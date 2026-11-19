@@ -67,7 +67,10 @@ class PresetSeederTests(TestCase):
         )
         self.assertEqual(rules[0].title, "Campaign points")
         charts = list(marienburg.charts.prefetch_related("rows"))
-        self.assertEqual(len(charts), 20)
+        # the burning-house table belongs to Setting buildings on fire, so it is not a chart of its own
+        self.assertEqual(sum(1 for chart in charts if chart.rule_id is None), 19)
+        owned = [chart.rule for chart in charts if chart.rule is not None]
+        self.assertEqual([rule.title for rule in owned], ["Setting buildings on fire"])
         seaside = next(chart for chart in charts if chart.title == "Seaside Situations")
         self.assertEqual((seaside.dice, len(seaside.rows.all())), ("D66", 32))
 
@@ -103,7 +106,7 @@ class PresetSeederTests(TestCase):
             "khemri": (None, None, None, None, None, "", 20),
             # Sartosa: its Locales are the campaign's places, and pressganging names a D66 result
             # Locations off (William, 20 Nov 2026): its locales are a document of their own, not the campaign's places
-            "sartosa": (False, None, None, None, None, "d66", 32),
+            "sartosa": (False, None, None, None, None, "d66", 35),
         }
         for slug, row in expected.items():
             preset = presets[slug]

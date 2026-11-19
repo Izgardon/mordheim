@@ -39,6 +39,7 @@ const rule = (
   body: "",
   umbrella: "",
   order: 0,
+  chart: null,
   ...overrides,
 });
 
@@ -65,6 +66,19 @@ const hail = rule({
   umbrella: "Weather",
   order: 3,
 });
+const storm = rule({
+  id: 8,
+  kind: "battle",
+  title: "Northern wind",
+  body: "A storm rolls in.",
+  order: 4,
+  chart: {
+    dice: "D6",
+    description: "",
+    note: "The powder stays wet.",
+    rows: [{ id: 5, result: "1-3", name: "Squall", text: "Missiles are at -1." }],
+  },
+});
 const monsters: CampaignChart = {
   id: 9,
   campaign_id: CAMPAIGN_ID,
@@ -87,7 +101,7 @@ beforeEach(() => {
   storeSession(RAIDER);
   fakeApi.on("GET /auth/me/", RAIDER);
   fakeApi.on("GET /notifications/", []);
-  fakeApi.on(`GET ${RULES}`, [comet, curfew, fog, hail]);
+  fakeApi.on(`GET ${RULES}`, [comet, curfew, fog, hail, storm]);
   fakeApi.on(`GET ${CHARTS}`, [monsters]);
   vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => undefined);
 });
@@ -130,6 +144,38 @@ describe("The Campaign rules page", () => {
     const both = await screen.findByRole("dialog", { name: "Weather" });
     expect(within(both).getByText(fog.body)).toBeInTheDocument();
     expect(within(both).getByText(hail.body)).toBeInTheDocument();
+  });
+
+  it("shows a rule's own table inside its modal, and not in the Charts list", async () => {
+    fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("player"));
+    const user = setupUser();
+    renderApp(PAGE);
+
+    await user.click(await screen.findByRole("button", { name: /^Northern wind/ }));
+
+    const modal = await screen.findByRole("dialog", { name: "Northern wind" });
+    expect(within(modal).getByText("A storm rolls in.")).toBeInTheDocument();
+    expect(within(modal).getByRole("cell", { name: "Squall" })).toBeInTheDocument();
+    expect(within(modal).getByText("The powder stays wet.")).toBeInTheDocument();
+    // the Charts list holds the reference charts only
+    await user.click(within(modal).getByRole("button", { name: "Close" }));
+    expect(screen.queryByRole("button", { name: /^Northern wind.*results/ })).toBeNull();
+  });
+
+  it("finds a rule by a result on its own table", async () => {
+    fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("player"));
+    const user = setupUser();
+    renderApp(PAGE);
+
+    const search = await screen.findByLabelText(
+      "Search the campaign rules, battle rules and charts"
+    );
+    await user.type(search, "squall");
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: /^Northern wind/ })).toBeInTheDocument()
+    );
+    expect(screen.queryByRole("button", { name: /^Weather/ })).toBeNull();
   });
 
   it("shows a chart's results, its dice and its note in its modal", async () => {
@@ -195,6 +241,7 @@ describe("The Campaign rules page", () => {
       { ...comet, order: 1 },
       fog,
       hail,
+      storm,
     ]);
     fakeApi.on(`PATCH ${RULES}4/`, (body: Partial<CampaignRule>) => ({ ...curfew, ...body }));
     const user = setupUser();
@@ -205,7 +252,7 @@ describe("The Campaign rules page", () => {
     await user.click(within(modal).getByRole("button", { name: "Move up" }));
 
     await waitFor(() =>
-      expect(fakeApi.bodyOf(`PUT ${RULES}order/`)).toEqual({ ids: [4, 3, 5, 6] })
+      expect(fakeApi.bodyOf(`PUT ${RULES}order/`)).toEqual({ ids: [4, 3, 5, 6, 8] })
     );
 
     await user.click(within(modal).getByRole("button", { name: "Edit" }));
@@ -220,6 +267,7 @@ describe("The Campaign rules page", () => {
       title: "Curfew Bell",
       body: curfew.body,
       umbrella: "",
+      chart: null, // it has none, and saying so leaves the rule without one
     });
   });
 

@@ -12,14 +12,15 @@ from ..models import CampaignPreset, CampaignPresetChart
 
 
 def missing_charts(campaign_id: int, preset: CampaignPreset | None) -> list[CampaignPresetChart]:
-    """The preset's charts the campaign holds none of by title, in the preset's order (two queries)."""
+    """The preset's standalone charts the campaign holds none of by title, in the preset's order (two queries)."""
     if preset is None:
         return []
     held = {
         title.strip().lower()
         for title in CampaignChart.objects.filter(campaign_id=campaign_id).values_list("title", flat=True)
     }
-    return [chart for chart in preset.charts.all() if chart.title.strip().lower() not in held]
+    # a chart belonging to a rule rides with that rule, never on its own (rules.py)
+    return [chart for chart in preset.charts.all() if chart.rule_id is None and chart.title.strip().lower() not in held]
 
 
 def copy_charts(campaign: Campaign, preset: CampaignPreset | None) -> int:

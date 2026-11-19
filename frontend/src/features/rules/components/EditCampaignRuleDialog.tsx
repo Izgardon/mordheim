@@ -11,11 +11,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@components/dialog";
+import { useDirtySince, useDiscardChanges } from "@/components/ui/discard-changes";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import type { useCampaignRuleWrites } from "../hooks/useCampaignRuleWrites";
 import type { CampaignRule, CampaignRulePayload } from "../types/rule-types";
 import CampaignRuleFields from "./CampaignRuleFields";
+import RuleTableField from "./RuleTableField";
 
 /** Edit a campaign rule's title and body, or delete it (after a confirm). */
 export default function EditCampaignRuleDialog({
@@ -29,15 +31,25 @@ export default function EditCampaignRuleDialog({
 }) {
   const [open, setOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const blank = () => ({ title: rule.title, body: rule.body, umbrella: rule.umbrella });
+  const blank = () => ({
+    title: rule.title,
+    body: rule.body,
+    umbrella: rule.umbrella,
+    chart: rule.chart,
+  });
   const [form, setForm] = useState<CampaignRulePayload>(blank);
   const [error, setError] = useState("");
   const busy = writes.update.isPending || writes.remove.isPending;
+  // with a table the form runs well past eight inputs, so closing it dirty asks first (5 Nov 2026)
+  const { dirty, markClean } = useDirtySince(form);
+  const discard = useDiscardChanges({ dirty, onClose: () => setOpen(false) });
 
   const openChange = (next: boolean) => {
-    setOpen(next);
-    if (next) setForm(blank());
+    if (!next) return discard.close();
+    setForm(blank());
+    markClean();
     setError("");
+    setOpen(true);
   };
   const save = () =>
     writes.update.mutate(
@@ -46,9 +58,13 @@ export default function EditCampaignRuleDialog({
         title: form.title.trim(),
         body: form.body.trim(),
         umbrella: (form.umbrella ?? "").trim(),
+        chart: form.chart ?? null,
       },
       {
-        onSuccess: () => setOpen(false),
+        onSuccess: () => {
+          markClean();
+          setOpen(false);
+        },
         onError: (failure) => setError(getErrorMessage(failure, "Couldn't save the rule.")),
       }
     );
@@ -75,6 +91,7 @@ export default function EditCampaignRuleDialog({
           <DialogTitle>Edit the rule</DialogTitle>
         </DialogHeader>
         <CampaignRuleFields value={form} onChange={setForm} />
+        <RuleTableField value={form.chart} onChange={(chart) => setForm({ ...form, chart })} />
         {error ? (
           <p role="alert" className="text-sm text-danger">
             {error}
@@ -89,6 +106,7 @@ export default function EditCampaignRuleDialog({
           </Button>
         </DialogFooter>
       </DialogContent>
+      {discard.confirm}
       <ConfirmDialog
         open={deleting}
         onOpenChange={setDeleting}

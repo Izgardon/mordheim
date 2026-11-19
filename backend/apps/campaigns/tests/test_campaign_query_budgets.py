@@ -45,7 +45,8 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
     "encampments": ("player", "encampments/", 2),  # the feature flag comes with the membership
     "locations": ("player", "locations/", 2),
     "house rules": ("player", "rules/", 2),
-    "campaign rules": ("player", "campaign-rules/", 2),
+    # the rules, their own tables and those tables' results: three, whatever the campaign holds
+    "campaign rules": ("player", "campaign-rules/", 3),
     "active battles": ("owner", "active-battles/", 3),
 }
 # The overview's list requests on every mount (players, completed trades, the history with its moments)

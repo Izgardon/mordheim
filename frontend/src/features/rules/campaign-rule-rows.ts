@@ -89,7 +89,20 @@ export function chartRows(charts: CampaignChart[]): ChartRow[] {
 
 /** What a row is found by: its heading and every entry's own words. */
 export function ruleRowWords(row: RuleRow): string[] {
-  return [row.name, ...row.rules.flatMap((rule) => [rule.title, rule.body])];
+  return [
+    row.name,
+    ...row.rules.flatMap((rule) => [
+      rule.title,
+      rule.body,
+      ...(rule.chart
+        ? [
+            rule.chart.description,
+            rule.chart.note,
+            ...rule.chart.rows.map((entry) => `${entry.result} ${entry.name} ${entry.text}`),
+          ]
+        : []),
+    ]),
+  ];
 }
 
 export function chartRowWords(row: ChartRow): string[] {

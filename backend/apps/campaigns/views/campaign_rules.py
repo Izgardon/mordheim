@@ -27,7 +27,7 @@ class CampaignRulesView(CampaignScopedView):
 
 
 class CampaignRuleDetailView(CampaignScopedView):
-    """PATCH: its title or body. DELETE: remove it."""
+    """PATCH: its fields, and its own table when `chart` is sent (null takes it away). DELETE: remove it."""
 
     rules = {"PATCH": WRITE, "DELETE": WRITE}
 
@@ -37,7 +37,8 @@ class CampaignRuleDetailView(CampaignScopedView):
             return Response({"detail": "Not found"}, status=404)
         serializer = CampaignRuleSerializer(rule, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        return Response(CampaignRuleSerializer(serializer.save()).data)
+        saved = campaign_rules.update_rule(rule, dict(serializer.validated_data))
+        return Response(CampaignRuleSerializer(saved).data)
 
     def delete(self, request, campaign_id, rule_id):
         if not campaign_rules.campaign_rules(campaign_id).filter(id=rule_id).delete()[0]:

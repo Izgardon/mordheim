@@ -1,6 +1,7 @@
 import { ModalSheet } from "@/components/ui/modal-sheet";
 
 import type { RuleRow } from "../campaign-rule-rows";
+import ChartTable from "./ChartTable";
 
 /**
  * A row's rules in one modal (William, 19 Nov 2026: "they should each get their own modal appear",
@@ -37,6 +38,21 @@ export default function CampaignRulesModal({
             ) : null}
             {rule.body ? (
               <p className="m-0 whitespace-pre-line text-[13px] text-text2">{rule.body}</p>
+            ) : null}
+            {rule.chart ? (
+              <>
+                {rule.chart.description ? (
+                  <p className="m-0 whitespace-pre-line text-[13px] text-text2">
+                    {rule.chart.description}
+                  </p>
+                ) : null}
+                <ChartTable rows={rule.chart.rows} dice={rule.chart.dice} />
+                {rule.chart.note ? (
+                  <p className="m-0 whitespace-pre-line text-xs text-muted-foreground">
+                    {rule.chart.note}
+                  </p>
+                ) : null}
+              </>
             ) : null}
             {actions ? <div className="flex flex-wrap gap-2">{actions(rule.id)}</div> : null}
           </section>

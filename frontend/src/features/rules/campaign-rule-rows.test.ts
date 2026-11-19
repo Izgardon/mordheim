@@ -19,6 +19,7 @@ const rule = (
   body: "",
   umbrella: "",
   order: 0,
+  chart: null,
   ...overrides,
 });
 

@@ -180,7 +180,34 @@
     {
       "title": "Setting buildings on fire",
       "text": "Only equipment that says so can set a building or forest on fire; otherwise only models may be set alight.\n\nA model in base contact with a building may use a brazier iron or torch to set it ablaze, as long as he neither shoots a missile weapon nor is engaged in close combat that turn. He may instead throw the torch or brazier iron up to 6\" to light a building, but the item is then lost. Fire arrows are shot at a building in the shooting phase. A model inside the building, setting fire to the furniture, starts the fire automatically.\n\nRoll a D6 to start the fire: 4+ for a wooden building, 6+ for a stone building. A torch or fire arrows give +1; a fire bomb, a brazier iron and other items give no bonus; after a tempest or hailstorm, or during a blizzard, the roll is at -2, and that modifier lasts the rest of the battle.\n\nOnce a building is lit, roll a D6 on the burning house chart at the start of each player's turn to see whether the fire is spreading, adding +1 for each turn it has been burning.",
-      "umbrella": "Fire"
+      "umbrella": "Fire",
+      "chart": {
+        "dice": "D6",
+        "note": "Add +1 to the roll for each turn the fire has been burning.",
+        "rows": [
+          {
+            "result": "1",
+            "name": "Gone out",
+            "text": "The fire has sputtered out of its own accord. Make no further rolls on the chart."
+          },
+          {
+            "result": "2-5",
+            "name": "Rising Flames",
+            "text": "Flames and smoke rise quickly. Any model within 2\" and inside the building must take a Toughness test; on a failure he suffers D3 Strength 2 hits with no armour save, from smoke and minor burns. Anyone wishing to enter the building must pass a Leadership test."
+          },
+          {
+            "result": "6",
+            "name": "Raging Inferno",
+            "text": "The building is totally ablaze. No model may enter it, and any model within 2\" and inside takes D3 Strength 3 hits from the flames and burning debris. A model wishing to get out must pass an Initiative test or stay trapped within."
+          },
+          {
+            "result": "7+",
+            "name": "Collapse!",
+            "text": "The timbers give way and the building collapses. Any model inside and not stunned must pass an Initiative test to escape, a knocked down model at -1 Initiative for the roll. A model who fails is crushed and taken out of action. The building now counts as impassable terrain."
+          }
+        ],
+        "description": "Rolled for a burning building at the start of each player's turn, to see whether the fire is spreading."
+      }
     },
     {
       "title": "Setting forests on fire",
@@ -713,35 +740,6 @@
           "result": "11-12",
           "name": "Bitter Cold",
           "text": ""
-        }
-      ]
-    },
-    {
-      "title": "Burning house",
-      "description": "Rolled for a burning building at the start of each player's turn, to see whether the fire is spreading.",
-      "dice": "D6",
-      "note": "Add +1 to the roll for each turn the fire has been burning.",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "1",
-          "name": "Gone out",
-          "text": "The fire has sputtered out of its own accord. Make no further rolls on the chart."
-        },
-        {
-          "result": "2-5",
-          "name": "Rising Flames",
-          "text": "Flames and smoke rise quickly. Any model within 2\" and inside the building must take a Toughness test; on a failure he suffers D3 Strength 2 hits with no armour save, from smoke and minor burns. Anyone wishing to enter the building must pass a Leadership test."
-        },
-        {
-          "result": "6",
-          "name": "Raging Inferno",
-          "text": "The building is totally ablaze. No model may enter it, and any model within 2\" and inside takes D3 Strength 3 hits from the flames and burning debris. A model wishing to get out must pass an Initiative test or stay trapped within."
-        },
-        {
-          "result": "7+",
-          "name": "Collapse!",
-          "text": "The timbers give way and the building collapses. Any model inside and not stunned must pass an Initiative test to escape, a knocked down model at -1 Initiative for the roll. A model who fails is crushed and taken out of action. The building now counts as impassable terrain."
         }
       ]
     },

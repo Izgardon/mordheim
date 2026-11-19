@@ -134,3 +134,81 @@ class CampaignChartTests(CampaignTestCase):
             self.add({**WEATHER, "title": f"Chart {index}"})
         with self.assertNumQueries(3):
             self.assertEqual(len(self.listed()), 9)
+
+
+class RuleOwnedTableTests(CampaignTestCase):
+    """A chart may belong to a rule (William, 20 Nov 2026: "charts should only really be used for clear reference
+    charts"). It then shows with its rule and is left out of the Charts list."""
+
+    TABLE = {"dice": "D6", "note": "Add 1 at night.", "rows": [{"result": "1-2", "name": "Fog", "text": "It hides."}]}
+
+    def rule_url(self, suffix: str = "") -> str:
+        return self.url(f"campaign-rules/{suffix}")
+
+    def charts_url(self, suffix: str = "") -> str:
+        return self.url(f"campaign-charts/{suffix}")
+
+    def add_rule(self, **body):
+        return self.post_as(self.admin, self.rule_url(), {"title": "Weather", **body})
+
+    def test_a_rule_is_written_and_read_with_its_own_table(self):
+        created = self.add_rule(kind="battle", chart=self.TABLE).json()
+
+        self.assertEqual(created["chart"]["dice"], "D6")
+        self.assertEqual([(row["result"], row["name"]) for row in created["chart"]["rows"]], [("1-2", "Fog")])
+        read = self.get_as(self.player, self.rule_url()).json()[0]
+        self.assertEqual(read["chart"]["note"], "Add 1 at night.")
+
+    def test_a_rule_without_one_reads_null(self):
+        self.add_rule()
+
+        self.assertIsNone(self.get_as(self.player, self.rule_url()).json()[0]["chart"])
+
+    def test_a_rules_table_is_left_out_of_the_charts_list(self):
+        self.add_rule(chart=self.TABLE)
+        self.post_as(self.admin, self.charts_url(), WEATHER)
+
+        listed = self.get_as(self.player, self.charts_url()).json()
+
+        self.assertEqual([chart["title"] for chart in listed], ["Spring weather"])
+
+    def test_a_patch_replaces_the_table_and_null_takes_it_away(self):
+        rule_id = self.add_rule(chart=self.TABLE).json()["id"]
+
+        swapped = self.patch_as(
+            self.owner,
+            self.rule_url(f"{rule_id}/"),
+            {"chart": {**self.TABLE, "rows": [{"result": "6", "name": "Hail", "text": ""}]}},
+        ).json()
+        self.assertEqual([row["result"] for row in swapped["chart"]["rows"]], ["6"])
+
+        gone = self.patch_as(self.owner, self.rule_url(f"{rule_id}/"), {"chart": None}).json()
+        self.assertIsNone(gone["chart"])
+        self.assertFalse(CampaignChart.objects.filter(campaign=self.campaign).exists())
+
+    def test_a_patch_that_sends_no_table_leaves_it_alone(self):
+        rule_id = self.add_rule(chart=self.TABLE).json()["id"]
+
+        patched = self.patch_as(self.owner, self.rule_url(f"{rule_id}/"), {"title": "Weather above"}).json()
+
+        self.assertEqual(patched["title"], "Weather above")
+        self.assertEqual(len(patched["chart"]["rows"]), 1)
+
+    def test_deleting_the_rule_takes_its_table_with_it(self):
+        rule_id = self.add_rule(chart=self.TABLE).json()["id"]
+
+        self.delete_as(self.owner, self.rule_url(f"{rule_id}/"))
+
+        self.assertFalse(CampaignChart.objects.filter(campaign=self.campaign).exists())
+        self.assertFalse(CampaignChartRow.objects.exists())
+
+    def test_a_table_needs_a_result(self):
+        self.assertEqual(self.add_rule(chart={**self.TABLE, "rows": []}).status_code, 400)
+
+    def test_reading_the_rules_costs_the_same_however_many_carry_tables(self):
+        for index in range(3):
+            self.add_rule(title=f"Rule {index}", chart=self.TABLE)
+        self.get_as(self.player, self.rule_url())  # the access row, warmed
+
+        with self.assertNumQueries(4):  # the reader's access, the rules, their tables, the tables' results
+            self.get_as(self.player, self.rule_url())

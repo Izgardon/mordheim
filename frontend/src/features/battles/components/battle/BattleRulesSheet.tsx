@@ -5,7 +5,9 @@ import { ModalSheet } from "@/components/ui/modal-sheet";
 import { useCampaignCharts, useCampaignRules } from "@/features/rules/api/rule-queries";
 import { ruleRows } from "@/features/rules/campaign-rule-rows";
 import CampaignChartView from "@/features/rules/components/CampaignChartView";
+import ChartTable from "@/features/rules/components/ChartTable";
 import { rulesTabs } from "@/features/rules/data/rules-content";
+import type { RuleTable } from "@/features/rules/types/rule-types";
 import { useHouseRules } from "@/features/rules/api/rule-queries";
 
 import BattleWarbandRules from "./BattleWarbandRules";
@@ -15,12 +17,24 @@ const WARBANDS = "warbands";
 const BATTLE = "battle-rules";
 const CHARTS = "charts";
 
-/** A titled block of text in a panel, as the house rules read. */
-function RuleEntry({ title, body }: { title: string; body: string }) {
+/** A titled block of text in a panel, as the house rules read, with the rule's own table under it. */
+function RuleEntry({
+  title,
+  body,
+  table,
+}: {
+  title: string;
+  body: string;
+  table?: RuleTable | null;
+}) {
   return (
-    <div className="flex flex-col gap-1 border-t border-line py-2.5">
+    <div className="flex flex-col gap-1.5 border-t border-line py-2.5">
       <h3 className="m-0 font-bold text-head">{title}</h3>
       {body ? <p className="m-0 whitespace-pre-line text-sm text-text2">{body}</p> : null}
+      {table ? <ChartTable rows={table.rows} dice={table.dice} /> : null}
+      {table?.note ? (
+        <p className="m-0 whitespace-pre-line text-xs text-muted-foreground">{table.note}</p>
+      ) : null}
     </div>
   );
 }
@@ -78,6 +92,7 @@ export default function BattleRulesSheet({
                     key={rule.id}
                     title={row.umbrella ? `${row.umbrella}: ${rule.title}` : rule.title}
                     body={rule.body}
+                    table={rule.chart}
                   />
                 ))
               )}

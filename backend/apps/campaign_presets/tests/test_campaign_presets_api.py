@@ -180,9 +180,10 @@ class CampaignPresetTests(CampaignTestCase):
 
     def test_the_payload_names_the_preset_what_it_sets_and_nothing_departed_from(self) -> None:
         campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
-        # the reader's access, the preset, its settings, its rules, its charts with their results, then the titles
-        # the campaign already holds of each: a fixed count, whatever the preset or the campaign holds
-        with self.assertNumQueries(7):
+        # the reader's access, the preset, its settings, its rules and their own tables with those tables'
+        # results, its charts with their results, then the titles the campaign already holds of each: a fixed
+        # count, whatever the preset or the campaign holds
+        with self.assertNumQueries(8):
             data = self.preset_payload(campaign_id)
         self.assertEqual((data["preset_id"], data["preset_name"]), (self.marienburg.pk, MARIENBURG))
         self.assertEqual((data["departures"], data["rule_count"]), ([], 2))

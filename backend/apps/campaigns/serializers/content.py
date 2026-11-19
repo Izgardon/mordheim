@@ -9,6 +9,7 @@ from ..access import CAMPAIGN_RULES
 from ..effects import EFFECT_KEYS
 from ..models import (
     CAMPAIGN_RULE_KINDS,
+    CHART_DICE,
     MAX_CAMPAIGN_RULE_TEXT,
     CampaignEncampment,
     CampaignHouseRule,
@@ -17,6 +18,7 @@ from ..models import (
     CampaignMessage,
     CampaignRule,
 )
+from .charts import MAX_ROWS, CampaignChartRowSerializer
 
 
 class CampaignHouseRuleSerializer(serializers.ModelSerializer):
@@ -39,6 +41,22 @@ class CampaignHouseRuleCreateSerializer(serializers.ModelSerializer):
         return value
 
 
+class RuleTableSerializer(serializers.Serializer):
+    """A rule's own table: the chart's fields, without the place and heading a standalone chart carries."""
+
+    dice = serializers.ChoiceField(choices=CHART_DICE, allow_blank=True, required=False, default="")
+    description = serializers.CharField(max_length=2000, allow_blank=True, required=False, default="")
+    note = serializers.CharField(max_length=2000, allow_blank=True, required=False, default="")
+    rows = CampaignChartRowSerializer(many=True)
+
+    def validate_rows(self, value: list[dict]) -> list[dict]:
+        if not value:
+            raise serializers.ValidationError("A table needs at least one result.")
+        if len(value) > MAX_ROWS:
+            raise serializers.ValidationError(f"A table holds at most {MAX_ROWS} results.")
+        return value
+
+
 class CampaignRuleSerializer(serializers.ModelSerializer):
     """A campaign rule (models.CampaignRule): read, and written by POST campaign-rules/ and PATCH
     campaign-rules/<id>/ (a PATCH may send any of the fields); its place changes only through PUT
@@ -52,11 +70,30 @@ class CampaignRuleSerializer(serializers.ModelSerializer):
         max_length=MAX_CAMPAIGN_RULE_TEXT, allow_blank=True, required=False, trim_whitespace=True
     )
     umbrella = serializers.CharField(max_length=120, allow_blank=True, required=False, trim_whitespace=True)
+    chart = RuleTableSerializer(required=False, allow_null=True)
 
     class Meta:
         model = CampaignRule
-        fields = ("id", "campaign_id", "kind", "title", "body", "umbrella", "order")
+        fields = ("id", "campaign_id", "kind", "title", "body", "umbrella", "order", "chart")
         read_only_fields = ("order",)
+
+    def to_representation(self, instance):
+        """The rule with its own table, from the rows already read (no query)."""
+        data = super().to_representation(instance)
+        table = next(iter(instance.charts.all()), None)
+        data["chart"] = (
+            None
+            if table is None
+            else {
+                "dice": table.dice,
+                "description": table.description,
+                "note": table.note,
+                "rows": [
+                    {"id": row.id, "result": row.result, "name": row.name, "text": row.text} for row in table.rows.all()
+                ],
+            }
+        )
+        return data
 
 
 class CampaignRuleOrderSerializer(serializers.Serializer):

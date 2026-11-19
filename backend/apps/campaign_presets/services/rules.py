@@ -6,7 +6,7 @@ same for a warband), so changing preset, or adding its rules again after editing
 
 from django.db.models import Max
 
-from apps.campaigns.models import Campaign, CampaignRule
+from apps.campaigns.models import Campaign, CampaignChart, CampaignChartRow, CampaignRule
 
 from ..models import CampaignPreset, CampaignPresetRule
 
@@ -28,13 +28,13 @@ def missing_rules(campaign_id: int, preset: CampaignPreset | None) -> list[Campa
 
 def copy_rules(campaign: Campaign, preset: CampaignPreset | None) -> int:
     """Copy the preset's missing rules onto the campaign's, after the rules it has, in the preset's order (one
-    INSERT). How many were copied."""
+    INSERT), each with its own table where the preset's rule had one. How many were copied."""
     rules = missing_rules(campaign.pk, preset)
     if not rules:
         return 0
     last = CampaignRule.objects.filter(campaign=campaign).aggregate(last=Max("order"))["last"]
     start = 0 if last is None else last + 1
-    CampaignRule.objects.bulk_create(
+    written = CampaignRule.objects.bulk_create(
         CampaignRule(
             campaign=campaign,
             kind=rule.kind,
@@ -45,4 +45,29 @@ def copy_rules(campaign: Campaign, preset: CampaignPreset | None) -> int:
         )
         for place, rule in enumerate(rules)
     )
+    _copy_tables(campaign, rules, written)
     return len(rules)
+
+
+def _copy_tables(campaign: Campaign, rules: list[CampaignPresetRule], written: list[CampaignRule]) -> None:
+    """Each copied rule's own table, where the preset's rule had one: one INSERT for the charts and one for every
+    result between them."""
+    pairs = [(copy, table) for copy, rule in zip(written, rules, strict=True) for table in rule.charts.all()[:1]]
+    if not pairs:
+        return
+    charts = CampaignChart.objects.bulk_create(
+        CampaignChart(
+            campaign=campaign,
+            rule=copy,
+            title=table.title,
+            description=table.description,
+            dice=table.dice,
+            note=table.note,
+        )
+        for copy, table in pairs
+    )
+    CampaignChartRow.objects.bulk_create(
+        CampaignChartRow(chart=chart, result=row.result, name=row.name, text=row.text, order=index)
+        for chart, (_copy, table) in zip(charts, pairs, strict=True)
+        for index, row in enumerate(table.rows.all())
+    )

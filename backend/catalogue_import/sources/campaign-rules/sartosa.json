@@ -93,6 +93,104 @@
       "umbrella": "Random events"
     },
     {
+      "title": "Secret F: the flying hat",
+      "text": "Rolled when a model catches the fancy hat blown through town by the North Western Wind.",
+      "umbrella": "Random events",
+      "chart": {
+        "dice": "D6",
+        "note": "",
+        "rows": [
+          {
+            "result": "1",
+            "name": "A leather hat",
+            "text": "Cheap but sturdy. Treat it as a helmet."
+          },
+          {
+            "result": "2-3",
+            "name": "A captain's hat",
+            "text": ""
+          },
+          {
+            "result": "4",
+            "name": "An expensive silk hat",
+            "text": "It sells for 5D6 gc."
+          },
+          {
+            "result": "5",
+            "name": "An executioner's hood",
+            "text": ""
+          },
+          {
+            "result": "6",
+            "name": "Sir Olivier Draco's felt hat",
+            "text": ""
+          }
+        ]
+      }
+    },
+    {
+      "title": "Secret G: a powerful warrior",
+      "text": "Rolled when the South West Wind sends somebody formidable into the battle.",
+      "umbrella": "Random events",
+      "chart": {
+        "dice": "D6",
+        "note": "",
+        "rows": [
+          {
+            "result": "1",
+            "name": "A beggar",
+            "text": "A powerful warrior indeed: you find a Beggar Hired Sword. He keeps walking aimlessly if left alone, but any warband may hire him by coming into base contact with him, or by paying him 10 gc or one item of food."
+          },
+          {
+            "result": "2-3",
+            "name": "A Pit Fighter",
+            "text": "A powerful Pit Fighter from the mainland offers his services to the warband with the lowest rating, rolling a dice to choose between two of equal rating. That warband must add the Hired Sword to its roster for this game. At the end of the game he demands payment, and the warband must pay his hire and upkeep fee. If it cannot or will not, he leaves, but takes his frustration out on a random member of the warband first, chosen from those not taken out of action during the game: roll for injuries for him as though he had been taken out of action."
+          },
+          {
+            "result": "4-6",
+            "name": "A legendary warrior of Sartosa",
+            "text": "Roll a D6 on the legendary warriors chart to find out who it is."
+          }
+        ]
+      }
+    },
+    {
+      "title": "Secret H: unguarded barrels",
+      "text": "Rolled for all the barrels found by the Unguarded Barrels encounter, once a model is in base contact with them.",
+      "umbrella": "Random events",
+      "chart": {
+        "dice": "D6",
+        "note": "",
+        "rows": [
+          {
+            "result": "1",
+            "name": "Trash",
+            "text": "What a stink."
+          },
+          {
+            "result": "2",
+            "name": "Grog",
+            "text": "The barrels cannot be carried, but any model in your warband may drink from them for free this game and counts as having Grog: -1 WS, -1 BS, and he passes all fear and all alone tests."
+          },
+          {
+            "result": "3",
+            "name": "Cracker barrels",
+            "text": "Each holds 1D3 victuals and 1D3 hardtack, which your warriors may pocket at once."
+          },
+          {
+            "result": "4-5",
+            "name": "Cargo",
+            "text": "Treat them as cargo, with all the normal restrictions on moving them. Any of them may be opened in the Exploration phase."
+          },
+          {
+            "result": "6",
+            "name": "Crude gunpowder",
+            "text": "Any of them may be carried off the map. Each barrel captured gives the warband 1 Cargo and one dose of Superior Gunpowder. See the crude gunpowder kegs rule."
+          }
+        ]
+      }
+    },
+    {
       "title": "Ground",
       "text": "Open ground, crossed without penalty: clear underground passages, unobstructed ruined streets, vines and ladders leading up or down, bridges with no gaps or gaps under 1 inch, and steps up or down.\n\nDifficult ground, crossed at half speed: steps higher than 1 inch, rubble and light shrub, shallow swamp or marsh, jungle, shallow rivers and calm water.",
       "umbrella": "Terrain"
@@ -570,64 +668,6 @@
       ]
     },
     {
-      "title": "Secret F: the flying hat",
-      "description": "Rolled when a model catches the fancy hat blown through town by the North Western Wind.",
-      "dice": "D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "1",
-          "name": "A leather hat",
-          "text": "Cheap but sturdy. Treat it as a helmet."
-        },
-        {
-          "result": "2-3",
-          "name": "A captain's hat",
-          "text": ""
-        },
-        {
-          "result": "4",
-          "name": "An expensive silk hat",
-          "text": "It sells for 5D6 gc."
-        },
-        {
-          "result": "5",
-          "name": "An executioner's hood",
-          "text": ""
-        },
-        {
-          "result": "6",
-          "name": "Sir Olivier Draco's felt hat",
-          "text": ""
-        }
-      ]
-    },
-    {
-      "title": "Secret G: a powerful warrior",
-      "description": "Rolled when the South West Wind sends somebody formidable into the battle.",
-      "dice": "D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "1",
-          "name": "A beggar",
-          "text": "A powerful warrior indeed: you find a Beggar Hired Sword. He keeps walking aimlessly if left alone, but any warband may hire him by coming into base contact with him, or by paying him 10 gc or one item of food."
-        },
-        {
-          "result": "2-3",
-          "name": "A Pit Fighter",
-          "text": "A powerful Pit Fighter from the mainland offers his services to the warband with the lowest rating, rolling a dice to choose between two of equal rating. That warband must add the Hired Sword to its roster for this game. At the end of the game he demands payment, and the warband must pay his hire and upkeep fee. If it cannot or will not, he leaves, but takes his frustration out on a random member of the warband first, chosen from those not taken out of action during the game: roll for injuries for him as though he had been taken out of action."
-        },
-        {
-          "result": "4-6",
-          "name": "A legendary warrior of Sartosa",
-          "text": "Roll a D6 on the legendary warriors chart to find out who it is."
-        }
-      ]
-    },
-    {
       "title": "Legendary warriors of Sartosa",
       "description": "Rolled when Secret G brings a legend into the battle. He charges, shoots at or casts spells at the first model within range that meets his own criterion.",
       "dice": "D6",
@@ -663,40 +703,6 @@
           "result": "6",
           "name": "A wanderer",
           "text": "Roll a D6. On 1-3 you are visited by the immortal wanderer Aenur, who attacks any evil warband. On 4-6 you meet Giovanni the Knife, Johan's Tilean descendant, treated as Johan, who attacks the first non-human he meets."
-        }
-      ]
-    },
-    {
-      "title": "Secret H: unguarded barrels",
-      "description": "Rolled for all the barrels found by the Unguarded Barrels encounter, once a model is in base contact with them.",
-      "dice": "D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "1",
-          "name": "Trash",
-          "text": "What a stink."
-        },
-        {
-          "result": "2",
-          "name": "Grog",
-          "text": "The barrels cannot be carried, but any model in your warband may drink from them for free this game and counts as having Grog: -1 WS, -1 BS, and he passes all fear and all alone tests."
-        },
-        {
-          "result": "3",
-          "name": "Cracker barrels",
-          "text": "Each holds 1D3 victuals and 1D3 hardtack, which your warriors may pocket at once."
-        },
-        {
-          "result": "4-5",
-          "name": "Cargo",
-          "text": "Treat them as cargo, with all the normal restrictions on moving them. Any of them may be opened in the Exploration phase."
-        },
-        {
-          "result": "6",
-          "name": "Crude gunpowder",
-          "text": "Any of them may be carried off the map. Each barrel captured gives the warband 1 Cargo and one dose of Superior Gunpowder. See the crude gunpowder kegs rule."
         }
       ]
     }

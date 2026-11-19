@@ -84,6 +84,7 @@ describe("Search everything's campaign rules and charts", () => {
     body: "",
     umbrella: "",
     order: 0,
+    chart: null,
     ...overrides,
   });
 

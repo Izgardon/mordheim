@@ -21,9 +21,18 @@ CHART_DICE = ("D3", "D6", "2D6", "3D6", "D66", "D100")
 class CampaignChart(models.Model):
     """One of the campaign's charts, with its place in the list. Its owner and admins write and order them; every
     member reads them. `note` carries what is true of the whole chart rather than one row: the modifiers, and what
-    to do with a result the chart sends on elsewhere."""
+    to do with a result the chart sends on elsewhere.
+
+    A chart may instead **belong to a rule** (William, 20 Nov 2026: "charts should only really be used for clear
+    reference charts"). Then it is that rule's own table: it shows inside the rule and is left out of the Charts
+    list, so a rule may hold a table of any size without pretending to be a chart a player looks up. It is the same
+    model and the same renderer either way; owning a table is all that tells them apart.
+    """
 
     campaign = models.ForeignKey(Campaign, related_name="charts", on_delete=models.CASCADE)
+    rule = models.ForeignKey(
+        "campaigns.CampaignRule", related_name="charts", null=True, blank=True, on_delete=models.CASCADE
+    )
     title = models.CharField(max_length=160)
     description = models.TextField(max_length=2000, blank=True, default="")
     dice = models.CharField(max_length=6, choices=[(die, die) for die in CHART_DICE], blank=True, default="")

@@ -29,6 +29,14 @@ export type CommonRule = {
   effect_key: string | null;
 };
 
+/** One result on a chart: what was rolled, its short name (may be blank) and what it does. */
+export type CampaignChartRow = {
+  id?: number;
+  result: string;
+  name: string;
+  text: string;
+};
+
 /** What a rule is about: the campaign between games, or a game being set up and played. */
 export type CampaignRuleKind = "campaign" | "battle";
 
@@ -48,6 +56,19 @@ export type CampaignRule = {
   body: string;
   umbrella: string;
   order: number;
+  /** The rule's own table, where it has one; null otherwise (William, 20 Nov 2026). */
+  chart: RuleTable | null;
+};
+
+/**
+ * A table belonging to one rule rather than standing on its own: it shows inside the rule and is
+ * left out of the Charts list, which is for the reference charts a player looks up.
+ */
+export type RuleTable = {
+  dice: string;
+  description: string;
+  note: string;
+  rows: CampaignChartRow[];
 };
 
 export type CampaignRulePayload = {
@@ -55,14 +76,8 @@ export type CampaignRulePayload = {
   body: string;
   kind?: CampaignRuleKind;
   umbrella?: string;
-};
-
-/** One result on a chart: what was rolled, its short name (may be blank) and what it does. */
-export type CampaignChartRow = {
-  id?: number;
-  result: string;
-  name: string;
-  text: string;
+  /** Sent to write the rule's table; null takes away the one it had. Left out leaves it alone. */
+  chart?: RuleTable | null;
 };
 
 /**

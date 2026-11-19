@@ -70,18 +70,36 @@ def _rules_of(rows: Any, kind: str, name: str, label: str) -> list[dict[str, str
     for row in rows:
         if not isinstance(row, dict) or not clean(row.get("title")):
             raise CommandError(f"{label}: each rule in {name}.json needs a title.")
-        rules.append(
-            {
-                "kind": kind,
-                "title": clean(row.get("title")),
-                "text": clean(row.get("text")),
-                "umbrella": clean(row.get("umbrella")),
-            }
-        )
+        entry: dict[str, Any] = {
+            "kind": kind,
+            "title": clean(row.get("title")),
+            "text": clean(row.get("text")),
+            "umbrella": clean(row.get("umbrella")),
+        }
+        if row.get("chart") is not None:  # the rule's own table, not a chart of its own
+            entry["table"] = _one_chart(row["chart"], entry["title"], label, name)
+        rules.append(entry)
     return rules
 
 
-def read_rules(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict[str, str]]:
+def _one_chart(row: Any, title: str, label: str, name: str) -> dict[str, Any]:
+    """One chart as the file gives it, by the rules `read_charts` applies."""
+    if not isinstance(row, dict):
+        raise CommandError(f"{label}: the chart on '{title}' in {name}.json should be an object.")
+    dice = clean(row.get("dice"))
+    if dice and dice not in CHART_DICE:
+        raise CommandError(f"{label}: the chart '{title}' rolls {dice}, which isn't a die we hold.")
+    return {
+        "title": clean(row.get("title")) or title,
+        "description": clean(row.get("description")),
+        "dice": dice,
+        "note": clean(row.get("note")),
+        "umbrella": clean(row.get("umbrella")),
+        "rows": _chart_rows(row.get("rows"), title, label),
+    }
+
+
+def read_rules(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict[str, Any]]:
     """The rules of `name.json` in `folder`, in its order: the campaign rules under `rules`, then the battle rules
     under `battle_rules` (William, 19 Nov 2026). A plain list is read as campaign rules, as the first files held."""
     data = _read_source(name, label, folder)
@@ -108,19 +126,7 @@ def read_charts(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict
     for row in rows:
         if not isinstance(row, dict) or not clean(row.get("title")):
             raise CommandError(f"{label}: each chart in {name}.json needs a title.")
-        dice = clean(row.get("dice"))
-        if dice and dice not in CHART_DICE:
-            raise CommandError(f"{label}: the chart '{row.get('title')}' rolls {dice}, which isn't a die we hold.")
-        charts.append(
-            {
-                "title": clean(row.get("title")),
-                "description": clean(row.get("description")),
-                "dice": dice,
-                "note": clean(row.get("note")),
-                "umbrella": clean(row.get("umbrella")),
-                "rows": _chart_rows(row.get("rows"), clean(row.get("title")), label),
-            }
-        )
+        charts.append(_one_chart(row, clean(row.get("title")), label, name))
     titles = [chart["title"].lower() for chart in charts]
     if len(set(titles)) != len(titles):
         raise CommandError(f"{label}: {name}.json holds two charts of the same title.")
@@ -225,19 +231,31 @@ def write_preset(
     preset, _created = CampaignPreset.objects.update_or_create(slug=slug, defaults=defaults)
     preset.settings.set(setting_ids)
     preset.rules.all().delete()
-    CampaignPresetRule.objects.bulk_create(
+    tables = [rule.pop("table", None) for rule in rules]
+    written = CampaignPresetRule.objects.bulk_create(
         CampaignPresetRule(preset=preset, order=place, **rule) for place, rule in enumerate(rules)
     )
     _write_charts(preset, preset_charts)
+    # a rule's own table: the same chart rows, pointed at the rule rather than standing on their own
+    _write_charts(preset, [t for t in tables if t], [r for r, t in zip(written, tables, strict=True) if t], keep=True)
     return preset
 
 
-def _write_charts(preset: CampaignPreset, charts: list[dict[str, Any]]) -> None:
-    """The preset's charts, written afresh with their results."""
-    preset.charts.all().delete()
+def _write_charts(
+    preset: CampaignPreset,
+    charts: list[dict[str, Any]],
+    rules: list[Any] | None = None,
+    keep: bool = False,
+) -> None:
+    """The preset's charts, written afresh with their results. With `rules`, each chart is that rule's own table;
+    `keep` leaves the charts already written in place (the rules' tables are written after the standalone ones)."""
+    if not keep:
+        preset.charts.all().delete()
     for place, chart in enumerate(charts):
         rows = chart.pop("rows")
-        written = CampaignPresetChart.objects.create(preset=preset, order=place, **chart)
+        written = CampaignPresetChart.objects.create(
+            preset=preset, order=place, rule=rules[place] if rules else None, **chart
+        )
         CampaignPresetChartRow.objects.bulk_create(
             CampaignPresetChartRow(chart=written, order=index, **row) for index, row in enumerate(rows)
         )

@@ -81,9 +81,11 @@ class CampaignPresetRule(models.Model):
 
 
 class CampaignPresetChart(models.Model):
-    """One of the preset's charts, in the book's order, as `CampaignChart` holds a campaign's own."""
+    """One of the preset's charts, in the book's order, as `CampaignChart` holds a campaign's own. One carrying a
+    `rule` is that rule's own table rather than a chart of its own, and is copied with it."""
 
     preset = models.ForeignKey(CampaignPreset, related_name="charts", on_delete=models.CASCADE)
+    rule = models.ForeignKey(CampaignPresetRule, related_name="charts", null=True, blank=True, on_delete=models.CASCADE)
     order = models.PositiveIntegerField(default=0)
     title = models.CharField(max_length=160)
     description = models.TextField(max_length=2000, blank=True, default="")
