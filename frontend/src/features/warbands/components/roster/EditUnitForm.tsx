@@ -47,10 +47,12 @@ function MissingGames({ form, onDone }: { form: UnitEditDraft; onDone: () => voi
 
 /**
  * One unit's edit form (design E): inline in its open card on the web, a bottom sheet on a
- * phone. Saved alone through the batch save; Duplicate and Dismiss go the same way. Every action
- * sits at the bottom: Save, Cancel and Duplicate on the left, Notes, Missing games and Dismiss on
- * the right. Cancel or closing the sheet with changes unsaved asks "Discard changes?" first
- * (William: a form of more than 8 inputs).
+ * phone. Saved alone through the batch save; Duplicate and Dismiss go the same way. On the web
+ * every action sits at the bottom: Save, Cancel and Duplicate on the left, Notes, Missing games
+ * and Dismiss on the right. On a phone the sheet's own bar holds the three that act on the unit --
+ * Dismiss, Duplicate and Save (William, 19 Nov 2026) -- leaving Notes and Missing games in the
+ * body; there is no Cancel, because the sheet's X and a swipe already close it. Closing with
+ * changes unsaved asks "Discard changes?" first (William: a form of more than 8 inputs).
  */
 export default function EditUnitForm({
   entry,
@@ -92,8 +94,22 @@ export default function EditUnitForm({
       Duplicate
     </Button>
   );
-  const right = (
-    <div className="ml-auto flex flex-wrap items-center gap-2">
+  const dismiss = confirmDismiss ? (
+    <Button
+      variant="danger"
+      className={isMobile ? "col-span-3" : undefined}
+      disabled={saving}
+      onClick={() => void form.dismiss().then(done)}
+    >
+      {dismissLabel} for good: carried items are lost
+    </Button>
+  ) : (
+    <Button variant="ghost" className="text-danger" onClick={() => setConfirmDismiss(true)}>
+      {dismissLabel}
+    </Button>
+  );
+  const notesAndMissing = (
+    <>
       {/* notes take no room until opened (William, 8 Nov 2026); the dot: he has some */}
       <Button variant="ghost" aria-expanded={notesOpen} onClick={() => setNotesOpen((o) => !o)}>
         Notes
@@ -106,15 +122,12 @@ export default function EditUnitForm({
       <Button variant="ghost" aria-expanded={missingOpen} onClick={() => setMissingOpen((o) => !o)}>
         {missing ? `Missing · ${missing} ${missing === 1 ? "game" : "games"}` : "Missing games"}
       </Button>
-      {confirmDismiss ? (
-        <Button variant="danger" disabled={saving} onClick={() => void form.dismiss().then(done)}>
-          {dismissLabel} for good: carried items are lost
-        </Button>
-      ) : (
-        <Button variant="ghost" className="text-danger" onClick={() => setConfirmDismiss(true)}>
-          {dismissLabel}
-        </Button>
-      )}
+    </>
+  );
+  const right = (
+    <div className="ml-auto flex flex-wrap items-center gap-2">
+      {notesAndMissing}
+      {dismiss}
     </div>
   );
   const body = (
@@ -141,20 +154,24 @@ export default function EditUnitForm({
         kicker="Edit"
         title={unitName(entry.unit)}
         footer={
-          <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-2">
-            <Button variant="secondary" onClick={discard.close}>
-              Cancel
-            </Button>
-            <Button disabled={saving} onClick={() => void form.save().then(done)}>
-              Save changes
+          // the three that act on the unit; confirming a dismissal takes the row and pushes the
+          // other two down, so the loss is still said plainly and neither is lost
+          <div className="grid grid-cols-3 gap-2">
+            {dismiss}
+            {duplicate}
+            <Button
+              className={confirmDismiss ? "col-span-2" : undefined}
+              disabled={saving}
+              onClick={() => void form.save().then(done)}
+            >
+              Save
             </Button>
           </div>
         }
       >
         {body}
         <div className="flex flex-wrap items-center gap-2 border-t border-line pt-3">
-          {duplicate}
-          {right}
+          {notesAndMissing}
         </div>
         {discard.confirm}
       </BottomSheet>

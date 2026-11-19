@@ -204,7 +204,9 @@ export function SearchMultiSelect({
   const [adding, setAdding] = React.useState(false);
   const free = picker.options.filter((option) => !values.some((value) => value.id === option.id));
   return (
-    <div className="flex flex-wrap items-start gap-1.5">
+    // stretch, so Add stands as tall as the entries beside it: a chip with a subtitle runs to two
+    // lines and outgrows the shared min-height (William, 19 Nov 2026)
+    <div className="flex flex-wrap items-stretch gap-1.5">
       {values.map((value) => (
         <SelectedChip
           key={value.id}

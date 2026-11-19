@@ -6,8 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
 import type { HeroCaster } from "../../../types/warband-types";
-import { isCreature, isGroup, unitName, xpTable, type RosterUnit } from "../unit-view";
-import XpTrack from "../XpTrack";
+import { isGroup, unitName, type RosterUnit } from "../unit-view";
 import EditGroupModels from "./EditGroupModels";
 import EditLists from "./EditLists";
 import EditProfile, { EditXpField } from "./EditProfile";
@@ -26,9 +25,10 @@ const CASTERS: [HeroCaster, string][] = [
 /**
  * The edit form's fields (design E, compact), shared by the web's inline form and the phone's
  * sheet (William's layout): the traits as plain toggles; name, type, race, cost and experience on
- * one row, each as tall as the race, and the XP track under it; the profile and skill access side
- * by side; then the lists
- * as a 2 × 2 grid, and a group's models.
+ * one row, each as tall as the race -- on a phone name and type share a line, the race takes one of
+ * its own and cost and experience share the next (William, 19 Nov 2026). The XP track is the card's,
+ * not the form's. Then the profile and skill access side by side, the lists as a 2 x 2 grid, and a
+ * group's models.
  */
 export default function EditUnitFields({
   entry,
@@ -119,6 +119,8 @@ export default function EditUnitFields({
         {field("Name", "name")}
         {field("Type", "unit_type")}
         <RaceField
+          // a line of its own on a phone, where the picker's name had no room (William, 19 Nov 2026)
+          className="col-span-2 min-[720px]:col-span-1"
           campaignId={campaignId}
           value={(draft.race as number | null) ?? null}
           canCreate={canCreateRace}
@@ -127,9 +129,6 @@ export default function EditUnitFields({
         {field(kind === "hireling" ? "Hire fee (gc)" : "Cost (gc)", "price", true)}
         <EditXpField form={form} />
       </div>
-      {isCreature(entry) ? null : (
-        <XpTrack xp={Number(draft.xp) || 0} thresholds={xpTable(kind, campaign)} />
-      )}
       <div className="grid gap-3.5 min-[720px]:grid-cols-2">
         <div className="flex flex-col gap-1.5">
           <EditProfile form={form} unitLabel={unitName(unit)} />
