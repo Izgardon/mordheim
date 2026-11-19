@@ -14,14 +14,19 @@ import type { Skill } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 
-export type SelectedItem = Item & { quantity: number };
+/**
+ * One chosen kit line: the item, how many, and — for a hired sword or dramatis persona — what the
+ * book makes it of and the name its kit gives it (weapon materials). The form never sets those
+ * two; it reads them with the entry and sends them back, so a save keeps them.
+ */
+export type SelectedItem = Item & { quantity: number; material?: string; shownAs?: string };
 
 /** What an edited entry already links to (a hired sword's or dramatis persona's detail). */
 export type LinkedEntry = {
   skills: Skill[];
   specials: Special[];
   spells: Spell[];
-  equipment: { item: Item; quantity: number }[];
+  equipment: { item: Item; quantity: number; material?: string; shown_as?: string }[];
 };
 
 /** Adds `entry` unless it is already chosen. */
@@ -94,7 +99,12 @@ export function useBestiaryLinks({
       setSkills(entry?.skills ?? []);
       setSpells(entry?.spells ?? []);
       setItems(
-        entry?.equipment.map(({ item, quantity }) => ({ ...item, quantity: quantity || 1 })) ?? []
+        entry?.equipment.map(({ item, quantity, material, shown_as }) => ({
+          ...item,
+          quantity: quantity || 1,
+          material: material ?? "",
+          shownAs: shown_as ?? "",
+        })) ?? []
       );
       closeNewSpecial();
     },
@@ -177,7 +187,12 @@ export function useBestiaryLinks({
       special_ids: specials.map((s) => s.id),
       skill_ids: skills.map((s) => s.id),
       spell_ids: spells.map((s) => s.id),
-      item_entries: items.map((item) => ({ item_id: item.id, quantity: item.quantity })),
+      item_entries: items.map((item) => ({
+        item_id: item.id,
+        quantity: item.quantity,
+        ...(item.material ? { material: item.material } : {}),
+        ...(item.shownAs ? { shown_as: item.shownAs } : {}),
+      })),
     }),
     load,
     /** Nothing linked and no special being created. */

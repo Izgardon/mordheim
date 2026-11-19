@@ -13,7 +13,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
 from apps.core.catalogue.payloads import BADGES
-from apps.hirelings.models import MAX_KIT_QUANTITY
+from apps.hirelings.models import MAX_KIT_QUANTITY, HiredSword
 from apps.items.tests.catalogue_support import DRAMATIS_PERSONAE, HIRED_SWORDS, ITEMS, CatalogueTestCase, make_entry
 from apps.warbands.models import WarbandType
 
@@ -164,3 +164,64 @@ class HirelingWriteBoundsTests(CatalogueTestCase):
                 stats = (created.data["strength"], created.data["movement"], created.data["attacks"])
                 self.assertEqual(stats, (4, None, 2))
                 self.assertEqual(created.data["written_stats"], {"movement": "12", "attacks": "(4)"})
+
+
+class KitMaterialWriteTests(CatalogueTestCase):
+    """What a kit line holds beside its item survives a write (weapon materials): a save of a book entry through the
+    catalogue form used to drop the material and the name its kit gives the item, so editing the Runesmith Journeyman
+    turned his gromril hammer into a plain Club, Mace or Hammer."""
+
+    def _kit(self, entry: Any) -> list[tuple[int, int, str, str]]:
+        rows = entry.item_links.order_by("id")
+        return list(rows.values_list("item_id", "quantity", "material", "shown_as"))
+
+    def test_a_create_carries_the_material_and_the_name_its_kit_gives_the_item(self):
+        for kind in (HIRED_SWORDS, DRAMATIS_PERSONAE):
+            with self.subTest(kind=kind.key):
+                line = {"item_id": self.book_sword.id, "quantity": 1, "material": "gromril", "shown_as": "Hammer"}
+                created = self.create_as(self.owner, kind, f"Runesmith {kind.key}", item_entries=[line])
+
+                self.assertEqual(created.status_code, 201, created.data)
+                entry = kind.model._default_manager.get(pk=created.data["id"])
+                self.assertEqual(self._kit(entry), [(self.book_sword.id, 1, "gromril", "Hammer")])
+                kit = created.data["equipment"][0]
+                self.assertEqual((kit["material"], kit["shown_as"]), ("gromril", "Hammer"))
+                self.assertEqual(kit["material_name"], "Gromril Hammer")
+
+    def test_editing_a_book_entry_keeps_what_its_kit_line_is_made_of_and_called(self):
+        # the form reads the kit and sends it back: the campaign's version keeps both
+        self.ogre.item_links.create(item=self.book_sword, quantity=1, material="gromril", shown_as="Hammer")
+        read = self.get_as(self.owner, f"{HIRED_SWORDS.detail_url(self.ogre.id)}?campaign_id={self.campaign.id}")
+        sent = [
+            {
+                "item_id": line["item"]["id"],
+                "quantity": line["quantity"],
+                "material": line["material"],
+                "shown_as": line["shown_as"],
+            }
+            for line in read.data["equipment"]
+        ]
+
+        saved = self.patch_as(
+            self.owner,
+            HIRED_SWORDS.detail_url(self.ogre.id),
+            {"campaign_id": self.campaign.id, "item_entries": sent},
+        )
+
+        self.assertEqual(saved.status_code, 200, saved.data)
+        version = HiredSword.objects.get(campaign=self.campaign, replaces=self.ogre)
+        self.assertEqual(self._kit(version), [(self.book_sword.id, 1, "gromril", "Hammer")])
+
+    def test_a_line_that_says_nothing_is_a_plain_copy_under_its_own_name(self):
+        created = self.create_as(self.owner, HIRED_SWORDS, "Plain one", item_entries=[{"item_id": self.book_sword.id}])
+
+        entry = HiredSword.objects.get(pk=created.data["id"])
+        self.assertEqual(self._kit(entry), [(self.book_sword.id, 1, "", "")])
+        self.assertEqual(created.data["equipment"][0]["material_name"], "Sword")
+
+    def test_an_unknown_material_is_refused(self):
+        line = {"item_id": self.book_sword.id, "material": "mithril"}
+
+        response = self.create_as(self.owner, HIRED_SWORDS, "Wrong one", item_entries=[line])
+
+        self.assertEqual((response.status_code, list(response.data)), (400, ["item_entries"]))

@@ -9,6 +9,8 @@ take the last copy. Call `remove_from_stash` inside a transaction: the locks las
 
 A copy made of a material (weapon materials: `apps/items/materials.py`) is its own row and its own entry, so a
 Gromril Sword never merges with a plain one; `material` names it ("" for plain, `ANY_MATERIAL` to reach every row).
+A row also keeps the name its copies were given (`shown_as`, the nickname a kit uses for the item), which names
+nothing: copies of one item, cost and material share a row and take the name it already holds.
 
 Answers show one entry per item and material (`StashEntry`): the total, the cost of the copies that would leave
 first, and each cost's count.
@@ -54,6 +56,7 @@ class StashEntry:
     costs: list[CostCount] = field(default_factory=list)  # newest row first
     current_price: int | None = None  # what a copy like this costs now (its material's price: materials.py)
     material: str = ""  # what these copies are made of ("" plain)
+    shown_as: str = ""  # the name they were given ("" the item's own)
 
 
 @dataclass(frozen=True)
@@ -62,14 +65,18 @@ class StashTake:
     costs: list[int | None]  # each copy taken, in the order taken
     remaining: StashEntry | None  # what is left of the item at that material, None when the last copy went
     materials: list[str] = field(default_factory=list)  # what each copy taken is made of, beside its cost
+    shown_as: str = ""  # the name the copies taken were given ("" the item's own)
 
 
 def _cost_filter(cost: int | None) -> Q:
     return Q(cost__isnull=True) if cost is None else Q(cost=cost)
 
 
-def add_to_stash(warband_id: int, item_id: int, quantity: int, cost: int | None, material: str = "") -> None:
-    """Add `quantity` copies at `cost` (None: unknown) made of `material` ("" plain) to that row."""
+def add_to_stash(
+    warband_id: int, item_id: int, quantity: int, cost: int | None, material: str = "", shown_as: str = ""
+) -> None:
+    """Add `quantity` copies at `cost` (None: unknown) made of `material` ("" plain) to that row; a row that exists
+    keeps the name it already holds, and a new one takes `shown_as`."""
     if quantity <= 0:
         return
     rows = WarbandItem.objects.filter(_cost_filter(cost), warband_id=warband_id, item_id=item_id, material=material)
@@ -78,19 +85,26 @@ def add_to_stash(warband_id: int, item_id: int, quantity: int, cost: int | None,
     try:
         with transaction.atomic():  # a savepoint, so a lost race leaves the caller's transaction usable
             WarbandItem.objects.create(
-                warband_id=warband_id, item_id=item_id, quantity=quantity, cost=cost, material=material
+                warband_id=warband_id,
+                item_id=item_id,
+                quantity=quantity,
+                cost=cost,
+                material=material,
+                shown_as=shown_as,
             )
     except IntegrityError:  # another request inserted the row first: add to it instead
         rows.update(quantity=F("quantity") + quantity)
 
 
-def add_costs(warband_id: int, item_id: int, costs: Iterable[int | None], materials: Iterable[str] = ()) -> None:
+def add_costs(
+    warband_id: int, item_id: int, costs: Iterable[int | None], materials: Iterable[str] = (), shown_as: str = ""
+) -> None:
     """Add one copy per cost in `costs` (one statement per distinct cost and material); `materials` is each copy's
-    material beside its cost, and an empty one makes every copy plain."""
+    material beside its cost, and an empty one makes every copy plain. They all carry `shown_as`."""
     named = list(materials)
     pairs = list(zip(costs, named, strict=True)) if named else [(cost, "") for cost in costs]
     for (cost, material), quantity in Counter(pairs).items():
-        add_to_stash(warband_id, item_id, quantity, cost, material)
+        add_to_stash(warband_id, item_id, quantity, cost, material, shown_as)
 
 
 def _priced(rows: QuerySet[WarbandItem]) -> QuerySet[WarbandItem]:
@@ -99,14 +113,16 @@ def _priced(rows: QuerySet[WarbandItem]) -> QuerySet[WarbandItem]:
 
 
 def _entry(item: Item, rows: list[WarbandItem], material: str = "") -> StashEntry | None:
-    """One entry from the rows of one item and material: the copies' current price is that material's."""
+    """One entry from the rows of one item and material: the copies' current price is that material's, and the name
+    they read under is the first row's."""
     own = annotated_current(rows[0], getattr(rows[0], "own_price", None)) if rows else None
     current = priced(material, own)
     rows = [row for row in rows if row.quantity > 0]
     if not rows:
         return None
     costs = [CostCount(row.cost, row.quantity) for row in rows]
-    return StashEntry(item, sum(row.quantity for row in rows), rows[0].cost, costs, current, material)
+    total = sum(row.quantity for row in rows)
+    return StashEntry(item, total, rows[0].cost, costs, current, material, rows[0].shown_as)
 
 
 def remove_from_stash(
@@ -130,6 +146,7 @@ def remove_from_stash(
         raise StashShortage("Item not found in stash.", held=held)
     taken: list[int | None] = []
     made_of: list[str] = []
+    name = takeable[0].shown_as if takeable else ""
     for row in takeable:
         take = min(row.quantity, quantity - len(taken))
         if take <= 0:
@@ -146,7 +163,8 @@ def remove_from_stash(
         return StashTake(None, taken, None, made_of)
     # what is left of the item at the material the copies came from (the newest row's when none was named)
     left = made_of[0] if made_of else held_rows[0].material
-    return StashTake(item, taken, _entry(item, [row for row in held_rows if row.material == left], left), made_of)
+    kept = _entry(item, [row for row in held_rows if row.material == left], left)
+    return StashTake(item, taken, kept, made_of, name)
 
 
 def stash_entry(warband_id: int, item: Item, material: str = "") -> StashEntry | None:

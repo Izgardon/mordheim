@@ -22,6 +22,7 @@ from dataclasses import dataclass
 
 WEAPON = "Weapon"  # the only item type a material goes on
 MAX_MATERIAL = 12  # the width of the `material` column on every owned row
+MAX_SHOWN_AS = 160  # the width of the `shown_as` column, as a warband template's list line's
 
 
 @dataclass(frozen=True)
@@ -154,6 +155,13 @@ def named(slug: str, item_name: str) -> str:
     """The copy's name: "Gromril Sword", or the item's own name for a plain copy."""
     material = material_of(slug)
     return f"{material.name} {item_name}" if material else item_name
+
+
+def copy_name(slug: str, shown_as: str, item_name: str) -> str:
+    """What a copy of an item reads as: its material in front of the name it was given (`shown_as`, the nickname the
+    list that gave it uses for the item, as a warband template's list line does: the Runesmith Journeyman's kit calls
+    our Club, Mace or Hammer a "Hammer", so his copy reads "Gromril Hammer"), else the item's own name."""
+    return named(slug, shown_as or item_name)
 
 
 def label_of(slug: str) -> str:

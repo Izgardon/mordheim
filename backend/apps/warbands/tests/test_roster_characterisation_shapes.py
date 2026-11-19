@@ -61,7 +61,8 @@ ITEM_SUMMARY = {
     "cost": "int",
     "row_id": "int",
     "companion": "bool",
-    "material": "str",  # weapon materials: what this copy is made of ("" plain) and what it is called
+    "material": "str",  # weapon materials: what this copy is made of ("" plain), the name it was given, and what
+    "shown_as": "str",  # it is called
     "material_name": "str",
     "beast_kind": None,
 }
@@ -79,7 +80,8 @@ ITEM_DETAIL = {
     "statblock": None,
     "row_id": "int",  # the bestiary rewrite step 4: this copy, its companion switch, the beast's kind
     "companion": "bool",
-    "material": "str",  # weapon materials: what this copy is made of ("" plain) and what it is called
+    "material": "str",  # weapon materials: what this copy is made of ("" plain), the name it was given, and what
+    "shown_as": "str",  # it is called
     "material_name": "str",
     "beast_kind": None,
     "rules": [  # with its pre-battle roll (a shared rule's, or the item's own rule's)

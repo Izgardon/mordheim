@@ -14,7 +14,7 @@ from rest_framework import serializers
 
 from apps.core.catalogue.scope import CatalogueEntryField
 from apps.hirelings.fees import MAX_FEE, MAX_RESOURCE_LINES, FeeField
-from apps.items.materials import SLUGS, named, priced
+from apps.items.materials import SLUGS, copy_name, priced
 from apps.items.models import Item
 from apps.races.models import Race
 from apps.warbands.models import MAX_PENDING_PICKS, RosterUnit
@@ -170,7 +170,8 @@ def detail_item_entries(rows: Iterable[Any]) -> list[Any]:
         data = ItemDetailSerializer(row.item).data
         data["row_id"], data["companion"], data["beast_kind"] = row.pk, row.companion, beast_kind(row.item)
         data["material"] = row.material  # what this copy is made of (weapon materials); "" plain
-        data["material_name"] = named(row.material, row.item.name)
+        data["shown_as"] = row.shown_as  # the name it was given ("Hammer"); "" its own
+        data["material_name"] = copy_name(row.material, row.shown_as, row.item.name)
         data["cost"] = getattr(row, "cost", None)
         # what Buy again charges: the item's current price through this copy's material
         data["current_price"] = priced(row.material, annotated_current(row, own_price(row.item)))

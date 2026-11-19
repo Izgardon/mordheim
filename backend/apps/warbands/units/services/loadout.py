@@ -2,7 +2,8 @@
 
 A create or PATCH that sends a list (`items`, `skill_ids`, `special_ids`, `spell_ids`) replaces that whole
 list; unknown catalogue ids are skipped, and the items list keeps the unit's mounts and pets switched on, and what
-each copy is made of (weapon materials), unless an entry says otherwise (its `companion`, its `material`).
+each copy is made of and the name it was given (weapon materials), unless an entry says otherwise (its
+`companion`, its `material`, its `shown_as`).
 Replacing the items list leaves the unit's armour save alone: the same write
 carries `armour_save` as the player typed it, so what he sent wins (services/armour.py moves the save for the
 equips and unequips that go through the item services). The trait flags keep their specials in step: `large` with the
@@ -55,20 +56,23 @@ def pop_loadout_lists(kind: "UnitKindSpec", data: MutableMapping[str, Any]) -> L
 @dataclass(frozen=True)
 class Held:
     """What the unit's item rows carried before a sent list replaced them (one query): the switched-on rows per item,
-    and the materials each item's rows were made of, in row order."""
+    the materials each item's rows were made of, in row order, and the name each item's rows were given."""
 
     companions: Counter[int] = field(default_factory=Counter)
     materials: dict[int, list[str]] = field(default_factory=dict)
+    names: dict[int, str] = field(default_factory=dict)
 
     @classmethod
     def read(cls, relation: Any) -> "Held":
-        rows = relation.order_by("id").values_list("item_id", "companion", "material")
+        rows = relation.order_by("id").values_list("item_id", "companion", "material", "shown_as")
         held = cls()
-        for item_id, companion, material in rows:
+        for item_id, companion, material, shown_as in rows:
             if companion:
                 held.companions[item_id] += 1
             if material:
                 held.materials.setdefault(item_id, []).append(material)
+            if shown_as:
+                held.names.setdefault(item_id, shown_as)
         return held
 
 
@@ -109,7 +113,7 @@ def build_item_rows(
     kind: "UnitKindSpec", unit: RosterUnit, items_data: list[dict[str, Any]], kept: Held | None = None
 ) -> list[Any]:
     """Join rows from a list of {id, cost, companion?, material?} dicts; an item with one availability defaults to
-    its cost."""
+    its cost, and a copy keeps the name it was given (`Held.names`)."""
     item_ids = [entry["id"] for entry in items_data]
     items_by_id = {item.id: item for item in Item.objects.filter(id__in=item_ids).prefetch_related("availabilities")}
     held = kept or Held()
@@ -125,6 +129,7 @@ def build_item_rows(
             "item": item,
             "companion": companion,
             "material": material,
+            "shown_as": held.names.get(entry["id"], ""),
         }
         cost = entry.get("cost")
         if cost is None:

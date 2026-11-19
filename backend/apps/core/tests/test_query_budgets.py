@@ -259,7 +259,10 @@ class QueryBudgetTests(TestCase):
         # row is locked and changed in two queries, without re-reading it (BUG-36). Each writes its log entry (+1,
         # ECON-CQ-02); a sale also writes its gold to the stored balance (+1, decision 4); each unit whose copies
         # change gets a new updated_at, the version a roster Save sends back (+1 per unit, pass 2 decision 1). A move
-        # locks the warband first, as every roster write does (+1, the bestiary rewrite's lock order follow-up).
+        # locks the warband first, as every roster write does (+1, the bestiary rewrite's lock order follow-up). A
+        # sale reads the row it takes from before it writes its "Sell" row, for its cost and the name the copies were
+        # given (+1, weapon materials): the ledger row must read as the card does, "Gromril Hammer". A move needs no
+        # such read: the take hands the name back with the copies.
         client = self.ref.owner_client
         client.force_authenticate(user=self.ref.owner)
         heroes = list(Hero.objects.filter(warband=self.ref.warband).order_by("id").values_list("id", flat=True))
@@ -281,13 +284,13 @@ class QueryBudgetTests(TestCase):
                     "sell from the stash",
                     sales,
                     {"source_type": "stash", "item_id": items[2], "quantity": 1, "price": 5},
-                    14,
+                    15,
                 ),
                 (
                     "sell from a hero",
                     sales,
                     {"source_type": "hero", "source_id": heroes[2], "item_id": items[1], "quantity": 1, "price": 5},
-                    21,
+                    22,
                 ),
             ],
         )

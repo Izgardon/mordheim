@@ -37,13 +37,14 @@ RESPONSE_KEYS = [
 ]
 
 # decision 3: half the item's current campaign price, rounded up (the Sword lists at 10, the Axe at 5 and 15)
-# material and material_name: weapon materials; every copy here is plain
+# material, shown_as and material_name: weapon materials; every copy here is plain, under its own name
 SWORD_SALE = {
     "current_price": 10,
     "suggested_sale_price": 5,
     "sale_price_basis": "campaign_price",
     "beast_kind": None,
     "material": "",
+    "shown_as": "",
     "material_name": "Sword",
 }  # beast_kind: step 4
 AXE_SALE = {
@@ -52,6 +53,7 @@ AXE_SALE = {
     "sale_price_basis": "campaign_price",
     "beast_kind": None,
     "material": "",
+    "shown_as": "",
     "material_name": "Axe",
 }
 # Heroes and hired swords hold one row per copy; a henchmen group holds a loadout, one row for every member, which moves

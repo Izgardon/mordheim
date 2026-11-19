@@ -183,7 +183,7 @@ class _Run:
             "special_ids": [special.id for special in links.specials],
             "spell_ids": [spell.id for spell in links.spells],
             "item_entries": [
-                {"item_id": pk, "quantity": line.quantity, "material": line.material}
+                {"item_id": pk, "quantity": line.quantity, "material": line.material, "shown_as": line.shown_as}
                 for pk, line in links.equipment.items()
             ],
             "warbands": imported["lines"] if imported else self.own_lines(terms, row.name),
