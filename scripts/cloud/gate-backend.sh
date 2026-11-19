@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
-# The backend gate, run natively in a cloud session: tests, ruff check, ruff format --check, mypy and the migration
-# check. Prints each step's last lines (the first 40 of a failure's tail) and exits non-zero if any step fails.
+# The backend gate, run natively in a cloud session: tests, ruff check, ruff format --check, mypy, the deploy checks
+# and the migration check. Prints each step's last lines (the first 40 of a failure's tail) and exits non-zero if any
+# step fails.
+#
+# It runs them on production's settings, because CI does: its workflow leaves DJANGO_DEBUG unset and passes a long
+# key. A gate on DEBUG-on settings passes where CI fails -- a test that only holds with the browsable API installed
+# did exactly that, and main went red for two days while the gates read green.
 #
 # The tests run in one process, as CI and the local gates run them. GATE_PARALLEL=auto runs one per CPU, about
 # three times faster, and tblib (a dev dependency) lets a failing test send its traceback back, so a parallel run
@@ -10,6 +15,10 @@ set -u
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 cd "$ROOT/backend" || exit 1
 export DJANGO_SETTINGS_MODULE=config.settings
+# These win over backend/.env, which load_dotenv() only uses for variables that are absent.
+export DJANGO_DEBUG=0
+export DJANGO_SECRET_KEY="${DJANGO_SECRET_KEY:-gate-only-secret-key-never-used-outside-the-local-gates}"
+export RATE_LIMIT_NUM_PROXIES="${RATE_LIMIT_NUM_PROXIES:-1}"
 LOGS="${TMPDIR:-/tmp}/mordheim-gate-$(basename "$ROOT")"
 mkdir -p "$LOGS"
 pg_start >/dev/null || echo "== Postgres isn't answering on localhost:5432; the tests will fail"
@@ -33,5 +42,6 @@ run "ruff check" $UVR ruff check --no-cache .
 run "ruff format" $UVR ruff format --no-cache --check .
 run mypy $UVR mypy . --config-file pyproject.toml --cache-dir "${XDG_CACHE_HOME:-$HOME/.cache}/mordheim-mypy-$(basename "$ROOT")"
 run migrations $UVR python manage.py makemigrations --check --dry-run
+run "deploy checks" $UVR python manage.py check --deploy --fail-level WARNING
 echo "== gate status: $status"
 exit $status
