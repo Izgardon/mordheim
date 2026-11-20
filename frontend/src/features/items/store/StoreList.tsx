@@ -196,7 +196,8 @@ export default function StoreList(props: StoreListProps) {
         aria-label="Category"
         className={cn(
           "flex gap-1.5",
-          props.isMobile ? "-mx-4 overflow-x-auto overscroll-x-contain px-4 pb-0.5" : "flex-wrap"
+          // pb-2: room between the chips and the scrollbar under them (William, 20 Nov 2026)
+          props.isMobile ? "-mx-4 overflow-x-auto overscroll-x-contain px-4 pb-2" : "flex-wrap"
         )}
       >
         {STORE_CATEGORIES.map((entry) => (
