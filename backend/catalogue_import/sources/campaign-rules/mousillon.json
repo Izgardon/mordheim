@@ -1,0 +1,321 @@
+{
+ "rules": [],
+ "battle_rules": [
+  {
+   "title": "City in fog",
+   "umbrella": "",
+   "text": "Mousillon lies where the River Grismerie runs through a huge marsh into the Great Ocean, and is shrouded in fog most of the time. Some say it is not an entirely natural fog: an attempt by whatever lurks in the abandoned city to hide from scouts and spies, or a manifestation of the decay itself. Natural or not, it is a standing problem for anyone travelling there.\n\nRoll a D6 before a battle in the city; a Western Approach scenario does not roll. No model may shoot, charge or cast a spell needing line of sight beyond what it can see.",
+   "chart": {
+    "dice": "D6",
+    "description": "",
+    "note": "",
+    "rows": [
+     {
+      "result": "1-2",
+      "name": "Thick fog",
+      "text": "Visibility is 6 inches at the start of the battle. Roll a D3 at the start of each turn and add that many inches as the fog lifts."
+     },
+     {
+      "result": "3-5",
+      "name": "Fog and light drizzle",
+      "text": "Roll a D3 at the start of each turn and multiply by 3 for how far in inches the troops can see. On an even result the fog lifts for a moment, but roll again next round."
+     },
+     {
+      "result": "6",
+      "name": "The fog lifts",
+      "text": "No modifiers apply this battle."
+     }
+    ]
+   }
+  }
+ ],
+ "charts": [
+  {
+   "title": "Mousillon random encounters",
+   "dice": "D66",
+   "umbrella": "",
+   "description": "The dank muck of Mousillon hides many dangers. Roll a D6 at the start of each player's turn: on a 1 there is an encounter, rolled for here. The player whose turn it is places whatever models it brings and they act in each of his turns, though he does not control them -- each result says how they behave. He is the encountering player.",
+   "note": "The book numbers two results 35, Basement and Inundated by blood; both are printed, neither is a misprint of another number.",
+   "rows": [
+    {
+     "result": "11",
+     "name": "Fimir",
+     "text": "D3 Fimir Warriors appear out of the mists. The encountering player places each within 6 inches of a different warrior of his warband, and at the end of his turn each moves towards the closest warrior to fight.\n\nFimir: M6 WS4 BS2 S4 T5 W3 I2 A3 Ld7, a two-handed weapon and light armour. Fear. Large: a hulking amphibian is a tempting target, so any model may shoot at it even when it is not the closest. Spiked Tail: a flexible tail with a mace-like bony tip gives an extra attack each hand-to-hand phase at Strength +1."
+    },
+    {
+     "result": "12",
+     "name": "Wharf rats",
+     "text": "D6 Giant Rats are chased out of the fog. The encountering player picks a battlefield edge to deploy them, and after each player's turn they move at full speed towards the opposite edge. Should their path take them within 6 inches of a warrior who is not a Skaven, place the rat in contact as though it had charged him."
+    },
+    {
+     "result": "13",
+     "name": "High tide",
+     "text": "The tide in the river mouth is flooding the city. The muck is thick enough to halve movement at ground level."
+    },
+    {
+     "result": "14",
+     "name": "Gale force wind",
+     "text": "A high wind blows through the city and clears any fog. Warriors are at -1 to Initiative tests and to hit for the rest of the battle."
+    },
+    {
+     "result": "15",
+     "name": "Plaguebearer",
+     "text": "Disease and decay have attracted one of Nurgle's own. Deploy the Plaguebearer within 6 inches of one of your warriors; at the end of the player's turn it moves towards the closest warrior to fight, and it disappears after D6 turns.\n\nPlaguebearer: M4 WS4 BS0 S4 T4 W1 I4 A2 Ld10, claws. Daemonic, following the daemon rules in Dark Intrigue: Dark Lands. Cloud of Flies: its close combat opponent is at -1 to hit for the flies at his mouth, eyes and nostrils."
+    },
+    {
+     "result": "16",
+     "name": "Lady's favour",
+     "text": "A random warrior spots a jewelled garter in the mud, lost by some knight. The warband gains 1 treasure."
+    },
+    {
+     "result": "21",
+     "name": "Oubliette",
+     "text": "One of the warband's warriors at ground level drops suddenly down a muddy grate. He takes an Initiative test, and is out of action if he fails."
+    },
+    {
+     "result": "22",
+     "name": "Dread",
+     "text": "One building chosen at random seems to be breathing, and odd wisps of ethereal light play about it. It causes fear, anyone who would enter must pass a fear test, and anyone inside at the end of his turn takes D3 Strength 2 hits."
+    },
+    {
+     "result": "23",
+     "name": "Pirates",
+     "text": "2D3 pirates are hunting an actual dead man's chest. Pick a board edge to deploy them; at the end of the player's turn each moves its full move in a random direction, and any that comes within 4 inches of a warrior is placed in base contact and treated as charging.\n\nPirate: M4 WS4 BS3 S3 T3 W1 I3 A1 Ld6, a pistol and a rapier. Sea Legs: a pirate re-rolls a failed Initiative test on a causeway, a jetty, a boat deck or a gangplank."
+    },
+    {
+     "result": "24",
+     "name": "Bogtopus",
+     "text": "Slime-encrusted tentacles burst from the murky water. The model standing closest to the largest swamp or water feature is attacked by a bog octopus; roll again if there is no such scenery. If he fails a Strength test he is dragged under, counts as drowned and is taken out of action, and his injuries are rolled at the end of the game."
+    },
+    {
+     "result": "25",
+     "name": "Harpy hunting grounds",
+     "text": "See Dark Intrigue: Marienburg."
+    },
+    {
+     "result": "26",
+     "name": "Pestilence",
+     "text": "An enormous cloud of flies swoops down on the warbands. Every model is at a further -1 to hit when shooting or fighting, flies buzzing about it and into every open orifice. They stay D3 turns and then fly away."
+    },
+    {
+     "result": "31",
+     "name": "Ooops",
+     "text": "The muddy ground is slick enough to make folk stumble. A random model of the warband not in close combat is knocked down unless it passes an Initiative test."
+    },
+    {
+     "result": "32",
+     "name": "Collapsing building",
+     "text": "Pick one building at random. Any model inside must pass an Initiative test or take a Strength 5 hit with armour saves as normal as the building comes down. Take the building off the table, put ruins there if you can, and set the models back where it stood. A model climbing its side or standing on its roof falls from whatever height it was at."
+    },
+    {
+     "result": "33",
+     "name": "Plague victims",
+     "text": "Disease is common among the few survivors left in the ruins. D6 citizens have caught a nasty plague known as Nurgle's Rot, and move at 4 inches towards the nearest warband members seeking help. They do not attack: a victim in contact clings to a warrior and begs, and that warrior acts as though he had just recovered from being knocked down, moving at half rate and unable to charge or run. Charge, shoot at or otherwise attack one and they all rout at once.\n\nAt the end of the game roll a die for each warband member who was in play when they appeared: on a 1 he has caught Nurgle's Rot."
+    },
+    {
+     "result": "34",
+     "name": "Hard times",
+     "text": "Cannibalism is no stranger to Mousillon. A pack of D3 Ghouls comes out of the ruins within 6 inches of a warrior and charges after the player's turn. Their profile is in the Mordheim rules."
+    },
+    {
+     "result": "35",
+     "name": "Basement",
+     "text": "The ground gives way under one randomly chosen warrior and he falls into an old basement, taking a Strength 3 hit from the fall unless he passes an Initiative test, and landing among the remains of others who fell before him. If the fall did not take him out of action, a quick search turns up one thing.\n\nWithout a rope and hook he is stuck in the catacombs and cannot rejoin the game: he counts as out of action for rout purposes but rejoins his warband afterwards none the worse. With one he climbs out D3 turns later, appearing inside a building determined at random.",
+     "chart": {
+      "dice": "D6",
+      "description": "What the fall turns up.",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "A helmet",
+        "text": ""
+       },
+       {
+        "result": "2",
+        "name": "A small pouch",
+        "text": "2D6 gold crowns."
+       },
+       {
+        "result": "3",
+        "name": "A lantern",
+        "text": ""
+       },
+       {
+        "result": "4",
+        "name": "A net",
+        "text": ""
+       },
+       {
+        "result": "5",
+        "name": "A vial of Black Lotus",
+        "text": ""
+       },
+       {
+        "result": "6",
+        "name": "A sword",
+        "text": ""
+       }
+      ]
+     }
+    },
+    {
+     "result": "35",
+     "name": "Inundated by blood",
+     "text": "Any river or water feature on the board swells violently and bursts its banks, running red with the blood of those slain in the forest. Every model within 3 inches of a river rolls three Strength tests, and is swept away if it fails all three: take the affected warriors off and roll on the Serious Injury table as normal at the end of the battle. The rivers fall as quickly as they rose."
+    },
+    {
+     "result": "36",
+     "name": "Spores, molds and fungus",
+     "text": "Both companies' rations turn inedible, clothing rots off their backs and leather grows mould. Any profit from this battle is halved to replace food and gear."
+    },
+    {
+     "result": "41",
+     "name": "Peddler",
+     "text": "Whichever turn it is rolled on, this happens at the end of the game. The winning warband sees a peddler wading through the muck with his whole stock on his back, and he offers part of it at half the normal price: mace, hammer, sword, dagger, axe, helmet, crossbow, pistol, duelling pistol, rope and hook, any poison, lucky charm, blessed water, hunting arrows, garlic, healing herbs, a holy or unholy relic, lantern and a Mousillon map. Roll a D3 for each to see how many he carries."
+    },
+    {
+     "result": "42",
+     "name": "Knight's gear",
+     "text": "A pair of leather saddlebags turns up, heavy with food and a little loot. When the winning warband next works out its earnings from selling valuables it counts as one size smaller, 10-12 warriors counting as 7-9, having less to spend on food. It also gains 2D6 gold crowns."
+    },
+    {
+     "result": "43",
+     "name": "That's a weed",
+     "text": "A random hero finds a small patch of healing herbs."
+    },
+    {
+     "result": "44",
+     "name": "Whole hog",
+     "text": "A wild boar, sought after by Bretonnian knights on the hunt, is wallowing in a puddle 6 inches from a warrior of your warband, and charges him after your turn.\n\nBoar: M7 WS3 BS0 S3 T4 W1 I3 A1 Ld3, no weapons or armour. Animal. Ferocious Charge: it attacks at +1 Strength when charging, for its bulk. Thick Skin: its matted fur gives an armour save of 6+."
+    },
+    {
+     "result": "45",
+     "name": "Chest",
+     "text": "One of the warriors finds an intact chest, Tilean in style with brass fittings. The winning warband may roll on the Cargo chart in the scenario Down at the Docks."
+    },
+    {
+     "result": "46",
+     "name": "The Old Crone",
+     "text": "A withered old hag stumbles about on her crook. Determine at random which terrain feature she inhabits. For 3D6 gold crowns she works a miracle or a malediction, once per turn; if a hero pays her, roll for which she chooses.",
+     "chart": {
+      "dice": "D6",
+      "description": "What the crone does for her coin.",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "Cursed",
+        "text": "The approaching model is cursed instead. A characteristic determined at random drops by 1, until a temple or some other means lifts it."
+       },
+       {
+        "result": "2-3",
+        "name": "Hex",
+        "text": "She lays her malady on a hero of another warband, treated as the curse above."
+       },
+       {
+        "result": "4+",
+        "name": "Miracle",
+        "text": "By magic she lifts any curse, heals any lost wounds, cures any mutation or removes a serious injury from a hero of your choice."
+       }
+      ]
+     }
+    },
+    {
+     "result": "51",
+     "name": "Freelancer",
+     "text": "A Freelancer appears further down the street and, sensing trouble brewing, offers his services to the warband with the lowest rating; roll a die between two warbands of the same rating. That warband must be able to add him to its roster for this game.\n\nAt the end of the game he wants paying, and the warband that took him on owes his hire and upkeep. If it cannot or will not pay, he leaves -- but not before taking his frustration out on a random member who was not taken out of action, whose injuries are rolled as though he had been."
+    },
+    {
+     "result": "52",
+     "name": "Plague victims",
+     "text": "As result 33."
+    },
+    {
+     "result": "53-55",
+     "name": "Restless dead",
+     "text": "Each player rolls a D3+1 and places that many zombies 6 inches from any warrior. The restless dead move in random directions and charge anything within range but each other.\n\nZombie: M4 WS2 BS0 S3 T3 W1 I2 A1 Ld5, armour save 5+. Cause Fear. Can't Run: dead legs are none too quick, so they may not run, though they charge as normal. Nuttin' but Skin 'n Bones: shambled out of Sylvania and long since rotted to paper, they keep a 5+ armour save against any weapon that is not a bludgeoning one, whatever its Strength or damage modifiers and whatever the critical hit."
+    },
+    {
+     "result": "56",
+     "name": "Swamp monster",
+     "text": "A Fenbeast appears within 6 inches of a warrior of your warband. It moves after the player's turn and acts before the other warriors, and always charges or runs at the nearest warrior. Roll a D6 for it at the end of each turn: on a 1 the magic binding it to the earth weakens and it is slain, and on a 6 some unknown elemental power fills it and D3 of its lost wounds return.\n\nFenbeast: M6 WS3 BS0 S5 T5 W4 I2 A3 Ld10, no weapons or armour, being a magically bound mound of dirt. Fen-Walker: it crosses fenland, quagmire and any other difficult ground as open ground. Fear. Immune to Psychology, and it never leaves combat. Regenerate: in swampy terrain it regains one lost wound in the recovery phase on a 4+."
+    },
+    {
+     "result": "61",
+     "name": "Headhunter",
+     "text": "A Bounty Hunter joins the warband for the rest of the battle. Name his mark and deploy him next to any friendly model. A warband following Chaos or Evil, and a Beastmen, Fimir or Goblinoid warband, is joined instead by Krogh the Mutant Bounty Killer, who uses the same rules and has a version of the mutation Great Claw that doubles as a mancatcher. Nothing is paid to hire him; upkeep is paid as normal after the battle."
+    },
+    {
+     "result": "62",
+     "name": "Street urchins",
+     "text": "Pickpockets one and all. A random warrior is robbed: a henchman costs the warband 2D6 gold crowns, a hero loses a random item."
+    },
+    {
+     "result": "63",
+     "name": "Plague victims",
+     "text": "As result 33."
+    },
+    {
+     "result": "64",
+     "name": "Finders, keepers",
+     "text": "A random hero finds a coin purse bearing a fleur de lis. Gain 3D6 gold crowns."
+    },
+    {
+     "result": "65",
+     "name": "A good vintage",
+     "text": "A hero finds a cask of wine and there is good drinking to be had. The whole warband gains +1 Leadership next battle."
+    },
+    {
+     "result": "66",
+     "name": "Blood Dragon",
+     "text": "A peerless warrior has been watching the battle. Afterwards the hero of the winning warband with the highest Weapon Skill is given a choice: train with the undead warrior for a year, or fight him now, which means death. Take the hero off the warband for a year; when he returns he has 3 points to put into his profile, in one characteristic or spread between several."
+    }
+   ]
+  },
+  {
+   "title": "Income",
+   "dice": "",
+   "umbrella": "",
+   "description": "The supplement's alternate income table for a campaign in the city. Roll a D6 for each hero who did not go out of action, and one more if the warband won. Only six dice are ever added, however many are rolled. Find the total below, then read across to the number of warriors in the warband.",
+   "note": "",
+   "rows": [
+    {
+     "result": "1-5",
+     "name": "",
+     "text": "1-3 warriors 45 gc · 4-6 40 gc · 7-9 35 gc · 10-12 30 gc · 13-15 30 gc · 16+ 25 gc"
+    },
+    {
+     "result": "6-11",
+     "name": "",
+     "text": "1-3 warriors 60 gc · 4-6 55 gc · 7-9 50 gc · 10-12 45 gc · 13-15 40 gc · 16+ 35 gc"
+    },
+    {
+     "result": "12-17",
+     "name": "",
+     "text": "1-3 warriors 75 gc · 4-6 70 gc · 7-9 65 gc · 10-12 60 gc · 13-15 55 gc · 16+ 50 gc"
+    },
+    {
+     "result": "18-24",
+     "name": "",
+     "text": "1-3 warriors 90 gc · 4-6 80 gc · 7-9 70 gc · 10-12 65 gc · 13-15 60 gc · 16+ 55 gc"
+    },
+    {
+     "result": "25-30",
+     "name": "",
+     "text": "1-3 warriors 110 gc · 4-6 100 gc · 7-9 90 gc · 10-12 80 gc · 13-15 70 gc · 16+ 65 gc"
+    },
+    {
+     "result": "31-35",
+     "name": "",
+     "text": "1-3 warriors 120 gc · 4-6 110 gc · 7-9 100 gc · 10-12 90 gc · 13-15 80 gc · 16+ 70 gc"
+    },
+    {
+     "result": "36+",
+     "name": "",
+     "text": "1-3 warriors 130 gc · 4-6 120 gc · 7-9 110 gc · 10-12 100 gc · 13-15 95 gc · 16+ 85 gc"
+    }
+   ]
+  }
+ ]
+}

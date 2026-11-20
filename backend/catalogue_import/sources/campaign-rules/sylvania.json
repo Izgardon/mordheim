@@ -1,0 +1,77 @@
+{
+ "rules": [
+  {
+   "title": "Poor",
+   "umbrella": "Trade",
+   "text": "The markets and villages of this cursed land leave much to be desired. A warband sells treasure as though it were one size larger than it is: a warband of 5 sells as one of 7-9, a warband of 8 as one of 10-12, and so on."
+  },
+  {
+   "title": "Distrust",
+   "umbrella": "Trade",
+   "text": "The Sylvanians are superstitious enough to shun outsiders. A warband with no model who has Streetwise adds +2 to the rarity of everything it looks for. Once a warrior has the skill, rarity rolls go back to normal."
+  },
+  {
+   "title": "Land of Little",
+   "umbrella": "",
+   "text": "Sylvania is not known for its hospitality, its inns or its bustling towns, and those who do venture there are hardened veterans or criminals seeking somewhere to be forgotten.\n\nA warband looking for a hired sword rolls a D6: on a 4 or more the one it seeks is available and willing. Anything less and either nobody matches what it wants or the man in question would rather not be found. A warband may try for two hired swords in a post-battle sequence, and may not try for the same one twice in the same one."
+  },
+  {
+   "title": "Death",
+   "umbrella": "",
+   "text": "The dead do not rest easily in Sylvanian soil, so a proper and sanctified burial is worth its cost. For every member who dies the warband pays D6 gold crowns, selling equipment or treasure or letting a hired sword go if it is short: nobody wishes to see a former brother in arms come back from the grave.\n\nA warband with a Priest pays nothing, the pious being willing to sanctify their own fallen. An Undead warband ignores the rule, caring nothing for the corpse. An Evil warband still pays: it hires dregs to dig deep and bury its fallen face down, the time-tested way of keeping a corpse where it was put."
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "Shadows",
+   "umbrella": "Darkness",
+   "text": "For all the gloom of Sylvania, a model halves its Initiative when looking for hidden models."
+  },
+  {
+   "title": "Spooky",
+   "umbrella": "Darkness",
+   "text": "A Sylvanian night is a bone-chilling experience. A model takes an All Alone test whenever no friendly model is within 6 inches, whether it is in combat or not. A model immune to fear ignores this."
+  },
+  {
+   "title": "Lanterns and torches",
+   "umbrella": "Darkness",
+   "text": "A lantern or a torch lets its bearer see 12 inches, and he looks for hidden models at his full Initiative. Any model with line of sight to him can see him from 16 inches away."
+  },
+  {
+   "title": "Zombie packs",
+   "umbrella": "",
+   "text": "Sylvania is a land full of roaming undead. Unless a scenario says otherwise, roll a D3+1 for each warband playing. Each player places that many Zombies anywhere on the battlefield, at least 10 inches from a deployment zone.\n\nOnce placed they move as a pack, taking their turn after the last player. With nobody in charge range they move 4 inches in a random direction (scatter for it), and they ignore other Zombies. Should a model come within 8 inches of them -- always measure before moving them -- they charge it at once, picking at random between several."
+  }
+ ],
+ "charts": [
+  {
+   "title": "Light",
+   "dice": "D6",
+   "umbrella": "",
+   "description": "The lands of Sylvania are in perpetual darkness. Rolled at the beginning of each scenario unless the scenario says otherwise, for what light there is.",
+   "note": "Whatever is rolled, Shadows, Spooky and Lanterns and torches are in effect.",
+   "rows": [
+    {
+     "result": "1",
+     "name": "Pitch black",
+     "text": "No model may see further than 6 inches. A model that does not rely on sight, a Zombie for one, is unaffected."
+    },
+    {
+     "result": "2-3",
+     "name": "Half moon",
+     "text": "No model may see further than 16 inches."
+    },
+    {
+     "result": "4-5",
+     "name": "Cloudy",
+     "text": "Roll again at the start of each turn, treating further rolls of 4-5 as Half moon."
+    },
+    {
+     "result": "6",
+     "name": "Full moon",
+     "text": "The normal rules apply."
+    }
+   ]
+  }
+ ]
+}
