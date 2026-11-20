@@ -229,7 +229,9 @@ function renderHisStore(
   forUnit: { key: string; name: string },
   /** More lines on his list (a weapon material's), with the materials the server offers. */
   extraLines: TemplateLine[] = [],
-  materials: WhoCan["materials"] = []
+  materials: WhoCan["materials"] = [],
+  /** Lines of his the server says he isn't meant to take. */
+  offLines: number[] = []
 ) {
   const queryClient = createTestQueryClient();
   queryClient.setQueryData(catalogueListKey(CAMPAIGN, "items"), [lance, dagger, sword, whip, rope]);
@@ -251,9 +253,13 @@ function renderHisStore(
       lines: [...template.template!.lists[0].lines, ...extraLines],
     },
   ];
+  const fighters = template.template!.fighters.map((fighter) => ({
+    ...fighter,
+    off_lines: [...fighter.off_lines, ...offLines],
+  }));
   queryClient.setQueryData(queryKeys.campaign.warbandHireTemplate(CAMPAIGN, WARBAND), {
     ...template,
-    template: { ...template.template!, lists },
+    template: { ...template.template!, lists, fighters },
   });
   renderWithQueryClient(
     <StorePanel
@@ -352,6 +358,32 @@ describe("StorePanel, buying for a unit from the template", () => {
     expect(picker.getAllByRole("button").map((button) => button.textContent)).toEqual([
       "Sword30 gc",
     ]);
+  });
+
+  it("dims a material his list sells that he isn't meant to take, with the server's reason", () => {
+    // the Shadow Warriors' ithilmar line is "Heroes only": the server says so, the row shows it
+    renderHisStore(
+      { key: "heroes:5", name: "Otto" },
+      [
+        makeTemplateLine(15, { id: 0, name: "" }, null, {
+          item: null,
+          cost_note: "2 × price",
+          who: { heroes: true },
+          who_text: "Heroes only",
+          material: {
+            slug: "gromril",
+            name: "Gromril",
+            rarity: 11,
+            price_note: "2 × price",
+            choices: [],
+          },
+        }),
+      ],
+      [GROMRIL],
+      [15]
+    );
+
+    expect(screen.getByText("Heroes only")).toBeInTheDocument();
   });
 
   it("offers a material open to anyone with his own list's weapons", async () => {

@@ -18,6 +18,8 @@ type MaterialRowProps = {
   name: string;
   /** How it prices, in the server's words: "4 x Price", or his list's "3 × price". */
   priceNote: string;
+  /** Why the unit isn't meant to take it on His list, in the server's words; "" otherwise. */
+  off: string;
   /** Every melee weapon the store offers, priced through the material. */
   weapons: MaterialWeapon[];
   open: boolean;
@@ -43,7 +45,8 @@ export default function MaterialRow(props: MaterialRowProps) {
   const { material } = props;
   const [shown, setShown] = useState(false);
   const [picked, setPicked] = useState<MaterialWeapon | null>(null);
-  const dim = !material.can_take;
+  const warnings = [material.can_take ? "" : material.reason, props.off].filter(Boolean);
+  const dim = warnings.length > 0;
   return (
     <li className="flex flex-col gap-2.5 border-b border-line py-2.5">
       <div className="flex items-center gap-3">
@@ -74,9 +77,11 @@ export default function MaterialRow(props: MaterialRowProps) {
                 "Melee weapon"
               )}
             </span>
-            {dim ? (
-              <span className="text-xs font-semibold text-danger">{material.reason}</span>
-            ) : null}
+            {warnings.map((text) => (
+              <span key={text} className="text-xs font-semibold text-danger">
+                {text}
+              </span>
+            ))}
           </div>
           {props.isMobile ? null : (
             <div className={cn("flex min-w-24 shrink-0 flex-col text-right", dim && "opacity-60")}>

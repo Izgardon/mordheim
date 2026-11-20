@@ -27,6 +27,8 @@ export type MaterialRowView = {
   material: WeaponMaterial;
   name: string;
   priceNote: string;
+  /** Why the unit isn't meant to take his list's line of it; "" otherwise (the server's words). */
+  off: string;
   weapons: MaterialWeapon[];
 };
 
@@ -66,6 +68,7 @@ export function materialRows(
               material,
               name,
               priceNote: material.price_note,
+              off: "",
               weapons: meleeWeapons(material, offers),
             },
           ]
@@ -80,7 +83,7 @@ export function materialRows(
       const offer = byId.get(itemId);
       return offer && allowed(material, itemId) ? [{ offer, price }] : [];
     });
-    return [{ material, name: line.name, priceNote: line.priceNote, weapons }];
+    return [{ material, name: line.name, priceNote: line.priceNote, off: line.off, weapons }];
   });
   const named = new Set(sold.map((row) => row.material.slug));
   const open = materials.flatMap((material) => {
@@ -93,6 +96,7 @@ export function materialRows(
         material,
         name,
         priceNote: material.price_note,
+        off: "",
         weapons: meleeWeapons(material, his.melee),
       },
     ];

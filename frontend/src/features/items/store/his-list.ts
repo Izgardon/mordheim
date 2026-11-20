@@ -46,6 +46,8 @@ export type HisMaterialLine = {
   name: string;
   /** How his list prices it, in its own words: "3 × price", "30 gc" (the server's). */
   priceNote: string;
+  /** Why he isn't meant to take it, in the server's words ("Heroes only"); "" when he is. */
+  off: string;
   /** The other melee weapons on that same list, at the line's price for each (the server's). */
   choices: { itemId: number; price: number | null }[];
 };
@@ -59,6 +61,7 @@ export function hisMaterials(his: HisList): HisMaterialLine[] {
       slug: line.material.slug,
       name: lineName(line),
       priceNote: line.material.price_note,
+      off: his.fighter.off_lines.includes(line.id) ? line.who_text : "",
       choices: line.material.choices.map((choice) => ({
         itemId: choice.item.id,
         price: choice.price,
