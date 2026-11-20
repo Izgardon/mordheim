@@ -6,7 +6,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import PlotTrack from "./PlotTrack";
+import { PlotTrack } from "./plot-track";
 
 const BOOK_RUNGS = [5, 10, 15, 20, 25, 35, 40];
 

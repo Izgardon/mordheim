@@ -12,9 +12,10 @@ const list = (numbers: number[]) =>
  * The campaign point track (apps/plots): a box per point, filled up to the warband's total, with
  * the rungs of its plot's ladder drawn heavy and numbered. The ladder comes from the warband's own
  * plot, so a custom plot's rungs are its own; the book's seven are 5, 10, 15, 20, 25, 35 and 40,
- * with no 30, and 40 wins the campaign.
+ * with no 30, and 40 wins the campaign. Shared: the warband page's plot section and anywhere else
+ * a total is read against a ladder (William, 20 Nov 2026: "make this table a shareable component").
  */
-export default function PlotTrack({ total, rungs }: { total: number; rungs: number[] }) {
+export function PlotTrack({ total, rungs }: { total: number; rungs: number[] }) {
   const length = Math.max(BOOK_TRACK, total, ...rungs);
   const marks = new Set(rungs);
   const label = rungs.length

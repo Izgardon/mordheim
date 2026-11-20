@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
+import { PlotTrack } from "@/components/ui/plot-track";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { useWarbandPlot } from "../../api/plot-queries";
 import type { WarbandPlot } from "../../types/warband-types";
 import PlotSelect from "./PlotSelect";
-import PlotTrack from "./PlotTrack";
 
 const LABEL = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
 
