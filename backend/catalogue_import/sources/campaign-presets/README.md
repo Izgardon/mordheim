@@ -74,3 +74,10 @@ lists, each optional; a list left out is a list the campaign has none of.
   anything else is refused. `result` is what was rolled as the book writes it (`"2"`, `"3-4"`, `"11-15"`).
 - A rule may keep a **small** table inside its `text` (two or three lines). A longer table, or one a player would
   look up on its own, is a chart.
+- **A chart that answers with a word needs a rule that tells you to roll it** (William, 20 Nov 2026, on weather:
+  "the main important part sits in charts then the rules that come from that chart sit in battle rules; the first
+  part is more of a battle rules really"). Where each result's rules are separate rules, as Border Town Burning's
+  and Marienburg's weather are, the umbrella opens with a rule carrying the roll itself and pointing at the chart,
+  and the chart stays the lookup. Where the chart's own rows carry what each result does, as Khemri's and Sartosa's
+  weather do, there is nothing to cross-reference and no such rule is written: it would only repeat the chart's
+  description.

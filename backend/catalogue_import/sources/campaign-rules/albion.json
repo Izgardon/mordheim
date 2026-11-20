@@ -1,0 +1,286 @@
+{
+ "rules": [
+  {
+   "title": "Stranded on the island",
+   "text": "No one knows of Albion, so a warband is not there on purpose but stranded. At the very start of the campaign roll a D6 for every warrior and every hired sword: on a 1 he was lost in the landing and the warband starts without him. Each survivor is ready to fight and has saved his equipment. This is rolled once and never again: once you are safe on the island, only a fight can kill you.",
+   "umbrella": ""
+  },
+  {
+   "title": "Injuries",
+   "text": "The Serious Injuries table is the rulebook's, with two changes.\n\nCaptives cannot be sold to slavers at any price. They must be exchanged or ransomed, or you must play a rescue mission. Undead and Possessed may go on as the book states.\n\nThere are no pits in Albion, so the result 65 cannot be \"sold to the pits\": treat it as captured, result 61.",
+   "umbrella": ""
+  },
+  {
+   "title": "Supply sources",
+   "text": "There is no real infrastructure in Albion, so what a warband may recruit and trade after a battle depends on what it found.\n\nRoll the exploration dice as usual: one D6 for each hero who survived the battle, one more if you won, and any the skills or equipment allow, keeping at most six of them. An Elf ranger may modify one die by +1 or -1. Doubles and triples are read on the Albion exploration chart as always.\n\nThen add the dice together and consult the Supply source chart for what the warband came across.",
+   "umbrella": ""
+  },
+  {
+   "title": "Money",
+   "text": "Gold crowns only exist for game purposes. On Albion the coins are worthless as money and count only for their metal, but prices are still named in gold crowns and the treasury is kept as usual.",
+   "umbrella": ""
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "Scenarios and setup",
+   "text": "The player with the lowest rating rolls on the scenario table; where the scenario needs an attacker and a defender, that same player chooses which to be. Roll for warriors with old battle wounds and set up the terrain and the warbands as the scenario says.\n\nWhere a scenario has a tunnel, the tunnel rules of the Khemri setting apply.",
+   "umbrella": "Scenarios"
+  },
+  {
+   "title": "Weather",
+   "text": "The weather of Albion is as inhospitable as its denizens. Roll 2D6 on the Weather chart at the start of the game.\n\nIn each player's recovery phase roll a D6. On a 1 or 2 lower the weather roll by one, on a 5 or 6 raise it by one, and apply the new result for that turn.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Ogham stones",
+   "text": "These monoliths are the symbols of power in Albion, potent magical conduits that channel a wizard's strength. Before each scenario, except The Ogham Stones itself, roll a D6: on a 4+ place a single Ogham stone on the battlefield in addition to the other terrain.\n\nA spellcaster within 2\" of an Ogham stone adds +1 to his casting rolls. A wizard of a different allegiance has his power siphoned away instead and suffers -1. If wizards of both kinds are within 2\" of the same stone, roll a D6 to see who receives the bonus.",
+   "umbrella": ""
+  },
+  {
+   "title": "Fens",
+   "text": "Fenland is the dense watery marshland commonplace throughout Albion. It is crossed at normal pace but never run through. A warrior who starts the recovery phase in fenland rolls a D6: on a 1 he is bogged down in thick mud and may not move that turn.",
+   "umbrella": ""
+  },
+  {
+   "title": "Trees",
+   "text": "Large firs are commonplace in Albion. A large tree is climbed as the floors of a building are. Every tree has two floors and so holds two warriors, and all the usual advantages of higher ground apply.",
+   "umbrella": ""
+  },
+  {
+   "title": "Fenbeasts",
+   "text": "Wrought by magical ritual from the souls of those slain in the marshes, Fenbeasts are unliving creatures formed from the earth itself.\n\nRoll a D6 for each warrior in fenland or within 2\" of it. On a 1 he has woken a Fenbeast; stop rolling, because there is only ever one. It appears within 2\" of that warrior, does not move until the start of the warband's next turn, and then always acts before the other warriors, charging or running towards the nearest warrior.\n\nAt the end of each turn roll a D6 for the Fenbeast. On a 1 the magic binding it to the earth weakens and it is slain; on a 6 some unknown elemental power fills it and it regains D3 lost wounds.\n\nM 6, WS 3, BS 0, S 5, T 5, W 4, I 2, A 3, Ld 10. It carries no weapons or armour and has no skills.\n\nFen-walker: it crosses fenland, quagmires and any other difficult terrain as open ground.\nFear: it causes fear.\nImmune to psychology: it is never affected by psychology and never leaves combat.\nRegenerate: in swampy terrain such as fenland or a quagmire it regains one lost wound in the recovery phase on a 4+.",
+   "umbrella": ""
+  },
+  {
+   "title": "Giants",
+   "text": "The giants of Albion are its guardians, forged from the earth itself. The larger ones slumber in caves; the younger sleep in the open.\n\nBefore each battle the player setting up first rolls a D6. On a 1 the warbands have come upon a young giant: he places it after both warbands have set up, no closer than 6\" to another model.\n\nM 6, WS 3, BS 0, S 5, T 5, W 4, I 2, A 3, Ld 8. It carries no weapons or armour and has no skills.\n\nSlumbering brute: the young giant is asleep at first. In each player's recovery phase roll a D6, adding 1 for each model within 2\" of it: on a 6 it wakes, and it wakes instantly if attacked. Its turn comes before that of the player who woke it. It always moves towards the nearest model, charging where it can, but will not attack a Truthsayer or a Dark Emissary.\nFear: huge and obese, it causes fear.\nEnraged: woken, it is too angry to rout for any reason.\nThickheaded: its skull is as thick as rock, so it is never stunned; treat a stunned result as knocked down.\nUngainly: knocked down, roll a scatter dice for the direction it falls and lay the model on its back. A model underneath passes an initiative test or takes a Strength 5 hit. It picks itself up next turn.\nRampage: when it attacks, roll a D6.\n\n1-2 Swipe: attacks as normal.\n3-4 Stomp: a single attack at Strength 7 inflicting double wounds.\n5-6 Shout and bawl: all models within 4\" of the brute must pass an immediate Strength.",
+   "umbrella": ""
+  }
+ ],
+ "charts": [
+  {
+   "title": "Two-player scenarios",
+   "description": "Rolled by the player with the lowest rating before a battle between two warbands.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Scenarios",
+   "rows": [
+    {
+     "result": "2",
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating chooses which scenario is played."
+    },
+    {
+     "result": "3",
+     "name": "Death in the Mists",
+     "text": ""
+    },
+    {
+     "result": "4",
+     "name": "Gift of the Truthsayers",
+     "text": ""
+    },
+    {
+     "result": "5",
+     "name": "Breakthrough",
+     "text": ""
+    },
+    {
+     "result": "6-8",
+     "name": "Skirmish",
+     "text": ""
+    },
+    {
+     "result": "9",
+     "name": "The Ogham Stones",
+     "text": ""
+    },
+    {
+     "result": "10",
+     "name": "Defend the Cave",
+     "text": ""
+    },
+    {
+     "result": "11",
+     "name": "Chance Encounter",
+     "text": ""
+    },
+    {
+     "result": "12",
+     "name": "The higher rating chooses",
+     "text": "The warband with the higher rating chooses which scenario is played."
+    }
+   ]
+  },
+  {
+   "title": "Multi-player scenarios",
+   "description": "Rolled by the player with the lowest rating before a battle between more than two warbands.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Scenarios",
+   "rows": [
+    {
+     "result": "2",
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating chooses which scenario is played."
+    },
+    {
+     "result": "3",
+     "name": "Monster Hunt",
+     "text": ""
+    },
+    {
+     "result": "4",
+     "name": "Death in the Mists",
+     "text": ""
+    },
+    {
+     "result": "5-6",
+     "name": "Treasure Hunt",
+     "text": ""
+    },
+    {
+     "result": "7",
+     "name": "Great Skirmish",
+     "text": ""
+    },
+    {
+     "result": "8-9",
+     "name": "Ambush",
+     "text": ""
+    },
+    {
+     "result": "10",
+     "name": "Raid",
+     "text": ""
+    },
+    {
+     "result": "11",
+     "name": "Defend the Cave",
+     "text": ""
+    },
+    {
+     "result": "12",
+     "name": "The higher rating chooses",
+     "text": "The warband with the higher rating chooses which scenario is played."
+    }
+   ]
+  },
+  {
+   "title": "Weather",
+   "description": "Rolled at the start of the game, and shifted up or down a step in each recovery phase.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Weather",
+   "rows": [
+    {
+     "result": "2-3",
+     "name": "Hailstorm",
+     "text": "All shooting is at -2 to hit. A warrior in the open is battered by hailstones and takes a Strength 2 hit on a 3+."
+    },
+    {
+     "result": "4-5",
+     "name": "Driving rain and gales",
+     "text": "All shooting is at -1 to hit. Initiative is at -1 for leaping and climbing."
+    },
+    {
+     "result": "6",
+     "name": "Light drizzle and thick fog",
+     "text": "Every warrior sees only 3D6 inches, which affects charging, shooting and the rest. Initiative is at -2 for leaping."
+    },
+    {
+     "result": "7-8",
+     "name": "Light drizzle",
+     "text": "Commonplace, and of no effect."
+    },
+    {
+     "result": "9",
+     "name": "Showers",
+     "text": "Shooting is at -1 to hit."
+    },
+    {
+     "result": "10",
+     "name": "Torrential rain",
+     "text": "Movement in the open is at -1 and fenland movement is halved. Shooting is at -2 to hit, and initiative at -2 for leaping and climbing."
+    },
+    {
+     "result": "11-12",
+     "name": "Thunderstorm",
+     "text": "All shooting is at -2 to hit. A warrior in the open risks being struck by lightning: on a 5+, or a 4+ if he is above ground level or within 2\" of a tree, he takes D3 Strength 4 hits with no armour save."
+    }
+   ]
+  },
+  {
+   "title": "Supply source",
+   "description": "Found after a battle by adding together the exploration dice.",
+   "dice": "",
+   "note": "The book's bands overlap at 6 and at 30, and run 1-6, 6-12, 13-18, 19-24, 25-30, 30+ as printed.",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "1-6",
+     "name": "Camping site",
+     "text": "For all your efforts you have found a piece of relatively dry land to camp on safely. You meet nobody, so neither recruiting nor trading is possible."
+    },
+    {
+     "result": "6-12",
+     "name": "Hunting party",
+     "text": "You come upon an indigenous hunting party just before nightfall. The site is too small for two camps and you are plainly no neighbours, so the barbarians camp with you.\n\nYou may try to persuade one hunter to join: roll a D6 for your leader and for the hunter and add each one's Leadership. If your leader's total is the higher, an Albion Hunter joins as a henchman with a bow and a dagger, for free. Only one may be persuaded, and only if he does not take the warband over its maximum."
+    },
+    {
+     "result": "13-18",
+     "name": "Abandoned cave",
+     "text": "An empty cave offering shelter from the weather, and you are not its first inhabitants. Searching it turns up equipment, and it may be searched only once.\n\nYou may make the cave your quarters until you find something better.",
+     "chart": {
+      "dice": "D6",
+      "description": "Rolled for each item; the daggers are always found.",
+      "note": "",
+      "rows": [
+       {
+        "result": "Auto",
+        "name": "1D6 daggers",
+        "text": ""
+       },
+       {
+        "result": "4+",
+        "name": "D3 longbows",
+        "text": ""
+       },
+       {
+        "result": "5+",
+        "name": "2 sets of hunting arrows",
+        "text": ""
+       },
+       {
+        "result": "5+",
+        "name": "D3 gems",
+        "text": "Worth 20 gc each."
+       },
+       {
+        "result": "6+",
+        "name": "1 Talisman of Light",
+        "text": ""
+       }
+      ]
+     }
+    },
+    {
+     "result": "19-24",
+     "name": "Barbarian tribe",
+     "text": "Near nightfall you spot a cave, and this one is inhabited. After some discussion the chief lets your warband shelter there for the night.\n\nThe tribe is not rich, but trading is possible: you may trade every common item and look for up to two rare ones. Some adventurous individuals are impressed by your tales, so you may hire indigenous warriors or hunters as henchmen up to the warband's maximum. They may carry weapons from your treasury so long as they are not black powder, and they must form a henchmen group of their own rather than joining an existing one."
+    },
+    {
+     "result": "25-30",
+     "name": "Small village",
+     "text": "The people here are a little more developed than the cave-dwellers, and a little richer. You may trade any common item and look for rare items with every hero you send, and sell items found earlier on the exploration chart. There are indigenous henchmen to hire as with the tribes.\n\nLate in the night you meet someone of obvious non-Albion origin: a hired sword from an earlier stranded party. You may choose what kind he is and hire him as his own profile states, if you can afford him."
+    },
+    {
+     "result": "30+",
+     "name": "Bol-A-Hat",
+     "text": "A place that can be called a town here. You may trade without restriction, sell anything you found without being asked where it came from, and hire any kind of henchman. Stranded strangers find their way to Bol-A-Hat sooner or later, so you may hire henchmen of your warband's own type as well as Albion natives. You still pay for their equipment, or arm them from your own stock."
+    }
+   ]
+  }
+ ]
+}

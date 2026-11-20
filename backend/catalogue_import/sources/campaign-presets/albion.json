@@ -5,5 +5,6 @@
   "settings": [
     "Albion"
   ],
-  "exploration_chart": "albion"
+  "exploration_chart": "albion",
+  "rules": "albion"
 }
