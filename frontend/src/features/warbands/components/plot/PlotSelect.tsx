@@ -32,7 +32,10 @@ export default function PlotSelect({
   const picked = rows.find((row) => row.id === value);
 
   return (
-    <div className="flex min-w-0 max-w-[340px] flex-1 basis-[180px] flex-col gap-1">
+    // a width, never a height: in a column (Raise a warband's form) `basis` would leave a tall
+    // empty block under the field (William, 20 Nov 2026: "big gap between plot and warband list
+    // summary")
+    <div className="flex w-full min-w-0 max-w-[340px] flex-col gap-1">
       <SearchSelect
         id={id}
         label="Plot"
