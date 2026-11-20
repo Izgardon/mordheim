@@ -9,14 +9,26 @@ import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
 
 import { usePresetLocks } from "../../api/preset-queries";
+import { settingShortName } from "@/features/reference/in-play";
+
 import { outOfPlay, useSettingsById } from "../../api/settings-queries";
-import type { CampaignSummary } from "../../types/campaign-types";
+import type { CampaignSummary, Setting } from "../../types/campaign-types";
 import { useCampaignSave } from "./CampaignSection";
 import PresetNote, { presetDim } from "./PresetNote";
 import { SettingRow, SettingsCard } from "./settings-ui";
 
 /** A campaign's own chart says so; a book chart is named for its setting already (William, 18 Nov 2026). */
 const source = (chart: ExplorationChartRow) => (chart.campaign_id === null ? "" : " (Yours)");
+
+/**
+ * What the dropdown calls a chart: its **setting**, with no "Exploration" and not the chart's own
+ * written name (William, 20 Nov 2026: "just Mutiny in Marienburg for example"), so "Wasteland
+ * Exploration" reads as Mutiny in Marienburg and "Exploration" as Mordheim. A split setting shows
+ * its family's name, as the reference pages do ("Khemri 1b" is Khemri). A campaign's own chart has
+ * no setting, so it keeps the name its author gave it.
+ */
+const chartLabel = (chart: ExplorationChartRow, settings: Map<number, Setting>) =>
+  settingShortName(chart.campaign_type_id, settings) || chart.name;
 
 /**
  * Settings → Exploration (`edit_settings`, the owner): which chart the post-game explores by. The
@@ -83,7 +95,7 @@ export default function ExplorationSection({ campaign }: { campaign: CampaignSum
               value={chart.id}
               className={cn(chart.in_play === false && "text-faint")}
             >
-              {chart.name}
+              {chartLabel(chart, settings)}
               {source(chart)}
               {chart.in_play === false ? " — not in this campaign" : ""}
             </option>
