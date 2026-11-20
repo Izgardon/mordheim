@@ -63,7 +63,9 @@ class PresetSeederTests(TestCase):
         rules = list(marienburg.rules.all())
         self.assertEqual(
             (sum(1 for rule in rules if rule.kind == "campaign"), sum(1 for rule in rules if rule.kind == "battle")),
-            (17, 38),
+            # one battle rule more than the book's chapters: the Weather umbrella opens with the roll itself, which
+            # nothing told you to make (William, 20 Nov 2026)
+            (17, 39),
         )
         self.assertEqual(rules[0].title, "Campaign points")
         charts = list(marienburg.charts.prefetch_related("rows").select_related("row__chart"))
@@ -117,8 +119,9 @@ class PresetSeederTests(TestCase):
         expected = {
             # Border Town Burning: its objectives chapter is campaign points, and its injury chart names a D66 result
             # one battle rule fewer than the book's chapters: its Perilous phenomenon rule only repeated the
-            # chart's own trigger, so the chart says it (William, 20 Nov 2026)
-            "border-town-burning": (None, None, True, None, None, "d66", 22),
+            # chart's own trigger, so the chart says it (William, 20 Nov 2026); and one more for the Weather
+            # umbrella's opening roll, which nothing told you to make
+            "border-town-burning": (None, None, True, None, None, "d66", 23),
             # Khemri dictates its chart and nothing else: it points at the rulebook for everything structural
             "khemri": (None, None, None, None, None, "", 20),
             # Sartosa: its Locales are the campaign's places, and pressganging names a D66 result
