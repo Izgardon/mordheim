@@ -5,5 +5,6 @@
   "settings": [
     "Lustria"
   ],
-  "exploration_chart": "lustria"
+  "exploration_chart": "lustria",
+  "rules": "lustria"
 }
