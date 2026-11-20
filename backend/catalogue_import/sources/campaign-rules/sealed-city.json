@@ -1,0 +1,618 @@
+{
+ "rules": [
+  {
+   "title": "Campaign points",
+   "umbrella": "Campaign points and ambitions",
+   "text": "Mark a box for every Campaign Point the warband gets, as you would mark experience. Whenever the warband reaches a thick-bordered box, read its ambition's achievement chart to see what it has gained. The marked boxes are at 5, 10, 15, 20, 25, 35 and 40; there is no step at 30."
+  },
+  {
+   "title": "Choosing an ambition",
+   "umbrella": "Campaign points and ambitions",
+   "text": "Each warband picks one ambition at the beginning of the campaign, from those its warband type may follow, and works towards it throughout the campaign. Every player may always see what every other player has picked.\n\nIt does not matter which warband types take part and no player need fight for the side of good: the campaign works with every warband infighting, every one working evil, or every one upholding law and order."
+  },
+  {
+   "title": "Changing ambition",
+   "umbrella": "Campaign points and ambitions",
+   "text": "A warband may switch to another ambition it is allowed to follow between battles. It loses D6 Campaign Points for doing so."
+  },
+  {
+   "title": "Campaign points once lost",
+   "umbrella": "Campaign points and ambitions",
+   "text": "Losing Campaign Points never takes back an achievement the warband has already reached. Lost points must still be earned again before the warband can reach its next achievement."
+  },
+  {
+   "title": "Winning the campaign",
+   "umbrella": "Campaign points and ambitions",
+   "text": "A warband wins as soon as it completes its ambition. An ambition is complete when every box on its Campaign Point track is filled and whatever else its 40-point achievement asks for has been done."
+  },
+  {
+   "title": "Starting over",
+   "umbrella": "Campaign points and ambitions",
+   "text": "A player who disbands his warband loses its progress and achievements along with its warriors. He picks an ambition for the new warband as if the campaign were beginning. To make up the lost time, the new warband starts with Campaign Points equal to the next lowest amount among the other warbands in the campaign, less D3. The book's own worked example takes the lowest of them instead: the others hold 12, 8 and 9 Campaign Points, a D3 scores 2, and the new warband starts with 8 - 2 = 6."
+  },
+  {
+   "title": "Kings' Greed",
+   "umbrella": "Ambitions",
+   "text": "Warbands: House Guard, Mercenaries, Pirates of the Great Ocean.\nNo alliance with: Kings' Greed.\n\nAmbition progress:\n+1 Playing a Scenario. Whenever the warband plays a scenario it gets +1 CP.\n+1 Winning a Scenario. If the warband wins a battle it gets +1 CP.\n+1 Competition is good for business. The warband gets +1 CP for taking the leader of a warband with the Kings' Greed ambition out of action.\n+1 Stacking values. The warband gets +1 CP for every item of Rare 10 or higher it obtains, bought, found or traded.\n-D3 Backing the wrong horse. The warband loses D3 CP for every item of Rare 10 or higher it loses, sold, stolen or destroyed.",
+   "chart": {
+    "title": "Kings' Greed: achievements",
+    "description": "Read whenever the warband reaches a thick-bordered box on its Campaign Point track.",
+    "dice": "",
+    "note": "",
+    "rows": [
+     {
+      "result": "5",
+      "name": "Trade agreement",
+      "text": "By concluding favourable contracts with merchants throughout the city, the warband pays 10% less for common items."
+     },
+     {
+      "result": "10",
+      "name": "Rolling business",
+      "text": "The warband's maximum number of warriors is increased by 3."
+     },
+     {
+      "result": "15",
+      "name": "Another!",
+      "text": "A single dead henchman may be replaced directly after the game at no cost on a 4+ on a D6. The new henchman comes with the same experience as his dead predecessor, but with no weapons or armour."
+     },
+     {
+      "result": "20",
+      "name": "Work is cheap",
+      "text": "Hired Swords charge this warband only half their normal hire and upkeep fees."
+     },
+     {
+      "result": "25",
+      "name": "Backhander",
+      "text": "Before rolling to find a rare item the hero may pay the item's rarity in gold crowns for a +1 bonus on the roll. This may be used up to twice per roll."
+     },
+     {
+      "result": "35",
+      "name": "Premium pay",
+      "text": "After every game the warband gains D6x5 gc for each enemy hero it took out of action during the game."
+     },
+     {
+      "result": "40",
+      "name": "Seize the throne",
+      "text": "Each warband with the Kings' Greed or Reign from Shadows ambition that this warband routs is eliminated from the campaign at once. Once all warbands with those ambitions have been eliminated, the warband wins the campaign."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Reign from Shadows",
+   "umbrella": "Ambitions",
+   "text": "Warbands: Cult of the Possessed, Silent Brotherhood, Skaven, The Undead.\nNo alliance with: Kings' Greed, Protect and Serve.\n\nAmbition progress:\n+1 Playing a Scenario. Whenever the warband plays a scenario it gets +1 CP.\n+1 Winning a Scenario. If the warband wins a battle it gets +1 CP.\n+1 Kill them dead. The warband gains +1 CP whenever an enemy hero dies permanently after being taken out of action by this warband.\n+1 Slay the king. The warband gets +1 CP for taking the leader of a warband with the Kings' Greed or Protect and Serve ambition out of action.",
+   "chart": {
+    "title": "Reign from Shadows: achievements",
+    "description": "Read whenever the warband reaches a thick-bordered box on its Campaign Point track.",
+    "dice": "",
+    "note": "",
+    "rows": [
+     {
+      "result": "5",
+      "name": "Local dealer",
+      "text": "During the trading phase up to D3 heroes succeed automatically when searching for rare poisons. They may not search for anything else that phase."
+     },
+     {
+      "result": "10",
+      "name": "Shadow-born",
+      "text": "Enemy warriors halve their Initiative when trying to spot hidden heroes of this warband."
+     },
+     {
+      "result": "15",
+      "name": "Contract killing",
+      "text": "From now on, whenever the player gets to pick a scenario, he may choose to play the Assassination scenario instead of any of the regularly allowed scenarios."
+     },
+     {
+      "result": "20",
+      "name": "Distraction",
+      "text": "Before each game the warband may choose an enemy henchmen group, which may not be deployed normally. Instead its owner rolls a D6 at the start of each of his turns and adds the number of the current turn to the result. On a 7+ the group may move onto the battlefield from a randomly determined table edge."
+     },
+     {
+      "result": "25",
+      "name": "Red herring",
+      "text": "Once per campaign turn the warband may choose the scenario of any single game it does not take part in itself. The scenario chosen must be available to every warband playing it."
+     },
+     {
+      "result": "35",
+      "name": "Final sanction",
+      "text": "Whenever the warband takes an enemy leader out of action, the warrior dies permanently instead of rolling for serious injuries."
+     },
+     {
+      "result": "40",
+      "name": "Endgame",
+      "text": "The warband must win a special version of the Assassination scenario against two opponents at once. No warband places a protege; the enemy leaders are the targets instead. The attacker doubles the number of counters and may choose up to six warband members to take part. A revealed attacker may choose to hide under any unoccupied counter left in the game at the start of his turn."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Knowledge is Power",
+   "umbrella": "Ambitions",
+   "text": "Warbands: Clockworkers, Cult of the Possessed, Maidens of Dusk and Dawn.\nNo alliance with: Purge the Intruders.\n\nAmbition progress:\n+1 Playing a Scenario. Whenever the warband plays a scenario it gets +1 CP.\n+1 Winning a Scenario. If the warband wins a battle it gets +1 CP.\n+D3 Progress. The warband gains +D3 CP for each ring layer it gets access to. Each one counts only once.\n+1 Accomplished leader. The warband gets +1 CP whenever the leader's total experience reaches 30, 40, 50, 60, 70, 80 and 90. Each one counts only once.\n-D6 Setback. If the warband's leader dies permanently, the warband loses D6 CP.",
+   "chart": {
+    "title": "Knowledge is Power: achievements",
+    "description": "Read whenever the warband reaches a thick-bordered box on its Campaign Point track.",
+    "dice": "",
+    "note": "",
+    "rows": [
+     {
+      "result": "5",
+      "name": "Seekers",
+      "text": "When rolling on the exploration chart the warband may modify one die by -1 or +1."
+     },
+     {
+      "result": "10",
+      "name": "Archaeological discoveries",
+      "text": "The warband needs one of a kind less when working out how many key fragments it finds during the exploration phase."
+     },
+     {
+      "result": "15",
+      "name": "Explorers",
+      "text": "The warband may roll one more die than normal in the exploration phase and discard one die of the player's choice."
+     },
+     {
+      "result": "20",
+      "name": "Experience pays off",
+      "text": "After every game the warband gains 2 gc for each experience point its members gained in that game."
+     },
+     {
+      "result": "25",
+      "name": "Circuit lock",
+      "text": "The warband has worked out the workings of the Sealed City's illumination and may influence the sight conditions. In its own games it may exchange any result on the illumination chart for the next higher or lower result."
+     },
+     {
+      "result": "35",
+      "name": "Awakened interest",
+      "text": "Henrik Bramstetter, monitoring the warband's progress and discoveries, decides to support its efforts himself. The warband may hire him at no cost; his upkeep fee is unchanged."
+     },
+     {
+      "result": "40",
+      "name": "The secret unfolds",
+      "text": "The warband has reached the inner sanctum. From now on, whenever the player gets to pick a scenario, he may choose to play the Activation scenario instead of any of the regularly allowed scenarios, as long as the warband has access to the Inner Sanctum and 20 moonstones in its stash."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Protect and Serve",
+   "umbrella": "Ambitions",
+   "text": "Warbands: House Guard, Mercenaries, Witch Hunters.\nNo alliance with: Purge the Intruders, Reign from Shadows.\n\nAmbition progress:\n+1 Playing a Scenario. Whenever the warband plays a scenario it gets +1 CP.\n+1 Winning a Scenario. If the warband wins a battle it gets +1 CP.\n+D3 Safe district. The warband gains +D3 CP instead of +1 whenever it wins a battle against a warband with the Fear the Abyss, Purge the Intruders or Reign from Shadows ambition.",
+   "chart": {
+    "title": "Protect and Serve: achievements",
+    "description": "Read whenever the warband reaches a thick-bordered box on its Campaign Point track.",
+    "dice": "",
+    "note": "",
+    "rows": [
+     {
+      "result": "5",
+      "name": "Well supplied",
+      "text": "When selling moonstones the warband counts as one size smaller, so a warband of 10-12 members counts as one of 7-9."
+     },
+     {
+      "result": "10",
+      "name": "Drilled recruits",
+      "text": "Experienced warriors cost this warband only 1 gc more per experience point."
+     },
+     {
+      "result": "15",
+      "name": "Conscription",
+      "text": "D3+1 conscripts join the warband. They are treated as Zealots and do not count towards the warband's maximum number of models."
+     },
+     {
+      "result": "20",
+      "name": "Bounty",
+      "text": "From now on the warband may pay 20 gold crowns between battles to put a price on an enemy hero's head. Once the reward is set up, every warband that may ally with this ambition may pay any number of gold crowns between battles to increase the bounty. The first warband to take the hunted hero out of action is paid the bounty after the battle."
+     },
+     {
+      "result": "25",
+      "name": "Armory",
+      "text": "Whenever a member of the warband loses weapons or armour -- to the Robbed serious injury or to a trap blade, say, but not by selling them -- the model gets the same equipment back from the armoury at no cost. Should the warrior die permanently, a newly hired replacement may start with the same equipment as his predecessor."
+     },
+     {
+      "result": "35",
+      "name": "Imprisoned",
+      "text": "Whenever the warband wins a battle, any enemy heroes taken out of action during the game suffer the Captured result instead of rolling on the serious injuries chart."
+     },
+     {
+      "result": "40",
+      "name": "Order re-established",
+      "text": "If the warband captures four heroes including a leader from each of the Fear the Abyss, Purge the Intruders and Reign from Shadows ambitions, it wins the campaign. An ambition no warband in the campaign has taken is left out."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Purge the Intruders",
+   "umbrella": "Ambitions",
+   "text": "Warbands: Maidens of Dusk and Dawn, The Brood of Ghurash.\nNo alliance with: Kings' Greed, Knowledge is Power, Protect and Serve, Reign from Shadows.\n\nAmbition progress:\n+1 Playing a Scenario. Whenever the warband plays a scenario it gets +1 CP.\n+1 Winning a Scenario. If the warband wins a battle it gets +1 CP.\n+D3 Winning a Scenario. If the warband wins a battle it gets +D3 CP instead.\n+1 The Root of Trouble. The warband gets +1 CP whenever a member takes an enemy leader out of action.\n-D6 Breaking sigils. The warband loses D6 CP for each ring layer that is opened permanently.",
+   "chart": {
+    "title": "Purge the Intruders: achievements",
+    "description": "Read whenever the warband reaches a thick-bordered box on its Campaign Point track.",
+    "dice": "",
+    "note": "The 0 achievement is the warband's from the start.",
+    "rows": [
+     {
+      "result": "0",
+      "name": "Inhabitants",
+      "text": "The warband starts with 1 key fragment in its stash. Key fragments in the warband's stash are subtracted from the Clock's count instead of added to it."
+     },
+     {
+      "result": "5",
+      "name": "Responsibilities",
+      "text": "The warband's leader hates every other leader with a different ambition. He must charge them when they are in range, unless he has a missile weapon, in which case he may choose to shoot at them instead."
+     },
+     {
+      "result": "10",
+      "name": "Soiled Victuals",
+      "text": "When selling moonstones, warbands without the Purge the Intruders ambition count as one size larger, so a warband of 7-9 members counts as one of 10-12."
+     },
+     {
+      "result": "15",
+      "name": "Disrupting the Flow",
+      "text": "When searching for rare items, warbands without the Purge the Intruders ambition are at -1 on their rarity rolls."
+     },
+     {
+      "result": "20",
+      "name": "Searched Area",
+      "text": "Enemy warbands roll one die less during the exploration phase if they have just lost against this warband."
+     },
+     {
+      "result": "25",
+      "name": "Wrong key",
+      "text": "Enemy warbands cannot find key fragments after a game against this warband."
+     },
+     {
+      "result": "35",
+      "name": "Power begets Power",
+      "text": "An enemy warband that loses a battle against this warband loses D3 key fragments from its stash, and this warband gains the same number."
+     },
+     {
+      "result": "40",
+      "name": "Unbroken sigil",
+      "text": "If the Clock's count reaches nought, the warband wins the campaign."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Fear the Abyss",
+   "umbrella": "Ambitions",
+   "text": "Warbands: Cult of the Possessed, Pirates of the Great Ocean, The Brood of Ghurash.\nNo alliance with: Kings' Greed, Knowledge is Power, Protect and Serve, Reign from Shadows.\n\nAmbition progress:\n+1 Playing a Scenario. Whenever the warband plays a scenario it gets +1 CP.\n+1 Winning a Scenario. If the warband wins a battle it gets +1 CP.\n+1 Spreading madness. The warband gets +1 CP whenever a hero gets a permanent result on the madness chart during a game it takes part in. If the hero is from this warband it gets +D3 CP instead.\n+1 Inexorable Change. Whenever its leader gains a mutation the warband gets +1 CP.",
+   "chart": {
+    "title": "Fear the Abyss: achievements",
+    "description": "Read whenever the warband reaches a thick-bordered box on its Campaign Point track.",
+    "dice": "",
+    "note": "",
+    "rows": [
+     {
+      "result": "5",
+      "name": "The Twisted leads",
+      "text": "The leader gains D3 insanity points and has to roll on the Stygian Mutation chart."
+     },
+     {
+      "result": "10",
+      "name": "Terror awaits you",
+      "text": "Every hero in the warband causes fear. Where the hero already caused fear, enemy models are at -1 Leadership when they test for fear from him."
+     },
+     {
+      "result": "15",
+      "name": "Infective craze",
+      "text": "At the start of each game this warband takes part in, every hero must pass a Leadership test or gain 1 insanity point."
+     },
+     {
+      "result": "20",
+      "name": "Reciprocity",
+      "text": "The warband's heroes may choose to roll on the Stygian Mutation chart instead of the madness chart, and the other way round."
+     },
+     {
+      "result": "25",
+      "name": "Stabilising changes",
+      "text": "Every hero in the warband may re-roll the D66 on the Stygian Mutation chart, and has to accept the second result."
+     },
+     {
+      "result": "35",
+      "name": "Join us!",
+      "text": "Every enemy hero the warband takes out of action in close combat has to pass a Toughness test and a Leadership test after the game. If the Toughness test fails he has to roll on the Stygian Mutation chart. If the Leadership test fails he gains D6 insanity points at once. If both fail, the warrior is warped beyond all hope and wanders off into the darkness: remove the model from its warband's roster."
+     },
+     {
+      "result": "40",
+      "name": "We're all the same here",
+      "text": "Whenever an enemy warrior fails both tests from Join us!, rolls the Completely Bonkers result on the madness chart or has to leave his warband because of a mutation, he joins this warband at once as a Hired Sword. He raises the warband's rating by 5 points plus 1 point for each experience point he has, and asks for no hire or upkeep fee. As soon as the warband's size reaches 40, it wins the campaign."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Going insane",
+   "umbrella": "Insanity",
+   "text": "A hero's Insanity Points are marked on the normal experience track, but in reverse, so a fighter starts as normal and it takes a long time for the madness to set in. Use a second colour of pencil for them.\n\nA point is marked as soon as it is earned during the game, not after the battle. Whenever a new level is reached the fighter must take a Leadership test at once. On a pass he thinks through the horror and keeps control of himself. On a fail, roll first on the Temporary Insanity chart for how long the insanity lasts and then on the Insanity chart for what it is.\n\nA fighter who fills the track is too insane to continue and must retire."
+  },
+  {
+   "title": "Gaining insanity points",
+   "umbrella": "Insanity",
+   "text": "+1 Failing a fear test.\n+1 Getting a critical wound.\n+1 Being wounded by a poisoned weapon.\n+1 Taking drugs.\n+D3 Getting the Madness result on the serious injury chart, instead of the normal result.\n+1 Getting the Nervous Condition result on the serious injury chart, instead of the normal result."
+  },
+  {
+   "title": "Too insane to care",
+   "umbrella": "Insanity",
+   "text": "Many societies and races cannot be twisted any further, being either wholly insane already or finding the terrors somehow acceptable. The insanity rules do not apply at all to henchmen, hired swords, dramatis personae or warriors immune to psychology.\n\nWarriors from Skaven or Troll warbands, warriors immune to fear and warriors suffering from stupidity gain insanity points at half rate: one box is marked for every two points the model gets."
+  },
+  {
+   "title": "A visit to the apothecary",
+   "umbrella": "The apothecary",
+   "text": "Instead of having a hero search for a rare item in the post-battle sequence you may send him to a physician. Even a warrior who went out of action in the last battle may go, being quite possibly in urgent need of it.\n\nOnly one wound, condition or mutation may be treated at a time, and a hero may make only one attempt at treatment in each post-battle sequence. Treatment costs 20 gold crowns, or 50 gold crowns to see a specialist, and must be paid before the roll, because every physician demands payment in advance while the patient is still able to give it.\n\nEach treatment gives one roll on the Limb Surgery chart for an affected body part, or on the Brain Surgery chart for a mental condition. A specialist lets you re-roll the 2D6 once, but the second result stands even if it is worse."
+  },
+  {
+   "title": "Mutation surgery",
+   "umbrella": "The apothecary",
+   "text": "Treating a mutant does not differ much from the apothecary's usual work, but success may mean something different. Only these mutations can be treated:\n\nAtrophied Arm/Leg, Great Claw, Tentacle, Warped Locomotion. Roll on the Limb Surgery chart, but treat any roll of 9+ as \"This has got to come off\".\nExtra Arm, Poisonous Fangs, Scorpion Tail, Spiked Tail, Spines, Suckers, Supplemental Leg, Warty skin. Roll on the Limb Surgery chart, but treat any roll of 4 as \"Sorry lad. Done my best\".\nAtrophied Head, Daemon Soul, Moronic. Roll on the Brain Surgery chart as normal.\n\nIf the warrior bears no other taints once the surgery has succeeded, he is no longer a mutant."
+  },
+  {
+   "title": "Amputations",
+   "umbrella": "The apothecary",
+   "text": "A warrior may lose one or more limbs to injuries or to successful surgery.\n\nOne arm lost: he cannot use a weapon with that arm any more, and may not use two-handed weapons unless he has an extra arm.\nAll arms lost: he cannot use weapons with his arms at all and every attack counts as unarmed, unless he has a bite attack or a tail. He is also at -3 on all climbing tests.\nOne leg lost: halve the warrior's Movement, rounding up.\nAll legs lost: he always counts as knocked down and may not stand up, unless he has a clockwork prosthesis and uses an orichalcum token before the game."
+  },
+  {
+   "title": "Gifted servants",
+   "umbrella": "Mutations",
+   "text": "Mutation is a sign of favour to the servants of Chaos. Whenever an advance roll gives a hero or hired sword of a Cult of the Possessed, Carnival of Chaos, Beastmen Raiders, Norse or Marauders of Chaos warband a new skill, the warrior may roll on the Stygian Mutation chart instead. On an advance roll of 2 or 12 he is forced to roll on it."
+  },
+  {
+   "title": "Abominations",
+   "umbrella": "Mutations",
+   "text": "All players make advance rolls straight after the battle as usual. A hero who rolls a 2 or a 12 on an advance roll has been mutated by the corrupting influence of the Sealed City: instead of choosing a new skill he rolls on the Stygian Mutation chart.\n\nA member of a zealous warband such as Witch Hunters or Maidens of Dusk and Dawn who receives a mutation is purged of the taint by his own brethren with sword and flame. Remove the hero from the roster; his equipment is lost.\n\nThe Brood of Ghurash, Skaven and warbands with the Fear the Abyss ambition revere all things twisted and suffer no penalty for being a mutant.\n\nAny other warband's hero can usually expect to be cast out by his suspicious peers once word gets around. Before the start of the next battle take a Leadership test using the warband leader's characteristic, at +1 for each mutant the warband is already harbouring and +1 for each time the leader has had to roll on the Insanity chart. If the test is passed the mutant is put to death: strike him from the roster and discard his equipment. If it is failed the shamed warrior is allowed to remain with the warband, and no further test is needed unless he receives another mutation. No test is needed if the mutant has successfully undergone surgery at the apothecary in the post-battle sequence. The test is failed automatically if the leader himself becomes a mutant or already is one."
+  },
+  {
+   "title": "The Sealed City price chart",
+   "umbrella": "",
+   "text": "The Sealed City has a price chart of its own, and some items cost more or less there than in the Mordheim rulebook and are harder or easier to find. Use it instead of the rulebook's chart for every purchase in a Sealed City campaign."
+  },
+  {
+   "title": "Using the new weapons",
+   "umbrella": "",
+   "text": "Unless a weapon introduced in the Sealed City is on his warband's equipment list, only a model with the Weapons Training skill may ever use it."
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "Multiple weapons",
+   "umbrella": "",
+   "text": "Every mutation that can be used in close combat has a weapon profile, so a mutant may end up with three or more usable melee weapons. He gains one extra attack with the weapon's profile for each weapon beyond the first, not just for the second. A warrior with a sword, a great claw and a sharp beak could make all his profile attacks with the great claw and an extra attack with each of the other two."
+  },
+  {
+   "title": "Clockwork ammunition",
+   "umbrella": "",
+   "text": "Clockwork weapons may use special types of ammunition, which are used up for a single battle. Declare in each shooting phase which ammunition the warrior will use before choosing a target."
+  }
+ ],
+ "charts": [
+  {
+   "title": "Temporary Insanity",
+   "description": "Rolled first when a fighter fails the Leadership test at a new insanity level: how long the insanity lasts.",
+   "dice": "D6",
+   "note": "",
+   "umbrella": "Insanity",
+   "rows": [
+    {
+     "result": "1",
+     "name": "",
+     "text": "D6 turns. Treat as 2-3 if the madness occurs during the exploration phase."
+    },
+    {
+     "result": "2-3",
+     "name": "",
+     "text": "The next battle."
+    },
+    {
+     "result": "4-5",
+     "name": "",
+     "text": "Next two battles."
+    },
+    {
+     "result": "6",
+     "name": "",
+     "text": "Indefinite."
+    }
+   ]
+  },
+  {
+   "title": "Insanity",
+   "description": "Rolled after the Temporary Insanity chart: the type of insanity the fighter gets.",
+   "dice": "2D6",
+   "note": "All results are unique: a result rolled twice is rolled again until a new type of insanity comes up. Unless a result says otherwise, it lasts as long as was rolled on the Temporary Insanity chart. The book's entry for Amnesia breaks off in mid-sentence.",
+   "umbrella": "Insanity",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Catatonia",
+     "text": "The fighter falls to the floor and rolls into the fetal position. Treat as stupidity where the fighter has automatically failed his Leadership test."
+    },
+    {
+     "result": "3",
+     "name": "Amnesia",
+     "text": "The warrior forgets or loses D3 random skills or spells,"
+    },
+    {
+     "result": "4",
+     "name": "Panzaism/Quixotism",
+     "text": "",
+     "chart": {
+      "title": "Panzaism or Quixotism",
+      "description": "Which of the two the fighter is taken by.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1-3",
+        "name": "Panzaism",
+        "text": "The warrior is immune to fear and The Terror, as he sees all things, even supernatural ones, as ordinary."
+       },
+       {
+        "result": "4-6",
+        "name": "Quixotism",
+        "text": "The fighter sees everything and everyone as supernatural threats. He must pass a Leadership test at the beginning of the movement phase or become frenzied while in hand-to-hand combat, or charge the closest model or piece of terrain bigger than him, which rules out rocks and barrels. He has to attack his foe until he takes him out of action or passes the Leadership test, which lets him break free from combat automatically (see LRB Optional Rules)."
+       }
+      ]
+     }
+    },
+    {
+     "result": "5",
+     "name": "Paranoia",
+     "text": "The fighter is always on edge and thinks someone is out to get him. He may not run but may charge into combat as normal. He always strikes first in combat unless he is carrying a double-handed weapon."
+    },
+    {
+     "result": "6",
+     "name": "Phobia",
+     "text": "The fighter is cursed with a permanent or temporary phobia. Causing fear does not stop a model from taking a phobia-induced fear test itself.",
+     "chart": {
+      "title": "Phobia",
+      "description": "Which phobia the fighter is cursed with.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "Claustrophobia",
+        "text": "The fighter must pass a Leadership test to enter a building, or each turn to move if he is inside a tunnel or similar."
+       },
+       {
+        "result": "2",
+        "name": "Acrophobia",
+        "text": "The fighter must take a Leadership test each turn he is on a higher floor or area."
+       },
+       {
+        "result": "3",
+        "name": "Nyctophobia",
+        "text": "As long as the sight conditions are worse than bright, the fighter has to pass a Leadership test at the beginning of each turn to move."
+       },
+       {
+        "result": "4",
+        "name": "Agoraphobia",
+        "text": "If he wants to move more than 2\" away from a building or wall, he must pass a Leadership test first."
+       },
+       {
+        "result": "5",
+        "name": "Anthrophobia",
+        "text": "His kin scares the fighter. Enemy models of the same race as the fighter inspire fear in him, while friendly models do not stop him from being all alone."
+       },
+       {
+        "result": "6",
+        "name": "Aichmophopia",
+        "text": "Fighters armed with a sword, a spear or another weapon with a sharp or pointy end inspire fear in the fighter."
+       }
+      ]
+     }
+    },
+    {
+     "result": "7",
+     "name": "Murderous Delirium",
+     "text": "Something snaps inside the fighter's mind and he gives in to the rage. He does not recognise any model as friendly and becomes frenzied. If he is out of charge range he runs towards the nearest visible model instead."
+    },
+    {
+     "result": "8",
+     "name": "Megalomania",
+     "text": "The fighter may not hide or end his movement phase behind an obstacle. He is immune to all alone tests. If he is the leader of the warband he cannot make a voluntary rout for as long as this result lasts."
+    },
+    {
+     "result": "9",
+     "name": "Corrupted in Mind and Body",
+     "text": "The warrior's body reacts to the unnatural changes his mind undergoes. Roll on the Stygian Mutation chart and apply the result permanently at once."
+    },
+    {
+     "result": "10",
+     "name": "Criminal Psychosis",
+     "text": "The fighter hates everyone."
+    },
+    {
+     "result": "11",
+     "name": "Abyssal Nightmares",
+     "text": "The fighter has seen too much and is plagued by horrible nightmares. The model misses the next game and must take a Leadership test. On a pass he has defeated the nightmares and loses D3 insanity points; on a fail his fragile mind suffers even more and he gains D6 insanity points. These effects are always permanent, whatever was rolled on the duration chart."
+    },
+    {
+     "result": "12",
+     "name": "Completely Bonkers",
+     "text": "The fighter may not take part in any battle as long as the insanity endures, his fragile mind no longer bearing the Sealed City's horrors. If the madness is permanent, remove him from your roster instead."
+    }
+   ]
+  },
+  {
+   "title": "Limb Surgery",
+   "description": "Rolled for a hero treated at the apothecary, once per treatment paid for.",
+   "dice": "2D6",
+   "note": "The injuries that can be treated are Leg Wound, Smashed Leg and Hand Injury.",
+   "umbrella": "The apothecary",
+   "rows": [
+    {
+     "result": "2-3",
+     "name": "Someone fetch a priest...",
+     "text": "The unfortunate patient has expired due to excessive blood loss. The hero is dead and must be stricken from the warband roster, but his equipment is retained by the warband."
+    },
+    {
+     "result": "4",
+     "name": "This has got to come off",
+     "text": "The surgeon has felt the need to amputate, ostensibly to keep the rot out, and the warrior loses the treated limb or limbs."
+    },
+    {
+     "result": "5-6",
+     "name": "Sorry lad. Done my best",
+     "text": "The surgery was unsuccessful, and the warrior must miss the next battle while he recovers."
+    },
+    {
+     "result": "7-8",
+     "name": "No Luck",
+     "text": "The surgery was unsuccessful."
+    },
+    {
+     "result": "9-10",
+     "name": "Mind you stay off it for a bit",
+     "text": "The surgery was successful! The warrior may remove the injury and its adverse effects from his profile. He must, however, miss the next battle while he recovers."
+    },
+    {
+     "result": "11-12",
+     "name": "Shallaya be praised!",
+     "text": "The surgery was a complete success! The warrior may remove the injury and its adverse effects from his profile."
+    }
+   ]
+  },
+  {
+   "title": "Brain Surgery",
+   "description": "Rolled for a hero treated at the apothecary, once per treatment paid for.",
+   "dice": "2D6",
+   "note": "The conditions that can be treated are Madness and Nervous Condition.",
+   "umbrella": "The apothecary",
+   "rows": [
+    {
+     "result": "2-3",
+     "name": "Someone fetch a priest...",
+     "text": "The physician has been a bit too zealous in his treatment. The hero is dead and must be stricken from the warband roster, but his equipment is retained by the warband."
+    },
+    {
+     "result": "4-5",
+     "name": "Erm... That's not right",
+     "text": "The treatment has not only failed to help the warrior, it has actually worsened his condition! The warrior is now subject to stupidity. If the warrior was being treated for stupidity there is no change in his condition, except perhaps a bit more drooling than usual."
+    },
+    {
+     "result": "6",
+     "name": "A bit unhinged, that one",
+     "text": "The treatment has failed, and the warrior emerges from the procedure as something of a raving lunatic. His Initiative suffers a -1 penalty, down to a minimum of 1, and he is now so unsettling to behold that he causes fear."
+    },
+    {
+     "result": "7-8",
+     "name": "Sorry lad. Done my best",
+     "text": "The treatment was unsuccessful, and the warrior must miss the next battle while he recovers."
+    },
+    {
+     "result": "9-10",
+     "name": "A bit of rest and you'll be fine",
+     "text": "The treatment was successful! The warrior may remove the injury and its adverse effects from his profile. He must, however, miss the next battle while he recovers."
+    },
+    {
+     "result": "11-12",
+     "name": "Shallaya be praised!",
+     "text": "The treatment was a complete success! The warrior may remove the injury and its adverse effects from his profile."
+    }
+   ]
+  }
+ ]
+}
