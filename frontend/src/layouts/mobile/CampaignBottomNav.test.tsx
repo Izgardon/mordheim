@@ -107,7 +107,7 @@ describe("the Settings sheet", () => {
 });
 
 describe("the Reference sheet", () => {
-  it("is still one button, its sheet showing References (Search everything first) apart from Rules", async () => {
+  it("is still one button, its sheet showing References apart from Rules", async () => {
     fakeApi.on(`GET ${BASE}/`, campaignSummary());
     const user = setupUser();
     renderApp(`${BASE}/house-rules`);
@@ -122,7 +122,6 @@ describe("the Reference sheet", () => {
         .getAllByRole("link")
         .map((link) => link.textContent);
     expect(names("References")).toEqual([
-      "Search everything",
       "Warbands",
       "Wargear",
       "Skills",
@@ -133,6 +132,21 @@ describe("the Reference sheet", () => {
       "Dramatis personae",
     ]);
     expect(names("Rules")).toEqual(["Rules", "House rules", "Campaign rules"]);
+  });
+
+  it("searches everything from a field at the head of References, and closes", async () => {
+    fakeApi.on(`GET ${BASE}/`, campaignSummary());
+    const user = setupUser();
+    const app = renderApp(`${BASE}/house-rules`);
+
+    await user.click(within(await bottomNav()).getByRole("button", { name: "Reference" }));
+    const sheet = await screen.findByRole("dialog", { name: "Reference" });
+    await user.type(within(sheet).getByRole("searchbox", { name: "Search everything" }), "halberd");
+    await user.click(within(sheet).getByRole("button", { name: "Search" }));
+
+    await waitFor(() => expect(app.location().pathname).toBe(`${BASE}/search`));
+    expect(app.location().search).toBe("?q=halberd");
+    expect(screen.queryByRole("dialog", { name: "Reference" })).not.toBeInTheDocument();
   });
 });
 

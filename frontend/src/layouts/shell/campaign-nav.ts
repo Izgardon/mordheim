@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { LayoutGrid, Map, Search, Shield, Swords, Tent } from "lucide-react";
+import { LayoutGrid, Map, Shield, Swords, Tent } from "lucide-react";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
@@ -35,8 +35,8 @@ export const RULES_LINKS: NavLink[] = [
 ];
 
 /**
- * The rail's and the Reference sheet's two sections, References (Search everything at its head)
- * then Rules; on a phone they share one navbar button.
+ * The rail's and the Reference sheet's two sections, References (the Search everything field at
+ * its head) then Rules; on a phone they share one navbar button.
  */
 export const REFERENCE_SECTIONS: { title: string; links: NavLink[] }[] = [
   { title: "References", links: REFERENCE_LINKS },
@@ -44,8 +44,8 @@ export const REFERENCE_SECTIONS: { title: string; links: NavLink[] }[] = [
 ];
 
 export const OVERVIEW_LINK: NavLink = { label: "Overview", path: "", icon: LayoutGrid };
-/** Search everything: the first row of References, in the rail and the Reference sheet. */
-export const SEARCH_LINK: NavLink = { label: "Search everything", path: "search", icon: Search };
+/** Search everything's page, the field at the head of References opens. */
+const SEARCH_PATH = "search";
 export const BATTLES_ICON = Swords;
 
 /**
@@ -71,7 +71,7 @@ const SECTION_TITLES: Record<string, string> = {
   settings: "Settings",
   account: "Account",
   battles: "Battle",
-  search: "Search everything",
+  [SEARCH_PATH]: "Search everything",
   ...Object.fromEntries(
     [...REFERENCE_LINKS, ...RULES_LINKS].map((link) => [link.path, link.label])
   ),
@@ -109,7 +109,7 @@ export function mobileNavActiveId(pathname: string): MobileNavId {
   if (current === "battles") return "battle";
   if (current === "settings" || current === "account") return "settings";
   if (["warband", "warbands", "encampments", "locations"].includes(current)) return "warband";
-  if (current === SEARCH_LINK.path) return "reference";
+  if (current === SEARCH_PATH) return "reference";
   if (REFERENCE_SECTIONS.some(({ links }) => links.some((link) => link.path === current)))
     return "reference";
   return "campaign";
