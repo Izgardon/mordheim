@@ -190,6 +190,7 @@ const skill = (id: number, name: string): Skill => ({ id, name, description: "",
 const group = (overrides: Partial<SkillGroup> & Pick<SkillGroup, "id" | "name">): SkillGroup => ({
   access_name: overrides.name,
   for_everyone: false,
+  open_to_all: false,
   warbands: [],
   large_only: false,
   learn_note: "",
@@ -227,7 +228,7 @@ const warbandSources: SearchSources = {
   skills: [skill(1, "Heron Strike"), skill(2, "Hunter"), skill(3, "Strike to Injure")],
   skillGroups: [
     group({ id: 5, name: "Battle Monks of Cathay", skill_ids: [1] }),
-    group({ id: 6, name: "Combat", for_everyone: true, skill_ids: [3] }),
+    group({ id: 6, name: "Combat", for_everyone: true, open_to_all: false, skill_ids: [3] }),
   ],
 };
 

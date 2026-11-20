@@ -44,6 +44,8 @@ export type SkillGroup = CatalogueBadgeFields & {
   /** What a unit's skill access names it by: the book group's name for a version of it. */
   access_name: string;
   for_everyone: boolean;
+  /** Anyone may learn from it, so no unit's access names it and its skills never warn (Animal, Cavalry). */
+  open_to_all: boolean;
   warbands: AccessLine[];
   large_only: boolean;
   learn_note: string;

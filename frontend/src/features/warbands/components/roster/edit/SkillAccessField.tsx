@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { Chip } from "@/components/ui/chip";
 import { SearchMultiSelect, type SearchOption } from "@/components/ui/search-select";
 import { useWhoCan } from "@/features/items/api/who-can-queries";
-import { isCore, useSkillGroups } from "@/features/skills/skill-groups";
+import { isCore, openToAll, useSkillGroups } from "@/features/skills/skill-groups";
 import type { SkillGroup } from "@/features/skills/types/skill-types";
 
 import { skillAbbrevToType } from "../../../utils/warband-utils";
@@ -17,7 +17,8 @@ const PILL = "min-h-8 md:min-h-9";
 /**
  * Skill access (design E): the five core skill groups and Special, which opens the campaign's
  * other groups on the searchable select, those open to his warband first, each with its count of
- * skills. Holds the form's checkbox record; a group is stored by the name a unit's access names it
+ * skills. A group anyone may learn from (Animal, Cavalry) is left out altogether: there is nothing
+ * to grant, and its skills are takeable either way (William, 20 Nov 2026). Holds the form's checkbox record; a group is stored by the name a unit's access names it
  * by (`access_name`), so a campaign's renamed version of a book group still answers to it.
  */
 export default function SkillAccessField({
@@ -36,7 +37,11 @@ export default function SkillAccessField({
 }) {
   const groups = useSkillGroups(campaignId);
   const open = useWhoCan(campaignId, warbandId).skillGroupIds;
-  const special = groups.groups.filter((group) => !isCore(group));
+  // a group anyone may learn from is never granted, so it is not offered here (William, 20 Nov 2026)
+  const special = groups.groups.filter((group) => !isCore(group) && !openToAll(group));
+  const notListed = new Set(
+    groups.groups.filter(openToAll).map((group) => group.access_name.toLowerCase())
+  );
   const ranked = [
     ...special.filter((group) => open.has(group.id)),
     ...special.filter((group) => !open.has(group.id)),
@@ -91,11 +96,16 @@ export default function SkillAccessField({
           emptyText="No skill group matches."
           options={ranked.map(groupOption)}
           values={Object.keys(value)
-            .filter((key) => value[key] && !isStandard(key))
+            .filter(
+              (key) => value[key] && !isStandard(key) && !notListed.has(key.trim().toLowerCase())
+            )
             .map(pickedOption)}
           onChange={(next) => {
             const record: Record<string, boolean> = {};
-            for (const [key, on] of Object.entries(value)) if (isStandard(key)) record[key] = on;
+            // what he holds that this list doesn't show stays his: the core five, and a group anyone may learn from
+            for (const [key, on] of Object.entries(value)) {
+              if (isStandard(key) || notListed.has(key.trim().toLowerCase())) record[key] = on;
+            }
             for (const option of next) record[String(option.id)] = true;
             onChange(record);
           }}

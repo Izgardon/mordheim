@@ -1,38 +1,66 @@
+/**
+ * A group anyone may learn from (William, 20 Nov 2026: Animal and Cavalry) is open to every unit
+ * without being granted. `for_everyone` cannot stand for that: it is about *warbands*, and is true
+ * of each hired sword's private skill list too, so reading it that way would offer every hero all
+ * 28 of those lists.
+ */
 import { describe, expect, it } from "vitest";
 
 import { skillGroup } from "@/test/catalogue-fixtures";
+import { skillOption } from "@/features/catalogue/search-options";
+import type { Skill } from "./types/skill-types";
 
-import { cameThrough, groupIndex, groupsOf, isCore, unitGroups } from "./skill-groups";
+import { groupIndex, learnableGroups, unitGroups } from "./skill-groups";
 
-const combat = skillGroup({
-  id: 1,
-  name: "Close Combat",
-  access_name: "Combat",
-  skill_ids: [10, 11],
+const combat = skillGroup({ id: 10, name: "Combat", skill_ids: [1] });
+const animal = skillGroup({ id: 11, name: "Animal", open_to_all: true, skill_ids: [2] });
+const hired = skillGroup({
+  id: 12,
+  name: "Hired Sword - Elf Ranger",
+  for_everyone: true,
+  skill_ids: [3],
 });
-const speed = skillGroup({ id: 2, name: "Speed", skill_ids: [11] });
-const dwarves = skillGroup({ id: 3, name: "Dwarves", for_everyone: false, skill_ids: [11, 12] });
-const index = groupIndex([combat, speed, dwarves]);
+const index = groupIndex([combat, animal, hired]);
 
-describe("skill groups", () => {
-  it("lists the groups holding a skill in group order", () => {
-    expect(groupsOf(index, 11)).toEqual([combat, speed, dwarves]);
-    expect(groupsOf(index, 99)).toEqual([]);
-  });
+const ride = { id: 2, name: "Ride [Animal]" } as Skill;
+const settings = {} as never;
 
-  it("finds a unit's groups by the names his access stores, a renamed version by its book name", () => {
-    expect(unitGroups(index, ["dwarves", " combat ", "Gone", "Dwarves"])).toEqual([
-      dwarves,
-      combat,
+describe("The groups a unit may learn from", () => {
+  it("are his own, then every group open to anyone", () => {
+    expect(learnableGroups(index, ["Combat"]).map((group) => group.name)).toEqual([
+      "Combat",
+      "Animal",
     ]);
-    expect(isCore(combat)).toBe(true);
-    expect(isCore(dwarves)).toBe(false);
   });
 
-  it("shows a skill under the first of his groups holding it, else its first group", () => {
-    expect(cameThrough(index, 11, [dwarves, combat])).toBe(dwarves);
-    expect(cameThrough(index, 11, [])).toBe(combat);
-    expect(cameThrough(index, 12, [combat])).toBe(dwarves);
-    expect(cameThrough(index, 99, [combat])).toBeUndefined();
+  it("leave out a for_everyone group that is only a hired sword's own list", () => {
+    expect(learnableGroups(index, ["Combat"]).map((group) => group.name)).not.toContain(
+      "Hired Sword - Elf Ranger"
+    );
+  });
+
+  it("do not repeat a group his access already names", () => {
+    expect(learnableGroups(index, ["Combat", "Animal"]).map((group) => group.name)).toEqual([
+      "Combat",
+      "Animal",
+    ]);
+  });
+
+  it("are what unitGroups is not: his alone", () => {
+    expect(unitGroups(index, ["Combat"]).map((group) => group.name)).toEqual(["Combat"]);
+  });
+});
+
+describe("A skill from a group anyone may learn from", () => {
+  it("carries no 'not open to him' warning", () => {
+    const access = learnableGroups(index, ["Combat"]);
+
+    expect(skillOption(ride, { settings, groups: index, access }).warning).toBeFalsy();
+  });
+
+  it("warns when only his own groups are counted, which is the bug this fixes", () => {
+    const access = unitGroups(index, ["Combat"]);
+
+    expect(skillOption(ride, { settings, groups: index, access }).warning).toBeTruthy();
   });
 });

@@ -80,6 +80,7 @@ export const skillGroup = (overrides: Partial<SkillGroup> = {}): SkillGroup => (
   name: "Combat",
   access_name: overrides.name ?? "Combat",
   for_everyone: true,
+  open_to_all: false,
   warbands: [],
   large_only: false,
   learn_note: "",

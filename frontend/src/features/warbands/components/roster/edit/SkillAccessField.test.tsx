@@ -62,3 +62,66 @@ describe("Skill access", () => {
     expect(onChange).toHaveBeenLastCalledWith({ C: false, Spc: true, Gone: true, Animal: true });
   });
 });
+
+describe("A group anyone may learn from", () => {
+  /**
+   * William, 20 Nov 2026: Animal and Cavalry skills "should automatically be for everyone but I
+   * dont want it listed on their skill list, their skills should just be takeable". So the group
+   * is never granted here, and what a unit already holds of it is left alone rather than dropped.
+   */
+  const open = [
+    skillGroup({ id: 10, name: "Combat" }),
+    skillGroup({ id: 11, name: "Animal", open_to_all: true, skill_ids: [1, 2] }),
+    skillGroup({ id: 12, name: "Dwarves", for_everyone: false, skill_ids: [3] }),
+  ];
+
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /skill-groups/?campaign_id=1", open);
+    fakeApi.on("GET /warbands/7/who-can/", {
+      items: [],
+      hired_swords: [],
+      dramatis_personae: [],
+      skill_group_ids: [10, 11, 12],
+      special_skill_ids: [],
+    });
+  });
+
+  const field = (value: Record<string, boolean>, onChange = vi.fn()) => {
+    renderWithQueryClient(
+      <SkillAccessField campaignId={1} warbandId={7} value={value} onChange={onChange} />
+    );
+    return onChange;
+  };
+
+  it("is not offered as a special group to grant", async () => {
+    const user = setupUser();
+    field({ Spc: true });
+
+    await user.click(screen.getByRole("button", { name: "Choose a special skill group" }));
+
+    const options = await screen.findAllByRole("option");
+    expect(options.map((option) => option.textContent)).toEqual([
+      expect.stringContaining("Dwarves"),
+    ]);
+  });
+
+  it("is not listed on a unit that already holds it", async () => {
+    field({ Spc: true, Animal: true, Dwarves: true });
+
+    // the subtitle only appears once the groups are read, so this waits for the loaded list
+    expect(await screen.findByText("1 skills")).toBeInTheDocument();
+    expect(screen.getByText("Dwarves")).toBeInTheDocument();
+    expect(screen.queryByText("Animal")).not.toBeInTheDocument();
+  });
+
+  it("stays on the unit when the special groups change", async () => {
+    const user = setupUser();
+    const onChange = field({ Spc: true, Animal: true });
+
+    await user.click(await screen.findByRole("button", { name: "Choose a special skill group" }));
+    await user.click((await screen.findAllByRole("option"))[0]);
+
+    expect(onChange).toHaveBeenLastCalledWith({ Spc: true, Animal: true, Dwarves: true });
+  });
+});

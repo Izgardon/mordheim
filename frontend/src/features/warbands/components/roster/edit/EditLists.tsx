@@ -7,7 +7,7 @@ import { skillOptions, specialOption, spellOptions } from "@/features/catalogue/
 import { useWhoCan } from "@/features/items/api/who-can-queries";
 import { itemKind } from "@/features/items/item-kind";
 import { inPlayOnly } from "@/features/reference/in-play";
-import { unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
+import { learnableGroups, useSkillGroups } from "@/features/skills/skill-groups";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
 import type { HeroCaster } from "../../../types/warband-types";
@@ -55,7 +55,7 @@ export default function EditLists({
     settings,
     groups,
     large: Boolean(draft.large),
-    access: access ? unitGroups(groups, buildAvailableSkillsPayload(access)) : [],
+    access: access ? learnableGroups(groups, buildAvailableSkillsPayload(access)) : [],
     specials: warbandSkills,
   };
   // only the campaign's skills are offered; one he has from outside it still shows as his

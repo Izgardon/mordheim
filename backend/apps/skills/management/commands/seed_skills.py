@@ -99,6 +99,7 @@ class Command(BaseCommand):
     def _group_fields(entry: dict[str, Any], access: AccessLines, settings: dict[str, int]) -> dict[str, Any]:
         return {
             "for_everyone": bool(entry.get("for_everyone", True)) if access.ready else True,
+            "open_to_all": bool(entry.get("open_to_all")),
             "large_only": bool(entry.get("large_only")),
             "learn_note": clean(entry.get("note")),
             "campaign_type_id": settings.get(clean(entry.get("setting"))),

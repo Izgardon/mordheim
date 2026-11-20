@@ -7,6 +7,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Strike to Injure",
       "Combat Master",
@@ -27,6 +28,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Quick Shot",
       "Pistolier",
@@ -51,6 +53,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Battle Tongue",
       "Sorcery",
@@ -80,6 +83,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Mighty Blow",
       "Pit Fighter",
@@ -102,6 +106,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Leap",
       "Sprint",
@@ -217,6 +222,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_lists",
+    "open_to_all": true,
     "skills": [
       "[Animal] Handler",
       "Ride [Animal]",
@@ -344,6 +350,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Heron Strike",
       "Swallow Kick",
@@ -364,6 +371,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Shaggy Hide",
       "Mutant",
@@ -429,6 +437,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Virtue of Purity",
       "Virtue of Valour",
@@ -488,6 +497,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": true,
     "skills": [
       "Cavalry Commander",
       "Trick Riding",
@@ -681,6 +691,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Fury of Khaine",
       "Powerful Build",
@@ -766,6 +777,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_lists",
+    "open_to_all": false,
     "skills": [
       "True Grit",
       "Thick Skull",
@@ -845,6 +857,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Ferocious Charge",
       "Monster Slayer",
@@ -881,6 +894,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Master of Blades",
       "Extra Tough",
@@ -925,6 +939,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Animosity"
     ]
@@ -1012,6 +1027,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Darkstalker",
       "Instinctual Violence",
@@ -1119,6 +1135,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Banditry",
       "Hide in Shadows",
@@ -1252,6 +1269,7 @@
     "large_only": true,
     "note": "",
     "how": "skill_lists",
+    "open_to_all": false,
     "skills": [
       "Seismic Toss",
       "Juggernaut",
@@ -1315,6 +1333,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Backstabber",
       "Pick Locks",
@@ -1356,6 +1375,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Chosen of chaos",
       "Tattooed body",
@@ -1418,6 +1438,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Crude Belch",
       "Stealthy",
@@ -1459,6 +1480,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Hide in Shadows",
       "Fungus Farmer",
@@ -1547,6 +1569,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Barbarian courage",
       "Berserk charge",
@@ -1593,6 +1616,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Master of arms",
       "Crude Belch",
@@ -1615,6 +1639,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "’ard ’ead",
       "Waaagh!",
@@ -1638,6 +1663,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Bull Rush",
       "Foul Odour",
@@ -1659,6 +1685,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Sea Shanty Singer",
       "Sea Legs",
@@ -1681,6 +1708,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_lists",
+    "open_to_all": false,
     "skills": [
       "Captain Blood",
       "Sea Legs (TBMF)",
@@ -1727,6 +1755,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Bulging Biceps",
       "Force of Will",
@@ -1787,6 +1816,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Corpse Bomb",
       "Deathspeaker",
@@ -1899,6 +1929,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Bellowing Battle Roar",
       "Toughened Hide"
@@ -1937,6 +1968,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Infiltration",
       "Luck",
@@ -1959,6 +1991,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "See in Shadows",
       "Hide in Shadows",
@@ -2002,6 +2035,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Righteous Aura",
       "Protection of Sigmar",
@@ -2023,6 +2057,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Black Hunger",
       "Tail Fighting",
@@ -2065,6 +2100,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_group_learners",
+    "open_to_all": false,
     "skills": [
       "Black Hunger",
       "Censer Bearer",
@@ -2107,6 +2143,7 @@
     "large_only": false,
     "note": "",
     "how": "skill_lists",
+    "open_to_all": false,
     "skills": [
       "Tail Fighting",
       "Infiltration",
@@ -2153,6 +2190,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Infiltration (Skink)",
       "Great Hunter"
@@ -2347,6 +2385,7 @@
     "large_only": false,
     "note": "",
     "how": "intersection",
+    "open_to_all": false,
     "skills": [
       "Sand worm",
       "Hit and run",
@@ -2366,6 +2405,7 @@
     "large_only": false,
     "note": "Vampire only",
     "how": "skill_lists",
+    "open_to_all": false,
     "skills": [
       "Transfixing Glare",
       "Mist Form",

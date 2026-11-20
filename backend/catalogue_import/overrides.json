@@ -1142,6 +1142,13 @@
       "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
     }
   },
+  "open_to_all_skill_groups": {
+    "_why": "William, 20 Nov 2026: Animal skills 'should automatically be for everyone but I dont want it listed on their skill list, their skills should just be takeable', and the same for Cavalry. These groups are left out of every unit's skill access and their skills never warn. Not for_everyone, which is about warbands and is true of each hired sword's private list too.",
+    "names": [
+      "Animal",
+      "Cavalry"
+    ]
+  },
   "new_skill_groups": {
     "Black Dwarfs": {
       "type": "black-dwarfs",

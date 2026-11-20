@@ -47,6 +47,20 @@ export const groupsOf = (index: SkillGroupIndex, skillId: number) =>
  * A unit's skill access (group names) as the campaign's groups, in his order: a book group's name
  * finds the campaign's version of it too. A name no group answers to is left out.
  */
+/**
+ * The groups a unit may learn from: the ones his access names, then every group open to anyone
+ * (William, 20 Nov 2026: an Animal or Cavalry skill is takeable without being granted the group,
+ * which is why neither is listed on him). Not `for_everyone`, which is about warbands and is true
+ * of each hired sword's private list too.
+ */
+export const learnableGroups = (index: SkillGroupIndex, names: string[]) => {
+  const his = unitGroups(index, names);
+  return [...his, ...index.groups.filter((group) => group.open_to_all && !his.includes(group))];
+};
+
+/** Groups anyone may learn from, so no unit's skill access lists them. */
+export const openToAll = (group: SkillGroup) => group.open_to_all;
+
 export const unitGroups = (index: SkillGroupIndex, names: string[]) =>
   names
     .map((name) => index.byAccess.get(key(name)))

@@ -39,8 +39,9 @@ class SkillCreateSerializer(serializers.ModelSerializer):
 
 
 class SkillGroupSerializer(serializers.ModelSerializer):
-    """A skill group: who learns from it (`for_everyone`, or the warbands its lines name), whether it is a Large
-    unit's, the note shown when learning from it, and its skills as the campaign's current entries (`skill_ids`, its
+    """A skill group: who learns from it (`for_everyone`, or the warbands its lines name), whether any unit may
+    learn from it without being granted it (`open_to_all`), whether it is a Large unit's, the note shown when
+    learning from it, and its skills as the campaign's current entries (`skill_ids`, its
     skills' name order). `access_name` is what a unit's skill access names it by: the book group's name for the book's
     and a campaign's version of it (renaming the version changes nothing a unit holds), its own for a campaign's."""
 
@@ -57,6 +58,7 @@ class SkillGroupSerializer(serializers.ModelSerializer):
             "name",
             "access_name",
             "for_everyone",
+            "open_to_all",
             "warbands",
             "large_only",
             "learn_note",
@@ -80,7 +82,7 @@ class SkillGroupWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = SkillGroup
         validators: list = []  # a taken name is the name rule's 400 name_taken (CAT-TWEAK-02), backed by the constraint
-        fields = ("name", "for_everyone", "large_only", "learn_note", "warbands", "skill_ids")
+        fields = ("name", "for_everyone", "open_to_all", "large_only", "learn_note", "warbands", "skill_ids")
 
     def validate_warbands(self, lines: list[dict[str, Any]]) -> list[dict[str, Any]]:
         refuse_unknown_lines(lines, self.context["campaign_id"])  # the book's or the campaign's types (SEC-07)

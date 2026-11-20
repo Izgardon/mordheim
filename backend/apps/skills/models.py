@@ -49,6 +49,9 @@ class SkillGroup(CatalogueEntry):
     """A group skills are learned from, and who learns from it: everyone, or the warbands its lines name. A Large
     unit's group warns for any other unit and its note is shown when learning, neither ever blocks.
 
+    `open_to_all` is the other question, about *units* rather than warbands: a group any unit may learn from
+    without being granted it, so it is left out of every unit's skill access and its skills carry no warning.
+
     Its setting holds its grade, as a skill's does: a grade 3 group goes out of play with its setting instead of
     showing as a row with every skill inside it filtered out (the Khemri split, William, 11 Nov 2026). Null counts
     as Mordheim's, which every other group's still is."""
@@ -67,6 +70,10 @@ class SkillGroup(CatalogueEntry):
     )
     name = models.CharField(max_length=160)
     for_everyone = models.BooleanField(default=True)
+    # Anyone may learn from it, so no unit's skill access names it and its skills never warn (William, 20 Nov 2026:
+    # Animal and Cavalry). `for_everyone` is about *warbands* and is true of a hired sword's private list too, so it
+    # cannot stand for this: it would open all 28 of those lists to every hero.
+    open_to_all = models.BooleanField(default=False)
     large_only = models.BooleanField(default=False)
     learn_note = models.CharField(max_length=200, blank=True, default="")
 

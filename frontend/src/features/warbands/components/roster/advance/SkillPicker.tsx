@@ -6,7 +6,13 @@ import { SearchCombobox, type SearchOption } from "@/components/ui/search-select
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { skillOptions } from "@/features/catalogue/search-options";
 import { inPlayOnly } from "@/features/reference/in-play";
-import { cameThrough, isCore, unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
+import {
+  cameThrough,
+  isCore,
+  learnableGroups,
+  unitGroups,
+  useSkillGroups,
+} from "@/features/skills/skill-groups";
 import { skillList } from "@/features/skills/skill-list";
 import type { Skill } from "@/features/skills/types/skill-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
@@ -44,11 +50,13 @@ export default function SkillPicker({
   const settings = useSettingsById();
   const groups = useSkillGroups(campaignId);
   const his = unitGroups(groups, accessNames(access));
+  // his own groups are the tabs; a group anyone may learn from is open to him without being one
   const tabs = his.length ? his : groups.groups.filter(isCore);
+  const open = learnableGroups(groups, accessNames(access));
   const [picked, setTab] = useState<number | typeof ALL | null>(null);
   const tab = picked ?? tabs[0]?.id ?? ALL; // his first group once the groups have loaded
   const shown = tab === ALL ? undefined : groups.byId.get(tab);
-  const rows = skillOptions(skills, { settings, groups, large, access: his });
+  const rows = skillOptions(skills, { settings, groups, large, access: open });
   const byId = new Map(skills.map((skill) => [skill.id, skill]));
   const inTab = (option: SearchOption) => !shown || shown.skill_ids.includes(Number(option.id));
   const options = rows.filter(inTab).map((option) => ({

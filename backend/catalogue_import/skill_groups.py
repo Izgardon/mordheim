@@ -110,6 +110,8 @@ class SkillGroupBuild:
         self.wording_names = list(overrides.get("skill_wordings", {}))
         self.wordings = {norm_name(name): entry for name, entry in overrides.get("skill_wordings", {}).items()}
         self.learners = {norm_name(name): entry for name, entry in overrides.get("skill_group_learners", {}).items()}
+        open_to_all = overrides.get("open_to_all_skill_groups", {})
+        self.open_to_all = {norm_name(name) for name in open_to_all.get("names", [])}
         self.skills: dict[str, Skill] = {}  # norm_name -> skill
         self.row_skill: dict[str, str] = {}  # a row's label -> its skill's name
         self.row_access: dict[str, dict[str, Any]] = {}  # a row's label -> its who-can (hiring.py)
@@ -191,10 +193,22 @@ class SkillGroupBuild:
             skills = list(dict.fromkeys(self.row_skill[label(row)] for row in members))
             known = [label(row) for row in members if label(row) in self.row_access]
             access = self.group_access(name, [self.row_access[key] for key in known])
-            groups.append({"name": name, "setting": self.setting_of(access), **access, "skills": skills})
-        unknown = self._unknown_learners() + sorted(set(self.learners) - {norm_name(name) for name in lists})
+            groups.append(
+                {
+                    "name": name,
+                    "setting": self.setting_of(access),
+                    **access,
+                    "open_to_all": norm_name(name) in self.open_to_all,
+                    "skills": skills,
+                }
+            )
+        held = {norm_name(name) for name in lists}
+        unknown = self._unknown_learners() + sorted(set(self.learners) - held)
         if unknown:
             raise ValueError(f"overrides.json skill_group_learners names what we lack: {', '.join(unknown)}")
+        missing = sorted(self.open_to_all - held)
+        if missing:
+            raise ValueError(f"overrides.json open_to_all_skill_groups names what we lack: {', '.join(missing)}")
         return groups
 
     def setting_of(self, access: dict[str, Any]) -> str | None:
