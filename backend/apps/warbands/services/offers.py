@@ -6,7 +6,8 @@ setting, then its lines; the skill groups (skill groups phase 1a), then their li
 open to the warband when its lines let it in (its type, its group, or everyone); the skills of a group not for
 everyone that names the warband's type or group are its special skills (a skill is learnable by whoever has a group
 holding it). The warband's own template lists are read too (two queries: its template, then its lines' items for
-its variant), so an item its own list sells is one it may buy whatever the price rows name (`who_can.py`, step 4).
+its variant), so an item its own list sells is one it may buy whatever the price rows name (`who_can.py`, step 4);
+Gromril and Ithilmar Armour ride on a list that sells Heavy Armour, which they count as (William, 20 Nov 2026).
 """
 
 from collections.abc import Sequence
@@ -17,11 +18,12 @@ from django.db.models import Model, Prefetch, QuerySet
 
 from apps.campaigns.in_play import with_in_play
 from apps.core.catalogue.merge import campaign_list
+from apps.items.materials import COUNTS_AS_ITEMS
 from apps.items.models import ItemAvailability
 from apps.warbands.models import Warband
 
 from .materials import material_offers
-from .who_can import Buyer, access, buyer_of, offer, step
+from .who_can import Buyer, access, buyer_of, offer, on_his_list, step
 
 
 def _current(kind: Any, campaign_id: int) -> QuerySet[Any]:
@@ -48,6 +50,16 @@ def item_offers(campaign_id: int, buyer: Buyer, items: Sequence[Any] | None = No
     rows = items if items is not None else current_items(campaign_id)
     offers = (offer(item, buyer, item.in_play, _setting(item)) for item in rows)
     return [found.payload() for found in offers if found is not None]
+
+
+def counts_as_sold(items: Sequence[Any], sells: frozenset[int]) -> frozenset[int]:
+    """The items a warband's own template lists sell, with the ones that count as one of them (`COUNTS_AS_ITEMS`:
+    Gromril and Ithilmar Armour count as heavy armour, William 20 Nov 2026, so a list selling Heavy Armour admits
+    them in the store). No extra query: these are the items already read."""
+    wanted = {name for item in items if on_his_list(item, sells) for name in COUNTS_AS_ITEMS.get(item.name, ())}
+    if not wanted:
+        return sells
+    return sells | frozenset(item.pk for item in items if item.name in wanted)
 
 
 def _hirelings(kind: Any, campaign_id: int, buyer: Buyer) -> list[dict[str, Any]]:
@@ -84,8 +96,8 @@ def who_can(warband: Warband) -> dict[str, Any]:
     from apps.warband_templates.services.resolve import list_item_ids  # it reads the warbands app
 
     campaign_id = warband.campaign_id
-    buyer = replace(buyer_of(warband), sells=list_item_ids(warband))
     items = current_items(campaign_id)
+    buyer = replace(buyer_of(warband), sells=counts_as_sold(items, list_item_ids(warband)))
     group_ids, special_ids = _skill_groups(campaign_id, buyer)
     return {
         "items": item_offers(campaign_id, buyer, items),

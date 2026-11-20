@@ -81,10 +81,10 @@ def step(for_everyone: bool, lines: Iterable[Any], buyer: Buyer) -> int | None:
     return 3 if for_everyone else None
 
 
-def on_his_list(item: Any, buyer: Buyer) -> bool:
-    """Whether the buyer's own template list sells the item: its id, or the book id a campaign's version of it stands
+def on_his_list(item: Any, sells: frozenset[int]) -> bool:
+    """Whether a warband's own template list sells the item: its id, or the book id a campaign's version of it stands
     in for (a book template's lines name the book item)."""
-    return item.pk in buyer.sells or getattr(item, "replaces_id", None) in buyer.sells
+    return item.pk in sells or getattr(item, "replaces_id", None) in sells
 
 
 def _rank(row: Any, index: int, at: int) -> SortKey:
@@ -147,7 +147,7 @@ def offer(item: Any, buyer: Buyer, in_play: bool, setting: str) -> Offer | None:
         for index, row in enumerate(rows)
         if (at := step(row.for_everyone, row.warband_links.all(), buyer)) is not None
     )
-    if not usable and on_his_list(item, buyer):
+    if not usable and on_his_list(item, buyer.sells):
         usable = sorted((_rank(row, index, 1), row) for index, row in enumerate(rows))
     reasons = [] if usable else [not_usually(buyer)]
     if not in_play:

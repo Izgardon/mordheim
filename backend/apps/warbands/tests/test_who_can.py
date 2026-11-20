@@ -390,6 +390,28 @@ class HisListTests(WhoCanTestCase):
         # an item no list of its own sells is unchanged
         self.assertEqual(offers[halberd.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
 
+    def test_a_list_selling_heavy_armour_admits_gromril_and_ithilmar_armour(self) -> None:
+        # William, 20 Nov 2026: "gromril and ithilmar count as heavy armour so if a unit in a template can get
+        # heavy armour they should also be able to get that". The store only: no list line is added.
+        heavy = self.item("Heavy Armour", {"types": [self.reiklanders], "cost": 50}, type="Armour")
+        gromril = self.item("Gromril Armour", {"types": [self.reiklanders], "cost": 150}, type="Armour")
+        ithilmar = self.item("Ithilmar Armour", {"types": [self.reiklanders], "cost": 90}, type="Armour")
+        light = self.item("Light Armour", {"types": [self.reiklanders], "cost": 20}, type="Armour")
+        self.template((heavy, ""))
+
+        offers = self.offers()
+
+        self.assertTrue(offers[gromril.id]["can_buy"])
+        self.assertTrue(offers[ithilmar.id]["can_buy"])
+        self.assertFalse(offers[light.id]["can_buy"])  # nothing else rides on the line
+
+    def test_an_armour_no_list_sells_and_nothing_counts_as_is_unchanged(self) -> None:
+        gromril = self.item("Gromril Mail", {"types": [self.reiklanders], "cost": 150}, type="Armour")
+        sword = self.item("Falchion", {"types": [self.reiklanders]})
+        self.template((sword, ""))
+
+        self.assertFalse(self.offers()[gromril.id]["can_buy"])
+
     def test_every_row_of_a_sold_item_is_an_option_the_unlabelled_cheapest_first(self) -> None:
         pistol = self.item(
             "Duelling Pistol",

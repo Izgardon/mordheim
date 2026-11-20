@@ -234,6 +234,12 @@ def material_for(item_name: str, shown_as: str = "") -> str:
     return SHOWN_AS_MATERIALS.get(shown_as) or ITEM_NAME_MATERIALS.get(item_name, "")
 
 
+# Gromril Armour and Ithilmar Armour count as heavy armour (William, 20 Nov 2026: "gromril and ithilmar count as
+# heavy armour so if a unit in a template can get heavy armour they should also be able to get that"), so a warband
+# whose own template list sells Heavy Armour may buy them in the store too (`who_can.py` step 4). The store only:
+# no list line is added, and no hire kit offers them.
+COUNTS_AS_ITEMS: dict[str, tuple[str, ...]] = {"Heavy Armour": ("Gromril Armour", "Ithilmar Armour")}
+
 # A weapon swung, not shot: the only thing a material is made into ("which type of hand-to-hand weapon is offered
 # to you"). The store's chips read the same subtypes (`features/items/store/store-items.ts`).
 MISSILE_SUBTYPES = frozenset({"ranged", "missile", "blackpowder", "thrown"})
