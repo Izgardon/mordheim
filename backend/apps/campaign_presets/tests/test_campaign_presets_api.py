@@ -188,10 +188,12 @@ class CampaignPresetTests(CampaignTestCase):
         self.assertEqual((settings.enable_locations, settings.max_heroes), (True, 6))
         self.assertIn(self.setting.pk, response.data["setting_ids"])
 
-    def test_changing_the_preset_offers_its_rules_rather_than_copying_them(self) -> None:
+    def test_changing_the_preset_copies_its_rules_there_and_then(self) -> None:
+        """William, 20 Nov 2026: "When changing campaign it should swap the rules then and there". They used to be
+        offered under the card and copied only when a button was pressed."""
         self.patch_as(self.owner, self.url(), {"preset_id": self.marienburg.pk})
-        self.assertEqual(self.rules_of(self.campaign.pk), [])
-        self.assertEqual(self.preset_payload(self.campaign.pk)["rules"], [title for title, _text in RULES])
+
+        self.assertEqual(self.rules_of(self.campaign.pk), [title for title, _text in RULES])
 
     def test_changing_the_preset_never_unticks_the_settings_the_campaign_already_had(self) -> None:
         before = set(self.get_as(self.owner, self.url()).data["setting_ids"])
@@ -219,12 +221,9 @@ class CampaignPresetTests(CampaignTestCase):
 
     def test_the_payload_names_the_preset_what_it_sets_and_nothing_departed_from(self) -> None:
         campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
-        # the reader's access, the preset, its settings, its rules and their own tables with those tables'
-        # results, its charts with their results, then the titles the campaign already holds of each, and the
-        # eight that say whether the button is a swap: every published campaign's rules and charts as
-        # fingerprints, and the campaign's own to match against them (services/swap.py). A fixed count, whatever
-        # the preset or the campaign holds -- it grows with neither.
-        with self.assertNumQueries(17):
+        # the reader's access, the preset, its settings, and the counts it shows: a fixed count, whatever the
+        # preset or the campaign holds. The swap rides the campaign PATCH, so nothing here reads what it would do.
+        with self.assertNumQueries(7):
             data = self.preset_payload(campaign_id)
         self.assertEqual((data["preset_id"], data["preset_name"]), (self.marienburg.pk, MARIENBURG))
         self.assertEqual((data["departures"], data["rule_count"]), ([], 2))
@@ -232,7 +231,7 @@ class CampaignPresetTests(CampaignTestCase):
         # and it stays fixed as the campaign grows
         for place in range(6):
             self.post_as(self.owner, f"/api/campaigns/{campaign_id}/campaign-rules/", {"title": f"Ours {place}"})
-        with self.assertNumQueries(17):
+        with self.assertNumQueries(7):
             self.preset_payload(campaign_id)
 
     def test_departing_from_a_dictated_setting_warns_and_is_allowed(self) -> None:
@@ -247,40 +246,37 @@ class CampaignPresetTests(CampaignTestCase):
 
     def test_a_campaign_with_no_preset_departs_from_nothing(self) -> None:
         data = self.preset_payload(self.campaign.pk)
-        self.assertEqual((data["preset_id"], data["sets"], data["departures"], data["rules"]), (None, [], [], []))
+        self.assertEqual((data["preset_id"], data["sets"], data["departures"]), (None, [], []))
 
     def test_every_member_reads_the_preset_and_an_outsider_does_not(self) -> None:
         self.assertEqual(self.preset_payload(self.campaign.pk, self.player)["preset_id"], None)
         self.assertEqual(self.get_as(self.outsider, self.url("preset/")).status_code, 404)
 
-    # its rules
+    # its rules, which the change itself brings in (William, 20 Nov 2026)
 
-    def test_adding_the_presets_rules_copies_the_ones_the_campaign_lacks_and_never_twice(self) -> None:
-        self.patch_as(self.owner, self.url(), {"preset_id": self.marienburg.pk})
+    def test_changing_the_preset_copies_its_rules_and_keeps_the_campaigns_own(self) -> None:
         CampaignRule.objects.create(campaign=self.campaign, title="Cargo", body="Ours.", order=0)
-        response = self.post_as(self.owner, self.url("preset/rules/"))
-        self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual([row["title"] for row in response.data["rules"]], ["Cargo", "Campaign points"])
-        self.assertEqual(CampaignRule.objects.filter(campaign=self.campaign, title="Cargo").count(), 1)
-        again = self.post_as(self.owner, self.url("preset/rules/"))
-        self.assertEqual([row["title"] for row in again.data["rules"]], ["Cargo", "Campaign points"])
 
-    def test_adding_the_rules_of_no_preset_does_nothing(self) -> None:
-        response = self.post_as(self.owner, self.url("preset/rules/"))
-        self.assertEqual((response.status_code, response.data), (200, {"out": 0, "in": 0, "rules": [], "charts": []}))
-
-    def test_only_the_owner_and_admins_add_the_presets_rules(self) -> None:
         self.patch_as(self.owner, self.url(), {"preset_id": self.marienburg.pk})
-        self.assertEqual(self.post_as(self.player, self.url("preset/rules/")).status_code, 403)
-        self.assertEqual(self.post_as(self.admin, self.url("preset/rules/")).status_code, 200)
 
-    def test_an_archived_campaign_takes_neither_a_preset_change_nor_its_rules(self) -> None:
+        held = list(
+            CampaignRule.objects.filter(campaign=self.campaign).order_by("order", "id").values_list("title", flat=True)
+        )
+        self.assertEqual(held, ["Cargo", "Campaign points"])  # its own Cargo kept, by title
+        self.assertEqual(CampaignRule.objects.filter(campaign=self.campaign, title="Cargo").count(), 1)
+
+    def test_there_is_no_route_to_ask_for_a_presets_rules(self) -> None:
+        self.patch_as(self.owner, self.url(), {"preset_id": self.marienburg.pk})
+
+        self.assertEqual(self.post_as(self.owner, self.url("preset/rules/")).status_code, 404)
+
+    def test_an_archived_campaign_takes_no_preset_change(self) -> None:
         self.patch_as(self.owner, self.url(), {"preset_id": self.marienburg.pk})
         self.post_as(self.owner, self.url("archive/"))
+
         refused = self.patch_as(self.owner, self.url(), {"preset_id": self.mordheim.pk})
+
         self.assertEqual((refused.status_code, refused.data["code"]), (403, "campaign_archived"))
-        rules = self.post_as(self.owner, self.url("preset/rules/"))
-        self.assertEqual((rules.status_code, rules.data["code"]), (403, "campaign_archived"))
         self.assertEqual(self.get_as(self.owner, self.url("preset/")).status_code, 200)
 
 
@@ -324,11 +320,10 @@ class PresetSwapTests(CampaignTestCase):
         rows = CampaignChart.objects.filter(campaign_id=campaign_id, rule__isnull=True, row__isnull=True)
         return [chart.title for chart in rows.order_by("order", "id")]
 
-    def swap(self, campaign_id: int) -> dict[str, Any]:
-        response = self.post_as(self.owner, f"/api/campaigns/{campaign_id}/preset/rules/", {})
-        self.assertEqual(response.status_code, 200, response.data)
-        payload: dict[str, Any] = response.data
-        return payload
+    def change_to(self, campaign_id: int, preset: CampaignPreset) -> None:
+        """Changing the published campaign is the whole swap: one PATCH, nothing to press after it."""
+        patched = self.patch_as(self.owner, f"/api/campaigns/{campaign_id}/", {"preset_id": preset.pk})
+        self.assertEqual(patched.status_code, 200, patched.data)
 
     def preset_payload(self, campaign_id: int) -> dict[str, Any]:
         response = self.get_as(self.owner, f"/api/campaigns/{campaign_id}/preset/")
@@ -338,76 +333,76 @@ class PresetSwapTests(CampaignTestCase):
 
     def on_khemri(self) -> int:
         campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
-        patched = self.patch_as(self.owner, f"/api/campaigns/{campaign_id}/", {"preset_id": self.khemri.pk})
-        self.assertEqual(patched.status_code, 200, patched.data)
+        self.change_to(int(campaign_id), self.khemri)
         return int(campaign_id)
 
     # the swap
 
     def test_the_swap_takes_the_old_campaigns_rules_and_charts_out(self) -> None:
-        campaign_id = self.on_khemri()
+        campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
         self.assertEqual(self.rules_of(campaign_id), [title for title, _text in RULES])
         self.assertEqual(self.charts_of(campaign_id), CHARTS)
 
-        self.swap(campaign_id)
+        self.change_to(campaign_id, self.khemri)
 
         self.assertEqual(self.rules_of(campaign_id), ["Dehydration"])
         self.assertEqual(self.charts_of(campaign_id), ["Tomb tile"])
 
-    def test_it_says_how_many_went_and_how_many_arrived(self) -> None:
-        swapped = self.swap(self.on_khemri())
+    def test_changing_back_swaps_back(self) -> None:
+        campaign_id = self.on_khemri()
 
-        # Marienburg's 2 rules and 2 charts out; Khemri's 1 rule and 1 chart in
-        self.assertEqual((swapped["out"], swapped["in"]), (4, 2))
+        self.change_to(campaign_id, self.marienburg)
+
+        self.assertEqual(self.rules_of(campaign_id), [title for title, _text in RULES])
+        self.assertEqual(self.charts_of(campaign_id), CHARTS)
+
+    def test_changing_to_no_preset_takes_the_old_campaigns_content_out(self) -> None:
+        campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
+
+        patched = self.patch_as(self.owner, f"/api/campaigns/{campaign_id}/", {"preset_id": None})
+
+        self.assertEqual(patched.status_code, 200, patched.data)
+        self.assertEqual((self.rules_of(campaign_id), self.charts_of(campaign_id)), ([], []))
 
     def test_a_rule_the_player_edited_is_his_and_stays(self) -> None:
-        campaign_id = self.on_khemri()
+        campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
         rule = CampaignRule.objects.filter(campaign_id=campaign_id, title="Cargo").get()
         patched = self.patch_as(
             self.owner, f"/api/campaigns/{campaign_id}/campaign-rules/{rule.pk}/", {"body": "Ours now."}
         )
         self.assertEqual(patched.status_code, 200, patched.data)
 
-        self.swap(campaign_id)
+        self.change_to(campaign_id, self.khemri)
 
         self.assertIn("Cargo", self.rules_of(campaign_id))
 
     def test_a_chart_the_player_edited_is_his_and_stays(self) -> None:
-        campaign_id = self.on_khemri()
+        campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
         chart = CampaignChart.objects.filter(campaign_id=campaign_id, title="Booty").get()
         patched = self.patch_as(
             self.owner, f"/api/campaigns/{campaign_id}/campaign-charts/{chart.pk}/", {"note": "We roll twice."}
         )
         self.assertEqual(patched.status_code, 200, patched.data)
 
-        self.swap(campaign_id)
+        self.change_to(campaign_id, self.khemri)
 
         self.assertIn("Booty", self.charts_of(campaign_id))
 
     def test_a_rule_the_player_wrote_stays(self) -> None:
-        campaign_id = self.on_khemri()
+        campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
         written = self.post_as(
             self.owner, f"/api/campaigns/{campaign_id}/campaign-rules/", {"title": "Ours", "body": "Mine."}
         )
         self.assertEqual(written.status_code, 201, written.data)
 
-        self.swap(campaign_id)
+        self.change_to(campaign_id, self.khemri)
 
         self.assertIn("Ours", self.rules_of(campaign_id))
 
-    def test_the_payload_says_the_button_is_a_swap(self) -> None:
-        self.assertEqual(self.preset_payload(self.on_khemri())["swap_out"], 4)
-
-    def test_with_nothing_of_another_campaigns_it_is_not_a_swap(self) -> None:
-        campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
-
-        self.assertEqual(self.preset_payload(campaign_id)["swap_out"], 0)
-
-    def test_swapping_again_changes_nothing(self) -> None:
+    def test_changing_to_the_same_preset_again_changes_nothing(self) -> None:
         campaign_id = self.on_khemri()
-        self.swap(campaign_id)
 
-        again = self.swap(campaign_id)
+        self.change_to(campaign_id, self.khemri)
 
-        self.assertEqual((again["out"], again["in"]), (0, 0))
         self.assertEqual(self.rules_of(campaign_id), ["Dehydration"])
+        self.assertEqual(self.charts_of(campaign_id), ["Tomb tile"])

@@ -11,9 +11,6 @@ from apps.campaigns.models import Campaign
 
 from .models import DICTATED, CampaignPreset
 from .selectors import chart_names, preset_of
-from .services.charts import missing_charts
-from .services.rules import missing_rules
-from .services.swap import swap_counts
 from .wording import departure, sets
 
 
@@ -54,7 +51,6 @@ def campaign_preset_payload(campaign: Campaign) -> dict[str, Any]:
             "rule_count": 0,
             "charts": [],
             "chart_count": 0,
-            "swap_out": 0,
         }
     charts = chart_names([preset])
     return {
@@ -62,13 +58,7 @@ def campaign_preset_payload(campaign: Campaign) -> dict[str, Any]:
         "preset_name": preset.name,
         "sets": sets(preset, charts),
         "departures": departures(campaign, preset, charts),
-        # the rules it would add: the ones the campaign holds none of by title (it is offered them, never given them)
-        "rules": [rule.title for rule in missing_rules(campaign.pk, preset)],
+        # how many rules and charts it holds: what the dialog says a change would bring in
         "rule_count": len(preset.rules.all()),
-        # the charts it would add, by the same rule: the ones the campaign holds none of by title
-        "charts": [chart.title for chart in missing_charts(campaign.pk, preset)],
         "chart_count": sum(1 for chart in preset.charts.all() if chart.rule_id is None and chart.row_id is None),
-        # how many of another published campaign's rules and charts the button would take out: above 0 it is a
-        # swap rather than an addition, and the page names it so (William, 20 Nov 2026)
-        "swap_out": swap_counts(campaign, preset)["out"],
     }

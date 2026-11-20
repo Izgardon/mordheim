@@ -1,6 +1,7 @@
 /**
  * Settings → Campaign preset: which published campaign this one plays. Changing it says what it
- * will set before it saves, and its rules are offered, never copied behind the owner's back.
+ * will set, and what it will swap, before it saves -- and the change itself does the swap, so
+ * there is no button underneath to press afterwards (William, 20 Nov 2026).
  */
 import { screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -46,6 +47,7 @@ const PRESETS = [
     setting_names: [],
     sets: [],
     rule_count: 0,
+    chart_count: 0,
   },
   {
     id: 2,
@@ -56,6 +58,7 @@ const PRESETS = [
     setting_names: ["Mutiny in Marienburg"],
     sets: SETS,
     rule_count: 18,
+    chart_count: 4,
   },
 ];
 
@@ -64,8 +67,8 @@ const state = (overrides: object = {}) => ({
   preset_name: "",
   sets: [],
   departures: [],
-  rules: [],
   rule_count: 0,
+  chart_count: 0,
   ...overrides,
 });
 
@@ -87,33 +90,32 @@ describe("the campaign preset", () => {
 
     expect(await screen.findByText("Play Mutiny in Marienburg?")).toBeInTheDocument();
     expect(screen.getByText("It sets Locations on · Most heroes 6.")).toBeInTheDocument();
-    expect(screen.getByText(/Its 18 rules are offered below, not copied/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Its 18 rules and 4 charts are copied in, and the ones the campaign still holds/
+      )
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Anything you wrote or edited stays/)).toBeInTheDocument();
     expect(fakeApi.bodyOf(PATCH)).toBeUndefined();
 
     await user.click(screen.getByRole("button", { name: "Change the campaign" }));
     await waitFor(() => expect(fakeApi.bodyOf(PATCH)).toEqual({ preset_id: 2 }));
   });
 
-  it("offers the rules the campaign lacks and adds them when asked", async () => {
-    const user = setupUser();
+  it("has no button to add or swap the rules: the change did it", async () => {
     fakeApi.on(
       `GET /campaigns/${campaign.id}/preset/`,
       state({
         preset_id: 2,
         preset_name: "Mutiny in Marienburg",
         sets: SETS,
-        rules: ["Campaign points", "Cargo"],
         rule_count: 18,
+        chart_count: 4,
       })
     );
-    fakeApi.on(`POST /campaigns/${campaign.id}/preset/rules/`, []);
     renderWithQueryClient(<CampaignPresetCard campaign={{ ...campaign, preset_id: 2 }} />);
 
     expect(await screen.findByText("Locations on · Most heroes 6")).toBeInTheDocument();
-    await user.click(await screen.findByRole("button", { name: "Add its 2 rules" }));
-
-    await waitFor(() =>
-      expect(fakeApi.countOf(`POST /campaigns/${campaign.id}/preset/rules/`)).toBe(1)
-    );
+    expect(screen.queryByRole("button", { name: /Swap rules|Add its/ })).not.toBeInTheDocument();
   });
 });

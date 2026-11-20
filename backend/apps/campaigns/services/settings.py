@@ -5,6 +5,7 @@ from typing import Any
 from django.db import transaction
 
 from apps.campaign_presets.services import apply as presets_apply
+from apps.campaign_presets.services.swap import swap_rules
 from apps.core.catalogue.cache import bump
 from apps.plots.writes import give_default_plots
 
@@ -55,7 +56,8 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
     picked = validated.get("setting_ids")
     picked_ids = None if picked is None else [row.pk for row in picked]
     # the published campaign it plays: what it dictates is applied, then what this request sends, which wins; the
-    # settings it guides towards are ticked on top of the campaign's own, and its rules are offered, never copied
+    # settings it guides towards are ticked on top of the campaign's own, and its rules and charts are swapped in
+    # there and then (William, 20 Nov 2026: "When changing campaign it should swap the rules then and there")
     preset = validated.get("preset_id") if "preset_id" in validated else None
     if preset is not None:
         settings_updates = {**presets_apply.settings_values(preset), **settings_updates}
@@ -64,6 +66,9 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
         if "preset_id" in validated:
             campaign.preset = preset
             campaign.save(update_fields=["preset"])
+            # out go the rules and charts still another published campaign's word for word, in come this one's;
+            # what the player wrote or edited is his and stays (campaign_presets/services/swap.py)
+            swap_rules(campaign, preset)
         if "in_progress" in validated:
             campaign.in_progress = validated["in_progress"]
             campaign.save(update_fields=["in_progress"])

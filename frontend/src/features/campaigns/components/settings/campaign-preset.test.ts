@@ -27,6 +27,7 @@ const preset = (changes: Partial<CampaignPreset> = {}): CampaignPreset => ({
     },
   ],
   rule_count: 18,
+  chart_count: 0,
   ...changes,
 });
 

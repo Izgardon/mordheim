@@ -10,12 +10,13 @@ from .wording import sets
 
 class CampaignPresetSerializer(serializers.ModelSerializer):
     """One preset on the dropdown: its name, the settings it guides the content choice towards, what it dictates
-    (`sets`, worded by the server) and how many rules it would offer."""
+    (`sets`, worded by the server) and how many rules and charts a change would copy in."""
 
     setting_ids = serializers.SerializerMethodField()
     setting_names = serializers.SerializerMethodField()
     sets = serializers.SerializerMethodField()
     rule_count = serializers.IntegerField(read_only=True, default=0)
+    chart_count = serializers.IntegerField(read_only=True, default=0)
 
     def get_setting_ids(self, preset: CampaignPreset) -> list[int]:
         return sorted(setting.pk for setting in preset.settings.all())
@@ -28,4 +29,14 @@ class CampaignPresetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CampaignPreset
-        fields = ("id", "slug", "name", "sort_order", "setting_ids", "setting_names", "sets", "rule_count")
+        fields = (
+            "id",
+            "slug",
+            "name",
+            "sort_order",
+            "setting_ids",
+            "setting_names",
+            "sets",
+            "rule_count",
+            "chart_count",
+        )

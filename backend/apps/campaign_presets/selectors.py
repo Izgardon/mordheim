@@ -1,6 +1,6 @@
 """Reading the presets in a fixed number of queries, whatever they hold."""
 
-from django.db.models import Count, QuerySet
+from django.db.models import Count, Q, QuerySet
 
 from apps.campaigns.models import Campaign
 
@@ -8,11 +8,17 @@ from .models import CampaignPreset
 
 
 def preset_rows() -> QuerySet[CampaignPreset]:
-    """Every preset with its chart, the settings it guides towards and how many rules it holds: two queries."""
+    """Every preset with its chart, the settings it guides towards, and how many rules and standalone charts it
+    holds: two queries. The counts are what the dialog says a change would copy in, so a table belonging to a rule
+    or to one result is not counted -- it rides with its owner."""
+    standalone = Q(charts__rule__isnull=True) & Q(charts__row__isnull=True)
     return (
         CampaignPreset.objects.select_related("exploration_chart")
         .prefetch_related("settings")
-        .annotate(rule_count=Count("rules"))
+        .annotate(
+            rule_count=Count("rules", distinct=True),
+            chart_count=Count("charts", filter=standalone, distinct=True),
+        )
         .order_by("sort_order", "name")  # a count annotation drops Meta.ordering
     )
 

@@ -1,19 +1,25 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { campaignCapabilities } from "@/features/campaigns/capabilities";
-import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 
-import { useAddPresetRules, useCampaignPreset, useCampaignPresets } from "../../api/preset-queries";
+import { useCampaignPreset, useCampaignPresets } from "../../api/preset-queries";
 import type { CampaignPreset, CampaignSummary } from "../../types/campaign-types";
 import { useCampaignSave } from "./CampaignSection";
 import { setsLine } from "./campaign-preset";
-import { FormError, SettingRow, SettingsCard } from "./settings-ui";
+import { SettingRow, SettingsCard } from "./settings-ui";
 
-/** What changing to this preset would set, for the confirm dialog. */
+/** "55 rules and 14 charts", leaving out whichever the preset has none of. */
+function countWords(rules: number, charts: number) {
+  const parts = [
+    rules ? `${rules} ${rules === 1 ? "rule" : "rules"}` : "",
+    charts ? `${charts} ${charts === 1 ? "chart" : "charts"}` : "",
+  ].filter(Boolean);
+  return parts.join(" and ");
+}
+
+/** What changing to this preset would set, and what it would swap, for the confirm dialog. */
 function ChangeSummary({ preset }: { preset: CampaignPreset }) {
   const line = setsLine(preset.sets);
   return (
@@ -27,9 +33,9 @@ function ChangeSummary({ preset }: { preset: CampaignPreset }) {
           {`It ticks ${preset.setting_names.join(", ")} in the content in play; nothing is unticked.`}
         </p>
       ) : null}
-      {preset.rule_count ? (
+      {preset.rule_count || preset.chart_count ? (
         <p className="m-0 text-sm text-text2">
-          {`Its ${preset.rule_count} rules are offered below, not copied.`}
+          {`Its ${countWords(preset.rule_count, preset.chart_count)} are copied in, and the ones the campaign still holds unchanged from another published campaign are taken out. Anything you wrote or edited stays.`}
         </p>
       ) : null}
     </div>
@@ -38,25 +44,19 @@ function ChangeSummary({ preset }: { preset: CampaignPreset }) {
 
 /**
  * Settings → Campaign → Campaign (the owner): which published campaign this one plays. Changing
- * it re-applies what that campaign dictates and ticks the settings it guides towards, and offers
- * its rules rather than copying them. Every control it sets stays operable, greyed, and warns
- * when the owner departs from it (`PresetNote`).
+ * it re-applies what that campaign dictates, ticks the settings it guides towards, and swaps its
+ * rules and charts in there and then (William, 20 Nov 2026): the dialog says so before it happens,
+ * because taking rules out is lossy. Every control it sets stays operable, greyed, and warns when
+ * the owner departs from it (`PresetNote`).
  */
 export default function CampaignPresetCard({ campaign }: { campaign: CampaignSummary }) {
   const presets = useCampaignPresets();
   const state = useCampaignPreset(campaign.id);
-  const addRules = useAddPresetRules(campaign.id);
   const queryClient = useQueryClient();
   const { saving, error, save } = useCampaignSave(campaign.id, "Couldn't save that.");
   const [changing, setChanging] = useState<CampaignPreset | null>(null);
   const rows = presets.data ?? [];
   const current = campaign.preset_id ?? null;
-  const offered = state.data?.rules ?? [];
-  const offeredCharts = state.data?.charts ?? [];
-  // what the button would take out: another published campaign's rules and charts, still word for word its own
-  const swapOut = state.data?.swap_out ?? 0;
-  const coming = offered.length + offeredCharts.length;
-  const canAddRules = campaignCapabilities(campaign).manage_campaign_rules;
 
   const pick = (value: string) => {
     const preset = rows.find((row) => row.id === Number(value));
@@ -104,25 +104,9 @@ export default function CampaignPresetCard({ campaign }: { campaign: CampaignSum
         <SettingRow
           label="It sets"
           hint={setsLine(state.data.sets) || "Nothing: every setting below is yours."}
-        >
-          {(coming || swapOut) && canAddRules ? (
-            <Button
-              variant="secondary"
-              disabled={addRules.isPending}
-              onClick={() => addRules.mutate()}
-            >
-              {addRules.isPending
-                ? "Working…"
-                : swapOut
-                  ? "Swap rules"
-                  : `Add its ${coming} ${coming === 1 ? "rule" : "rules"}`}
-            </Button>
-          ) : null}
-        </SettingRow>
+        />
       ) : null}
-      <FormError
-        message={addRules.error ? getErrorMessage(addRules.error, "Couldn't add its rules.") : ""}
-      />
+
       <ConfirmDialog
         open={Boolean(changing)}
         onOpenChange={(open) => (open ? null : setChanging(null))}

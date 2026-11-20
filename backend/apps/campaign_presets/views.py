@@ -1,27 +1,24 @@
-"""The presets' routes: the dropdown's list, and one campaign's preset with its rules offer.
+"""The presets' routes: the dropdown's list, and one campaign's preset.
 
 `GET campaign-presets/` is book data, as `GET settings/` is: a login is all it takes. `GET campaigns/<id>/preset/`
-is what the campaign's Settings page shows (what the preset dictates, where the campaign departs from it and which
-of its rules it lacks), and `POST campaigns/<id>/preset/rules/` adds the rules it lacks — never silently, and never
-twice. Changing which preset a campaign plays is the campaign PATCH's `preset_id` (`edit_settings`, the owner).
+is what the campaign's Settings page shows: what the preset dictates, and where the campaign departs from it.
+
+Changing which preset a campaign plays is the campaign PATCH's `preset_id` (`edit_settings`, the owner), and the
+swap rides that one request (William, 20 Nov 2026: "When changing campaign it should swap the rules then and
+there"). There is no route to ask for a preset's rules separately: the dialog that confirms the change says what
+it will take out, and the change does it.
 """
 
-from django.db import transaction
 from rest_framework import permissions
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.serializers.charts import CampaignChartSerializer
-from apps.campaigns.serializers.content import CampaignRuleSerializer
-from apps.campaigns.services.campaign_charts import campaign_charts
-from apps.campaigns.services.campaign_rules import campaign_rules
 from apps.campaigns.views.base import CampaignScopedView
 
 from .payload import campaign_preset_payload
-from .selectors import chart_names, preset_of, preset_rows
+from .selectors import chart_names, preset_rows
 from .serializers import CampaignPresetSerializer
-from .services.swap import swap_rules
 
 
 class CampaignPresetListView(APIView):
@@ -44,26 +41,3 @@ class CampaignPresetView(CampaignScopedView):
 
     def get(self, request: Request, campaign_id: int) -> Response:
         return Response(campaign_preset_payload(self.access.campaign))
-
-
-class CampaignPresetRulesView(CampaignScopedView):
-    """POST campaigns/<id>/preset/rules/: **swap** the campaign's preset content. It takes out the rules and
-    charts that are still another published campaign's word for word, then adds this one's that the campaign holds
-    none of by title, in the preset's order (its owner and admins, as the campaign's own rules are theirs).
-
-    Anything the player wrote or edited stays (services/swap.py). Answers the campaign's rules and charts as they
-    now stand, with `out` and `in`: how many went and how many arrived."""
-
-    rules = {"POST": "manage_campaign_rules"}
-
-    def post(self, request: Request, campaign_id: int) -> Response:
-        campaign = self.access.campaign
-        with transaction.atomic():
-            moved = swap_rules(campaign, preset_of(campaign))
-        return Response(
-            {
-                **moved,
-                "rules": CampaignRuleSerializer(campaign_rules(campaign_id), many=True).data,
-                "charts": CampaignChartSerializer(campaign_charts(campaign_id), many=True).data,
-            }
-        )
