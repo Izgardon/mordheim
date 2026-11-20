@@ -118,8 +118,13 @@
    "umbrella": "Battle locations"
   },
   {
+   "title": "Weather",
+   "text": "At the start of a battle roll 2D6 on the weather table for the season the campaign is in: Spring, Summer, Autumn or Winter weather. Each result has its own rules.",
+   "umbrella": "Weather"
+  },
+  {
    "title": "Seasons",
-   "text": "The campaign runs over a year, each ten Campaign Points standing for three months. It starts in spring, and the season changes as soon as one player reaches 11 Campaign Points, then 21, then 31. Past 40 the track resets to spring. The season sets which weather table is rolled on.\n\nSpring, 0 to 10 CP, Hexenstag to Pflugzeit. New life, produce and animals are plentiful: whenever healing herbs or any other herb are found or bought, D3 more are available.\n\nSummer, 11 to 20 CP, Sigmarzeit to Vorgeheim. The main trading season, with ships from all over the world in dock: rarity rolls are at +1.\n\nAutumn, 21 to 30 CP, Nachgeheim to Brauzeit. The beer is brewed: whenever alcohol of any kind is found or bought, D3 more are available.\n\nWinter, 31 to 40 CP, Kaldezeit to Vorhexen. The water is not frozen but bitterly cold: all tests made in water are at +1 and all combat in water is a further -1 to hit. Cold-blooded creatures ignore the cold-blooded rule while in water.",
+   "text": "The campaign runs over a year, each ten Campaign Points standing for three months. It starts in spring, and the season changes as soon as one player reaches 11 Campaign Points, then 21, then 31. Past 40 the track resets to spring.\n\nSpring, 0 to 10 CP, Hexenstag to Pflugzeit. New life, produce and animals are plentiful: whenever healing herbs or any other herb are found or bought, D3 more are available.\n\nSummer, 11 to 20 CP, Sigmarzeit to Vorgeheim. The main trading season, with ships from all over the world in dock: rarity rolls are at +1.\n\nAutumn, 21 to 30 CP, Nachgeheim to Brauzeit. The beer is brewed: whenever alcohol of any kind is found or bought, D3 more are available.\n\nWinter, 31 to 40 CP, Kaldezeit to Vorhexen. The water is not frozen but bitterly cold: all tests made in water are at +1 and all combat in water is a further -1 to hit. Cold-blooded creatures ignore the cold-blooded rule while in water.",
    "umbrella": "Weather"
   },
   {

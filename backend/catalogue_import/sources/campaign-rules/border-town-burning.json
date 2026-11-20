@@ -63,6 +63,11 @@
    "umbrella": "Territories"
   },
   {
+   "title": "Weather",
+   "text": "Roll 2D6 on the Weather chart once before the battle; the result lasts the whole battle. A scenario set in the Northern Wastes reads result 8-9 as a hailstorm, one in the Cathayan borderlands as a tempest.",
+   "umbrella": "Weather"
+  },
+  {
    "title": "Bitter cold",
    "text": "The Northern Wastes lie under deep snow. Beastmen, Norse, Marauders of Chaos and monsters encountered at random in the Northern Wastes are immune to all of the following except the ice field.\n\nDeep snow: a model without Winter Furs treats snow-covered ground as difficult terrain.\n\nWintery chill: a model without Winter Furs suffers -1 Leadership and -1 Initiative, and Initiative never falls below 1. An Undead warband is immune unless the member is not himself Undead, so necromancers, ghouls and dregs still suffer.\n\nIce field: lakes and rivers are frozen and can be crossed as difficult ground. A model that runs across frozen water must pass an Initiative test or slip and be knocked down; ignore this during heavy snowfall. Each model standing on frozen water at the beginning of its turn tests whether the ice holds: on a 1 on a D6, or a 1 or 2 for a large model, the ice breaks and it falls in. Add 1 to that roll for every model within 2 inches on the ice, or 2 for a large model.\n\nAt the beginning of its turn a model in the water must pass a Strength test to get out. Failing, it suffers -1 Strength for the rest of the game, and goes out of action if its Strength reaches 0. A model within 1 inch may help drag it out by passing a Strength test. Undead do not feel the cold and lose no Strength. A model that fell through the ice and got out again counts as soaked with water, so a Rain Coat gives it no benefit.",
    "umbrella": "Weather"
