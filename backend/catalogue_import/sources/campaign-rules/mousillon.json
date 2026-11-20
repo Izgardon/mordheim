@@ -35,7 +35,7 @@
    "dice": "D66",
    "umbrella": "",
    "description": "The dank muck of Mousillon hides many dangers. Roll a D6 at the start of each player's turn: on a 1 there is an encounter, rolled for here. The player whose turn it is places whatever models it brings and they act in each of his turns, though he does not control them -- each result says how they behave. He is the encountering player.",
-   "note": "The book numbers two results 35, Basement and Inundated by blood; both are printed, neither is a misprint of another number.",
+   "note": "The book numbers two results 35, Basement and Inundated by blood: roll a 35 and pick one.",
    "rows": [
     {
      "result": "11",
