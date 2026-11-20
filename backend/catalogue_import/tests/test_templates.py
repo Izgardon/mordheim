@@ -296,6 +296,7 @@ class PartsTests(SimpleTestCase):
                     "max_per_fighter": None,
                     "later_double": False,
                     "at_recruit": False,
+                    "from_skill": "",  # a page's own upgrade is bought when he is recruited
                 }
             ],
         )
