@@ -16,6 +16,8 @@ type MaterialRowProps = {
   material: WeaponMaterial;
   /** What the row reads as: "Gromril Weapon", or the name his list gives it. */
   name: string;
+  /** How it prices, in the server's words: "4 x Price", or his list's "3 × price". */
+  priceNote: string;
   /** Every melee weapon the store offers, priced through the material. */
   weapons: MaterialWeapon[];
   open: boolean;
@@ -65,7 +67,7 @@ export default function MaterialRow(props: MaterialRowProps) {
             <span className={cn("text-xs text-muted-foreground", dim && "opacity-60")}>
               {props.isMobile ? (
                 <>
-                  {material.price_note} ·{" "}
+                  {props.priceNote} ·{" "}
                   <span className="text-accent-text">{rarityLabel(material.rarity)}</span>
                 </>
               ) : (
@@ -79,7 +81,7 @@ export default function MaterialRow(props: MaterialRowProps) {
           {props.isMobile ? null : (
             <div className={cn("flex min-w-24 shrink-0 flex-col text-right", dim && "opacity-60")}>
               <span className="whitespace-nowrap font-mono text-sm font-bold text-head">
-                {material.price_note}
+                {props.priceNote}
               </span>
               <span className="text-xs text-accent-text">{rarityLabel(material.rarity)}</span>
             </div>
@@ -112,7 +114,12 @@ export default function MaterialRow(props: MaterialRowProps) {
         </div>
       ) : null}
       {props.open && !picked ? (
-        <MaterialWeapons material={material} weapons={props.weapons} onPick={setPicked} />
+        <MaterialWeapons
+          material={material}
+          priceNote={props.priceNote}
+          weapons={props.weapons}
+          onPick={setPicked}
+        />
       ) : null}
       {props.open && picked ? (
         <div className="flex flex-col gap-2">

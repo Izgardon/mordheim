@@ -44,6 +44,8 @@ export type HisMaterialLine = {
   slug: string;
   /** His list's own name for it ("Darksteel blade"), else "Gromril Weapon". */
   name: string;
+  /** How his list prices it, in its own words: "3 × price", "30 gc" (the server's). */
+  priceNote: string;
   /** The other melee weapons on that same list, at the line's price for each (the server's). */
   choices: { itemId: number; price: number | null }[];
 };
@@ -56,6 +58,7 @@ export function hisMaterials(his: HisList): HisMaterialLine[] {
     found.set(line.material.slug, {
       slug: line.material.slug,
       name: lineName(line),
+      priceNote: line.material.price_note,
       choices: line.material.choices.map((choice) => ({
         itemId: choice.item.id,
         price: choice.price,

@@ -67,12 +67,23 @@ class MaterialLineEndpointTests(CatalogueTestCase):
 
         self.assertIsNone(line["item"])
         self.assertEqual((line["material"]["slug"], line["material"]["name"]), ("gromril", "Gromril"))
-        self.assertEqual((line["material"]["rarity"], line["material"]["price_note"]), (11, "4 x Price"))
+        # its own rarity, and the line's own terms rather than the material's four times the price
+        self.assertEqual((line["material"]["rarity"], line["material"]["price_note"]), (11, "3 × price"))
         # the melee weapons of its list, at three times their list price; the crossbow is shot, not swung
         self.assertEqual(
             [(choice["item"]["name"], choice["price"]) for choice in line["material"]["choices"]],
             [("Axe", 15), ("Sword", 30)],
         )
+
+    def test_the_same_weapon_sold_twice_is_one_choice(self) -> None:
+        # the Dwarf list sells our Club, Mace or Hammer as a Mace and as a Hammer: a gromril one is one choice
+        TemplateListItem.objects.create(
+            equipment_list=self.made.kit, item=self.book_sword, cost=10, shown_as="Longsword"
+        )
+
+        line = self.material_line(self.read())
+
+        self.assertEqual([choice["item"]["name"] for choice in line["material"]["choices"]], ["Axe", "Sword"])
 
     def test_an_item_line_names_no_material(self) -> None:
         lines = self.read()["template"]["lists"][0]["lines"]

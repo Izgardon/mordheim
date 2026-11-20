@@ -63,8 +63,14 @@ def line_material(line: Any) -> Material | None:
 
 
 def weapon_lines(lines: Iterable[Any]) -> list[Any]:
-    """The melee weapon lines among a list's, which a material line on that list may be made into."""
-    return [line for line in lines if line.item_id and is_melee(line.item)]
+    """The melee weapons a list sells, which a material line on it may be made into: one line per item, the first
+    naming it (the Dwarf list sells our Club, Mace or Hammer twice, as a Mace and as a Hammer, and a gromril one of
+    it is one choice), named as the item itself is, which is what the copy bought will read."""
+    found: dict[int, Any] = {}
+    for line in lines:
+        if line.item_id and is_melee(line.item):
+            found.setdefault(line.item_id, line)
+    return list(found.values())
 
 
 def line_choices(line: Any, lines: Sequence[Any]) -> list[dict[str, Any]]:
@@ -88,9 +94,16 @@ def line_choices(line: Any, lines: Sequence[Any]) -> list[dict[str, Any]]:
     ]
 
 
+def price_note(line: Any, material: Material) -> str:
+    """How the line prices it, in its own words ("3 × price", "30 gc"), else the material's own shape."""
+    if line.cost is not None:
+        return f"{line.cost} gc"
+    return str(line.cost_note or "") or material.price_note
+
+
 def line_payload(line: Any, lines: Sequence[Any]) -> dict[str, Any] | None:
-    """A material line as the hire screens and the store read it: the material, how it prices, and the weapons on
-    its list with their prices. None for an ordinary item line."""
+    """A material line as the hire screens and the store read it: the material, how the line prices it, and the
+    weapons on its list with their prices. None for an ordinary item line."""
     material = line_material(line)
     if material is None:
         return None
@@ -98,6 +111,6 @@ def line_payload(line: Any, lines: Sequence[Any]) -> dict[str, Any] | None:
         "slug": material.slug,
         "name": material.name,
         "rarity": material.rarity,
-        "price_note": material.price_note,
+        "price_note": price_note(line, material),
         "choices": line_choices(line, lines),
     }

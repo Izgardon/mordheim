@@ -19,8 +19,16 @@ import type { StoreOffer } from "./StoreRow";
  */
 export type MaterialWeapon = { offer: StoreOffer; price: number | null };
 
-/** A material's row: the material as the server offers it, the name it reads as, and its weapons. */
-export type MaterialRowView = { material: WeaponMaterial; name: string; weapons: MaterialWeapon[] };
+/**
+ * A material's row: the material as the server offers it, the name it reads as, how it prices (its
+ * own shape, or his list's terms where his list sells it) and the weapons it may be made into.
+ */
+export type MaterialRowView = {
+  material: WeaponMaterial;
+  name: string;
+  priceNote: string;
+  weapons: MaterialWeapon[];
+};
 
 export type MaterialFilters = { query: string; category: StoreCategory; onlyMine: boolean };
 
@@ -53,7 +61,14 @@ export function materialRows(
     return materials.flatMap((material) => {
       const name = material.row_name;
       return shown(material, name, filters)
-        ? [{ material, name, weapons: meleeWeapons(material, offers) }]
+        ? [
+            {
+              material,
+              name,
+              priceNote: material.price_note,
+              weapons: meleeWeapons(material, offers),
+            },
+          ]
         : [];
     });
   }
@@ -65,7 +80,7 @@ export function materialRows(
       const offer = byId.get(itemId);
       return offer && allowed(material, itemId) ? [{ offer, price }] : [];
     });
-    return [{ material, name: line.name, weapons }];
+    return [{ material, name: line.name, priceNote: line.priceNote, weapons }];
   });
   const named = new Set(sold.map((row) => row.material.slug));
   const open = materials.flatMap((material) => {
@@ -73,7 +88,14 @@ export function materialRows(
     if (named.has(material.slug) || !material.for_everyone || !shown(material, name, filters)) {
       return [];
     }
-    return [{ material, name, weapons: meleeWeapons(material, his.melee) }];
+    return [
+      {
+        material,
+        name,
+        priceNote: material.price_note,
+        weapons: meleeWeapons(material, his.melee),
+      },
+    ];
   });
   return [...sold, ...open];
 }

@@ -23,11 +23,12 @@ export default function MaterialRows({ rows, ...props }: MaterialRowsProps) {
   const [open, setOpen] = useState<string | null>(null);
   return (
     <>
-      {rows.map(({ material, name, weapons }) => (
+      {rows.map(({ material, name, priceNote, weapons }) => (
         <MaterialRow
           key={material.slug}
           material={material}
           name={name}
+          priceNote={priceNote}
           weapons={weapons}
           open={open === material.slug}
           onOpen={(next) => setOpen(next ? material.slug : null)}

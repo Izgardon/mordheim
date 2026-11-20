@@ -9,6 +9,8 @@ import { itemName } from "./store-items";
 
 type MaterialWeaponsProps = {
   material: WeaponMaterial;
+  /** How the row prices it, shown where a weapon's own price isn't known yet. */
+  priceNote: string;
   /** Every melee weapon the store offers, priced through the material. */
   weapons: MaterialWeapon[];
   onPick: (weapon: MaterialWeapon) => void;
@@ -20,7 +22,12 @@ type MaterialWeaponsProps = {
  * hand-to-hand weapon is offered to you"), or only the weapons its own rule allows (the Dark Elf
  * Blade's swords and daggers), with that rule's sentence above them.
  */
-export default function MaterialWeapons({ material, weapons, onPick }: MaterialWeaponsProps) {
+export default function MaterialWeapons({
+  material,
+  priceNote,
+  weapons,
+  onPick,
+}: MaterialWeaponsProps) {
   const [query, setQuery] = useState("");
   const found = searchWeapons(weapons, query);
   return (
@@ -45,7 +52,7 @@ export default function MaterialWeapons({ material, weapons, onPick }: MaterialW
             <Chip key={weapon.offer.item.id} onClick={() => onPick(weapon)}>
               {itemName(weapon.offer.item)}
               <span className="font-mono text-xs font-normal text-muted-foreground">
-                {weapon.price == null ? material.price_note : `${weapon.price} gc`}
+                {weapon.price == null ? priceNote : `${weapon.price} gc`}
               </span>
             </Chip>
           ))}
