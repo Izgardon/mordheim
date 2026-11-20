@@ -1,0 +1,130 @@
+{
+ "rules": [
+  {
+   "title": "Treasure, not wyrdstone",
+   "umbrella": "",
+   "text": "In Karak Azgal the warbands search the ruined hold for treasure rather than wyrdstone. Wherever a rule or a scenario says wyrdstone, read treasure instead.\n\nExploration and income follow the rulebook, and doubles, triples and so on are looked up on the Karak Azgal exploration chart."
+  },
+  {
+   "title": "Warbands and hired swords",
+   "umbrella": "",
+   "text": "You may use the warbands written for Karak Azgal and every Mordheim warband except the Sisters of Sigmar and any Elves.\n\nA warband may hire any Hired Sword or Dramatis Persona written for Karak Azgal, and every Hired Sword from Mordheim except the Elf Ranger. The Dramatis Personae of Mordheim may not be hired: they would have died nearly 500 years ago."
+  },
+  {
+   "title": "Hermit's Lair",
+   "umbrella": "",
+   "text": "Serious injuries are rolled on the chart on page 119 of the Mordheim rulebook. There are no fighting pits in a Dwarf stronghold, so Sold to the Pits is read as Hermit's Lair.\n\nThe Hero has been found by a strange old creature living deep within the stronghold. Some say he is a human and others that he is an Orc; either way he demands single combat of his victims before they leave. Use the profile and equipment of the Pit Fighter hired sword, roll to decide who charges and fight the combat as normal.\n\nIf the Hero loses, roll to see whether he is dead or injured, 11 to 35 on a D66 killing him. If he is not dead he is thrown out of the lair without his weapons and armour and rejoins his warband. If he beats the hermit he gains +2 Experience and may take 50 gc worth of loot from the lair, and rejoins his warband with all of his armour and equipment."
+  },
+  {
+   "title": "Dwarf drunks",
+   "umbrella": "",
+   "text": "An optional rule.\n\nA warband may include up to two Drunk warriors. Each replaces one of its normal Hero choices and is the same type of Hero as the one he replaces, and they may never outnumber the sober Heroes. Slayers cannot be Drunk: their heads are strong, and years of practice and excessive drinking whenever possible have left them almost proof against the effects of drink.\n\nA Drunk Hero costs the same as his sober counterpart, because his drunkenness is more a disadvantage than an advantage to a Dwarf leader. It also stands for the fact that Dwarf Drunks join the warband of a Dwarf lord of their own accord, hoping for good pay, rather than being hired."
+  },
+  {
+   "title": "Skaven tunnel team",
+   "umbrella": "",
+   "text": "An optional rule, and one unusual enough that it is only right and proper to tell your opponent what he will be facing.\n\nA Skaven warband may take 0-1 Skaven Gutter Runners Tunnel Team as a Henchmen choice, at 145 gc per team. The team is two Gutter Runners.\n\nProfile M 6, WS 4, BS 4, S 4, T 3, W 1, I 5, A 1, Ld 7.\n\nEquipment: Digging Claws, which count as Fighting Claws for all purposes.\n\nTunnelling: the team is not deployed at the beginning of the game, but uses the rules under Tunnelling.\n\nTeam: if one of the two gets the Dead result the other leaves the warband as well.\n\nOther races that live underground could field something similar. Dwarf Miners and Night Goblins (no Fanatics, please) may replace the Gutter Runners: change the profile, the equipment and the cost, and keep the Skaven tunnellers' rules. Keep such a team to four models or fewer, none of them with five Wounds or more, so that nothing able to threaten a proper warrior pops up behind an enemy warband."
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "Laying out the stronghold",
+   "umbrella": "Tunnels and chambers",
+   "text": "A skirmish may be fought in any part of the stronghold. Unless a scenario says otherwise, choose between tunnels and rooms or open chambers.\n\nTunnels and rooms are laid out with dungeon floor tiles; aim for a complex grid-like plan, which allows the most interesting battles. A chamber is a vast space that can hold a whole army, some of them big enough for a gyrocopter to fly in. Fill one by declaring one or more table edges to be walls, and so impassable, and covering the rest of the table with ruined buildings, just as in Mordheim. Marking doorways on those edges and making the warbands enter and leave by them is worth trying.\n\nMany of the old tunnels and chambers are ruinous or partly flooded, so agree with your opponent before the game which terrain is difficult ground and which is impassable. Corners cut off lines of sight: with floor tiles, agree whether the corner of a tile is the printed area or the margin."
+  },
+  {
+   "title": "Large creatures in tunnels",
+   "umbrella": "Tunnels and chambers",
+   "text": "Unless otherwise specified, a tunnel of nominally 2 inches wide is tall enough for a large creature such as a troll or an ogre.\n\nLarge creatures - ogres, trolls or, Grungni forbid, mounted models - move and run normally in rooms and halls, but may not run in a tunnel, where they have to stoop. Charging in a tunnel they are limited to their normal speed."
+  },
+  {
+   "title": "Flyers in tunnels",
+   "umbrella": "Tunnels and chambers",
+   "text": "A flyer may fly only in rooms and caverns, where there is more height. In a tunnel he must walk, or move at half speed if he has no normal Movement characteristic to walk with."
+  },
+  {
+   "title": "Mounts underground",
+   "umbrella": "Tunnels and chambers",
+   "text": "Horses may not be used: they will not go underground. The Dwarfs used a type of pit pony, trained to work in the tunnels and mines."
+  },
+  {
+   "title": "Scenarios",
+   "umbrella": "",
+   "text": "Use the scenario tables on page 126 of the Mordheim rulebook for single player games, and the one in 'Chaos on the Streets' from Town Crier 5 or the Best of Town Crier otherwise. In place of scenario 4, The Wizards Mansion, play The Engineers Workshop.\n\nEvery scenario can be played in an open cavern as though it were a city, and some suit smaller tunnels and chambers as well. Decide which to use with your opponent."
+  },
+  {
+   "title": "Drunken behaviour",
+   "umbrella": "",
+   "text": "A Drunk warrior is immune to panic; other psychology and rout tests apply as normal.\n\nAt the beginning of each of your turns make a Drunken Behaviour test for each of your Drunks. Roll a D6:\n1 He does not move this turn, puking, falling over or marching off in the wrong direction. This does not stop him shooting or fighting, but he is at -1 to hit until his next drunk test.\n2-3 He behaves normally this turn.\n4-6 Eager to get to grips with the enemy, he staggers D6 inches towards the nearest enemy he can see, shouting insults and chanting. This move is in addition to his normal movement and is made before it.\n\nThe extra move is not optional: make it every time it is rolled, even if the Drunk is defending an obstacle or preparing to shoot. If it brings him into base contact with an enemy it counts as a charge. Make the test during close combat too: the Drunk will not move, but he can still take the -1 to hit."
+  },
+  {
+   "title": "Tunnelling",
+   "umbrella": "",
+   "text": "A tunnel team is not deployed with the rest of the warband. After both sides have set up, place a tunnel marker - a penny will do - anywhere on the battlefield. At the beginning of each Skaven turn except the first, roll a D6 to see whether the team emerges: 3 or more on the second turn, 2 or more on the third, automatically on the fourth.\n\nWhen it emerges, roll a Scatter dice and an Artillery dice. A Hit leaves the marker where it stands; an arrow moves it the distance shown by the Artillery dice in the direction of the arrow.\n\nOnce the marker's final position is settled, replace it with one of your models and place the other within 2 inches of the first, facing any direction. The team emerges at the beginning of the turn - the very first thing you do in it - and acts normally; yes, it may charge. A marker moved under an enemy model engages that model in hand to hand on the side closest to the marker, counting as charging. A marker moved under a friendly model or impassable terrain puts the tunnellers on the closest edge of it. A marker moved off the battlefield means the team is lost, as result 3-4 on the mishap table.",
+   "chart": {
+    "title": "Tunnel mishap",
+    "description": "Rolled when a tunnel team's emergence goes wrong.",
+    "dice": "D6",
+    "note": "The book prints the table without saying when it is rolled. The only thing that sends a player to it is a marker moved off the battlefield, which is result 3-4 whatever is rolled.",
+    "rows": [
+     {
+      "result": "1-2",
+      "name": "Cave in!",
+      "text": "The tunnel collapses and the team is squashed. Both Skaven are dead as a doornail."
+     },
+     {
+      "result": "3-4",
+      "name": "Where are we?",
+      "text": "The team is lost and emerges well away from where it meant to, maybe in a cave, the lair of a huge monster, or the wrong Dwarf hall. It takes no part in this battle."
+     },
+     {
+      "result": "5-6",
+      "name": "I told you to turn left!",
+      "text": "The team almost made it, but went the wrong way for the last few hundred yards. Your opponent places the marker anywhere on the battlefield and the Skaven emerge there. They may not move in the movement phase of the turn they emerge, being too busy working out where they are and blaming each other for reading the map wrong."
+     }
+    ]
+   }
+  }
+ ],
+ "charts": [
+  {
+   "title": "Karak Azgal runic artefacts",
+   "description": "Rolled when a result on the exploration chart gives a runic artefact.",
+   "dice": "D6",
+   "note": "None of these items can appear more than once in a campaign. If you find one already in somebody else's possession, roll again, even if the warrior carrying it has been killed.",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "1",
+     "name": "Builder's Boots",
+     "text": "Runes are commonly inscribed on weapons and armour and much less commonly on anything else, so these boots are a very rare item. They are said to have been made for one of the engineers who built part of the stronghold in forgotten times.\n\nA model wearing them may move normally, running and charging included, over any kind of terrain, vertical surfaces included. He simply adds the distance moved horizontally to the distance moved vertically, with no Initiative test needed except to jump across a gap."
+    },
+    {
+     "result": "2",
+     "name": "Sword of Snorri Elfbane",
+     "text": "The Rune of Slaying is a potent rune, which adds to the killing power of a blade. This one has plainly been worn by generations of Dwarf thanes.\n\nAn opponent wounded by the sword is stunned on a result of 1-3 (Undead are knocked down as normal) and put out of action on a 4-6."
+    },
+    {
+     "result": "3",
+     "name": "Att'la's Plate Mail",
+     "text": "This armour was given as a present by the Dwarf Lord Kurgan to the warlord Att'la in the time of Sigmar Heldenhammer. It is a magnificent suit of gromril armour with three runes inscribed on it.\n\nRune of spell eating: the Hero wearing this armour is immune to all spells.\n\nRune of passage: he can move through solid objects such as walls, though not tunnel walls, which does not mean that he can see through them.\n\nRune of Fortitude: he has an extra wound, which may take his total above his race's maximum."
+    },
+    {
+     "result": "4",
+     "name": "Ulthar's Bow of Seeking",
+     "text": "Made for Ulthar Grudgbringer, a noble of Karak Haskal. It is not known how it got here.\n\nA bolt shot from this bow seeks its target. It always hits on a 2 or more, whatever the Ballistic Skill, the cover or any other modifier, and the shooter may choose any target in sight rather than the nearest one."
+    },
+    {
+     "result": "5",
+     "name": "Redbeard's Belt of Rage",
+     "text": "Made in the days of the War of the Beard, this talisman turns its wearer into a cruel and frightening warrior. It was worn only at times of great need.\n\nA warrior wearing this amulet becomes subject to frenzy, and always will be, even if he is knocked down or stunned. He also adds +1 to his Strength in close combat, such is the power of his fury. He never leaves close combat under any circumstances and attacks opponents in base contact until they are taken out of action.\n\nIf there is a stunned or knocked down model within his charge range at the beginning of his turn, he charges and attacks the closest one, even a member of his own warband, and the combat is fought until one of the two is taken out of action."
+    },
+    {
+     "result": "6",
+     "name": "The Eye of Izril",
+     "text": "In the closed tunnels of a Dwarf stronghold it is a great advantage to see what is happening elsewhere. A lord with this amulet could hold his power against the most secretive of enemies.\n\nThe bearer sees every model on the table, even hidden or out of sight, and can guide his fellow warband members through the ruins, which lets you roll two dice for him after the battle when you roll on the exploration chart. He also has a 6+ ward save against every shooting attack and every strike in close combat, sensing the attack before it is made. Every animal, a wardog or a horse for one, is subject to frenzy when fighting the bearer."
+    }
+   ]
+  }
+ ]
+}

@@ -5,5 +5,6 @@
   "settings": [
     "Karak Azgal"
   ],
-  "exploration_chart": "karak-azgal"
+  "exploration_chart": "karak-azgal",
+  "rules": "karak-azgal"
 }
