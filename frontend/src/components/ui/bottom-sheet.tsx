@@ -78,7 +78,9 @@ export function BottomSheet({
           onOpenAutoFocus={(event) => event.preventDefault()}
           style={offset ? { transform: `translateY(${offset}px)` } : undefined}
           className={cn(
-            "fixed inset-x-0 bottom-0 z-[60] flex max-h-[85dvh] flex-col border-t border-accent-line bg-panel text-ink shadow-[0_-16px_40px_var(--color-shadow)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+            // full height but for the status bar, so the handle and the × stay reachable
+            // (William, 20 Nov 2026: "should be able to go full height as we need the space")
+            "fixed inset-x-0 bottom-0 z-[60] flex max-h-[calc(100dvh-env(safe-area-inset-top,0px))] flex-col border-t border-accent-line bg-panel text-ink shadow-[0_-16px_40px_var(--color-shadow)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
             className
           )}
         >
