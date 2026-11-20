@@ -204,7 +204,7 @@ describe("Recruiting from the warband's template", () => {
         name: "Gromril",
         prefix: "Gromril",
         rarity: 11,
-        price_note: "4 x Price",
+        price_note: "3 × price", // the line's own terms, which the server words
         choices: [
           { line_id: 2, item: { id: 20, name: "Sword", variant: "", type: "Weapon" }, price: 30 },
         ],

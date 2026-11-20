@@ -42,8 +42,7 @@ function MaterialLine({
         title={off ? line.who_text : undefined}
         onClick={() => setOpen(!open)}
       >
-        {lineLabel(line)} ·{" "}
-        {line.cost === null ? line.cost_note || material.price_note : `${line.cost} gc`}
+        {lineLabel(line)} · {material.price_note}
         {off ? <span className="text-[11px] font-normal">({line.who_text})</span> : null}
       </Chip>
       {open
@@ -55,7 +54,7 @@ function MaterialLine({
                 pressed={picked.has(pickKey(pick))}
                 onClick={() => onToggle(pick)}
               >
-                {material.name} {choice.item.name}
+                {material.prefix} {choice.item.name}
                 {choice.price === null ? "" : ` ${choice.price} gc`}
               </Chip>
             );
