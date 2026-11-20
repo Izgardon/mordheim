@@ -23,6 +23,7 @@ import {
   unpriced,
   type KitPick,
 } from "./hire-draft";
+import { atHire } from "./upgrade-draft";
 import { useUpgradePicks } from "./useUpgradePicks";
 
 const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
@@ -71,7 +72,9 @@ export default function TemplateRecruit({
   const [cost, setCost] = useState(String(fighter.cost));
   const [picks, setPicks] = useState<KitPick[]>([]);
   const [prices, setPrices] = useState<Record<string, string>>({});
-  const bought = useUpgradePicks(group ? [] : upgrades);
+  // a hero's upgrades, less the ones a skill gives (the Beastmen's mutations): the store sells those
+  const offered = atHire(upgrades);
+  const bought = useUpgradePicks(group ? [] : offered);
   const count = group ? Math.max(1, Math.min(20, Math.trunc(Number(models) || 1))) : 1;
   const warnings = [overCount(fighter, count), group ? overGroup(fighter, count) : null].filter(
     Boolean
@@ -145,7 +148,7 @@ export default function TemplateRecruit({
         onToggle={toggle}
       />
       {group ? null : (
-        <HireUpgrades upgrades={upgrades} offUpgrades={fighter.off_upgrades} picks={bought} />
+        <HireUpgrades upgrades={offered} offUpgrades={fighter.off_upgrades} picks={bought} />
       )}
       <HireTally
         name={group ? fighter.plural || fighter.name : fighter.name}

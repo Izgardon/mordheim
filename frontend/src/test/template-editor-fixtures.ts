@@ -157,6 +157,7 @@ export const makeEditorTemplate = (overrides: Partial<WarbandTemplate> = {}): Wa
       max_per_fighter: null,
       later_double: true,
       at_recruit: true,
+      from_skill: "",
       who_text: "",
     },
   ],

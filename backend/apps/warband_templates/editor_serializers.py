@@ -164,6 +164,7 @@ class UpgradeSerializer(serializers.Serializer):
     max_per_fighter = serializers.IntegerField(min_value=1, max_value=99, allow_null=True, default=None)
     later_double = serializers.BooleanField(default=False)
     at_recruit = serializers.BooleanField(default=False)
+    from_skill = serializers.CharField(max_length=120, allow_blank=True, default="")
 
 
 class UpgradesSerializer(serializers.Serializer):

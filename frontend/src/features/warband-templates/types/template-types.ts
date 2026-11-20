@@ -200,6 +200,12 @@ export type TemplateUpgrade = {
   later_double: boolean;
   /** Bought only when he is recruited. */
   at_recruit: boolean;
+  /**
+   * The skill its mutations come from (the Beastmen's and Marauders' Mutant, Clan Moulder's
+   * Twistkin); blank for an upgrade bought when a fighter is recruited. The hire dialog leaves
+   * these out and the store keeps them, buyable at any time (William, 20 Nov 2026).
+   */
+  from_skill: string;
   /** Who may take it, in the server's words: "Tainted Ones only"; blank: any hero. */
   who_text: string;
 };

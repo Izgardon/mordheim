@@ -62,7 +62,7 @@ FIGHTER_FIELDS = (
     "fixed_kit",
 )
 LINE_FIELDS = ("shown_as", "cost", "cost_note", "first_free", "brace_cost", "who", "warband_max", "note", "variant")
-UPGRADE_FIELDS = ("group", "cost", "cost_note", "note", "who", "max_per_fighter", "later_double", "at_recruit")
+UPGRADE_FIELDS = ("group", "cost", "cost_note", "note", "who", "max_per_fighter", "later_double", "at_recruit", "from_skill")  # fmt: skip
 
 
 def read_templates(out: Path = IMPORT_OUT) -> list[dict[str, Any]]:

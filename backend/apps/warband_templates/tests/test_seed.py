@@ -108,6 +108,7 @@ def template(**fields: Any) -> dict[str, Any]:
                 "max_per_fighter": 1,
                 "later_double": True,
                 "at_recruit": True,
+                "from_skill": "",
             }
         ],
         **fields,

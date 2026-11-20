@@ -122,5 +122,6 @@ export const makeTemplateUpgrade = (
   max_per_fighter: null,
   later_double: false,
   at_recruit: false,
+  from_skill: "",
   ...overrides,
 });

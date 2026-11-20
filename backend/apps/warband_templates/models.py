@@ -279,7 +279,9 @@ class TemplateUpgrade(models.Model):
     ("Mutations"), the special it gives, its cost (null: none in the book) and a note. `who` is who may take it, in a
     list line's shape (others still may, with a warning); the rest hold for its group on one fighter: at most
     `max_per_fighter` of it (a warning; null: any number), the second and later at double (`later_double`), and bought
-    only when he is recruited (`at_recruit`, a warning in the store)."""
+    only when he is recruited (`at_recruit`, a warning in the store). `from_skill` names the skill its mutations come
+    from (the Beastmen's and Marauders' Mutant, Clan Moulder's Twistkin), so the hire dialog leaves it out and the
+    store keeps it, buyable at any time (William, 20 Nov 2026)."""
 
     template = models.ForeignKey(WarbandTemplate, related_name="upgrades", on_delete=models.CASCADE)
     position = models.PositiveSmallIntegerField(default=0)
@@ -292,6 +294,7 @@ class TemplateUpgrade(models.Model):
     max_per_fighter = models.PositiveSmallIntegerField(null=True, blank=True)
     later_double = models.BooleanField(default=False)
     at_recruit = models.BooleanField(default=False)
+    from_skill = models.CharField(max_length=120, blank=True, default="")
 
     class Meta:
         db_table = "template_upgrade"

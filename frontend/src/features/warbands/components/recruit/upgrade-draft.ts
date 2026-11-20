@@ -7,6 +7,14 @@ import type { TemplateUpgrade } from "../../types/hire-template-types";
  * and Blessings); these helpers pick which applies and say what warns. Nothing here blocks.
  */
 
+/**
+ * The upgrades a hire offers: those not from a skill (William, 20 Nov 2026: "no mutations on hire
+ * for skill related mutations like the beastmen, it should only be for units that explicitly start
+ * with them"). The store's Upgrades section still offers every one of them, at any time.
+ */
+export const atHire = <T extends { from_skill: string }>(upgrades: T[]) =>
+  upgrades.filter((upgrade) => !upgrade.from_skill);
+
 /** The template's upgrades by group, in its order: [group, its upgrades]. */
 export function upgradeGroups(upgrades: TemplateUpgrade[]): [string, TemplateUpgrade[]][] {
   const groups = new Map<string, TemplateUpgrade[]>();

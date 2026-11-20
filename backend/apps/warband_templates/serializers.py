@@ -284,6 +284,7 @@ class TemplateUpgradeSerializer(serializers.ModelSerializer):
             "max_per_fighter",
             "later_double",
             "at_recruit",
+            "from_skill",
             "who_text",
         )
 

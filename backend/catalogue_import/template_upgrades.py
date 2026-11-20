@@ -3,7 +3,9 @@ gives and its group's terms read from the group's text (`template_answers.UPGRAD
 of the group a fighter may have, whether the second and later cost double, whether they are bought only when he is
 recruited. Each group's own text is a warband rule of its name, and an entry that is no upgrade (the Lizardmen's
 Poisoned Weapons) is a warband rule instead. The warbands that buy the shared mutations do it through tailored lists of
-them (`template_answers.MUTATION_UPGRADES`), added once every page has given its prices."""
+them (`template_answers.MUTATION_UPGRADES`), added once every page has given its prices. A list whose mutations come
+from a skill carries `from_skill` with its name (the Beastmen's and Marauders' Mutant, Clan Moulder's Twistkin), so
+the hire dialog leaves them out and the store keeps them (William, 20 Nov 2026)."""
 
 import string
 from dataclasses import dataclass, field
@@ -93,6 +95,7 @@ def build_upgrades(
                     "max_per_fighter": terms.get("max_per_fighter"),
                     "later_double": bool(terms.get("later_double")),
                     "at_recruit": bool(terms.get("at_recruit")),
+                    "from_skill": "",
                 }
             )
             added += 1
@@ -141,6 +144,7 @@ def mutation_upgrades(
                     "max_per_fighter": terms.get("max_per_fighter"),
                     "later_double": bool(terms.get("later_double")),
                     "at_recruit": bool(terms.get("at_recruit")),
+                    "from_skill": line.get("from_skill", ""),
                 }
             )
         log.mutations.append((slug, group, len(added), terms_text(terms), note))
