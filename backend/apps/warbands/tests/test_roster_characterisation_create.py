@@ -343,3 +343,31 @@ class HenchmenCreateCharacterisationTests(RosterTestCase):
                 self.assertEqual(list(response.json()), ["henchmen"])
         self.assertFalse(HenchmenGroup.objects.filter(warband=self.warband).exists())
         self.assertEqual((trade_rows(self.warband), log_rows(self.warband)), ([], []))
+
+
+class FirstSpellOnCreateTests(RosterTestCase):
+    """A unit created with a spell lore has his first spell to pick (William, 20 Nov 2026: "for wizards and priests
+    when created for the first time they should be prompted to learn a spell from their list"), so his card shows the
+    same prompt a Spell advance leaves and he picks it through the unit's PATCH."""
+
+    def created(self, kind: Kind, **payload: Any) -> Any:
+        response = self.client.post(unit_url(kind, self.warband.id), create_payload(kind, **payload), format="json")
+        self.assertEqual(response.status_code, 201, response.data)
+        return kind.model.objects.get(id=response.json()["id"])
+
+    def test_a_hero_or_a_hired_sword_created_with_a_lore_has_one_spell_to_pick(self) -> None:
+        for kind in (HERO, HIRELING):
+            with self.subTest(kind=kind.key):
+                unit = self.created(kind, caster="Wizard", available_spell_types=["Lesser Magic"])
+
+                self.assertEqual(unit.pending_spells, 1)
+
+    def test_a_unit_created_with_no_lore_has_none(self) -> None:
+        for kind in (HERO, HIRELING):
+            with self.subTest(kind=kind.key):
+                self.assertEqual(self.created(kind).pending_spells, 0)
+
+    def test_a_henchmen_group_keeps_no_picks_at_all(self) -> None:
+        group = self.created(HENCHMEN, available_spell_types=["Lesser Magic"])
+
+        self.assertFalse(hasattr(group, "pending_spells"))

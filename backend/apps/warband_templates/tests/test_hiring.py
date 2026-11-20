@@ -58,6 +58,8 @@ class HiringFromTheTemplateTests(CatalogueTestCase):
         self.assertEqual(
             (hero.available_skills, hero.available_spell_types), (["Combat", "Shooting"], ["Lesser Magic"])
         )
+        # a unit created with a lore has his first spell to pick (William, 20 Nov 2026)
+        self.assertEqual(hero.pending_spells, 1)
         self.assertEqual(set(hero.hero_specials.values_list("special__name", flat=True)), {"Leader", "Wizard"})
         self.assertEqual(sorted(hero.hero_items.values_list("item__name", "cost")), [("Axe", 4), ("Dagger", 0)])
         self.assertEqual(
