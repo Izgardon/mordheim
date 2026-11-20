@@ -16,13 +16,6 @@ import { capitalDice, rollDie as rollDieOf } from "@/lib/dice";
 
 const DICE = ["D3", "D6", "D8", "D10", "D12", "D20", "D66", "D100"] as const;
 type Die = (typeof DICE)[number];
-const PRESETS: { label: string; count: number; die: Die }[] = [
-  { label: "D6", count: 1, die: "D6" },
-  { label: "2D6", count: 2, die: "D6" },
-  { label: "D3", count: 1, die: "D3" },
-  { label: "D66", count: 1, die: "D66" },
-  { label: "3D6", count: 3, die: "D6" },
-];
 
 const random = rollDieOf;
 /** One die: D66 is two D6 read as tens and units. */
@@ -103,21 +96,6 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
     <>
       {trigger ? <Slot onClick={() => onOpenChange(true)}>{trigger}</Slot> : null}
       <SidePanel open={open} onOpenChange={onOpenChange} kicker="Table" title="Dice">
-        <div role="group" aria-label="Quick rolls" className="flex flex-wrap gap-1.5">
-          {PRESETS.map((preset) => (
-            <Chip
-              key={preset.label}
-              pressed={count === preset.count && die === preset.die && modifier === 0}
-              onClick={() => {
-                setCount(preset.count);
-                setDie(preset.die);
-                setModifier(0);
-              }}
-            >
-              {preset.label}
-            </Chip>
-          ))}
-        </div>
         <div className="flex flex-col gap-1.5">
           <span className="text-xs font-bold text-muted-foreground">Die</span>
           <div role="group" aria-label="Die" className="grid grid-cols-4 gap-1.5">
