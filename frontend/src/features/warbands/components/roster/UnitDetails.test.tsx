@@ -4,7 +4,7 @@
  */
 import { MemoryRouter } from "react-router-dom";
 import { screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -17,6 +17,9 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
+
+let mobile = false;
+vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => mobile }));
 
 const konrad = makeHero({
   id: 5,
@@ -106,6 +109,56 @@ describe("An open card's skills", () => {
     await user.click(screen.getByRole("button", { name: /Strike to Injure/ }));
 
     expect(screen.getByText("Add +1 to all injury rolls.")).toBeInTheDocument();
+  });
+});
+
+describe("An open card on a phone", () => {
+  beforeEach(() => {
+    mobile = true;
+    fakeApi.reset();
+    fakeApi.on("GET /warbands/9/template/", {
+      template: null,
+      variant: "",
+      list_prices_open: true,
+    });
+  });
+  afterEach(() => {
+    mobile = false;
+  });
+
+  // William, 20 Nov 2026: a box's detail belongs under the boxes it was picked from, not at the
+  // foot of the card: "the item under the items, the skill under the skills".
+  it("opens a box's detail inside the section it was picked from", async () => {
+    const strike = { id: 7, name: "Strike to Injure", description: "Add +1 to all injury rolls." };
+    renderWithQueryClient(
+      <MemoryRouter initialEntries={["/campaigns/1/warband"]}>
+        <RosterSections
+          warbandId={9}
+          campaign={null}
+          heroes={[makeHero({ id: 5, name: "Konrad Adler", items: [sword], skills: [strike] })]}
+          henchmenGroups={[]}
+          hirelings={[]}
+          canEdit={false}
+          canCreateRace={false}
+          onLoadout={vi.fn()}
+          onHire={vi.fn()}
+          onAdvance={vi.fn()}
+          onBuyAgain={vi.fn()}
+          renderEdit={() => null}
+        />
+      </MemoryRouter>
+    );
+    const user = setupUser();
+    const section = (label: string) => screen.getByText(label).closest("div") as HTMLElement;
+    await user.click(screen.getByRole("button", { name: "Open Konrad Adler" }));
+
+    await user.click(screen.getByRole("button", { name: /Strike to Injure/ }));
+    expect(within(section("Skills")).getByText("Add +1 to all injury rolls.")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /Sword/ }));
+    expect(
+      within(section("Items")).getByRole("button", { name: "Close rules" })
+    ).toBeInTheDocument();
   });
 });
 
