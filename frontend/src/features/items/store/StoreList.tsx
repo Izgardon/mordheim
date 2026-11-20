@@ -15,8 +15,15 @@ import ItemFormDialog from "../components/ItemFormDialog";
 import type { ShownItem } from "../components/ItemInfo";
 import type { WeaponMaterial } from "../types/item-types";
 import { isSold } from "../utils/item-listing";
-import { hisLine, hisRow, rareBonusFor, type HisList, type HisUpgrades } from "./his-list";
-import { shownMaterials } from "./material-rows";
+import {
+  hisLine,
+  hisMaterials,
+  hisRow,
+  rareBonusFor,
+  type HisList,
+  type HisUpgrades,
+} from "./his-list";
+import { materialRows } from "./material-rows";
 import MaterialRows from "./MaterialRows";
 import {
   inStoreOrder,
@@ -88,10 +95,13 @@ export default function StoreList(props: StoreListProps) {
   );
   const his = props.his ?? null;
   const hisOn = his !== null && onlyHis;
-  // a material is a row of its own ("Gromril Weapon"), never one of his list's lines
-  const materials = hisOn
-    ? []
-    : shownMaterials(props.materials ?? [], { query, category, onlyMine });
+  // a material is a row of its own ("Gromril Weapon"); on His list, those his lists sell
+  const materials = materialRows(
+    props.materials ?? [],
+    offers,
+    { query, category, onlyMine },
+    hisOn && his ? hisMaterials(his) : null
+  );
   const copies = props.recipients.find((entry) => entry.key === props.firstKey)?.count ?? 1;
   const upgrades =
     props.upgrades && category === "all"
@@ -203,8 +213,7 @@ export default function StoreList(props: StoreListProps) {
       <ul className="m-0 flex list-none flex-col border-t border-line p-0">
         {materials.length ? (
           <MaterialRows
-            materials={materials}
-            offers={offers}
+            rows={materials}
             canBuy={props.canBuy}
             isMobile={props.isMobile}
             warbandId={props.warbandId}

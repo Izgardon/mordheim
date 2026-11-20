@@ -84,7 +84,7 @@ export default function TemplateRecruit({
       return;
     }
     const line = lines.find((entry) => entry.id === pick.lineId);
-    const price = line ? listPrice(line, pick.brace) : null;
+    const price = line ? listPrice(line, pick.brace, pick.itemId) : null;
     setPicks([...picks, pick]);
     setPrices({ ...prices, [key]: price === null ? "" : String(price) });
   };

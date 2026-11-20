@@ -11,10 +11,18 @@ import type { TemplateFighter, TemplateLine, TemplateList } from "../../types/hi
  * warns.
  */
 
-/** A line picked from his lists: one copy, or a brace at its brace price. */
-export type KitPick = { lineId: number; brace: boolean };
+/**
+ * A line picked from his lists: one copy, or a brace at its brace price. A line selling a weapon
+ * material (weapon materials) carries the weapon picked on it (`itemId`), from the other melee
+ * weapons on the same list.
+ */
+export type KitPick = { lineId: number; brace: boolean; itemId?: number };
 
-export const pickKey = (pick: KitPick) => `${pick.lineId}${pick.brace ? "-brace" : ""}`;
+export const pickKey = (pick: KitPick) =>
+  `${pick.lineId}${pick.itemId ? `-${pick.itemId}` : ""}${pick.brace ? "-brace" : ""}`;
+
+/** What a pick buys: the weapon picked on a material line, else the line's item. */
+export const pickItemId = (pick: KitPick, line: TemplateLine) => pick.itemId ?? line.item?.id ?? null;
 
 /** The lines of his lists, in his lists' order, each once. */
 export function fighterLines(fighter: TemplateFighter, lists: TemplateList[]): TemplateLine[] {
@@ -33,7 +41,8 @@ export function fighterLines(fighter: TemplateFighter, lists: TemplateList[]): T
 export function linesByType(lines: TemplateLine[]): [string, TemplateLine[]][] {
   const groups = new Map<string, TemplateLine[]>();
   for (const line of lines) {
-    const type = line.item.type || "Other";
+    // a line naming a weapon material sits with the weapons (weapon materials)
+    const type = line.item?.type || (line.material ? "Weapon" : "Other");
     groups.set(type, [...(groups.get(type) ?? []), line]);
   }
   return [...groups];
@@ -72,9 +81,21 @@ export function overGroup(fighter: TemplateFighter, models: number): string | nu
 /** "Sword", or the list's own name for it: "Jambiya (Dagger)" (the Warbands page's). */
 export const lineLabel = lineName;
 
+/** "Gromril Sword": what a pick on a material line reads as, from the weapon picked on it. */
+export function pickLabel(line: TemplateLine, pick: KitPick): string {
+  const chosen = line.material?.choices.find((choice) => choice.item.id === pick.itemId);
+  return chosen ? `${line.material?.name} ${chosen.item.name}` : lineLabel(line);
+}
+
+/** What a material line's pick costs at list price: the line's price for the weapon picked. */
+export const materialPickPrice = (line: TemplateLine, itemId: number) =>
+  line.material?.choices.find((choice) => choice.item.id === itemId)?.price ?? null;
+
 /** What a pick costs at list price: the line's price, or its brace price; null when the player types it. */
-export const listPrice = (line: TemplateLine, brace: boolean) =>
-  brace ? line.brace_cost : line.cost;
+export const listPrice = (line: TemplateLine, brace: boolean, itemId?: number) => {
+  if (line.material) return itemId ? materialPickPrice(line, itemId) : null;
+  return brace ? line.brace_cost : line.cost;
+};
 
 /** Past a per-warband limit, with what this hire adds (`copies`): a warning. */
 export function overWarbandMax(line: TemplateLine, copies: number): string | null {
@@ -101,15 +122,18 @@ export function kitPurchases(
   return picks.flatMap((pick) => {
     const line = lines.find((entry) => entry.id === pick.lineId);
     if (!line) return [];
+    const itemId = pickItemId(pick, line);
+    if (itemId === null) return [];
     const total = whole(prices[pickKey(pick)] ?? "");
     const halves = pick.brace ? [Math.floor(total / 2), total - Math.floor(total / 2)] : [total];
     return halves.map((price) => ({
       create_index: createIndex,
-      item_id: line.item.id,
+      item_id: itemId,
       quantity: 1,
       price,
       availability_id: null,
       is_buying: true,
+      ...(line.material ? { material: line.material.slug } : {}),
     }));
   });
 }

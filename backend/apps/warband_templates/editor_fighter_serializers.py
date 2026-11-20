@@ -8,6 +8,7 @@ from typing import Any
 from rest_framework import serializers
 
 from apps.core.catalogue.scope import CatalogueEntryField, CatalogueIdsField, refuse_unknown
+from apps.items.materials import SLUGS
 from apps.items.models import Item
 from apps.races.models import Race
 from apps.skills.models import Skill
@@ -75,11 +76,13 @@ class FighterSerializer(serializers.Serializer):
 
 
 class LineSerializer(serializers.Serializer):
-    """A list line: an item at its list price (none: see the cost note), its brace price, the first free, the list's
-    own name for it, who may take it, the most in a warband, a note and the variant it is for."""
+    """A list line: an item at its list price (none: see the cost note), or a weapon material (`material`, with no
+    item: weapon materials), its brace price, the first free, the list's own name for it, who may take it, the most
+    in a warband, a note and the variant it is for."""
 
     id = serializers.IntegerField(required=False)
-    item_id = serializers.IntegerField(min_value=1)
+    item_id = serializers.IntegerField(min_value=1, allow_null=True, default=None)
+    material = serializers.ChoiceField(choices=SLUGS, allow_blank=True, default="")
     shown_as = serializers.CharField(max_length=160, allow_blank=True, default="")
     cost = serializers.IntegerField(min_value=0, max_value=100_000, allow_null=True)
     cost_note = serializers.CharField(max_length=120, allow_blank=True, default="")
@@ -100,10 +103,15 @@ class EquipmentListSerializer(serializers.Serializer):
     lines = LineSerializer(many=True, default=list)
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        ids = [line["item_id"] for line in attrs["lines"]]
+        """Each line names an item (the campaign's current entry for it) or a weapon material, never both."""
+        if any(bool(line["item_id"]) == bool(line["material"]) for line in attrs["lines"]):
+            raise serializers.ValidationError({"lines": ["A line names an item or a weapon material."]})
+        ids = [line["item_id"] for line in attrs["lines"] if line["item_id"]]
         try:
             current = refuse_unknown(Item.objects.all(), ids, self.context["campaign_id"]) if ids else {}
         except serializers.ValidationError as error:
             raise serializers.ValidationError({"lines": error.detail}) from None
-        attrs["lines"] = [{**line, "item_id": current[line["item_id"]]} for line in attrs["lines"]]
+        attrs["lines"] = [
+            {**line, "item_id": current[line["item_id"]] if line["item_id"] else None} for line in attrs["lines"]
+        ]
         return attrs

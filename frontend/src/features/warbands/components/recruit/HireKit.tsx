@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Chip } from "@/components/ui/chip";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +13,56 @@ function chipText(line: TemplateLine, brace: boolean) {
   const price = listPrice(line, brace);
   const name = brace ? `${lineLabel(line)}, brace` : lineLabel(line);
   return price === null ? `${name} · ${line.cost_note || "price to type"}` : `${name} ${price} gc`;
+}
+
+/**
+ * A line selling a weapon material (weapon materials): the chip opens the weapons on that same
+ * list, each at the line's price for it, and picking one picks the line with that weapon.
+ */
+function MaterialLine({
+  line,
+  off,
+  picks,
+  onToggle,
+}: {
+  line: TemplateLine;
+  off: boolean;
+  picks: KitPick[];
+  onToggle: (pick: KitPick) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const picked = new Set(picks.map(pickKey));
+  const material = line.material;
+  if (!material) return null;
+  return (
+    <>
+      <Chip
+        pressed={open}
+        className={cn(off && "opacity-60")}
+        title={off ? line.who_text : undefined}
+        onClick={() => setOpen(!open)}
+      >
+        {lineLabel(line)} ·{" "}
+        {line.cost === null ? line.cost_note || material.price_note : `${line.cost} gc`}
+        {off ? <span className="text-[11px] font-normal">({line.who_text})</span> : null}
+      </Chip>
+      {open
+        ? material.choices.map((choice) => {
+            const pick = { lineId: line.id, brace: false, itemId: choice.item.id };
+            return (
+              <Chip
+                key={choice.item.id}
+                pressed={picked.has(pickKey(pick))}
+                onClick={() => onToggle(pick)}
+              >
+                {material.name} {choice.item.name}
+                {choice.price === null ? "" : ` ${choice.price} gc`}
+              </Chip>
+            );
+          })
+        : null}
+    </>
+  );
 }
 
 /**
@@ -64,24 +116,34 @@ export default function HireKit({
           <span className={CAPTION}>{type}</span>
           <div className="flex flex-wrap gap-1.5">
             {group.flatMap((line) =>
-              [false, ...(line.brace_cost !== null ? [true] : [])].map((brace) => {
-                const pick = { lineId: line.id, brace };
-                const off = offLines.includes(line.id);
-                return (
-                  <Chip
-                    key={pickKey(pick)}
-                    pressed={picked.has(pickKey(pick))}
-                    className={cn(off && "opacity-60")}
-                    title={off ? line.who_text : undefined}
-                    onClick={() => onToggle(pick)}
-                  >
-                    {chipText(line, brace)}
-                    {off ? (
-                      <span className="text-[11px] font-normal">({line.who_text})</span>
-                    ) : null}
-                  </Chip>
-                );
-              })
+              line.material
+                ? [
+                    <MaterialLine
+                      key={line.id}
+                      line={line}
+                      off={offLines.includes(line.id)}
+                      picks={picks}
+                      onToggle={onToggle}
+                    />,
+                  ]
+                : [false, ...(line.brace_cost !== null ? [true] : [])].map((brace) => {
+                    const pick = { lineId: line.id, brace };
+                    const off = offLines.includes(line.id);
+                    return (
+                      <Chip
+                        key={pickKey(pick)}
+                        pressed={picked.has(pickKey(pick))}
+                        className={cn(off && "opacity-60")}
+                        title={off ? line.who_text : undefined}
+                        onClick={() => onToggle(pick)}
+                      >
+                        {chipText(line, brace)}
+                        {off ? (
+                          <span className="text-[11px] font-normal">({line.who_text})</span>
+                        ) : null}
+                      </Chip>
+                    );
+                  })
             )}
           </div>
         </div>

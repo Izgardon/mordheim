@@ -16,6 +16,7 @@ def template_item_names(warband: Warband) -> dict[str, dict[str, str]]:
     rows = (
         TemplateListItem.objects.filter(equipment_list__template_id=template_id_for(warband))
         .exclude(shown_as="")
+        .exclude(item__isnull=True)  # a material line's name is the material's (weapon materials)
         .values_list("equipment_list__fighter_links__fighter__key", "item_id", "shown_as")
     )
     found: dict[str, dict[int, set[str]]] = {}

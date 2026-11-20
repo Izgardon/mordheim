@@ -13,7 +13,9 @@ import { numberOrNull, textOf } from "./editor-ui";
 export type LineDraft = {
   /** The saved line's id (it keeps its row); none for a line added here. */
   id?: number;
-  item: { id: number; name: string; variant: string; type: string };
+  item: { id: number; name: string; variant: string; type: string } | null;
+  /** The weapon material the line sells (weapon materials), with no item: its slug and its name. */
+  material: { slug: string; name: string } | null;
   shownAs: string;
   cost: string;
   costNote: string;
@@ -31,6 +33,7 @@ export type ListDraft = { name: string; note: string; fighters: string[]; lines:
 export const lineDraft = (line: TemplateLine): LineDraft => ({
   id: line.id,
   item: line.item,
+  material: line.material && { slug: line.material.slug, name: line.material.name },
   shownAs: line.shown_as,
   cost: textOf(line.cost),
   costNote: line.cost_note,
@@ -66,6 +69,7 @@ export function newLine(item: Item, offer?: ItemOffer): LineDraft {
   const row = chartRow(item, offer);
   return {
     item: { id: item.id, name: item.name, variant: item.variant ?? "", type: item.type },
+    material: null,
     shownAs: "",
     cost: textOf(row?.cost),
     costNote: "",
@@ -87,7 +91,8 @@ export function listInput(draft: ListDraft): ListInput {
     fighters: draft.fighters,
     lines: draft.lines.map((line) => ({
       ...(line.id !== undefined ? { id: line.id } : {}),
-      item_id: line.item.id,
+      item_id: line.item?.id ?? null,
+      material: line.material?.slug ?? "",
       shown_as: line.shownAs.trim(),
       cost: numberOrNull(line.cost),
       cost_note: line.costNote.trim(),

@@ -32,6 +32,7 @@ class HireLineSerializer(TemplateLineSerializer):
         fields = (
             "id",
             "item",
+            "material",
             "shown_as",
             "cost",
             "cost_note",
@@ -46,7 +47,9 @@ class HireLineSerializer(TemplateLineSerializer):
         )
 
     def get_held(self, line: TemplateListItem) -> int | None:
-        return self.context["held"].get(line.item_id, 0) if line.warband_max else None
+        if not line.warband_max or not line.item_id:  # nothing is held of a material (weapon materials)
+            return None
+        return int(self.context["held"].get(line.item_id, 0))
 
 
 class HireListSerializer(serializers.ModelSerializer):
@@ -59,7 +62,9 @@ class HireListSerializer(serializers.ModelSerializer):
         fields = ("id", "key", "name", "note", "lines")
 
     def get_lines(self, row: TemplateList) -> Any:
-        return HireLineSerializer(self.context["lines"].get(row.pk, []), many=True, context=self.context).data
+        """Its lines for the variant, each with them all in context: a material line names the list's weapons."""
+        lines = self.context["lines"].get(row.pk, [])
+        return HireLineSerializer(lines, many=True, context={**self.context, "list_lines": lines}).data
 
 
 def fighter_lines(fighter: TemplateFighter, lines: Lines) -> list[TemplateListItem]:
@@ -72,7 +77,7 @@ def free_lines(fighter: TemplateFighter, lines: Lines) -> list[TemplateListItem]
     Dagger, the Gnoblars' Sharp Stuff)."""
     found: dict[int, TemplateListItem] = {}
     for line in fighter_lines(fighter, lines):
-        if line.first_free:
+        if line.first_free and line.item_id:  # a material line gives nothing away
             found.setdefault(line.item_id, line)
     return list(found.values())
 
@@ -119,7 +124,8 @@ class HireFighterSerializer(TemplateFighterSerializer):
         return [upgrade.pk for upgrade in self.context["upgrades"] if not allows(upgrade.who or {}, fighter)]
 
     def get_free_items(self, fighter: TemplateFighter) -> list[dict[str, Any]]:
-        return [{"id": line.item_id, "name": line.item.name} for line in free_lines(fighter, self.context["lines"])]
+        lines = free_lines(fighter, self.context["lines"])
+        return [{"id": line.item_id, "name": line.item.name} for line in lines if line.item is not None]
 
 
 class WarbandTemplateHireSerializer(serializers.ModelSerializer):

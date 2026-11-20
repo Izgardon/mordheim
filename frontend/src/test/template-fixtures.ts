@@ -15,6 +15,7 @@ export const makeTemplateLine = (
 ): TemplateLine => ({
   id,
   item: { ...item, variant: "", type: "Weapon" },
+  material: null,
   shown_as: "",
   cost,
   cost_note: "",

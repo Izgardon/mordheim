@@ -39,9 +39,35 @@ export function hisListFor(
   return { fighter, lines: fighterLines(fighter, template.lists) };
 }
 
+/** A weapon material one of his lists sells (weapon materials): as his list names it, with its weapons. */
+export type HisMaterialLine = {
+  slug: string;
+  /** His list's own name for it ("Darksteel blade"), else "Gromril Weapon". */
+  name: string;
+  /** The other melee weapons on that same list, at the line's price for each (the server's). */
+  choices: { itemId: number; price: number | null }[];
+};
+
+/** The weapon materials his lists sell, each once (the first line naming it), in his lists' order. */
+export function hisMaterials(his: HisList): HisMaterialLine[] {
+  const found = new Map<string, HisMaterialLine>();
+  for (const line of his.lines) {
+    if (!line.material || found.has(line.material.slug)) continue;
+    found.set(line.material.slug, {
+      slug: line.material.slug,
+      name: lineName(line),
+      choices: line.material.choices.map((choice) => ({
+        itemId: choice.item.id,
+        price: choice.price,
+      })),
+    });
+  }
+  return [...found.values()];
+}
+
 /** His line for an item: one he is meant to take first, else the first (null: not on his list). */
 export function hisLine(his: HisList, itemId: number): TemplateLine | null {
-  const lines = his.lines.filter((line) => line.item.id === itemId);
+  const lines = his.lines.filter((line) => line.item?.id === itemId);
   return lines.find((line) => !his.fighter.off_lines.includes(line.id)) ?? lines[0] ?? null;
 }
 

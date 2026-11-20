@@ -36,6 +36,7 @@ const line = (id: number, name: string, cost: number | null, extra: Partial<Temp
   ({
     id,
     item: { id: id * 10, name, variant: "", type: "Weapon" },
+    material: null,
     shown_as: "",
     cost,
     cost_note: "",
@@ -189,6 +190,53 @@ describe("Recruiting from the warband's template", () => {
         { ...bought, item_id: 30, price: 15 },
       ],
     });
+  });
+
+  it("buys a weapon from his list made of the material its line sells", async () => {
+    // weapon materials: the Dwarf lists' gromril weapon at three times the price, the weapon picked
+    // from the other melee weapons on that same list (William, 20 Nov 2026)
+    const base = answer(true);
+    const gromril = line(5, "Gromril", null, {
+      item: null,
+      cost_note: "3 × price",
+      material: {
+        slug: "gromril",
+        name: "Gromril",
+        rarity: 11,
+        price_note: "4 x Price",
+        choices: [
+          { line_id: 2, item: { id: 20, name: "Sword", variant: "", type: "Weapon" }, price: 30 },
+        ],
+      },
+    });
+    const lists = [
+      { ...base.template!.lists[0], lines: [...base.template!.lists[0].lines, gromril] },
+    ];
+    fakeApi.on("GET /warbands/9/template/", { ...base, template: { ...base.template!, lists } });
+    renderForm();
+    const user = setupUser();
+    await user.click(await screen.findByRole("radio", { name: /Champion/ }));
+
+    await user.click(screen.getByRole("button", { name: /Gromril Weapon · 3 × price/ }));
+    await user.click(screen.getByRole("button", { name: "Gromril Sword 30 gc" }));
+
+    const tally = screen.getByRole("list", { name: "Tally" });
+    expect(within(tally).getByLabelText("Price for Gromril Sword")).toHaveValue(30);
+    await user.click(screen.getByRole("button", { name: "Recruit" }));
+    await waitFor(() =>
+      expect(fakeApi.bodyOf("POST /warbands/9/heroes/batch/")).toMatchObject({
+        purchases: [
+          {
+            create_index: 0,
+            item_id: 20,
+            material: "gromril",
+            price: 30,
+            quantity: 1,
+            is_buying: true,
+          },
+        ],
+      })
+    );
   });
 
   it("after the first battle shows his lists to look at, and the tally is his cost and the dagger", async () => {

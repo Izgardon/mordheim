@@ -21,6 +21,7 @@ Both price shapes are whole gold, so a material price is never rounded; half of 
 """
 
 from dataclasses import dataclass
+from typing import Any
 
 WEAPON = "Weapon"  # the only item type a material goes on
 MAX_MATERIAL = 12  # the width of the `material` column on every owned row
@@ -141,9 +142,27 @@ SILVER = Material(
 MATERIALS: dict[str, Material] = {material.slug: material for material in (GROMRIL, ITHILMAR, OBSIDIAN, SILVER)}
 SLUGS: tuple[str, ...] = tuple(MATERIALS)
 
-# The items the four used to be. seed_items skips them, so its own archive writes them off, and the warband
-# template seeder drops a list line naming one: a material is not an item (William, 19 Nov 2026).
-FAKE_ITEM_NAMES = ("Gromril Weapon", "Ithilmar Weapon", "Obsidian Weapon", "Silver Weapons")
+# The items the materials used to be, by the name the import gives each. seed_items skips them, so its own archive
+# writes them off, and a warband template's list line naming one names the material instead (a line with no item:
+# `warband_templates/services/material_lines.py`), because a material is not an item (William, 19 Nov 2026).
+ITEM_NAME_MATERIALS: dict[str, str] = {
+    "Gromril Weapon": "gromril",
+    "Ithilmar Weapon": "ithilmar",
+    "Obsidian Weapon": "obsidian",
+    "Silver Weapons": "silver",
+}
+FAKE_ITEM_NAMES: tuple[str, ...] = tuple(ITEM_NAME_MATERIALS)
+
+# A weapon swung, not shot: the only thing a material is made into ("which type of hand-to-hand weapon is offered
+# to you"). The store's chips read the same subtypes (`features/items/store/store-items.ts`).
+MISSILE_SUBTYPES = frozenset({"ranged", "missile", "blackpowder", "thrown"})
+
+
+def is_melee(item: Any) -> bool:
+    """Whether an item is a melee weapon (its `type` and `subtype`)."""
+    type_ = str(getattr(item, "type", "") or "").strip().lower()
+    subtype = str(getattr(item, "subtype", "") or "").strip().lower()
+    return type_ == WEAPON.lower() and subtype not in MISSILE_SUBTYPES
 
 
 def material_of(slug: str) -> Material | None:

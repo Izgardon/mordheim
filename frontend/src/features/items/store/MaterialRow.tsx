@@ -7,13 +7,15 @@ import { cn } from "@/lib/utils";
 import type { WeaponMaterial } from "../types/item-types";
 import { rarityLabel } from "../utils/item-prices";
 import AcquireForm from "./AcquireForm";
-import { materialRowName, type MaterialWeapon } from "./material-rows";
+import type { MaterialWeapon } from "./material-rows";
 import MaterialWeapons from "./MaterialWeapons";
 import { itemName } from "./store-items";
 import type { BasketLine, Recipient } from "./useStoreBasket";
 
 type MaterialRowProps = {
   material: WeaponMaterial;
+  /** What the row reads as: "Gromril Weapon", or the name his list gives it. */
+  name: string;
   /** Every melee weapon the store offers, priced through the material. */
   weapons: MaterialWeapon[];
   open: boolean;
@@ -58,7 +60,7 @@ export default function MaterialRow(props: MaterialRowProps) {
           />
           <div className="flex min-w-0 flex-1 flex-col gap-px">
             <span className={cn("item-name font-bold text-ink", dim && "opacity-60")}>
-              {materialRowName(material)}
+              {props.name}
             </span>
             <span className={cn("text-xs text-muted-foreground", dim && "opacity-60")}>
               {props.isMobile ? (

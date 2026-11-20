@@ -22,6 +22,8 @@ import {
 } from "@/test/template-fixtures";
 import { makeHero, makeItem, makeSpecial } from "@/test/warband-fixtures";
 
+import type { TemplateLine } from "@/features/warbands/types/hire-template-types";
+
 import type { WhoCan } from "../types/item-types";
 import StorePanel from "./StorePanel";
 
@@ -216,11 +218,17 @@ const template = makeTemplateAnswer(
   { variant: "marienburg" }
 );
 
-function renderHisStore(forUnit: { key: string; name: string }) {
+function renderHisStore(
+  forUnit: { key: string; name: string },
+  /** More lines on his list (a weapon material's), with the materials the server offers. */
+  extraLines: TemplateLine[] = [],
+  materials: WhoCan["materials"] = []
+) {
   const queryClient = createTestQueryClient();
   queryClient.setQueryData(catalogueListKey(CAMPAIGN, "items"), [lance, dagger, sword, whip]);
   queryClient.setQueryData(queryKeys.campaign.warbandWhoCan(CAMPAIGN, WARBAND), {
     ...whoCan,
+    materials,
     items: [lance, dagger, sword, whip].map((item) => ({
       item_id: item.id,
       availability_id: item.availabilities![0].id,
@@ -229,7 +237,16 @@ function renderHisStore(forUnit: { key: string; name: string }) {
       reason: item === whip ? "Not usually available to Mercenaries." : "",
     })),
   });
-  queryClient.setQueryData(queryKeys.campaign.warbandHireTemplate(CAMPAIGN, WARBAND), template);
+  const lists = [
+    {
+      ...template.template!.lists[0],
+      lines: [...template.template!.lists[0].lines, ...extraLines],
+    },
+  ];
+  queryClient.setQueryData(queryKeys.campaign.warbandHireTemplate(CAMPAIGN, WARBAND), {
+    ...template,
+    template: { ...template.template!, lists },
+  });
   renderWithQueryClient(
     <StorePanel
       open
@@ -285,6 +302,47 @@ describe("StorePanel, buying for a unit from the template", () => {
     expect(
       within(screen.getByRole("group", { name: "Search bonus" })).getByText("+1")
     ).toBeInTheDocument();
+  });
+
+  it("offers a material his list sells with that list's weapons only", async () => {
+    // weapon materials (William, 20 Nov 2026): the weapon choices are the other melee weapons on
+    // that same equipment list, at the line's own price for each (the server's)
+    const user = setupUser();
+    renderHisStore(
+      { key: "heroes:5", name: "Otto" },
+      [
+        makeTemplateLine(14, { id: 0, name: "" }, null, {
+          item: null,
+          shown_as: "Darksteel blade",
+          cost_note: "3 × price",
+          material: {
+            slug: "gromril",
+            name: "Gromril",
+            rarity: 11,
+            price_note: "4 x Price",
+            choices: [
+              {
+                line_id: 12,
+                item: { id: 2, name: "Sword", variant: "", type: "Weapon" },
+                price: 30,
+              },
+            ],
+          },
+        }),
+      ],
+      [GROMRIL]
+    );
+
+    expect(names()).toEqual(["Darksteel blade", "Jambiya (Dagger)", "Sword"]);
+    const row = screen
+      .getByRole("button", { name: /Darksteel blade/ })
+      .closest("li") as HTMLElement;
+    await user.click(within(row).getByRole("button", { name: "Get" }));
+    const picker = within(screen.getByRole("group", { name: "Weapon" }));
+
+    expect(picker.getAllByRole("button").map((button) => button.textContent)).toEqual([
+      "Sword30 gc",
+    ]);
   });
 
   it("has no His list for a unit typed by hand", () => {

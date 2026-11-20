@@ -191,6 +191,16 @@ class SeedWarbandTemplatesTests(TestCase):
         gone = Special.objects.filter(owner_kind=WARBAND, archived_at__isnull=False).values_list("name", flat=True)
         self.assertEqual(set(gone), {"Leader", "Tentacle"})
 
+    def test_a_line_naming_a_weapon_material_is_seeded_as_the_material(self) -> None:
+        # the Dwarf lists' "Gromril Weapon" is not an item: the line carries the material and no item, and names
+        # the weapon when it is picked (weapon materials)
+        gromril = {**template()["lists"][0]["lines"][0], "item": {"name": "Gromril Weapon", "variant": ""}}
+        gromril |= {"cost": None, "cost_note": "3 × price", "first_free": False, "shown_as": ""}
+        seed(template(lists=[{"key": "kit", "name": "Kit", "note": "", "lines": [gromril]}]))
+
+        line = TemplateListItem.objects.get()
+        self.assertEqual((line.item_id, line.material, line.cost_note), (None, "gromril", "3 × price"))
+
     def test_a_name_the_book_lacks_stops_the_run_and_keeps_nothing(self) -> None:
         missing = template(lists=[{"key": "kit", "name": "Kit", "note": "", "lines": [{**template()["lists"][0]["lines"][0], "item": {"name": "Halberd", "variant": ""}}]}])  # fmt: skip
         with self.assertRaisesRegex(CommandError, "Mercenaries, Kit: item \\('Halberd', ''\\) isn't seeded"):

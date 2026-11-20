@@ -18,7 +18,7 @@ from django.utils import timezone
 
 from apps.campaigns.models import CampaignType
 from apps.core.seeding import IMPORT_OUT
-from apps.items.materials import FAKE_ITEM_NAMES
+from apps.items.materials import ITEM_NAME_MATERIALS
 from apps.items.models import Item
 from apps.races.models import Race
 from apps.skills.models import Skill
@@ -206,20 +206,25 @@ def write_lists(template: WarbandTemplate, entries: list[dict[str, Any]], book: 
         for n, row in enumerate(entries)
     )
     owner = template.name
-    # A line naming one of the items the weapon materials replaced is dropped: gromril, ithilmar, obsidian and
-    # silver are what a weapon is made of now, chosen when it is bought, so no list sells them (19 Nov 2026)
     TemplateListItem.objects.bulk_create(
-        TemplateListItem(
-            equipment_list=made,
-            position=n,
-            item_id=book.item(line["item"], f"{owner}, {row['name']}"),
-            **{field: line[field] for field in LINE_FIELDS},
-        )
+        _line(made, n, line, f"{owner}, {row['name']}", book)
         for made, row in zip(lists, entries, strict=True)
         for n, line in enumerate(row["lines"])
-        if line["item"]["name"] not in FAKE_ITEM_NAMES
     )
     return {row.key: row.pk for row in lists}
+
+
+def _line(made: TemplateList, position: int, line: dict[str, Any], owner: str, book: BookRows) -> TemplateListItem:
+    """One list line: an item at its list price, or the weapon material its item name means (gromril, ithilmar,
+    obsidian, silver), which carries no item and names the weapon when it is picked (weapon materials)."""
+    material = ITEM_NAME_MATERIALS.get(line["item"]["name"], "")
+    return TemplateListItem(
+        equipment_list=made,
+        position=position,
+        item_id=None if material else book.item(line["item"], owner),
+        material=material,
+        **{field: line[field] for field in LINE_FIELDS},
+    )
 
 
 def write_fighters(

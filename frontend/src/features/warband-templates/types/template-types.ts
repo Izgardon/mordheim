@@ -79,9 +79,29 @@ export type TemplateRule = {
 /** Who may take a list line: everyone ({}), heroes, the fighters named, or all but some (by key). */
 export type TemplateWho = { heroes?: boolean; fighters?: string[]; except?: string[] };
 
+/**
+ * A weapon material a list line names instead of an item (weapon materials): the material, how the
+ * line prices it, and the weapons on that same list it may be made into, each at the line's price
+ * for it (the server's: "3 × price" on the Sword's 10 gc is 30).
+ */
+export type TemplateLineMaterial = {
+  slug: string;
+  name: string;
+  rarity: number;
+  price_note: string;
+  choices: {
+    line_id: number;
+    item: { id: number; name: string; variant: string; type: string };
+    price: number | null;
+  }[];
+};
+
 export type TemplateLine = {
   id: number;
-  item: { id: number; name: string; variant: string; type: string };
+  /** null for a line naming a weapon material: `material` says which. */
+  item: { id: number; name: string; variant: string; type: string } | null;
+  /** The weapon material the line sells (weapon materials), null for an item line. */
+  material: TemplateLineMaterial | null;
   shown_as: string;
   cost: number | null;
   cost_note: string;

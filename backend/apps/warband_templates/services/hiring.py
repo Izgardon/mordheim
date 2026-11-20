@@ -69,7 +69,10 @@ def free_items(fighters: list[TemplateFighter], variant: str) -> dict[str, list[
     Ghurash's "Dagger (Henchmen only)") (one query)."""
     lines = (
         TemplateListItem.objects.filter(
-            first_free=True, equipment_list__fighter_links__fighter__in=fighters, variant__in=("", variant)
+            first_free=True,
+            item__isnull=False,  # a material line gives nothing away (weapon materials)
+            equipment_list__fighter_links__fighter__in=fighters,
+            variant__in=("", variant),
         )
         .order_by("equipment_list__position", "position", "id")
         .values_list("equipment_list__fighter_links__fighter__key", "item_id", "who")
