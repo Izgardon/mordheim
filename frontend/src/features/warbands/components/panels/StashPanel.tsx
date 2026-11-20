@@ -11,9 +11,7 @@ import {
   useShownItem,
   type ShownItem,
 } from "@/features/items/components/ItemInfo";
-import MaterialButton, { useOwnedMaterials } from "@/features/items/components/MaterialButton";
 import { itemKind } from "@/features/items/item-kind";
-import { isWeapon } from "@/features/items/store/store-items";
 import type { Item } from "@/features/items/types/item-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
@@ -39,7 +37,6 @@ type StashPanelProps = {
   onMove: (itemId: number, to: ItemPlace, quantity?: number, material?: string) => void;
   onSell: (item: WarbandItemSummary) => void;
   /** Puts a material on a weapon in the stash (weapon materials): silver only. */
-  onMaterial?: (item: WarbandItemSummary, material: string) => void;
 };
 
 type StashListProps = Omit<StashPanelProps, "open" | "onOpenChange"> & {
@@ -68,12 +65,10 @@ export function StashList({
   forUnit,
   onMove,
   onSell,
-  onMaterial,
   isShown,
   onToggleShown,
 }: StashListProps) {
   const stash = useQuery(warbandStashQuery(campaignId, warbandId));
-  const ownedMaterials = useOwnedMaterials(campaignId, warbandId);
   const items = stash.data ?? [];
   // a stash row names only the item: its kind and its rules come from the cached catalogue
   const catalogue = useCatalogue("items", campaignId).data ?? [];
@@ -92,7 +87,6 @@ export function StashList({
       {items.map((item) => {
         const key = `stash:${stashKey(item)}`;
         const entry = entryOf(item);
-        const materials = onMaterial && !item.material && isWeapon(entry) ? ownedMaterials : [];
         return (
           <li
             key={stashKey(item)}
@@ -151,13 +145,6 @@ export function StashList({
                     }}
                   />
                 )}
-                {materials.map((material) => (
-                  <MaterialButton
-                    key={material.slug}
-                    material={material}
-                    onApply={() => onMaterial?.(item, material.slug)}
-                  />
-                ))}
                 <Button size="sm" variant="ghost" onClick={() => onSell(item)}>
                   Sell
                 </Button>

@@ -35,7 +35,7 @@ export default function LineFields({
   return (
     <div className="flex flex-col gap-2.5 border-l-2 border-accent-line bg-page px-3 py-2.5">
       <p className="m-0 text-xs text-text2">
-        {line.item.name}
+        {line.item?.name ?? `${line.material?.name ?? ""} Weapon`}
         {chart ? ` · ${chart}` : ""}
       </p>
       {reason ? <p className="m-0 text-xs font-semibold text-danger">{reason}</p> : null}

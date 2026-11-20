@@ -50,9 +50,20 @@ def check_cap(kind: "UnitKindSpec", warband: Warband, data: Mapping[str, Any], *
         raise RosterError(f"Warband already has {limit} {cap.noun}", cap.code)
 
 
+def first_spell_pick(kind: "UnitKindSpec", data: MutableMapping[str, Any]) -> None:
+    """A unit created with a spell lore has his first spell to pick (William, 20 Nov 2026: "for wizards and priests
+    when created for the first time they should be prompted to learn a spell from their list"): his card shows the
+    same prompt a Spell advance leaves and he picks through the unit's PATCH. Only at creation, only for a kind that
+    keeps picks (heroes, hired swords and dramatis personae), and never for one given no lore."""
+    if not kind.pick_advances or not data.get("available_spell_types"):
+        return
+    data["pending_spells"] = max(int(data.get("pending_spells") or 0), 1)
+
+
 def apply_create(kind: "UnitKindSpec", data: MutableMapping[str, Any]) -> RosterUnit:
     """Create a unit from a validated body (with `warband`): its fields, loadout, traits and members."""
     lists = pop_loadout_lists(kind, data)
+    first_spell_pick(kind, data)
     members = data.pop("henchmen", None) if kind.has_members else None
     apply_create_traits(kind, data, lists, data["warband"].campaign_id)
     if not (kind.recruit.client_may_seed_level_up and "level_up" in data):

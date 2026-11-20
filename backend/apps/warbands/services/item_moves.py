@@ -6,10 +6,8 @@ dismissed) raises NotFound and nothing moves (BUG-06). Too few copies to move or
 which rolls the whole move back.
 
 A move or a sale names what the copies are made of (`material`, weapon materials; "" plain, the default), so a
-Gromril Sword is moved and sold as itself and keeps its material, and the name it was given, wherever it lands. `apply_material` puts a material
-on a weapon the warband already owns, which the book allows for silver: it charges what the material asks (80 gc
-unless the request names a price), logs the rarity roll as a purchase does, and writes its "Buy" row in the same
-transaction.
+Gromril Sword is moved and sold as itself and keeps its material, and the name it was given, wherever it lands. An
+item is never transformed (William, 20 Nov 2026), so nothing here puts a material on a copy the warband owns.
 """
 
 from collections.abc import Mapping
@@ -19,7 +17,7 @@ from typing import Any, cast
 from django.db import transaction
 from django.db.models import Prefetch
 
-from apps.items.materials import MATERIALS, copy_name, priced
+from apps.items.materials import copy_name, priced
 from apps.items.models import Item
 from apps.warbands.models import Henchman, LedgerAction, RosterUnit, Warband, WarbandItem, not_dismissed
 from apps.warbands.prefetches import members_with_gaps
@@ -27,13 +25,10 @@ from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandItemSummarySerial
 from apps.warbands.services import economy_log, ledger
 from apps.warbands.services.loadouts import carriers_of, peek_row
 from apps.warbands.services.prices import CampaignPrices, sale_price
-from apps.warbands.services.purchases import gold_negative
-from apps.warbands.services.rarity_rolls import RollRefused, record_roll
 from apps.warbands.services.stash import (
     ANY_COST,
     StashTake,
     add_costs,
-    add_to_stash,
     remove_from_stash,
     stash_entry,
 )
@@ -43,7 +38,6 @@ from apps.warbands.services.unit_items import (
     holds_loadout,
     resolve_unit,
     take_unit_copies,
-    touch_unit,
 )
 from apps.warbands.units.kinds import KINDS, UnitKindKey
 from apps.warbands.utils.leaders import lock_warband
@@ -243,59 +237,3 @@ def sell_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outcome:
         source_end = (source_type, economy_log.unit_name(source_type, source_unit))
         economy_log.log_sale(warband, name, quantity, price, source_end)
         return 200, _item_change(warband, source=source, stash_item=stash_item, removed=removed, material=material)
-
-
-def _made_of(warband: Warband, item: Item, data: Mapping[str, Any], unit: Any, material: str) -> Any:
-    """One plain copy of `item` becomes a copy made of `material`, where it is: a unit's newest plain copy (a group's
-    newest plain loadout row, which is every member's), or one out of the stash. ValueError when there is none; the
-    stash entry the copy landed in, or None for a unit's copy."""
-    if unit is None:
-        take = remove_from_stash(warband.id, item.id, 1, data["cost"] if "cost" in data else ANY_COST, "")
-        if not take.costs:
-            raise ValueError("Item not found in stash.")
-        add_to_stash(warband.id, item.id, 1, take.costs[0], material, take.shown_as)
-        return stash_entry(warband.id, item, material)
-    kind = KINDS[cast(UnitKindKey, data["source_type"])]
-    rows: Any = kind.items.model._default_manager.filter(**{kind.parent_field: unit, "item": item, "material": ""})
-    row = rows.order_by("companion", "-id").first()
-    if row is None:
-        raise ValueError("Item not found.")
-    kind.items.model._default_manager.filter(pk=row.pk).update(material=material)
-    touch_unit(data["source_type"], unit)
-    return None
-
-
-def apply_material(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outcome:
-    """POST item-materials/: put a material on a weapon the warband already owns (the book's silvering). It charges
-    the material's `on_owned` unless a price was sent, logs the rarity roll, and answers what changed."""
-    material = data["material"]
-    source_type, source_id = data["source_type"], data.get("source_id")
-    source_unit = None if source_type == "stash" else resolve_unit(warband, source_type, source_id, "Source")
-    asked = MATERIALS[material].on_owned
-    price = int(data["price"]) if data.get("price") is not None else int(asked or 0)
-    warnings: list[dict[str, Any]] = []
-    plain = _source_row(warband, item, data, source_unit, "")  # the plain copy's name, which it keeps
-    name = copy_name(material, plain.shown_as, item.name)
-    with transaction.atomic():
-        lock_warband(warband.id)  # the gold first, as every roster write does
-        ledger.record(warband, LedgerAction.BUY, -price, name)
-        if data.get("rarity_roll"):
-            try:
-                warnings += record_roll(warband, item, data["rarity_roll"])
-            except RollRefused as refusal:
-                raise ValueError(str(refusal)) from None
-        stash_item = _made_of(warband, item, data, source_unit, material)
-        economy_log.write(
-            warband,
-            "loadout",
-            "item_material",
-            {"item": name, "material": MATERIALS[material].name, "price": price},
-        )
-        if source_unit is not None:
-            source = _unit_payload(warband, source_type, source_id)
-        else:
-            source = WarbandItemSummarySerializer(stash_item).data if stash_item else None
-        body = _item_change(warband, source=source, stash_item=stash_item, removed=None)
-        if warband.gold < 0:
-            warnings.append(gold_negative(warband))
-        return 200, {**body, "warnings": warnings}

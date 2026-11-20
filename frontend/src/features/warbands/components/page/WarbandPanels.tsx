@@ -76,7 +76,6 @@ export default function WarbandPanels(props: WarbandPanelsProps) {
         units={units}
         onMove={actions.moveItem}
         onSellFromStash={sellFromStash}
-        onMaterial={(from, item, material) => actions.materialItem(from, item.id, material)}
         onOpenStore={() => {
           props.setLoadoutFor(null);
           if (current) props.openStore(storeFor(current));
@@ -93,7 +92,6 @@ export default function WarbandPanels(props: WarbandPanelsProps) {
           actions.moveItem(null, itemId, to, quantity, material)
         }
         onSell={sellFromStash}
-        onMaterial={(item, material) => actions.materialItem(null, item.id, material)}
       />
       <StorePanel
         open={props.panel === "store"}

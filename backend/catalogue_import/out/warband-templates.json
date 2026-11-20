@@ -10751,7 +10751,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -10772,7 +10773,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -10793,7 +10795,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -10814,7 +10817,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -10835,7 +10839,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -10856,7 +10861,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -10877,7 +10883,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -10898,7 +10905,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -10919,7 +10927,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -10940,7 +10949,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -10961,7 +10971,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -10982,7 +10993,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -11003,7 +11015,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -11024,7 +11037,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -11045,7 +11059,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       }
     ]
   },
@@ -13411,7 +13426,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Bloodline Abilities",
@@ -13430,7 +13446,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Bloodline Abilities",
@@ -13449,7 +13466,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Bloodline Abilities",
@@ -13468,7 +13486,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Bloodline Abilities",
@@ -13487,7 +13506,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Bloodline Abilities",
@@ -13506,7 +13526,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Bloodline Abilities",
@@ -13525,7 +13546,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       }
     ]
   },
@@ -20356,7 +20378,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Blessings of Nurgle",
@@ -20374,7 +20397,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Blessings of Nurgle",
@@ -20392,7 +20416,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Blessings of Nurgle",
@@ -20410,7 +20435,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Blessings of Nurgle",
@@ -20428,7 +20454,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Blessings of Nurgle",
@@ -20446,7 +20473,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       }
     ]
   },
@@ -24066,7 +24094,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24082,7 +24111,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24098,7 +24128,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       }
     ]
   },
@@ -24796,7 +24827,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24815,7 +24847,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24834,7 +24867,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24853,7 +24887,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24872,7 +24907,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24891,7 +24927,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24910,7 +24947,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24929,7 +24967,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24948,7 +24987,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24967,7 +25007,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -24986,7 +25027,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -25005,7 +25047,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -25024,7 +25067,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -25043,7 +25087,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -25062,7 +25107,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       }
     ]
   },
@@ -34900,7 +34946,8 @@
         },
         "max_per_fighter": 3,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Scars and Tattoos",
@@ -34920,7 +34967,8 @@
         },
         "max_per_fighter": 3,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Scars and Tattoos",
@@ -34940,7 +34988,8 @@
         },
         "max_per_fighter": 3,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Scars and Tattoos",
@@ -34960,7 +35009,8 @@
         },
         "max_per_fighter": 3,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Scars and Tattoos",
@@ -34980,7 +35030,8 @@
         },
         "max_per_fighter": 3,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Scars and Tattoos",
@@ -35000,7 +35051,8 @@
         },
         "max_per_fighter": 3,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Scars and Tattoos",
@@ -35020,7 +35072,8 @@
         },
         "max_per_fighter": 3,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Scars and Tattoos",
@@ -35040,7 +35093,8 @@
         },
         "max_per_fighter": 3,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Scars and Tattoos",
@@ -35060,7 +35114,8 @@
         },
         "max_per_fighter": 3,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       }
     ]
   },
@@ -36538,7 +36593,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Runic Tattoos",
@@ -36555,7 +36611,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Runic Tattoos",
@@ -36572,7 +36629,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Runic Tattoos",
@@ -36589,7 +36647,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Runic Tattoos",
@@ -36606,7 +36665,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Runic Tattoos",
@@ -36623,7 +36683,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Runic Tattoos",
@@ -36640,7 +36701,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Runic Tattoos",
@@ -36657,7 +36719,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Runic Tattoos",
@@ -36674,7 +36737,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       }
     ]
   },
@@ -38418,7 +38482,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Variations",
@@ -38434,7 +38499,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Variations",
@@ -38450,7 +38516,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Variations",
@@ -38466,7 +38533,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Variations",
@@ -38482,7 +38550,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Variations",
@@ -38498,7 +38567,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Variations",
@@ -38514,7 +38584,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       }
     ]
   },
@@ -41672,7 +41743,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Speshul Nitches",
@@ -41689,7 +41761,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Speshul Nitches",
@@ -41706,7 +41779,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Speshul Nitches",
@@ -41723,7 +41797,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Speshul Nitches",
@@ -41740,7 +41815,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Speshul Nitches",
@@ -41757,7 +41833,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       }
     ]
   },
@@ -54593,7 +54670,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Sacred markings",
@@ -54613,7 +54691,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Sacred markings",
@@ -54630,7 +54709,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       }
     ]
   },
@@ -55476,7 +55556,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Sacred Markings",
@@ -55496,7 +55577,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Sacred Markings",
@@ -55513,7 +55595,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       }
     ]
   },
@@ -56262,7 +56345,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56278,7 +56362,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56294,7 +56379,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56310,7 +56396,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56326,7 +56413,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56342,7 +56430,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56358,7 +56447,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56374,7 +56464,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56390,7 +56481,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56406,7 +56498,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56422,7 +56515,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56438,7 +56532,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56454,7 +56549,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56470,7 +56566,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -56486,7 +56583,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       }
     ]
   },
@@ -57450,7 +57548,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Honours",
@@ -57467,7 +57566,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Honours",
@@ -57484,7 +57584,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Honours",
@@ -57501,7 +57602,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Honours",
@@ -57518,7 +57620,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Honours",
@@ -57535,7 +57638,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Honours",
@@ -57552,7 +57656,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Honours",
@@ -57569,7 +57674,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       }
     ]
   },
@@ -61452,7 +61558,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Mark of the Dark Gods",
@@ -61472,7 +61579,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Mark of the Dark Gods",
@@ -61492,7 +61600,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Mark of the Dark Gods",
@@ -61512,7 +61621,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Mark of the Dark Gods",
@@ -61532,7 +61642,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Mutations",
@@ -61553,7 +61664,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61574,7 +61686,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61595,7 +61708,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61616,7 +61730,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61637,7 +61752,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61658,7 +61774,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61679,7 +61796,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61700,7 +61818,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61721,7 +61840,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61742,7 +61862,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61763,7 +61884,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61784,7 +61906,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61805,7 +61928,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61826,7 +61950,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Mutations",
@@ -61847,7 +61972,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Blessings of Nurgle",
@@ -61868,7 +61994,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Blessings of Nurgle",
@@ -61889,7 +62016,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Blessings of Nurgle",
@@ -61910,7 +62038,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Blessings of Nurgle",
@@ -61931,7 +62060,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Blessings of Nurgle",
@@ -61952,7 +62082,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       },
       {
         "group": "Blessings of Nurgle",
@@ -61973,7 +62104,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Mutant"
       }
     ]
   },
@@ -69099,7 +69231,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Necrolore Abilities",
@@ -69118,7 +69251,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Necrolore Abilities",
@@ -69137,7 +69271,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Necrolore Abilities",
@@ -69156,7 +69291,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Necrolore Abilities",
@@ -69175,7 +69311,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Necrolore Abilities",
@@ -69194,7 +69331,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       }
     ]
   },
@@ -92064,7 +92202,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Aquatic Mutants",
@@ -92080,7 +92219,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Aquatic Mutants",
@@ -92096,7 +92236,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Aquatic Mutants",
@@ -92112,7 +92253,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Aquatic Mutants",
@@ -92128,7 +92270,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Aquatic Mutants",
@@ -92144,7 +92287,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Aquatic Mutants",
@@ -92160,7 +92304,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Aquatic Mutants",
@@ -92176,7 +92321,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       },
       {
         "group": "Aquatic Mutants",
@@ -92192,7 +92338,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": true
+        "at_recruit": true,
+        "from_skill": ""
       }
     ]
   },
@@ -92977,7 +93124,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Modus Operandi",
@@ -92994,7 +93142,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Modus Operandi",
@@ -93011,7 +93160,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       }
     ]
   },
@@ -95767,7 +95917,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Twistkin"
       },
       {
         "group": "Mutations",
@@ -95785,7 +95936,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Twistkin"
       },
       {
         "group": "Mutations",
@@ -95803,7 +95955,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Twistkin"
       },
       {
         "group": "Mutations",
@@ -95821,7 +95974,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Twistkin"
       },
       {
         "group": "Mutations",
@@ -95839,7 +95993,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Twistkin"
       },
       {
         "group": "Mutations",
@@ -95857,7 +96012,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Twistkin"
       },
       {
         "group": "Mutations",
@@ -95875,7 +96031,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Twistkin"
       },
       {
         "group": "Mutations",
@@ -95893,7 +96050,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Twistkin"
       },
       {
         "group": "Mutations",
@@ -95911,7 +96069,8 @@
         },
         "max_per_fighter": 1,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": "Twistkin"
       }
     ]
   },
@@ -104684,7 +104843,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Strigoi Vampire Abilities",
@@ -104703,7 +104863,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Strigoi Vampire Abilities",
@@ -104722,7 +104883,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Strigoi Vampire Abilities",
@@ -104741,7 +104903,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Strigoi Vampire Abilities",
@@ -104760,7 +104923,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Strigoi Vampire Abilities",
@@ -104779,7 +104943,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Strigoi Vampire Abilities",
@@ -104798,7 +104963,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Strigoi Vampire Abilities",
@@ -104817,7 +104983,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Strigoi Vampire Abilities",
@@ -104836,7 +105003,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Strigoi Vampire Abilities",
@@ -104855,7 +105023,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Strigoi Vampire Abilities",
@@ -104874,7 +105043,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Strigoi Vampire Abilities",
@@ -104893,7 +105063,8 @@
         },
         "max_per_fighter": null,
         "later_double": true,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       }
     ]
   },
@@ -115324,7 +115495,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Warpstone for Breakfast",
@@ -115340,7 +115512,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Warpstone for Breakfast",
@@ -115356,7 +115529,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Warpstone for Breakfast",
@@ -115372,7 +115546,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Warpstone for Breakfast",
@@ -115388,7 +115563,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Warpstone for Breakfast",
@@ -115404,7 +115580,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Warpstone for Breakfast",
@@ -115420,7 +115597,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       },
       {
         "group": "Warpstone for Breakfast",
@@ -115436,7 +115614,8 @@
         },
         "max_per_fighter": null,
         "later_double": false,
-        "at_recruit": false
+        "at_recruit": false,
+        "from_skill": ""
       }
     ]
   },

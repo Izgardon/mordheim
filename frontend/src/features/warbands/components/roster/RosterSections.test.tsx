@@ -1,7 +1,8 @@
 /**
  * Recruiting is an inline form at the top of its roster section (William, 1 Nov 2026: "an inline
- * form rather than a modal ... it should then automatically start in the edit mode after saving"),
- * and a hire or a camp recruit lands on the new card in Edit through `?unit=…&edit=1`.
+ * form rather than a modal"), which closes onto the new unit's collapsed card (20 Nov 2026: "after
+ * creating a unit from a template it should go straight to the minimised unit card not edit form");
+ * a hire or a camp recruit lands on the new card in Edit through `?unit=…&edit=1`.
  */
 import { useState } from "react";
 import { MemoryRouter } from "react-router-dom";
@@ -72,7 +73,7 @@ describe("Recruiting from the roster", () => {
     fakeApi.on("GET /warbands/9/template/", NO_TEMPLATE);
   });
 
-  it("opens the form in the Heroes section, and the new hero's card opens in Edit", async () => {
+  it("opens the form in the Heroes section, and closes onto the new hero's collapsed card", async () => {
     fakeApi.on("POST /warbands/9/heroes/batch/", {
       units: [aldric, ulrich],
       summary: {},
@@ -90,11 +91,15 @@ describe("Recruiting from the roster", () => {
     await user.type(within(form).getByLabelText("Cost (gc)"), "35");
     await user.click(within(form).getByRole("button", { name: "Recruit" }));
 
-    expect(await screen.findByText("Editing Ulrich Brandt")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByRole("form", { name: "Recruit" })).not.toBeInTheDocument()
+    );
     expect(fakeApi.bodyOf("POST /warbands/9/heroes/batch/")).toEqual({
       create: [{ name: "Ulrich Brandt", unit_type: "Champion", race: null, price: 35, xp: 0 }],
     });
-    expect(screen.queryByRole("form", { name: "Recruit" })).not.toBeInTheDocument();
+    // his card sits collapsed, like every other: nothing is open and nothing is in Edit
+    expect(screen.queryByText("Editing Ulrich Brandt")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /Ulrich Brandt/ }).length).toBeGreaterThan(0);
   });
 
   it("keeps the form when the recruit fails, and Cancel closes it", async () => {

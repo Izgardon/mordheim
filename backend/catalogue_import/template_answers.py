@@ -185,6 +185,10 @@ UPGRADES_AS_RULES: dict[str, frozenset[str]] = {"lizardmen": frozenset({"Poisone
 # Ungor Trapper: upgrades are for heroes, so a player adds one from Boons & Banes), the Clan Moulder Rat Ogre's
 # mutation at hire (a henchman's) and the god families on the Marauders' Marks. `half`: each at half its price,
 # rounded up as gold always is (William, 6 Nov 2026: "yes always round up in mordheim for gold"): 35 gc is 18.
+# A list whose mutations come from a skill, not from recruiting, carries `from_skill` with the skill's name: they
+# are left out of the hire dialog's Upgrades and stay in the store's, buyable at any time (William, 20 Nov 2026:
+# "no mutations on hire for skill related mutations like the beastmen, it should only be for units that explicitly
+# start with them").
 MUTANT_SKILL = "With the Mutant skill."
 TWISTKIN = "With the Twistkin skill, at half the listed price."
 RULEBOOK_MUTATIONS = [
@@ -218,6 +222,7 @@ MUTATION_UPGRADES: dict[str, list[dict[str, Any]]] = {
             "family": "Mutation",
             "terms": {"who": {"fighters": ["beastmen-chieftain", "beastmen-shaman", "bestigors", "centigor"]}},
             "note": MUTANT_SKILL,
+            "from_skill": "Mutant",
         }
     ],
     # the Marauders' mutant skill, "may buy one mutation ... Heroes with the Mark of Onogal may choose a Blessing of
@@ -228,6 +233,7 @@ MUTATION_UPGRADES: dict[str, list[dict[str, Any]]] = {
             "family": "Mutation",
             "terms": {"who": {"fighters": ["marauder-chieftain", "seer", "champions", "condemned"]}},
             "note": MUTANT_SKILL,
+            "from_skill": "Mutant",
         },
         {
             "group": "Blessings of Nurgle",
@@ -235,6 +241,7 @@ MUTATION_UPGRADES: dict[str, list[dict[str, Any]]] = {
             "except": ["Mark of Nurgle"],
             "terms": {"who": {"fighters": ["marauder-chieftain", "seer", "champions", "condemned"]}},
             "note": "Mark of Onogal heroes with the Mutant skill, instead of a mutation.",
+            "from_skill": "Mutant",
         },
     ],
     # the Twistkin skill (Stormvermin only, PDF p4): "must buy a Mutation from the list in the Mordheim Rulebook (see
@@ -246,6 +253,7 @@ MUTATION_UPGRADES: dict[str, list[dict[str, Any]]] = {
             "half": True,
             "terms": {"who": {"fighters": ["stormvermin"]}, "max_per_fighter": 1},
             "note": TWISTKIN,
+            "from_skill": "Twistkin",
         }
     ],
     # the Fen Guard's Variation rule (PDF p1): one when hired, a new one on an advance's double, from the mutation

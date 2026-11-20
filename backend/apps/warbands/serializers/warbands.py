@@ -2,7 +2,7 @@ from typing import Any
 
 from rest_framework import serializers
 
-from apps.items.materials import copy_name, on_owned_only
+from apps.items.materials import copy_name
 from apps.warbands.models import Warband, WarbandResource, WarbandRule
 from apps.warbands.models.warband import MAX_RULE_TEXT
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
@@ -15,10 +15,8 @@ from apps.warbands.units.services.create import cap_limit
 from apps.warbands.utils.wyrdstone_prices import size_band
 
 from ..services.types import types_of
-from .purchases import MaterialField, RarityRollSerializer
+from .purchases import MaterialField
 from .types import WarbandTypeBriefSerializer
-
-ON_OWNED = on_owned_only()  # the materials the book lets a warband put on a weapon it already owns (silver)
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
@@ -363,25 +361,4 @@ class WarbandItemSaleSerializer(serializers.Serializer):
             attrs["source_id"] = None
         elif source_id is None:
             raise serializers.ValidationError({"source_id": "source_id is required for non-stash sources."})
-        return attrs
-
-
-class WarbandItemMaterialSerializer(serializers.Serializer):
-    """POST item-materials/: put a material on a weapon the warband already owns (weapon materials). Only a material
-    the book lets a warband add later (silver) is taken; the rarity roll is logged as a purchase's is, and `price`
-    overrides what the material asks for."""
-
-    source_type = serializers.ChoiceField(choices=("hero", "hireling", "henchmen_group", "stash"))
-    source_id = serializers.IntegerField(required=False, allow_null=True)
-    cost = serializers.IntegerField(required=False, allow_null=True)  # from the stash: a copy of this cost
-    item_id = serializers.IntegerField()
-    material = serializers.ChoiceField(choices=ON_OWNED)
-    price = serializers.IntegerField(min_value=0, max_value=MAX_TRADE_PRICE, required=False, allow_null=True)
-    rarity_roll = RarityRollSerializer(required=False, allow_null=True)
-
-    def validate(self, attrs: Any) -> Any:
-        if attrs["source_type"] == "stash":
-            attrs["source_id"] = None
-        elif attrs.get("source_id") is None:
-            raise serializers.ValidationError({"source_id": ["source_id is required for a unit."]})
         return attrs

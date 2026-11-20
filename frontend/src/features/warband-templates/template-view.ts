@@ -218,9 +218,19 @@ export function priceLabel(
   return `${base}${line.cost_note ? ` ${line.cost_note}` : ""}${brace}`;
 }
 
-/** The line's item as the list names it: "Jambiya (Dagger)", or the item's own name. */
-export const lineName = (line: Pick<TemplateLine, "item" | "shown_as">) =>
-  line.shown_as ? `${line.shown_as} (${line.item.name})` : line.item.name;
+/**
+ * The line's item as the list names it: "Jambiya (Dagger)", or the item's own name. A line naming a
+ * weapon material (weapon materials) reads as the list names it ("Darksteel blade"), else "Gromril
+ * Weapon".
+ */
+export const lineName = (line: {
+  item: { name: string } | null;
+  shown_as: string;
+  material?: { name: string } | null;
+}) => {
+  if (!line.item) return line.shown_as || `${line.material?.name ?? ""} Weapon`.trim();
+  return line.shown_as ? `${line.shown_as} (${line.item.name})` : line.item.name;
+};
 
 /** A lore and when he may use it: "Tchar Rituals (with the Mark of Tchar the Eagle)". */
 export const spellLabel = (spell: TemplateSpellType) =>

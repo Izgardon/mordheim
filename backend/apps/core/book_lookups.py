@@ -69,14 +69,18 @@ EQUIPMENT_NAME_ALIASES = {
     "hardened leathers": "toughened leathers",
     "bo": "quarter staff",
     "rope and hook": "rope & hook",
+    "dark elf blade": "sword",  # what it is made of is in EQUIPMENT_MATERIALS: his copy reads "Dark Elf Sword"
 }
 
 # What the book makes a kit line of (weapon materials; `EQUIPMENT_NAME_ALIASES` stays a name-to-name map): the
-# Runesmith Journeyman's gromril hammer is our Club, Mace or Hammer made of gromril, and it is the only weapon-
-# material kit row in the catalogue. Every other material line (the Dwarf Treasure Hunter's, Aenur's, Bertha's,
+# Runesmith Journeyman's gromril hammer is our Club, Mace or Hammer made of gromril, and the Dark Elves' blade is
+# our Sword made of the Dark Elf Blade. Every other material line (the Dwarf Treasure Hunter's, Aenur's, Bertha's,
 # Dalla's, Leonardo's, Okrinok's) names Gromril Armour or Ithilmar Armour, which are items of their own.
 EQUIPMENT_MATERIALS = {
     "gromril hammer": "gromril",
+    # the Dark Elf Assassin's, the Corsairs' Beastmaster's and Sorceress's and Innominatus's blade: our Sword made
+    # of the Dark Elves' own material, which reads "Dark Elf Sword" (weapon materials, 20 Nov 2026)
+    "dark elf blade": "dark-elf-blade",
 }
 
 # The name a kit gives the item, as a warband template's list line does (`TemplateListItem.shown_as`): his kit calls

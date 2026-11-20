@@ -16,6 +16,10 @@ A list says whether it is for everyone and names warband types or groups, each i
    rows name (William: the rows the Nehekharan arrows and the Sea Dragon Cloak name are another warband's);
 5. otherwise the item is "not usually available": it can still be bought at its first row, with the reason.
 
+An animal or a miscellaneous item a warband reaches as everyone does (step 3, no line naming any warband) is
+`always_open`: the store offers it to any unit whatever his own list sells (William, 20 Nov 2026), while weapons and
+armour stay his list's.
+
 Among an item's rows a warband may use, the lowest step wins, then a row without a label (a "Brace" or "Skink heroes"
 row is a variant, never the default), then the row naming the fewest warbands (the more specific), then the commonest,
 the cheapest and the first. An item from a setting the campaign hasn't ticked is treated like step 5, the setting named
@@ -77,10 +81,10 @@ def step(for_everyone: bool, lines: Iterable[Any], buyer: Buyer) -> int | None:
     return 3 if for_everyone else None
 
 
-def on_his_list(item: Any, buyer: Buyer) -> bool:
-    """Whether the buyer's own template list sells the item: its id, or the book id a campaign's version of it stands
+def on_his_list(item: Any, sells: frozenset[int]) -> bool:
+    """Whether a warband's own template list sells the item: its id, or the book id a campaign's version of it stands
     in for (a book template's lines name the book item)."""
-    return item.pk in buyer.sells or getattr(item, "replaces_id", None) in buyer.sells
+    return item.pk in sells or getattr(item, "replaces_id", None) in sells
 
 
 def _rank(row: Any, index: int, at: int) -> SortKey:
@@ -96,16 +100,31 @@ def out_of_play(setting: str) -> str:
     return f"{setting} isn't in this campaign."
 
 
+# The types of item generally usable by anyone (William, 20 Nov 2026: "animals should generally appear in a units
+# available store unless it is scoped to something and miscellaneous items too should show if they aren't scoped,
+# as these are generally always usable and should be purchasable"). One of these whose rows name no warband at all
+# is `always_open`, which the store shows beside a unit's own list; weapons and armour stay his list's.
+ALWAYS_OPEN_TYPES = frozenset({"animal", "miscellaneous"})
+
+
+def always_open(item: Any, at: int | None) -> bool:
+    """Whether the store offers the item to any unit, whatever his own list sells: an animal or a miscellaneous item
+    the buyer reaches as everyone does (step 3), so no row of it names a warband that shuts him in or out."""
+    return at == 3 and str(item.type or "").strip().lower() in ALWAYS_OPEN_TYPES
+
+
 @dataclass(frozen=True)
 class Offer:
     """The price row an item offers a warband (`availability_id`), the other rows it may use (`options`, the chosen
-    first), whether it can usually buy it, and why not."""
+    first), whether it can usually buy it, why not, and whether the store offers it to any unit whatever his own
+    list sells (`always_open`)."""
 
     item_id: int
     availability_id: int
     options: list[int]
     can_buy: bool
     reason: str
+    always_open: bool = False
 
     def payload(self) -> dict[str, Any]:
         return {
@@ -114,6 +133,7 @@ class Offer:
             "options": self.options,
             "can_buy": self.can_buy,
             "reason": self.reason,
+            "always_open": self.always_open,
         }
 
 
@@ -127,13 +147,15 @@ def offer(item: Any, buyer: Buyer, in_play: bool, setting: str) -> Offer | None:
         for index, row in enumerate(rows)
         if (at := step(row.for_everyone, row.warband_links.all(), buyer)) is not None
     )
-    if not usable and on_his_list(item, buyer):
+    if not usable and on_his_list(item, buyer.sells):
         usable = sorted((_rank(row, index, 1), row) for index, row in enumerate(rows))
     reasons = [] if usable else [not_usually(buyer)]
     if not in_play:
         reasons.append(out_of_play(setting))
     chosen = [row for _key, row in usable] or [rows[0]]
-    return Offer(item.pk, chosen[0].pk, [row.pk for row in chosen], not reasons, " ".join(reasons))
+    at = usable[0][0][0] if usable else None
+    open_now = not reasons and always_open(item, at)
+    return Offer(item.pk, chosen[0].pk, [row.pk for row in chosen], not reasons, " ".join(reasons), open_now)
 
 
 def access(entry: Any, buyer: Buyer, in_play: bool, setting: str) -> dict[str, Any]:

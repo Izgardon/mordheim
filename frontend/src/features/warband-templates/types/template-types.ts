@@ -79,9 +79,31 @@ export type TemplateRule = {
 /** Who may take a list line: everyone ({}), heroes, the fighters named, or all but some (by key). */
 export type TemplateWho = { heroes?: boolean; fighters?: string[]; except?: string[] };
 
+/**
+ * A weapon material a list line names instead of an item (weapon materials): the material, how the
+ * line prices it, and the weapons on that same list it may be made into, each at the line's price
+ * for it (the server's: "3 × price" on the Sword's 10 gc is 30).
+ */
+export type TemplateLineMaterial = {
+  slug: string;
+  name: string;
+  /** The word in front of the weapon's name: "Gromril", "Dark Elf" (the server's). */
+  prefix: string;
+  rarity: number;
+  price_note: string;
+  choices: {
+    line_id: number;
+    item: { id: number; name: string; variant: string; type: string };
+    price: number | null;
+  }[];
+};
+
 export type TemplateLine = {
   id: number;
-  item: { id: number; name: string; variant: string; type: string };
+  /** null for a line naming a weapon material: `material` says which. */
+  item: { id: number; name: string; variant: string; type: string } | null;
+  /** The weapon material the line sells (weapon materials), null for an item line. */
+  material: TemplateLineMaterial | null;
   shown_as: string;
   cost: number | null;
   cost_note: string;
@@ -180,6 +202,12 @@ export type TemplateUpgrade = {
   later_double: boolean;
   /** Bought only when he is recruited. */
   at_recruit: boolean;
+  /**
+   * The skill its mutations come from (the Beastmen's and Marauders' Mutant, Clan Moulder's
+   * Twistkin); blank for an upgrade bought when a fighter is recruited. The hire dialog leaves
+   * these out and the store keeps them, buyable at any time (William, 20 Nov 2026).
+   */
+  from_skill: string;
   /** Who may take it, in the server's words: "Tainted Ones only"; blank: any hero. */
   who_text: string;
 };

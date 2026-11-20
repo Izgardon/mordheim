@@ -1,29 +1,26 @@
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Chip } from "@/components/ui/chip";
-import { Switch } from "@/components/ui/switch";
 import type { TemplateVariant } from "@/features/warband-templates/types/template-types";
 import type { TemplateUpgrade } from "@/features/warbands/types/hire-template-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
-import { cn } from "@/lib/utils";
 
 import { useWhoCan } from "../api/who-can-queries";
-import ItemFormDialog from "../components/ItemFormDialog";
 import type { ShownItem } from "../components/ItemInfo";
 import type { WeaponMaterial } from "../types/item-types";
 import { isSold } from "../utils/item-listing";
-import { hisLine, hisRow, rareBonusFor, type HisList, type HisUpgrades } from "./his-list";
 import {
-  inStoreOrder,
-  isWeapon,
-  STORE_CATEGORIES,
-  searchWords,
-  storeCategory,
-  type StoreCategory,
-} from "./store-items";
+  hisLine,
+  hisMaterials,
+  hisRow,
+  rareBonusFor,
+  type HisList,
+  type HisUpgrades,
+} from "./his-list";
+import { materialRows } from "./material-rows";
+import MaterialRows from "./MaterialRows";
+import StoreFilters from "./StoreFilters";
+import { inStoreOrder, searchWords, storeCategory, type StoreCategory } from "./store-items";
 import StoreRow, { type StoreOffer } from "./StoreRow";
 import StoreUpgrades from "./StoreUpgrades";
 import type { BasketLine, Recipient } from "./useStoreBasket";
@@ -44,7 +41,7 @@ export type StoreListProps = {
   his?: HisList | null;
   /** The warband's variant's terms: where a rare search starts its bonus. */
   variant?: TemplateVariant | null;
-  /** The weapon materials the server offers this warband (weapon materials): a weapon's only. */
+  /** The weapon materials the server offers this warband (weapon materials): a row each. */
   materials?: WeaponMaterial[];
   /** The copies of an item the basket holds, for a per-warband limit. */
   inBasket?: (itemId: number) => number;
@@ -61,7 +58,8 @@ export type StoreListProps = {
  * can't usually buy is hidden; off: it shows with the server's reason, "Not usually available to
  * Skaven.", and can still be bought), His list when buying for a unit from the template (on: only
  * his lists' items, as they name them, at the store's price; both on: his items the warband can
- * usually buy), category chips, a hero's Upgrades (his template's), and a row per item. Add item
+ * usually buy), category chips, a hero's Upgrades (his template's), a row per weapon material
+ * (weapon materials: "Gromril Weapon", which picks the weapon when opened), and a row per item. Add item
  * (William, 7 Nov 2026: "Store has button to add a new item that opens the the create item modal")
  * makes a campaign item and opens its row, found by its name, ready to buy.
  */
@@ -80,12 +78,35 @@ export default function StoreList(props: StoreListProps) {
         const byId = new Map((item.availabilities ?? []).map((row) => [row.id, row]));
         const rows = (offer?.options ?? []).flatMap((id) => byId.get(id) ?? []);
         if (!offer || !rows.length) return [];
-        return [{ item, availability: rows[0], rows, warning: offer.can_buy ? "" : offer.reason }];
+        return [
+          {
+            item,
+            availability: rows[0],
+            rows,
+            warning: offer.can_buy ? "" : offer.reason,
+            alwaysOpen: Boolean(offer.always_open),
+          },
+        ];
       }),
     [catalogue.data, whoCan.items]
   );
   const his = props.his ?? null;
   const hisOn = his !== null && onlyHis;
+  // a material is a row of its own ("Gromril Weapon"); on His list, those his lists sell and those
+  // open to anyone, whose weapons are then his lists' own
+  const hisWeapons =
+    hisOn && his
+      ? {
+          lines: hisMaterials(his),
+          melee: offers.filter((offer) => hisLine(his, offer.item.id) !== null),
+        }
+      : null;
+  const materials = materialRows(
+    props.materials ?? [],
+    offers,
+    { query, category, onlyMine },
+    hisWeapons
+  );
   const copies = props.recipients.find((entry) => entry.key === props.firstKey)?.count ?? 1;
   const upgrades =
     props.upgrades && category === "all"
@@ -100,7 +121,9 @@ export default function StoreList(props: StoreListProps) {
       const shown =
         offer.item.id === openId ||
         ((!onlyMine || !offer.warning) &&
-          (!hisOn || line !== null) &&
+          // an animal or a miscellaneous item nobody's rows name is generally usable, so it shows
+          // beside his own list's lines (the server decides it: `always_open`)
+          (!hisOn || line !== null || offer.alwaysOpen) &&
           (category === "all" || storeCategory(offer.item) === category) &&
           matchesSearchQuery(
             query,
@@ -119,68 +142,27 @@ export default function StoreList(props: StoreListProps) {
 
   return (
     <div className="flex flex-col gap-3.5">
-      <div className={cn("flex gap-2.5", props.isMobile ? "flex-col" : "items-stretch")}>
-        <label className="flex min-h-11 flex-1 items-center gap-2 border border-strong bg-page px-3 text-muted-foreground">
-          <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
-          <input
-            type="search"
-            placeholder="Search the store"
-            aria-label="Search the store"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none"
-          />
-        </label>
-        <div className="flex gap-2.5">
-          <Switch checked={onlyMine} onCheckedChange={setOnlyMine}>
-            What I can buy
-          </Switch>
-          {his ? (
-            <Switch checked={onlyHis} onCheckedChange={setOnlyHis}>
-              His list
-            </Switch>
-          ) : null}
-          {props.canAddItem ? (
-            <ItemFormDialog
-              mode="create"
-              campaignId={props.campaignId}
-              onCreated={(item) => {
-                setQuery(item.name);
-                setOpenId(item.id);
-              }}
-              trigger={
-                <Button variant="secondary" className={props.isMobile ? "ml-auto min-h-11" : ""}>
-                  Add item
-                </Button>
-              }
-            />
-          ) : null}
-        </div>
-      </div>
-      <div
-        role="group"
-        aria-label="Category"
-        className={cn(
-          "flex gap-1.5",
-          props.isMobile ? "-mx-4 overflow-x-auto overscroll-x-contain px-4 pb-0.5" : "flex-wrap"
-        )}
-      >
-        {STORE_CATEGORIES.map((entry) => (
-          <Chip
-            key={entry.id}
-            pressed={category === entry.id}
-            className="shrink-0"
-            onClick={() => setCategory(entry.id)}
-          >
-            {entry.label}
-          </Chip>
-        ))}
-      </div>
+      <StoreFilters
+        campaignId={props.campaignId}
+        isMobile={props.isMobile}
+        query={query}
+        onQuery={setQuery}
+        onlyMine={onlyMine}
+        onOnlyMine={setOnlyMine}
+        his={his ? { checked: onlyHis, onChange: setOnlyHis } : null}
+        category={category}
+        onCategory={setCategory}
+        canAddItem={props.canAddItem}
+        onAdded={(item) => {
+          setQuery(item.name);
+          setOpenId(item.id);
+        }}
+      />
       {catalogue.isLoading || whoCan.isLoading ? (
         <p className="m-0 text-sm text-muted-foreground">Opening the store…</p>
       ) : catalogue.error ? (
         <p className="m-0 text-sm text-danger">{catalogue.error}</p>
-      ) : rows.length === 0 && upgrades.length === 0 ? (
+      ) : rows.length === 0 && upgrades.length === 0 && materials.length === 0 ? (
         <p className="m-0 text-sm text-text2">Nothing in the store by that name.</p>
       ) : null}
       {props.upgrades ? (
@@ -195,6 +177,19 @@ export default function StoreList(props: StoreListProps) {
         />
       ) : null}
       <ul className="m-0 flex list-none flex-col border-t border-line p-0">
+        {materials.length ? (
+          <MaterialRows
+            rows={materials}
+            canBuy={props.canBuy}
+            isMobile={props.isMobile}
+            warbandId={props.warbandId}
+            recipients={props.recipients}
+            firstKey={props.firstKey}
+            searchers={props.searchers}
+            rareBonus={(item) => rareBonusFor(props.variant ?? null, item)}
+            onPick={props.onPick}
+          />
+        ) : null}
         {rows.map(({ offer, view }) => (
           <StoreRow
             key={offer.item.id}
@@ -210,7 +205,6 @@ export default function StoreList(props: StoreListProps) {
             searchers={props.searchers}
             startPrice={props.again?.itemId === offer.item.id ? props.again.price : null}
             rareBonus={rareBonusFor(props.variant ?? null, offer.item)}
-            materials={isWeapon(offer.item) ? (props.materials ?? []) : []}
             onPick={(line) => {
               props.onPick(line);
               setOpenId(null);

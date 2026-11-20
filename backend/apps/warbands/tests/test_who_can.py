@@ -13,6 +13,7 @@ from apps.skills.models import Skill, SkillGroup, SkillGroupSkill, SkillGroupWar
 from apps.warband_templates.models import TemplateList, TemplateListItem, WarbandTemplate, WarbandTemplateType
 from apps.warbands.models import WarbandGroup, WarbandType
 
+from .beast_support import HORSE_PROFILE, make_animal
 from .roster_support import RosterTestCase
 
 STATS = {"movement": 4, "weapon_skill": 3, "ballistic_skill": 3, "strength": 3, "toughness": 3}
@@ -49,7 +50,7 @@ class WhoCanTestCase(RosterTestCase):
     def item(self, name: str, *rows: dict[str, Any], **fields: Any) -> Item:
         """A book item (`campaign` for the campaign's own) with price rows, each `{cost, rarity, label, everyone,
         types, groups, not_types, not_groups}`."""
-        item = Item.objects.create(name=name, type="Weapon", **fields)
+        item = Item.objects.create(name=name, **{"type": "Weapon", **fields})
         for row in rows:
             written = ItemAvailability.objects.create(
                 item=item,
@@ -274,6 +275,54 @@ class WhoCanHireAndLearnTests(WhoCanTestCase):
         self.assertEqual(self.who_can()["special_skill_ids"], [version.id])
 
 
+class AlwaysOpenTests(WhoCanTestCase):
+    """An animal or a miscellaneous item nobody's rows name is generally usable, so the store offers it to any unit
+    whatever his own list sells (William, 20 Nov 2026); weapons and armour stay his list's."""
+
+    def animal(self, name: str, *rows: dict[str, Any]) -> Item:
+        """An Animal item (one per bestiary entry) with the price rows `rows` names."""
+        item = make_animal(name, "mount", **HORSE_PROFILE)
+        for row in rows:
+            written = ItemAvailability.objects.create(item=item, cost=80, for_everyone=row.get("everyone", False))
+            self.lines(written, ItemAvailabilityWarband, "availability", row)
+        return item
+
+    def test_an_unscoped_animal_or_miscellaneous_item_is_always_open(self) -> None:
+        horse = self.animal("Riding Horse", {"everyone": True})
+        rope = self.item("Rope & Hook", {"everyone": True}, type="Miscellaneous")
+
+        offers = self.offers()
+
+        self.assertTrue(offers[horse.id]["always_open"])
+        self.assertTrue(offers[rope.id]["always_open"])
+
+    def test_a_weapon_or_armour_is_never_always_open(self) -> None:
+        sword = self.item("Short Sword", {"everyone": True})
+        mail = self.item("Light Armour", {"everyone": True}, type="Armour")
+
+        offers = self.offers()
+
+        self.assertFalse(offers[sword.id]["always_open"])
+        self.assertFalse(offers[mail.id]["always_open"])
+
+    def test_an_animal_scoped_to_warbands_is_not(self) -> None:
+        mine = self.animal("Giant Rat", {"types": [self.pestilens]})
+        theirs = self.animal("War Horse", {"types": [self.reiklanders]})
+        barred = self.animal("Mule", {"everyone": True, "not_groups": [self.skaven]})
+
+        offers = self.offers()
+
+        # its own type's row is step 1, not "anyone's"; the others it can't usually buy at all
+        self.assertFalse(offers[mine.id]["always_open"])
+        self.assertFalse(offers[theirs.id]["always_open"])
+        self.assertFalse(offers[barred.id]["always_open"])
+
+    def test_an_animal_from_a_setting_the_campaign_lacks_is_not(self) -> None:
+        out_of_play = self.item("Warhound", {"everyone": True}, type="Miscellaneous", campaign_type=self.khemri)
+
+        self.assertFalse(self.offers()[out_of_play.id]["always_open"])
+
+
 class WhoCanReadTests(WhoCanTestCase):
     def test_any_member_reads_it_in_a_fixed_number_of_queries(self) -> None:
         def count() -> int:
@@ -294,9 +343,9 @@ class WhoCanReadTests(WhoCanTestCase):
         self.assertEqual(count(), before)
         # the warband and the membership, its types, its warband template (its lists' items only when it has one:
         # `HisListTests`), the items, their rows and the rows' lines, each hireling kind and its lines, the skill
-        # groups, their lines and their skills, and the weapon materials' three (their excluded types, their
-        # excluded groups, their settings)
-        self.assertEqual(before, 17)
+        # groups, their lines and their skills, and the weapon materials' four (the warband types their lines name,
+        # the warband groups, the template lists that sell one, their settings)
+        self.assertEqual(before, 18)
         self.client.force_authenticate(user=self.viewer)
         self.assertEqual(self.client.get(f"/api/warbands/{self.warband.id}/who-can/").status_code, 200)
         self.client.force_authenticate(user=self.outsider)
@@ -340,6 +389,28 @@ class HisListTests(WhoCanTestCase):
         self.assertEqual((offers[staff.id]["can_buy"], offers[staff.id]["reason"]), (True, ""))
         # an item no list of its own sells is unchanged
         self.assertEqual(offers[halberd.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
+
+    def test_a_list_selling_heavy_armour_admits_gromril_and_ithilmar_armour(self) -> None:
+        # William, 20 Nov 2026: "gromril and ithilmar count as heavy armour so if a unit in a template can get
+        # heavy armour they should also be able to get that". The store only: no list line is added.
+        heavy = self.item("Heavy Armour", {"types": [self.reiklanders], "cost": 50}, type="Armour")
+        gromril = self.item("Gromril Armour", {"types": [self.reiklanders], "cost": 150}, type="Armour")
+        ithilmar = self.item("Ithilmar Armour", {"types": [self.reiklanders], "cost": 90}, type="Armour")
+        light = self.item("Light Armour", {"types": [self.reiklanders], "cost": 20}, type="Armour")
+        self.template((heavy, ""))
+
+        offers = self.offers()
+
+        self.assertTrue(offers[gromril.id]["can_buy"])
+        self.assertTrue(offers[ithilmar.id]["can_buy"])
+        self.assertFalse(offers[light.id]["can_buy"])  # nothing else rides on the line
+
+    def test_an_armour_no_list_sells_and_nothing_counts_as_is_unchanged(self) -> None:
+        gromril = self.item("Gromril Mail", {"types": [self.reiklanders], "cost": 150}, type="Armour")
+        sword = self.item("Falchion", {"types": [self.reiklanders]})
+        self.template((sword, ""))
+
+        self.assertFalse(self.offers()[gromril.id]["can_buy"])
 
     def test_every_row_of_a_sold_item_is_an_option_the_unlabelled_cheapest_first(self) -> None:
         pistol = self.item(

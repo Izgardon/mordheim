@@ -2,7 +2,7 @@ import { NumberInput } from "@/components/ui/number-input";
 import { cn } from "@/lib/utils";
 
 import type { TemplateLine } from "../../types/hire-template-types";
-import { lineLabel, overWarbandMax, pickKey, tallyTotal, type KitPick } from "./hire-draft";
+import { overWarbandMax, pickKey, pickLabel, tallyTotal, type KitPick } from "./hire-draft";
 import type { UpgradePick } from "./useUpgradePicks";
 
 type PriceProps = {
@@ -88,7 +88,8 @@ export default function HireTally({
         {picks.map((pick) => {
           const line = lines.find((entry) => entry.id === pick.lineId);
           if (!line) return null;
-          const label = pick.brace ? `${lineLabel(line)}, brace` : lineLabel(line);
+          const name = pickLabel(line, pick);
+          const label = pick.brace ? `${name}, brace` : name;
           const warning = overWarbandMax(line, (pick.brace ? 2 : 1) * members);
           return (
             <li key={pickKey(pick)} className={cn(ROW, "flex-wrap")}>

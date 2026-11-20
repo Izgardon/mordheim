@@ -79,7 +79,9 @@ export type FighterInput = {
 
 export type LineInput = {
   id?: number;
-  item_id: number;
+  /** An item, or null for a line selling a weapon material (`material`: weapon materials). */
+  item_id: number | null;
+  material: string;
   shown_as: string;
   cost: number | null;
   cost_note: string;

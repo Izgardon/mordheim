@@ -66,7 +66,6 @@ function renderLoadout(onMove = vi.fn()) {
       canEdit
       units={[vrask, krekk]}
       onMove={onMove}
-      onMaterial={vi.fn()}
       onSellFromStash={vi.fn()}
       onOpenStore={vi.fn()}
     />,

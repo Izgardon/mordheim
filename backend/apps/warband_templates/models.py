@@ -11,6 +11,7 @@ each campaign. Raising and hiring from a template come later; nothing on a roste
 from django.db import models
 
 from apps.core.models import CatalogueEntry, version_constraints
+from apps.items.materials import MAX_MATERIAL
 from apps.warbands.models.shared import WrittenStatBlock, stat_constraints
 from apps.warbands.models.warband import MAX_RULE_TEXT
 
@@ -225,7 +226,9 @@ class TemplateList(models.Model):
 
 
 class TemplateListItem(models.Model):
-    """A line of an equipment list: an item at its list price. `cost` null: see `cost_note` ("3 × price"). `shown_as`:
+    """A line of an equipment list: an item at its list price, or a weapon material (`material`, a slug of
+    `apps/items/materials.py`, with no `item`: the Dwarf lists' gromril weapon, the Druchii's darksteel blade, which
+    names the weapon when it is picked). `cost` null: see `cost_note` ("3 × price"). `shown_as`:
     the list's own name for the item ("Jambiya" for a Dagger). `first_free`: "1st free", every hire gets one of its
     item free (the Dagger, the Gnoblars' Sharp Stuff). `who` narrows who may take it, by fighter key: `{}` everyone,
     `{"heroes": true}`, `{"fighters": [...]}` (with or without heroes), `{"except": [...]}`; others still may, with a
@@ -234,7 +237,10 @@ class TemplateListItem(models.Model):
 
     equipment_list = models.ForeignKey(TemplateList, related_name="lines", on_delete=models.CASCADE)
     position = models.PositiveSmallIntegerField(default=0)
-    item = models.ForeignKey("items.Item", related_name="template_lines", on_delete=models.RESTRICT)
+    item = models.ForeignKey(
+        "items.Item", related_name="template_lines", on_delete=models.RESTRICT, null=True, blank=True
+    )
+    material = models.CharField(max_length=MAX_MATERIAL, blank=True, default="")
     shown_as = models.CharField(max_length=160, blank=True, default="")
     cost = models.PositiveIntegerField(null=True, blank=True)
     cost_note = models.CharField(max_length=120, blank=True, default="")
@@ -273,7 +279,9 @@ class TemplateUpgrade(models.Model):
     ("Mutations"), the special it gives, its cost (null: none in the book) and a note. `who` is who may take it, in a
     list line's shape (others still may, with a warning); the rest hold for its group on one fighter: at most
     `max_per_fighter` of it (a warning; null: any number), the second and later at double (`later_double`), and bought
-    only when he is recruited (`at_recruit`, a warning in the store)."""
+    only when he is recruited (`at_recruit`, a warning in the store). `from_skill` names the skill its mutations come
+    from (the Beastmen's and Marauders' Mutant, Clan Moulder's Twistkin), so the hire dialog leaves it out and the
+    store keeps it, buyable at any time (William, 20 Nov 2026)."""
 
     template = models.ForeignKey(WarbandTemplate, related_name="upgrades", on_delete=models.CASCADE)
     position = models.PositiveSmallIntegerField(default=0)
@@ -286,6 +294,7 @@ class TemplateUpgrade(models.Model):
     max_per_fighter = models.PositiveSmallIntegerField(null=True, blank=True)
     later_double = models.BooleanField(default=False)
     at_recruit = models.BooleanField(default=False)
+    from_skill = models.CharField(max_length=120, blank=True, default="")
 
     class Meta:
         db_table = "template_upgrade"

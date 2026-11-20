@@ -100,6 +100,7 @@ const MERCENARIES: WarbandTemplate = {
         {
           id: 50,
           item: { id: 3, name: "Dagger", variant: "", type: "Weapon" },
+          material: null,
           shown_as: "",
           cost: 2,
           cost_note: "",
@@ -114,6 +115,7 @@ const MERCENARIES: WarbandTemplate = {
         {
           id: 51,
           item: { id: 4, name: "Pistol", variant: "", type: "Weapon" },
+          material: null,
           shown_as: "",
           cost: 15,
           cost_note: "",
@@ -128,6 +130,7 @@ const MERCENARIES: WarbandTemplate = {
         {
           id: 52,
           item: { id: 5, name: "Halberd", variant: "", type: "Weapon" },
+          material: null,
           shown_as: "",
           cost: 10,
           cost_note: "",

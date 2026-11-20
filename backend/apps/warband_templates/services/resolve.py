@@ -79,7 +79,9 @@ def list_item_ids(warband: Warband) -> frozenset[int]:
     if template is None:
         return frozenset()
     variant = warband_variant(warband, template)
-    lines = TemplateListItem.objects.filter(equipment_list__template_id=template.pk, variant__in=("", variant))
+    lines = TemplateListItem.objects.filter(
+        equipment_list__template_id=template.pk, variant__in=("", variant), item__isnull=False
+    )
     return frozenset(lines.values_list("item_id", flat=True))
 
 

@@ -15,6 +15,7 @@ export const makeTemplateLine = (
 ): TemplateLine => ({
   id,
   item: { ...item, variant: "", type: "Weapon" },
+  material: null,
   shown_as: "",
   cost,
   cost_note: "",
@@ -121,5 +122,6 @@ export const makeTemplateUpgrade = (
   max_per_fighter: null,
   later_double: false,
   at_recruit: false,
+  from_skill: "",
   ...overrides,
 });

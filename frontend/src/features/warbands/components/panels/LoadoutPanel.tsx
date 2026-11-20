@@ -3,9 +3,7 @@ import { ItemKindIcon } from "@/components/ui/game-icons";
 import { ROW_SELECT, SectionedSelect } from "@/components/ui/sectioned-select";
 import { SidePanel } from "@/components/ui/side-panel";
 import { ItemRowButton, useShownItem } from "@/features/items/components/ItemInfo";
-import MaterialButton, { useOwnedMaterials } from "@/features/items/components/MaterialButton";
 import { itemKind } from "@/features/items/item-kind";
-import { isWeapon } from "@/features/items/store/store-items";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { groupItemsById } from "../../utils/warband-utils";
@@ -30,7 +28,6 @@ type LoadoutPanelProps = {
   ) => void;
   onSellFromStash: (item: WarbandItemSummary) => void;
   /** Puts a material on a weapon the unit or the stash holds (weapon materials): silver only. */
-  onMaterial: (from: RosterUnit | null, item: WarbandItemSummary, material: string) => void;
   onOpenStore: () => void;
 };
 
@@ -46,7 +43,6 @@ const SECTION = "pb-1.5 font-sans text-[11px] font-bold uppercase tracking-[0.12
 export default function LoadoutPanel(props: LoadoutPanelProps) {
   const { entry } = props;
   const details = useShownItem(entry ? unitKey(entry) : "");
-  const ownedMaterials = useOwnedMaterials(props.campaignId, props.warbandId);
   // A group's rows are its loadout: each counts the members who carry it (henchmen loadouts)
   const group = entry !== null && isGroup(entry);
   const carrying = !entry
@@ -91,7 +87,6 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
             {carrying.map((line) => {
               const key = `carried:${line.key}`;
               const material = line.item.material ?? "";
-              const materials = !material && isWeapon(line.item) ? ownedMaterials : [];
               return (
                 <div
                   key={line.key}
@@ -136,19 +131,6 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
                           if (to) props.onMove(entry, line.item.id, to, 1, material);
                         }}
                       />
-                      {materials.map((made) => (
-                        <MaterialButton
-                          key={made.slug}
-                          material={made}
-                          onApply={() =>
-                            props.onMaterial(
-                              entry,
-                              { id: line.item.id, name: line.item.name },
-                              made.slug
-                            )
-                          }
-                        />
-                      ))}
                     </div>
                   ) : null}
                 </div>
@@ -167,7 +149,6 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
                 props.onMove(null, itemId, to, quantity, material)
               }
               onSell={props.onSellFromStash}
-              onMaterial={(item, material) => props.onMaterial(null, item, material)}
               isShown={details.isShown}
               onToggleShown={details.toggle}
             />

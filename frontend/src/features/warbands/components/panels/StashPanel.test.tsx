@@ -73,20 +73,7 @@ const whoCan: WhoCan = {
   dramatis_personae: [],
   skill_group_ids: [],
   special_skill_ids: [],
-  materials: [
-    {
-      slug: "silver",
-      name: "Silver",
-      rarity: 11,
-      price_note: "+60 gc",
-      multiplier: null,
-      addition: 60,
-      on_owned: 80,
-      rules: [],
-      can_take: true,
-      reason: "",
-    },
-  ],
+  materials: [],
 };
 const units: RosterUnit[] = [
   { kind: "henchmen_group", unit: makeHenchmenGroup({ id: 5, name: "Verminkin Pack" }) },
@@ -94,7 +81,7 @@ const units: RosterUnit[] = [
   { kind: "hero", unit: makeHero({ id: 2, name: "Krekk Blackfur" }) },
 ] as RosterUnit[];
 
-function renderStash(onMove = vi.fn(), onMaterial = vi.fn()) {
+function renderStash(onMove = vi.fn()) {
   const queryClient = createTestQueryClient();
   queryClient.setQueryData(queryKeys.campaign.warbandStash(CAMPAIGN, WARBAND), [
     makeStashItem({ id: 101, name: "Sword", cost: 10 }),
@@ -113,7 +100,6 @@ function renderStash(onMove = vi.fn(), onMaterial = vi.fn()) {
       units={units}
       onMove={onMove}
       onSell={vi.fn()}
-      onMaterial={onMaterial}
     />,
     { queryClient }
   );
@@ -176,18 +162,11 @@ describe("StashPanel materials", () => {
     expect(screen.getByRole("button", { name: /^Sword/ })).toBeInTheDocument();
   });
 
-  it("offers the material the book lets a warband add on a plain weapon only", async () => {
-    const user = setupUser();
-    const onMaterial = vi.fn();
-    renderStash(vi.fn(), onMaterial);
+  it("never offers to make a copy the warband owns of something", () => {
+    renderStash();
 
-    const plain = screen.getAllByRole("listitem")[0];
-    await user.click(within(plain).getByRole("button", { name: /Silver · 80 gc/ }));
-    expect(onMaterial).toHaveBeenCalledWith(expect.objectContaining({ id: 101 }), "silver");
-
-    // the gromril row and the Halberd, which is already made of something, offer none
-    const gromril = screen.getAllByRole("listitem")[1];
-    expect(within(gromril).queryByRole("button", { name: /Silver/ })).not.toBeInTheDocument();
+    // an item is never transformed (William, 20 Nov 2026): the store's material rows are the only way
+    expect(screen.queryByRole("button", { name: /Silver/ })).not.toBeInTheDocument();
   });
 
   it("equips the copies of the material the row names", async () => {

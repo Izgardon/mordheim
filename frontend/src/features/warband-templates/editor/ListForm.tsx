@@ -102,7 +102,7 @@ export default function ListForm(props: ListFormProps) {
               className="flex items-baseline justify-between gap-3 py-1.5 text-left text-sm hover:bg-raised"
             >
               <span className="text-ink">
-                {lineName({ item: line.item, shown_as: line.shownAs })}
+                {lineName({ item: line.item, shown_as: line.shownAs, material: line.material })}
               </span>
               <span className="shrink-0 font-mono text-[13px] text-ink">
                 {linePrice({
@@ -116,8 +116,8 @@ export default function ListForm(props: ListFormProps) {
             {openLine === index ? (
               <LineFields
                 line={line}
-                chart={charts.chartOf(line.item.id)}
-                reason={charts.reasonOf(line.item.id)}
+                chart={line.item ? charts.chartOf(line.item.id) : ""}
+                reason={line.item ? charts.reasonOf(line.item.id) : ""}
                 fighters={template.fighters}
                 variants={template.variants}
                 onChange={(next) =>

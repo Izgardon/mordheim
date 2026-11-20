@@ -110,6 +110,7 @@ export const makeEditorTemplate = (overrides: Partial<WarbandTemplate> = {}): Wa
         {
           id: 50,
           item: { id: 3, name: "Dagger", variant: "", type: "Weapon" },
+          material: null,
           shown_as: "",
           cost: 2,
           cost_note: "",
@@ -124,6 +125,7 @@ export const makeEditorTemplate = (overrides: Partial<WarbandTemplate> = {}): Wa
         {
           id: 51,
           item: { id: 4, name: "Halberd", variant: "", type: "Weapon" },
+          material: null,
           shown_as: "",
           cost: 10,
           cost_note: "",
@@ -155,6 +157,7 @@ export const makeEditorTemplate = (overrides: Partial<WarbandTemplate> = {}): Wa
       max_per_fighter: null,
       later_double: true,
       at_recruit: true,
+      from_skill: "",
       who_text: "",
     },
   ],

@@ -4,12 +4,7 @@ import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { switchCompanion } from "../../api/beasts-api";
-import {
-  useItemMaterial,
-  useItemMove,
-  useItemSale,
-  itemMutationUpdate,
-} from "../../api/economy-queries";
+import { useItemMove, useItemSale, itemMutationUpdate } from "../../api/economy-queries";
 import { useWarbandCacheUpdate, type WarbandUpdate } from "../../api/warband-cache";
 import { LIST_KEY, type RosterUnit } from "../../components/roster/unit-view";
 import { unitApi, type AdvancePick } from "../../units/unit-api";
@@ -30,7 +25,6 @@ export function useUnitActions(warbandId: number) {
   const updateCache = useWarbandCacheUpdate();
   const itemMove = useItemMove(warbandId);
   const itemSale = useItemSale(warbandId);
-  const itemMaterial = useItemMaterial(warbandId);
   const fail = (what: string) => (error: unknown) =>
     toast.error(what, { description: getErrorMessage(error) });
 
@@ -120,27 +114,6 @@ export function useUnitActions(warbandId: number) {
       }
     );
 
-  /**
-   * Puts a material on a weapon the warband already owns (weapon materials): the server charges
-   * what the material asks and may warn that the warband went below 0.
-   */
-  const materialItem = (from: RosterUnit | null, itemId: number, material: string) =>
-    itemMaterial.mutate(
-      {
-        source_type: from ? from.kind : "stash",
-        source_id: from?.unit.id ?? null,
-        item_id: itemId,
-        material,
-      },
-      {
-        onSuccess: (result) => {
-          updateCache(warbandId, itemMutationUpdate(result, from ? sourceOf(from) : undefined));
-          toastServerWarnings(result.warnings ?? []);
-        },
-        onError: fail("Couldn't change what it is made of."),
-      }
-    );
-
   return {
     patchUnit: (entry: RosterUnit, body: PatchVars["patch"]) =>
       patch.mutate({ entry, patch: body }),
@@ -149,13 +122,7 @@ export function useUnitActions(warbandId: number) {
     rideMount: (entry: RosterUnit, rowId: number, on: boolean) => ride.mutate({ entry, rowId, on }),
     moveItem,
     sellItem,
-    materialItem,
-    isBusy:
-      patch.isPending ||
-      ride.isPending ||
-      itemMove.isPending ||
-      itemSale.isPending ||
-      itemMaterial.isPending,
+    isBusy: patch.isPending || ride.isPending || itemMove.isPending || itemSale.isPending,
   };
 }
 

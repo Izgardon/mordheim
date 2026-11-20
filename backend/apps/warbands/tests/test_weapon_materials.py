@@ -1,9 +1,10 @@
 """Weapon materials (William, 19 Nov 2026): a material is a modifier on a weapon, not an item.
 
 The four were catalogue items, so buying one gave the warband a "Gromril Weapon" row that was not a weapon. Now the
-copy the warband owns carries one: the store offers it when a weapon is bought, the server derives the price (four
-times the weapon's, three times it, or 60 gc on top), the copy reads "Gromril Sword" everywhere, and silver can be
-put on a weapon the warband already owns, which is the only one the book lets a warband add later.
+copy the warband owns carries one: the material has its own store row, which picks the weapon it is made into, the
+server derives the price (four times the weapon's, three times it, or 60 gc on top) and the copy reads "Gromril
+Sword" everywhere. An item is never transformed (William, 20 Nov 2026), so no copy the warband owns is made of
+anything after it is bought.
 """
 
 from typing import Any
@@ -11,8 +12,17 @@ from typing import Any
 from apps.campaigns.models import CampaignType
 from apps.hirelings.fees import make_fee
 from apps.hirelings.models import HiredSword
-from apps.items.materials import GROMRIL, ITHILMAR, MATERIALS, OBSIDIAN, SILVER
+from apps.items.materials import (
+    DARK_ELF_BLADE,
+    DARKSTEEL,
+    GROMRIL,
+    ITHILMAR,
+    MATERIALS,
+    OBSIDIAN,
+    SILVER,
+)
 from apps.items.models import Item, ItemAvailability
+from apps.warband_templates.models import TemplateList, TemplateListItem, WarbandTemplate
 from apps.warbands.models import (
     Hireling,
     LedgerAction,
@@ -34,10 +44,11 @@ class MaterialRegistryTests(RosterTestCase):
         self.assertEqual(
             [GROMRIL.price(25), ITHILMAR.price(25), OBSIDIAN.price(25), SILVER.price(25)], [100, 75, 100, 85]
         )
-        self.assertEqual([material.rarity for material in MATERIALS.values()], [11, 9, 12, 11])
-        # only silver can be put on a weapon the warband already owns, at the book's 80 gc in all
-        self.assertEqual([slug for slug, row in MATERIALS.items() if row.on_owned], ["silver"])
-        self.assertEqual(SILVER.on_owned, 80)
+        # the two darksteels are priced apart: the Druchii's list says "3 x price", ours is the Dark Elves' +20 gc
+        self.assertEqual((DARKSTEEL.price(25), DARK_ELF_BLADE.price(25)), (75, 45))
+        self.assertEqual([material.rarity for material in MATERIALS.values()], [11, 9, 12, 11, 9, 9])
+        # "Dark Elf Blade Sword" reads badly, so the blade puts its own word in front of the weapon
+        self.assertEqual((DARKSTEEL.word, DARK_ELF_BLADE.word), ("Darksteel", "Dark Elf"))
 
     def test_every_material_carries_the_books_rule_text(self) -> None:
         self.assertIn("an extra -1 save modifier", GROMRIL.rules[0].text)
@@ -47,6 +58,15 @@ class MaterialRegistryTests(RosterTestCase):
             "may never be used by Dwarfs, Elves, Sisters of Sigmar, Witch Hunters or Priests", OBSIDIAN.rules[0].text
         )
         self.assertIn("each wound causes D3 wounds", SILVER.rules[0].text)
+        # the book's own words on silvering a weapon the warband owns stay: the player settles it at the table
+        self.assertIn("To silver a weapon the warband already owns", SILVER.rules[1].text)
+        # both darksteels carry the Druchii page's two rules; only ours carries William's third (20 Nov 2026)
+        self.assertIn("add +1 to the result", DARKSTEEL.rules[0].text)
+        self.assertIn("A roll of 2-4 on the injury table is a Stunned result", DARKSTEEL.rules[1].text)
+        self.assertEqual([rule.name for rule in DARKSTEEL.rules], ["Critical Damage", "Wicked Edge"])
+        self.assertEqual(DARKSTEEL.only_names, ())  # any close-combat weapon may carry one
+        self.assertEqual(DARK_ELF_BLADE.rules[2].text, "Only a sword or a dagger may be made with one of these blades.")
+        self.assertEqual(DARK_ELF_BLADE.only_names, ("sword", "dagger"))
 
 
 class MaterialBuyingTests(RosterTestCase):
@@ -114,7 +134,17 @@ class MaterialBuyingTests(RosterTestCase):
         response = self.client.get(f"/api/items/{self.weapon.id}/?campaign_id={self.campaign.id}")
 
         prices = response.json()["material_prices"]
-        self.assertEqual(prices[str(self.row.id)], {"gromril": 100, "ithilmar": 75, "obsidian": 100, "silver": 85})
+        self.assertEqual(
+            prices[str(self.row.id)],
+            {
+                "gromril": 100,
+                "ithilmar": 75,
+                "obsidian": 100,
+                "silver": 85,
+                "darksteel": 75,
+                "dark-elf-blade": 45,
+            },
+        )
 
     def test_a_weapon_bought_for_the_stash_is_its_own_row_and_its_own_name(self) -> None:
         self._buy(target_type="stash", item_id=self.weapon.id, availability_id=self.row.id, material="gromril")
@@ -163,70 +193,9 @@ class MaterialBuyingTests(RosterTestCase):
         self.assertIn("material", response.json()["fields"])
 
 
-class MaterialOnAnOwnedWeaponTests(RosterTestCase):
-    """`POST item-materials/`: the book lets a warband silver a weapon it already owns, and nothing else."""
-
-    def setUp(self) -> None:
-        super().setUp()
-        self.client.force_authenticate(user=self.player)
-
-    def _apply(self, **body: Any) -> Any:
-        return self.client.post(f"/api/warbands/{self.warband.id}/item-materials/", body, format="json")
-
-    def test_silvering_a_heros_weapon_charges_the_books_eighty_gold(self) -> None:
-        hero = make_unit(HERO, self.warband)
-        hero.hero_items.create(item=self.sword, cost=10)
-        gold = self.warband.gold
-
-        response = self._apply(source_type="hero", source_id=hero.id, item_id=self.sword.id, material="silver")
-
-        self.assertEqual(response.status_code, 200)
-        self.warband.refresh_from_db()
-        self.assertEqual(gold - self.warband.gold, 80)
-        self.assertEqual(hero.hero_items.get().material, "silver")
-        self.assertEqual(WarbandTrade.objects.get(action=LedgerAction.BUY).description, "Silver Sword")
-
-    def test_silvering_a_weapon_in_the_stash_moves_one_copy_to_its_own_row(self) -> None:
-        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=10)
-
-        body = self._apply(source_type="stash", item_id=self.sword.id, material="silver").json()
-
-        held = WarbandItem.objects.filter(warband=self.warband).order_by("material")
-        self.assertEqual([(row.material, row.quantity, row.cost) for row in held], [("", 1, 10), ("silver", 1, 10)])
-        self.assertEqual(body["stash_item"]["material_name"], "Silver Sword")
-
-    def test_a_price_typed_in_wins_over_the_books(self) -> None:
-        hero = make_unit(HERO, self.warband)
-        hero.hero_items.create(item=self.sword, cost=10)
-        gold = self.warband.gold
-
-        self._apply(source_type="hero", source_id=hero.id, item_id=self.sword.id, material="silver", price=50)
-
-        self.warband.refresh_from_db()
-        self.assertEqual(gold - self.warband.gold, 50)
-
-    def test_a_material_the_book_only_gives_at_the_forge_is_refused(self) -> None:
-        hero = make_unit(HERO, self.warband)
-        hero.hero_items.create(item=self.sword, cost=10)
-
-        response = self._apply(source_type="hero", source_id=hero.id, item_id=self.sword.id, material="gromril")
-
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(self.warband.gold, self.warband.__class__.objects.get(pk=self.warband.pk).gold)
-
-    def test_a_weapon_the_warband_does_not_hold_is_refused_and_charges_nothing(self) -> None:
-        hero = make_unit(HERO, self.warband)
-        gold = self.warband.gold
-
-        response = self._apply(source_type="hero", source_id=hero.id, item_id=self.sword.id, material="silver")
-
-        self.assertEqual(response.status_code, 400)
-        self.warband.refresh_from_db()
-        self.assertEqual(self.warband.gold, gold)  # the whole request rolled back
-
-
 class MaterialWhoCanTests(RosterTestCase):
-    """Obsidian's rule names who may never use it, so who-can words it: a warning, never a block."""
+    """Obsidian's rule names who may never use it and darksteel's price rows named the Dark Elves and the Druchii,
+    so who-can words both: a warning, never a block."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -263,11 +232,43 @@ class MaterialWhoCanTests(RosterTestCase):
 
         # Mordheim is always on, so gromril and ithilmar are in; the campaign has ticked neither Mordheim 1c
         # (obsidian) nor Grade 3 (silver), which reads as any other restriction does
-        self.assertEqual([row["can_take"] for row in materials.values()], [True, True, False, False])
+        # the two darksteels belong to the warbands whose list sells them, so they read as any restriction does
+        self.assertEqual([row["can_take"] for row in materials.values()], [True, True, False, False, False, False])
         self.assertEqual(materials["gromril"]["price_note"], "4 x Price")
-        self.assertEqual(materials["silver"]["on_owned"], 80)
         self.assertEqual(materials["ithilmar"]["rarity"], 9)
         self.assertEqual(materials["silver"]["addition"], 60)
+
+    def darksteel_template(self, slug: str, material: str, warband_type: WarbandType) -> None:
+        """A book template serving the type, with a list line selling the material (as the Druchii's does)."""
+        template = WarbandTemplate.objects.create(slug=slug, name=slug)
+        template.type_links.create(warband_type=warband_type)
+        made = TemplateList.objects.create(template=template, key="kit", name="Kit")
+        TemplateListItem.objects.create(equipment_list=made, material=material, cost_note="3 × price")
+
+    def test_a_darksteel_belongs_to_the_warbands_whose_list_sells_it(self) -> None:
+        CampaignType.objects.create(name="Mordheim 1b", slug="mordheim-1b", grade="1b", always_on=True)
+        corsairs = WarbandType.objects.create(name="Dark Elf Corsairs", slug="dark-elves")
+        self.darksteel_template("dark-elves", "dark-elf-blade", corsairs)
+
+        # the warband is Sisters of Sigmar: the Dark Elves' own blade isn't usually theirs
+        self.assertFalse(self._materials()["dark-elf-blade"]["can_take"])
+
+        self.warband.warband_type = corsairs
+        self.warband.save(update_fields=["warband_type"])
+        materials = self._materials()
+
+        self.assertTrue(materials["dark-elf-blade"]["can_take"])
+        self.assertFalse(materials["darksteel"]["can_take"])  # no list of theirs sells the Druchii's
+        self.assertEqual(materials["dark-elf-blade"]["prefix"], "Dark Elf")
+
+    def test_the_dark_elf_blade_offers_only_the_weapons_its_rule_allows(self) -> None:
+        only = self._materials()["dark-elf-blade"]["only"]
+
+        # the Sword is in; the Axe is not, and the sentence above the picker is the rule's own
+        self.assertEqual(only["text"], "Only a sword or a dagger may be made with one of these blades.")
+        self.assertIn(self.sword.id, only["item_ids"])
+        self.assertNotIn(self.axe.id, only["item_ids"])
+        self.assertIsNone(self._materials()["darksteel"]["only"])  # any close-combat weapon may carry one
 
     def test_a_setting_the_campaign_has_not_ticked_is_named(self) -> None:
         setting = CampaignType.objects.create(name="Mordheim 1c", slug="mordheim-1c", grade="1c")

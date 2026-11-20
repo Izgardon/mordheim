@@ -2,7 +2,8 @@
  * Upgrades in the hire dialog (the templates plan, phase 3): a hero's template upgrades by group,
  * before and after the first battle; a pick is a tally line at its price, the second and later of
  * a doubling group at double (and back when the first goes), past a group's most it warns, one he
- * isn't meant to take is dimmed with its reason, and the hire sends what the tally says.
+ * isn't meant to take is dimmed with its reason, and the hire sends what the tally says. A mutation
+ * a skill gives is no part of a hire (William, 20 Nov 2026): the store sells it at any time.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -41,6 +42,8 @@ const answer = makeTemplateAnswer(
       makeTemplateUpgrade(2, "Tentacle", 35, { ...doubling, later_cost: 70 }),
       makeTemplateUpgrade(3, "Mark of Tchar", 0, marks),
       makeTemplateUpgrade(4, "Mark of Arkhar", 0, { ...marks, who_text: "Seers only" }),
+      // the Mutant skill's, not a recruit's: the store sells it, the hire dialog never offers it
+      makeTemplateUpgrade(5, "Spines", 20, { from_skill: "Mutant" }),
     ],
   },
   { list_prices_open: false }
@@ -112,6 +115,16 @@ describe("Upgrades in the hire dialog", () => {
         ],
       })
     );
+  });
+
+  it("never offers a mutation a skill gives, which the store sells instead", async () => {
+    // William, 20 Nov 2026: "no mutations on hire for skill related mutations like the beastmen"
+    renderForm();
+    const user = setupUser();
+    await user.click(await screen.findByRole("radio", { name: /Chieftain/ }));
+
+    expect(screen.getByRole("button", { name: /Great Claw/ })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Spines/ })).toBeNull();
   });
 
   it("has no upgrades for a group", async () => {

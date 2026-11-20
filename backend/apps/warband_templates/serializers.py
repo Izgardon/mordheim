@@ -19,6 +19,7 @@ from .models import (
     WarbandTemplate,
     WarbandTemplateType,
 )
+from .services.material_lines import line_payload
 from .services.who import who_text
 
 
@@ -138,6 +139,7 @@ class TemplateLineSerializer(serializers.ModelSerializer):
     serializer's `fighters` context, by key)."""
 
     item = serializers.SerializerMethodField()
+    material = serializers.SerializerMethodField()
     who_text = serializers.SerializerMethodField()
 
     class Meta:
@@ -145,6 +147,7 @@ class TemplateLineSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "item",
+            "material",
             "shown_as",
             "cost",
             "cost_note",
@@ -160,17 +163,29 @@ class TemplateLineSerializer(serializers.ModelSerializer):
     def get_who_text(self, line: TemplateListItem) -> str:
         return who_text(line.who or {}, self.context.get("fighters") or {})
 
-    def get_item(self, line: TemplateListItem) -> dict[str, Any]:
+    def get_item(self, line: TemplateListItem) -> dict[str, Any] | None:
         item = line.item
+        if item is None:  # a line naming a weapon material (weapon materials)
+            return None
         return {"id": item.pk, "name": item.name, "variant": item.variant, "type": item.type}
+
+    def get_material(self, line: TemplateListItem) -> dict[str, Any] | None:
+        """The weapon material the line names (None: an item line), with the weapons on its own list it may be made
+        into, which the list hands down (`list_lines`) so nothing here queries."""
+        return line_payload(line, self.context.get("list_lines") or [])
 
 
 class TemplateListSerializer(serializers.ModelSerializer):
-    lines = TemplateLineSerializer(many=True, read_only=True)
+    lines = serializers.SerializerMethodField()
 
     class Meta:
         model = TemplateList
         fields = ("id", "key", "name", "note", "lines")
+
+    def get_lines(self, row: TemplateList) -> Any:
+        """Its lines, each with the list's own lines in context: a material line names the weapons on its list."""
+        lines = list(row.lines.all())
+        return TemplateLineSerializer(lines, many=True, context={**self.context, "list_lines": lines}).data
 
 
 class TemplateFighterSerializer(serializers.ModelSerializer):
@@ -269,6 +284,7 @@ class TemplateUpgradeSerializer(serializers.ModelSerializer):
             "max_per_fighter",
             "later_double",
             "at_recruit",
+            "from_skill",
             "who_text",
         )
 

@@ -69,11 +69,15 @@ export function useRosterCards() {
       setEditKey(key);
     },
     stopEdit: () => setEditKey(null),
-    /** A unit just recruited: the form closes and its card opens in Edit. */
+    /**
+     * A unit just recruited: the form closes and his card sits collapsed like every other, scrolled
+     * to (William, 20 Nov 2026: "after creating a unit from a template it should go straight to the
+     * minimised unit card not edit form").
+     */
     recruited: (key: string) => {
       setRecruiting(null);
-      setOpenKey(key);
-      setEditKey(key);
+      setOpenKey(null);
+      setEditKey(null);
       scrollTo(key);
     },
   };
