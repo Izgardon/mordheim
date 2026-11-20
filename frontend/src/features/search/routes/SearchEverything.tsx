@@ -4,7 +4,6 @@ import { Search } from "lucide-react";
 
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
-import { SectionPicker } from "@/features/reference/ReferencePage";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 
@@ -112,9 +111,7 @@ export default function SearchEverything() {
 
   return (
     <div className="flex flex-col gap-6 pb-14 max-[960px]:gap-3">
-      {isMobile ? (
-        <SectionPicker current="search" />
-      ) : (
+      {isMobile ? null : (
         <header className="flex flex-col gap-1.5">
           <span className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
             Reference
