@@ -12,8 +12,9 @@ import WarbandStats from "./WarbandStats";
 import { WARBAND_INFO } from "./warband-layout";
 
 /**
- * The warband page's info line (rating, gold, units, record) beside its resources (design E), and
- * under them its campaign points and plot while the campaign has Plots on (`plot` left out: off).
+ * The top of the warband page's Roster tab (William, 20 Nov 2026): the info line (rating, gold,
+ * units, record), then the resources, then its campaign points and plot while the campaign has
+ * Plots on (`plot` left out: off), each a full-width section of its own.
  */
 export default function WarbandInfo({
   campaignId,
@@ -40,23 +41,21 @@ export default function WarbandInfo({
   pricing: SalePricing;
 }) {
   return (
-    <>
-      <div className={WARBAND_INFO}>
-        <WarbandStats
-          warband={warband}
-          heroes={heroes}
-          hirelings={hirelings}
-          henchmenGroups={henchmenGroups}
-          breakdownOpen={breakdownOpen}
-          setBreakdownOpen={setBreakdownOpen}
-        />
-        <WarbandResources
-          warbandId={warband.id}
-          resources={warband.resources ?? []}
-          canEdit={canEdit}
-          pricing={pricing}
-        />
-      </div>
+    <div className={WARBAND_INFO}>
+      <WarbandStats
+        warband={warband}
+        heroes={heroes}
+        hirelings={hirelings}
+        henchmenGroups={henchmenGroups}
+        breakdownOpen={breakdownOpen}
+        setBreakdownOpen={setBreakdownOpen}
+      />
+      <WarbandResources
+        warbandId={warband.id}
+        resources={warband.resources ?? []}
+        canEdit={canEdit}
+        pricing={pricing}
+      />
       {plot === undefined ? null : (
         <WarbandPlotSection
           campaignId={campaignId}
@@ -66,6 +65,6 @@ export default function WarbandInfo({
           canEdit={canEdit}
         />
       )}
-    </>
+    </div>
   );
 }

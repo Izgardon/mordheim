@@ -147,7 +147,24 @@ export type WarbandRule = {
  * The plot a warband follows, as its page reads it (apps/plots): its name and its ladder's points,
  * which the campaign point track draws as its heavy boxes. Its lines are in the rules it wrote.
  */
-export type WarbandPlot = { id: number; name: string; rungs: number[] };
+/** One line of what a plot scores, as the server words it ("+1", "D3", "-1" and what earns it). */
+export type WarbandPlotScoring = { shown: string; text: string };
+
+/** One rung of a plot's ladder: the total that unlocks it, its name and what it gives. */
+export type WarbandPlotRung = { points: number; name: string; text: string };
+
+/**
+ * The plot a warband follows, whole, from its sheet (apps/plots): its name and summary, its
+ * ladder's points for the track, and its scoring and ladder for Plot details.
+ */
+export type WarbandPlot = {
+  id: number;
+  name: string;
+  rungs: number[];
+  summary: string;
+  scoring: WarbandPlotScoring[];
+  achievements: WarbandPlotRung[];
+};
 
 export type WarbandRulePayload = { title: string; description: string };
 

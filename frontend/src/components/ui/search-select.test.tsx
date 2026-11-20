@@ -3,6 +3,8 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import { setupUser } from "@/test/user-event";
+
 import {
   SearchCombobox,
   SearchMultiSelect,
@@ -172,10 +174,16 @@ describe("SearchSelect", () => {
   });
 });
 
-function Multi({ initial }: { initial: SearchOption[] }) {
+function Multi({ initial, blurOnPick }: { initial: SearchOption[]; blurOnPick?: boolean }) {
   const [values, setValues] = useState(initial);
   return (
-    <SearchMultiSelect addLabel="Add skill" options={SKILLS} values={values} onChange={setValues} />
+    <SearchMultiSelect
+      addLabel="Add skill"
+      options={SKILLS}
+      values={values}
+      onChange={setValues}
+      blurOnPick={blurOnPick}
+    />
   );
 }
 
@@ -197,6 +205,20 @@ describe("SearchMultiSelect", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Remove Mighty Blow" }));
     expect(screen.queryByText("Mighty Blow")).not.toBeInTheDocument();
+  });
+
+  // William, 20 Nov 2026, of a unit's skills, spells and Boons & Banes: "whenever one is added
+  // the input should be unfocused". Leaving the field puts the Add button back.
+  it("leaves the field after a pick with blurOnPick", async () => {
+    const user = setupUser();
+    render(<Multi initial={[]} blurOnPick />);
+    await user.click(screen.getByRole("button", { name: "Add skill" }));
+
+    await user.type(screen.getByRole("combobox", { name: "Add skill" }), "black{Enter}");
+
+    expect(screen.getByText("Black Hunger")).toBeInTheDocument();
+    expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add skill" })).toBeInTheDocument();
   });
 
   it("keeps a chip within 200 px, its lines ending in … with the full text in their titles", () => {

@@ -9,7 +9,8 @@ import type { Named } from "./useUnitEditDraft";
 /**
  * A list in the edit form (skills, specials, spells) on the searchable select: the unit's entries
  * with their subtitles, each removable, the picks an advance left for later ("1 skill to choose",
- * one fewer with ×), and Add.
+ * one fewer with ×), and Add. One added leaves the field (William, 20 Nov 2026), which puts Add
+ * back: these lists take one or two, unlike a unit's items.
  */
 export default function EditPickList({
   title,
@@ -52,6 +53,7 @@ export default function EditPickList({
         addLabel={`Add ${noun}`}
         placeholder={`Search ${plural}`}
         emptyText={`No ${noun} matches.`}
+        blurOnPick
         onChange={(next) =>
           onChange(
             next.map(

@@ -1,23 +1,27 @@
 import { useEffect, useState } from "react";
+import { ChevronDown, Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
 
+import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
+import { PlotTrack } from "@/components/ui/plot-track";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { useWarbandPlot } from "../../api/plot-queries";
 import type { WarbandPlot } from "../../types/warband-types";
+import { SECTION_TITLE } from "../page/warband-layout";
+import PlotDetailsDialog from "./PlotDetailsDialog";
 import PlotSelect from "./PlotSelect";
-import PlotTrack from "./PlotTrack";
-
-const LABEL = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
 
 /**
  * Campaign points and the plot the warband follows (apps/plots), shown while the campaign has
- * Plots on: the track, the total the player types (nothing here computes, adds to or takes from
- * it), and one plot of the campaign's, changed for nothing (William: "editable for free").
+ * Plots on. Collapsed it is one line, as a resource reads: the plot's name, the total with − and +
+ * (and typed in, the player's own number either way — nothing here computes, adds to or takes from
+ * it), and the arrow that opens the rest. Open, it shows the track, Plot Details (the plot's own
+ * plan, read only) and the plot picked, changed for nothing (William: "editable for free").
  *
- * The plot's rules are the server's (`warbands/services/plot_rules.py`) and show as the warband's
- * rule pills: the plot's own rule with its whole ladder, and one rule per rung reached.
+ * Only the rungs the total has reached are warband rules (`warbands/services/plot_rules.py`); the
+ * plan is this section's, not a rule (William, 20 Nov 2026).
  */
 export default function WarbandPlotSection({
   campaignId,
@@ -28,7 +32,7 @@ export default function WarbandPlotSection({
 }: {
   campaignId: number;
   warbandId: number;
-  /** The plot it follows, with its ladder, from the sheet; null: none. */
+  /** The plot it follows, whole, from the sheet; null: none. */
   plot: WarbandPlot | null;
   total: number;
   canEdit: boolean;
@@ -39,54 +43,102 @@ export default function WarbandPlotSection({
   // the plot shown while the sheet that holds it is read again
   const [picked, setPicked] = useState(plot?.id ?? null);
   useEffect(() => setPicked(plot?.id ?? null), [plot?.id]);
+  const [open, setOpen] = useState(false);
+  const [details, setDetails] = useState(false);
   const onError = (error: unknown) => toast.error(getErrorMessage(error, "Couldn't save that."));
 
-  const saveTotal = () => {
-    const next = Math.max(0, Math.trunc(Number(typed) || 0));
-    setTyped(String(next));
-    if (next !== total) save.mutate({ campaign_points: next }, { onError });
+  const write = (next: number) => {
+    const points = Math.max(0, Math.trunc(next || 0));
+    setTyped(String(points));
+    if (points !== total) save.mutate({ campaign_points: points }, { onError });
   };
 
   return (
-    <section
-      aria-label="Campaign points"
-      className="flex flex-col gap-2.5 border-y border-line py-3"
-    >
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <span className={LABEL}>Campaign points</span>
-        {canEdit ? (
-          <Input
-            type="number"
-            inputMode="numeric"
-            min={0}
-            max={999}
-            aria-label="Campaign points"
-            className="h-9 w-20 font-mono md:h-9"
-            value={typed}
-            onChange={(event) => setTyped(event.target.value)}
-            onBlur={saveTotal}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") event.currentTarget.blur();
-            }}
-          />
-        ) : (
-          <span className="font-display text-2xl font-semibold text-head">{total}</span>
-        )}
-        <span className={LABEL}>Plot</span>
-        {canEdit ? (
-          <PlotSelect
-            campaignId={campaignId}
-            value={picked}
-            onChange={(plotId) => {
-              setPicked(plotId);
-              save.mutate({ plot_id: plotId }, { onError });
-            }}
-          />
-        ) : (
-          <span className="text-[13px] text-ink">{plot?.name ?? "None"}</span>
-        )}
+    <section aria-label="Campaign points" className="flex flex-col gap-2 border-b border-line pb-3">
+      <h2 className={SECTION_TITLE}>Campaign points</h2>
+      <div className="flex items-center justify-between gap-2 whitespace-nowrap py-1">
+        <span className="min-w-0 truncate text-[13px] font-bold text-ink">
+          {plot?.name ?? "No plot"}
+        </span>
+        <span className="flex shrink-0 items-center gap-1.5">
+          {canEdit ? (
+            <IconButton
+              aria-label="One campaign point less"
+              className="h-8 w-8"
+              onClick={() => write(total - 1)}
+            >
+              <Minus aria-hidden="true" />
+            </IconButton>
+          ) : null}
+          {canEdit ? (
+            <Input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              max={999}
+              aria-label="Campaign points"
+              className="h-9 w-16 text-center font-mono md:h-9"
+              value={typed}
+              onChange={(event) => setTyped(event.target.value)}
+              onBlur={() => write(Number(typed))}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") event.currentTarget.blur();
+              }}
+            />
+          ) : (
+            <span className="font-display text-2xl font-semibold text-head">{total}</span>
+          )}
+          {canEdit ? (
+            <IconButton
+              aria-label="One campaign point more"
+              className="h-8 w-8"
+              onClick={() => write(total + 1)}
+            >
+              <Plus aria-hidden="true" />
+            </IconButton>
+          ) : null}
+          <IconButton
+            aria-label={open ? "Hide the plot" : "Show the plot"}
+            aria-expanded={open}
+            look="plain"
+            className="h-8 w-8"
+            onClick={() => setOpen(!open)}
+          >
+            <ChevronDown
+              aria-hidden="true"
+              className={open ? "rotate-180 transition-transform" : "transition-transform"}
+            />
+          </IconButton>
+        </span>
       </div>
-      <PlotTrack total={total} rungs={plot?.rungs ?? []} />
+      {open ? (
+        <div className="flex flex-col gap-2.5">
+          <div className="flex flex-wrap items-start gap-x-4 gap-y-2">
+            <button
+              type="button"
+              onClick={() => setDetails(true)}
+              disabled={!plot}
+              className="min-h-9 border border-strong px-3 text-[13px] font-bold text-accent-text hover:bg-raised disabled:opacity-50"
+            >
+              Plot details
+            </button>
+            {canEdit ? (
+              <PlotSelect
+                campaignId={campaignId}
+                value={picked}
+                onChange={(plotId) => {
+                  setPicked(plotId);
+                  save.mutate({ plot_id: plotId }, { onError });
+                }}
+              />
+            ) : null}
+          </div>
+          <PlotTrack total={total} rungs={plot?.rungs ?? []} />
+        </div>
+      ) : null}
+      {plot ? (
+        <PlotDetailsDialog plot={plot} total={total} open={details} onOpenChange={setDetails} />
+      ) : null}
     </section>
   );
 }

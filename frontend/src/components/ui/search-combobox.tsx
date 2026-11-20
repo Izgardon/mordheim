@@ -64,6 +64,12 @@ export type SearchComboboxProps = {
   onTyped?: (typed: string) => void;
   /** A pick closes the list (a single pick: the field stays for the next, closed). */
   closeOnPick?: boolean;
+  /**
+   * A pick leaves the field (William, 20 Nov 2026, of a unit's skills, spells and Boons & Banes:
+   * "whenever one is added the input should be unfocused"); on a list you add to several times
+   * over (a unit's items) the field keeps the focus for the next.
+   */
+  blurOnPick?: boolean;
 };
 
 const CAPTION =
@@ -75,6 +81,7 @@ const CAPTION =
  */
 export function SearchCombobox(props: SearchComboboxProps) {
   const { options, onPick, inline = false, create, limit = 80, onDismiss } = props;
+  const field = React.useRef<HTMLInputElement | null>(null);
   const listId = React.useId();
   const [typed, setTyped] = React.useState("");
   const [open, setOpen] = React.useState(Boolean(props.autoFocus));
@@ -103,6 +110,7 @@ export function SearchCombobox(props: SearchComboboxProps) {
     setTyped("");
     setActive(0);
     if (props.closeOnPick) setOpen(false);
+    if (props.blurOnPick) field.current?.blur();
   };
   const move = (by: number) => {
     setOpen(true);
@@ -134,6 +142,7 @@ export function SearchCombobox(props: SearchComboboxProps) {
       <label className="flex min-h-9 items-center gap-2 border border-strong bg-page px-2.5 text-muted-foreground focus-within:ring-2 focus-within:ring-inset focus-within:ring-ring">
         <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
         <input
+          ref={field}
           id={props.id}
           role="combobox"
           aria-label={props.label}

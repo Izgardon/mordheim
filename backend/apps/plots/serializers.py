@@ -10,6 +10,7 @@ from typing import Any
 from rest_framework import serializers
 
 from .models import Plot, PlotAchievement, PlotScoringLine
+from .wording import scored
 
 SMALLINT = 32_767
 PLOT_FIELDS = (
@@ -26,9 +27,14 @@ PLOT_FIELDS = (
 
 
 class PlotScoringLineSerializer(serializers.ModelSerializer):
+    shown = serializers.SerializerMethodField()  # its number as the plot prints it: the pages word none of it
+
+    def get_shown(self, obj: PlotScoringLine) -> str:
+        return scored(obj.points, obj.dice)
+
     class Meta:
         model = PlotScoringLine
-        fields = ("id", "points", "dice", "text")
+        fields = ("id", "points", "dice", "text", "shown")
 
 
 class PlotAchievementSerializer(serializers.ModelSerializer):

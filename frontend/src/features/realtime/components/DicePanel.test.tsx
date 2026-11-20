@@ -43,6 +43,11 @@ describe("DicePanel", () => {
     ]);
   });
 
+  it("has no row of preset rolls over the die chips (William, 20 Nov 2026)", () => {
+    renderPanel();
+    expect(screen.queryByRole("group", { name: "Quick rolls" })).toBeNull();
+  });
+
   it("names the die group and both steppers on the panel itself", () => {
     renderPanel();
     const captions = Array.from(document.body.querySelectorAll("span")).map(

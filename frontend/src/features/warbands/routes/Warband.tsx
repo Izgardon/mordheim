@@ -9,19 +9,13 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import { warbandStashQuery } from "../api/economy-queries";
 import CreateWarband from "../components/page/CreateWarband";
-import { BackstoryTab, LogTab } from "../components/page/StoryAndLogTabs";
-import TreasuryTab from "../components/page/TreasuryTab";
 import WarbandHeader, { type WarbandPanel } from "../components/page/WarbandHeader";
-import WarbandInfo from "../components/page/WarbandInfo";
 import WarbandPanels, { storeFor } from "../components/page/WarbandPanels";
+import WarbandSections from "../components/page/WarbandSections";
 import WarbandSkeleton from "../components/page/WarbandSkeleton";
-import WarbandTabs from "../components/page/WarbandTabs";
 import PostgameSlot from "../components/camp/PostgameSlot";
 import LocationsPanel from "../components/panels/LocationsPanel";
 import AdvanceDialog from "../components/roster/AdvanceDialog";
-import EditUnitForm from "../components/roster/EditUnitForm";
-import RosterSections from "../components/roster/RosterSections";
-import WarbandRules from "../components/rules/WarbandRules";
 import WarbandTrade from "../components/trade/WarbandTrade";
 import type { RosterUnit } from "../components/roster/unit-view";
 import { useUnitActions } from "../hooks/units/useUnitActions";
@@ -139,78 +133,26 @@ export default function Warband() {
           onInviteOpenChange={setTradeInviteOpen}
         />
       ) : null}
-      <WarbandInfo
-        campaignId={campaignId}
-        warband={warband}
-        plot={campaign?.enable_campaign_points ? sheet.plot : undefined}
-        heroes={sheet.heroes}
-        hirelings={sheet.hirelings}
-        henchmenGroups={sheet.henchmenGroups}
-        breakdownOpen={breakdownOpen}
-        setBreakdownOpen={setBreakdownOpen}
-        canEdit={canEdit}
-        pricing={{ table: campaign?.wyrdstone_prices, band: warband.size_band ?? 0 }}
-      />
-      <WarbandRules
-        campaignId={campaignId}
-        warbandId={warbandId}
-        warbandName={warband.name}
-        rules={sheet.rules}
-        canEdit={canEdit}
-      />
       <div className="flex flex-wrap items-start gap-8">
         <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-6">
-          <WarbandTabs
-            render={(tab) =>
-              tab === "Roster" ? (
-                <RosterSections
-                  warbandId={warbandId}
-                  campaign={campaign}
-                  heroes={sheet.heroes}
-                  henchmenGroups={sheet.henchmenGroups}
-                  hirelings={sheet.hirelings}
-                  counts={{
-                    hero_count: warband?.hero_count,
-                    hireling_count: warband?.hireling_count,
-                  }}
-                  gold={warband.gold ?? 0}
-                  warbandType={warband.warband_type}
-                  canEdit={canEdit}
-                  canCreateRace={capabilities.edit_catalogue}
-                  onLoadout={setLoadoutFor}
-                  onHire={hire}
-                  onAdvance={setAdvancing}
-                  onBuyAgain={(entry, item) =>
-                    openStore(
-                      storeFor(entry, {
-                        itemId: item.id,
-                        name: item.name,
-                        price: item.current_price ?? null,
-                      })
-                    )
-                  }
-                  renderEdit={(entry, close) => (
-                    <EditUnitForm
-                      entry={entry}
-                      campaign={campaign}
-                      campaignId={campaignId}
-                      warbandId={warbandId}
-                      canCreateRace={capabilities.edit_catalogue}
-                      onAddItem={() => setLoadoutFor(entry)}
-                      onClose={close}
-                    />
-                  )}
-                />
-              ) : tab === "Treasury" ? (
-                <TreasuryTab campaignId={campaignId} warbandId={warbandId} canEdit={canEdit} />
-              ) : tab === "Backstory" ? (
-                <BackstoryTab
-                  warband={warband}
-                  canEdit={capabilities.edit_backstory}
-                  onWarbandUpdated={sheet.mergeWarband}
-                />
-              ) : (
-                <LogTab campaignId={campaignId} warbandId={warbandId} />
+          <WarbandSections
+            campaignId={campaignId}
+            campaign={campaign}
+            warband={warband}
+            sheet={sheet}
+            canEdit={canEdit}
+            breakdownOpen={breakdownOpen}
+            setBreakdownOpen={setBreakdownOpen}
+            onLoadout={setLoadoutFor}
+            onHire={hire}
+            onAdvance={setAdvancing}
+            onBuyAgain={(entry, item) =>
+              openStore(
+                storeFor(entry, {
+                  itemId: item.id,
+                  name: item.name,
+                  price: item.current_price ?? null,
+                })
               )
             }
           />

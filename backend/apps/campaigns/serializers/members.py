@@ -26,6 +26,7 @@ class CampaignPlayerSerializer(serializers.Serializer):
             "wins": warband.get("wins"),
             "losses": warband.get("losses"),
             "rating": warband.get("rating"),
+            "campaign_points": warband.get("campaign_points"),
         }
 
 

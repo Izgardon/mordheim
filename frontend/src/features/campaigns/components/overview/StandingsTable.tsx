@@ -18,18 +18,22 @@ const ICON = "h-3.5 w-3.5 text-accent-text";
 /**
  * The standings (design E), by warband rating: each warband links to its warband page (yours
  * opens your own), and your row is picked out. A table on the web that fits its column (a long
- * name wraps, and below 1600 px the type moves under the name), a list on a phone.
+ * name wraps, and below 1600 px the type moves under the name), a list on a phone. Campaign points
+ * sit beside the rating while the campaign has them on (William, 20 Nov 2026).
  */
 export default function StandingsTable({
   rows,
   campaignId,
   userId,
   isMobile,
+  showCampaignPoints = false,
 }: {
   rows: Standing[];
   campaignId: number;
   userId: number | undefined;
   isMobile: boolean;
+  /** The campaign has campaign points on (`enable_campaign_points`). */
+  showCampaignPoints?: boolean;
 }) {
   const href = (row: Standing) =>
     row.playerId === userId
@@ -64,9 +68,14 @@ export default function StandingsTable({
                     {row.player} · {row.warbandType} · {row.record}
                   </span>
                 </span>
-                <span className="flex items-center gap-1 font-mono text-sm font-bold text-ink">
-                  <GameIcon name="rating" className={ICON} />
-                  {row.rating}
+                <span className="flex shrink-0 flex-col items-end font-mono text-sm text-ink">
+                  <span className="flex items-center gap-1 font-bold">
+                    <GameIcon name="rating" className={ICON} />
+                    {row.rating}
+                  </span>
+                  {showCampaignPoints ? (
+                    <span className="text-xs text-text2">{row.campaignPoints} CP</span>
+                  ) : null}
                 </span>
                 <ChevronRight className="h-4 w-4 text-faint" aria-hidden="true" />
               </Link>
@@ -100,6 +109,13 @@ export default function StandingsTable({
                 Rating
               </span>
             </th>
+            {showCampaignPoints ? (
+              <th scope="col" className={cn(TH, "text-right")}>
+                <abbr title="Campaign points" className="no-underline">
+                  CP
+                </abbr>
+              </th>
+            ) : null}
             <th scope="col" className={cn(TH, "pr-4 text-right")}>
               <span className={HEAD_WITH_ICON}>
                 <GameIcon name="record" className={ICON} />
@@ -140,6 +156,11 @@ export default function StandingsTable({
                 <td className={cn(TD, "whitespace-nowrap text-right font-mono font-bold text-ink")}>
                   {row.rating}
                 </td>
+                {showCampaignPoints ? (
+                  <td className={cn(TD, "whitespace-nowrap text-right font-mono text-text2")}>
+                    {row.campaignPoints}
+                  </td>
+                ) : null}
                 <td className={cn(TD, "whitespace-nowrap pr-4 text-right font-mono text-text2")}>
                   {row.record}
                 </td>

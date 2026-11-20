@@ -69,6 +69,15 @@ describe("BottomSheet", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
+  it("may fill the screen but for the status bar, the handle and × still on it", () => {
+    render(<Harness />);
+
+    const sheet = screen.getByRole("dialog", { name: "Battle menu" });
+    expect(sheet.className).toContain("max-h-[calc(100dvh-env(safe-area-inset-top,0px))]");
+    expect(screen.getByTestId("sheet-handle")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
+  });
+
   it("closes from its close button", () => {
     render(<Harness />);
 

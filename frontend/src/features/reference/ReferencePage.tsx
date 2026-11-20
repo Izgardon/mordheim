@@ -1,16 +1,15 @@
 import type { ReactNode } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 
 import { Switch } from "@/components/ui/switch";
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
-import { REFERENCE_SECTIONS, RULES_LINKS, SEARCH_LINK } from "@/layouts/shell/campaign-nav";
+import { RULES_LINKS } from "@/layouts/shell/campaign-nav";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import ArchivedEntries, { type ArchivedOptions } from "./ArchivedEntries";
 
 type ReferencePageProps = {
   title: string;
-  /** The page's path under the campaign ("items"): the phone's Section picker shows it. */
+  /** The page's path under the campaign ("items"): its eyebrow reads from it. */
   section: string;
   /** Plain buttons beside the title: Add skill, Add house rule. */
   actions?: ReactNode;
@@ -26,48 +25,14 @@ type ReferencePageProps = {
   children: ReactNode;
 };
 
-/**
- * The phone's Section picker (design E): the References and the Rules pages, each under its
- * heading, then Search everything, at the top of each reference page beside its own buttons.
- */
-export function SectionPicker({ current, actions }: { current: string; actions?: ReactNode }) {
-  const navigate = useNavigate();
-  const { id } = useParams();
-  return (
-    <div className="flex items-center justify-between gap-2">
-      <label className="flex min-w-0 items-center gap-1.5 text-xs font-bold text-muted-foreground">
-        Section
-        <select
-          aria-label="Reference section"
-          value={current}
-          onChange={(event) => navigate(`/campaigns/${id}/${event.target.value}`)}
-          className="min-h-10 min-w-0 border border-border bg-surface px-2 text-sm text-ink"
-        >
-          {REFERENCE_SECTIONS.map((section) => (
-            <optgroup key={section.title} label={section.title}>
-              {section.links.map((link) => (
-                <option key={link.path} value={link.path}>
-                  {link.label}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-          <option value={SEARCH_LINK.path}>{SEARCH_LINK.label}</option>
-        </select>
-      </label>
-      {actions ? <div className="flex shrink-0 gap-2">{actions}</div> : null}
-    </div>
-  );
-}
-
 /** The eyebrow over a page's title: its section's, "Rules" for the Rules section's pages. */
 const eyebrowOf = (section: string) =>
   RULES_LINKS.some((link) => link.path === section) ? "Rules" : "Reference";
 
 /**
  * The reference pages' one layout (design E, E-Web-Items and E-Mobile-Items): "Reference" (or
- * "Rules") and the title with the page's buttons (on a phone the Section picker instead, the
- * shell's top bar naming the page), the filters, a summary line with Show archived (the archived
+ * "Rules") and the title with the page's buttons (on a phone its buttons alone, the shell's top
+ * bar naming the page), the filters, a summary line with Show archived (the archived
  * entries, while shown), and the list of rows that open in place.
  */
 export default function ReferencePage(props: ReferencePageProps) {
@@ -78,7 +43,10 @@ export default function ReferencePage(props: ReferencePageProps) {
   return (
     <div className="flex flex-col gap-6 pb-14 max-[960px]:gap-2.5">
       {isMobile ? (
-        <SectionPicker current={props.section} actions={props.actions} />
+        // the shell's top bar names the page; only the page's own buttons show here
+        props.actions ? (
+          <div className="flex flex-wrap justify-end gap-2">{props.actions}</div>
+        ) : null
       ) : (
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-1.5">

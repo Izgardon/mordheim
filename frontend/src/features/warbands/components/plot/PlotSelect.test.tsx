@@ -71,3 +71,16 @@ describe("the plot picker", () => {
     expect(onChange).toHaveBeenCalledWith(null);
   });
 });
+
+describe("the plot picker's box", () => {
+  // William, 20 Nov 2026, of Raise a warband: "big gap between plot and warband list summary".
+  // In a column the old flex-basis was a height, so the field left a tall empty block under it.
+  it("takes a width, never a height", () => {
+    renderWithQueryClient(<PlotSelect campaignId={7} value={null} onChange={vi.fn()} />);
+
+    const box = screen.getByRole("combobox", { name: "Plot" }).closest("div.flex.w-full");
+    expect(box?.className).toContain("max-w-[340px]");
+    expect(box?.className).not.toMatch(/basis-/);
+    expect(box?.className).not.toMatch(/flex-1/);
+  });
+});

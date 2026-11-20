@@ -4,6 +4,7 @@ import { BoxTile } from "@/components/ui/box-tile";
 import { ItemKindIcon } from "@/components/ui/game-icons";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { itemKind, itemStatsLine } from "@/features/items/item-kind";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { plainRuleText, ruleName } from "@/features/items/utils/item-rules";
 import type { Item } from "@/features/items/types/item-types";
 import { cameThrough, unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
@@ -15,8 +16,7 @@ import type { AdvancePick } from "../../units/unit-api";
 import { loadoutLine } from "../../units/loadout";
 import { accessNames } from "../../utils/warband-utils";
 import GroupMembers from "./GroupMembers";
-import PendingPick from "./PendingPick";
-import RulesPanel from "./RulesPanel";
+import UnitBoxDetail, { type OpenBox } from "./UnitBoxDetail";
 import UnitSectionLabel from "./UnitSectionLabel";
 import UnitXp from "./UnitXp";
 import { entryBoxes, type Row } from "./unit-boxes";
@@ -45,7 +45,10 @@ type UnitDetailsProps = {
 export default function UnitDetails(props: UnitDetailsProps) {
   const { entry, campaign, canEdit, others } = props;
   const { kind } = entry;
-  const [open, setOpen] = useState<{ row: string; index: number } | null>(null);
+  const [open, setOpen] = useState<OpenBox | null>(null);
+  // on a phone a box's detail opens inside its own section, under the boxes it was picked from
+  // (William, 20 Nov 2026); the web's columns are too narrow for it, so it sits under them all
+  const inSection = useMediaQuery("(max-width: 960px)");
   const lists = boxRows(entry);
   const itemLabel = useItemLabel(props.campaignId, props.warbandId);
   const groups = useSkillGroups(props.campaignId);
@@ -96,6 +99,23 @@ export default function UnitDetails(props: UnitDetailsProps) {
   const selectedRow = all.find((row) => row.key === open?.row);
   const selected = open && selectedRow ? selectedRow.boxes[open.index] : undefined;
 
+  const detail =
+    open && selected ? (
+      <UnitBoxDetail
+        box={selected}
+        open={open}
+        entry={entry}
+        campaignId={props.campaignId}
+        canEdit={canEdit}
+        others={others}
+        onClose={() => setOpen(null)}
+        onPick={props.onPick}
+        onMoveItem={props.onMoveItem}
+        onSellItem={props.onSellItem}
+        onBuyAgain={props.onBuyAgain}
+      />
+    ) : null;
+
   const row = (line: Row, extra?: ReactNode) => (
     <div key={line.key} className="flex flex-col gap-2">
       <UnitSectionLabel icon={line.icon}>{line.label}</UnitSectionLabel>
@@ -113,6 +133,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
         ))}
         {extra}
       </div>
+      {inSection && open?.row === line.key ? detail : null}
     </div>
   );
   const members = isGroup(entry) && !isCreature(entry);
@@ -157,43 +178,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
           </div>
         ) : null}
       </div>
-      {selected?.pending && canEdit ? (
-        <PendingPick
-          key={`${open?.row}-${open?.index}`}
-          campaignId={props.campaignId}
-          list={selected.pending}
-          entry={entry}
-          onClose={() => setOpen(null)}
-          onPick={(pick) => {
-            setOpen(null);
-            props.onPick(pick);
-          }}
-        />
-      ) : selected ? (
-        <RulesPanel
-          // a box of its own: another box's sale price and Sell state never carry over (William, 8 Nov 2026)
-          key={`${open?.row}:${open?.index}:${selected.item?.id ?? selected.name}`}
-          detail={selected}
-          onClose={() => setOpen(null)}
-          itemActions={
-            canEdit && selected.item
-              ? {
-                  owner: entry,
-                  targets: others,
-                  onMove: (to) => {
-                    setOpen(null);
-                    props.onMoveItem(selected.item!.id, to, selected.item!.material ?? "");
-                  },
-                  onSell: (price) => {
-                    setOpen(null);
-                    props.onSellItem(selected.item!.id, price, selected.item!.material ?? "");
-                  },
-                  onBuyAgain: () => props.onBuyAgain(selected.item!),
-                }
-              : undefined
-          }
-        />
-      ) : null}
+      {inSection ? null : detail}
     </div>
   );
 }

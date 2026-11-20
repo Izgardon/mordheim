@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import { Settings, UserRound } from "lucide-react";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
+import SearchEverythingField from "@/features/search/components/SearchEverythingField";
 import { cn } from "@/lib/utils";
 
 import {
@@ -11,7 +12,6 @@ import {
   isAftermathPath,
   OVERVIEW_LINK,
   REFERENCE_SECTIONS,
-  SEARCH_LINK,
   warbandLinks,
   type NavLink,
 } from "./campaign-nav";
@@ -141,12 +141,7 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
       {REFERENCE_SECTIONS.map((section, index) => (
         <RailSection key={section.title} title={section.title}>
           {index === 0 ? (
-            <RailLink
-              to={to(SEARCH_LINK)}
-              label={SEARCH_LINK.label}
-              icon={SEARCH_LINK.icon}
-              current={isCurrent(SEARCH_LINK.path)}
-            />
+            <SearchEverythingField campaignId={campaign.id} className="mx-2.5 mb-1" />
           ) : null}
           {section.links.map((link) => (
             <RailLink

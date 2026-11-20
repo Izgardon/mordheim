@@ -42,6 +42,8 @@ export type Standing = {
   warbandType: string;
   rating: number;
   record: string;
+  /** Its campaign point total (apps/plots); shown while the campaign has them on. */
+  campaignPoints: number;
 };
 
 /**
@@ -70,6 +72,7 @@ export function buildStandings(
         warband: warband.name,
         warbandType: warband.type_name,
         rating: warband.rating ?? 0,
+        campaignPoints: warband.campaign_points ?? 0,
         record: `${warband.wins ?? 0}–${draws.get(warband.id) ?? 0}–${warband.losses ?? 0}`,
       };
     })

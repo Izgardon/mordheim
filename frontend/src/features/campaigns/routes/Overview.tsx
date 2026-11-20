@@ -96,6 +96,7 @@ export default function Overview() {
       campaignId={campaignId}
       userId={user?.id}
       isMobile={isMobile}
+      showCampaignPoints={Boolean(campaign.enable_campaign_points)}
     />
   );
   const recent = (

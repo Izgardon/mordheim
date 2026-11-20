@@ -6,8 +6,9 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
+import SearchEverythingField from "@/features/search/components/SearchEverythingField";
 
-import { REFERENCE_SECTIONS, SEARCH_LINK, mobileNavActiveId } from "../shell/campaign-nav";
+import { REFERENCE_SECTIONS, mobileNavActiveId } from "../shell/campaign-nav";
 import { BottomBar, BottomBarButton, BottomBarLink } from "./BottomBar";
 import { SheetLinkRow, SheetRows } from "./SheetRows";
 
@@ -103,10 +104,10 @@ export default function CampaignBottomNav({
           {REFERENCE_SECTIONS.map((section, index) => (
             <SheetRows key={section.title} label={section.title}>
               {index === 0 ? (
-                <SheetLinkRow
-                  to={`${base}/${SEARCH_LINK.path}`}
-                  label={SEARCH_LINK.label}
+                <SearchEverythingField
+                  campaignId={campaign.id}
                   onNavigate={close}
+                  className="mx-1 mb-1.5 min-h-12"
                 />
               ) : null}
               {section.links.map((link) => (

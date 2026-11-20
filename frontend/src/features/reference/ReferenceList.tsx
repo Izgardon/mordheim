@@ -163,7 +163,12 @@ export function ReferenceRow(props: ReferenceRowProps) {
             ))
           : null}
         {!props.cells && props.aside ? (
-          <span className="flex shrink-0 flex-col items-end">{props.aside}</span>
+          // half the row at most, and its lines wrap as the name's do, so a long fee
+          // ("90 gc + 5 Campaign points") never squeezes the name into a column
+          // (William, 20 Nov 2026)
+          <span className="flex min-w-0 max-w-[50%] flex-col items-end text-right">
+            {props.aside}
+          </span>
         ) : null}
         {props.cells ? null : (
           <ChevronDown
