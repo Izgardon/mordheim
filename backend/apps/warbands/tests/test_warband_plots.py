@@ -181,6 +181,16 @@ class WarbandPlotTests(CampaignTestCase):
         self.assertEqual(sheet["warband"]["campaign_points"], 10)
         self.assertEqual([rule["title"] for rule in sheet["rules"]][1:], ["5 CP: Rung 5", "10 CP: Rung 10"])
 
+    def test_the_players_list_carries_each_warbands_campaign_points_for_the_standings(self):
+        self.follow(campaign_points=7)
+
+        self.client.force_authenticate(user=self.rival)
+        with self.assertNumQueries(6):  # the campaign pages' budget: the list costs no more for it
+            players = self.client.get(self.url("players/")).json()
+
+        points = {row["warband"]["name"]: row["warband"]["campaign_points"] for row in players if row["warband"]}
+        self.assertEqual(points, {self.warband.name: 7, self.rival_warband.name: 0})
+
     def test_a_warband_following_none_has_no_plot_on_its_sheet(self):
         sheet = self.get_as(self.player, f"/api/warbands/{self.warband.id}/sheet/").json()
 

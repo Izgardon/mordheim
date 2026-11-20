@@ -142,6 +142,8 @@ export type CampaignPlayer = {
     wins: number | null;
     losses: number | null;
     rating?: number | null;
+    /** Its campaign point total; the standings show it while the campaign has them on (apps/plots). */
+    campaign_points?: number | null;
   } | null;
 };
 

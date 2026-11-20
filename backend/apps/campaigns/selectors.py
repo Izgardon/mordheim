@@ -106,7 +106,7 @@ def _warbands_by_user(campaign_id: int) -> dict[int, dict[str, Any]]:
     warbands = list(
         Warband.objects.filter(campaign_id=campaign_id)
         .select_related("warband_type")
-        .only("id", "name", "warband_type__name", "user_id", "wins", "losses")
+        .only("id", "name", "warband_type__name", "user_id", "wins", "losses", "campaign_points")
     )
     units_by_warband = load_warband_units(warband.id for warband in warbands)
     return {
@@ -117,6 +117,8 @@ def _warbands_by_user(campaign_id: int) -> dict[int, dict[str, Any]]:
             "wins": warband.wins,
             "losses": warband.losses,
             "rating": units_by_warband[warband.id].rating,
+            # the standings show it beside the rating while the campaign has campaign points on
+            "campaign_points": warband.campaign_points,
         }
         for warband in warbands
     }
