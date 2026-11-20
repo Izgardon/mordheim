@@ -123,7 +123,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
       onOpenChange={(open) => (open ? null : discard.close())}
       kicker="Warband template"
       // on a phone the sheet keeps one height, so it doesn't jump as the sections change
-      className={isMobile ? "h-[85dvh]" : undefined}
+      className={isMobile ? "h-[calc(100dvh-env(safe-area-inset-top,0px))]" : undefined}
       title={answer?.template.name ?? "Warband template"}
     >
       <DirtyRegistry value={changes.value}>

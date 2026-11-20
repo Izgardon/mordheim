@@ -157,7 +157,7 @@ const DialogContent = React.forwardRef<
           ref={ref}
           className={cn(
             // overflow visible: a field's list floats out past the edge (useFloating); the body scrolls inside
-            "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[85dvh] overflow-visible overscroll-x-none border-t border-accent-line bg-panel shadow-[0_-16px_40px_var(--color-shadow)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[calc(100dvh-env(safe-area-inset-top,0px))] overflow-visible overscroll-x-none border-t border-accent-line bg-panel shadow-[0_-16px_40px_var(--color-shadow)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "min-[960px]:left-[50%] min-[960px]:top-[50%] min-[960px]:bottom-auto min-[960px]:w-[calc(100%-2rem)] min-[960px]:max-h-[90vh] min-[960px]:-translate-x-1/2 min-[960px]:-translate-y-1/2 min-[960px]:border min-[960px]:border-accent-line min-[960px]:bg-panel min-[960px]:shadow-[0_24px_60px_var(--color-shadow)] min-[960px]:data-[state=closed]:zoom-out-95 min-[960px]:data-[state=open]:zoom-in-95 min-[960px]:data-[state=closed]:slide-out-to-left-1/2 min-[960px]:data-[state=closed]:slide-out-to-top-[48%] min-[960px]:data-[state=open]:slide-in-from-left-1/2 min-[960px]:data-[state=open]:slide-in-from-top-[48%]",
             className,
             "max-[959px]:!max-w-full"
@@ -172,7 +172,7 @@ const DialogContent = React.forwardRef<
         >
           <div
             className={cn(
-              "pointer-events-auto relative flex max-h-[85dvh] flex-col overflow-x-hidden pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-ink min-[960px]:max-h-[90vh] min-[960px]:py-8",
+              "pointer-events-auto relative flex max-h-[calc(100dvh-env(safe-area-inset-top,0px))] flex-col overflow-x-hidden pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-ink min-[960px]:max-h-[90vh] min-[960px]:py-8",
               innerClassName
             )}
             style={mobileMaxHeightStyle}

@@ -27,6 +27,25 @@ function open(body: string) {
   return screen.getByRole("button", { name: "Save" }).parentElement as HTMLElement;
 }
 
+describe("a dialog on a phone", () => {
+  it("may fill the screen but for the status bar, as a bottom sheet may", () => {
+    render(
+      <Dialog open>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rating breakdown</DialogTitle>
+          </DialogHeader>
+          <p>A long list of units.</p>
+        </DialogContent>
+      </Dialog>
+    );
+
+    const dialog = screen.getByRole("dialog", { name: "Rating breakdown" });
+    expect(dialog.className).toContain("max-h-[calc(100dvh-env(safe-area-inset-top,0px))]");
+    expect(dialog.className).not.toContain("max-h-[85dvh]");
+  });
+});
+
 describe("DialogFooter", () => {
   it("sticks to the bottom of the scrolling body", () => {
     const footer = open("A long rule.");
