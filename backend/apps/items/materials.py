@@ -8,10 +8,12 @@ weapon's price through the material (four times it, or 60 gc on top).
 The set is closed and will never be added to, so it is hard-coded here (William: "hard-code it"), as the unit kinds
 are in `apps/warbands/units/kinds.py`. A material carries its slug, the word that goes in front of the weapon's name,
 how it prices (a multiplier or a flat addition: the book needs only those two shapes), its own rarity (the rarity the
-purchase rolls, never the weapon's), the book's rules word for word, the setting they come from, what putting it on a
-weapon the warband already owns costs (`on_owned`, None: it is chosen when the weapon is bought), and who may not
+purchase rolls, never the weapon's), the book's rules word for word, the setting they come from, and who may not
 take it (`excluded_groups`, `excluded_types`: who-can lines, which `warbands/services/materials.py` resolves and
-`who_can.py` reads). Weapons only: `Gromril Armour` and `Ithilmar Armour` are real armour with their own prices and
+`who_can.py` reads). An item is never transformed (William, 20 Nov 2026: "items are never transformed"): a material
+is a store row of its own, which picks the weapon it is made into, and a weapon is never made of anything after it
+is bought. Silver's own words on silvering a weapon the warband already owns stay as the book has them, for the
+player to settle at the table. Weapons only: `Gromril Armour` and `Ithilmar Armour` are real armour with their own prices and
 saves, and `Sons of Hashut Obsidian Weapon` is a different rule at a flat price, so all three stay items.
 
 Both price shapes are whole gold, so a material price is never rounded; half of one (a sale) rounds up through
@@ -45,7 +47,6 @@ class Material:
     setting: str
     multiplier: int | None = None
     addition: int | None = None
-    on_owned: int | None = None
     excluded_groups: tuple[str, ...] = ()
     excluded_types: tuple[str, ...] = ()
 
@@ -120,7 +121,6 @@ SILVER = Material(
     name="Silver",
     rarity=11,
     addition=60,
-    on_owned=80,  # "To silver a weapon the warband already owns, roll the rarity all the same and pay 80 gc in all."
     setting="grade-3",
     rules=(
         MaterialRule(
@@ -176,8 +176,3 @@ def priced(slug: str, base: int | None) -> int | None:
     if material is None or base is None:
         return base
     return material.price(base)
-
-
-def on_owned_only() -> tuple[str, ...]:
-    """The materials that can be put on a weapon the warband already owns (silver: the book says so)."""
-    return tuple(slug for slug, material in MATERIALS.items() if material.on_owned is not None)

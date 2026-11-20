@@ -1,10 +1,10 @@
 """What a warband may make its weapons of (weapon materials, William 19 Nov 2026).
 
 The four materials are hard-coded data (`apps/items/materials.py`). This is the only place that reads them against a
-warband: who may take each, worded as every other who-can line is (`who_can.py`), and what putting one on a weapon
-the warband already owns costs. Obsidian's book rule names who may never use it (Dwarfs, Elves, Sisters of Sigmar,
+warband: who may take each, worded as every other who-can line is (`who_can.py`). Obsidian's book rule names who may never use it (Dwarfs, Elves, Sisters of Sigmar,
 Witch Hunters), so it carries those as excluded who-can lines, read exactly as a price row's are: the answer is a
-warning, never a block, and the pages show it without re-deriving it.
+warning, never a block, and the pages show it without re-deriving it. Nothing here puts a material on a weapon the
+warband already owns: an item is never transformed (William, 20 Nov 2026).
 
 Three queries for every material together: the excluded warband types, the excluded warband groups, and the
 materials' settings with whether the campaign has each in play.
@@ -81,7 +81,6 @@ def material_payload(material: Material, buyer: Buyer, catalogue: Catalogue) -> 
         "price_note": material.price_note,
         "multiplier": material.multiplier,
         "addition": material.addition,
-        "on_owned": material.on_owned,
         "rules": [{"name": rule.name, "text": rule.text} for rule in material.rules],
         "can_take": not reasons,
         "reason": " ".join(reasons),

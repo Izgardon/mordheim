@@ -73,7 +73,7 @@ def _skill_groups(campaign_id: int, buyer: Buyer) -> tuple[list[int], list[int]]
 def who_can(warband: Warband) -> dict[str, Any]:
     """`{items: [{item_id, availability_id, options, can_buy, reason}], hired_swords: [{id, can_hire, reason}],
     dramatis_personae: [...], skill_group_ids: [...], special_skill_ids: [...],
-    materials: [{slug, name, rarity, rules, can_take, reason, on_owned}]}` (weapon materials: three queries)."""
+    materials: [{slug, name, rarity, rules, can_take, reason}]}` (weapon materials: three queries)."""
     from apps.core.catalogue.kinds import DRAMATIS_PERSONAE, HIRED_SWORDS
     from apps.warband_templates.services.resolve import list_item_ids  # it reads the warbands app
 

@@ -30,7 +30,6 @@ const material = (change: Partial<WeaponMaterial>): WeaponMaterial => ({
   price_note: "4 x Price",
   multiplier: 4,
   addition: null,
-  on_owned: null,
   rules: [],
   can_take: true,
   reason: "",

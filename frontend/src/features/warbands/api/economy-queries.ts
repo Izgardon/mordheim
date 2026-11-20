@@ -5,7 +5,6 @@ import { applyWarbandUpdate, isWarbandQuery, type WarbandUpdate } from "./warban
 import { sheetWarband } from "./warband-queries";
 import { prependTreasuryRow } from "./ledger-queries";
 import {
-  applyWarbandItemMaterial,
   createWarbandResource,
   deleteWarbandResource,
   listWarbandItems,
@@ -18,7 +17,6 @@ import {
 import type { WarbandSheet } from "../types/warband-sheet";
 import type { UnitListKey } from "../types/units";
 import type {
-  WarbandItemMaterialPayload,
   WarbandItemMutationResponse,
   WarbandItemSalePayload,
   WarbandItemTransferPayload,
@@ -149,14 +147,6 @@ export function useItemSale(warbandId: number) {
 export function useItemMove(warbandId: number) {
   return useMutation({
     mutationFn: (payload: WarbandItemTransferPayload) => transferWarbandItem(warbandId, payload),
-  });
-}
-
-/** Puts a material on a weapon the warband already owns; the answer carries what changed. */
-export function useItemMaterial(warbandId: number) {
-  return useMutation({
-    mutationFn: (payload: WarbandItemMaterialPayload) =>
-      applyWarbandItemMaterial(warbandId, payload),
   });
 }
 

@@ -12,7 +12,6 @@ import type {
   ServerWarning,
   UnitCompanionFields,
 } from "./companion-types";
-import type { RarityRollLine } from "../../items/api/purchase";
 
 type RaceStatProfile = {
   id?: number;
@@ -808,21 +807,6 @@ export type WarbandItemSalePayload = {
   material?: string;
 };
 
-/**
- * `POST item-materials/`: puts a material on a weapon the warband already owns. The book allows it
- * for silver, so the server takes that one only, and it charges what the material asks unless
- * `price` says otherwise.
- */
-export type WarbandItemMaterialPayload = {
-  source_type: "hero" | "hireling" | "henchmen_group" | "stash";
-  source_id?: number | null;
-  item_id: number;
-  cost?: number | null;
-  material: string;
-  price?: number | null;
-  rarity_roll?: RarityRollLine | null;
-};
-
 export type WarbandItemMutationResponse = {
   summary: WarbandUnitsSummary;
   source: WarbandUnitDetail | WarbandItemSummary | null;
@@ -831,7 +815,6 @@ export type WarbandItemMutationResponse = {
   removed_stash_item_id?: number | null;
   /** Which of that item's stash rows went (weapon materials): "" for the plain one. */
   removed_stash_item_material?: string;
-  /** `POST item-materials/` only: it charges gold, so it may leave the warband below 0. */
   warnings?: ServerWarning[];
 };
 

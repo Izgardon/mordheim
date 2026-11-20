@@ -10,7 +10,6 @@ from .views import (
     WarbandDetailView,
     WarbandGroupListView,
     WarbandItemListView,
-    WarbandItemMaterialView,
     WarbandItemSaleView,
     WarbandItemTransferView,
     WarbandListCreateView,
@@ -64,11 +63,6 @@ urlpatterns = [
         "warbands/<int:warband_id>/item-sales/",
         WarbandItemSaleView.as_view(),
         name="warbands-item-sales",
-    ),
-    path(
-        "warbands/<int:warband_id>/item-materials/",
-        WarbandItemMaterialView.as_view(),
-        name="warbands-item-materials",
     ),
     path(
         "warbands/<int:warband_id>/purchases/",

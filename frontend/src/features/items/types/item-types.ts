@@ -228,7 +228,6 @@ export type WeaponMaterial = {
   price_note: string;
   multiplier: number | null;
   addition: number | null;
-  on_owned: number | null;
   rules: { name: string; text: string }[];
   can_take: boolean;
   reason: string;

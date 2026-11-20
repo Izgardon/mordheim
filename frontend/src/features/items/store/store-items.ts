@@ -80,6 +80,3 @@ export function inStoreOrder<T extends StoreSortable>(rows: T[], query: string):
     return shown(a).localeCompare(shown(b));
   });
 }
-
-/** A weapon: the only kind of item a material goes on (weapon materials). */
-export const isWeapon = (item: Pick<Item, "type">) => (item.type ?? "").toLowerCase() === "weapon";

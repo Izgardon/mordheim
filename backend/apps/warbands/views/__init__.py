@@ -1,7 +1,6 @@
 from .beasts import WarbandBeastRecruitView
 from .items import (
     WarbandItemListView,
-    WarbandItemMaterialView,
     WarbandItemSaleView,
     WarbandItemTransferView,
 )
@@ -32,7 +31,6 @@ __all__ = [
     "WarbandDetailView",
     "WarbandListCreateView",
     "WarbandItemListView",
-    "WarbandItemMaterialView",
     "WarbandItemSaleView",
     "WarbandItemTransferView",
     "WarbandLogListView",
