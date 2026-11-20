@@ -8,6 +8,7 @@ from typing import Any
 from django.db import transaction
 
 from apps.campaign_presets.services import apply as presets_apply
+from apps.campaign_presets.services import charts as preset_charts
 from apps.campaign_presets.services import rules as preset_rules
 from apps.exploration.selectors import book_chart_id
 from apps.plots.writes import give_default_plots
@@ -61,7 +62,9 @@ def settings_at_creation(validated: dict[str, Any], preset: Any) -> dict[str, An
 def create_campaign(owner: Any, validated: dict[str, Any]) -> Campaign:
     """A new campaign with `owner` as its owner, from CampaignCreateSerializer's data; all or nothing. Its settings
     in play are the ones sent, else its grade preset's (Up to 1c by default, in_play.py), with the settings its
-    campaign preset guides towards added, and its preset's rules are copied into its own rules in order."""
+    campaign preset guides towards added, and its preset's rules **and charts** are copied into its own in order
+    (William, 20 Nov 2026: a Marienburg campaign "has no charts, it has the rest of the rules" -- creation copied
+    the rules and stopped, so the charts only arrived if someone later asked for the preset's rules again)."""
     picked = validated.get("setting_ids")
     setting_ids = (
         [row.pk for row in picked] if picked is not None else preset_ids(validated.get("preset", DEFAULT_PRESET))
@@ -76,6 +79,7 @@ def create_campaign(owner: Any, validated: dict[str, Any]) -> Campaign:
         if values.get("enable_campaign_points"):  # on from the start: it is given the plots of its settings in play
             give_default_plots(campaign.pk)
         preset_rules.copy_rules(campaign, preset)
+        preset_charts.copy_charts(campaign, preset)
         CampaignMembership.objects.create(campaign=campaign, user=owner, role_id=codes.role_ref(OWNER))
     return campaign
 

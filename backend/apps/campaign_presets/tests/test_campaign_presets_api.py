@@ -3,14 +3,21 @@ creation and when it is changed, where a campaign departs from it, and its rules
 
 from typing import Any
 
-from apps.campaign_presets.models import CampaignPreset, CampaignPresetRule
+from apps.campaign_presets.models import (
+    CampaignPreset,
+    CampaignPresetChart,
+    CampaignPresetChartRow,
+    CampaignPresetRule,
+)
 from apps.campaigns.in_play import preset_ids
-from apps.campaigns.models import Campaign, CampaignRule, CampaignSettings, CampaignType
+from apps.campaigns.models import Campaign, CampaignChart, CampaignRule, CampaignSettings, CampaignType
 from apps.campaigns.tests.campaign_support import CampaignTestCase
 from apps.exploration.models import ExplorationChart
 
 MARIENBURG = "Mutiny in Marienburg"
 RULES = [("Campaign points", "Mark one box for every Campaign Point."), ("Cargo", "Crates of Marienburg.")]
+# a standalone chart, and a table hanging off one of its results: only the first is a chart of the campaign's own
+CHARTS = ["Seaside Situations", "Booty"]
 
 
 class CampaignPresetTests(CampaignTestCase):
@@ -42,6 +49,12 @@ class CampaignPresetTests(CampaignTestCase):
             CampaignPresetRule(preset=cls.marienburg, order=place, title=title, text=text)
             for place, (title, text) in enumerate(RULES)
         )
+        for place, title in enumerate(CHARTS):
+            chart = CampaignPresetChart.objects.create(preset=cls.marienburg, order=place, title=title, dice="D66")
+            row = CampaignPresetChartRow.objects.create(chart=chart, order=0, result="11", name="Rats", text="")
+            if title == "Seaside Situations":  # the sub-table its result sends the player to
+                table = CampaignPresetChart.objects.create(preset=cls.marienburg, row=row, title="Sewer hazards")
+                CampaignPresetChartRow.objects.create(chart=table, order=0, result="1", name="Gas", text="")
 
     # helpers
 
@@ -56,6 +69,11 @@ class CampaignPresetTests(CampaignTestCase):
 
     def rules_of(self, campaign_id: int) -> list[str]:
         return [rule.title for rule in CampaignRule.objects.filter(campaign_id=campaign_id).order_by("order", "id")]
+
+    def charts_of(self, campaign_id: int) -> list[str]:
+        """The campaign's own charts: a table belonging to a rule or a result is not one."""
+        rows = CampaignChart.objects.filter(campaign_id=campaign_id, rule__isnull=True, row__isnull=True)
+        return [chart.title for chart in rows.order_by("order", "id")]
 
     def preset_payload(self, campaign_id: int, user: Any = None) -> dict[str, Any]:
         response = self.get_as(user or self.owner, f"/api/campaigns/{campaign_id}/preset/")
@@ -111,6 +129,27 @@ class CampaignPresetTests(CampaignTestCase):
             (True, True, True, True, 6, "d66", self.chart.pk),
         )
         self.assertEqual(self.rules_of(created["id"]), [title for title, _text in RULES])
+
+    def test_creating_with_a_preset_copies_its_charts_too(self) -> None:
+        """William, 20 Nov 2026: a Marienburg campaign "has no charts, it has the rest of the rules". Creation
+        copied the rules and stopped there, so the charts only arrived if someone later asked for the preset's
+        rules again."""
+        created = self.create(preset_id=self.marienburg.pk)
+
+        self.assertEqual(self.charts_of(created["id"]), CHARTS)
+
+    def test_creating_with_a_preset_copies_a_table_hanging_off_a_result(self) -> None:
+        created = self.create(preset_id=self.marienburg.pk)
+
+        table = CampaignChart.objects.select_related("row__chart").get(campaign_id=created["id"], row__isnull=False)
+        row = table.row
+        assert row is not None  # row__isnull=False, but mypy reads the field as nullable
+        self.assertEqual((table.title, row.chart.title, row.result), ("Sewer hazards", "Seaside Situations", "11"))
+
+    def test_creating_without_a_preset_copies_no_charts(self) -> None:
+        created = self.create()
+
+        self.assertEqual(self.charts_of(created["id"]), [])
 
     def test_creating_with_a_preset_ticks_its_settings_on_top_of_the_grade_preset(self) -> None:
         created = self.create(preset_id=self.marienburg.pk)
@@ -183,7 +222,7 @@ class CampaignPresetTests(CampaignTestCase):
         # the reader's access, the preset, its settings, its rules and their own tables with those tables'
         # results, its charts with their results, then the titles the campaign already holds of each: a fixed
         # count, whatever the preset or the campaign holds
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             data = self.preset_payload(campaign_id)
         self.assertEqual((data["preset_id"], data["preset_name"]), (self.marienburg.pk, MARIENBURG))
         self.assertEqual((data["departures"], data["rule_count"]), ([], 2))
