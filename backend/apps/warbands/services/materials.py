@@ -50,16 +50,6 @@ class Catalogue:
         named = self.sold_to.get(material.slug, []) if material.from_lists else []
         lines = [AccessLine(warband_type_id=type_id, excluded=False) for type_id in named]
         lines += [
-            AccessLine(warband_type_id=self.types[slug], excluded=False)
-            for slug in material.types
-            if slug in self.types
-        ]
-        lines += [
-            AccessLine(warband_group_id=self.groups[slug], excluded=False)
-            for slug in material.groups
-            if slug in self.groups
-        ]
-        lines += [
             AccessLine(warband_type_id=self.types[slug]) for slug in material.excluded_types if slug in self.types
         ]
         lines += [
@@ -68,8 +58,8 @@ class Catalogue:
         return lines
 
 
-def _slugs(*attributes: str) -> set[str]:
-    return {slug for material in MATERIALS.values() for name in attributes for slug in getattr(material, name)}
+def _slugs(attribute: str) -> set[str]:
+    return {slug for material in MATERIALS.values() for slug in getattr(material, attribute)}
 
 
 def sold_to(campaign_id: int) -> dict[str, list[int]]:
@@ -94,9 +84,10 @@ def sold_to(campaign_id: int) -> dict[str, list[int]]:
 
 def read_catalogue(campaign_id: int) -> Catalogue:
     """The warband types, groups, lists and settings the materials name (four queries)."""
-    wanted_types = _slugs("types", "excluded_types")
-    types = dict(WarbandType.objects.filter(campaign__isnull=True, slug__in=wanted_types).values_list("slug", "id"))
-    groups = dict(WarbandGroup.objects.filter(slug__in=_slugs("groups", "excluded_groups")).values_list("slug", "id"))
+    types = dict(
+        WarbandType.objects.filter(campaign__isnull=True, slug__in=_slugs("excluded_types")).values_list("slug", "id")
+    )
+    groups = dict(WarbandGroup.objects.filter(slug__in=_slugs("excluded_groups")).values_list("slug", "id"))
     wanted = {material.setting for material in MATERIALS.values()}
     chosen = CampaignCampaignType.objects.filter(campaign_id=campaign_id, campaign_type_id=OuterRef("id"))
     settings = CampaignType.objects.filter(slug__in=wanted).annotate(ticked=Exists(chosen))

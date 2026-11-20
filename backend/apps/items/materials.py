@@ -44,8 +44,8 @@ class Material:
     where "<name> Weapon" reads badly.
 
     Who may take it is a who-can list read exactly as a price row's is: `for_everyone` with the types and groups it
-    names, included or excluded, and `from_lists` for one that belongs to the warbands whose template list sells it
-    (the two darksteels; `warbands/services/materials.py` works out which types those are). `only_names` and
+    shuts out, and `from_lists` for one that belongs to the warbands whose template list sells it (the two
+    darksteels; `warbands/services/materials.py` works out which types those are). `only_names` and
     `only_text` are a rule that names which weapons may be made of it (the Dark Elf Blade's swords and daggers,
     William 20 Nov 2026: "the one just for swords and daggers should only allow those 2"), so the picker offers
     those and nothing else, with the rule's own sentence above them."""
@@ -61,8 +61,6 @@ class Material:
     row_name: str = ""  # what the store's row is called; "<name> Weapon" where it says nothing
     for_everyone: bool = True
     from_lists: bool = False
-    groups: tuple[str, ...] = ()
-    types: tuple[str, ...] = ()
     excluded_groups: tuple[str, ...] = ()
     excluded_types: tuple[str, ...] = ()
     only_names: tuple[str, ...] = ()

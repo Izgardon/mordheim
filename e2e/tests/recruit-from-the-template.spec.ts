@@ -1,4 +1,10 @@
-import { apiRequests, campaignUrl, expect, test, warbandStat } from "../fixtures/app";
+import {
+  apiRequests,
+  campaignUrl,
+  expect,
+  test,
+  warbandStat,
+} from "../fixtures/app";
 
 /**
  * E2E-01 step 4: the hire dialog's Recruit as, on the seed's untouched warband.
@@ -25,7 +31,10 @@ test("recruiting a captain from the template costs the warband what the tally sa
   });
   expect(requests.length, requests.join(", ")).toBeLessThanOrEqual(10);
   for (const path of new Set(requests)) {
-    expect(requests.filter((seen) => seen === path).length, path).toBeLessThanOrEqual(2);
+    expect(
+      requests.filter((seen) => seen === path).length,
+      path,
+    ).toBeLessThanOrEqual(2);
   }
 
   await page.getByRole("button", { name: "Add hero" }).click();
@@ -44,7 +53,13 @@ test("recruiting a captain from the template costs the warband what the tally sa
 
   await expect(warbandStat(page, "Gold")).toHaveText(`${left} gc`);
   await expect(warbandStat(page, "Units")).toContainText("1");
-  // his template's profile came with him: a Mercenary Captain is WS 4
-  await expect(page.getByRole("textbox", { name: "WS for Gerta Vogel" })).toHaveValue("4");
+  // the form closed onto her collapsed card (William, 20 Nov 2026), so her profile is read by
+  // opening it: his template's profile came with him, and a Mercenary Captain is WS 4
+  await expect(page.getByRole("form", { name: "Recruit" })).toHaveCount(0);
+  await page.getByText("Gerta Vogel").first().click();
+  await page.getByRole("button", { name: "Edit" }).first().click();
+  await expect(
+    page.getByRole("textbox", { name: "WS for Gerta Vogel" }),
+  ).toHaveValue("4");
   expect(problems).toEqual([]);
 });
