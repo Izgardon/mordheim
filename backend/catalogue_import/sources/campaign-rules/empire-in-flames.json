@@ -1,0 +1,542 @@
+{
+ "rules": [
+  {
+   "title": "Warbands",
+   "umbrella": "",
+   "text": "Any warband published in the Mordheim rulebook, the Mordheim Annual or Town Cryer is legal in this setting, though some suit the wilderness better than others. The best suited are Witch Hunters, Orcs & Goblins, Dwarf Treasure Hunters, Beastmen, The Possessed, Undead, Kislevites, Skaven Warp Hunters and Human Mercenaries (any type).\n\nNew warbands were written for this setting as well: the Carnival of Chaos and the Beastmen Raiders."
+  },
+  {
+   "title": "Treasure, not wyrdstone",
+   "umbrella": "",
+   "text": "Games here are about collecting treasure, which can be a variety of things: wyrdstone shards, small items of art, jewellery of precious metals set with gems, or merchant goods. Whatever its form it acts exactly as a wyrdstone shard does in the basic game. It is found through Exploration, or sometimes as a scenario's objective, and is sold on the same chart on page 134 of the Mordheim rulebook.\n\nThe number of Treasures found comes from that normal chart, but this setting has Exploration charts of its own."
+  },
+  {
+   "title": "Lost!",
+   "umbrella": "",
+   "text": "Pit fighting exists in other parts of the Empire, but it is nowhere near as popular as in Mordheim and certainly not popular outside the larger settlements, so a warrior is unlikely to get the 'Sold to the Pits' result from the Injury table. If that result is rolled for a Hero after a game, use this one instead.\n\n65 Lost! The Hero suffered a blow to the head and wandered off in a daze, or tumbled down a hill when knocked unconscious and found his mates gone when he came to his senses. Injured and confused, he has trouble finding his way back to camp: he must miss the next D3 games while he orientates himself, and earns +1 Experience for the adventures he goes through on the way back."
+  },
+  {
+   "title": "How many mounts",
+   "umbrella": "",
+   "text": "Riding mounts are rare both amongst the ruins of Mordheim and in the jungles of Lustria: the dense terrain makes riding difficult and large numbers of riders are highly ineffective, so in those settings a warband may have at most two mounts, not counting those belonging to Hired Swords.\n\nIn more open settings, such as the open fields of the countryside around Mordheim or the deserts of Khemri, a warband may have as many mounts as it can afford."
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "Ground",
+   "umbrella": "Terrain",
+   "text": "There are no jungles or deserts in the Empire. Most of the countryside is open plain or forest, low ground broken up by low hills, with more hills the closer you get to the mountain ranges, and small farms surrounded by fields that are either clear or filled with crops depending on the time of year. These are guidelines for the terrain of a game set here.\n\nOpen ground, no movement penalty: fallow fields, or fields which have not produced crops yet; low, open hills; bridges or fords in waterways; steps or ladders leading up or down.\n\nDifficult ground, half speed: small streams, meaning moving water less than 4 inches wide; rocky ground; fields filled with crops; abandoned ruins; marshy ground; woods.\n\nVery difficult ground, quarter speed and no charging: rivers, meaning moving water 4 inches or more wide; swamp or deeper marsh; hedges or thickets.\n\nImpassable terrain, which models may not move through: tall rock outcroppings; deep rivers or lakes. A warrior forced into it for whatever reason counts as out of action."
+  },
+  {
+   "title": "Woods",
+   "umbrella": "Terrain",
+   "text": "The woods of the Empire are very dense and very dark, full of huge ancient trees that block out the sun, but warbands rarely stray into the deepest of them, so only small copses and clumps of trees need be represented.\n\nA stand of woods blocks line of sight to the other side no matter how wide the stand is: two models on either side of even a 1 inch wide section cannot see each other if neither has actually entered it.\n\nA model within a stand of woods can see or be seen for 2 inches. There must be no more than 2 inches between a warrior in woods and an enemy model for either to charge or shoot at the other. Models with more than 2 inches of woods between them may still test to charge an unseen enemy as normal.\n\nWoods are difficult ground and reduce movement to half speed."
+  },
+  {
+   "title": "Swamp and deep marsh",
+   "umbrella": "Terrain",
+   "text": "In many areas of the Empire water from the waterways has built up over time and formed treacherous swamps, home to poisonous reptiles, bandit bands, crazed hermits, witches and sucking bogs. Many areas within a swamp are actually clear; these rules cover an actual swamp terrain section, represented by a small pond.\n\nWhenever a model moves through a swamp section, roll a D6. On a 1 he has stumbled into a sucking bog. He may not move, and if he is not rescued within D3+1 game turns, at the end of the last of them, he is sucked under and lost: remove the poor soul from the warband's roster. We suggest placing a D6 by the model with the number of turns remaining showing face up.\n\nTo rescue a trapped model before the time runs out, a friendly model must move within 2 inches of him and pass a Strength test on a D6 in that player's next Close Combat phase; a roll of 6 always fails. If the test fails he may roll again in the next Close Combat phase. Additional models may help, either by making Strength tests of their own or by adding +1 each to the Strength of the model making the test. A model engaged in close combat may neither pull a friendly model free nor help in the attempt.\n\nSwamp sections are always very difficult ground."
+  },
+  {
+   "title": "Rivers",
+   "umbrella": "Water",
+   "text": "The Empire is dissected by many huge, fast-flowing rivers.\n\nEstablish which way the river is flowing at the start of the game.\n\nAll rivers count as difficult ground or worse for every model except those considered aquatic.\n\nA model swimming with the current doubles its base move. A model swimming against the current of a slow moving river may only move a quarter of its base move, and may not swim against the current of a fast moving river at all. An aquatic model suffers no reduction of its base move against the current of a slow moving river, but may not swim against a fast moving one either.\n\nA model wearing armour may not attempt to move through any water deeper than shallow. Shields and bucklers do not count for this, being assumed to be strapped onto backs. A model wearing armour that finds itself in deep water must make a Strength test each turn it is in the water, and is taken out of action if it fails.\n\nAn aquatic model in water, whether swamp, stream or river, may elect to be hidden at the discretion of its player.\n\nModels cannot move upstream in fast moving rivers without floating transportation, such as a boat or a canoe."
+  },
+  {
+   "title": "Fighting in water",
+   "umbrella": "Water",
+   "text": "A non-aquatic model knocked down in a shallow river or stream is swept D6 inches downriver. An aquatic model knocked down does not drift with the current and can still get back into combat the following turn.\n\nA model stunned in shallow water must make an Initiative test. If it passes, it can be turned over the following turn. If it fails, it counts as drowned and is taken out of action, and the player rolls for injuries at the end of the game; this does not mean the model is gone for good, just a bit waterlogged.\n\nAn Undead model knocked down in shallow water recovers as the standard Mordheim rules for Undead say.\n\nA model fighting in a shallow stream while wearing light armour counts as out of action if it is stunned, with no Initiative test taken. This does not apply to a model whose skin or clothing counts as natural light armour."
+  },
+  {
+   "title": "Locked doors",
+   "umbrella": "Buildings",
+   "text": "Buildings are treated differently here. These rules do not cover ruins, which are simply difficult ground in most cases.\n\nUnless the building is an inn, whose doors are only locked at night, its doors are locked, or someone is simply on the other side holding them shut, and its windows are shuttered or have frames and intact glass. To move through a locked door or a shuttered window, a warrior must first force it open.\n\nRipping a door off its hinges with bare hands is done at the end of the warrior's Movement phase and requires him to pass a Strength check at -2 to his Strength. If he fails he can try again next turn. Only one warrior may attempt this at a time.\n\nChopping a door down takes D3+1 complete game turns of doing nothing but attacking the door. Up to two friendly warriors may help, each taking one turn off the total, down to a minimum of one turn.\n\nRushing a door may be done at the end of any of the warrior's Movement phases and requires a successful Strength test. If he passes, his momentum carries him inside: place him 1 inch straight ahead into the room, pushing aside enemy models to make room if necessary. If he ends up in contact with enemy models he counts as engaged in close combat with them and as having charged. If he fails he takes an automatic hit at his own Strength and must try again next turn.\n\nA door that has been chopped down may never be locked again. A door that has been forced open may be locked again on a roll of 4-6, rolled as soon as the door is forced; otherwise it is too badly damaged to be locked until it is repaired some time after the game. Doors inside a building count as unlocked.\n\nA model must be in contact with a door to open or lock it, and a model who has just forced a door open prevents enemy models from locking it: he may shove his foot or a weapon in there."
+  },
+  {
+   "title": "Get out me 'ouse!",
+   "umbrella": "Buildings",
+   "text": "A warrior stepping into a building will likely find it occupied. A warrior moving into an intact building suffers D3-1 automatic hits at Strength 3 as the inhabitants show their displeasure at him bringing the battle to them.\n\nHe may spend a complete turn attempting to quell them: roll a Leadership test for him. If he passes he suffers no more hits while in this building. If he fails he immediately suffers another D3 automatic Strength 3 hits this turn.\n\nIf members of two enemy warbands are inside the same building this rule is ignored, as the inhabitants realise the battle has reached their home and go and find a place to hide."
+  },
+  {
+   "title": "Clutter",
+   "umbrella": "Buildings",
+   "text": "Tables, chairs, other furniture, dropped dishes and firewood all make for tricky footing in a fight, so the inside of a building counts as difficult terrain."
+  },
+  {
+   "title": "Combat through doorways",
+   "umbrella": "Buildings",
+   "text": "If both sides are unwilling or unable to go past a doorway they may fight through it. The number of models that may fight on each side is one more than the number that could walk abreast through the doorway, which usually means two models from each side, though an especially large door such as a barn door may allow more.\n\nAs soon as the door is opened both sides may place up to that number of models in contact with the doorway. Any models within 1 inch of the door when it was opened may be moved this way, and each player chooses which of his models move into the combat. The side opening the door counts as charging in the first round of the combat."
+  },
+  {
+   "title": "Stairs and ladders",
+   "umbrella": "Buildings",
+   "text": "A warrior climbing a rope or a wall follows the rules for climbing in the Mordheim rulebook. Ladders and stairs are easier: a warrior may move up a ladder or a flight of stairs to the next level in a single Movement phase. He must start his move within 1 inch of the bottom, and it takes all of his movement to get to the top. If there is an upright enemy model within 1 inch of the top of the stairs or ladder, the climber may charge it."
+  },
+  {
+   "title": "Mounting and dismounting",
+   "umbrella": "Mounts",
+   "text": "It requires half a warrior's move to mount or dismount a riding creature. Neither the mount nor its rider may run or charge in the same turn that the warrior mounts or dismounts, unless the rider has a Special Riding skill that allows it."
+  },
+  {
+   "title": "Mounts indoors",
+   "umbrella": "Mounts",
+   "text": "Mounts cannot normally be ridden indoors or underground, unless you are playing a specially devised scenario that allows it."
+  },
+  {
+   "title": "Controlling a mount",
+   "umbrella": "Mounts",
+   "text": "The Special Riding skills may only be used by a warrior who has gained the skill Ride; a warrior who comes provided with a riding animal is assumed to have it already.\n\nA warrior without Ride may still ride animals, but must test against his Leadership if he is hit by any missile, and at the beginning of any Combat phase when a standing enemy is in base contact. If the test is failed he loses control of his mount and must roll on the Whoa Boy! table. If an enemy is not standing, the mounted warrior does not count as being in combat and does not test."
+  },
+  {
+   "title": "Armour bonus",
+   "umbrella": "Mounts",
+   "text": "All riding animals give their riders a +1 Armour save bonus."
+  },
+  {
+   "title": "Bolting mounts",
+   "umbrella": "Mounts",
+   "text": "A bolting mount must make a Leadership test at the beginning of the owning player's turn; if it passes it stops running, otherwise it continues fleeing.\n\nThe easiest way to determine the direction is an Artillery Scatter dice. Without one, roll 2D6 and use the clock face method, taking the direction the horse is facing as 12 and directly behind as 6."
+  },
+  {
+   "title": "Leading animals",
+   "umbrella": "Mounts",
+   "text": "A warrior may lead one riding animal, or as many as he wishes if he has the Animal Handling skill for that particular animal. Groups of led animals are tethered together and must maintain base contact with each other, and at least one must be in base contact with the warrior leading them.\n\nRiding animals being led do not roll for loss of control. If one is required to make a Leadership test, when charged by a fear-causing enemy for instance, it uses the Leadership of the warrior leading it.\n\nA warrior leading riding animals may move and fight as normal, but must maintain base contact at all times."
+  },
+  {
+   "title": "Un-led animals",
+   "umbrella": "Mounts",
+   "text": "A riding animal that is neither led nor ridden remains stationary, but must make a Leadership test at the beginning of its turn. If it fails, it bolts."
+  },
+  {
+   "title": "Losing control",
+   "umbrella": "Mounts",
+   "text": "If a mounted warrior has lost his last wound, the player rolls on the Whoa Boy! table instead of the normal Injuries chart. If critical hits are suffered, roll as many times as required and take the most serious result."
+  },
+  {
+   "title": "Wagon movement",
+   "umbrella": "Wagons",
+   "text": "Wagons cover carts, stagecoaches and all two- and four-wheeled transport commonly found in the Empire.\n\nA wagon's movement is determined by how laden it is with passengers and cargo, so it may change during a game as passengers and cargo are loaded or unloaded. Wagons cannot charge, climb, hide, run or flee.\n\nPassengers or cargo quota, standard movement, applying the lash:\n1 (the driver, compulsory), 10, +D6\n2-3, 8, +D6\n4-6, 6, +D6\n\nA wagon of any size may make a single turn of up to 45 degrees at the end of its movement, pivoting from its mid-point. It may then apply the lash if desired."
+  },
+  {
+   "title": "Applying the lash",
+   "umbrella": "Wagons",
+   "text": "A driver may urge his beasts on to gain some extra movement. After the wagon has moved normally the player may roll a D6: on a 2 or more that is how many extra inches the wagon may move ahead in a straight line. On a roll of 1 something drastic has happened.",
+   "chart": {
+    "title": "Applying the lash",
+    "description": "Rolled when a driver applying the lash rolls a 1.",
+    "dice": "D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "1-2",
+      "name": "Steeds tiring",
+      "text": "The draft animals are growing tired. If the driver applies the lash next turn, halve the score, rounding fractions up."
+     },
+     {
+      "result": "3-4",
+      "name": "Driver shaken",
+      "text": "The driver is thrown all over the place by the wagon's speed and may not apply the lash next turn as he recovers his composure."
+     },
+     {
+      "result": "5-6",
+      "name": "Out of control",
+      "text": "Make a roll on the Out of Control table."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Wagons in terrain",
+   "umbrella": "Wagons",
+   "text": "Difficult ground: roll a D6 when the wagon enters it. On a 1 make a roll on the Out of Control table at once, otherwise the wagon is fine.\n\nVery difficult ground: make a roll on the Out of Control table at once, with a modifier of +1.\n\nWalls and obstacles: a wagon that collides with a wall or other solid obstacle comes to an immediate halt and suffers D3 hits at Strength 7.\n\nImpassable ground: the wagon is immediately destroyed and each crew member and draft animal must make an Injury roll. Remove the wagon and place any survivors within 3 inches of the crash site."
+  },
+  {
+   "title": "Wagon collisions",
+   "umbrella": "Wagons",
+   "text": "If a wagon collides with another wagon both suffer D3 Strength 7 hits; roll location and damage as normal.\n\nIf attackers or defenders block the way of a wagon and it cannot move around them, the wagon moves through the models, even models of the defending warband. Every model touched must roll equal to or under its Initiative or suffer a Strength 4 hit with all the usual consequences. Warriors who are out of action cannot get out of the way and are hit automatically.\n\nWhenever a wagon collides with anything, roll a D6: on a 1 make an Out of Control test."
+  },
+  {
+   "title": "Wagon transport",
+   "umbrella": "Wagons",
+   "text": "For simplicity all wagons and coaches carry up to six human-sized warriors or smaller, or the equivalent in cargo. One crewman must be allocated as the driver and one may ride shotgun with him. The driver may do nothing but drive while the wagon is moving, being too busy controlling the reins. If the driver is knocked down, stunned or taken out of action, the crew member riding shotgun may take over the reins and become the new driver."
+  },
+  {
+   "title": "Boarding a wagon",
+   "umbrella": "Wagons",
+   "text": "A friendly warrior boards a stationary wagon by moving into contact with it, and dismounts from one by moving out of contact. A wagon counts as stationary only if it did not move in its last turn. Place the model either on the wagon or in base contact with it, moving it with the wagon.\n\nA warrior may attempt to mount or dismount a moving wagon by passing an Initiative test. If he fails he takes falling damage of D3 automatic hits at a Strength equal to half the vehicle's speed. A warrior may attempt to board a moving wagon from another moving wagon or from a moving mount at -1 to his Initiative test; this counts as a charge."
+  },
+  {
+   "title": "Losing control of the draft animals",
+   "umbrella": "Wagons",
+   "text": "Besides a runaway wagon, control may also be lost to attackers wrestling the draft animals away from the driver. Apart from eliminating the driver and taking the reins, the easiest way is for a warrior to leap onto the back of one and ride it.\n\nA warrior leaps onto a draft animal by passing an Initiative test, adding +1 if he has the Ride skill; if he fails he takes falling damage as usual. He must then pass a Leadership test to control the beast, and with it the direction and speed of the wagon. The driver can only wrestle control back by eliminating the warrior, and any injury will suffice.\n\nA warrior who has successfully mounted a draft animal may attempt to cut it free from the team on a 4+, although he loses control of the wagon itself in doing so."
+  },
+  {
+   "title": "Shooting from and at a wagon",
+   "umbrella": "Wagons",
+   "text": "Crew may fire from aboard a wagon with a 360 degree arc of fire, at a penalty of -1 to hit for firing from a moving surface.\n\nWarriors may shoot at a vehicle and gain +1 to hit because it is a large target. If a hit is scored, roll on the Wagon Location table to decide what part of the vehicle has been hit.\n\nWagon: T 8, W 4.\nWheel: T 6, W 1.\nHorse: M 8, S 3, T 3, W 1, I 3.\nHorse: M 6, S 3, T 3, W 1, I 2."
+  },
+  {
+   "title": "Loss of a draft creature",
+   "umbrella": "Wagons",
+   "text": "Any time a steed is hit, whether or not it is injured, make a roll on the Out of Control table.\n\nA steed that is stunned or knocked down is dragged along by its associates until it recovers: next turn reduce speed by 1/2 with a draft of two animals, or by 1/4 with a draft of four, and the driver may not apply the lash. If the steed is taken out of action, reduce the speed by that amount permanently until the driver can cut the animal free on a roll of 5+.\n\nIf the last steed is stunned, knocked down or taken out of action, the wagon comes to a halt and cannot move unless the steed recovers. Make an Out of Control roll with +2 to the result."
+  },
+  {
+   "title": "Wheel and chassis damage",
+   "umbrella": "Wagons",
+   "text": "Wheel: randomly determine which wheel has been damaged and roll on the Wheel Damage table, adding +1 to the result if that wheel has been damaged before.\n\nChassis: when the wagon loses its final point of damage it is destroyed, comes to an immediate halt, and each crew member and draft animal must make an Injury roll."
+  },
+  {
+   "title": "Fighting a wagon",
+   "umbrella": "Wagons",
+   "text": "A warrior may strike a stationary wagon in close combat by charging it and striking the part he is in contact with: draft creatures, crew, wheel or chassis.\n\nChassis and wheels are hit automatically; just resolve damage. Crew aboard a stationary wagon count as defending an obstacle and need a 6 to hit regardless of Weapon Skill; if a crew member is taken out of action an attacker may board the wagon in his next turn. Draft animals are attacked in the usual manner, although an attacker may instead choose to cut them free, which requires a 2+ on a D6; animals cut free count as un-led beasts.\n\nA warrior may attempt to attack a moving wagon by charging it in the normal way. Charging a moving wagon does not bring it to a halt: the combat round is played out and then the wagon is free to move in its next Movement phase, and is compelled to move if it is a runaway. Warriors are advised to attack to the side and rear, because attacking to the front leaves them liable to be run down in the wagon's next turn. Against a moving wagon the attacker must first roll on the Wagon Location table for what he struck. Chassis and wheels are hit automatically, the draft animals are attacked in the normal manner but may not have their reins cut, and the crew need a 6 to hit regardless of Weapon Skill.\n\nAttackers who manage to board the wagon, whether it was stationary or moving, may engage the crew in the usual manner without penalties or modifiers. An attacker or defender injured while fighting aboard a wagon must pass an Initiative test or fall off."
+  },
+  {
+   "title": "Boat movement",
+   "umbrella": "Boats",
+   "text": "These are very basic rules covering small skirmishes on the rivers of the Empire, from small rowing boats through to large river barges.\n\nA boat moves 6 inches with the current of a river, the direction of the flow being established before the start of the game, and 4 inches against it. A boat must move at least half of its movement allowance unless it has been anchored or tethered to the shore.\n\nA boat of any size may make a single turn of up to 45 degrees at the end of its movement."
+  },
+  {
+   "title": "Boats in terrain",
+   "umbrella": "Boats",
+   "text": "A boat can encounter natural terrain such as rocks or man-made obstacles such as logjams placed to obstruct its movement. Both are impassable to boats: a boat that moves into one suffers D3 Strength 7 hits and comes to an immediate halt.\n\nCollisions are as a wagon's."
+  },
+  {
+   "title": "Boat transport",
+   "umbrella": "Boats",
+   "text": "All the wagon rules for transport apply. Boats are considerably bigger than wagons and so carry more: a rowboat carries up to six human-sized warriors or smaller, or the equivalent in cargo; a river boat up to eight; a barge up to twelve."
+  },
+  {
+   "title": "Boarding a boat",
+   "umbrella": "Boats",
+   "text": "As for a wagon, except that a warrior who fails his Initiative test to board a moving boat suffers no damage but falls into the water."
+  },
+  {
+   "title": "Shooting from and at a boat",
+   "umbrella": "Boats",
+   "text": "As for a wagon. A hit scored against a boat is rolled on the Boat Location table.\n\nRowboat: T 5, W 3.\nRiverboat: T 8, W 4.\nBarge: T 8, W 8."
+  },
+  {
+   "title": "Hull damage",
+   "umbrella": "Boats",
+   "text": "When the boat loses its final point of damage it is destroyed and sinks immediately. Each crew member falls into the water and must make the appropriate tests for swimming."
+  },
+  {
+   "title": "Fighting a boat",
+   "umbrella": "Boats",
+   "text": "As for a wagon. Swimming warriors may not attack boats."
+  },
+  {
+   "title": "Scenarios",
+   "umbrella": "Scenarios",
+   "text": "Use the scenario tables of this setting instead of the one on page 126 of the rulebook, rolling 2D6; there is a separate table for multi-player games. As usual, the winner of a scenario rolls one more Exploration dice than normal.\n\nTerrain should be set up to reflect the wilderness."
+  },
+  {
+   "title": "Beastmen scenarios",
+   "umbrella": "Scenarios",
+   "text": "If you or your opponent is using a Beastmen warband, you might like to use one of the special Beastmen scenarios instead: The Ambush, The Raid or The Beast Hunt. Roll a D6 on the Beastmen scenarios table to see which one to fight."
+  }
+ ],
+ "charts": [
+  {
+   "title": "Whoa Boy!",
+   "description": "Rolled when a rider loses control of his mount, and in place of the Injuries chart when a mounted warrior loses his last wound.",
+   "dice": "D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "1-2",
+     "name": "",
+     "text": "The rider is temporarily disorientated and his mount rears up. The rider keeps his seat but must spend his next turn stationary regaining control, unable to move or shoot. If he is attacked, treat him as fallen down."
+    },
+    {
+     "result": "3-4",
+     "name": "",
+     "text": "The rider falls off his mount and is stunned, taking an additional Strength 2 hit in the process with no Armour save. Roll a D6: on a 1-3 the mount immediately bolts 3D6 inches in a random direction and continues until it has left the table, and may be recovered after the battle; on a 4-6 it remains stationary and the warrior may remount once recovered. The mount does not count as unridden or un-led in this instance."
+    },
+    {
+     "result": "5-6",
+     "name": "",
+     "text": "The rider and his mount crash to the ground together and are automatically out of action. Roll a D6: on a 1-2 the mount lands on top of its rider, crushing him, and the warrior must roll twice on the Serious Injuries chart after the battle. Roll a D6 again after the battle: on a 1-2 the mount was crippled or killed by the fall and is removed from the warband roster."
+    }
+   ]
+  },
+  {
+   "title": "Out of Control",
+   "description": "Rolled when a wagon enters difficult or very difficult ground, collides with something, has a steed hit, or the lash goes badly wrong.",
+   "dice": "D6",
+   "note": "Very difficult ground adds +1 to the result, and a wagon whose last steed is down adds +2.",
+   "umbrella": "Wagons",
+   "rows": [
+    {
+     "result": "1-3",
+     "name": "Swerve",
+     "text": "The driver temporarily loses control and the wagon veers wildly off course. Roll a D6: on a 1-3 it swerves 45 degrees to the left, on a 4-6 45 degrees to the right. The wagon then moves another 6 inches in that direction."
+    },
+    {
+     "result": "4-5",
+     "name": "Runaway",
+     "text": "The steeds bolt and the driver loses control of them. Each turn randomly determine the direction the wagon goes in: roll a D6, on a 1-2 it swerves 45 degrees to the left, on a 3-4 45 degrees to the right, on a 5-6 it moves straight ahead. The wagon always moves at full speed and rolls for applying the lash, discounting the effects of a 1, all the time it is a runaway. Each turn the driver may attempt to take control of the steeds by passing a Leadership test. The crew may not fire missile weapons all the time the wagon is a runaway, as they are holding on for dear life."
+    },
+    {
+     "result": "6",
+     "name": "Loss of control",
+     "text": "The wagon goes wildly out of control. Roll a D6:\n1 The wagon swerves to the right, as above.\n2 The wagon swerves to the left, as above.\n3-4 The wagon comes to an immediate halt.\n5 The wagon's yoke pole snaps and the draft animals gallop off. The vehicle moves 6 inches straight ahead and then comes to a halt, and may no longer move.\n6 The wagon jackknifes, or hits a rock or a depression in the road, and goes into a roll. It moves D6 inches in a random direction determined by the Artillery Scatter dice, and any warriors or beasts it collides with take the usual collision damage. All the crew and draft animals take D3 Strength 4 hits. The wagon is now wrecked."
+    }
+   ]
+  },
+  {
+   "title": "Wagon Location",
+   "description": "Rolled when a hit is scored against a wagon, for what part of it was struck.",
+   "dice": "D6",
+   "note": "",
+   "umbrella": "Wagons",
+   "rows": [
+    {
+     "result": "1-2",
+     "name": "Draft creature",
+     "text": "Roll to wound and injure as normal. See Loss of a draft creature for the effects."
+    },
+    {
+     "result": "3",
+     "name": "Crew",
+     "text": "Randomly select a crew member and roll to wound and injure as normal; see Wagon transport if the driver is hit. Any crew member that is wounded must make an immediate Initiative test, and if it is failed he has fallen from the wagon and must test for falling damage."
+    },
+    {
+     "result": "4-5",
+     "name": "Chassis",
+     "text": "Roll to damage the vehicle using the wagon's profile."
+    },
+    {
+     "result": "6",
+     "name": "Wheel",
+     "text": "Roll to damage the wheel using the wheel's profile."
+    }
+   ]
+  },
+  {
+   "title": "Wheel Damage",
+   "description": "Rolled for the wheel that was damaged.",
+   "dice": "D6",
+   "note": "Add +1 to the result if that wheel has been damaged before.",
+   "umbrella": "Wagons",
+   "rows": [
+    {
+     "result": "1-4",
+     "name": "Wheel damaged",
+     "text": "The wagon's speed is permanently reduced by -2 inches."
+    },
+    {
+     "result": "5-6",
+     "name": "Wheel flies off!",
+     "text": "The wagon immediately swerves, as the swerve result on the Out of Control table, and then comes to a halt. The wagon is now immobile. Roll a D6: on a 5-6 the wagon goes into a roll, as the roll result on the Out of Control table."
+    }
+   ]
+  },
+  {
+   "title": "Boat Location",
+   "description": "Rolled when a hit is scored against a boat, for what part of it was struck.",
+   "dice": "D6",
+   "note": "",
+   "umbrella": "Boats",
+   "rows": [
+    {
+     "result": "1",
+     "name": "Propulsion",
+     "text": "Roll to damage the boat using its profile. If it is damaged, roll again on the Propulsion Damage table."
+    },
+    {
+     "result": "2",
+     "name": "Rudder",
+     "text": "Roll to damage the rudder using the boat's profile. If it is damaged, the boat may only turn from now on after coming to a complete halt, using a combination of oars and boat-hooks."
+    },
+    {
+     "result": "3-4",
+     "name": "Crew",
+     "text": "Randomly select a crew member and roll to wound and injure as normal; see Wagon transport if the driver is hit. Any crew member that is wounded must make an immediate Initiative test, and if it is failed he has fallen from the boat."
+    },
+    {
+     "result": "5-6",
+     "name": "Hull",
+     "text": "Roll to damage the boat using its profile."
+    }
+   ]
+  },
+  {
+   "title": "Propulsion Damage",
+   "description": "Rolled when a boat's propulsion is damaged: either the oars, or the mast and rigging, have been hit.",
+   "dice": "D6",
+   "note": "The book prints no result for a 3.",
+   "umbrella": "Boats",
+   "rows": [
+    {
+     "result": "1-2",
+     "name": "Sail damaged, oars splintered",
+     "text": "The boat's speed is permanently reduced by -1 inch."
+    },
+    {
+     "result": "4-5",
+     "name": "Rigging damaged, oars splintered",
+     "text": "The boat's speed is permanently reduced by -2 inches."
+    },
+    {
+     "result": "6",
+     "name": "Mast falls!",
+     "text": "With the loss of the mast, or of all the oars in the case of an oared vessel, the boat may only drift 2 inches in the direction of the current. All crew must immediately test on their Initiative to avoid the falling mast, which obviously does not apply to oared vessels; a crewman who fails receives an immediate Strength 6 hit."
+    }
+   ]
+  },
+  {
+   "title": "Two-player scenarios",
+   "description": "Rolled before a battle between two warbands.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Scenarios",
+   "rows": [
+    {
+     "result": "2",
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating chooses the scenario."
+    },
+    {
+     "result": "3",
+     "name": "Breakthrough",
+     "text": ""
+    },
+    {
+     "result": "4",
+     "name": "The Thing in the Woods",
+     "text": ""
+    },
+    {
+     "result": "5",
+     "name": "Wyrdstone Hunt",
+     "text": ""
+    },
+    {
+     "result": "6",
+     "name": "Skirmish",
+     "text": ""
+    },
+    {
+     "result": "7",
+     "name": "Stagecoach Ambush",
+     "text": ""
+    },
+    {
+     "result": "8",
+     "name": "Bounty Hunting",
+     "text": ""
+    },
+    {
+     "result": "9",
+     "name": "Lost in the Bogs",
+     "text": ""
+    },
+    {
+     "result": "10",
+     "name": "Surprise Attack",
+     "text": ""
+    },
+    {
+     "result": "11",
+     "name": "Chance Encounter",
+     "text": ""
+    },
+    {
+     "result": "12",
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating chooses the scenario."
+    }
+   ]
+  },
+  {
+   "title": "Multi-player scenarios",
+   "description": "Rolled before a battle between more than two warbands.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Scenarios",
+   "rows": [
+    {
+     "result": "2",
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating chooses the scenario."
+    },
+    {
+     "result": "3",
+     "name": "The Lost Prince",
+     "text": "Mordheim 2002 Annual, page 30, or on the Mordheim website."
+    },
+    {
+     "result": "4",
+     "name": "Monster Hunt",
+     "text": "Mordheim 2002 Annual, page 33, or on the Mordheim website."
+    },
+    {
+     "result": "5",
+     "name": "Treasure Hunt",
+     "text": "Mordheim 2002 Annual, page 29, or on the Mordheim website."
+    },
+    {
+     "result": "6",
+     "name": "Street Brawl",
+     "text": "Mordheim 2002 Annual, page 29, or on the Mordheim website."
+    },
+    {
+     "result": "7",
+     "name": "Stagecoach Ambush",
+     "text": ""
+    },
+    {
+     "result": "8",
+     "name": "Bounty Hunting",
+     "text": ""
+    },
+    {
+     "result": "9",
+     "name": "Lost in the Bogs",
+     "text": ""
+    },
+    {
+     "result": "10",
+     "name": "The Thing in the Woods",
+     "text": ""
+    },
+    {
+     "result": "11",
+     "name": "Ambush!",
+     "text": "Mordheim 2002 Annual, page 32, or on the Mordheim website."
+    },
+    {
+     "result": "12",
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating chooses the scenario."
+    }
+   ]
+  },
+  {
+   "title": "Beastmen scenarios",
+   "description": "Rolled when either player is using a Beastmen warband and you would rather fight one of the Beastmen scenarios.",
+   "dice": "D6",
+   "note": "The book prints 1-2, 2-4 and 5-6, so a roll of 2 appears twice.",
+   "umbrella": "Scenarios",
+   "rows": [
+    {
+     "result": "1-2",
+     "name": "The Ambush",
+     "text": ""
+    },
+    {
+     "result": "2-4",
+     "name": "The Raid",
+     "text": ""
+    },
+    {
+     "result": "5-6",
+     "name": "The Beast Hunt",
+     "text": ""
+    }
+   ]
+  }
+ ]
+}
