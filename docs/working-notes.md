@@ -30,13 +30,28 @@ of batches. The steps:
 1. Check prod's users and campaigns in Neon. Take an undo branch if any are worth keeping.
 2. Run `DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO neondb_owner;
    GRANT ALL ON SCHEMA public TO public;` on that branch and database.
-3. Push main, **and only then**, because a wipe needs a boot to undo it. `/api/health/` answers a static ok and
-   runs no query (`apps/core/views.py`), so Render's probe keeps passing against a schemaless database and the
-   instance never restarts itself: between the DROP and the next deploy, every real endpoint 500s. Render migrates
-   on boot, and gunicorn's `when_ready` runs `seed_catalogue_if_empty`, which reseeds in the background: about 10
-   minutes. With nothing to push, redeploy from Render's dashboard instead.
-4. Reseed the local database the same way (drop, `migrate`, `seed_all`, `seed_demo_campaign`).
-5. Tell William the live demo needs re-running: `seed_demo_campaign --remote` against prod, with `DEMO_PASSWORD` set.
+3. **Make Render deploy, and confirm it did.** A wipe needs a boot to undo it: Render migrates on boot and
+   gunicorn's `when_ready` runs `seed_catalogue_if_empty`. Pushing main is not enough on its own -- on 20 Nov 2026
+   a push did not deploy and prod sat schemaless for 40 minutes -- so watch for it, and if nothing happens within
+   a few minutes ask William for a Manual Deploy (Render dashboard) or for the service's **deploy hook URL**, a
+   plain HTTPS POST that works through the session proxy. He holds that URL; it is a secret and is never written
+   down here or committed.
+   Nothing in the app shows the damage: `/api/health/` answers a static ok and runs no query
+   (`apps/core/views.py`), so Render's probe keeps passing against a wiped database and the instance never
+   restarts itself, while every real endpoint 500s. To tell migrated from not, POST `auth/login/` with a junk
+   **`email`** and password: 500 means no tables, 400 means they are back (`username` 400s on validation without
+   touching the database, and `auth/password-reset/` 503s before any lookup because prod has no Resend key --
+   neither tells you anything). Ask Neon for `COUNT(*) FROM information_schema.tables` instead where you can; it
+   is authoritative. Repeated login probes trip the throttle to 429, so poll the database, not the endpoint.
+4. **A cloud session cannot seed prod itself.** Its container cannot resolve or reach Neon's Postgres host at all
+   (no DNS, and the only egress is an HTTPS proxy psycopg cannot use), so `DATABASE_URL=... manage.py migrate`
+   fails whatever credentials it is given. The Neon connector tunnels through Anthropic and is fine for queries,
+   but a full catalogue seed is far too many rows to replay through it. Seeding happens on Render, or on
+   William's PC.
+5. Reseed the local database the same way (drop, `migrate`, `seed_all`, `seed_demo_campaign`), and check prod's
+   counts against it: migrations, tables, skills, items, specials, templates, hired swords, presets and preset
+   charts should match exactly.
+6. Tell William the live demo needs re-running: `seed_demo_campaign --remote` against prod, with `DEMO_PASSWORD` set.
    It needs the prod connection string on a command line, which the classifier has refused, so William runs it.
 
 ## Deploying and checking a deploy
