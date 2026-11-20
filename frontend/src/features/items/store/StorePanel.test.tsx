@@ -477,3 +477,99 @@ describe("StorePanel, Add item", () => {
     expect(names()).toEqual(["Rope and Hook"]);
   });
 });
+
+const GROMRIL = {
+  slug: "gromril",
+  name: "Gromril",
+  rarity: 11,
+  price_note: "4 x Price",
+  multiplier: 4,
+  addition: null,
+  on_owned: null,
+  rules: [{ name: "Gromril", text: "A gromril weapon has an extra -1 save modifier." }],
+  can_take: true,
+  reason: "",
+};
+const OBSIDIAN = {
+  ...GROMRIL,
+  slug: "obsidian",
+  name: "Obsidian",
+  rarity: 12,
+  rules: [],
+  can_take: false,
+  reason: "Not usually available to Dwarfs.",
+};
+
+function renderMaterialStore(materials = [GROMRIL]) {
+  const queryClient = createTestQueryClient();
+  queryClient.setQueryData(catalogueListKey(CAMPAIGN, "items"), [lance]);
+  queryClient.setQueryData(queryKeys.campaign.warbandWhoCan(CAMPAIGN, WARBAND), {
+    ...whoCan,
+    materials,
+  });
+  renderWithQueryClient(
+    <StorePanel
+      open
+      onOpenChange={vi.fn()}
+      campaignId={CAMPAIGN}
+      warband={{ id: WARBAND, name: "Clan Eshin", gold: 500 }}
+      heroes={[]}
+      henchmenGroups={[]}
+      hirelings={[]}
+      canBuy
+      opening={{}}
+    />,
+    { queryClient }
+  );
+}
+
+/**
+ * The weapon materials in the store (weapon materials, William 20 Nov 2026): a row of their own,
+ * which picks the weapon when opened. An item is never transformed and a weapon's own form never
+ * asks what it is made of.
+ */
+describe("StorePanel materials", () => {
+  it("finds a material by name and prices the weapon picked under it", async () => {
+    const user = setupUser();
+    renderMaterialStore();
+
+    await user.type(screen.getByRole("searchbox", { name: "Search the store" }), "gromril");
+    expect(names()).toEqual(["Gromril Weapon"]);
+    const row = screen.getByRole("button", { name: /Gromril Weapon/ });
+    expect(row).toHaveTextContent("4 x Price");
+    expect(row).toHaveTextContent("Rare 11");
+
+    await user.click(screen.getByRole("button", { name: "Get" }));
+    await user.click(
+      within(screen.getByRole("group", { name: "Weapon" })).getByRole("button", {
+        name: /Lance/,
+      })
+    );
+
+    // 4 x the Lance's 40 gc, and the material's rarity is the one searched for
+    expect(screen.getByLabelText("Price each for Lance")).toHaveValue(160);
+    expect(screen.getByRole("group", { name: "Who searches" })).toBeInTheDocument();
+  });
+
+  it("shows the material's rules, and the server's reason when it isn't usually allowed", async () => {
+    const user = setupUser();
+    renderMaterialStore([GROMRIL, OBSIDIAN]);
+
+    expect(names()).toEqual(["Gromril Weapon", "Lance"]);
+    await user.click(screen.getByRole("switch", { name: "What I can buy" }));
+    expect(screen.getByText("Not usually available to Dwarfs.")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /Gromril Weapon/ }));
+
+    expect(screen.getByText("A gromril weapon has an extra -1 save modifier.")).toBeInTheDocument();
+  });
+
+  it("never asks a weapon's own form what it is made of", async () => {
+    const user = setupUser();
+    renderMaterialStore();
+
+    await user.click(screen.getAllByRole("button", { name: "Get" })[1]);
+
+    expect(screen.getByLabelText("Price each for Lance")).toHaveValue(40);
+    expect(screen.queryByRole("group", { name: "Made of" })).not.toBeInTheDocument();
+  });
+});

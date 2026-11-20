@@ -55,21 +55,9 @@ const GROMRIL = {
   can_take: true,
   reason: "",
 };
-const SILVER = {
-  ...GROMRIL,
-  slug: "silver",
-  name: "Silver",
-  price_note: "+60 gc",
-  multiplier: null,
-  addition: 60,
-  on_owned: 80,
-  can_take: false,
-  reason: "Not usually available to Skaven.",
-};
-
 const show = (
   row: ItemAvailability,
-  more: { firstKey?: string; bonus?: number; materials?: WeaponMaterial[] } = {}
+  more: { firstKey?: string; bonus?: number; material?: WeaponMaterial } = {}
 ) => {
   const onPick = vi.fn();
   const item = makeItem({
@@ -87,7 +75,7 @@ const show = (
       recipients={[{ key: "stash", label: "Stash", target: { kind: "stash" }, count: 1 } as never]}
       firstKey={more.firstKey ?? null}
       searchers={searchers}
-      materials={more.materials ?? []}
+      material={more.material ?? null}
       isMobile={false}
       onPick={onPick}
     />
@@ -238,11 +226,11 @@ describe("AcquireForm materials", () => {
     fakeApi.on(SEARCH, { hero_id: 5, warnings: [] });
   });
 
-  it("prices a weapon through the material, at the server's price", async () => {
+  it("prices the weapon through the material it was opened for, at the server's price", async () => {
     const user = setupUser();
-    const onPick = show(price({}), { materials: [GROMRIL] });
+    const onPick = show(price({}), { material: GROMRIL });
 
-    await user.click(button(/Gromril · 100 gc · Rare 11/));
+    expect(screen.getByLabelText("Price each for Hunting Arrows")).toHaveValue(100);
     await user.click(screen.getByRole("checkbox", { name: "No search" }));
     await user.click(button(/Stash · 100 gc/));
 
@@ -251,29 +239,14 @@ describe("AcquireForm materials", () => {
     );
   });
 
-  it("rolls the material's rarity, not the weapon's", async () => {
-    const user = setupUser();
-    show(price({ rarity: null }), { materials: [GROMRIL] });
-
-    await user.click(button(/Gromril/));
+  it("rolls the material's rarity, not the weapon's", () => {
+    show(price({ rarity: null }), { material: GROMRIL });
 
     // Common on its own, the weapon now needs the gromril search
     expect(screen.getByRole("group", { name: "Who searches" })).toBeInTheDocument();
   });
 
-  it("warns when a material the warband isn't meant to take is picked, and still takes it", async () => {
-    const user = setupUser();
-    const onPick = show(price({}), { materials: [SILVER] });
-
-    await user.click(button(/Silver/));
-
-    expect(screen.getByText("Not usually available to Skaven.")).toBeInTheDocument();
-    await user.click(screen.getByRole("checkbox", { name: "No search" }));
-    await user.click(button(/Stash · 85 gc/));
-    expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ material: "silver", price: 85 }));
-  });
-
-  it("offers no material for anything but a weapon", () => {
+  it("never asks what a weapon bought on its own is made of", () => {
     show(price({}));
 
     expect(screen.queryByRole("group", { name: "Made of" })).not.toBeInTheDocument();

@@ -16,9 +16,10 @@ import type { ShownItem } from "../components/ItemInfo";
 import type { WeaponMaterial } from "../types/item-types";
 import { isSold } from "../utils/item-listing";
 import { hisLine, hisRow, rareBonusFor, type HisList, type HisUpgrades } from "./his-list";
+import { shownMaterials } from "./material-rows";
+import MaterialRows from "./MaterialRows";
 import {
   inStoreOrder,
-  isWeapon,
   STORE_CATEGORIES,
   searchWords,
   storeCategory,
@@ -44,7 +45,7 @@ export type StoreListProps = {
   his?: HisList | null;
   /** The warband's variant's terms: where a rare search starts its bonus. */
   variant?: TemplateVariant | null;
-  /** The weapon materials the server offers this warband (weapon materials): a weapon's only. */
+  /** The weapon materials the server offers this warband (weapon materials): a row each. */
   materials?: WeaponMaterial[];
   /** The copies of an item the basket holds, for a per-warband limit. */
   inBasket?: (itemId: number) => number;
@@ -61,7 +62,8 @@ export type StoreListProps = {
  * can't usually buy is hidden; off: it shows with the server's reason, "Not usually available to
  * Skaven.", and can still be bought), His list when buying for a unit from the template (on: only
  * his lists' items, as they name them, at the store's price; both on: his items the warband can
- * usually buy), category chips, a hero's Upgrades (his template's), and a row per item. Add item
+ * usually buy), category chips, a hero's Upgrades (his template's), a row per weapon material
+ * (weapon materials: "Gromril Weapon", which picks the weapon when opened), and a row per item. Add item
  * (William, 7 Nov 2026: "Store has button to add a new item that opens the the create item modal")
  * makes a campaign item and opens its row, found by its name, ready to buy.
  */
@@ -86,6 +88,10 @@ export default function StoreList(props: StoreListProps) {
   );
   const his = props.his ?? null;
   const hisOn = his !== null && onlyHis;
+  // a material is a row of its own ("Gromril Weapon"), never one of his list's lines
+  const materials = hisOn
+    ? []
+    : shownMaterials(props.materials ?? [], { query, category, onlyMine });
   const copies = props.recipients.find((entry) => entry.key === props.firstKey)?.count ?? 1;
   const upgrades =
     props.upgrades && category === "all"
@@ -180,7 +186,7 @@ export default function StoreList(props: StoreListProps) {
         <p className="m-0 text-sm text-muted-foreground">Opening the store…</p>
       ) : catalogue.error ? (
         <p className="m-0 text-sm text-danger">{catalogue.error}</p>
-      ) : rows.length === 0 && upgrades.length === 0 ? (
+      ) : rows.length === 0 && upgrades.length === 0 && materials.length === 0 ? (
         <p className="m-0 text-sm text-text2">Nothing in the store by that name.</p>
       ) : null}
       {props.upgrades ? (
@@ -195,6 +201,20 @@ export default function StoreList(props: StoreListProps) {
         />
       ) : null}
       <ul className="m-0 flex list-none flex-col border-t border-line p-0">
+        {materials.length ? (
+          <MaterialRows
+            materials={materials}
+            offers={offers}
+            canBuy={props.canBuy}
+            isMobile={props.isMobile}
+            warbandId={props.warbandId}
+            recipients={props.recipients}
+            firstKey={props.firstKey}
+            searchers={props.searchers}
+            rareBonus={(item) => rareBonusFor(props.variant ?? null, item)}
+            onPick={props.onPick}
+          />
+        ) : null}
         {rows.map(({ offer, view }) => (
           <StoreRow
             key={offer.item.id}
@@ -210,7 +230,6 @@ export default function StoreList(props: StoreListProps) {
             searchers={props.searchers}
             startPrice={props.again?.itemId === offer.item.id ? props.again.price : null}
             rareBonus={rareBonusFor(props.variant ?? null, offer.item)}
-            materials={isWeapon(offer.item) ? (props.materials ?? []) : []}
             onPick={(line) => {
               props.onPick(line);
               setOpenId(null);
