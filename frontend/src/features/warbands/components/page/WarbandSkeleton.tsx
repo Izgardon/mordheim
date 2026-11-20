@@ -61,9 +61,9 @@ function SectionBones({ divided, children }: { divided?: boolean; children: Reac
 }
 
 /**
- * The warband page while it loads (design E): the header with Store and Stash, the info line
- * beside the resources, the tabs, then the roster: heroes' and henchmen's cards in their grids, a
- * hairline between the sections.
+ * The warband page while it loads: the header with Store and Stash, the tabs under it, then the
+ * Roster tab's own top (the info line, the resources) and the roster itself: heroes' and
+ * henchmen's cards in their grids, a hairline between the sections.
  */
 export default function WarbandSkeleton() {
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -77,6 +77,7 @@ export default function WarbandSkeleton() {
           <Bone className="h-11" />
         </div>
       ) : null}
+      <SkeletonTabs tabs={4} />
       <div className={WARBAND_INFO}>
         <SkeletonStats cells={4} />
         <div className="flex items-center gap-4 border-y border-line py-3">
@@ -85,7 +86,6 @@ export default function WarbandSkeleton() {
           <Bone className="ml-auto h-8 w-28" />
         </div>
       </div>
-      <SkeletonTabs tabs={4} />
       <div className={ROSTER_SECTIONS}>
         <SectionBones>
           <div className={ROSTER_HEROES}>

@@ -41,7 +41,7 @@ export default function SearchEverythingField({
       <input
         type="search"
         aria-label="Search everything"
-        placeholder="Search everything"
+        placeholder="Search"
         value={typed}
         onChange={(event) => setTyped(event.target.value)}
         className="min-w-0 flex-1 bg-transparent px-2.5 text-sm text-ink outline-none placeholder:text-faint"

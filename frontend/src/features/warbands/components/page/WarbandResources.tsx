@@ -1,13 +1,6 @@
 import { useState } from "react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { EllipsisVertical, Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
 
-import { NumberInput } from "@/components/ui/number-input";
-import { Button } from "@/components/ui/button";
-import { GameIcon } from "@/components/ui/game-icons";
-import { IconButton } from "@/components/ui/icon-button";
-import { Input } from "@/components/ui/input";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import {
@@ -22,12 +15,9 @@ import {
   type SalePricing,
 } from "../../hooks/warband/useResourceSaleNumbers";
 import type { WarbandResource } from "../../types/warband-types";
-import SizeBandSelect from "./SizeBandSelect";
-
-type Editing = { kind: "add" } | { kind: "rename" | "sell"; resource: WarbandResource } | null;
-
-const MENU_ITEM =
-  "flex min-h-10 cursor-pointer items-center px-3 text-sm text-ink outline-none data-[highlighted]:bg-raised";
+import ResourceForm, { type Editing } from "./ResourceForm";
+import ResourceRow from "./ResourceRow";
+import { SECTION_TITLE } from "./warband-layout";
 
 /** The campaign's default resource first, the rest as they come. */
 const defaultFirst = (resources: WarbandResource[]) => [
@@ -36,11 +26,11 @@ const defaultFirst = (resources: WarbandResource[]) => [
 ];
 
 /**
- * The warband's resources (design E): the default resource first, with no icon, then the rest;
- * − and + inline, Add resource (its name, starting at 0, opens in the button's place: William,
- * 7 Nov 2026, "add resource should just be name not amount"), and Rename, Delete, Sell (the
- * default only sells). Selling the default resource prices it from the campaign's table at the
- * warband's size band, which the player may change.
+ * The warband's resources (William, 20 Nov 2026): the section's title with Add resource spaced
+ * apart from it, then a column per resource, a hairline between them, each with its name on the
+ * left and its number and − / + on the right. The default resource comes first, with no icon; its
+ * ⋮ offers Sell alone, the others Rename, Sell and Delete. Selling the default resource prices it
+ * from the campaign's table at the warband's size band, which the player may change.
  */
 export default function WarbandResources({
   warbandId,
@@ -78,158 +68,52 @@ export default function WarbandResources({
   };
 
   return (
-    <section
-      aria-label="Resources"
-      className="flex flex-wrap items-center gap-x-5 gap-y-2.5 border-y border-line py-3"
-    >
-      {defaultFirst(resources).map((resource) => (
-        <div key={resource.id} className="flex items-center gap-2">
-          <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
-            {!resource.is_default && /wyrd/i.test(resource.name) ? (
-              <GameIcon name="wyrdstone" className="h-3.5 w-3.5 text-good" />
-            ) : null}
-            {resource.name}
-          </span>
-          {canEdit ? (
-            <IconButton
-              aria-label={`One ${resource.name} less`}
-              className="h-8 w-8"
-              onClick={() => change.mutate({ resourceId: resource.id, delta: -1 }, { onError })}
-            >
-              <Minus aria-hidden="true" />
-            </IconButton>
-          ) : null}
-          <span className="min-w-[26px] text-center font-display text-2xl font-semibold text-head">
-            {resource.amount}
-          </span>
-          {canEdit ? (
-            <>
-              <IconButton
-                aria-label={`One ${resource.name} more`}
-                className="h-8 w-8"
-                onClick={() => change.mutate({ resourceId: resource.id, delta: 1 }, { onError })}
-              >
-                <Plus aria-hidden="true" />
-              </IconButton>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <IconButton
-                    aria-label={`${resource.name} actions`}
-                    look="plain"
-                    className="h-8 w-8"
-                  >
-                    <EllipsisVertical aria-hidden="true" />
-                  </IconButton>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Portal>
-                  <DropdownMenu.Content
-                    align="end"
-                    className="z-[70] min-w-[160px] border border-border bg-panel p-1"
-                  >
-                    {resource.is_default ? null : (
-                      <DropdownMenu.Item
-                        className={MENU_ITEM}
-                        onSelect={() => {
-                          setText(resource.name);
-                          setEditing({ kind: "rename", resource });
-                        }}
-                      >
-                        Rename
-                      </DropdownMenu.Item>
-                    )}
-                    <DropdownMenu.Item
-                      className={MENU_ITEM}
-                      onSelect={() => {
-                        sale.reset();
-                        setEditing({ kind: "sell", resource });
-                      }}
-                    >
-                      Sell
-                    </DropdownMenu.Item>
-                    {resource.is_default ? null : (
-                      <DropdownMenu.Item
-                        className={`${MENU_ITEM} text-danger`}
-                        onSelect={() => remove.mutate(resource.id, { onError })}
-                      >
-                        Delete
-                      </DropdownMenu.Item>
-                    )}
-                  </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Root>
-            </>
-          ) : null}
-        </div>
-      ))}
-      {canEdit && !editing ? (
-        <button
-          type="button"
-          onClick={() => {
-            setText("");
-            setEditing({ kind: "add" });
-          }}
-          className="ml-auto min-h-8 border border-dashed border-strong px-2.5 text-xs font-bold text-accent-text"
-        >
-          Add resource
-        </button>
-      ) : null}
+    <section aria-label="Resources" className="flex flex-col gap-2 border-y border-line py-3">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className={SECTION_TITLE}>Resources</h2>
+        {canEdit && !editing ? (
+          <button
+            type="button"
+            onClick={() => {
+              setText("");
+              setEditing({ kind: "add" });
+            }}
+            className="min-h-8 border border-dashed border-strong px-2.5 text-xs font-bold text-accent-text"
+          >
+            Add resource
+          </button>
+        ) : null}
+      </div>
       {editing ? (
-        <form
-          aria-label={editing.kind === "add" ? "Add resource" : undefined}
-          className={
-            editing.kind === "add"
-              ? "ml-auto flex flex-wrap items-center gap-1.5"
-              : "flex w-full flex-wrap items-center gap-2"
-          }
-          onSubmit={(event) => {
-            event.preventDefault();
-            submit();
-          }}
-        >
-          {editing.kind === "sell" ? (
-            <NumberInput
-              compact
-              autoFocus
-              inputSize="sm"
-              min={1}
-              max={editing.resource.amount}
-              aria-label="How many"
-              value={sale.quantity}
-              onChange={(event) => sale.setQuantity(event.target.value)}
-            />
-          ) : (
-            <Input
-              autoFocus
-              inputSize="sm"
-              aria-label="Resource name"
-              placeholder={editing.kind === "add" ? "Name" : undefined}
-              className="h-9 w-36 md:h-9"
-              value={text}
-              onChange={(event) => setText(event.target.value)}
-            />
-          )}
-          {priced ? (
-            <SizeBandSelect className="h-9" value={sale.band} onChange={sale.setBand} />
-          ) : null}
-          {editing.kind === "sell" ? (
-            <NumberInput
-              compact
-              aria-label="Price in gold"
-              inputSize="sm"
-              placeholder="gc"
-              className="w-24"
-              value={sale.price}
-              onChange={(event) => sale.setPrice(event.target.value)}
-            />
-          ) : null}
-          <Button size="sm" type="submit">
-            {editing.kind === "add" ? "Add" : editing.kind === "rename" ? "Rename" : "Sell"}
-          </Button>
-          <Button size="sm" variant="ghost" onClick={() => setEditing(null)}>
-            Cancel
-          </Button>
-        </form>
+        <ResourceForm
+          editing={editing}
+          sale={sale}
+          priced={priced}
+          text={text}
+          onText={setText}
+          onSubmit={submit}
+          onCancel={() => setEditing(null)}
+        />
       ) : null}
+      <div className="flex flex-wrap gap-x-4">
+        {defaultFirst(resources).map((resource) => (
+          <ResourceRow
+            key={resource.id}
+            resource={resource}
+            canEdit={canEdit}
+            onChange={(delta) => change.mutate({ resourceId: resource.id, delta }, { onError })}
+            onRename={() => {
+              setText(resource.name);
+              setEditing({ kind: "rename", resource });
+            }}
+            onSell={() => {
+              sale.reset();
+              setEditing({ kind: "sell", resource });
+            }}
+            onDelete={() => remove.mutate(resource.id, { onError })}
+          />
+        ))}
+      </div>
     </section>
   );
 }

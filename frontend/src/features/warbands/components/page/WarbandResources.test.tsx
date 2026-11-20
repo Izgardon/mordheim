@@ -1,7 +1,10 @@
 /**
- * The warband's resources: the campaign's default resource comes first, with no icon, and its ⋮
- * offers only Sell (the campaign names it, and it is never deleted); the rest keep Rename, Sell
- * and Delete, and a Wyrdstone-named one keeps its icon. Add resource takes a name only.
+ * The warband's resources (William, 20 Nov 2026): the section's title with Add resource spaced
+ * apart from it, then a column per resource, the name on the left and the number with its buttons
+ * on the right, the line never wrapping. The campaign's default resource comes first, with no
+ * icon, and its ⋮ offers only Sell (the campaign names it, and it is never deleted); the rest keep
+ * Rename, Sell and Delete, and a Wyrdstone-named one keeps its icon. Add resource takes a name
+ * only.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -49,8 +52,28 @@ describe("WarbandResources", () => {
       .getAllByText(/^(Amber|Wyrdstone shards|Warpstone)$/)
       .map((label) => label.textContent);
     expect(names).toEqual(["Warpstone", "Amber", "Wyrdstone shards"]);
-    expect(screen.getByText("Warpstone").querySelector("svg")).toBeNull();
-    expect(screen.getByText("Wyrdstone shards").querySelector("svg")).not.toBeNull();
+    const label = (name: string) => screen.getByText(name).parentElement;
+    expect(label("Warpstone")?.querySelector("svg")).toBeNull();
+    expect(label("Wyrdstone shards")?.querySelector("svg")).not.toBeNull();
+  });
+
+  it("heads the section and keeps Add resource out of the resources", () => {
+    renderResources();
+
+    const section = screen.getByRole("region", { name: "Resources" });
+    const heading = within(section).getByRole("heading", { name: "Resources" });
+    const add = within(section).getByRole("button", { name: "Add resource" });
+    expect(heading.parentElement).toBe(add.parentElement);
+    expect(within(heading.parentElement as HTMLElement).queryByText("Warpstone")).toBeNull();
+  });
+
+  it("gives each resource its own column, ellipsised rather than wrapped", () => {
+    renderResources(false);
+
+    const column = screen.getByText("Wyrdstone shards").closest("div");
+    expect(column?.className).toContain("whitespace-nowrap");
+    expect(column?.className).toContain("border-l"); // the hairline between columns on the web
+    expect(screen.getByText("Wyrdstone shards").className).toContain("truncate");
   });
 
   it("offers only Sell on the default resource", async () => {
