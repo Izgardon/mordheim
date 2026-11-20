@@ -121,7 +121,7 @@ export default function MaterialRow(props: MaterialRowProps) {
             onClick={() => setPicked(null)}
             className="self-start text-[13px] font-semibold text-accent-hi underline"
           >
-            {material.name} {itemName(picked.offer.item)} · another weapon
+            {material.prefix} {itemName(picked.offer.item)} · another weapon
           </button>
           <AcquireForm
             key={picked.offer.item.id}

@@ -18,7 +18,7 @@ from django.utils import timezone
 
 from apps.campaigns.models import CampaignType
 from apps.core.seeding import IMPORT_OUT
-from apps.items.materials import ITEM_NAME_MATERIALS
+from apps.items.materials import material_for
 from apps.items.models import Item
 from apps.races.models import Race
 from apps.skills.models import Skill
@@ -215,9 +215,10 @@ def write_lists(template: WarbandTemplate, entries: list[dict[str, Any]], book: 
 
 
 def _line(made: TemplateList, position: int, line: dict[str, Any], owner: str, book: BookRows) -> TemplateListItem:
-    """One list line: an item at its list price, or the weapon material its item name means (gromril, ithilmar,
-    obsidian, silver), which carries no item and names the weapon when it is picked (weapon materials)."""
-    material = ITEM_NAME_MATERIALS.get(line["item"]["name"], "")
+    """One list line: an item at its list price, or the weapon material its name means (the gromril, ithilmar,
+    obsidian and silver weapons, the Druchii's darksteel blade and the Dark Elves' own), which carries no item and
+    names the weapon when it is picked (weapon materials)."""
+    material = material_for(line["item"]["name"], line["shown_as"])
     return TemplateListItem(
         equipment_list=made,
         position=position,

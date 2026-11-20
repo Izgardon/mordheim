@@ -22,7 +22,8 @@ export const pickKey = (pick: KitPick) =>
   `${pick.lineId}${pick.itemId ? `-${pick.itemId}` : ""}${pick.brace ? "-brace" : ""}`;
 
 /** What a pick buys: the weapon picked on a material line, else the line's item. */
-export const pickItemId = (pick: KitPick, line: TemplateLine) => pick.itemId ?? line.item?.id ?? null;
+export const pickItemId = (pick: KitPick, line: TemplateLine) =>
+  pick.itemId ?? line.item?.id ?? null;
 
 /** The lines of his lists, in his lists' order, each once. */
 export function fighterLines(fighter: TemplateFighter, lists: TemplateList[]): TemplateLine[] {

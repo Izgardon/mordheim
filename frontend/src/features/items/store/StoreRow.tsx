@@ -15,6 +15,8 @@ export type StoreOffer = {
   availability: ItemAvailability;
   rows: ItemAvailability[];
   warning: string;
+  /** The server offers it to any unit whatever his own list sells (an unscoped animal or oddment). */
+  alwaysOpen?: boolean;
 };
 
 /** What His list adds to a row: his list's name for the item, why it is dimmed, the limit's warning. */

@@ -16,7 +16,10 @@ import type { StoreOffer } from "./StoreRow";
 /** "Gromril Weapon": what the material's row is called, unless a list of his names it its own way. */
 export const materialRowName = (material: WeaponMaterial) => `${material.name} Weapon`;
 
-/** A weapon a material may be made into: its offer, its price through the material (null: rolled). */
+/**
+ * A weapon a material may be made into: its offer and its price through the material (null: not
+ * known until its dice are rolled).
+ */
 export type MaterialWeapon = { offer: StoreOffer; price: number | null };
 
 /** A material's row: the material as the server offers it, the name it reads as, and its weapons. */
@@ -31,19 +34,24 @@ function shown(material: WeaponMaterial, name: string, filters: MaterialFilters)
   return matchesSearchQuery(filters.query, name, material.name, "weapon");
 }
 
+/** His list's part: the material lines his lists sell, and the melee weapons those lists sell. */
+export type HisWeapons = { lines: HisMaterialLine[]; melee: StoreOffer[] };
+
 /**
  * The material rows the store shows now, in the server's order. What I can buy hides one the
- * warband isn't usually allowed, as it hides an item. On His list (`his`) only the materials his
- * lists sell show, as his list names them, and each offers the other melee weapons on that same
- * list at the line's own price for them (the server's), never every melee weapon in play.
+ * warband isn't usually allowed, as it hides an item.
+ *
+ * On His list (`his`) the materials his lists sell show, as his list names them, each offering the
+ * other melee weapons on that same list at the line's own price for them (the server's), never
+ * every melee weapon in play; and after them the materials open to anyone (gromril and ithilmar,
+ * which William's rule lets any unit use), offering his lists' melee weapons at their own price.
  */
 export function materialRows(
   materials: WeaponMaterial[],
   offers: StoreOffer[],
   filters: MaterialFilters,
-  his: HisMaterialLine[] | null = null
+  his: HisWeapons | null = null
 ): MaterialRowView[] {
-  const byId = new Map(offers.map((offer) => [offer.item.id, offer]));
   if (his === null) {
     return materials.flatMap((material) => {
       const name = materialRowName(material);
@@ -52,15 +60,25 @@ export function materialRows(
         : [];
     });
   }
-  return his.flatMap((line) => {
+  const byId = new Map(offers.map((offer) => [offer.item.id, offer]));
+  const sold = his.lines.flatMap((line) => {
     const material = materials.find((row) => row.slug === line.slug);
     if (!material || !shown(material, line.name, filters)) return [];
     const weapons = line.choices.flatMap(({ itemId, price }) => {
       const offer = byId.get(itemId);
-      return offer ? [{ offer, price }] : [];
+      return offer && allowed(material, itemId) ? [{ offer, price }] : [];
     });
     return [{ material, name: line.name, weapons }];
   });
+  const named = new Set(sold.map((row) => row.material.slug));
+  const open = materials.flatMap((material) => {
+    const name = materialRowName(material);
+    if (named.has(material.slug) || !material.for_everyone || !shown(material, name, filters)) {
+      return [];
+    }
+    return [{ material, name, weapons: meleeWeapons(material, his.melee) }];
+  });
+  return [...sold, ...open];
 }
 
 /**
@@ -73,14 +91,24 @@ function meleeWeapons(material: WeaponMaterial, offers: StoreOffer[]): MaterialW
   return inStoreOrder(
     melee.map((offer) => ({ offer, view: null })),
     ""
-  ).map(({ offer }) => ({
-    offer,
-    price:
-      offer.availability.cost == null
-        ? null
-        : materialPrice(offer.item, offer.availability, material),
-  }));
+  )
+    .filter(({ offer }) => allowed(material, offer.item.id))
+    .map(({ offer }) => ({
+      offer,
+      price:
+        offer.availability.cost == null
+          ? null
+          : materialPrice(offer.item, offer.availability, material),
+    }));
 }
+
+/**
+ * Whether the material's own rule allows this weapon: the Dark Elf Blade's swords and daggers only
+ * (William, 20 Nov 2026: "the one just for swords and daggers should only allow those 2"), so its
+ * picker offers nothing else. The server says which items those are.
+ */
+const allowed = (material: WeaponMaterial, itemId: number) =>
+  !material.only || material.only.item_ids.includes(itemId);
 
 /** The weapons whose name, kind, rules or tags answer what was typed in the picker. */
 export const searchWeapons = (weapons: MaterialWeapon[], query: string) =>

@@ -209,28 +209,42 @@ export type ItemOffer = {
   options: number[];
   can_buy: boolean;
   reason: string;
+  /**
+   * The store offers it to any unit whatever his own list sells (William, 20 Nov 2026): an animal
+   * or a miscellaneous item the warband reaches as everyone does, so no row of it names a warband.
+   * The server decides it; His list only reads it.
+   */
+  always_open?: boolean;
 };
 
 /** Whether a warband can usually hire a hired sword or dramatis persona, and why not. */
 export type HireAccess = { id: number; can_hire: boolean; reason: string };
 
 /**
- * One weapon material as the warband sees it (weapon materials): the word in front of a weapon's
- * name, the rarity the purchase rolls (never the weapon's), how it prices in the book's words, the
- * book's rules, what silvering a weapon the warband already owns costs (`on_owned`, null: it is
- * only chosen when the weapon is bought), and whether this warband may usually take it. The
- * server words the reason; pages show it and never re-derive it.
+ * One weapon material as the warband sees it (weapon materials): its own name, the word it puts in
+ * front of a weapon's name ("Dark Elf Blade" makes a "Dark Elf Sword"), the rarity the purchase
+ * rolls (never the weapon's), how it prices in the book's words, the book's rules, and whether this
+ * warband may usually take it. The server words the reason; pages show it and never re-derive it.
  */
 export type WeaponMaterial = {
   slug: string;
   name: string;
+  /** The word in front of the weapon's name: "Gromril", "Dark Elf". */
+  prefix: string;
   rarity: number;
+  /** Open to anyone its setting reaches (gromril, ithilmar): no warband is named either way. */
+  for_everyone: boolean;
   price_note: string;
   multiplier: number | null;
   addition: number | null;
   rules: { name: string; text: string }[];
   can_take: boolean;
   reason: string;
+  /**
+   * A rule naming the only weapons it may be made of (the Dark Elf Blade's swords and daggers):
+   * the items it allows and the rule's own sentence. null: every melee weapon may be made of it.
+   */
+  only: { text: string; item_ids: number[] } | null;
 };
 
 /** `GET warbands/<id>/who-can/`: what the warband can usually buy, hire and learn. */

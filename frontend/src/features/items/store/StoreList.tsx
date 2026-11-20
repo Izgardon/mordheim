@@ -89,18 +89,34 @@ export default function StoreList(props: StoreListProps) {
         const byId = new Map((item.availabilities ?? []).map((row) => [row.id, row]));
         const rows = (offer?.options ?? []).flatMap((id) => byId.get(id) ?? []);
         if (!offer || !rows.length) return [];
-        return [{ item, availability: rows[0], rows, warning: offer.can_buy ? "" : offer.reason }];
+        return [
+          {
+            item,
+            availability: rows[0],
+            rows,
+            warning: offer.can_buy ? "" : offer.reason,
+            alwaysOpen: Boolean(offer.always_open),
+          },
+        ];
       }),
     [catalogue.data, whoCan.items]
   );
   const his = props.his ?? null;
   const hisOn = his !== null && onlyHis;
-  // a material is a row of its own ("Gromril Weapon"); on His list, those his lists sell
+  // a material is a row of its own ("Gromril Weapon"); on His list, those his lists sell and those
+  // open to anyone, whose weapons are then his lists' own
+  const hisWeapons =
+    hisOn && his
+      ? {
+          lines: hisMaterials(his),
+          melee: offers.filter((offer) => hisLine(his, offer.item.id) !== null),
+        }
+      : null;
   const materials = materialRows(
     props.materials ?? [],
     offers,
     { query, category, onlyMine },
-    hisOn && his ? hisMaterials(his) : null
+    hisWeapons
   );
   const copies = props.recipients.find((entry) => entry.key === props.firstKey)?.count ?? 1;
   const upgrades =
@@ -116,7 +132,9 @@ export default function StoreList(props: StoreListProps) {
       const shown =
         offer.item.id === openId ||
         ((!onlyMine || !offer.warning) &&
-          (!hisOn || line !== null) &&
+          // an animal or a miscellaneous item nobody's rows name is generally usable, so it shows
+          // beside his own list's lines (the server decides it: `always_open`)
+          (!hisOn || line !== null || offer.alwaysOpen) &&
           (category === "all" || storeCategory(offer.item) === category) &&
           matchesSearchQuery(
             query,

@@ -91,7 +91,7 @@ export default function AcquireForm(props: AcquireFormProps) {
       diceRoll: rolled,
       rowPrice: !edited && !free && row.cost != null,
       material: material?.slug ?? "",
-      materialName: material?.name ?? "",
+      materialName: material?.prefix ?? "",
     });
   const fields = (
     <PriceFields

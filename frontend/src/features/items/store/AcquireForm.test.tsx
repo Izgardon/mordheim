@@ -46,12 +46,14 @@ const searchers = [
 const GROMRIL = {
   slug: "gromril",
   name: "Gromril",
+  prefix: "Gromril",
+  for_everyone: true,
   rarity: 11,
   price_note: "4 x Price",
   multiplier: 4,
   addition: null,
-  on_owned: null,
   rules: [],
+  only: null,
   can_take: true,
   reason: "",
 };

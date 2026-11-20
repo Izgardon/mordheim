@@ -26,6 +26,8 @@ const row = (change: Partial<ItemAvailability> = {}): ItemAvailability => ({
 const material = (change: Partial<WeaponMaterial>): WeaponMaterial => ({
   slug: "gromril",
   name: "Gromril",
+  prefix: "Gromril",
+  for_everyone: true,
   rarity: 11,
   price_note: "4 x Price",
   multiplier: 4,
@@ -33,6 +35,7 @@ const material = (change: Partial<WeaponMaterial>): WeaponMaterial => ({
   rules: [],
   can_take: true,
   reason: "",
+  only: null,
   ...change,
 });
 const weapon = makeItem({ material_prices: { "7": { gromril: 100, silver: 85 } } });

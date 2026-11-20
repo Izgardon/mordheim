@@ -24,7 +24,7 @@ from dataclasses import dataclass
 from typing import Any
 
 WEAPON = "Weapon"  # the only item type a material goes on
-MAX_MATERIAL = 12  # the width of the `material` column on every owned row
+MAX_MATERIAL = 20  # the width of the `material` column on every owned row
 MAX_SHOWN_AS = 160  # the width of the `shown_as` column, as a warband template's list line's
 
 
@@ -39,7 +39,15 @@ class MaterialRule:
 @dataclass(frozen=True)
 class Material:
     """One weapon material. `multiplier` and `addition` are exclusive: the price is the weapon's times the one, or
-    the weapon's plus the other."""
+    the weapon's plus the other. `prefix` is the word that goes in front of the weapon's name where it isn't the
+    material's own name ("Dark Elf Blade" makes a "Dark Elf Sword").
+
+    Who may take it is a who-can list read exactly as a price row's is: `for_everyone` with the types and groups it
+    names, included or excluded, and `from_lists` for one that belongs to the warbands whose template list sells it
+    (the two darksteels; `warbands/services/materials.py` works out which types those are). `only_names` and
+    `only_text` are a rule that names which weapons may be made of it (the Dark Elf Blade's swords and daggers,
+    William 20 Nov 2026: "the one just for swords and daggers should only allow those 2"), so the picker offers
+    those and nothing else, with the rule's own sentence above them."""
 
     slug: str
     name: str
@@ -48,8 +56,27 @@ class Material:
     setting: str
     multiplier: int | None = None
     addition: int | None = None
+    prefix: str = ""
+    for_everyone: bool = True
+    from_lists: bool = False
+    groups: tuple[str, ...] = ()
+    types: tuple[str, ...] = ()
     excluded_groups: tuple[str, ...] = ()
     excluded_types: tuple[str, ...] = ()
+    only_names: tuple[str, ...] = ()
+    only_text: str = ""
+
+    @property
+    def word(self) -> str:
+        """The word in front of the weapon's name: "Gromril", "Dark Elf"."""
+        return self.prefix or self.name
+
+    def allows(self, item: Any) -> bool:
+        """Whether its rule allows this weapon, by the item's name and tags; True where it names none."""
+        if not self.only_names:
+            return True
+        words = [str(getattr(item, "name", "") or ""), *(getattr(item, "tags", None) or [])]
+        return any(wanted in word.lower() for word in words for wanted in self.only_names)
 
     def price(self, base: int) -> int:
         """What the weapon costs made of this material, from its own price."""
@@ -139,7 +166,50 @@ SILVER = Material(
     ),
 )
 
-MATERIALS: dict[str, Material] = {material.slug: material for material in (GROMRIL, ITHILMAR, OBSIDIAN, SILVER)}
+# The Druchii's darksteel blade and the Dark Elves' Dark Elf Blade are two materials, not one (William, 20 Nov
+# 2026: "i think it might be easier to have both kinds of darksteel separately ... and cost them properly and scope
+# them properly"). Both carry the Druchii page's two rules word for word; the Dark Elf Blade also carries William's
+# own ruling, which its picker enforces. Each belongs to the warbands whose template list sells it.
+CRITICAL_DAMAGE = MaterialRule(
+    "Critical Damage",
+    "Dark Elf Blades inflict serious damage on their opponents. When rolling on the critical hit chart a Dark Elf "
+    "Blade will add +1 to the result.",
+)
+WICKED_EDGE = MaterialRule(
+    "Wicked Edge",
+    "Dark Elf Blades are set with sharp protrusions and serrated edges which inflict serious damage on an opponent. "
+    "A roll of 2-4 on the injury table is a Stunned result.",
+)
+SWORDS_AND_DAGGERS = "Only a sword or a dagger may be made with one of these blades."
+
+DARKSTEEL = Material(  # the Druchii's list: "3 x price", and its page allows any close-combat weapon
+    slug="darksteel",
+    name="Darksteel",
+    rarity=9,
+    multiplier=3,
+    setting="mordheim-1b",
+    for_everyone=False,
+    from_lists=True,
+    rules=(CRITICAL_DAMAGE, WICKED_EDGE),
+)
+
+DARK_ELF_BLADE = Material(  # ours, the Dark Elves': +20 gc, Rare 9, swords and daggers only
+    slug="dark-elf-blade",
+    name="Dark Elf Blade",
+    prefix="Dark Elf",
+    rarity=9,
+    addition=20,
+    setting="mordheim-1b",
+    for_everyone=False,
+    from_lists=True,
+    only_names=("sword", "dagger"),
+    only_text=SWORDS_AND_DAGGERS,
+    rules=(CRITICAL_DAMAGE, WICKED_EDGE, MaterialRule("Swords and daggers only", SWORDS_AND_DAGGERS)),
+)
+
+MATERIALS: dict[str, Material] = {
+    material.slug: material for material in (GROMRIL, ITHILMAR, OBSIDIAN, SILVER, DARKSTEEL, DARK_ELF_BLADE)
+}
 SLUGS: tuple[str, ...] = tuple(MATERIALS)
 
 # The items the materials used to be, by the name the import gives each. seed_items skips them, so its own archive
@@ -150,8 +220,19 @@ ITEM_NAME_MATERIALS: dict[str, str] = {
     "Ithilmar Weapon": "ithilmar",
     "Obsidian Weapon": "obsidian",
     "Silver Weapons": "silver",
+    "Dark Elf Blade": "dark-elf-blade",
 }
 FAKE_ITEM_NAMES: tuple[str, ...] = tuple(ITEM_NAME_MATERIALS)
+
+# A list that names the item one way and the material another: the Druchii's line sells the Dark Elf Blade as a
+# "Darksteel blade", which is the Druchii's own material, so its name wins over the item's.
+SHOWN_AS_MATERIALS: dict[str, str] = {"Darksteel blade": "darksteel"}
+
+
+def material_for(item_name: str, shown_as: str = "") -> str:
+    """The material a seeded list line names, by the name it shows and then the item it names; "" for a real item."""
+    return SHOWN_AS_MATERIALS.get(shown_as) or ITEM_NAME_MATERIALS.get(item_name, "")
+
 
 # A weapon swung, not shot: the only thing a material is made into ("which type of hand-to-hand weapon is offered
 # to you"). The store's chips read the same subtypes (`features/items/store/store-items.ts`).
@@ -171,9 +252,9 @@ def material_of(slug: str) -> Material | None:
 
 
 def named(slug: str, item_name: str) -> str:
-    """The copy's name: "Gromril Sword", or the item's own name for a plain copy."""
+    """The copy's name: "Gromril Sword", "Dark Elf Sword", or the item's own name for a plain copy."""
     material = material_of(slug)
-    return f"{material.name} {item_name}" if material else item_name
+    return f"{material.word} {item_name}" if material else item_name
 
 
 def copy_name(slug: str, shown_as: str, item_name: str) -> str:
@@ -184,9 +265,9 @@ def copy_name(slug: str, shown_as: str, item_name: str) -> str:
 
 
 def label_of(slug: str) -> str:
-    """The word in front of the name ("Gromril"), blank for a plain copy."""
+    """The word in front of the name ("Gromril", "Dark Elf"), blank for a plain copy."""
     material = material_of(slug)
-    return material.name if material else ""
+    return material.word if material else ""
 
 
 def priced(slug: str, base: int | None) -> int | None:

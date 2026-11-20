@@ -9,6 +9,7 @@ holding it). The warband's own template lists are read too (two queries: its tem
 its variant), so an item its own list sells is one it may buy whatever the price rows name (`who_can.py`, step 4).
 """
 
+from collections.abc import Sequence
 from dataclasses import replace
 from typing import Any
 
@@ -34,13 +35,18 @@ def _setting(entry: Model) -> str:
     return str(setting.name) if setting is not None else "Its setting"
 
 
-def item_offers(campaign_id: int, buyer: Buyer) -> list[dict[str, Any]]:
-    """Each of the campaign's current items' offer to the buyer (a warband, or a template's types: the editor)."""
+def current_items(campaign_id: int) -> list[Any]:
+    """The campaign's current items with their price rows and the rows' who-can lines (three queries)."""
     from apps.core.catalogue.kinds import ITEMS  # the registry imports the warbands app
 
     rows = ItemAvailability.objects.order_by("id").prefetch_related("warband_links")
-    items = _current(ITEMS, campaign_id).prefetch_related(Prefetch("availabilities", queryset=rows))
-    offers = (offer(item, buyer, item.in_play, _setting(item)) for item in items)
+    return list(_current(ITEMS, campaign_id).prefetch_related(Prefetch("availabilities", queryset=rows)))
+
+
+def item_offers(campaign_id: int, buyer: Buyer, items: Sequence[Any] | None = None) -> list[dict[str, Any]]:
+    """Each of the campaign's current items' offer to the buyer (a warband, or a template's types: the editor)."""
+    rows = items if items is not None else current_items(campaign_id)
+    offers = (offer(item, buyer, item.in_play, _setting(item)) for item in rows)
     return [found.payload() for found in offers if found is not None]
 
 
@@ -73,18 +79,19 @@ def _skill_groups(campaign_id: int, buyer: Buyer) -> tuple[list[int], list[int]]
 def who_can(warband: Warband) -> dict[str, Any]:
     """`{items: [{item_id, availability_id, options, can_buy, reason}], hired_swords: [{id, can_hire, reason}],
     dramatis_personae: [...], skill_group_ids: [...], special_skill_ids: [...],
-    materials: [{slug, name, rarity, rules, can_take, reason}]}` (weapon materials: three queries)."""
+    materials: [{slug, name, rarity, rules, can_take, reason, limit}]}` (weapon materials: three queries)."""
     from apps.core.catalogue.kinds import DRAMATIS_PERSONAE, HIRED_SWORDS
     from apps.warband_templates.services.resolve import list_item_ids  # it reads the warbands app
 
     campaign_id = warband.campaign_id
     buyer = replace(buyer_of(warband), sells=list_item_ids(warband))
+    items = current_items(campaign_id)
     group_ids, special_ids = _skill_groups(campaign_id, buyer)
     return {
-        "items": item_offers(campaign_id, buyer),
+        "items": item_offers(campaign_id, buyer, items),
         "hired_swords": _hirelings(HIRED_SWORDS, campaign_id, buyer),
         "dramatis_personae": _hirelings(DRAMATIS_PERSONAE, campaign_id, buyer),
         "skill_group_ids": group_ids,
         "special_skill_ids": special_ids,
-        "materials": material_offers(campaign_id, buyer),
+        "materials": material_offers(campaign_id, buyer, items),
     }
