@@ -1,4 +1,5 @@
 import { ModalSheet } from "@/components/ui/modal-sheet";
+import { cn } from "@/lib/utils";
 
 import type { ChartRow } from "../campaign-rule-rows";
 import CampaignChartView from "./CampaignChartView";
@@ -23,9 +24,13 @@ export default function CampaignChartsModal({
       className="max-w-[720px]"
       closeButton
     >
-      <div className="flex flex-col gap-5">
-        {(row?.charts ?? []).map((chart) => (
-          <div key={chart.id} className="flex flex-col gap-2">
+      <div className="flex flex-col">
+        {(row?.charts ?? []).map((chart, index) => (
+          <div
+            key={chart.id}
+            // a rule between the charts an umbrella holds, as the rules modal has (William, 20 Nov 2026)
+            className={cn("flex flex-col gap-2", index > 0 && "mt-6 border-t border-strong pt-6")}
+          >
             <CampaignChartView chart={chart} heading={Boolean(row?.umbrella)} />
             {actions ? <div className="flex flex-wrap gap-2">{actions(chart.id)}</div> : null}
           </div>

@@ -1,4 +1,5 @@
 import { ModalSheet } from "@/components/ui/modal-sheet";
+import { cn } from "@/lib/utils";
 
 import type { RuleRow } from "../campaign-rule-rows";
 import ChartTable from "./ChartTable";
@@ -30,9 +31,14 @@ export default function CampaignRulesModal({
       className="max-w-[720px]"
       closeButton
     >
-      <div className="flex flex-col gap-4">
-        {(row?.rules ?? []).map((rule) => (
-          <section key={rule.id} className="flex flex-col gap-1.5">
+      <div className="flex flex-col">
+        {(row?.rules ?? []).map((rule, index) => (
+          <section
+            key={rule.id}
+            // a rule under an umbrella is its own section: a rule above it, so its heading does not
+            // run on from the last one's buttons (William, 20 Nov 2026)
+            className={cn("flex flex-col gap-1.5", index > 0 && "mt-6 border-t border-strong pt-6")}
+          >
             {row?.umbrella ? (
               <h3 className="m-0 text-[15px] font-bold text-head">{rule.title}</h3>
             ) : null}
