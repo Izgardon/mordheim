@@ -333,6 +333,7 @@ describe("StorePanel, buying for a unit from the template", () => {
           material: {
             slug: "gromril",
             name: "Gromril",
+            prefix: "Gromril",
             rarity: 11,
             price_note: "4 x Price",
             choices: [
@@ -373,6 +374,7 @@ describe("StorePanel, buying for a unit from the template", () => {
           material: {
             slug: "gromril",
             name: "Gromril",
+            prefix: "Gromril",
             rarity: 11,
             price_note: "2 × price",
             choices: [],

@@ -67,6 +67,7 @@ class MaterialLineEndpointTests(CatalogueTestCase):
 
         self.assertIsNone(line["item"])
         self.assertEqual((line["material"]["slug"], line["material"]["name"]), ("gromril", "Gromril"))
+        self.assertEqual(line["material"]["prefix"], "Gromril")  # "Dark Elf Blade" makes a "Dark Elf Sword"
         # its own rarity, and the line's own terms rather than the material's four times the price
         self.assertEqual((line["material"]["rarity"], line["material"]["price_note"]), (11, "3 × price"))
         # the melee weapons of its list, at three times their list price; the crossbow is shot, not swung

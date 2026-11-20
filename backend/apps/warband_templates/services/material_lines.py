@@ -102,14 +102,15 @@ def price_note(line: Any, material: Material) -> str:
 
 
 def line_payload(line: Any, lines: Sequence[Any]) -> dict[str, Any] | None:
-    """A material line as the hire screens and the store read it: the material, how the line prices it, and the
-    weapons on its list with their prices. None for an ordinary item line."""
+    """A material line as the hire screens and the store read it: the material, the word it puts in front of a
+    weapon's name, how the line prices it, and the weapons on its list with their prices. None for an item line."""
     material = line_material(line)
     if material is None:
         return None
     return {
         "slug": material.slug,
         "name": material.name,
+        "prefix": material.word,
         "rarity": material.rarity,
         "price_note": price_note(line, material),
         "choices": line_choices(line, lines),

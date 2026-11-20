@@ -87,6 +87,8 @@ export type TemplateWho = { heroes?: boolean; fighters?: string[]; except?: stri
 export type TemplateLineMaterial = {
   slug: string;
   name: string;
+  /** The word in front of the weapon's name: "Gromril", "Dark Elf" (the server's). */
+  prefix: string;
   rarity: number;
   price_note: string;
   choices: {

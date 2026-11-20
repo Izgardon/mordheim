@@ -85,7 +85,7 @@ export const lineLabel = lineName;
 /** "Gromril Sword": what a pick on a material line reads as, from the weapon picked on it. */
 export function pickLabel(line: TemplateLine, pick: KitPick): string {
   const chosen = line.material?.choices.find((choice) => choice.item.id === pick.itemId);
-  return chosen ? `${line.material?.name} ${chosen.item.name}` : lineLabel(line);
+  return chosen ? `${line.material?.prefix} ${chosen.item.name}` : lineLabel(line);
 }
 
 /** What a material line's pick costs at list price: the line's price for the weapon picked. */

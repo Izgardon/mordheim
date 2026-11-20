@@ -202,6 +202,7 @@ describe("Recruiting from the warband's template", () => {
       material: {
         slug: "gromril",
         name: "Gromril",
+        prefix: "Gromril",
         rarity: 11,
         price_note: "4 x Price",
         choices: [
