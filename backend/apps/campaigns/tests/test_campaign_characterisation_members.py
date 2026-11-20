@@ -159,6 +159,14 @@ class MemberListTests(CampaignTestCase):
         self.assertIsNone(players[0]["warband"])
         self.assertEqual(self.get_as(self.outsider, self.url("players/")).status_code, 404)
 
+    def test_a_players_warband_carries_its_campaign_points_for_the_standings(self):
+        Warband.objects.filter(pk=self.warband.pk).update(campaign_points=7)
+
+        players = self.get_as(self.rival, self.url("players/")).json()
+
+        pia = next(row for row in players if row["id"] == self.player.id)
+        self.assertEqual(pia["warband"]["campaign_points"], 7)
+
     def test_name_pickers_read_ids_and_names_only(self):
         # PERF-41: Encampments and the trade invite fetched the whole roster (7 queries) for names
         basic = self.get_as(self.rival, self.url("players/?fields=basic")).json()
