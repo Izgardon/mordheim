@@ -30,7 +30,10 @@ class CampaignPresetTests(CampaignTestCase):
     def setUpTestData(cls) -> None:
         super().setUpTestData()
         cls.setting = CampaignType.objects.create(slug="mutiny-in-marienburg", name=MARIENBURG, grade="2b")
-        cls.chart = ExplorationChart.objects.create(slug="mutiny-in-marienburg", name="Wasteland Exploration")
+        # every book chart carries its setting, which is what names it on the pages
+        cls.chart = ExplorationChart.objects.create(
+            slug="mutiny-in-marienburg", name="Wasteland Exploration", campaign_type=cls.setting
+        )
         cls.mordheim = CampaignPreset.objects.create(slug="mordheim", name="Mordheim", sort_order=1)
         cls.marienburg = CampaignPreset.objects.create(
             slug="mutiny-in-marienburg",
@@ -85,7 +88,8 @@ class CampaignPresetTests(CampaignTestCase):
 
     def test_the_preset_list_holds_each_published_campaign_with_what_it_dictates(self) -> None:
         self.client.force_authenticate(user=self.player)
-        with self.assertNumQueries(2):
+        # the presets with their counts, their settings, and the settings that name each dictated chart
+        with self.assertNumQueries(3):
             rows = self.client.get("/api/campaign-presets/").data
         self.assertEqual([row["slug"] for row in rows], ["mordheim", "mutiny-in-marienburg"])
         self.assertEqual((rows[0]["sets"], rows[0]["setting_ids"], rows[0]["rule_count"]), ([], [], 0))
@@ -96,7 +100,7 @@ class CampaignPresetTests(CampaignTestCase):
         self.assertEqual(
             [(line["field"], line["text"]) for line in marienburg["sets"]],
             [
-                ("exploration_chart_id", "Wasteland Exploration"),
+                ("exploration_chart_id", MARIENBURG),
                 ("enable_locations", "on"),
                 ("enable_encampments", "on"),
                 ("enable_campaign_points", "on"),
@@ -221,18 +225,32 @@ class CampaignPresetTests(CampaignTestCase):
 
     def test_the_payload_names_the_preset_what_it_sets_and_nothing_departed_from(self) -> None:
         campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
-        # the reader's access, the preset, its settings, and the counts it shows: a fixed count, whatever the
-        # preset or the campaign holds. The swap rides the campaign PATCH, so nothing here reads what it would do.
-        with self.assertNumQueries(7):
+        # the reader's access, the preset, its settings, the counts it shows, and the settings that name the chart
+        # it dictates: a fixed count, whatever the preset or the campaign holds. The swap rides the campaign PATCH,
+        # so nothing here reads what it would do.
+        with self.assertNumQueries(8):
             data = self.preset_payload(campaign_id)
         self.assertEqual((data["preset_id"], data["preset_name"]), (self.marienburg.pk, MARIENBURG))
         self.assertEqual((data["departures"], data["rule_count"]), ([], 2))
-        self.assertEqual(len(data["sets"]), 7)
-        # and it stays fixed as the campaign grows
+        # the chart it dictates reads as its setting, not its own written name (William, 20 Nov 2026)
+        chart_line = next(line for line in data["sets"] if line["field"] == "exploration_chart_id")
+        self.assertEqual(chart_line["text"], MARIENBURG)
+        # and the count stays fixed as the campaign grows
         for place in range(6):
             self.post_as(self.owner, f"/api/campaigns/{campaign_id}/campaign-rules/", {"title": f"Ours {place}"})
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             self.preset_payload(campaign_id)
+
+    def test_a_chart_with_no_setting_keeps_its_own_name(self) -> None:
+        """A campaign's own chart belongs to no setting, so there is nothing to name it but itself."""
+        self.chart.campaign_type = None
+        self.chart.save(update_fields=["campaign_type"])
+        self.patch_as(self.owner, self.url(), {"preset_id": self.marienburg.pk})
+
+        data = self.preset_payload(self.campaign.pk)
+
+        chart_line = next(line for line in data["sets"] if line["field"] == "exploration_chart_id")
+        self.assertEqual(chart_line["text"], "Wasteland Exploration")
 
     def test_departing_from_a_dictated_setting_warns_and_is_allowed(self) -> None:
         campaign_id = self.create(preset_id=self.marienburg.pk)["id"]

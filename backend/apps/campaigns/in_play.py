@@ -14,6 +14,7 @@ Picking a grade is a preset: "Up to 1c" ticks every setting at or below 1c, then
 campaign stores no grade, so there is nothing to reset. A new campaign starts on `DEFAULT_PRESET`.
 """
 
+import re
 from collections.abc import Iterable
 from typing import Any
 
@@ -88,3 +89,32 @@ def set_settings(campaign: Campaign, ids: Iterable[int]) -> None:
     CampaignCampaignType.objects.bulk_create(
         [CampaignCampaignType(campaign=campaign, campaign_type_id=pk) for pk in sorted(wanted - held)]
     )
+
+
+# The grade a part of a split setting carries at the end of its slug and of its name ("khemri-3", "Khemri 1b").
+GRADE_SUFFIX = re.compile(r"[ -](?:1a|1b|1c|2a|2b|3)$")
+
+
+def setting_display_names() -> dict[int, str]:
+    """What the pages call each setting: the family's name for a part of a split one, else the setting's own.
+
+    One book split by grade is shown as one setting -- Mordheim 1a to 2a as "Mordheim", Khemri 1b and Khemri 3 as
+    "Khemri" -- which `features/reference/in-play.ts` has always done for the reference pages' Setting filter. The
+    same rule lives here so the **server** can word a line naming a setting (William, 20 Nov 2026: the exploration
+    chart should read "Mutiny in Marienburg", not "Wasteland Exploration"). It is read from the settings
+    themselves, so the next split needs no code: a part carries its grade at the end of its slug, and the base part
+    keeps the family's bare slug. One query.
+    """
+    rows = list(CampaignType.objects.values("id", "slug", "name"))
+    by_slug = {row["slug"]: row for row in rows}
+    names = {}
+    for row in rows:
+        base = GRADE_SUFFIX.sub("", row["slug"])
+        head = by_slug.get(base) if base != row["slug"] else row
+        # a part only belongs to a family while the base part is there to head it
+        in_family = head is not None and (
+            base != row["slug"]
+            or any(other["slug"] != row["slug"] and GRADE_SUFFIX.sub("", other["slug"]) == base for other in rows)
+        )
+        names[row["id"]] = GRADE_SUFFIX.sub("", head["name"]) if in_family and head else row["name"]
+    return names

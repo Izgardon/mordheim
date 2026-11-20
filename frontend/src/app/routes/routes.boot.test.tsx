@@ -62,7 +62,14 @@ describe("a cold start signed out", () => {
       renderApp(path);
 
       await screen.findByRole("heading", { name: "Mordheim Chronicler" });
-      // Nothing of the app's own: the one request is which social providers are set up.
+      // Nothing of the app's own: the one request is which social providers are set up. The card sends it a tick
+      // after the heading paints, so wait for it rather than race it -- asserting on the spot made this test fail
+      // now and then in a full run, and never on its own.
+      await waitFor(() => expect(fakeApi.calls()).toEqual([SSO_PROVIDERS]));
+      // and nothing follows it
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 20));
+      });
       expect(fakeApi.calls()).toEqual([SSO_PROVIDERS]);
       expect(fakeRealtime.channels()).toEqual([]);
     }

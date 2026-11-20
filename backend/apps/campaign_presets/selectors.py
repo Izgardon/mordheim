@@ -2,6 +2,7 @@
 
 from django.db.models import Count, Q, QuerySet
 
+from apps.campaigns.in_play import setting_display_names
 from apps.campaigns.models import Campaign
 
 from .models import CampaignPreset
@@ -24,12 +25,19 @@ def preset_rows() -> QuerySet[CampaignPreset]:
 
 
 def chart_names(presets: list[CampaignPreset]) -> dict[int, str]:
-    """The name of each chart the presets dictate, from the rows already read (no query)."""
-    return {
-        preset.exploration_chart_id: preset.exploration_chart.name
+    """What each chart the presets dictate is called: its **setting**, as the dropdown names it, not the chart's
+    own written name (William, 20 Nov 2026: "just Mutiny in Marienburg for example"), so a dialog reads "It sets
+    Exploration chart Mutiny in Marienburg" rather than "Wasteland Exploration". A chart with no setting keeps its
+    own name. One query for the settings; the charts come with the rows already read."""
+    charts = [
+        preset.exploration_chart
         for preset in presets
         if preset.exploration_chart_id is not None and preset.exploration_chart is not None
-    }
+    ]
+    if not charts:
+        return {}
+    settings = setting_display_names()
+    return {chart.pk: settings.get(chart.campaign_type_id or 0) or chart.name for chart in charts}
 
 
 def preset_of(campaign: Campaign) -> CampaignPreset | None:
