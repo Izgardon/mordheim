@@ -1,17 +1,11 @@
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Chip } from "@/components/ui/chip";
-import { Switch } from "@/components/ui/switch";
 import type { TemplateVariant } from "@/features/warband-templates/types/template-types";
 import type { TemplateUpgrade } from "@/features/warbands/types/hire-template-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
-import { cn } from "@/lib/utils";
 
 import { useWhoCan } from "../api/who-can-queries";
-import ItemFormDialog from "../components/ItemFormDialog";
 import type { ShownItem } from "../components/ItemInfo";
 import type { WeaponMaterial } from "../types/item-types";
 import { isSold } from "../utils/item-listing";
@@ -25,13 +19,8 @@ import {
 } from "./his-list";
 import { materialRows } from "./material-rows";
 import MaterialRows from "./MaterialRows";
-import {
-  inStoreOrder,
-  STORE_CATEGORIES,
-  searchWords,
-  storeCategory,
-  type StoreCategory,
-} from "./store-items";
+import StoreFilters from "./StoreFilters";
+import { inStoreOrder, searchWords, storeCategory, type StoreCategory } from "./store-items";
 import StoreRow, { type StoreOffer } from "./StoreRow";
 import StoreUpgrades from "./StoreUpgrades";
 import type { BasketLine, Recipient } from "./useStoreBasket";
@@ -153,64 +142,22 @@ export default function StoreList(props: StoreListProps) {
 
   return (
     <div className="flex flex-col gap-3.5">
-      <div className={cn("flex gap-2.5", props.isMobile ? "flex-col" : "items-stretch")}>
-        <label className="flex min-h-11 flex-1 items-center gap-2 border border-strong bg-page px-3 text-muted-foreground">
-          <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
-          <input
-            type="search"
-            placeholder="Search the store"
-            aria-label="Search the store"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none"
-          />
-        </label>
-        <div className="flex gap-2.5">
-          <Switch checked={onlyMine} onCheckedChange={setOnlyMine}>
-            What I can buy
-          </Switch>
-          {his ? (
-            <Switch checked={onlyHis} onCheckedChange={setOnlyHis}>
-              His list
-            </Switch>
-          ) : null}
-          {props.canAddItem ? (
-            <ItemFormDialog
-              mode="create"
-              campaignId={props.campaignId}
-              onCreated={(item) => {
-                setQuery(item.name);
-                setOpenId(item.id);
-              }}
-              trigger={
-                <Button variant="secondary" className={props.isMobile ? "ml-auto min-h-11" : ""}>
-                  Add item
-                </Button>
-              }
-            />
-          ) : null}
-        </div>
-      </div>
-      <div
-        role="group"
-        aria-label="Category"
-        className={cn(
-          "flex gap-1.5",
-          // pb-2: room between the chips and the scrollbar under them (William, 20 Nov 2026)
-          props.isMobile ? "-mx-4 overflow-x-auto overscroll-x-contain px-4 pb-2" : "flex-wrap"
-        )}
-      >
-        {STORE_CATEGORIES.map((entry) => (
-          <Chip
-            key={entry.id}
-            pressed={category === entry.id}
-            className="shrink-0"
-            onClick={() => setCategory(entry.id)}
-          >
-            {entry.label}
-          </Chip>
-        ))}
-      </div>
+      <StoreFilters
+        campaignId={props.campaignId}
+        isMobile={props.isMobile}
+        query={query}
+        onQuery={setQuery}
+        onlyMine={onlyMine}
+        onOnlyMine={setOnlyMine}
+        his={his ? { checked: onlyHis, onChange: setOnlyHis } : null}
+        category={category}
+        onCategory={setCategory}
+        canAddItem={props.canAddItem}
+        onAdded={(item) => {
+          setQuery(item.name);
+          setOpenId(item.id);
+        }}
+      />
       {catalogue.isLoading || whoCan.isLoading ? (
         <p className="m-0 text-sm text-muted-foreground">Opening the store…</p>
       ) : catalogue.error ? (
