@@ -5,7 +5,7 @@ import { apiRequest } from "@/lib/api-client";
 import { queryKeys } from "@/lib/query-keys";
 
 import type { CampaignPreset, CampaignPresetState } from "../types/campaign-types";
-import type { CampaignRule } from "@/features/rules/types/rule-types";
+import type { CampaignChart, CampaignRule } from "@/features/rules/types/rule-types";
 
 /** The presets change only with a reseed, as the settings do: read once a session, more or less. */
 const PRESETS_STALE_TIME_MS = 30 * 60_000;
@@ -33,14 +33,31 @@ export function useCampaignPreset(campaignId: number) {
   });
 }
 
-/** Adds the preset's rules the campaign lacks; its own rules and this card are read again. */
+/** What the swap answers: how many went and arrived, and the campaign's rules and charts as they now stand. */
+export type PresetSwap = {
+  out: number;
+  in: number;
+  rules: CampaignRule[];
+  charts: CampaignChart[];
+};
+
+/**
+ * Swaps the campaign's preset content: out with the rules and charts that are still another published campaign's
+ * word for word, in with this one's that it lacks (the server decides both). Its rules, its charts and this card
+ * are read again.
+ *
+ * The answer is an object, not a list. It was typed as `CampaignRule[]` and written whole into the rules cache,
+ * so the page then read `{rules, charts}` where it expected an array and threw (William, 20 Nov 2026: "Page
+ * errors when i changed campaign setting and added new rules").
+ */
 export function useAddPresetRules(campaignId: number) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () =>
-      apiRequest<CampaignRule[]>(`/campaigns/${campaignId}/preset/rules/`, { method: "POST" }),
-    onSuccess: (rules) => {
-      queryClient.setQueryData(queryKeys.campaign.campaignRules(campaignId), rules);
+      apiRequest<PresetSwap>(`/campaigns/${campaignId}/preset/rules/`, { method: "POST" }),
+    onSuccess: (swap) => {
+      queryClient.setQueryData(queryKeys.campaign.campaignRules(campaignId), swap.rules);
+      queryClient.setQueryData(queryKeys.campaign.campaignCharts(campaignId), swap.charts);
       void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.preset(campaignId) });
     },
   });

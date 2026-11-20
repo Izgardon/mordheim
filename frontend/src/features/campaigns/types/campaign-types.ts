@@ -410,4 +410,13 @@ export type CampaignPresetState = {
   /** The titles it would add; the campaign keeps the rules it already holds by title. */
   rules: string[];
   rule_count: number;
+  /** The chart titles it would add, by the same rule. */
+  charts: string[];
+  chart_count: number;
+  /**
+   * How many of the campaign's rules and charts the button would take out: the ones still another published
+   * campaign's word for word. Above 0 the button reads "Swap rules" rather than "Add its N rules" (William,
+   * 20 Nov 2026).
+   */
+  swap_out: number;
 };

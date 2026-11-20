@@ -13,6 +13,7 @@ from .models import DICTATED, CampaignPreset
 from .selectors import chart_names, preset_of
 from .services.charts import missing_charts
 from .services.rules import missing_rules
+from .services.swap import swap_counts
 from .wording import departure, sets
 
 
@@ -53,6 +54,7 @@ def campaign_preset_payload(campaign: Campaign) -> dict[str, Any]:
             "rule_count": 0,
             "charts": [],
             "chart_count": 0,
+            "swap_out": 0,
         }
     charts = chart_names([preset])
     return {
@@ -66,4 +68,7 @@ def campaign_preset_payload(campaign: Campaign) -> dict[str, Any]:
         # the charts it would add, by the same rule: the ones the campaign holds none of by title
         "charts": [chart.title for chart in missing_charts(campaign.pk, preset)],
         "chart_count": sum(1 for chart in preset.charts.all() if chart.rule_id is None and chart.row_id is None),
+        # how many of another published campaign's rules and charts the button would take out: above 0 it is a
+        # swap rather than an addition, and the page names it so (William, 20 Nov 2026)
+        "swap_out": swap_counts(campaign, preset)["out"],
     }

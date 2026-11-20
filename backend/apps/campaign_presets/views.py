@@ -21,8 +21,7 @@ from apps.campaigns.views.base import CampaignScopedView
 from .payload import campaign_preset_payload
 from .selectors import chart_names, preset_of, preset_rows
 from .serializers import CampaignPresetSerializer
-from .services.charts import copy_charts
-from .services.rules import copy_rules
+from .services.swap import swap_rules
 
 
 class CampaignPresetListView(APIView):
@@ -48,20 +47,22 @@ class CampaignPresetView(CampaignScopedView):
 
 
 class CampaignPresetRulesView(CampaignScopedView):
-    """POST campaigns/<id>/preset/rules/: add the preset's rules and charts the campaign holds none of by title, in
-    the preset's order (its owner and admins, as the campaign's own rules are theirs). Answers the campaign's rules
-    and charts as they now stand."""
+    """POST campaigns/<id>/preset/rules/: **swap** the campaign's preset content. It takes out the rules and
+    charts that are still another published campaign's word for word, then adds this one's that the campaign holds
+    none of by title, in the preset's order (its owner and admins, as the campaign's own rules are theirs).
+
+    Anything the player wrote or edited stays (services/swap.py). Answers the campaign's rules and charts as they
+    now stand, with `out` and `in`: how many went and how many arrived."""
 
     rules = {"POST": "manage_campaign_rules"}
 
     def post(self, request: Request, campaign_id: int) -> Response:
         campaign = self.access.campaign
         with transaction.atomic():
-            preset = preset_of(campaign)
-            copy_rules(campaign, preset)
-            copy_charts(campaign, preset)
+            moved = swap_rules(campaign, preset_of(campaign))
         return Response(
             {
+                **moved,
                 "rules": CampaignRuleSerializer(campaign_rules(campaign_id), many=True).data,
                 "charts": CampaignChartSerializer(campaign_charts(campaign_id), many=True).data,
             }

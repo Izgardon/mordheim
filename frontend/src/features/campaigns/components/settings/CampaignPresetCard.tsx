@@ -52,6 +52,10 @@ export default function CampaignPresetCard({ campaign }: { campaign: CampaignSum
   const rows = presets.data ?? [];
   const current = campaign.preset_id ?? null;
   const offered = state.data?.rules ?? [];
+  const offeredCharts = state.data?.charts ?? [];
+  // what the button would take out: another published campaign's rules and charts, still word for word its own
+  const swapOut = state.data?.swap_out ?? 0;
+  const coming = offered.length + offeredCharts.length;
   const canAddRules = campaignCapabilities(campaign).manage_campaign_rules;
 
   const pick = (value: string) => {
@@ -101,15 +105,17 @@ export default function CampaignPresetCard({ campaign }: { campaign: CampaignSum
           label="It sets"
           hint={setsLine(state.data.sets) || "Nothing: every setting below is yours."}
         >
-          {offered.length && canAddRules ? (
+          {(coming || swapOut) && canAddRules ? (
             <Button
               variant="secondary"
               disabled={addRules.isPending}
               onClick={() => addRules.mutate()}
             >
               {addRules.isPending
-                ? "Adding…"
-                : `Add its ${offered.length} ${offered.length === 1 ? "rule" : "rules"}`}
+                ? "Working…"
+                : swapOut
+                  ? "Swap rules"
+                  : `Add its ${coming} ${coming === 1 ? "rule" : "rules"}`}
             </Button>
           ) : null}
         </SettingRow>
