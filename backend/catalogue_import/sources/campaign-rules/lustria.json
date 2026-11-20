@@ -1,0 +1,295 @@
+{
+ "rules": [
+  {
+   "title": "Animal Attack",
+   "umbrella": "",
+   "text": "Serious injuries are rolled on the chart on page 119 of the Mordheim rulebook. There are no fighting pits in Lustria, so Sold to the Pits is read as Animal Attack.\n\nThe Hero stumbles on a nest and finds a baby Cold One, and the mother has returned from an unsuccessful hunt. He must fight the beast to escape. Place the Hero and the Cold One 6 inches apart and roll off to see who gains the initiative and takes the first turn.\n\nIf the Hero wins the fight he earns +1 Experience, and another +1 Experience if he kills the Cold One; the hide is worth 50 gold crowns. If he loses the fight, the mother will not have to worry about feeding her young one dinner.\n\nCold One: M 8, WS 3, BS -, S 4, T 4, W 1, I 1, A 2, Ld 3. Fear. The mother is subject to frenzy."
+  },
+  {
+   "title": "Valuables, not wyrdstone",
+   "umbrella": "Income",
+   "text": "In Lustria the warbands search for valuables -- gems, gold items, exotic furs and stones -- rather than wyrdstone. Wherever a rule reads wyrdstone, read valuables instead; nothing else about them changes. The Lizardmen ignore the decorative and useless items and instead receive aid for the number of patrols they have carried out.\n\nAt the end of each battle every warband rolls on the exploration chart, by the rules on page 134 of the rulebook but on the Lustria exploration chart rather than the one on page 135. Every Hero who was not taken out of action may search the ruins, but one of them is nominated to lead the search. Some multiples are a trap or a fearsome monster and the entry says what happens, so a Hero with good characteristics is a good choice: he runs the risk of being seriously injured."
+  },
+  {
+   "title": "Lustrian equipment list",
+   "umbrella": "Income",
+   "text": "Equipment is bought from the Lustrian equipment list, following all the rules on page 144 of the rulebook. Equipment that is found can only be used by a warrior who could buy such an item from his own equipment list, or who has the relevant skill to use it."
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "Open ground",
+   "umbrella": "Ground",
+   "text": "Models move without penalty over clear underground passages, unobstructed ruined city streets, vines and ladders leading up or down, steps leading up or down, and bridges with no gaps or with gaps of less than 1 inch."
+  },
+  {
+   "title": "Difficult ground",
+   "umbrella": "Ground",
+   "text": "Models move at half speed over steps higher than 1 inch, rubble or light shrub, shallow swamp or marsh, jungles, and shallow rivers."
+  },
+  {
+   "title": "Very difficult ground",
+   "umbrella": "Ground",
+   "text": "Models move at a quarter speed over dense rubble, muddy swamp or marsh, thorny or dense shrub, and going against the current of a slow moving river. Open ground is very difficult ground for an aquatic model."
+  },
+  {
+   "title": "Impassable terrain",
+   "umbrella": "Ground",
+   "text": "No movement is allowed through deep rivers or lakes, quicksand or deep mud, or against the current of a fast moving river. A deep river or lake is difficult ground for an aquatic model."
+  },
+  {
+   "title": "Line of sight in the jungle",
+   "umbrella": "",
+   "text": "A jungle stand is a group of trees clumped together on one base, or two or more freestanding trees standing near each other, with room enough on the base to place models in it. Work through all the jungle terrain on the board before the game to settle which stands are jungle and which are simply trees that happen to be near each other.\n\nA jungle stand of any width blocks line of sight to the other side, even a stand 1 inch wide. A model must be within 2 inches of the edge of a stand to fire out, charge, be fired upon or be charged from outside it, and a model inside a stand sees 4 inches for shooting and for declaring charges. A model fighting in difficult terrain, other than on steps, is at -1 to hit."
+  },
+  {
+   "title": "Swimming",
+   "umbrella": "Water",
+   "text": "Lustria is a rain forest, and for seven to ten months of the year its rivers and lakes stay at peak levels, so most jungle battles and some ruined city battles are fought around water. Settle which way the river is flowing at the start of the game.\n\nAll rivers count as difficult ground or worse for every model that is not aquatic. A model swimming with the current doubles its base move. A model swimming against the current of a slow moving river moves a quarter of its base move, while an aquatic model suffers no reduction at all; neither may swim against the current of a fast moving river, and no model moves upstream in a fast moving river without floating transport such as a boat or a canoe.\n\nA model wearing armour may not move through water deeper than shallow. Shields and bucklers do not count for this, being assumed to be strapped on the back. An aquatic model in swamp, stream or river may be declared hidden, at its player's discretion."
+  },
+  {
+   "title": "Fighting in water",
+   "umbrella": "Water",
+   "text": "A model that is not aquatic and is knocked down in a shallow river or stream is swept D6 inches down river. An aquatic model knocked down does not drift with the current and can get back into combat the following turn.\n\nA model stunned in shallow water must take an Initiative test. If it passes it can be turned over in the following turn; if it fails it has drowned and is out of action, and the player rolls for its survival at the end of the game. An Undead model knocked down in shallow water recovers by the standard Mordheim rules for Undead.\n\nA model fighting in a shallow stream while wearing light armour is out of action if it is stunned, with no Initiative test taken. This does not apply to a model whose skin or clothing counts as natural light armour, an Amazon's skins and charms or the toughened hide of a Skaven."
+  },
+  {
+   "title": "Trees and vines",
+   "umbrella": "",
+   "text": "The ruined buildings of the temple cities are often covered in vines, and others have trees bursting through their walls. These vines and trees count as ladders for moving up and down the buildings.\n\nA model climbing a tree has +1 to its Initiative for the test, though a 6 is still a failure. It does not have to be placed at the base of the tree first: as long as it has movement enough left to reach a safe place in the tree, it may be 1 inch away and still climb 3 inches into it, provided it passes the Initiative test.\n\nA model in a tree may be declared hidden as described on page 29 of the rulebook. One that is discovered or gives its position away is no longer hidden but still has cover. A model knocked down or stunned in a tree must take an Initiative test at -1 or fall out of the tree and take falling damage as the rulebook describes."
+  },
+  {
+   "title": "Carnivorous plants",
+   "umbrella": "",
+   "text": "The jungles of Lustria are home to a wide variety of carnivorous plants. They appear in a few of the scenarios, and may be included in any game all the players agree to.\n\nCarnivorous Plant: M 0, WS 2, BS 0, S 4, T 2, W 2, I 1, A 2, Ld 7.\n\nThe plant attacks any model that stops within a 3 inch radius of it, in the combat phase as normal, and fighting it is handled much as two warriors would do battle. It always strikes first in the first round of combat unless the model it is fighting has been outfitted with a pike, in which case the pikeman goes first.\n\nIf the plant suffers a wound in any round, roll against its Leadership. If the check is failed the plant attempts to defend itself: its Toughness and Leadership go up by 1 and its attacks go down by 1 until it is left alone or wins a round of combat.\n\nIf a model is put out of action by a plant the player rolls for casualties as normal, except that both Heroes and Henchmen roll a single D6: on a 1 the model was eaten by the plant and is removed from the campaign. Any model that kills a carnivorous plant is awarded D6 gold crowns, from the loot of the plant's past victims."
+  },
+  {
+   "title": "Hazards",
+   "umbrella": "",
+   "text": "Before the start of the game roll a D6 for the number of hazards plaguing the area. Once play begins, each player rolls a D6 for each of his Heroes and each of his henchmen groups. The roll is made before any movement occurs, so it leaves out any model unable to move. On a 1 the model or models have stumbled into harm's way: roll 3D6 on the Hazards chart."
+  },
+  {
+   "title": "Scenarios",
+   "umbrella": "Scenarios",
+   "text": "Use the two-player and multi-player scenario tables in place of the one on page 126 of the rulebook, rolling 2D6 on whichever suits the game. As usual, the winner of a scenario may roll one extra dice in the exploration phase.\n\nAnother scenario worth trying is Kidnapped from White Dwarf 234, with a Lizardmen player taking the role of the Possessed in sacrificing a captive. If the Lizardmen manage to sacrifice the captive they earn 3D3 Experience to share among their Heroes."
+  }
+ ],
+ "charts": [
+  {
+   "title": "Two-player scenarios",
+   "description": "Rolled before a battle between two warbands, in place of the table on page 126 of the rulebook.",
+   "dice": "2D6",
+   "note": "The book gives result 12 to the warband with the lower rating, as result 2 does.",
+   "umbrella": "Scenarios",
+   "rows": [
+    {
+     "result": "2",
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating picks the scenario."
+    },
+    {
+     "result": "3",
+     "name": "The Hunters become the hunted",
+     "text": ""
+    },
+    {
+     "result": "4",
+     "name": "The Secrets of Beujuntae",
+     "text": ""
+    },
+    {
+     "result": "5",
+     "name": "Skirmish",
+     "text": ""
+    },
+    {
+     "result": "6",
+     "name": "Jungle Skirmish",
+     "text": ""
+    },
+    {
+     "result": "7",
+     "name": "Dem's My Gubbinz!",
+     "text": ""
+    },
+    {
+     "result": "8",
+     "name": "Island Hopping",
+     "text": ""
+    },
+    {
+     "result": "9",
+     "name": "Defend the Find",
+     "text": ""
+    },
+    {
+     "result": "10",
+     "name": "Hidden Treasure",
+     "text": ""
+    },
+    {
+     "result": "11",
+     "name": "Chance Encounter",
+     "text": ""
+    },
+    {
+     "result": "12",
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating picks the scenario."
+    }
+   ]
+  },
+  {
+   "title": "Multi-player scenarios",
+   "description": "Rolled before a battle between more than two warbands.",
+   "dice": "2D6",
+   "note": "The book gives result 12 to the warband with the lower rating, as result 2 does.",
+   "umbrella": "Scenarios",
+   "rows": [
+    {
+     "result": "2",
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating picks the scenario."
+    },
+    {
+     "result": "3",
+     "name": "The Hunters become the hunted",
+     "text": ""
+    },
+    {
+     "result": "4",
+     "name": "The Secrets of Beujuntae",
+     "text": ""
+    },
+    {
+     "result": "5",
+     "name": "Lost Temple of Slann",
+     "text": ""
+    },
+    {
+     "result": "6",
+     "name": "Jungle Skirmish",
+     "text": ""
+    },
+    {
+     "result": "7",
+     "name": "Treasure Hunt",
+     "text": "White Dwarf 242."
+    },
+    {
+     "result": "8",
+     "name": "Street Brawl",
+     "text": "White Dwarf 242."
+    },
+    {
+     "result": "9",
+     "name": "Island Hopping",
+     "text": ""
+    },
+    {
+     "result": "10",
+     "name": "The Pool",
+     "text": "White Dwarf 242."
+    },
+    {
+     "result": "11",
+     "name": "Ambush",
+     "text": "White Dwarf 242."
+    },
+    {
+     "result": "12",
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating picks the scenario."
+    }
+   ]
+  },
+  {
+   "title": "Hazards",
+   "description": "Rolled when a Hero or a henchmen group stumbles into harm's way before moving, as the Hazards rule describes.",
+   "dice": "3D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "3",
+     "name": "Tar pit",
+     "text": "The unfortunate warband member has fallen into a tar pit and will sink until he is submerged completely. Another model must rescue him within D3 turns or he drowns, taking him out of action permanently. A rescuer must pass a Strength test to pull him free."
+    },
+    {
+     "result": "4",
+     "name": "Reptile Swarm",
+     "text": "A deadly nest of vipers or lizards has been woken by the warrior's careless misstep. Roll D6+2 for the number of cold-blooded menaces.\n\nReptile Swarm: M 5, WS 2, BS 0, S 2, T 2, W 1, I 5, A 1, Ld 4."
+    },
+    {
+     "result": "5",
+     "name": "Giant Spider",
+     "text": "Stumbling into the rope-like strands of web has alerted the deadly occupant. The giant arachnid attacks any model within 3 inches of its lair as well as the warrior who disturbed it.\n\nGiant Spider: M 5, WS 3, BS 0, S 4, T 4, W 3, I 1, A 2, Ld 10. Fear. Natural armour save 4+. Venomous: any wound of 5 or 6 is treated as a critical."
+    },
+    {
+     "result": "6",
+     "name": "Coatl",
+     "text": "The warrior has surprised one of Lustria's most enigmatic inhabitants. A Coatl has a snake-like body measuring up to ten feet in length and brightly coloured feathery wings, and the Lizardmen often worship them as a living embodiment of Sotek.\n\nCoatl: M 9, WS 4, BS 0, S 4, T 3, W 3, I 5, A 2, Ld 10. Fear. Venomous: any wound of 5 or 6 is treated as a critical. Flight: as a flying creature it traverses the jungles with ease. Magic Aura: being part magical, it has a natural save of 4+ against hostile magic."
+    },
+    {
+     "result": "7",
+     "name": "Cold Ones",
+     "text": "A dreadful pair of the reptilian beasts have set their bloodthirsty sights on the warriors.\n\nCold One: M 8, WS 3, BS 0, S 4, T 4, W 2, I 1, A 2, Ld 6. Fear. Scaly skin: natural armour save 5+."
+    },
+    {
+     "result": "8",
+     "name": "River Troll",
+     "text": "Attracted by the promise of fresh meat, a loathsome Troll has attacked the hapless warrior. Count the Troll as having charged.\n\nRiver Troll: M 6, WS 3, BS 1, S 5, T 4, W 3, I 1, A 3, Ld 4. Fear. Stupidity. Regeneration: any wound suffered is automatically ignored on a 4+, and only fire based attacks cannot be regenerated. Vomit attack: a single Strength 5 hit, which hits automatically and is used in place of the Troll's other attacks."
+    },
+    {
+     "result": "9",
+     "name": "Quicksand",
+     "text": "The jungle floor is full of surprises, but none as subtle as quicksand. The same rules govern this hazard as the tar pit, except that the model has D6 turns in which to be saved."
+    },
+    {
+     "result": "10",
+     "name": "Giant Constrictor",
+     "text": "Tales of snakes reaching gargantuan proportions have not been exaggerated. This predator attacks any further model within 2 inches of its victim with its constricting coils.\n\nGiant Constrictor: M 6, WS 3, BS 0, S 5, T 4, W 2, I 4, A 2, Ld 5. Fear. Constricting coils: the snake may give up its normal attacks to engulf its prey within its massive coils. The attack is at -1 to hit and gains +1 Strength, and it may wrap up to 3 models one after another. A model held by the snake is unable to move and is at -2 to hit in close combat."
+    },
+    {
+     "result": "11",
+     "name": "Giant Frog",
+     "text": "A most unusual carnivorous predator, the giant frog possesses razor sharp teeth and grows as long as five feet.\n\nGiant Frog: M 7, WS 3, BS 0, S 5, T 4, W 2, I 4, A 2, Ld 5. Fear. Tongue strike: the frog may lash out at any model up to 6 inches away with its tongue, for a single Strength 3 hit."
+    },
+    {
+     "result": "12",
+     "name": "Swamp Flies",
+     "text": "A cloud of Lustria's most common inhabitants has found its mark. The unfortunate warrior is immobilised for one turn and thereafter is at -1 to any roll involving combat, and to Initiative, for the rest of the game."
+    },
+    {
+     "result": "13",
+     "name": "Pygmies",
+     "text": "The diminutive jungle tribesmen have taken a sudden and unhealthy interest in the warriors. Roll D3+1 for the number of them.\n\nPygmy: M 4, WS 2, BS 3, S 2, T 2, W 1, I 4, A 1, Ld 8. Blowpipe, spear, dagger and shield."
+    },
+    {
+     "result": "14",
+     "name": "Salamander Nest",
+     "text": "The warband has regrettably disturbed the nest of a giant salamander, who sees all models within 8 inches as a potential meal.\n\nGiant Salamander: M 6, WS 3, BS 0, S 4, T 5, W 3, I 4, A 2, Ld 7. Fear. Venom spray: a cone of poison mist up to 6 inches away, hitting all models within 2 inches of the targeted area at Strength 4."
+    },
+    {
+     "result": "15",
+     "name": "Vampire Bats",
+     "text": "A swarm of ravenous bats has set upon a warrior out of nowhere. D6+2 bats attack.\n\nVampire Bat: M 8, WS 2, BS 0, S 2, T 2, W 1, I 6, A 1, Ld 4. Fly. Erratic: their strange pattern of flight makes them a challenging target, so all rolls to hit them are at -1."
+    },
+    {
+     "result": "16",
+     "name": "Sabre-toothed Tiger",
+     "text": "As the warband stalks the jungle, so too does the jungle stalk the warband: the primeval predator has found its prey. Count the tiger as having charged.\n\nSabre-toothed Tiger: M 6, WS 3, BS 1, S 5, T 4, W 3, I 1, A 3, Ld 4. Fear. Ferocious bite: one of the tiger's attacks comes as a flesh rending bite, which adds +1 to the injury roll and allows no armour save."
+    },
+    {
+     "result": "17",
+     "name": "Amazon Scouts",
+     "text": "Lithe, athletic and amazingly beautiful, Amazons do not take kindly to intruders, especially male ones. D3+1 scouts are encountered.\n\nAmazon Scout: M 4, WS 4, BS 4, S 3, T 3, W 1, I 3, A 1, Ld 7. Spear, dagger, sling or bow, and light armour."
+    },
+    {
+     "result": "18",
+     "name": "Man-eating Plant",
+     "text": "The jungle does indeed come alive, often in the strangest of forms.\n\nCarnivorous Plant: M 0, WS 2, BS 0, S 4, T 2, W 2, I 1, A 2, Ld 7. It fights by the Carnivorous plants rules."
+    }
+   ]
+  }
+ ]
+}
