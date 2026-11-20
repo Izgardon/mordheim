@@ -1,0 +1,924 @@
+{
+ "rules": [
+  {
+   "title": "Exploration procedure",
+   "umbrella": "",
+   "text": "Roll a D6 for each hero and a D3 for each henchman who did not go out of action in your last game. Add one more D6 if you won that game. Roll any extra D6s from skills and equipment.\n\nThen do anything that modifies those rolls, such as adding or subtracting 1 or re-rolling a die.\n\nAdd all of the scores together, then subtract the number of warriors in your warband, the ones who went out of action included. Roll that many D6 to see how many gold crowns you find."
+  },
+  {
+   "title": "Going to a shop",
+   "umbrella": "Trade",
+   "text": "After every battle your warband may go to one shop. A shop is not actually one building but one community or location that sells similar items, and is called a shop for simplification. Your entire warband must go, so there is no splitting your warriors up. Choose one shop available to your warband type, then roll on its hazard charts the number of times it asks for, and your warband has made it to the shop.\n\nWood Elf Village -- 1 Forest Hazard.\nPine Glade -- 2 Forest Hazards.\nYew Glade -- 2 Forest Hazards.\nOrc Camp -- 1 Forest Hazard, 1 Orc Army Hazard.\nOrc Black Market -- 1 Forest Hazard, 3 Orc Army Hazards.\nDwarf Outpost -- 1 Mountain Hazard, 1 Underground Hazard.\nSkaven Armoury -- 1 Underground Hazard.\nClan Skryre Armoury -- 2 Underground Hazards.\nWarlock's Inner Sanctum -- 4 Underground Hazards."
+  },
+  {
+   "title": "Buying equipment",
+   "umbrella": "Trade",
+   "text": "Every shop has a different supply and cost for equipment. Check the shop for what it has and what it costs, then use the normal rules for buying equipment."
+  },
+  {
+   "title": "Recruiting henchmen",
+   "umbrella": "Trade",
+   "text": "Every shop has a different amount of recruits. You may buy as many new recruits as you like. For experienced troops you have to roll the rarity value of the troops you want: roll that many D6 and add the scores together. You may recruit up to that many with one experience each, one with that many experience, or any combination of the two, as long as the experience does not come to more than your score. For troops with 3 experience and a rarity of 2D6, a score of 8 buys 2 of them, 3 x 2 being 6, since you cannot exceed 8 experience in all."
+  },
+  {
+   "title": "Selling equipment",
+   "umbrella": "Trade",
+   "text": "You may sell equipment for half of its cost in the location you are at, even if you spent more on it in another location."
+  },
+  {
+   "title": "Recruiting hired swords and dramatis personae",
+   "umbrella": "Trade",
+   "text": "You may search for up to two hired swords, or one dramatis personae, after every battle. Roll on the appropriate hazard charts to find the character, as you would to reach a shop.\n\nFor a hired sword, take an Initiative test for the warrior in your warband with the highest Initiative; a 6 always fails. On a pass you have found him: pay for him and he will fight for you in your next battle.\n\nFor a dramatis personae, roll a D6. On a 6 you have found the character you were searching for: pay for him and he will fight for you in your next battle."
+  },
+  {
+   "title": "Hazard chart notes",
+   "umbrella": "",
+   "text": "Unless a hazard roll says otherwise, your warband always makes it to a shop once it has rolled for all of its hazards. It gets there even if it loses a mini-battle, a warrior dies, or anything else bad happens. The only thing that keeps a warband from a shop is a hazard that directly says it does not make it.\n\nWhere a hazard says hero, it means one of your heroes. Where it says henchman, it means one member of a henchmen group. Where it says warrior, it means either one of your heroes or a member of a henchmen group.\n\nA mini-battle from a hazard does not shorten the number of battles a warrior has to wait out because of a result on the serious injury chart. Mini-battles are not treated as normal battles except for the core rules and whatever the hazard itself states. Serious injuries are treated as normal. Do not apply the normal experience rules and do not roll for finding gold or artefacts after a mini-battle. Level-ups are issued as normal."
+  }
+ ],
+ "charts": [
+  {
+   "title": "Forest Hazards",
+   "description": "Rolled once for every Forest Hazard a shop or a search for a character calls for.",
+   "dice": "D66",
+   "note": "The Hazard chart notes apply to every result.",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "11",
+     "name": "Goblin Ambush",
+     "text": "A few of your heroes are walking the forest at night when forest goblins jump out of the bushes after their equipment. There are D6 forest goblins, and D3+1 randomly determined heroes are caught. Those heroes may hand over all of their equipment, bar one concealed dagger, or fight.\n\nIf they fight, 2D6 more forest goblins come out of the bushes. Set the heroes up in the middle of a 2 foot square table and surround them with the goblins, each at least 6 inches away and armed with a spear. The goblins take the first turn. Your heroes never take a rout test in this skirmish, but the goblins do.\n\nIf the heroes win they find D6 gold crowns on the bodies. If the goblins win, those heroes take the Robbed serious injury instead of rolling for one. A hero gains no experience for taking a goblin out of action, but gains 1 experience if he does not go out of action during the ordeal.\n\nForest goblin: M 4, WS 2, BS 3, S 3, T 3, W 1, I 2, A 1, Ld 6."
+    },
+    {
+     "result": "12",
+     "name": "Wild Treeman",
+     "text": "All the commotion in the forest upset a treeman, who wandered into the orc army and was wounded by them. He has wandered the forest aimlessly since, and has just met one of your warriors alone.\n\nRandomly determine which hero it was, and put him and the treeman on opposite edges of a 2 foot square battlefield. If the hero is a Wood Elf, a Halfling or a Dryad the treeman goes first, those races not expecting a treeman to hurt or attack them; a hero of any other race takes the first turn.\n\nThe treeman causes fear, has a 5+ save against any attack other than a fire-based one, takes double damage from fire and moves through forest with no penalty. His giant arms count as clubs. A hero who wins the combat gains 1 experience, unless he is a Wood Elf, a Halfling or a Dryad, being too ashamed. If he loses, roll a serious injury as normal.\n\nTreeman: M 3, WS 6, BS 0, S 6, T 6, W 4, I 1, A 3, Ld 9."
+    },
+    {
+     "result": "13",
+     "name": "Falling Tree",
+     "text": "As the warband walks down a forest path a tree falls on one of the warriors. Randomly determine which, and take an Initiative test; a roll of 6 always fails. On a pass he nimbly dodges the tree. On a fail it falls on him and he takes a serious injury."
+    },
+    {
+     "result": "14",
+     "name": "Traps",
+     "text": "The warband finds itself caught in a wide variety of traps, most likely left by a waywatcher in some long forgotten battle. Take an Initiative test for each of your warriors; a roll of 6 always fails. Those who pass are safe. Each one who fails was caught in a trap and suffers D3 Strength 4 hits. Knocked down and stunned have no effect on a warrior who is not in a battle."
+    },
+    {
+     "result": "15",
+     "name": "Spider's Web",
+     "text": "One of your warriors has been caught in a spider's web while on his own. Randomly determine which, and take a Strength test; a roll of 6 always fails. On a pass he breaks free and makes it back to camp safely. On a fail the spider comes back before he has a chance to free himself, and he takes a serious injury before he barely manages to get back to camp."
+    },
+    {
+     "result": "16",
+     "name": "Uneventful Trip",
+     "text": "Your warriors come across nothing very eventful on this part of the trip."
+    },
+    {
+     "result": "21",
+     "name": "River Troll",
+     "text": "As the warband fords a river, a long, slimy arm darts out of the water and grabs one of the warriors. Randomly determine which, and take a Toughness test to see whether he can withstand his time under water; a roll of 6 always fails. On a pass he holds his breath long enough to fight his way free. On a fail he is exhausted and must miss the next battle while he recovers. An Undead warrior does not have to breathe and takes no Toughness test, but is slower than the others, so he takes an Initiative test instead."
+    },
+    {
+     "result": "22",
+     "name": "Wandering Necromancer",
+     "text": "A cloaked necromancer attacks the warband in a dense part of the forest, hoping to add to his zombies. Set up D3 of your warriors on one side of a 3 foot square table, and the necromancer, D6 zombies and D6 skeletons on the other. D3 more of your warriors come on from your starting side each turn.\n\nThe necromancer is armed with a staff and has one randomly determined necromancy spell. Each skeleton is armed with an axe, a shield and light armour. The skeletons and zombies cause fear, may not run, are immune to psychology and poison and feel no pain. A warrior gains no experience for taking a skeleton or a zombie out of action, but gains 1 experience for taking the necromancer out of action and 1 for not going out of action during the battle.\n\nNecromancer: M 4, WS 2, BS 2, S 3, T 3, W 1, I 3, A 1, Ld 8.\nSkeleton: M 4, WS 2, BS 2, S 3, T 3, W 1, I 2, A 1, Ld 5.\nZombie: M 4, WS 2, BS 0, S 3, T 3, W 1, I 1, A 1, Ld 5."
+    },
+    {
+     "result": "23",
+     "name": "The Wrong Path",
+     "text": "After several days of wandering, the leader of your warband declares that they must have taken the wrong path somewhere. Roll two more times on this chart."
+    },
+    {
+     "result": "24",
+     "name": "Sick",
+     "text": "A day or two after drinking from a questionable spring, some of your warriors begin to get sick. D3 of your heroes, determined randomly, are too sick to buy equipment at the shop you were headed for. A warrior who is immune to poison is immune to the disease as well."
+    },
+    {
+     "result": "25",
+     "name": "Uneventful Trip",
+     "text": "Your warriors come across nothing very eventful on this part of the trip."
+    },
+    {
+     "result": "26",
+     "name": "Wood Elf Camp",
+     "text": "In a clearing the warband sees a camp of wood elves dancing around the fire over a good meal. Wood Elves and Halflings may join the festivities. Savage Orcs, Undead, Beastmen and Skaven may raid the camp. Any warband may just pass by.\n\nA warband that stays pays 2D6 gold crowns and will not go to a shop, and all of its heroes gain 1 experience after listening to tales by the fire, eating a hefty meal and dancing around for several days.\n\nA warband that passes by: treat this as an Uneventful Trip.\n\nA warband that raids the camp finds 5D6 gold crowns worth of loot once the peaceful elves are scared off. News spreads quickly, however, and in the next battle the raiders fight Wood Elves every warrior in the Wood Elf warband will hate everyone in the raiding warband."
+    },
+    {
+     "result": "31",
+     "name": "Trapped Child",
+     "text": "Exploring the woods around camp alone, one of your heroes finds a small Wood Elf child trapped in a pit. Determine which hero randomly. As he goes down to the child -- to help it, for a Wood Elf, a Dryad, a Halfling, a Human or a Dwarf, or to kill it, for an Orc, Undead, a Beastman or a Skaven -- he realises too late that it is a trap set by a necromancer. D3 zombies spring out of the ground and attack him. Put them in base contact with the hero and fight: the zombies take the first turn, but nobody counts as charging.\n\nThe zombies cause fear, may not run, are immune to psychology and poison and feel no pain. The hero gains no experience for taking an individual zombie out of action, but gains 1 experience for taking all of them out of action. If the zombies win, the hero dies, and the warband might see him some time as a zombie. If the hero wins, the necromancer runs away and he can do what he came to do with the trapped child.\n\nZombie: M 4, WS 2, BS 0, S 3, T 3, W 1, I 1, A 1, Ld 5."
+    },
+    {
+     "result": "32",
+     "name": "Waywatcher Ambush",
+     "text": "As one of your heroes scouts ahead of the rest, arrows fly without warning from a nearby tree into his flesh. One randomly determined hero takes D6 Strength 3 hits with a -1 armour save. Knocked down and stunned have no effect here."
+    },
+    {
+     "result": "33",
+     "name": "Wild Cats",
+     "text": "The warband comes across a pack of hungry wild cats in desperate need of food. Set your warriors up on one side of a 4 foot square table and 2D6 wild cats at the other end. The cats take the first turn. They are animals, but they can climb trees. A warrior who takes an individual cat out of action gains no experience, but one who does not go out of action gains 1 experience.\n\nWild cat: M 6, WS 4, BS 0, S 4, T 3, W 1, I 4, A 1, Ld 5."
+    },
+    {
+     "result": "34",
+     "name": "Giant Boulder",
+     "text": "Walking down their normal path, the warband comes across a gigantic boulder in the way, and the whole warband has to work together to move it. Take a Strength test for every warrior. If at least half of the models pass, the boulder has been moved and you go on to your shop as normal. If fewer than half pass, it is too huge and you must take an unfamiliar path: roll two more times on this chart."
+    },
+    {
+     "result": "35",
+     "name": "Uneventful Trip",
+     "text": "Your warriors come across nothing very eventful on this part of the trip."
+    },
+    {
+     "result": "36",
+     "name": "Dead Goblin",
+     "text": "One of your warriors trips on the corpse of a dead goblin, littered with arrows. You find 3D6 gold crowns on it."
+    },
+    {
+     "result": "41",
+     "name": "Skaven Tunnel",
+     "text": "As the warband walks along, one of your heroes falls through the ground into a tunnel being dug out by skaven slaves, who quickly come to their senses and attack him. Randomly determine which hero falls and place him in the middle of a 2 foot square table, with D6 skaven slaves surrounding him, each at the table edge. They take the first turn. The hero gains no experience for taking an individual slave out of action, but gains 1 experience if he wins. If the skaven win, he suffers 2 serious injuries before they have to get back to work, after which he escapes, assuming he is still alive. Each slave is armed with a pick, which counts as an axe.\n\nSkaven slave: M 5, WS 2, BS 2, S 3, T 3, W 1, I 4, A 1, Ld 4."
+    },
+    {
+     "result": "42",
+     "name": "Beastman Shrine",
+     "text": "The warband spots some beastmen praising the gods of Chaos at one of their shrines. You may leave them alone or fight them.\n\nIf you leave them alone, roll a D6. On a 1 they catch up to you and fight you anyway: treat it as though you had stayed and fought, but they take the first turn. Any other roll means you got away safely.\n\nIf you stay and fight, set your warriors up on one edge of a 4 foot square table with D6 gors and D6 ungors on the other. Your warband takes the first turn unless you tried to get away and they caught you. A gor is armed with an axe and a shield and wears light armour; an ungor is armed with one spear. Your heroes gain 1 experience for taking a gor out of action, and anyone who did not go out of action gains 1 experience at the end of the battle. Whoever routs first loses. A Beastmen warband that wins may stay and worship at the shrine, and its leader gains 1 more experience.\n\nGor: M 4, WS 4, BS 3, S 3, T 4, W 2, I 3, A 1, Ld 7.\nUngor: M 4, WS 3, BS 2, S 3, T 4, W 1, I 3, A 1, Ld 6."
+    },
+    {
+     "result": "43",
+     "name": "War Hawk Nest",
+     "text": "Marching through the forest, one of your warriors notices a nest in one of the trees, and one of your heroes recognises it as a War Hawk nest and decides to climb for it. Determine which hero randomly and take an Initiative test; a roll of 6 always fails. On a pass he reaches the top of the tree and gets a War Hawk egg. On a fail he cannot get up there before the rest of the warband gets bored, and has to come down.\n\nWood Elves can raise the baby War Hawk: roll a D6 after every battle, and on a 6 it is ready for battle, a free War Hawk the warband may sell or use. Dryads, Halflings, Humans, Undead and Dwarves will just sell the egg, and gain 5D6 gold crowns. Orcs, Beastmen and Skaven will eat the War Hawk inside the egg: after the next battle they do not have to subtract dice for the members of their warband on their income roll.\n\nWhile the hero is at the nest the parent War Hawks might return. Roll a D6: on a 1-3 they come back in time to find their egg being stolen and attack the thief, and that hero takes a serious injury."
+    },
+    {
+     "result": "44",
+     "name": "Lost Tileans",
+     "text": "Some Tileans who have got horribly lost meet up with the warband and beg for help, whatever race you are. Right before the warband is about to help, hurt or steal from them, one pulls a pistol from his belt and shoots your leader. He takes a serious injury unless he passes a Toughness test; a roll of 6 always fails."
+    },
+    {
+     "result": "45",
+     "name": "Uneventful Trip",
+     "text": "Your warriors come across nothing very eventful on this part of the trip."
+    },
+    {
+     "result": "46",
+     "name": "Injured Elven Steed",
+     "text": "One of your heroes finds an injured Elven Steed, one of the few surviving ones in the forest, left for dead under a tree.\n\nA Wood Elf, Dryad, Halfling, Human or Dwarf warband will try to recover it. It takes D3 battles before it is fully recovered, and it might die before then: roll a D6 after every battle before it recovers, and on a 1 it has suddenly died. If it survives until it is fully recovered it may then be used in battle by Wood Elves, or sold for 60 gold crowns by any warband.\n\nOrcs, Beastmen and Skaven will eat the Steed: after the next battle they do not have to subtract dice for the members of their warband on their income roll. Undead will kill the horse and leave it there for the carrion."
+    },
+    {
+     "result": "51",
+     "name": "Imperial Noble",
+     "text": "An Imperial Noble who wandered into the forest in search of treasure and to make a name for himself has taken offence at something one of your heroes said, and challenges him to a duel. Randomly determine which hero insulted the noble. He can accept the challenge and fight, or decline and insult the noble further.\n\nIf he accepts, take a Weapon Skill test; a roll of 6 always fails. On a pass he has beaten the noble: roll a further D6, and on a 6 he killed him and gains a free sword, buckler and pistol and 3D6 gold crowns. On a fail he lost to the noble and suffers a serious injury.\n\nIf he declines, the noble is so insulted that he shoots the hero with his pistol as he walks off. Take a Toughness test; a roll of 6 always fails. On a pass he is unharmed and goes on with the rest of the warband. On a fail he takes a serious injury."
+    },
+    {
+     "result": "52",
+     "name": "Little Thief",
+     "text": "Walking through the forest, the leader of your warband suddenly feels his gold pouch get lighter, and turns just in time to see a short, fat figure run off into the bushes. The warband loses 5D6 gold crowns, or all of its gold crowns if it does not have that much."
+    },
+    {
+     "result": "53",
+     "name": "Night Visitors",
+     "text": "During the night your warriors hear strange sounds coming from the forest and start to panic. Your leader tries to assure them that the sounds are nothing and that they should stand their ground. Take a Leadership test for your leader.\n\nIf he fails, the warband turns tail and runs, abandoning the camp to the mysterious noise, and gets back to find 10D6 gold crowns missing -- all of its gold crowns, if it did not have that many. If he passes, the warband stays, only to find that the noise was a few goblins trying to make some easy money; the warband chases them off and your leader gains 1 experience.\n\nUndead never have to take this test, as they know no fear, but their leader does not gain the experience either."
+    },
+    {
+     "result": "54",
+     "name": "Dwarf Lumberjacks",
+     "text": "One of your heroes spots some dwarves cutting down trees and reports it to the leader. You may choose to go on or to fight them; Wood Elves and Dryads must fight. A warband that wishes to go on treats this result as an Uneventful Trip.\n\nOtherwise place your warband at the edge of a 4 foot square table and 3D3 dwarves at the other edge. Your warband takes the first turn, catching the dwarves by surprise. Each dwarf is armed with a double-handed axe used for chopping down trees and wears light armour. A hero gains no experience for taking an individual dwarf out of action, but a warrior who does not go out of action gains 1 experience. Whoever routs first loses. The leader of a Wood Elf or Dryad warband gains 1 more experience for defeating the dwarves. If your warband wins, you gain D6 gold crowns for every dwarf you took out of action.\n\nDwarf: M 3, WS 4, BS 3, S 3, T 4, W 1, I 2, A 1, Ld 9."
+    },
+    {
+     "result": "55",
+     "name": "Uneventful Trip",
+     "text": "After the next battle they do not have to subtract dice for the members of their warband on their income roll."
+    },
+    {
+     "result": "56",
+     "name": "Secret Path",
+     "text": "One of the warriors in your warband comes across a secret path. It is a shortcut, and your leader quickly jots down its location. From now on, whenever you have to roll two or more times on the Forest Hazards chart, you only have to roll one less time than you normally would. This is not cumulative and has no effect if it is rolled more than once."
+    },
+    {
+     "result": "61",
+     "name": "Snipers",
+     "text": "Walking down a forest path, your warband is suddenly littered with arrows from the trees. A Wardancer, Waywatcher, Dryad, Brettonian or Beastmaster warband rolls a D6: on a 4-6, or a 2-6 for a Waywatcher warband, the waywatchers sniping at the warband decide that it is good and do not fire. Otherwise 3D6 arrows hit your troops, randomly determining who each arrow hits. The hits are at Strength 3 with a -1 armour save. Knocked down and stunned have no effect here."
+    },
+    {
+     "result": "62",
+     "name": "Druid",
+     "text": "A lone Druid stumbles across one of your heroes as he wanders through the forest. Unless yours is a Dryad warband, one of your heroes, determined randomly, will miss D3 games trapped in a wooden prison made by the Druid. In a Dryad warband one of your heroes, determined randomly, will be at +1 Strength next battle, even if this takes him over his maximum characteristic."
+    },
+    {
+     "result": "63",
+     "name": "Harpy Swarm",
+     "text": "Walking through a clearing in the forest, your warband is attacked by harpies looking for a quick meal. D6 harpies attack. Set your warband up in the middle of a 2 foot square table and put the harpies in base contact with the troops of the lowest Strength first. They try to attack models one to one, but are only ever set up in base contact with the models of the lowest Strength. The harpies count as charging on the first turn. They have no weapons, but do not need them to fight, and they fly. Every harpy put out of action gives the hero who did it 1 experience.\n\nHarpy: M 4, WS 3, BS 0, S 4, T 4, W 1, I 2, A 2, Ld 6."
+    },
+    {
+     "result": "64",
+     "name": "Uneventful Trip",
+     "text": "After the next battle they do not have to subtract dice for the members of their warband on their income roll."
+    },
+    {
+     "result": "65",
+     "name": "Dead Waywatcher",
+     "text": "One of your heroes comes across a dead waywatcher who was killed in a battle. The body was already looted, but the hero manages to find something hidden on it.",
+     "chart": {
+      "description": "What the hero finds.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "Long Bow",
+        "text": ""
+       },
+       {
+        "result": "2",
+        "name": "Elf Bow",
+        "text": ""
+       },
+       {
+        "result": "3",
+        "name": "Elven Cloak",
+        "text": ""
+       },
+       {
+        "result": "4",
+        "name": "Elven Boots",
+        "text": ""
+       },
+       {
+        "result": "5",
+        "name": "Healing Potion",
+        "text": ""
+       },
+       {
+        "result": "6",
+        "name": "An artefact",
+        "text": ""
+       }
+      ]
+     }
+    },
+    {
+     "result": "66",
+     "name": "Battle Scene",
+     "text": "Your warband comes across a battle scene between some orcs and some wood elves. The battle is long since over and the area is littered with bodies. After hours of searching the warband manages to find what it can. Roll a D6 for each item except the ones marked Auto; the number is what you need to find it.",
+     "chart": {
+      "description": "What the warband finds.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "Auto",
+        "name": "5D6 gold crowns",
+        "text": ""
+       },
+       {
+        "result": "Auto",
+        "name": "D6 Swords",
+        "text": ""
+       },
+       {
+        "result": "3+",
+        "name": "D6 Axes",
+        "text": ""
+       },
+       {
+        "result": "4+",
+        "name": "D3 Long Bows",
+        "text": ""
+       },
+       {
+        "result": "4+",
+        "name": "D6 Short Bows",
+        "text": ""
+       },
+       {
+        "result": "4+",
+        "name": "D6 Spears",
+        "text": ""
+       },
+       {
+        "result": "5+",
+        "name": "D3 Suits of Light Armour",
+        "text": ""
+       },
+       {
+        "result": "5+",
+        "name": "",
+        "text": "Roll a D6: 1-2 Elven Cloak · 3-4 Elven Boots · 5-6 Healing Potion."
+       },
+       {
+        "result": "5+",
+        "name": "An artefact",
+        "text": ""
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "title": "Orc Army Hazards",
+   "description": "Rolled once for every Orc Army Hazard a shop or a search for a character calls for.",
+   "dice": "D66",
+   "note": "The Hazard chart notes apply to every result.",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "11",
+     "name": "Angry Giant",
+     "text": "Walking along the tents of Razgul's army, one of your heroes accidentally angers a giant. Randomly determine which hero made the giant mad and roll a D3: he must pass that many Toughness tests, and a roll of 6 always fails. He takes a serious injury for every test he fails. Re-roll Bitter Enmity, Captured, Sold to the Pits and Survives Against the Odds."
+    },
+    {
+     "result": "12",
+     "name": "Sick Trolls",
+     "text": "One of your henchmen groups comes across trolls who ate a few too many goblins the night before and are now feeling sick. The trolls erupt in vomit, and most of it heads the group's way. Randomly determine which group is being vomited on and take an Initiative test for it; a roll of 6 always fails. On a pass they are lucky enough to avoid most of it. On a fail all of their weapons and armour melts away in the corrosive goo."
+    },
+    {
+     "result": "13",
+     "name": "Goblin Fanatic",
+     "text": "Strolling through a very goblin-dense part of the army, a Night Goblin Fanatic bursts out of the crowd, having had too much fungus brew, and smashes one of your heroes with his steel ball. Randomly determine which hero was hit: he takes a Strength 5 hit with no armour save possible, which causes D6 wounds. Knocked down and stunned have no effect when received outside a game."
+    },
+    {
+     "result": "14",
+     "name": "Unfortunate Shaman",
+     "text": "As the warband passes a straw hut, a shaman trying to practise some of his spells miscasts and explodes. Each of your warriors takes a Strength 4 hit. Knocked down and stunned have no effect when received outside a game."
+    },
+    {
+     "result": "15",
+     "name": "Ogre Posse",
+     "text": "A group of ogres who think they own the army decide they do not like the looks of your warband. They push it out into the forest and keep a close watch to make sure you do not return. Your warband cannot go on looking for the shop it was headed for, although it can start looking for another shop, as long as you do not have to roll on the Orc Army Hazards chart to find that one."
+    },
+    {
+     "result": "16",
+     "name": "Uneventful Trip",
+     "text": "Other than a few scraps with some goblins, the trip is pretty much uneventful."
+    },
+    {
+     "result": "21",
+     "name": "Loose Wolves",
+     "text": "Some goblins have lost control of their giant wolves, which are now rampaging through the army, only to come across your warband. Set your warband up on one side of a 4 foot square table and place 2D6 giant wolves on the other. The wolves take the first turn, and the warband that does not rout wins. A warrior who takes out an individual wolf gains no experience, but a hero or a henchmen group that does not go out of action gains 1 experience.\n\nGiant wolf: M 9, WS 3, BS 0, S 3, T 3, W 1, I 3, A 1, Ld 3."
+    },
+    {
+     "result": "22",
+     "name": "Prank",
+     "text": "While one of your heroes is out on his own, a few Night Goblin Netters get the idea that it would be funny to club him: catch him in a net, then beat him over the head, repeatedly, with a big club. The perfect joke. Randomly determine which hero is attacked and take an Initiative test; a roll of 6 always fails. On a pass he escapes the net and returns to the warband. On a fail the goblins have caught him: take a Toughness test, where a roll of 6 always fails. On a fail the clubber got him in the head, and he misses the next D3 games while he is unconscious and struggles to get free of the net. On a pass the gobbo did not get him very hard and he only has to break free, missing one game."
+    },
+    {
+     "result": "23",
+     "name": "Bossy Black Orc",
+     "text": "A big Black Orc boss mistakes one of your henchmen groups for part of the army. Randomly determine which group is caught: it has no choice but to obey his commands and do some training to strengthen its skills. That group misses D3 games but gains that many experience points."
+    },
+    {
+     "result": "24",
+     "name": "Snotling Mob",
+     "text": "As one of your heroes pushes around a weedy little goblin, as he usually does when he meets one alone, a huge mob of snotlings charges him: they obviously look up to that particular goblin and will not let your hero push him around. Randomly determine which hero is attacked and place him in the middle of a 2 foot square table, then put 3D6 snotlings in base contact with him, or as close as they will fit. The snotlings take the first turn and count as charging. Whichever side takes all of the other side's models out of action first wins, and neither side will rout. The hero gains no experience for taking an individual snotling out of action, but gains 2 experience points if he does not go out of action.\n\nSnotling: M 4, WS 1, BS 1, S 1, T 1, W 1, I 3, A 1, Ld 4."
+    },
+    {
+     "result": "25",
+     "name": "Uneventful Trip",
+     "text": "Other than stepping on a few snotlings, this trip was pretty uneventful."
+    },
+    {
+     "result": "26",
+     "name": "Da Trezure Map",
+     "text": "One of your heroes finds a scrap of paper with the words 'Da Trezure Map' written across the top and a map of a nearby area drawn on it. Randomly determine which hero finds the map: he can follow it or go on to the shop. Going on counts as an Uneventful Trip. If he follows the map he cannot buy items at the shop: roll a D6. On a 1-2 the map was a phony, and the hero hears some laughter as he looks puzzled at the spot where the trezure should be. On a 3-5 he finds 2D6 gold crowns. On a 6 he finds an artefact buried underneath a tree."
+    },
+    {
+     "result": "31",
+     "name": "Chariot Race",
+     "text": "As the warband makes its way through the legions of orcs, two chariots crash through the crowd right into it. D6 random members must pass an Initiative test to dodge them. One who passes avoids the scythed wheels. One who fails is hit by the spinning blades and takes a serious injury."
+    },
+    {
+     "result": "32",
+     "name": "Da Challenge",
+     "text": "One of your heroes has offended an orc, and the orc challenges him. Randomly determine which hero insulted the orc: he may accept the challenge or be considered a coward through the entire army. If he accepts, take a Strength test; a roll of 6 always fails. On a fail he is beaten to a bloody pulp by the orc and takes a serious injury. On a pass he defeats the orc and earns 1 experience. If he declines he may not go to the shop, the entire army soon hearing what a weedy grot he is, and you roll on the Forest Hazards chart just for him, since he is forced to fend for himself."
+    },
+    {
+     "result": "33",
+     "name": "Sneaky Guide",
+     "text": "The leader of your warband has noticed a small goblin watching the warband from a distance as it struggles through the dense army. Finally it approaches and asks, in a squeaky little voice, whether it can help you find your way: it knows the army like the back of its hand, and will take you where you want to go for a measly 3D6 gold crowns.\n\nIf you accept, deduct 3D6 gold crowns from your treasury and roll a D6. On a 1-4 the whole thing was a scam and the goblin runs off with your hard earned gold. On a 5-6 it was telling the truth and shows you where you want to go: you do not have to roll on any more hazard charts and you get there safely.\n\nIf you decline, take an Initiative test for your leader; a roll of 6 always fails. On a pass you go on your way and treat this as an Uneventful Trip. On a fail the goblin steals 5D6 gold crowns from you anyway, or all of your gold crowns if you do not have that many."
+    },
+    {
+     "result": "34",
+     "name": "Civil War",
+     "text": "Two large regiments of orcs each seem to think the other has insulted it, which has caused a huge skirmish between them and drawn a huge crowd of viewers. Your warband, wanting no part in this chaos, has decided to avoid the whole thing, but that takes a large detour. Roll two more times on this chart."
+    },
+    {
+     "result": "35",
+     "name": "Uneventful Trip",
+     "text": "Other than occasionally having to fight off an attempting thief, this trip was pretty uneventful."
+    },
+    {
+     "result": "36",
+     "name": "Big Buddy",
+     "text": "A large ogre has taken a liking to your warband and agrees to help it get through the lawless army. You automatically make it to the shop without further rolls on the Orc Army Hazards chart. In addition, every time you need to roll on that chart to get to a shop, roll a D6: on a 5-6 you meet up with him and have to roll one less time on the chart, and on a 1-4 you do not meet up with your ogre friend and roll as normal. This bonus is not cumulative, so if you roll this result again treat it as an Uneventful Trip."
+    },
+    {
+     "result": "41",
+     "name": "I fink itz workin'",
+     "text": "Some orcs decided to test out a recently repaired rock lobber, right on your troops, and one of your warriors takes a direct hit from the stone. Randomly determine which warrior was hit and take a Toughness test; a roll of 6 always fails. On a pass he takes the hit safely. On a fail he takes a serious injury."
+    },
+    {
+     "result": "42",
+     "name": "Furious Orcs",
+     "text": "On discovering that your warband's leader was cheating while gambling, the orcs he was playing with decide to attack him. They were cheating too, of course, but they seem to have forgotten. D3 of your other heroes and D3 henchmen groups, randomly determined, were with the leader when the orcs attacked. Set up 3D3 orcs on one side of a 4 foot square table, then set up your leader and those who were with him on the opposite side. The orcs take the first turn, and the first side to rout loses. Your models gain no experience for taking an individual orc out of action, but any hero or henchmen group that does not go out of action gains 1 experience. Roll a D6 for each orc to see how he is armed: 1-3 club · 4-5 axe · 6 sword.\n\nOrc: M 4, WS 3, BS 3, S 3, T 4, W 1, I 2, A 1, Ld 7."
+    },
+    {
+     "result": "43",
+     "name": "Face Eater Squig",
+     "text": "A face eater squig has taken a liking to one of your heroes and is showing his preference by chewing on his face. Randomly determine which hero is attacked: he must take a Strength test to get the squig off before it does any damage, and a roll of 6 always fails. On a pass he pulls it off with only minor cuts and scratches. On a fail he is badly hurt and takes a serious injury. Re-roll Multiple Injuries, Leg Wound, Arm Wound, Smashed Leg, Chest Wound, Hand Injury, Robbed, Bitter Enmity, Captured, Sold to the Pits and Survives Against the Odds."
+    },
+    {
+     "result": "44",
+     "name": "Boar Stampede",
+     "text": "A large group of boars has got loose and is now rampaging through the army, and some of them have detoured into your warband. D6 boars hit your warband, randomly determining who each one hits. Each hit is at Strength 4. Knocked down and stunned have no effect when received outside a game."
+    },
+    {
+     "result": "45",
+     "name": "Uneventful Trip",
+     "text": "Other than avoiding a few orc mobs, this trip was pretty uneventful."
+    },
+    {
+     "result": "46",
+     "name": "Forest Goblin Mob",
+     "text": "Your warband finds a mob of forest goblins in a muddle and, on investigating, finds the whole group attacking one of their own. You fight the group off, and the one being attacked thanks you incredibly and decides to pledge his life to you. You get either a Forest Goblin Guide or a Forest Goblin Spider Rider next game for free. After that you must pay normally. A goblin's word is not the most honourable..."
+    },
+    {
+     "result": "51",
+     "name": "Bouncy Squig",
+     "text": "A bouncer squig has got loose from its goblin and is causing havoc throughout the army. It happens to land right in the middle of your warband, bouncing on your warriors' heads. The squig bounces 2D6 times, and for each bounce you randomly determine which warrior is hit. Each hit is at Strength 4. Knocked down and stunned have no effect when received outside a battle."
+    },
+    {
+     "result": "52",
+     "name": "Big Spider",
+     "text": "In the middle of the night, with your warband asleep, a giant spider wanders into camp and decides to take a bite out of one of your heroes. Randomly determine the hero and take a Toughness test; a roll of 6 always fails. On a pass he can take the poison the spider releases through its jaws. On a fail he takes a serious injury from the bite: re-roll Robbed, Bitter Enmity, Captured, Sold to the Pits and Survives Against the Odds.\n\nWhether or not the test is passed, the entire warband hears the bitten warrior scream and starts to panic. Take a Leadership test for your leader. On a pass he manages to control the warband and they do not panic. On a fail the warband scatters throughout the army: roll again on this chart."
+    },
+    {
+     "result": "53",
+     "name": "Brawl",
+     "text": "An ogre just looking for trouble has found your warband. He starts a fight by insulting one of your heroes, and the argument has escalated into a full-blown brawl. Randomly determine which hero is fighting the ogre and take a Strength test. On a fail he has been beaten and takes a serious injury. On a pass he has miraculously defeated the ogre, and finds 2D6 gold crowns on him."
+    },
+    {
+     "result": "54",
+     "name": "Pump Wagon Trainee",
+     "text": "One of your heroes decides to accept a goblin's offer to help train some weedy little snotlings to pump their wagon. How much damage could some weak snotlings do, anyway? Determine which hero randomly and take D3 Strength tests; a roll of 6 always fails. For each test he passes he managed to keep the whirling blades pushed far enough back to avoid serious damage. For each test he fails he could not hold the wheeling blades of death back, and takes a serious injury: re-roll Robbed, Bitter Enmity, Captured, Sold to the Pits and Survives Against the Odds. He gets 3D6 gold crowns for his services, whether or not he is injured."
+    },
+    {
+     "result": "55",
+     "name": "Uneventful Trip",
+     "text": "Other than the bump on the head here and there, this trip was pretty uneventful."
+    },
+    {
+     "result": "56",
+     "name": "Coward Orc",
+     "text": "Your warband's leader gets into an argument with an orc which leads to a challenge, and the big, bad orc he was supposed to be fighting turns out to be nothing more than a big, bad coward, and runs away. Demanding tribute from his boys, they generously give you an item once treasured by the coward orc.",
+     "chart": {
+      "description": "What the boys give you.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "Axe",
+        "text": ""
+       },
+       {
+        "result": "2",
+        "name": "Dwarf Axe",
+        "text": ""
+       },
+       {
+        "result": "3",
+        "name": "Light Armour",
+        "text": ""
+       },
+       {
+        "result": "4",
+        "name": "Crossbow",
+        "text": ""
+       },
+       {
+        "result": "5",
+        "name": "Heavy Armour",
+        "text": ""
+       },
+       {
+        "result": "6",
+        "name": "Gromril Dwarf Axe",
+        "text": ""
+       }
+      ]
+     }
+    },
+    {
+     "result": "61",
+     "name": "Quick Little Gobbo",
+     "text": "One of your heroes catches a goblin running away from a large orc. The goblin had stolen something of the orc's, and he wants it back. Randomly determine the hero, then roll for what was stolen.\n\nThe orc offers you half the cost of the item according to the Orc Camp shop. Your hero can accept the generous offer or bid the orc good day. If he accepts, add half the cost of the item according to the Orc Camp shop and remove the item from your extra equipment. If he refuses, the orc gets mad and attacks him: take a Toughness test, where a roll of 6 always fails. On a pass he withstands the blow and sends the orc running. On a fail he is hurt by the swing and takes a serious injury: re-roll Bitter Enmity, Captured, Sold to the Pits and Survives Against the Odds. He keeps the item even if he was hurt.",
+     "chart": {
+      "description": "What the goblin stole.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "Dagger",
+        "text": ""
+       },
+       {
+        "result": "2",
+        "name": "Club",
+        "text": ""
+       },
+       {
+        "result": "3",
+        "name": "Axe",
+        "text": ""
+       },
+       {
+        "result": "4",
+        "name": "Shield",
+        "text": ""
+       },
+       {
+        "result": "5",
+        "name": "Sword",
+        "text": ""
+       },
+       {
+        "result": "6",
+        "name": "Light Armour",
+        "text": ""
+       }
+      ]
+     }
+    },
+    {
+     "result": "62",
+     "name": "Drunk Orc",
+     "text": "Strolling through the army, one of your heroes stumbles upon an orc passed out drunk, and decides to rob him. Randomly determine the hero, then take an Initiative test; a roll of 6 always fails. On a pass he steals D6 gold crowns and escapes unnoticed. On a fail the orc wakes up, finds your hero red-handed and calls his boys over, demanding 5D6 gold crowns for his trouble, or else.\n\nYour hero may pay up or try to get away. If he pays up, subtract 5D6 gold crowns from your treasury, or all the gold you have if you do not have enough. If he runs away he must avoid hurled rocks, bottles and other projectiles from the angry orcs: take D6 Toughness tests, where a roll of 6 always fails. If he passes all of them he has escaped, and you treat this as an Uneventful Trip. If he fails even one, the orcs knock him out: he takes a serious injury, and it is automatically Robbed."
+    },
+    {
+     "result": "63",
+     "name": "Boom-Boom Stick",
+     "text": "An orc who found a pistol on a dead Tilean has attracted quite an audience, one of your heroes among them. Randomly determine which hero it is. While experimenting with the pistol the orc accidentally shoots him. Take a Toughness test for that hero. On a pass he withstands the shot and walks away with only minor wounds. On a fail he takes a serious injury: re-roll Multiple Injuries, Bitter Enmity, Captured and Survives Against the Odds."
+    },
+    {
+     "result": "64",
+     "name": "Uneventful Trip",
+     "text": "Other than avoiding a few of Razgul's officers, this trip is pretty uneventful."
+    },
+    {
+     "result": "65",
+     "name": "Robbed Shop",
+     "text": "Your warband comes across a shop right as it is being robbed. Among dozens of orcs your warband searches through the scattered items. Roll a D6 for each item except the ones marked Auto; the number is what you need to get it.",
+     "chart": {
+      "description": "What the warband finds.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "Auto",
+        "name": "D6 gold crowns",
+        "text": ""
+       },
+       {
+        "result": "Auto",
+        "name": "Club",
+        "text": ""
+       },
+       {
+        "result": "2+",
+        "name": "Axe",
+        "text": ""
+       },
+       {
+        "result": "3+",
+        "name": "Spear",
+        "text": ""
+       },
+       {
+        "result": "4+",
+        "name": "Light Armour",
+        "text": ""
+       },
+       {
+        "result": "5+",
+        "name": "Sword",
+        "text": ""
+       },
+       {
+        "result": "6+",
+        "name": "Halberd",
+        "text": ""
+       }
+      ]
+     }
+    },
+    {
+     "result": "66",
+     "name": "Ex-Shaman's Hut",
+     "text": "Your warband's leader comes across a shaman's hut in which the shaman accidentally killed himself while practising a spell. After looking through the runes for the better part of an hour, the leader manages to find one item.",
+     "chart": {
+      "description": "What the leader finds.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "Staff",
+        "text": ""
+       },
+       {
+        "result": "2",
+        "name": "Sword",
+        "text": ""
+       },
+       {
+        "result": "3",
+        "name": "Magic War Paint",
+        "text": ""
+       },
+       {
+        "result": "4",
+        "name": "Yew Staff",
+        "text": ""
+       },
+       {
+        "result": "5",
+        "name": "Boar",
+        "text": ""
+       },
+       {
+        "result": "6",
+        "name": "An artefact",
+        "text": ""
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "title": "Underground Hazards",
+   "description": "Rolled once for every Underground Hazard a shop or a search for a character calls for.",
+   "dice": "D66",
+   "note": "The Hazard chart notes apply to every result.",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "11",
+     "name": "Rockfall!",
+     "text": "An earthquake far off -- or perhaps even nearby -- has caused a rockslide in the tunnel your warriors were using, and the falling rocks have smashed into one random henchmen group bringing up the rear. Each member of that group takes a Strength 4 hit as the rocks come crashing down. Knocked down and stunned have no effect when received outside a game."
+    },
+    {
+     "result": "12",
+     "name": "Rat Swarm",
+     "text": "Seconds after a squeaking sound is heard in the distance, a tide of biting, snarling fur comes hurtling into the catacomb your warband occupies. Set your warband up on one short side of a 3 foot by 2 foot table and place 2D6 giant rats on the other side. The rats take the first turn, and the warband that does not rout wins. A warrior who takes out an individual rat gains no experience, but a hero or a henchmen group that does not go out of action gains 1 experience.\n\nGiant rat: M 6, WS 2, BS 0, S 3, T 3, W 1, I 4, A 1, Ld 4."
+    },
+    {
+     "result": "13",
+     "name": "Uneventful Trip",
+     "text": "Other than an irritating dripping noise that always seems to be coming from around the next bend, the trip is totally uneventful, and in fact quite boring."
+    },
+    {
+     "result": "14",
+     "name": "Bats",
+     "text": "Your warband's lanterns must have disturbed a nest of gigantic bats, which launch themselves out of an alcove at a random hero, screeching and scratching frantically. Determine which hero has been attacked and take an Initiative test for him. On a pass he dives for cover before he takes too much damage. On a fail the poisonous fangs of the bats bite deep and he suffers a serious injury: re-roll Robbed, Captured and Sold to the Pits."
+    },
+    {
+     "result": "15",
+     "name": "Fissure",
+     "text": "Your warband comes to a fissure running across the length of the passage it was travelling down. It is too wide to simply step across, so a warrior with a rope has to jump it to make a bridge for everyone else. Choose a hero to make the jump -- henchmen are not getting paid enough to risk it -- and roll a D6 for the distance he manages to leap. On a 4+ he has made it across. Otherwise he falls and smashes into the side of the fissure, taking a Strength 5 hit before his companions haul him up. Whether or not he makes the jump he still manages to embed the piton and its rope deep enough in the rock for the rest of the warband to carry on. Knocked down and stunned have no effect when received outside a game."
+    },
+    {
+     "result": "16",
+     "name": "Something's Following Us...",
+     "text": "A random henchmen group bringing up the rear of the party becomes convinced that they are being followed in the dark by some terrible creature. Take a fear test for that group; the leader's Leadership cannot be used for this test. On a pass they keep their nerve. On a fail they flee blindly off into the dark: roll twice more on this chart and apply the results to the group that fled, a group of screaming adventurers attracting a lot of attention. If one of those rolls requires something to affect a hero, it affects one member of the henchmen group instead."
+    },
+    {
+     "result": "21",
+     "name": "Booby Traps!",
+     "text": "Your unsuspecting warband has wandered into an area of the underground littered with booby traps laid by its former skaven occupants. Before the warriors really know what is happening, massive blades swing down and boulders start to rumble out of hidden passageways towards them. Take an Initiative test for every member of your warband. Each warrior who fails suffers D3 Strength 4 hits. Knocked down and stunned have no effect when received outside a game."
+    },
+    {
+     "result": "22",
+     "name": "Shortcut",
+     "text": "Through a total fluke your warband has discovered a shortcut through the catacombs, and immediately finds its way to the shop it was headed for, whatever Underground Hazard rolls are left. Finding it lets you skip all remaining Underground Hazard rolls; it does not affect rolls on any other chart. On any later trip to the same shop, roll a 6 on a D6 to find the passage again and take one roll fewer on the Underground Hazards chart."
+    },
+    {
+     "result": "23",
+     "name": "Skaven Attack",
+     "text": "Your warband has accidentally wandered into a catacomb being used as a test site by the Warlock Engineers of Clan Skryre, and clanrats attack before you have a chance to react. Place 3D3 clanrats on one edge of a 4 foot square battlefield, then place your warband on the opposite side. The clanrats take the first turn, and the warband that does not rout wins. A warrior who takes out an individual clanrat gains no experience, but a hero or a henchmen group that does not go out of action gains 1 experience. Every clanrat is armed with a sword.\n\nClanrat: M 5, WS 3, BS 3, S 3, T 3, W 1, I 4, A 1, Ld 5."
+    },
+    {
+     "result": "24",
+     "name": "Where did he go?",
+     "text": "Looking about himself, your leader suddenly realises that the hero with the least experience in your warband has disappeared. He was there a minute ago, but now nobody remembers seeing him. After much frantic searching the missing warrior is found huddled behind a rock, looking terrified, and refuses to say anything about what he has seen, no matter how much he is pressed. Take a Leadership test for this warrior. On a pass he soon recovers from his fright and suffers no ill effects. On a fail he suffers the serious injury Nervous Condition."
+    },
+    {
+     "result": "25",
+     "name": "Explosives Test",
+     "text": "A group of dwarf miners deep in the tunnels you are travelling through have decided to test a new explosive, and one of your heroes has strayed too close to the test site. Randomly determine which hero set the charges off and take a Toughness test; a roll of 6 always fails. On a pass he shrugs off the explosion. On a fail he suffers a serious injury: re-roll Robbed, Captured and Sold to the Pits."
+    },
+    {
+     "result": "26",
+     "name": "Uneventful Trip",
+     "text": "Despite banging your head on the low roof too many times to count, and swearing loudly every time, this trip is largely free of mishap."
+    },
+    {
+     "result": "31",
+     "name": "None Shall Pass!",
+     "text": "An ancient dwarf Iron Breaker -- still convinced of his duty to defend the entrances to a keep that no longer exists -- refuses to let your warband pass, and you have no choice but to kill him to continue your journey. Determine randomly which warrior attacks the dwarf and take a Strength test for him. On a pass the warband may continue on its way. On a fail another warrior, chosen by the player rather than randomly determined, may elect to challenge the dwarf, and so on until a hero passes his Strength test or you have no heroes left. Any warrior who fails his Strength test takes a serious injury. If you have no heroes left the dwarf has defended his position and you may not reach the shop this time. You can elect at any stage to stop challenging him, in which case you cannot reach the shop just as if you had failed with all your heroes."
+    },
+    {
+     "result": "32",
+     "name": "Lanterns",
+     "text": "A massive gust of wind rushes down the tunnel your warband is using, and all of your lanterns flicker out. Unable to relight them, you are forced to grope around blindly in the dark. Roll two more times on this chart."
+    },
+    {
+     "result": "33",
+     "name": "Adventurer Stuck in a Pit Trap",
+     "text": "As you make your way down the corridor you hear the cries of a warrior stuck at the bottom of a pit trap. If you elect to save him, make a Strength test with a hero of your choice. On a pass the warrior is rescued and rewards your warband with 3D6 gold crowns. On a fail you are unable to free him and must carry on your way, which counts as an Uneventful Trip."
+    },
+    {
+     "result": "34",
+     "name": "Uneventful Trip",
+     "text": "Apart from a walk through a truly frightening cave littered with bones and smelling of blood, your trip is largely unremarkable."
+    },
+    {
+     "result": "35",
+     "name": "Slave Attack",
+     "text": "One of your heroes, forging ahead of the rest of your warband, runs into a group of skavenslaves excavating a new tunnel. Randomly determine which hero has been attacked and place him in the centre of a 2 foot square table. D6 slaves, armed with clubs, are deployed on any table edge, and they take the first turn. Neither side will rout: their master is forcing the slaves into it, and the hero is waiting for the rest of the warband to arrive. Whichever side takes its opponents out of action wins. The hero gains no experience for taking an individual slave out of action, but gains 1 experience point if he is not taken out.\n\nSkavenslave: M 5, WS 2, BS 2, S 3, T 3, W 1, I 4, A 1, Ld 4."
+    },
+    {
+     "result": "36",
+     "name": "Thieving Snotling",
+     "text": "In the flickering light cast by your lanterns you do not notice the tiny snotling clawing at your coin purse until it is almost too late. Take an Initiative test for your leader, remembering that a 6 always fails. On a pass you manage to swat the tiny creature as it makes a break for it, forcing it to drop some of the money it has stolen: remove 2D6 gold crowns from your stores. On a fail the snotling dodges nimbly out of the way and your warband loses 4D6 gold crowns. If the amount of gold stolen exceeds the amount you have, simply remove all of your gold."
+    },
+    {
+     "result": "41",
+     "name": "Uneventful Trip",
+     "text": "Despite a brawl nearly breaking out amongst your highly strung-out and tired troops, the voyage is largely uneventful."
+    },
+    {
+     "result": "42",
+     "name": "Enraged Cave Squig",
+     "text": "Moments after hearing the evil cackle of night goblins, an enraged cave squig comes bouncing down the corridor in the direction of your warband. No fewer than 2D6 of your warband's members are chomped by the squig as it rushes past, determined randomly, each suffering a single Strength 4 hit. Knocked down and stunned have no effect when received outside a game."
+    },
+    {
+     "result": "43",
+     "name": "Lava Pool",
+     "text": "In the centre of the cavern ahead is a massive lava pool, leaving only a crumbling ledge for your warband to walk around. The extreme heat causes each member of your warband to suffer D3 Strength 2 hits with no armour saves possible; a warrior wearing heavy armour suffers Strength 3 hits instead, the metal covering his skin heated by the pit. On any serious injury roll, re-roll Smashed Leg, Robbed, Bitter Enmity, Captured and Sold to the Pits. Other injuries can be considered the result of collapsing from heat stress, or damage from melted armour and clothing."
+    },
+    {
+     "result": "44",
+     "name": "Gigantic Spider Web",
+     "text": "Stretched across the passageway ahead is a gigantic spider web. As your warriors begin using their weapons to hack their way through, the owner comes hurtling out of a side passage you had not noticed and attacks a random hero. Take a Toughness test for the warrior attacked. On a pass he shrugs off the attacks and poison of the spider until his companions come to his aid. On a fail he immediately takes a serious injury: re-roll Robbed, Captured and Sold to the Pits."
+    },
+    {
+     "result": "45",
+     "name": "Secret Passage",
+     "text": "One of your henchmen, taking practice swings at the passage walls with his club or an appropriate piece of wood, accidentally discovers a secret passage leading to an old, abandoned guardhouse. It looks like its occupants left in a hurry, possibly when an unexpected attack came through the tunnels. Rummaging through what remains, you find 3D6 gold crowns. Add them to your treasury immediately."
+    },
+    {
+     "result": "46",
+     "name": "Guide",
+     "text": "A creature of the appropriate race -- a skaven if yours is a Skaven warband, a dwarf if you are Dwarfs -- comes out of the gloom ahead, announcing that he knows the way through the tunnels and volunteering to lead your warband to safety for a 2D6 gold crown fee. If you pay him, treat this roll as an Uneventful Trip. If you choose not to, he smashes your lanterns and plunges you into darkness: roll two more times on this chart."
+    },
+    {
+     "result": "51",
+     "name": "Poisonous Fungus",
+     "text": "Entering a massive cavern, you notice that every square inch of ground is covered by glowing fungus. After much coaxing you manage to convince your companions that it is perfectly harmless and safe to cross, and a random henchman manages to pass a little too close to one of the more poisonous specimens. Take a Toughness test for that henchman. On a fail the henchman -- just the single warrior, not his whole group -- misses the next two games as he recovers from the effects of the mushroom. Otherwise there is no effect."
+    },
+    {
+     "result": "52",
+     "name": "Pit Trap",
+     "text": "It is the most ancient of cave traps, yet still one of the most effective: a random member of your warband, taking the lead, has triggered a pit trap. That warrior takes a Strength 5 hit from the fall, and the length of time spent underground rescuing him makes further encounters much more likely. Roll once more on this chart. Knocked down and stunned have no effect when received outside a game."
+    },
+    {
+     "result": "53",
+     "name": "Underground Lake",
+     "text": "The caves underground often have small pools and watercourses all over the place. This lake is much larger than the usual pool, and its water is freezing cold. Just as you are about to pass it by, one of your warriors notices something glinting at the bottom. You can choose to send a warrior in to have a look, but the water is extremely cold: make a Toughness test for him. On a fail he misses the next two games. On a pass, roll for what he has found.",
+     "chart": {
+      "description": "What is at the bottom of the lake.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "Axe",
+        "text": ""
+       },
+       {
+        "result": "2",
+        "name": "Sword",
+        "text": ""
+       },
+       {
+        "result": "3",
+        "name": "Shield",
+        "text": ""
+       },
+       {
+        "result": "4",
+        "name": "Light Armour",
+        "text": ""
+       },
+       {
+        "result": "5",
+        "name": "Lucky Charm",
+        "text": ""
+       },
+       {
+        "result": "6",
+        "name": "An artefact",
+        "text": ""
+       }
+      ]
+     }
+    },
+    {
+     "result": "54",
+     "name": "Shaky Old Bridge",
+     "text": "Across a massive chasm ahead -- much too wide for even the most adventurous to jump -- is a shaky old bridge. Its wooden planks are rotten and creak in a worrying fashion, and the rope holding the whole structure together is frayed and weak. Still, you bravely forge across, and all looks well until halfway, when a plank shatters under the feet of one random hero. Take an Initiative test for that hero. On a pass he manages to stop himself from falling through the gap. On a fail he plummets down the chasm and takes a single serious injury, re-rolling Bitter Enmity, Captured and Sold to the Pits; in addition, roll again on this chart for that one warrior, for his efforts to rejoin his warband, if he lives. A result on that roll that would ordinarily affect a henchmen group affects the hero instead."
+    },
+    {
+     "result": "55",
+     "name": "Miners",
+     "text": "Unfortunately for your warband, you have stumbled across a small group of dwarf miners engaged in a top secret project which they have been ordered to protect with their lives. Set up a 2 foot square table to represent the section of cavern you have found them in. Place 2D6 miners along one edge and deploy your warband on the other. The miners take the first turn, and whichever side does not rout wins. Each miner is armed with a pick, which counts as a double-handed axe, and follows all the usual rules for dwarfs. A warrior gains no experience for an individual dwarf taken out of action, but gains 1 experience point if he does not go out of action.\n\nMiner: M 3, WS 4, BS 3, S 3, T 4, W 1, I 2, A 1, Ld 9."
+    },
+    {
+     "result": "56",
+     "name": "Uneventful Trip",
+     "text": "Even though Heinrich -- or his equivalent in your warband -- insists on singing long and loudly, not to mention badly, you do not attract any attention this time."
+    },
+    {
+     "result": "61",
+     "name": "Lost in the Dark",
+     "text": "Trips through the catacombs and tunnels underneath the Old World can be difficult for even the creatures that make the underworld their home. Your warband leader, despite countless years spent underground, has managed to get your warband totally lost. Roll twice more on this chart."
+    },
+    {
+     "result": "62",
+     "name": "Night Goblin Attack",
+     "text": "Just as the caverns are home to skaven and dwarfs, they are also the homes of the night goblins, and any venture through the caves and passageways runs the risk of meeting a band of them, doubtless searching for someone to rough up. Place 2D6 goblins on one edge of a 2 foot square table and deploy your warband on the other side. Three-quarters of the night goblins are armed with spears and the remainder with short bows and daggers. The night goblins take the first turn, and the warband that routs first loses. A warrior gains no experience for taking an individual goblin out of action, but gains 1 experience point if he is still standing at the end of the scrap.\n\nNight goblin: M 4, WS 2, BS 3, S 3, T 3, W 1, I 4, A 1, Ld 5."
+    },
+    {
+     "result": "63",
+     "name": "Long Climb",
+     "text": "Ahead of your warband is a solid wall, going up as far as the eye can see in the gloom. You have no choice but to tie yourselves to the other members of the warband and attempt to climb it. Halfway up, one of your henchmen groups, determined randomly, loses its grip and falls. Take a Strength test for each warrior in the group. If the majority pass, they manage to grab hold again and suffer no damage. If the majority fail, all of the warriors who fell are taken out of action and must make the appropriate injury roll."
+    },
+    {
+     "result": "64",
+     "name": "Skaven Assassin",
+     "text": "Slipping silently through the darkness and shadows, a skaven assassin deftly manipulates the path of your warriors until 3 random heroes and 1 random henchmen group have become separated from the rest of the warband. Then it attacks with all its ferocity and skill. Set up a 2 foot square table and deploy the chosen warriors in the middle of it. Place the assassin in base contact with one randomly chosen hero: this is who it has been sent to kill. The assassin goes first, and the battle continues until it -- or all of your warriors -- have been taken out of action. Rout tests are not necessary. This mini-battle is an exception, in that experience is earned for taking the assassin out of action as well as for still standing at the end. The assassin is armed with two weeping blades, which may be used for parrying and are coated in black lotus, and wears light armour.\n\nSkaven assassin: M 6, WS 4, BS 4, S 4, T 3, W 2, I 5, A 2, Ld 7."
+    },
+    {
+     "result": "65",
+     "name": "Uneventful Trip",
+     "text": "Despite a desperate flight away from a massive herd of cave squigs, this is a totally uneventful trip."
+    },
+    {
+     "result": "66",
+     "name": "Ancient Dwarf Tomb",
+     "text": "Luck is with your warband, which finds its way into a long abandoned dwarf tomb. It is here that the rulers of the ancient stronghold above -- no doubt overrun by skaven or goblins -- were buried, and there is great wealth scattered about the cavern. Roll a D6 for each item except the gold crowns, which you automatically get; the number is the minimum you need to find that piece of equipment.",
+     "chart": {
+      "description": "What the tomb holds.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "Auto",
+        "name": "3D6 gold crowns",
+        "text": ""
+       },
+       {
+        "result": "2+",
+        "name": "D3 Axes",
+        "text": ""
+       },
+       {
+        "result": "3+",
+        "name": "D3 Dwarf Axes",
+        "text": ""
+       },
+       {
+        "result": "4+",
+        "name": "Gromril Hammer",
+        "text": ""
+       },
+       {
+        "result": "5+",
+        "name": "Gromril Armour",
+        "text": ""
+       },
+       {
+        "result": "5+",
+        "name": "An artefact",
+        "text": ""
+       }
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}
