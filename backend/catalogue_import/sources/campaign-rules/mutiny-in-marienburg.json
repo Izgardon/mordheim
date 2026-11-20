@@ -3,42 +3,42 @@
   {
    "title": "Campaign points",
    "text": "Every warband tracks Campaign Points. A warband gets them for the things its plot rewards, and spends nothing to keep them. Mark one box for every Campaign Point, as you would mark experience. The track is 40 boxes long, with a marked box at 5, 10, 15, 20, 25, 35 and 40; reaching a marked box gives the warband that step of its plot's achievement chart. There is no step at 30.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Choosing a plot",
    "text": "Each warband picks one plot at the beginning of the campaign, from those its warband type may follow. Every player may always see what every other player has picked.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Changing plot",
    "text": "A warband may switch to another plot it is allowed to follow between battles. It loses D6 Campaign Points for doing so.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Campaign points once spent or lost",
    "text": "Losing Campaign Points never takes back an achievement the warband has already reached. Lost points must still be earned again before the warband can reach its next achievement.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Winning the campaign",
    "text": "A warband wins as soon as it completes its plot. A plot is complete when every box on its Campaign Point track is filled and whatever its 40-point achievement additionally asks for has been done.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Starting over",
    "text": "A player who disbands his warband loses its progress and achievements along with its warriors. He picks a plot for the new warband as if the campaign were beginning. To make up the lost time, the new warband starts with Campaign Points equal to the lowest total among the other warbands in the campaign, less D3. For example, the others hold 12, 8 and 9 Campaign Points, the lowest of them is 8, and a D3 scores 2, so the new warband starts with 6. The book's wording is the next lowest amount of the other participating warbands, but its own worked example takes the lowest of them.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Encampments",
    "text": "Important buildings around the city are encampments, and a warband that discovers one records it on its roster. There is only ever one encampment of each type. If a second warband discovers an encampment another player already holds, it may contest it in the next game: an unprotected business is contested with the scenario The Sting, and a tower or other fortified encampment with the scenario Stockade. If the challenger wins without the building collapsing he takes possession; if the burning building collapses the encampment is razed.",
-   "umbrella": ""
+   "umbrella": "Encampments"
   },
   {
    "title": "Rebuilding a razed encampment",
    "text": "A razed encampment can be rebuilt for 150 + D6 x 25 gold crowns. The work takes four games, during which at least one Hero and two Henchmen must miss battles. Each further Hero, or each further two Henchmen, who help with the work shorten it by one game, down to a minimum of one game.",
-   "umbrella": ""
+   "umbrella": "Encampments"
   },
   {
    "title": "Warband categories",
@@ -63,22 +63,22 @@
   {
    "title": "Trade deals",
    "text": "A warband that has a Merchant, Fence or Slaver and a Trade Wagon or other suitable vehicle, such as a riverboat, river barge, stage coach, opulent coach or treasure cart, can be visited by Heroes from other warbands.\nStorage. Any of the warband's stored equipment may be stowed in the vehicle, but not gold crowns or treasures. If the vehicle is destroyed everything stored in it is lost, and nothing can be traded until a new vehicle is bought.\nReputation. For every five different rare items stored in the vehicle the leader gets +1 to his rolls for finding rare items. Any rare item brought down to Rare 2 or lower, by the wagon's reputation, the Streetwise skill or anything else, can be bought as a Common item. Rare 12 is the highest rarity that can ever become common.\nTreasure carts. A cart carries up to three human-sized warriors, or the same in cargo. Carts and rowboats hold at most five rare items.\nAbandoned. If the warband fails its Rout test and nobody is crewing the vehicle, it falls to the winning warband if one or more of their warriors is within 1 inch of it. They may steal the contents, keep the vehicle if they are allowed one, or cut a deal with the Merchant using the ransom rules from Captured on the Serious Injuries chart. A warband that captures a Trade Wagon may not search for rare items after that battle, unless every model of the Merchant's warband was taken out of action.\nTrading. A player may send a Hero to the trader instead of searching for rare items. He may buy from the other warband's stored equipment at a price the players agree, including exchanges for items, animals, vehicles and treasures, or sell him any number of items: rare, common, magical artefacts or wyrdstone shards. If no price is agreed the visit is wasted.\nCaptives may only be sold or traded to a Slaver, and only a warband with a Slaver Hired Sword or a Hero with the Slaver skill may receive captured warriors.",
-   "umbrella": ""
+   "umbrella": "Trade"
   },
   {
    "title": "Merchant charters",
    "text": "A warband with a Merchant may spend Campaign Points to charter a ship, which it then keeps for the rest of the campaign unless the ship is sunk. A riverboat costs 1 Campaign Point; a river barge costs D3 Campaign Points.",
-   "umbrella": ""
+   "umbrella": "Trade"
   },
   {
    "title": "Prisoners of war",
    "text": "Dark Elf and Chaos Dwarf warbands never free a captured warrior; they put him to work. After a battle, nominate which captured warriors are sent to search for treasure and wyrdstone. At the end of the exploration procedure roll a D6 for each, and add the results to the exploration dice total before reading the income chart. On a 1 the prisoner breaks free and returns to his own warband as a Hero: treat a Henchman as having rolled The lad's got talent, and the Hero gains D6+2 experience. On a 6 he has been worked to death. Either result removes him from the captor's roster. A captured Hired Sword or Dramatis Personae is treated like any other warrior, or, if the captor could have hired him anyway, he counts as hired with no hire fee, though upkeep is still paid after each battle.",
-   "umbrella": ""
+   "umbrella": "Captives"
   },
   {
    "title": "Stragglers and corpses",
    "text": "A straggler counts as a hostage captured by the warband. Undead warbands may kill a straggler to make a corpse, and a corpse gives a Zombie for no cost. Skaven may sell a straggler to Clan Eshin for 2D6 gold crowns. Followers of Chaos may sacrifice him, and the warband leader gains +1 experience. Dark Elves and Chaos Dwarfs only take prisoners of war. Any other warband may interrogate him: the next time it rolls on the exploration chart it rolls one die more than usual and discards any one die. A warband that is not Chaos, Skaven or Undead may sell corpses it finds to Undead warbands, or deliver them to the Temple of Morr for 1 experience point.",
-   "umbrella": ""
+   "umbrella": "Captives"
   },
   {
    "title": "Uncommon sightings",
@@ -297,7 +297,7 @@
   {
    "title": "Breaking into buildings",
    "text": "Each building that is not a ruin may be visited once per game, and every door and window counts as secured. At the start of his turn, a Hero or Hired Sword in base contact with an entry point of an unvisited building may try to enter.\n\nA warrior with the tools or the skill to pick the lock enters and then rolls once on the burglary chart. A warrior who breaks the door down rolls twice on the burglary chart and takes the worse result.\n\nUnless the building is an inn, whose doors are only locked at night, the doors are locked. The doors of shops, warehouses and hostels are not fortified; the doors of barracks, armouries and temples are. A fortified door can only be broken down by attacking it, and is destroyed when its Wounds reach 0. A fortified door has Toughness 8 and 4 Wounds.",
-   "umbrella": "",
+   "umbrella": "Crime",
    "chart": {
     "title": "Burglary",
     "description": "Rolled when a warrior breaks into a building. Picking the lock is one roll; forcing the door is two rolls, taking the worse result.",
@@ -335,7 +335,7 @@
   {
    "title": "Under arrest",
    "text": "A warrior taken out of action by a Watch Officer who belongs to no warband in the campaign is placed under arrest at once.",
-   "umbrella": "",
+   "umbrella": "Crime",
    "chart": {
     "title": "Conviction",
     "description": "Rolled for a warrior who has been arrested, to see what the courts of Marienburg do with him.",

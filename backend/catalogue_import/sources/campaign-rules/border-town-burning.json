@@ -3,32 +3,32 @@
   {
    "title": "Campaign points",
    "text": "Every warband tracks Campaign Points. Mark a box for every Campaign Point the warband gets, as you would mark experience. Whenever the warband reaches a thick-bordered box, read its plot's achievement chart to see what it has gained. The marked boxes are at 5, 10, 15, 20, 25, 35 and 40; there is no step at 30.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Choosing a plot",
    "text": "Each warband picks one plot at the beginning of the campaign, from those its warband type may follow. Every player may always see what every other player has picked. It does not matter which warbands take part and no player need fight for the side of good: the campaign works with every warband pursuing evil, or every one upholding law and order.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Changing plot",
    "text": "A warband may switch to another plot it is allowed to follow between battles. It loses D6 Campaign Points for doing so.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Campaign points once lost",
    "text": "Losing Campaign Points never takes back an achievement the warband has already reached. Lost points must still be earned again before the warband can reach its next achievement.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Winning the campaign",
    "text": "A warband wins as soon as it completes its plot. A plot is complete when every box on its Campaign Point track is filled and whatever else its 40-point achievement asks for has been done.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Starting over",
    "text": "A player who disbands his warband loses its progress and achievements along with its warriors. He picks a plot for the new warband as if the campaign were beginning. To make up the lost time, the new warband starts with Campaign Points equal to the next lowest amount among the other warbands in the campaign, less D3. The book's own worked example takes the lowest of them instead: the others hold 12, 8 and 9 Campaign Points, a D3 scores 2, and the new warband starts with 8 - 2 = 6.",
-   "umbrella": ""
+   "umbrella": "Campaign points and plots"
   },
   {
    "title": "Mounts",

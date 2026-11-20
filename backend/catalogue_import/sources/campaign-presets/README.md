@@ -53,6 +53,23 @@ lists, each optional; a list left out is a list the campaign has none of.
   so a title must be unique across both lists.
 - `umbrella` is the heading clearly related rules or charts share (William, 19 Nov 2026: "one modal for all shared
   rules"). Blank means it stands alone. Use one only where two or more belong together.
+
+  **Group a new campaign's rules as you write it** (William, 20 Nov 2026), its campaign rules as much as its battle
+  rules: a run of rules on one subject becomes one row the player opens once, so Marienburg's 17 campaign rules read
+  as 9 and Khemri's 9 as 3. These names already recur, so reach for them before inventing one:
+
+  | Umbrella | What it gathers |
+  | --- | --- |
+  | `Campaign points and plots` | the six that open Marienburg and Border Town Burning alike: the points, choosing a plot, changing plot, points once lost, winning the campaign, starting over |
+  | `Captives` | prisoners, stragglers, who takes a captive, a captive joining the crew |
+  | `Trade` / `Cargo` / `Locales` | trade deals and charters; cargo and opening a crate; playing and trading at a locale |
+  | `Encampments` / `Water` | an encampment and rebuilding it; carrying, spending, lacking and finding water |
+  | `Weather` / `Fire` / `Territories` / `Boats` / `Random events` | the battle rules already grouped this way |
+
+  Group only a run the book itself keeps together and a player would read in one go, and **only where the rules are
+  adjacent** in the file: the umbrella's row sits where its first rule sits, so a group reorders the list if it is
+  not already one run. A rule that stands on its own stays loose (Blood pacts, Greater Artefacts, Mounts), and
+  nothing is grouped merely to shorten the list.
 - A chart's `dice` is one of `D3`, `D6`, `2D6`, `3D6`, `D66`, `D100`, or blank for a table with no dice of its own;
   anything else is refused. `result` is what was rolled as the book writes it (`"2"`, `"3-4"`, `"11-15"`).
 - A rule may keep a **small** table inside its `text` (two or three lines). A longer table, or one a player would

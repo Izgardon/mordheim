@@ -13,37 +13,37 @@
   {
    "title": "Water",
    "text": "Water is recorded on the roster exactly as the stash is: each unit the warband carries adds one to its water stash and each unit it uses up takes one away. Each warrior may carry a number of units equal to his Strength, and those Strengths added together are the most the water stash may ever hold. Every warband starts with a full water stash. Models that cannot use equipment, such as dogs and the Possessed, carry neither water nor treasure. Undead warriors need no water, but any living member of their warband does, and Undead warriors who can use weapons may carry water and treasure.",
-   "umbrella": ""
+   "umbrella": "Water"
   },
   {
    "title": "Burden limit",
    "text": "The burden limit is the Strength of every member of the warband added together, and a unit of water and a unit of treasure each take up one point of Strength. After the battle, once injuries and exploration have been rolled, add the warband's water and treasure together: the total may not exceed the burden limit, it may be split between the two in any proportion, and anything over the limit is lost. A member who dies, takes a serious injury or loses Strength to thirst or heat lowers the limit, but water and treasure are pooled after each game, so nothing is lost merely because the man carrying it died. The book's worked example gives a warband of a Strength 4 Hero, eight warriors of Strength 3 and a horse of Strength 3 a burden limit of 34, worked as 4 + 8x3 + 2x3; the horse is counted twice there, and the warband as described comes to 31. At 34 it could carry 12 water and 22 treasure, or 4 water and 30 treasure, and if it held 38 units in all it would discard 4.",
-   "umbrella": ""
+   "umbrella": "Water"
   },
   {
    "title": "Water expenditure",
    "text": "Water is expended before the start of each game. Each model in the warband uses up 1 unit, each large creature or animal uses up 1 more on top of that, and some weather conditions use up more again. A warband may refuse water to some of its members to keep it for the ones that matter, but every Hero except an accompanying mount must be given water before anyone else is. A warband need not hand out all its water and may keep some back for the next battle.",
-   "umbrella": ""
+   "umbrella": "Water"
   },
   {
    "title": "Lack of water",
    "text": "Before every game each member of the warband who was given no water must pass a Toughness test. A warrior who passes has resisted it; one who fails rolls on the dehydration chart.",
-   "umbrella": ""
+   "umbrella": "Water"
   },
   {
    "title": "Animals without water",
    "text": "An animal is a warrior that cannot use equipment, and it carries neither water nor treasure. A ridden animal carries units like any other model, and most animals have the Beast of Burden special rule, which lets them carry twice their Strength; carrying more than their Strength they use up three water units instead of two, and carrying no more than their Strength they use up two as usual. A rider whose mount is exhausted or has collapsed fights on foot, and a henchman in a group that is all mounted cannot take part in the battle until his mount is replaced. An animal given no water rolls a D6. 1-2, Steadfast: it carries on as normal with no penalty. 3-5, Exhausted: it keeps up with the warband but cannot fight or carry any treasure or water. 6, Collapse: it is abandoned in the desert and counts as dead.",
-   "umbrella": ""
+   "umbrella": "Water"
   },
   {
    "title": "Acquiring water",
    "text": "A warband refills its water at a trading post, by gathering it during rain, from the rare pools in the tombs, or at one of the occasional oases that are not poisoned. A warband that finds a source may gather as many units as it likes, up to its burden limit. Water may be sold in the trading phase like any other equipment, at a price that depends on the supply source, but never at a source that gives water away free.",
-   "umbrella": ""
+   "umbrella": "Water"
   },
   {
    "title": "Finding a supply source",
    "text": "The tombs are far from any settlement, so after each battle every player rolls on the supply source chart to see where, or whether, his warband finds somewhere to resupply.",
-   "umbrella": ""
+   "umbrella": "Water"
   }
  ],
  "battle_rules": [
