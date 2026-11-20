@@ -13,9 +13,6 @@ import type { StoreOffer } from "./StoreRow";
  * the normal one. An item is never transformed, and buying a weapon never asks what it is made of.
  */
 
-/** "Gromril Weapon": what the material's row is called, unless a list of his names it its own way. */
-export const materialRowName = (material: WeaponMaterial) => `${material.name} Weapon`;
-
 /**
  * A weapon a material may be made into: its offer and its price through the material (null: not
  * known until its dice are rolled).
@@ -54,7 +51,7 @@ export function materialRows(
 ): MaterialRowView[] {
   if (his === null) {
     return materials.flatMap((material) => {
-      const name = materialRowName(material);
+      const name = material.row_name;
       return shown(material, name, filters)
         ? [{ material, name, weapons: meleeWeapons(material, offers) }]
         : [];
@@ -72,7 +69,7 @@ export function materialRows(
   });
   const named = new Set(sold.map((row) => row.material.slug));
   const open = materials.flatMap((material) => {
-    const name = materialRowName(material);
+    const name = material.row_name;
     if (named.has(material.slug) || !material.for_everyone || !shown(material, name, filters)) {
       return [];
     }

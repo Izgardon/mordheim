@@ -40,7 +40,8 @@ class MaterialRule:
 class Material:
     """One weapon material. `multiplier` and `addition` are exclusive: the price is the weapon's times the one, or
     the weapon's plus the other. `prefix` is the word that goes in front of the weapon's name where it isn't the
-    material's own name ("Dark Elf Blade" makes a "Dark Elf Sword").
+    material's own name ("Dark Elf Blade" makes a "Dark Elf Sword"), and `row_name` what the store's row is called
+    where "<name> Weapon" reads badly.
 
     Who may take it is a who-can list read exactly as a price row's is: `for_everyone` with the types and groups it
     names, included or excluded, and `from_lists` for one that belongs to the warbands whose template list sells it
@@ -57,6 +58,7 @@ class Material:
     multiplier: int | None = None
     addition: int | None = None
     prefix: str = ""
+    row_name: str = ""  # what the store's row is called; "<name> Weapon" where it says nothing
     for_everyone: bool = True
     from_lists: bool = False
     groups: tuple[str, ...] = ()
@@ -70,6 +72,12 @@ class Material:
     def word(self) -> str:
         """The word in front of the weapon's name: "Gromril", "Dark Elf"."""
         return self.prefix or self.name
+
+    @property
+    def shown_as(self) -> str:
+        """What the store's row is called: "Gromril Weapon", or the material's own name where it already names
+        the weapon ("Dark Elf Blade")."""
+        return self.row_name or f"{self.name} Weapon"
 
     def allows(self, item: Any) -> bool:
         """Whether its rule allows this weapon, by the item's name and tags; True where it names none."""
@@ -197,6 +205,7 @@ DARK_ELF_BLADE = Material(  # ours, the Dark Elves': +20 gc, Rare 9, swords and 
     slug="dark-elf-blade",
     name="Dark Elf Blade",
     prefix="Dark Elf",
+    row_name="Dark Elf Blade",
     rarity=9,
     addition=20,
     setting="mordheim-1b",

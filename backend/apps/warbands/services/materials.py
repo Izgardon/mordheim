@@ -117,8 +117,8 @@ def only_payload(material: Material, items: Sequence[Any]) -> dict[str, Any] | N
 def material_payload(
     material: Material, buyer: Buyer, catalogue: Catalogue, items: Sequence[Any] = ()
 ) -> dict[str, Any]:
-    """One material as the pages read it: its rules, its own rarity, how it prices, the word it puts in front of a
-    weapon's name, whether this warband may usually take it and why not, and the only weapons its own rule allows.
+    """One material as the pages read it: its rules, its own rarity, how it prices, what its store row is called,
+    the word it puts in front of a weapon's name, whether this warband may usually take it and why not, and the only weapons its own rule allows.
     Every reason is the server's wording."""
     reasons = [] if step(material.for_everyone, catalogue.lines(material), buyer) else [not_usually(buyer)]
     if material.setting not in catalogue.in_play:
@@ -126,6 +126,7 @@ def material_payload(
     return {
         "slug": material.slug,
         "name": material.name,
+        "row_name": material.shown_as,
         "prefix": material.word,
         "rarity": material.rarity,
         "for_everyone": material.for_everyone,

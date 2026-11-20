@@ -567,6 +567,7 @@ describe("StorePanel, Add item", () => {
 const GROMRIL: WeaponMaterial = {
   slug: "gromril",
   name: "Gromril",
+  row_name: "Gromril Weapon",
   prefix: "Gromril",
   for_everyone: true,
   rarity: 11,
@@ -582,6 +583,7 @@ const OBSIDIAN = {
   ...GROMRIL,
   slug: "obsidian",
   name: "Obsidian",
+  row_name: "Obsidian Weapon",
   rarity: 12,
   rules: [],
   can_take: false,
@@ -660,6 +662,7 @@ describe("StorePanel materials", () => {
         ...GROMRIL,
         slug: "dark-elf-blade",
         name: "Dark Elf Blade",
+        row_name: "Dark Elf Blade",
         prefix: "Dark Elf",
         for_everyone: false,
         only: {

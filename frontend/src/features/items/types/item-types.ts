@@ -229,6 +229,8 @@ export type HireAccess = { id: number; can_hire: boolean; reason: string };
 export type WeaponMaterial = {
   slug: string;
   name: string;
+  /** What its store row is called: "Gromril Weapon", "Dark Elf Blade" (the server's wording). */
+  row_name: string;
   /** The word in front of the weapon's name: "Gromril", "Dark Elf". */
   prefix: string;
   rarity: number;

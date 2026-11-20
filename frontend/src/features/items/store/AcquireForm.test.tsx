@@ -46,6 +46,7 @@ const searchers = [
 const GROMRIL = {
   slug: "gromril",
   name: "Gromril",
+  row_name: "Gromril Weapon",
   prefix: "Gromril",
   for_everyone: true,
   rarity: 11,
