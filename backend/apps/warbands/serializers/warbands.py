@@ -26,7 +26,7 @@ HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 class WarbandSerializer(serializers.ModelSerializer):
     """A warband: what it is (`warband_type` and `counts_as`, with their settings and groups: one query,
     `services/types.py`), its record and settings, the plot it follows and its campaign point total (apps/plots:
-    the plot's own lines come with the sheet, `services/plot_rules.py` wrote its rules)."""
+    the plot comes whole with the sheet, and `services/plot_rules.py` wrote a rule per rung reached)."""
 
     warband_type = serializers.SerializerMethodField()
     counts_as = serializers.SerializerMethodField()

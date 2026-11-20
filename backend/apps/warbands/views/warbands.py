@@ -68,7 +68,7 @@ class WarbandListCreateView(APIView):
             ledger.record(warband, LedgerAction.STARTING_GOLD, starting_gold, "Starting Gold")
             if template is not None:
                 copy_rules(warband, template, variant)
-            sync_plot_rules(warband)  # its plot's own rule, after the template's (apps/plots)
+            sync_plot_rules(warband)  # the rungs it has reached, after the template's rules (apps/plots)
         return Response(WarbandSerializer(warband).data, status=status.HTTP_201_CREATED)
 
 

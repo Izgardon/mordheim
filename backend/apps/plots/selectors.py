@@ -14,7 +14,8 @@ from django.db.models import QuerySet
 from apps.campaigns.in_play import in_play, with_in_play
 from apps.core.catalogue import current, merge
 
-from .models import CampaignPlot, Plot, PlotAchievement
+from .models import CampaignPlot, Plot, PlotAchievement, PlotScoringLine
+from .wording import scored
 
 
 def plot_rows() -> QuerySet[Plot]:
@@ -47,16 +48,24 @@ def plays_with(campaign_id: int) -> set[int]:
 
 
 def warband_plot(plot_id: int | None) -> dict[str, object] | None:
-    """The plot a warband follows, as its page reads it: its name, and its ladder's points for the track (two
-    queries; none when it follows none). Its lines are in the rules its plot wrote
-    (warbands/services/plot_rules.py)."""
+    """The plot a warband follows, whole, as its page reads it: its name and summary, its ladder's points for the
+    track, and its scoring and ladder for Plot Details, every line worded here (three queries; none when it follows
+    none). Only the rungs it has reached are rules of its own (warbands/services/plot_rules.py)."""
     if plot_id is None:
         return None
-    row = Plot.objects.filter(pk=plot_id).values("id", "name").first()
+    row = Plot.objects.filter(pk=plot_id).values("id", "name", "summary").first()
     if row is None:
         return None
-    rungs = PlotAchievement.objects.filter(plot_id=plot_id).order_by("points", "id")
-    return {**row, "rungs": list(dict.fromkeys(rungs.values_list("points", flat=True)))}
+    lines = PlotScoringLine.objects.filter(plot_id=plot_id).values_list("points", "dice", "text")
+    ladder = list(
+        PlotAchievement.objects.filter(plot_id=plot_id).order_by("points", "id").values("points", "name", "text")
+    )
+    return {
+        **row,
+        "rungs": list(dict.fromkeys(rung["points"] for rung in ladder)),
+        "scoring": [{"shown": scored(points, dice), "text": text} for points, dice, text in lines],
+        "achievements": ladder,
+    }
 
 
 def campaign_plots(campaign_id: int) -> list[Plot]:

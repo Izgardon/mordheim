@@ -152,10 +152,10 @@ class WarbandRule(models.Model):
     edit and delete them; a template's rules are copied in when a warband is raised from it (the templates plan),
     and edited freely after.
 
-    A rule the server owns instead carries `from_plot`, the plot it was written from (services/plot_rules.py): the
-    plot's own rule, which carries the whole plan, with `plot_achievement` null, or the rule of the rung the
-    warband's total has reached, which names it. Both are rewritten whenever the plot or the total changes, so an
-    edit to one is lost; a rule with no `from_plot` is the player's and is never touched."""
+    A rule the server owns instead carries `from_plot`, the plot it was written from, and `plot_achievement`, the
+    rung the warband's total has reached (services/plot_rules.py): only earned plot points are rules here (William,
+    20 Nov 2026; the plan itself is the plot's own page). It is rewritten whenever the plot or the total changes, so
+    an edit to one is lost; a rule with no `from_plot` is the player's and is never touched."""
 
     warband = models.ForeignKey(Warband, related_name="rules", on_delete=models.CASCADE)
     title = models.CharField(max_length=160)

@@ -1,9 +1,10 @@
 """A warband's plot and its campaign point total (apps/plots), and the rules they write.
 
 A warband follows one plot of its campaign's, picked when it is raised and changed for nothing afterwards, and holds
-a total the player types: nothing here adds to it or takes from it. From those two the server writes the warband's
-plot rules, and nothing else: the plot's own rule carries the whole plan (its scoring and every rung), and a rule
-per rung reached comes and goes with the total. The player's own rules are never touched.
+a total the player types: nothing here adds to it or takes from it. From those two the server writes one kind of
+rule and nothing else: a rule per rung reached, which comes and goes with the total (William, 20 Nov 2026: "only
+earned plot points fall into there"). The plan itself is no rule — the sheet carries the plot whole, for the page's
+Plot Details — and the player's own rules are never touched.
 """
 
 from typing import Any
@@ -63,27 +64,14 @@ class WarbandPlotTests(CampaignTestCase):
 
     # Picking one
 
-    def test_a_warband_is_raised_following_a_plot_and_its_rule_carries_the_whole_plan(self):
+    def test_a_warband_is_raised_following_a_plot_and_the_plan_itself_is_no_rule(self):
         body = {"name": "Hunters", "warband_type_id": self.warband.warband_type_id, "campaign_id": self.campaign.id}
         response = self.post_as(self.outsider_in_campaign(), "/api/warbands/", {**body, "plot_id": self.plot.id})
 
         self.assertEqual(response.status_code, 201, response.data)
         raised = Warband.objects.get(id=response.data["id"])
         self.assertEqual((response.data["plot_id"], response.data["campaign_points"]), (self.plot.id, 0))
-        self.assertEqual(self.rules(raised), [("Plot: Drowning the Witch", None)])  # nothing reached at 0
-        rule = WarbandRule.objects.get(warband=raised)
-        self.assertEqual(
-            rule.description,
-            "Campaign points\n"
-            "+1 Playing a scenario.\n"
-            "D3 A Chaos leader goes down.\n"
-            "-1 A lawman killed by the warband.\n"
-            "\n"
-            "Achievements\n"
-            "5 - Rung 5: What 5 gives.\n"
-            "10 - Rung 10: What 10 gives.\n"
-            "40 - Rung 40: What 40 gives.",
-        )
+        self.assertEqual(self.rules(raised), [])  # nothing reached at 0, and no rule for the plan
 
     def test_the_plot_changes_for_nothing_and_its_rules_are_replaced(self):
         self.follow(plot_id=self.plot.id, campaign_points=12)
@@ -91,7 +79,7 @@ class WarbandPlotTests(CampaignTestCase):
         changed = self.follow(plot_id=self.other.id)
 
         self.assertEqual(changed.status_code, 200, changed.data)
-        self.assertEqual(self.rules(), [("Plot: The Shards", None), ("5 CP: Rung 5", 5), ("10 CP: Rung 10", 10)])
+        self.assertEqual(self.rules(), [("5 CP: Rung 5", 5), ("10 CP: Rung 10", 10)])
         self.assertEqual({rule.from_plot_id for rule in self.derived()}, {self.other.id})
         self.assertEqual(Warband.objects.get(id=self.warband.id).campaign_points, 12)  # the total is the player's
 
@@ -121,7 +109,7 @@ class WarbandPlotTests(CampaignTestCase):
         house = self.follow(plot_id=version.id, campaign_points=5)
 
         self.assertEqual((book.status_code, house.status_code), (400, 200))
-        self.assertEqual(self.rules(), [("Plot: House Witch", None), ("5 CP: House rung", 5)])
+        self.assertEqual(self.rules(), [("5 CP: House rung", 5)])
 
     # The total
 
@@ -133,10 +121,8 @@ class WarbandPlotTests(CampaignTestCase):
         back_to_six = self.follow(campaign_points=6)
 
         self.assertEqual((at_ten.status_code, back_to_six.status_code), (200, 200))
-        self.assertEqual(
-            titles_at_ten, [("Plot: Drowning the Witch", None), ("5 CP: Rung 5", 5), ("10 CP: Rung 10", 10)]
-        )
-        self.assertEqual(self.rules(), [("Plot: Drowning the Witch", None), ("5 CP: Rung 5", 5)])
+        self.assertEqual(titles_at_ten, [("5 CP: Rung 5", 5), ("10 CP: Rung 10", 10)])
+        self.assertEqual(self.rules(), [("5 CP: Rung 5", 5)])
 
     def test_writing_the_same_total_again_changes_nothing(self):
         self.follow(plot_id=self.plot.id, campaign_points=10)
@@ -170,16 +156,27 @@ class WarbandPlotTests(CampaignTestCase):
         self.assertEqual((by_admin.status_code, archived.status_code), (200, 403))
         self.assertEqual(archived.json()["code"], "campaign_archived")
 
-    def test_the_sheet_carries_the_plot_and_its_rungs_in_a_fixed_number_of_queries(self):
+    def test_the_sheet_carries_the_plot_whole_in_a_fixed_number_of_queries(self):
         self.follow(plot_id=self.plot.id, campaign_points=10)
         url = f"/api/warbands/{self.warband.id}/sheet/"
         self.client.force_authenticate(user=self.rival)
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):  # the plot, its scoring and its ladder: three, whatever it holds
             sheet = self.client.get(url).json()
 
-        self.assertEqual(sheet["plot"], {"id": self.plot.id, "name": "Drowning the Witch", "rungs": [5, 10, 40]})
+        plot = sheet["plot"]
+        self.assertEqual((plot["id"], plot["name"], plot["rungs"]), (self.plot.id, "Drowning the Witch", [5, 10, 40]))
+        # Plot Details reads these; the server words every line, the page words none
+        self.assertEqual(
+            plot["scoring"],
+            [
+                {"shown": "+1", "text": "Playing a scenario."},
+                {"shown": "D3", "text": "A Chaos leader goes down."},
+                {"shown": "-1", "text": "A lawman killed by the warband."},
+            ],
+        )
+        self.assertEqual(plot["achievements"][0], {"points": 5, "name": "Rung 5", "text": "What 5 gives."})
         self.assertEqual(sheet["warband"]["campaign_points"], 10)
-        self.assertEqual([rule["title"] for rule in sheet["rules"]][1:], ["5 CP: Rung 5", "10 CP: Rung 10"])
+        self.assertEqual([rule["title"] for rule in sheet["rules"]], ["5 CP: Rung 5", "10 CP: Rung 10"])
 
     def test_the_players_list_carries_each_warbands_campaign_points_for_the_standings(self):
         self.follow(campaign_points=7)
