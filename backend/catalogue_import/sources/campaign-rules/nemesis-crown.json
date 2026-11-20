@@ -1,0 +1,269 @@
+{
+ "rules": [
+  {
+   "title": "Ill-gotten gains",
+   "umbrella": "",
+   "text": "Use the Wilderness Exploration Chart for your Nemesis Crown games. It represents the kinds of treasure more likely to be found in the forest than in the ruined depraved streets of the City of the Damned.\n\nThat is the Empire in Flames Exploration Chart, which the supplement's scenarios name directly."
+  },
+  {
+   "title": "Territories",
+   "umbrella": "",
+   "text": "The book gives no instructions for running a Nemesis Crown campaign: that bit is up to you. Each scenario stands alone, but every one ties to a region of the campaign map, and a moderator can use the locales, characters and special items they mention as story hooks to steer the campaign.\n\nThe area the map covers is equivalent to a European country, so warbands are likely to spend some time investigating and exploring each territory before moving on to the next. Artefact hunting is a time-consuming business."
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "Wilderness terrain",
+   "umbrella": "",
+   "text": "The Great Forest is a vast region: dense tangled undergrowth, bleak desolate hills, lonely moorland broken only by great towers of granite, waterways ranging from small brooks to vast unfordable rivers, and trees. Lots and lots of trees.\n\nPlay it with the wilderness rules from the Empire in Flames supplement, which covers the terrain likely to be encountered -- marshes, rivers, forest and the rest. The woodland rules are an addition to it."
+  },
+  {
+   "title": "Which woods are which",
+   "umbrella": "Woodland",
+   "text": "Unless the scenario dictates it, players agree which stands of trees represent which type of woodland at the start of the game."
+  },
+  {
+   "title": "Dense woodland",
+   "umbrella": "Woodland",
+   "text": "A stand of trees represents an area of dense forest, where sight is limited to 2 inches. This is the type of woods described on page 13 of the Empire in Flames supplement.\n\nDense woodland counts as difficult ground. Mounted models may not enter dense woodland without dismounting."
+  },
+  {
+   "title": "Light woodland",
+   "umbrella": "Woodland",
+   "text": "The terrain is what you see is what you get: a stand of four trees represents a copse of four trees. To tell whether the trees block line of sight you will need to crouch down and squint through them.\n\nLight woodland counts as open ground. Mounted models may enter light woodland without dismounting."
+  },
+  {
+   "title": "Scenarios",
+   "umbrella": "",
+   "text": "Each of the supplement's nine scenarios is designed to tie in with a specific region of the Nemesis Crown campaign map, but players should feel free to adapt them as they wish.\n\nThe Draken Downs -- Scenario 1: Nightfall\nThe Drakwald Deeps -- Scenario 2: The Necromancer's Tower\nThe Reik's Marches -- Scenario 3: The Warmachine\nThe Howling Height -- Scenario 4: The Lost Mines of Khrazi Drudd\nThe Rauberthal -- Scenario 5: Last Orders\nThe Great Confluence -- Scenario 6: The Flood Plain\nThe Talabec Borders -- Scenario 7: The Shifting Paths\nThe Barren Hills -- Scenario 8: Fowl Play\nThe Taalford Lowlands -- Scenario 9: The Wild Wood"
+  }
+ ],
+ "charts": [
+  {
+   "title": "Strange events",
+   "description": "This optional table adds a little spice to a Nemesis Crown skirmish without being too overbearing, and each event is quick to resolve, so it suits tournaments and games where the players are short of time. At the start of each player's turn roll a D6. On a 6 an event occurs: roll D66 here. No further events happen during that battle.",
+   "dice": "D66",
+   "note": "For an event which affects a random Hero, first roll to determine which side is affected, then roll again to determine the Hero.",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "11",
+     "name": "Sinister shadows",
+     "text": "A random Hero from each side sees sinister shadows in the undergrowth. He behaves exactly as if he was All Alone, except that he runs in the opposite direction from the one he is facing. Warriors immune to psychology may ignore this."
+    },
+    {
+     "result": "12",
+     "name": "Spindly branches",
+     "text": "Spindly branches grab at a random Hero. He must pass a Strength test or be unable to move. If he fails he may retry every recovery phase."
+    },
+    {
+     "result": "13",
+     "name": "Spooked",
+     "text": "A random Hero becomes spooked by the forest. He must reroll all successful dice until he passes a Leadership test in his recovery phase. Warriors immune to psychology may ignore this."
+    },
+    {
+     "result": "14",
+     "name": "A tree full of skulls",
+     "text": "Warriors suddenly become aware that every tree in the area is filled with hundreds of skulls. Every warrior within 1 inch of a tree, except those immune to psychology, must immediately pass a Leadership test or flee directly from the tree during their next movement phase, jumping from heights if necessary.\n\nAny warrior who leaves combat, assuming his opponent is not also fleeing, must pass an Initiative test or receive one automatic hit.\n\nAfter the shock of the initial discovery, warriors may behave as normal."
+    },
+    {
+     "result": "15",
+     "name": "Being watched",
+     "text": "An eerie atmosphere pervades the area, giving the warriors the feeling that they are being watched. All models' Leadership values are reduced by 1 for D6 full game turns. Warriors immune to psychology may ignore this."
+    },
+    {
+     "result": "16",
+     "name": "Downpour of twigs",
+     "text": "There is a torrential downpour of twigs, branches and seeds, as if the trees are attempting to repel the invader. All models take a Strength 1 automatic hit."
+    },
+    {
+     "result": "21",
+     "name": "Rivers of blood",
+     "text": "Any rivers on the board suddenly swell violently and burst their banks, running red with the blood of those slain in the forest. All models within 3 inches of a river must roll three Strength tests. If all are failed the model is swept away: remove the affected warriors and roll on the Serious Injury table as normal at the end of the battle.\n\nThe rivers return to normal as quickly as they swelled."
+    },
+    {
+     "result": "22",
+     "name": "Hostile trees",
+     "text": "The trees suddenly become hostile. Every warrior within 3 inches of a tree must pass an Initiative test or take a Strength 3 hit. The trees then return to normal."
+    },
+    {
+     "result": "23",
+     "name": "Warding spell",
+     "text": "A warding spell placed by a forest-dwelling wizard long ago teleports a random Hero to the highest point on the board. Ha!"
+    },
+    {
+     "result": "24",
+     "name": "Concealed trap",
+     "text": "A random Hero must pass an Initiative test or tumble into a 2 inch deep trap. He takes a Strength 2 hit and must pass an Initiative test to rejoin the board. He may exchange missile fire with any models within 1 inch of the pit if he does not attempt to climb."
+    },
+    {
+     "result": "25",
+     "name": "Wandering peddler",
+     "text": "A wandering peddler appears at the middle of a random table edge. He moves randomly 8 inches per turn. The first Hero to reach him may buy a basket of Madcap Mushrooms for 10 gc. The warband must have the cash on them, or the Hero may swap items worth 20 gc."
+    },
+    {
+     "result": "26",
+     "name": "Faerie Glamour",
+     "text": "A random Hero becomes mesmerized by a wondrous object he espies 6D6 inches away. He will run, irrespective of enemy models within 8 inches, until he gets to it. If he breaks from hand-to-hand he must pass an Initiative test or receive one automatic hit.\n\nEvery recovery phase after the first he may attempt a Leadership test to break the spell. If he reaches the object he discovers it is merely a mirage, and may now behave as normal."
+    },
+    {
+     "result": "31",
+     "name": "Golden feather",
+     "text": "One random Hero finds a golden feather from a rare Wekki bird nesting in this area. This enables him to fly for the duration of the battle. He must end each movement phase on solid ground though."
+    },
+    {
+     "result": "32",
+     "name": "Forest mammal",
+     "text": "A random Hero disturbs a forest mammal scuttling among the undergrowth. It bites the Hero for one automatic Strength 3 hit before disappearing into its burrow."
+    },
+    {
+     "result": "33",
+     "name": "Loose branches",
+     "text": "Loose branches fall from an ancient twisted oak tree. A random Hero takes a Strength 4 hit."
+    },
+    {
+     "result": "34",
+     "name": "Possessed",
+     "text": "One random Hero on each side becomes possessed by a mischievous forest spirit. For one turn the affected warrior is run by his opponent, who may not have him commit suicide."
+    },
+    {
+     "result": "35",
+     "name": "Forest Spites",
+     "text": "Those cheeky forest Spites are up to their tricks. A random Hero teleports 3D6 inches in a random horizontal direction. He will not leave the board: place him at the edge."
+    },
+    {
+     "result": "36",
+     "name": "Hooves",
+     "text": "The magic of the wild is strong here. All warriors' legs elongate and they grow hooves for the remainder of the battle. Every model gains +1 Movement. Animals are not affected."
+    },
+    {
+     "result": "41",
+     "name": "Crazed leper",
+     "text": "A crazed leper, forced to wander the forest having been driven out by his townsfolk, will pester the warbands for a cure. Place him centrally. He moves 4 inches in a random direction at the beginning of each player's turn. He will desperately plead for deliverance from the first model with whom he makes base contact.\n\nThe beleaguered model may easily put him out of his misery -- he is a defenceless loony. However, that model must pass a Toughness test or be forced to make a Serious Injury roll at the end of the battle, irrespective of whether he went out of action; if he goes out of action he must make two Serious Injury rolls."
+    },
+    {
+     "result": "42",
+     "name": "Sacred grove",
+     "text": "This area was once a sacred grove. Both Leaders, or acting Leaders, are filled with the raw power of nature. Both double all their stats except Wounds and Leadership for one game turn. Thereafter they must both pass a Leadership test in their respective recovery phases. If a Leader fails this test then he returns to normal."
+    },
+    {
+     "result": "43",
+     "name": "Wild Magic",
+     "text": "This part of the forest is rich in natural magic. For the next D6 full game turns, each time a model attempts to cast a spell or prayer, roll on the chart below first to determine what effect the spooky forest has on his spellcasting.",
+     "chart": {
+      "description": "Rolled each time a model attempts to cast a spell or prayer while Wild Magic lasts.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "",
+        "text": "The model is overloaded with power and may cast no spells or prayers this turn."
+       },
+       {
+        "result": "2",
+        "name": "",
+        "text": "+1 Difficulty on any spell or prayer attempted this turn."
+       },
+       {
+        "result": "3",
+        "name": "",
+        "text": "The range of any spell or prayer the model casts this turn is halved. This has no effect on a spell or prayer that does not have a range, like one centred on the caster."
+       },
+       {
+        "result": "4",
+        "name": "",
+        "text": "-1 Difficulty on any spell or prayer attempted this turn."
+       },
+       {
+        "result": "5",
+        "name": "",
+        "text": "The range of any spell or prayer the model casts this turn is doubled. This has no effect on a spell or prayer that does not have a range, like one centred on the caster."
+       },
+       {
+        "result": "6",
+        "name": "",
+        "text": "The model may direct his spell or prayer at two targets within range instead of one. Spells or prayers that affect the caster may be directed at another friendly model within 6 inches as well."
+       }
+      ]
+     }
+    },
+    {
+     "result": "44",
+     "name": "The grey hermit",
+     "text": "A bent old man dressed in grey appears at the centre of a random table edge; roll as for the Surprise Attack scenario on page 133 of the Mordheim rulebook, and the player whose turn it is may nominate which edge is 1.\n\nThe old man has something on his mind: he mutters to himself and is seemingly oblivious to the warbands. In each player's movement phase he hobbles 4 inches directly towards the centre of a different random table edge, rolled on a D3, skirting any obstacles by the shortest route.\n\nThis mysterious hermit is charmed: no hand-to-hand attacks, missile weapons nor spells will affect him. In addition, any nearby warriors benefit from this charm. Any model within 2 inches of him is immune to the effects of spells, prayers or missile weapons, but not hand-to-hand combat."
+    },
+    {
+     "result": "45",
+     "name": "Shrine to Taal",
+     "text": "The battle is taking place around a shrine to the forest god, Taal. The spirit of Taal possesses the warriors in a frenzy of blood-lust. Every model's Movement is doubled for one full game turn."
+    },
+    {
+     "result": "46",
+     "name": "The attention of Taal",
+     "text": "The magic-users and prayer-casters in the area draw the attention of Taal. All spells and prayers known by the casters go off automatically, affecting the nearest model whether friend or foe."
+    },
+    {
+     "result": "51",
+     "name": "Thick fog",
+     "text": "Thick fog penetrates the forest. Visibility, meaning missiles, spells and charges, is limited to 3D6 inches. Roll a D6 in each player's recovery phase: on a 6+ the fog clears permanently. Add one for every such roll previously made."
+    },
+    {
+     "result": "52",
+     "name": "White flowers",
+     "text": "Pretty white flowers spring up from the ground, releasing fragrant pollen. Every model must immediately pass a Toughness test or become knocked down."
+    },
+    {
+     "result": "53",
+     "name": "Dread",
+     "text": "The spirit of the forest exudes a fearsome, almost tangible, dread on the warriors near its perimeter. All Henchmen not in hand-to-hand combat must pass a Leadership test or move at full speed, irrespective of enemy models within 8 inches, directly towards the edge of the board. Any model leaving the board may re-appear at the point he left during the following turn. He may not charge on the turn he re-appears."
+    },
+    {
+     "result": "54",
+     "name": "A murder of crows",
+     "text": "A murder of crows flies overhead, cawing noisily... a very bad omen! For the next full turn, each player must reroll all successful rolls he makes for his warband, including rolls to hit, to wound, armour saves and Leadership tests."
+    },
+    {
+     "result": "55",
+     "name": "A nubile young lady",
+     "text": "A random warrior spies a nubile young lady in the woods at the edge of the battlefield. He must immediately move as quickly as possible toward the nearest board edge, leaving combat as necessary; any model leaving combat receives automatic hits from his opponent. If he makes it off the board edge before the end of the game, he is gone for the rest of the battle, but returns for the next game. He gains one extra Experience point."
+    },
+    {
+     "result": "56",
+     "name": "Insight",
+     "text": "A random warrior suddenly notices strange patterns in the trees and rocks nearby... he has gained insight into the spirit of the forest. No effect this game, but if the next game is also set in the wilderness, his warband may automatically choose sides."
+    },
+    {
+     "result": "61",
+     "name": "White Hart",
+     "text": "A random warrior spies a White Hart in the woods... a very good omen! That warrior may reroll all failed rolls -- to hit, to wound, armour saves and so on -- for the next D3 turns."
+    },
+    {
+     "result": "62",
+     "name": "Nest of hornets",
+     "text": "One randomly determined warrior upsets a nest of hornets, at least they LOOK like hornets. That warrior and every model within 3 inches of him, and anyone they are in combat with, may do nothing until the start of this player's next turn."
+    },
+    {
+     "result": "63",
+     "name": "White Woman",
+     "text": "A White Woman appears in the air above the battlefield... a very bad omen! Each warband must automatically let their opponent choose the deployment area in their next game. If they play each other, determine setup areas as normal."
+    },
+    {
+     "result": "64",
+     "name": "Vanished weapon",
+     "text": "Meddlesome forest spites play their tricks on a random warrior, and his weapon disappears! He must resort to a backup weapon, or his fists if he has not got one. Assuming he is still alive at the end of the game, roll a D6: on a 1-3 his weapon is lost; on a 4-6 he finds his weapon leaning up against a tree as he walks away from the battlefield."
+    },
+    {
+     "result": "65",
+     "name": "Stampede",
+     "text": "Something spooks the animals of the forest and they stampede through the playing area! All models from both warbands can do nothing until the start of this player's next turn as they try to dodge claws, hooves and horns."
+    },
+    {
+     "result": "66",
+     "name": "Taal smiles",
+     "text": "Taal smiles upon this player. Roll twice on this table, ignoring further results of 66."
+    }
+   ]
+  }
+ ]
+}
