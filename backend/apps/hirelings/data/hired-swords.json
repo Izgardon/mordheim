@@ -6813,7 +6813,7 @@
     "leadership": 7,
     "armour_save": null,
     "large": false,
-    "caster": "No",
+    "caster": "Priest",
     "specials": [
       {
         "name": "Alchemist",
@@ -6822,10 +6822,6 @@
       {
         "name": "Potions (Alchemist)",
         "description": "Potions are the results of the recipes the Alchemist knows. They are all used at the start of the battle, the exploding potion aside, and thrown potions follow the rules for thrown weapons. A potion lasts for one battle and is then useless. Before the battle the Alchemist may make potions from two different recipes he knows, D3-1 potions from each. If he uses a potion on himself or his own equipment he never suffers its bad consequences. If another warrior suffers from a potion, the Alchemist will refuse to make any further potions for him."
-      },
-      {
-        "name": "Potion Recipes",
-        "description": "1. Potion of Flames. Used on one weapon, which counts as +1 Strength. A creature susceptible to fire suffers 2 wounds instead of one. After the battle roll a D6: on a 1 the weapon is burnt and worthless.\n2. Leather Skin Potion. The drinker's skin gives a 5+ armour save, which may not be modified beyond 6+. It cannot be used while he wears body armour, but may be combined with a shield. After the battle roll a D6: on a 1 the skin tears and he must roll on the Serious Injury table, rolling again for death, capture and sold to the pits.\n3. Muscle Potion. The drinker is +1 Strength for the rest of the battle, which may take him beyond his racial maximum. After the battle roll a D6: on a 1 he is -1 Strength for the next battle.\n4. Exploding Potion. Thrown, and explodes on its target with a S5 hit. If it misses it rolls D3\" in a random direction and explodes there; on a 1 to hit it goes D3\" in a random direction from the thrower. Everything within 1\" of the explosion takes a S3 hit.\n5. Berserker Potion. The drinker becomes frenzied. After the battle roll a D6: on a 1 he is too ill to fight and misses the next battle.\n6. Potion of Speed. Rubbed on one warrior's legs and arms, he is +1 Movement and +1 Initiative for the battle. Drunk instead, his Initiative becomes 10 and his Movement 6, but he falls ill and misses the next game. The Alchemist will never drink it himself."
       }
     ],
     "skills": [],

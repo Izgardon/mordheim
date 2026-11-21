@@ -99,7 +99,7 @@ class SeedAllTests(TestCase):
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 563,  # the import's 521 (one per name, Relics of the Crusades' ten Holy skills and its Smith (Academic), Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 42 hired swords' own skills the book lacks (the Runesmith's Rune Use and Durable are his rules, William, 21 Nov 2026), 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 142,  # the import's 111 (Athel Loren's three, Relics of the Crusades' Holy) + a group of his own for each of 27 hired swords, 9 of them broheim's hireling sections'
-                "Spell": 419,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six and the Runesmith's six Runes (William, 21 Nov 2026)
+                "Spell": 425,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -141,7 +141,8 @@ class SeedAllTests(TestCase):
                 # and Tomb Guardian's Undead, each named apart over a change of subject, folded back into one row
                 # the three Arabian tribes are one template with a variant each (13 Nov 2026): 4 rows fewer
                 # the Runesmith's Rune Use and Durable are his rules, not special skills (21 Nov 2026): 2 more
-                "Special": 1958,
+                # the Alchemist's Potion Recipes rule is a lore now (21 Nov 2026): 1 fewer
+                "Special": 1957,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -188,7 +189,8 @@ class SeedAllTests(TestCase):
                     elif model in (Race, Spell, SkillGroup):  # what the Khemri 3, Grade 3 and Athel Loren
                         # warbands brought: the Khemri races and lores, the Grade 3 lores and groups, and the
                         # three Athel Loren skill groups, and Relics of the Crusades' six spells and the
-                        # Runesmith's Runes, the Nemesis Crown's as he is (21 Nov 2026)
+                        # Runesmith's Runes and the Alchemist's Potion Recipes, each its hired sword's setting
+                        # (21 Nov 2026)
                         rest = model._default_manager.filter(**{"campaign_type__isnull": False}).exclude(
                             **{
                                 "campaign_type__slug__in": (
@@ -197,6 +199,7 @@ class SeedAllTests(TestCase):
                                     "athel-loren",
                                     "relics-of-the-crusades",
                                     "nemesis-crown",
+                                    "mousillon",
                                 )
                             }
                         )
