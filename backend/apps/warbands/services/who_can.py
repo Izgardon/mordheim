@@ -150,7 +150,9 @@ def offer(item: Any, buyer: Buyer, in_play: bool, setting: str) -> Offer | None:
     if not usable and on_his_list(item, buyer.sells):
         usable = sorted((_rank(row, index, 1), row) for index, row in enumerate(rows))
     reasons = [] if usable else [not_usually(buyer)]
-    if not in_play:
+    # an item's setting is the first book that printed it, so a later book's list sells what an earlier one
+    # introduced: his own list says he may have it, whatever its setting (William, 21 Nov 2026)
+    if not in_play and not on_his_list(item, buyer.sells):
         reasons.append(out_of_play(setting))
     chosen = [row for _key, row in usable] or [rows[0]]
     at = usable[0][0][0] if usable else None

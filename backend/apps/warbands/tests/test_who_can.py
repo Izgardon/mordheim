@@ -390,6 +390,19 @@ class HisListTests(WhoCanTestCase):
         # an item no list of its own sells is unchanged
         self.assertEqual(offers[halberd.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
 
+    def test_an_item_its_own_list_sells_is_in_play_whatever_its_setting(self) -> None:
+        # William, 21 Nov 2026: an item's setting is the first book that printed it, so a later book's warband list
+        # sells items an earlier one introduced. His own list says he may have it, so its setting warns nothing.
+        hook = self.item("Boat Hook", {"types": [self.reiklanders]}, campaign_type=self.khemri)
+        elsewhere = self.item("Bota Bag", {"everyone": True}, campaign_type=self.khemri)
+        self.template((hook, ""))
+
+        offers = self.offers()
+
+        self.assertEqual((offers[hook.id]["can_buy"], offers[hook.id]["reason"]), (True, ""))
+        # an item off his list still names the setting the campaign lacks
+        self.assertEqual(offers[elsewhere.id]["reason"], "Khemri isn't in this campaign.")
+
     def test_a_list_selling_heavy_armour_admits_gromril_and_ithilmar_armour(self) -> None:
         # William, 20 Nov 2026: "gromril and ithilmar count as heavy armour so if a unit in a template can get
         # heavy armour they should also be able to get that". The store only: no list line is added.
