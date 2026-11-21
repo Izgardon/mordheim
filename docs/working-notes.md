@@ -176,7 +176,7 @@ chart's result takes 40 characters.
   Holy group is open to everyone with the paths as its note, and like every group but Grade 3's carries no setting, so
   it lists outside Relics with its skills out of play; Scholarly Works (Path of Knowledge, 50+2D6, Rare 9) is not
   an item, having no rules; other towns' prices are notes on each item's one price row. Flaming Arrows are left out
-  (William). Its exploration chart is a separate import.
+  (William). Its own exploration chart is imported, and its preset explores by it.
 - **Darksteel's naming.** The material is called Dark Elf Blade, and a copy reads "Dark Elf Sword", because
   "Dark Elf Blade Sword" does not read. Darksteel's own copies read "Darksteel Sword".
 - **Silver's book text** still carries the book's sentence about silvering a weapon the warband already owns, though
@@ -187,8 +187,8 @@ chart's result takes 40 characters.
 - **Left as printed:** Athel Loren's Dwarf Outpost asks for a Mountain Hazard no chart holds, and Lustria's
   opening hazard D6 is never used. Fixing either means inventing a rule.
 - **Mordheim** has no rules file: its rules are the rulebook and its preset dictates nothing. **Relics of the
-  Crusades** has Part 2 only (warbands, hirelings, its warbands note); Part 1 would hold its campaign rules and is
-  not in `.pdf-sources`.
+  Crusades** is whole: Part 1 (broheim's `downloads/fo/96RelicsoftheCrusadesPt1.pdf`, beside Part 2's 97) holds its
+  campaign rules, items, skills, spells and exploration chart, all imported 21 Nov 2026.
 
 **Prices the books print differently from ours** (kept ours, per William): Horseman's Hammer (the item entry says
 12 gc, the Empire in Flames chart 30), Barding (book 30 gc Rare 11, ours 80 gc Rare 8), Nightmare and Giant Spider,
