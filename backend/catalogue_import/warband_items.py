@@ -34,7 +34,7 @@ def _item(name: str, kind: str, subtype: str, setting: str, source: str, **field
         "source": source,
         "link_url": fields.get("link_url", ""),
         "tags": fields.get("tags", [name.lower()]),
-        "flavour": "",
+        "flavour": fields.get("flavour", ""),
         "range": fields.get("range", ""),
         "strength": fields.get("strength", ""),
         "save": "",
@@ -107,17 +107,19 @@ def _extra_rules(entry: dict[str, Any], index: dict[str, dict[str, Any]]) -> lis
 def extra_items(
     entries: list[dict[str, Any]], groups: list[dict[str, Any]], index: dict[str, dict[str, Any]]
 ) -> list[dict[str, Any]]:
-    """Items no source has, with one price row each for the warbands named. An entry with no `cost` gets no price
-    row at all, so nobody can buy it and the store never offers it (who_can.py: `offer`): what a named hired sword
-    or dramatis persona carries and nothing else (William, 13 Nov 2026, of the Pox Staff)."""
+    """Items no source has, with one price row each for the warbands named (for everyone when it names none). An
+    entry with no `cost` gets no price row at all, so nobody can buy it and the store never offers it (who_can.py:
+    `offer`): what a named hired sword or dramatis persona carries and nothing else (William, 13 Nov 2026, of the Pox
+    Staff). A dice price adds `dice` (how many D6, "10+4D6" is cost 10 and dice 4) and `dice_multiplier`."""
     items = []
     for entry in entries:
         fields: dict[str, Any] = {
             "rules": _extra_rules(entry, index),
-            **{key: entry[key] for key in ("range", "strength") if key in entry},
+            **{key: entry[key] for key in ("range", "strength", "flavour", "link_url") if key in entry},
         }
         if entry.get("cost") is not None:
-            cost = {"cost": entry["cost"], "dice": None, "dice_multiplier": None, "cost_note": ""}
+            dice = {"dice": entry.get("dice"), "dice_multiplier": entry.get("dice_multiplier")}
+            cost = {"cost": entry["cost"], **dice, "cost_note": ""}
             warbands = [{**line, "excluded": False} for line in collapse(entry.get("warbands", []), groups)]
             fields["availabilities"] = [_row(cost, entry.get("rarity"), warbands, entry.get("note", ""))]
         items.append(
