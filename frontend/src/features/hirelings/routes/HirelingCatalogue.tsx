@@ -11,6 +11,7 @@ import { BuyableToggle, FilterRow, ReferenceSearch } from "@/features/reference/
 import { ReferenceList, ShowMore, useShownRows } from "@/features/reference/ReferenceList";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
+import { recruitedLink } from "@/features/warbands/components/roster/useRosterCards";
 import { useWarbandSheet } from "@/features/warbands/hooks/warband/useWarbandSheet";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
@@ -197,7 +198,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
           heroes={sheet.heroes}
           entry={hiring}
           onClose={() => setHiring(null)}
-          onHired={(unitId) => navigate(`${warbandPage}?unit=hireling-${unitId}&edit=1`)}
+          onHired={(unitId) => navigate(`${warbandPage}?${recruitedLink("hireling", unitId)}`)}
         />
       ) : null}
     </ReferencePage>

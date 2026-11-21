@@ -17,14 +17,19 @@ import type { RosterUnit } from "./unit-view";
 const hired = (fields: Partial<WarbandHireling>) =>
   ({ ...makeHero({ id: 3 }), ...fields }) as WarbandHireling;
 
-const renderCard = (entry: RosterUnit, open = false, campaign: CampaignSummary | null = null) =>
+const renderCard = (
+  entry: RosterUnit,
+  open = false,
+  campaign: CampaignSummary | null = null,
+  canEdit = false
+) =>
   renderWithQueryClient(
     <UnitCard
       entry={entry}
       campaign={campaign}
       warbandId={9}
       open={open}
-      canEdit={false}
+      canEdit={canEdit}
       onToggle={vi.fn()}
       onLoadout={vi.fn()}
       onEdit={vi.fn()}
@@ -111,6 +116,17 @@ describe("A hired sword's blood pact badge", () => {
       { enable_blood_pacts: true } as CampaignSummary
     );
     expect(screen.queryByText("Blood pact")).toBeNull();
+  });
+});
+
+describe("Who the card offers a loadout", () => {
+  // William, 21 Nov 2026: a hired sword keeps his kit; his Edit form still adds and takes away
+  it("leaves a hired sword's Loadout off, and keeps a hero's", () => {
+    renderCard({ kind: "hireling", unit: hired({ name: "Grukk" }) }, false, null, true);
+    renderCard({ kind: "hero", unit: makeHero({ name: "Aldric Voss" }) }, false, null, true);
+
+    expect(screen.queryByRole("button", { name: "Loadout of Grukk" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Loadout of Aldric Voss" })).toBeInTheDocument();
   });
 });
 

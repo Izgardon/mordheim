@@ -14,6 +14,7 @@ import UnitBadges, { UnitTradingAction } from "./UnitBadges";
 import UnitLines from "./UnitLines";
 import UnitProfile from "./UnitProfile";
 import {
+  buysItems,
   isCreature,
   isGroup,
   KIND_TRIM,
@@ -120,7 +121,7 @@ export default function UnitCard(props: UnitCardProps) {
           Edit
         </Button>
       ) : null}
-      {creature ? null : (
+      {buysItems(entry) ? (
         <IconButton
           aria-label={`Loadout of ${unitName(unit)}`}
           className="h-9 w-9 bg-page text-accent-text"
@@ -128,7 +129,7 @@ export default function UnitCard(props: UnitCardProps) {
         >
           <GameIcon name="loadout" className="h-[18px] w-[18px]" />
         </IconButton>
-      )}
+      ) : null}
       <IconButton
         aria-label={open ? `Close ${unitName(unit)}` : `Open ${unitName(unit)}`}
         aria-expanded={open}

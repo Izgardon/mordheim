@@ -13,7 +13,9 @@ const toasterStyle = {
   "--error-bg": "var(--color-danger-bg)",
   "--error-border": "var(--color-danger-line)",
   "--error-text": "var(--color-danger)",
-  "--success-bg": "var(--color-good-bg)",
+  // the token is a see-through tint in the dark theme, which let the page's titles show through a
+  // toast (William, 21 Nov 2026): mixed onto the panel it is solid in both themes
+  "--success-bg": "color-mix(in srgb, var(--color-good) 12%, var(--color-panel))",
   "--success-border": "var(--color-good-line)",
   "--success-text": "var(--color-good)",
   "--border-radius": "0px",

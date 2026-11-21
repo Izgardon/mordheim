@@ -16,6 +16,7 @@ import LoadoutPanel from "../panels/LoadoutPanel";
 import LocationsPanel from "../panels/LocationsPanel";
 import StashPanel from "../panels/StashPanel";
 import { unitName, type RosterUnit } from "../roster/unit-view";
+import { RECRUITED_PARAM } from "../roster/useRosterCards";
 import type { WarbandPanel } from "./WarbandHeader";
 
 /** The store opened for a unit (its loadout, Buy again): it comes first, "Buying for <name>". */
@@ -51,12 +52,11 @@ type WarbandPanelsProps = {
 export default function WarbandPanels(props: WarbandPanelsProps) {
   const { campaignId, warband, units, actions, loadoutFor } = props;
   const [searchParams, setSearchParams] = useSearchParams();
-  /** Out of the hire drawer onto the roster, the new hireling's card in Edit. */
+  /** Out of the hire drawer onto the roster, the new hireling's card closed and scrolled to. */
   const leaveHire = (unitId: number) => {
     const params = new URLSearchParams(searchParams);
     params.delete("panel");
-    params.set("unit", `hireling-${unitId}`);
-    params.set("edit", "1");
+    params.set(RECRUITED_PARAM, `hireling-${unitId}`);
     setSearchParams(params, { replace: true });
   };
   const sellFromStash = (item: WarbandItemSummary) =>

@@ -2,7 +2,8 @@
  * Recruiting is an inline form at the top of its roster section (William, 1 Nov 2026: "an inline
  * form rather than a modal"), which closes onto the new unit's collapsed card (20 Nov 2026: "after
  * creating a unit from a template it should go straight to the minimised unit card not edit form");
- * a hire or a camp recruit lands on the new card in Edit through `?unit=…&edit=1`.
+ * a camp recruit lands on the new card in Edit through `?unit=…&edit=1`, and a hire on his closed
+ * card through `?recruited=…` (21 Nov 2026).
  */
 import { useState } from "react";
 import { MemoryRouter } from "react-router-dom";
@@ -114,9 +115,16 @@ describe("Recruiting from the roster", () => {
     expect(screen.queryByRole("form", { name: "Recruit" })).not.toBeInTheDocument();
   });
 
-  it("opens a linked card straight in Edit (after a hire or a camp recruit)", () => {
+  it("opens a linked card straight in Edit (after a camp recruit)", () => {
     renderAt("/campaigns/1/warband?unit=hero-5&edit=1");
     expect(screen.getByText("Editing Aldric Voss")).toBeInTheDocument();
+  });
+
+  // William, 21 Nov 2026: "after hiring it should go to the minimised card not the edit form"
+  it("lands on a hire's card closed, not in Edit", () => {
+    renderAt("/campaigns/1/warband?recruited=hero-5");
+    expect(screen.queryByText("Editing Aldric Voss")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Open Aldric Voss" })).toBeInTheDocument();
   });
 
   // William, 8 Nov 2026: "we dont need the Hire someone not on this list button or inline form"

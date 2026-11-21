@@ -10,6 +10,7 @@ import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 import { dagger, makeHero, makeItem, sword } from "@/test/warband-fixtures";
+import type { WarbandHireling } from "../../types/warband-types";
 
 import RosterSections from "./RosterSections";
 
@@ -39,6 +40,35 @@ describe("An open card's Boons & Banes", () => {
       variant: "",
       list_prices_open: true,
     });
+  });
+
+  it("offers Add item on an open hero, never on an open hired sword", async () => {
+    // William, 21 Nov 2026: a hired sword keeps his kit; his Edit form still adds and takes away
+    const grukk = { ...makeHero({ id: 3, name: "Grukk" }), kind: "hired_sword" } as WarbandHireling;
+    renderWithQueryClient(
+      <MemoryRouter initialEntries={["/campaigns/1/warband"]}>
+        <RosterSections
+          warbandId={9}
+          campaign={null}
+          heroes={[konrad]}
+          henchmenGroups={[]}
+          hirelings={[grukk]}
+          canEdit
+          canCreateRace={false}
+          onLoadout={vi.fn()}
+          onHire={vi.fn()}
+          onAdvance={vi.fn()}
+          onBuyAgain={vi.fn()}
+          renderEdit={() => null}
+        />
+      </MemoryRouter>
+    );
+    const user = setupUser();
+    await user.click(screen.getByRole("button", { name: "Open Grukk" }));
+    expect(screen.queryByRole("button", { name: "Add item" })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Open Konrad Adler" }));
+    expect(screen.getByRole("button", { name: "Add item" })).toBeInTheDocument();
   });
 
   it("lists his injuries with his other boons and banes", async () => {

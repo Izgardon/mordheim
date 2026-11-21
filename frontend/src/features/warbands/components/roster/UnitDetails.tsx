@@ -20,7 +20,7 @@ import UnitBoxDetail, { type OpenBox } from "./UnitBoxDetail";
 import UnitSectionLabel from "./UnitSectionLabel";
 import UnitXp from "./UnitXp";
 import { entryBoxes, type Row } from "./unit-boxes";
-import { boxRows, isCreature, isGroup, itemBoxKind, type RosterUnit } from "./unit-view";
+import { boxRows, buysItems, isCreature, isGroup, itemBoxKind, type RosterUnit } from "./unit-view";
 
 type UnitDetailsProps = {
   entry: RosterUnit;
@@ -137,7 +137,8 @@ export default function UnitDetails(props: UnitDetailsProps) {
     </div>
   );
   const members = isGroup(entry) && !isCreature(entry);
-  const showItems = lists.items.length > 0 || (canEdit && !isCreature(entry));
+  const addsItems = canEdit && buysItems(entry);
+  const showItems = lists.items.length > 0 || addsItems;
 
   return (
     <div className="flex flex-col gap-3 border-t border-line pt-3">
@@ -147,7 +148,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
           <div className="flex flex-col gap-2">
             {row(
               itemsRow,
-              canEdit && !isCreature(entry) ? (
+              addsItems ? (
                 <button
                   type="button"
                   onClick={props.onLoadout}

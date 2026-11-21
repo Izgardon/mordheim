@@ -78,6 +78,13 @@ export const isGroup = (
 
 export const isCreature = (entry: RosterUnit) => isGroup(entry) && isCreatureGroup(entry.unit);
 
+/**
+ * Whether the card offers his loadout (the closed card's Loadout, the open card's Add item). A
+ * creature group carries none, and a hired sword keeps the kit he came with (William, 21 Nov 2026):
+ * his Edit form still adds and takes away.
+ */
+export const buysItems = (entry: RosterUnit) => entry.kind !== "hireling" && !isCreature(entry);
+
 export const liveMembers = (group: HenchmenGroup) =>
   group.henchmen.filter((member) => !member.dead);
 

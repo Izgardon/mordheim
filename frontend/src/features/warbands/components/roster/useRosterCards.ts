@@ -5,6 +5,13 @@ import type { RecruitKind } from "../../hooks/units/useRecruit";
 import type { UnitKindKey } from "../../types/units";
 
 /**
+ * Lands on a unit just hired from outside the roster (the hire drawer, the hired swords page): his
+ * card collapsed like every other, scrolled to (William, 21 Nov 2026), `?recruited=<kind>-<id>`.
+ */
+export const RECRUITED_PARAM = "recruited";
+export const recruitedLink = (kind: UnitKindKey, id: number) => `${RECRUITED_PARAM}=${kind}-${id}`;
+
+/**
  * Opens a unit's card in Edit from outside the roster (the camp's Recruit): the link the roster
  * reads, `?unit=<kind>-<id>&edit=1`. With no id (the unit wasn't found) it does nothing.
  */
@@ -23,15 +30,19 @@ export function useOpenInEdit() {
 export const newUnitId = (before: { id: number }[], after: { id: number }[]) =>
   after.find((unit) => !before.some((known) => known.id === unit.id))?.id;
 
-const scrollTo = (key: string) =>
-  requestAnimationFrame(() =>
-    document.getElementById(`unit-${key}`)?.scrollIntoView?.({ block: "start" })
-  );
+/** Scrolls to the card, waiting (up to about two seconds) for it to render: a hire's card only
+ * arrives with the sheet read again after it. */
+const scrollTo = (key: string, framesLeft = 120) =>
+  requestAnimationFrame(() => {
+    const card = document.getElementById(`unit-${key}`);
+    if (card) card.scrollIntoView?.({ block: "start" });
+    else if (framesLeft > 0) scrollTo(key, framesLeft - 1);
+  });
 
 /**
  * Which roster card is open and which is in Edit, and the inline recruit form (Add hero, Add
  * group). A link opens a card (`?unit=hero-12`, from Search everything) or puts it straight into
- * Edit (`&edit=1`, after a hire or a camp recruit, read once).
+ * Edit (`&edit=1`, after a camp recruit, read once); `?recruited=` lands on a hire's card, closed.
  */
 export function useRosterCards() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -47,6 +58,17 @@ export function useRosterCards() {
     if (linkedEdit) setEditKey(linked);
     scrollTo(linked);
   }, [linked, linkedEdit]);
+
+  const landed = searchParams.get(RECRUITED_PARAM);
+  useEffect(() => {
+    if (!landed) return;
+    setOpenKey(null);
+    setEditKey(null);
+    scrollTo(landed);
+    const params = new URLSearchParams(searchParams);
+    params.delete(RECRUITED_PARAM);
+    setSearchParams(params, { replace: true });
+  }, [landed, searchParams, setSearchParams]);
 
   useEffect(() => {
     if (!linkedEdit) return;
