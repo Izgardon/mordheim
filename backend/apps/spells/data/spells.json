@@ -5,6 +5,7 @@
   {"name": "Silver Arrows of Arha", "type": "Lesser Magic", "dc": "7", "roll": 4, "description": "D6+2 arrows using the wizard's BS, no penalties. Range 24\", each causes one S3 hit. Cannot be cast in combat."},
   {"name": "Luck of Shemtek", "type": "Lesser Magic", "dc": "6", "roll": 5, "description": "The wizard may re-roll all his failed dice rolls until the beginning of his next turn."},
   {"name": "Sword of Rezhebel", "type": "Lesser Magic", "dc": "8", "roll": 6, "description": "A magical blade grants +1 Attack, +2 Strength, and +2 Weapon Skill. Requires Leadership test each turn to maintain."},
+  {"name": "Curse of Form", "type": "Lesser Magic", "setting": "relics-of-the-crusades", "dc": "8", "roll": null, "description": "The wizard turns a model within 8\" into a Mule or a Wardog for D6 turns. The afflicted warrior remains in the control of his owning player."},
 
   {"name": "Doombolt", "type": "Dark Elf Magic", "dc": "9", "roll": 1, "description": "A bolt of dark energy travels up to 18\", inflicting S5 damage and potentially leaping to nearby targets with decreasing power."},
   {"name": "Word of Pain", "type": "Dark Elf Magic", "dc": "8", "roll": 2, "description": "Curses a nearby enemy within 12\", forcing them to re-roll successful attacks and wound rolls, plus requiring a Leadership test to charge. Lasts until caster's next turn."},
@@ -19,6 +20,7 @@
   {"name": "Lure of Chaos", "type": "Chaos Rituals", "dc": "9", "roll": 4, "description": "Calls upon the taint of chaos in the soul of all living beings. Takes control of closest enemy within 12\" via leadership contest."},
   {"name": "Wings of Darkness", "type": "Chaos Rituals", "dc": "7", "roll": 5, "description": "Lifted from the ground by two shadowy Daemons. Teleports caster up to 12\", can charge enemies."},
   {"name": "Word of Pain", "type": "Chaos Rituals", "dc": "7", "roll": 6, "description": "Speaking the forbidden name of his dark god causes indescribable pain. All models within 3\" suffer S3 hit; no armour saves."},
+  {"name": "Shroud of Darkness", "type": "Chaos Rituals", "setting": "relics-of-the-crusades", "dc": "7", "roll": null, "description": "The Magister cloaks himself in shadows. He counts as being in constant cover, so may hide, and walk without revealing himself."},
 
   {"name": "Scry", "type": "Charms and Hexes", "dc": "6", "roll": 1, "description": "One hero or henchman may re-roll D3 dice rolls and add +1 or -1 to the result during the turn."},
   {"name": "Curse", "type": "Charms and Hexes", "dc": "6", "roll": 2, "description": "Forces one enemy within 12\" to re-roll all successful dice for this and their next turn."},
@@ -33,6 +35,8 @@
   {"name": "Spell of Doom", "type": "Necromancy", "dc": "9", "roll": 4, "description": "The Necromancer whispers to the sleeping dead. Forces an enemy within 12\" to pass a Strength test or suffer injury."},
   {"name": "Call of Vanhel", "type": "Necromancy", "dc": "6", "roll": 5, "description": "Summons the world of the dead to invigorate Undead servants. A nearby Zombie or Dire Wolf may move again up to its full distance."},
   {"name": "Spell of Awakening", "type": "Necromancy", "dc": "Auto", "roll": 6, "description": "Calls the soul of a slain Hero back to his body and enslaves him with corrupt magic. Converts a defeated enemy Hero into a Zombie servant."},
+  {"name": "Summon Skeletons", "type": "Necromancy", "setting": "relics-of-the-crusades", "dc": "9", "roll": null, "description": "The wizard raises the dead that lie under the earth he walks upon. Place D3 skeletons within 3\" of the necromancer; any that end up in contact with an enemy model count as charging. The spell can only be cast once per game, and only in desert locales."},
+  {"name": "Control Undead", "type": "Necromancy", "setting": "relics-of-the-crusades", "dc": "Special", "roll": null, "description": "The necromancer tries to wrest control of an undead creature from its master: any enemy zombie, skeleton, dire wolf or sgull within 12\". He and the enemy wizard who controls it each roll 2D6, adding any modifiers they would receive for casting a spell (+1 for Sorcery, for example). If the caster of Control Undead scores higher, he controls the creature for the rest of the battle."},
 
   {"name": "The Hammer of Sigmar", "type": "Prayers of Sigmar", "dc": "7", "roll": 1, "description": "This weapon of the faithful glows with golden light. Grants +2 Strength and double damage in melee."},
   {"name": "Hearts of Steel", "type": "Prayers of Sigmar", "dc": "8", "roll": 2, "description": "Allied warriors within 8\" become immune to fear and alone tests; whole warband gains +1 to Rout tests. Lasts until caster is knocked down or stunned."},
@@ -410,5 +414,8 @@
   {"name": "Mud", "type": "Earth Magic", "setting": "khemri-3", "dc": "7", "roll": 3, "description": "Range 8\". The target may not move, but fights back if it is charged. It lasts until the caster's next turn."},
   {"name": "Stone Guardian", "type": "Earth Magic", "setting": "khemri-3", "dc": "10", "roll": 4, "description": "Cast before the battle: it summons a stone guardian, which must stay within 8\" of the caster. Its profile is M5 WS2 BS0 S4 T4 W2 I1 A2 Ld10 with an armour save of 5+, and it is immune to poison and to psychology, may not run and causes fear."},
   {"name": "Stone Hands", "type": "Earth Magic", "setting": "khemri-3", "dc": "8", "roll": 5, "description": "Range 6\". The target is attacked by two stone hands with Weapon Skill 4, Strength 4 and 2 Attacks. The attacks can be parried. It lasts for one hand-to-hand phase."},
-  {"name": "Earth Lore", "type": "Earth Magic", "setting": "khemri-3", "dc": "Auto", "roll": 6, "description": "Cast after the battle. The caster may re-roll one dice and change one dice by +1 or -1, and the two need not be the same dice. He may not re-roll a re-roll. If he was taken out of action the spell may not be used."}
+  {"name": "Earth Lore", "type": "Earth Magic", "setting": "khemri-3", "dc": "Auto", "roll": 6, "description": "Cast after the battle. The caster may re-roll one dice and change one dice by +1 or -1, and the two need not be the same dice. He may not re-roll a re-roll. If he was taken out of action the spell may not be used."},
+
+  {"name": "Light", "type": "All Lores", "setting": "relics-of-the-crusades", "dc": "5", "roll": null, "description": "A wizard or cleric casts the spell on himself or another warrior within 12\". That model counts as carrying a torch, but keeps his hands free. Every turn the caster must roll a D6: on a 1 or 2 the Light disappears."},
+  {"name": "Silence", "type": "All Lores", "setting": "relics-of-the-crusades", "dc": "6", "roll": null, "description": "The wizard encircles one enemy model within 24\" with a sphere of silence: it cannot cast spells, or sound the alarm if it is a sentry. It shrugs off the spell if it passes a Leadership test in its recovery phase."}
 ]

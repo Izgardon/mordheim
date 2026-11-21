@@ -99,7 +99,7 @@ class SeedAllTests(TestCase):
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 565,  # the import's 521 (one per name, Relics of the Crusades' ten Holy skills and its Smith (Academic), Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 44 hired swords' own skills the book lacks, 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 143,  # the import's 111 (Athel Loren's three, Relics of the Crusades' Holy) + a group of his own for each of 28 hired swords, 9 of them broheim's hireling sections'
-                "Spell": 407,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores)
+                "Spell": 413,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six (William, 21 Nov 2026)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -186,9 +186,16 @@ class SeedAllTests(TestCase):
                         )
                     elif model in (Race, Spell, SkillGroup):  # what the Khemri 3, Grade 3 and Athel Loren
                         # warbands brought: the Khemri races and lores, the Grade 3 lores and groups, and the
-                        # three Athel Loren skill groups
+                        # three Athel Loren skill groups, and Relics of the Crusades' six spells (21 Nov 2026)
                         rest = model._default_manager.filter(**{"campaign_type__isnull": False}).exclude(
-                            **{"campaign_type__slug__in": ("khemri-3", "grade-3", "athel-loren")}
+                            **{
+                                "campaign_type__slug__in": (
+                                    "khemri-3",
+                                    "grade-3",
+                                    "athel-loren",
+                                    "relics-of-the-crusades",
+                                )
+                            }
                         )
                         self.assertFalse(rest.exists())
                     else:  # the rest count as Mordheim's until they get theirs
