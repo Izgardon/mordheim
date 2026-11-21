@@ -1,0 +1,421 @@
+[
+  {
+    "slug": "kings-greed",
+    "name": "Kings' Greed",
+    "setting": "The Sealed City",
+    "summary": "Gold. Power. Dominion. Wealth and power often come hand-in-hand and power is the one thing, which may guarantee a noble man's survival in this nightmare world. More gold, more men, more weapons, more everything - this is what drives Bramstetter's financiers across the Great Ocean. But they are by far not the only ones who seek to make a fortune in the Sealed City - wherever wealth establishes, greed always follows on foot. In the end, the right amount of gold could make you a king to rule this gods-forsaken island.",
+    "variant_of": "",
+    "no_alliance_with": [
+      "kings-greed"
+    ],
+    "who_text": "House Guard, Mercenary warbands and Pirates of the Great Ocean may follow this plot.",
+    "scoring": [
+      {
+        "points": 1,
+        "text": "Playing a scenario."
+      },
+      {
+        "points": 1,
+        "text": "Winning a scenario."
+      },
+      {
+        "points": 1,
+        "text": "Competition is good for business: for taking out of action the leader of a warband with the Kings' Greed ambition."
+      },
+      {
+        "points": 1,
+        "text": "Stacking values: for every item of Rare 10 or higher the warband obtains, whether bought, found or traded."
+      },
+      {
+        "points": null,
+        "dice": "-D3",
+        "text": "Backing the wrong horse: for every item of Rare 10 or higher the warband loses, whether sold, stolen or destroyed."
+      }
+    ],
+    "achievements": [
+      {
+        "points": 5,
+        "name": "Trade agreement",
+        "text": "By concluding favourable contracts with merchants throughout the city, the warband pays 10% less for common items."
+      },
+      {
+        "points": 10,
+        "name": "Rolling business",
+        "text": "The warband's maximum number of warriors is increased by 3."
+      },
+      {
+        "points": 15,
+        "name": "Another!",
+        "text": "A single dead henchman may be replaced directly after the game at no cost on a 4+ on a D6. The new henchman comes with the same experience as his dead predecessor, but with no weapons or armour."
+      },
+      {
+        "points": 20,
+        "name": "Work is cheap",
+        "text": "Hired Swords charge this warband only half their normal hire and upkeep fees."
+      },
+      {
+        "points": 25,
+        "name": "Backhander",
+        "text": "Before rolling to find a rare item the hero may pay the item's rarity in gold crowns for a +1 bonus on the roll. This may be used up to twice per roll."
+      },
+      {
+        "points": 35,
+        "name": "Premium pay",
+        "text": "After every game the warband gains D6x5 gc for each enemy hero it took out of action during the game."
+      },
+      {
+        "points": 40,
+        "name": "Seize the throne",
+        "text": "Each warband with the Kings' Greed or Reign from Shadows ambition that this warband routs is eliminated from the campaign at once. Once all warbands with those ambitions have been eliminated, the warband wins the campaign."
+      }
+    ]
+  },
+  {
+    "slug": "reign-from-shadows",
+    "name": "Reign from Shadows",
+    "setting": "The Sealed City",
+    "summary": "It's not unusual for those in power to be just unwitting puppets whose fates are controlled out of the shadows. Prestige and renown aren't sought by their puppeteers for they only lust after influence and power to put their plans into action, hidden from the public eye. These intriguers quite often make use of their shadowy kin - poisoners, smugglers and fences are their allies as these miscreants benefit as well from their patron's powerful dancing puppets.",
+    "variant_of": "",
+    "no_alliance_with": [
+      "kings-greed",
+      "protect-and-serve"
+    ],
+    "who_text": "The Cult of the Possessed, the Silent Brotherhood, Skaven warbands and Undead warbands may follow this plot.",
+    "scoring": [
+      {
+        "points": 1,
+        "text": "Playing a scenario."
+      },
+      {
+        "points": 1,
+        "text": "Winning a scenario."
+      },
+      {
+        "points": 1,
+        "text": "Kill them dead: whenever an enemy hero taken out of action by the warband dies permanently."
+      },
+      {
+        "points": 1,
+        "text": "Slay the king: for taking out of action the leader of a warband with the Kings' Greed or Protect and Serve ambition."
+      }
+    ],
+    "achievements": [
+      {
+        "points": 5,
+        "name": "Local dealer",
+        "text": "During the trading phase up to D3 heroes succeed automatically when searching for rare poisons. They may not search for anything else that phase."
+      },
+      {
+        "points": 10,
+        "name": "Shadow-born",
+        "text": "Enemy warriors halve their Initiative when trying to spot hidden heroes of this warband."
+      },
+      {
+        "points": 15,
+        "name": "Contract killing",
+        "text": "From now on, whenever the player gets to pick a scenario, he may choose to play the Assassination scenario instead of any of the regularly allowed scenarios."
+      },
+      {
+        "points": 20,
+        "name": "Distraction",
+        "text": "Before each game the warband may choose an enemy henchmen group, which may not be deployed normally. Instead its owner rolls a D6 at the start of each of his turns and adds the number of the current turn to the result. On a 7+ the group may move onto the battlefield from a randomly determined table edge."
+      },
+      {
+        "points": 25,
+        "name": "Red herring",
+        "text": "Once per campaign turn the warband may choose the scenario of any single game it does not take part in itself. The scenario chosen must be available to every warband playing it."
+      },
+      {
+        "points": 35,
+        "name": "Final sanction",
+        "text": "Whenever the warband takes an enemy leader out of action, the warrior dies permanently instead of rolling for serious injuries."
+      },
+      {
+        "points": 40,
+        "name": "Endgame",
+        "text": "The warband must win a special version of the Assassination scenario against two opponents at once. No warband places a protege; the enemy leaders are the targets instead. The attacker doubles the number of counters and may choose up to six warband members to take part. A revealed attacker may choose to hide under any unoccupied counter left in the game at the start of his turn."
+      }
+    ]
+  },
+  {
+    "slug": "knowledge-is-power",
+    "name": "Knowledge is Power",
+    "setting": "The Sealed City",
+    "summary": "Great knowledge leads to great power. Knowing who built the city and why it has been sealed means gaining power over this strange place. Every secret, no matter how insignificant it might seem, is a stepping stone on the path to enlightenment. But no matter what terrible secrets are uncovered in the process - the final key to unlock all of the city's mysteries is buried deep in its fortified centre. The inner sanctum holds unimaginable truths and not only the Clockworkers crave for their revelation.",
+    "variant_of": "",
+    "no_alliance_with": [
+      "purge-the-intruders"
+    ],
+    "who_text": "Clockworkers, the Cult of the Possessed and the Maidens of Dusk and Dawn may follow this plot.",
+    "scoring": [
+      {
+        "points": 1,
+        "text": "Playing a scenario."
+      },
+      {
+        "points": 1,
+        "text": "Winning a scenario."
+      },
+      {
+        "points": null,
+        "dice": "D3",
+        "text": "Progress: for each ring layer the warband gets access to. Each applies only once per warband."
+      },
+      {
+        "points": 1,
+        "text": "Accomplished leader: whenever the leader's total Experience reaches 30, 40, 50, 60, 70, 80 and 90. Each applies only once per warband."
+      },
+      {
+        "points": null,
+        "dice": "-D6",
+        "text": "Setback: if the warband's leader dies permanently."
+      }
+    ],
+    "achievements": [
+      {
+        "points": 5,
+        "name": "Seekers",
+        "text": "When rolling on the exploration chart the warband may modify one die by -1 or +1."
+      },
+      {
+        "points": 10,
+        "name": "Archaeological discoveries",
+        "text": "The warband needs one of a kind less when working out how many key fragments it finds during the exploration phase."
+      },
+      {
+        "points": 15,
+        "name": "Explorers",
+        "text": "The warband may roll one more die than normal in the exploration phase and discard one die of the player's choice."
+      },
+      {
+        "points": 20,
+        "name": "Experience pays off",
+        "text": "After every game the warband gains 2 gc for each experience point its members gained in that game."
+      },
+      {
+        "points": 25,
+        "name": "Circuit lock",
+        "text": "The warband has worked out the workings of the Sealed City's illumination and may influence the sight conditions. In its own games it may exchange any result on the illumination chart for the next higher or lower result."
+      },
+      {
+        "points": 35,
+        "name": "Awakened interest",
+        "text": "Henrik Bramstetter, monitoring the warband's progress and discoveries, decides to support its efforts himself. The warband may hire him at no cost; his upkeep fee is unchanged."
+      },
+      {
+        "points": 40,
+        "name": "The secret unfolds",
+        "text": "The warband has reached the inner sanctum. From now on, whenever the player gets to pick a scenario, he may choose to play the Activation scenario instead of any of the regularly allowed scenarios, as long as the warband has access to the Inner Sanctum and 20 moonstones in its stash."
+      }
+    ]
+  },
+  {
+    "slug": "protect-and-serve",
+    "name": "Protect and Serve",
+    "setting": "The Sealed City",
+    "summary": "Chaos and violence constantly threaten the Old World's inhabitants and weren't it for the forces of order, they would be utterly consumed by these threats. Guards, bailiffs, tribunals - all part of the same vast system to protect and - ideally - serve those who cannot defend themselves. Though stricken by greed and corruption all these institutions of law are the frame which holds societies and empires together. In this light the Tilean outpost on the Sealed City's rocky coast is no different than the mainland's cities. Without the town watch neither commerce nor exploration would be possible and to serve the law comes with its own benefits - weapons, men, reputation.",
+    "variant_of": "",
+    "no_alliance_with": [
+      "purge-the-intruders",
+      "reign-from-shadows"
+    ],
+    "who_text": "House Guard, Mercenary warbands and Witch Hunters may follow this plot.",
+    "scoring": [
+      {
+        "points": 1,
+        "text": "Playing a scenario."
+      },
+      {
+        "points": 1,
+        "text": "Winning a scenario."
+      },
+      {
+        "points": null,
+        "dice": "D3",
+        "text": "Safe district: whenever the warband wins a battle against a warband with the Fear the Abyss, Purge the Intruders or Reign from Shadows ambition, instead of the +1 for winning."
+      }
+    ],
+    "achievements": [
+      {
+        "points": 5,
+        "name": "Well supplied",
+        "text": "When selling moonstones the warband counts as one size smaller, so a warband of 10-12 members counts as one of 7-9."
+      },
+      {
+        "points": 10,
+        "name": "Drilled recruits",
+        "text": "Experienced warriors cost this warband only 1 gc more per experience point."
+      },
+      {
+        "points": 15,
+        "name": "Conscription",
+        "text": "D3+1 conscripts join the warband. They are treated as Zealots and do not count towards the warband's maximum number of models."
+      },
+      {
+        "points": 20,
+        "name": "Bounty",
+        "text": "From now on the warband may pay 20 gold crowns between battles to put a price on an enemy hero's head. Once the reward is set up, every warband that may ally with this ambition may pay any number of gold crowns between battles to increase the bounty. The first warband to take the hunted hero out of action is paid the bounty after the battle."
+      },
+      {
+        "points": 25,
+        "name": "Armory",
+        "text": "Whenever a member of the warband loses weapons or armour -- to the Robbed serious injury or to a trap blade, say, but not by selling them -- the model gets the same equipment back from the armoury at no cost. Should the warrior die permanently, a newly hired replacement may start with the same equipment as his predecessor."
+      },
+      {
+        "points": 35,
+        "name": "Imprisoned",
+        "text": "Whenever the warband wins a battle, any enemy heroes taken out of action during the game suffer the Captured result instead of rolling on the serious injuries chart."
+      },
+      {
+        "points": 40,
+        "name": "Order re-established",
+        "text": "If the warband captures four heroes including a leader from each of the Fear the Abyss, Purge the Intruders and Reign from Shadows ambitions, it wins the campaign. An ambition no warband in the campaign has taken is left out."
+      }
+    ]
+  },
+  {
+    "slug": "purge-the-intruders",
+    "name": "Purge the Intruders",
+    "setting": "The Sealed City",
+    "summary": "For centuries both the sunken carcass of the Sealed City and the archipelago around it are inhabited and neither human nor monstrous natives are fond of the Tilean newcomers. Some try to avert a prophesied doom, others may just defend their home. No matter their agenda, they share a common goal - to expel all intruders from their domains.",
+    "variant_of": "",
+    "no_alliance_with": [
+      "kings-greed",
+      "knowledge-is-power",
+      "protect-and-serve",
+      "reign-from-shadows"
+    ],
+    "who_text": "The Maidens of Dusk and Dawn and The Brood of Ghurash may follow this plot.",
+    "scoring": [
+      {
+        "points": 1,
+        "text": "Playing a scenario."
+      },
+      {
+        "points": null,
+        "dice": "D3",
+        "text": "Winning a scenario."
+      },
+      {
+        "points": 1,
+        "text": "The Root of Trouble: whenever a member of the warband takes an enemy leader out of action."
+      },
+      {
+        "points": null,
+        "dice": "-D6",
+        "text": "Breaking sigils: for each ring layer that is opened permanently."
+      }
+    ],
+    "achievements": [
+      {
+        "points": 0,
+        "name": "Inhabitants",
+        "text": "The warband starts with 1 key fragment in its stash. Key fragments in the warband's stash are subtracted from the Clock's count instead of added to it."
+      },
+      {
+        "points": 5,
+        "name": "Responsibilities",
+        "text": "The warband's leader hates every other leader with a different ambition. He must charge them when they are in range, unless he has a missile weapon, in which case he may choose to shoot at them instead."
+      },
+      {
+        "points": 10,
+        "name": "Soiled Victuals",
+        "text": "When selling moonstones, warbands without the Purge the Intruders ambition count as one size larger, so a warband of 7-9 members counts as one of 10-12."
+      },
+      {
+        "points": 15,
+        "name": "Disrupting the Flow",
+        "text": "When searching for rare items, warbands without the Purge the Intruders ambition are at -1 on their rarity rolls."
+      },
+      {
+        "points": 20,
+        "name": "Searched Area",
+        "text": "Enemy warbands roll one die less during the exploration phase if they have just lost against this warband."
+      },
+      {
+        "points": 25,
+        "name": "Wrong key",
+        "text": "Enemy warbands cannot find key fragments after a game against this warband."
+      },
+      {
+        "points": 35,
+        "name": "Power begets Power",
+        "text": "An enemy warband that loses a battle against this warband loses D3 key fragments from its stash, and this warband gains the same number."
+      },
+      {
+        "points": 40,
+        "name": "Unbroken sigil",
+        "text": "If the Clock's count reaches nought, the warband wins the campaign."
+      }
+    ]
+  },
+  {
+    "slug": "fear-the-abyss",
+    "name": "Fear the Abyss",
+    "setting": "The Sealed City",
+    "summary": "Driven by greed and ambition many of the Sealed City's explorers have gone way too far on their search of enlightenment and the secrets they unravelled have claimed both their mind and soul. Some were tainted from the beginning, unconsciously waiting for a trigger to spark the fires of insanity and mutation. Others may have entered the city pure, but were infected by its dark mysteries. Ever-changing and drifting into ever deeper pits of madness these individuals' only purpose is to spread their condition.",
+    "variant_of": "",
+    "no_alliance_with": [
+      "kings-greed",
+      "knowledge-is-power",
+      "protect-and-serve",
+      "reign-from-shadows"
+    ],
+    "who_text": "The Cult of the Possessed, Pirates of the Great Ocean and The Brood of Ghurash may follow this plot.",
+    "scoring": [
+      {
+        "points": 1,
+        "text": "Playing a scenario."
+      },
+      {
+        "points": 1,
+        "text": "Winning a scenario."
+      },
+      {
+        "points": 1,
+        "text": "Spreading madness: whenever a hero gets a permanent result on the madness chart during a game the warband takes part in. If the hero is from this warband, it scores D3 instead."
+      },
+      {
+        "points": 1,
+        "text": "Inexorable Change: whenever the warband's leader gains a mutation."
+      }
+    ],
+    "achievements": [
+      {
+        "points": 5,
+        "name": "The Twisted leads",
+        "text": "The leader gains D3 insanity points and has to roll on the Stygian Mutation chart."
+      },
+      {
+        "points": 10,
+        "name": "Terror awaits you",
+        "text": "Every hero in the warband causes fear. Where the hero already caused fear, enemy models are at -1 Leadership when they test for fear from him."
+      },
+      {
+        "points": 15,
+        "name": "Infective craze",
+        "text": "At the start of each game this warband takes part in, every hero must pass a Leadership test or gain 1 insanity point."
+      },
+      {
+        "points": 20,
+        "name": "Reciprocity",
+        "text": "The warband's heroes may choose to roll on the Stygian Mutation chart instead of the madness chart, and the other way round."
+      },
+      {
+        "points": 25,
+        "name": "Stabilising changes",
+        "text": "Every hero in the warband may re-roll the D66 on the Stygian Mutation chart, and has to accept the second result."
+      },
+      {
+        "points": 35,
+        "name": "Join us!",
+        "text": "Every enemy hero the warband takes out of action in close combat has to pass a Toughness test and a Leadership test after the game. If the Toughness test fails he has to roll on the Stygian Mutation chart. If the Leadership test fails he gains D6 insanity points at once. If both fail, the warrior is warped beyond all hope and wanders off into the darkness: remove the model from its warband's roster."
+      },
+      {
+        "points": 40,
+        "name": "We're all the same here",
+        "text": "Whenever an enemy warrior fails both tests from Join us!, rolls the Completely Bonkers result on the madness chart or has to leave his warband because of a mutation, he joins this warband at once as a Hired Sword. He raises the warband's rating by 5 points plus 1 point for each experience point he has, and asks for no hire or upkeep fee. As soon as the warband's size reaches 40, it wins the campaign."
+      }
+    ]
+  }
+]

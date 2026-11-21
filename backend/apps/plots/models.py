@@ -1,7 +1,8 @@
 """Plots as catalogue data: the path a warband follows through a campaign, scoring campaign points and winning at 40.
 
-"Plot" is the name in every setting. Mutiny in Marienburg prints ten; Border Town Burning calls its six "objectives",
-which we do not: they are plots too, each carrying the setting it was printed in. A plot holds its scoring lines
+"Plot" is the name in every setting. Mutiny in Marienburg prints ten; Border Town Burning calls its six "objectives"
+and the Sealed City its six "ambitions", which we do not: they are plots too, each carrying the setting it was
+printed in. A plot holds its scoring lines
 (what earns or costs campaign points) and its achievement ladder (what the total unlocks). Both are text the player
 reads: nothing here is applied, logged or automated.
 
@@ -77,8 +78,9 @@ class PlotScoringLine(models.Model):
 
 class PlotAchievement(models.Model):
     """One rung of the ladder: what the plot unlocks at `points` campaign points. Every book plot has seven, at 5,
-    10, 15, 20, 25, 35 and 40 — there is no 30, in the book or on the printed track — and 40 wins the campaign. A
-    custom plot may have any ladder it likes, so nothing here requires the seven."""
+    10, 15, 20, 25, 35 and 40 — there is no 30, in the book or on the printed track — and 40 wins the campaign; the
+    Sealed City's Purge the Intruders adds one at 0, held from the start. A custom plot may have any ladder it likes,
+    so nothing here requires the seven."""
 
     plot = models.ForeignKey(Plot, related_name="achievements", on_delete=models.CASCADE)
     points = models.SmallIntegerField()
