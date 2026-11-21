@@ -168,11 +168,9 @@ chart's result takes 40 characters.
 - **Athel Loren's nine shops: pencilled for the locations work** (William, 21 Nov 2026: "would sit well in our
   locations structure ... dont need them done just yet"). Not charts. Each shop is a place a warband travels to
   after a battle, with its hazard rolls, its own price list and the henchmen it recruits. The seven items its
-  shops sold that we lacked are added; the store keeps its normal prices.
-- **Athel Loren's new items with no rules anywhere we hold:** Yew Staff, Sword of Orion, Yew Bow, Yew Armour (no
-  save), War Hawk, Fighting Falcons. Open: the Wild Cat matches our Wardogs exactly (price, rarity, profile), so
-  should it take their rules? Should Fighting Falcons take one of our four birds' rules? Should other Elf
-  warbands buy them, not only the Wood Elf Scouts?
+  shops sold that we lacked (Yew Staff, Sword of Orion, Yew Bow, Fighting Falcons, Yew Armour, War Hawk, Wild Cat)
+  are not imported, since none has rules (William, 21 Nov 2026: "if not rules then dont import, i dont want dead
+  items lying around"); the store keeps its normal prices.
 - **Relics of the Crusades Part 1 leftovers**, not imported: about 20 new items (Astrolabe, Surgeon, Ship of the
   Desert, Magic Tattoo, Stickfire Pots and Hose, Arabian Steed, the four dwellings, and more), 10 Holy skills, an
   Academic Smith unlike ours, 6 spells, and its own exploration chart (its pages are rotated in the PDF). Flaming
