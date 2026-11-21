@@ -129,7 +129,7 @@ def build_item_rows(
             "item": item,
             "companion": companion,
             "material": material,
-            "shown_as": held.names.get(entry["id"], ""),
+            "shown_as": entry.get("shown_as") or held.names.get(entry["id"], ""),  # sent only by the server's own
         }
         cost = entry.get("cost")
         if cost is None:

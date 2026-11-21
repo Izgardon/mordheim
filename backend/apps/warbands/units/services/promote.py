@@ -66,7 +66,11 @@ def _hero_fields(warband: Warband, group: HenchmenGroup, name: str, items: list[
         "caster": caster,
         "half_rate": group.half_rate,
         **stat_values(group),
-        "items": [{"id": row.item_id, "cost": row.cost, "companion": row.companion} for row in items],
+        "items": [
+            {"id": row.item_id, "cost": row.cost, "companion": row.companion}
+            | {"material": row.material, "shown_as": row.shown_as}  # a Gromril Sword stays one, named as it was
+            for row in items
+        ],
         "skill_ids": list(group.henchmen_group_skills.order_by("id").values_list("skill_id", flat=True)),
         "special_ids": [link.special_id for link in specials],
         "spell_ids": [],

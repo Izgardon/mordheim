@@ -114,6 +114,19 @@ class PromoteTests(RosterTestCase):
         self.assertEqual(body["summary"], self.client.get(f"{base}summary/").json())
         self.assertEqual([member["name"] for member in body["group"]["henchmen"]], ["Beta"])
 
+    def test_his_items_keep_their_material_and_name(self):
+        # code review, 21 Nov 2026: a promoted henchman's Gromril Sword used to become a plain sword
+        self.group.henchmen_group_items.filter(item=self.sword).update(material="gromril", shown_as="Kopis")
+
+        response = self._promote(self._body())
+
+        self.assertEqual(response.status_code, 201, response.data)
+        hero = Hero.objects.get(id=response.json()["hero"]["id"])
+        self.assertEqual(
+            list(hero.hero_items.order_by("id").values_list("item_id", "material", "shown_as")),
+            [(self.sword.id, "gromril", "Kopis"), (self.axe.id, "", "")],
+        )
+
     def test_promoting_the_last_living_member_dismisses_the_group(self):
         Henchman.objects.filter(id=self.beta.id).update(dead=True)
 
