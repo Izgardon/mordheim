@@ -14,7 +14,9 @@ from apps.plots.seeding import SeedResult, seed_book_plots
 
 MARIENBURG = "Mutiny in Marienburg"
 BORDER_TOWN = "Border Town Burning"
+SEALED_CITY = "The Sealed City"
 RUNGS = (5, 10, 15, 20, 25, 35, 40)  # every book plot's ladder: there is no 30
+FROM_THE_START = {"purge-the-intruders": (0, *RUNGS)}  # the Sealed City prints a 0 rung, held from the start
 
 
 def plot(**changes) -> dict:
@@ -39,12 +41,14 @@ def plot(**changes) -> dict:
 class PlotSeederTests(TestCase):
     setting: CampaignType
     border_town: CampaignType
+    sealed_city: CampaignType
     result: SeedResult
 
     @classmethod
     def setUpTestData(cls) -> None:
         cls.setting = CampaignType.objects.create(slug="mutiny-in-marienburg", name=MARIENBURG, grade="2b")
         cls.border_town = CampaignType.objects.create(slug="border-town-burning", name=BORDER_TOWN, grade="1c")
+        cls.sealed_city = CampaignType.objects.create(slug="sealed-city", name=SEALED_CITY, grade="2b")
 
     def seed(self, *plots: dict, wrapped: bool = False) -> None:
         with TemporaryDirectory() as folder:
@@ -52,17 +56,18 @@ class PlotSeederTests(TestCase):
             (Path(folder) / "setting.json").write_text(json.dumps(body), encoding="utf-8")
             self.result = seed_book_plots(Path(folder))
 
-    def test_the_book_source_seeds_both_settings_plots_with_their_ladders(self):
+    def test_the_book_source_seeds_every_settings_plots_with_their_ladders(self):
         out = StringIO()
         call_command("seed_plots", stdout=out)
         plots = Plot.objects.filter(campaign__isnull=True)
-        self.assertEqual(plots.count(), 18)
-        self.assertEqual(len({row.name for row in plots}), 18)  # every plot is distinctly named
+        self.assertEqual(plots.count(), 24)  # the Sealed City's six ambitions joined as plots (21 Nov 2026)
+        self.assertEqual(len({row.name for row in plots}), 24)  # every plot is distinctly named
         for row in plots:
-            self.assertEqual(tuple(row.achievements.values_list("points", flat=True)), RUNGS)
+            self.assertEqual(tuple(row.achievements.values_list("points", flat=True)), FROM_THE_START.get(row.slug, RUNGS))  # fmt: skip
         self.assertEqual(plots.filter(campaign_type=self.setting).count(), 10)
         self.assertEqual(plots.filter(campaign_type=self.border_town).count(), 8)
-        self.assertIn("Plots: 18", out.getvalue())
+        self.assertEqual(plots.filter(campaign_type=self.sealed_city).count(), 6)
+        self.assertIn("Plots: 24", out.getvalue())
         self.assertIn("skipped: 0", out.getvalue())
 
     def test_border_town_burnings_variants_name_the_plot_they_are_a_variant_of(self):
