@@ -269,11 +269,11 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     mim = merge_duplicates(mim, items, overrides.get("mim_merges", {}), mim_log)
     snapshot = load_snapshot(package / "sources" / SNAPSHOT.name)
     seed = [row for row in load_json(item_data / "standard-items.json") if isinstance(row, dict)]
-    added = template_items(overrides, snapshot.pages, seed, sources.properties, types, groups, index)
     pdf_pages = load_pdf_pages(package / "sources" / PDF_SOURCES.name)  # the warbands read from their PDFs
     page_rules = page_item_rules(pdf_pages)  # shared item rules a page brings (Experimental Technology)
     shared = sorted(shared + page_rules, key=lambda rule: rule["slug"])
-    index.update(index_rules(page_rules))
+    index.update(index_rules(page_rules))  # before the templates' items, so an extra item may link one (Map)
+    added = template_items(overrides, snapshot.pages, seed, sources.properties, types, groups, index)
     stubs = stub_items(pdf_pages, items + mim + added, types, index)
     # a page's row on one of our items (the Spiked Gauntlet) or on a stub the batch declares (Throwing Axes): after
     # the stubs are made, so a price row may name one

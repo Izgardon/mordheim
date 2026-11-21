@@ -104,6 +104,34 @@ class ExtraItemTests(SimpleTestCase):
         )
         self.assertEqual(staff["strength"], "As user")
 
+    def test_a_dice_price_keeps_its_dice_and_names_no_warband_for_everyone(self) -> None:
+        # the Karak Azgal Map, 10+4D6 gc, Rare 9, with the Mordheim Map's rules (William, 21 Nov 2026)
+        _types, _resolver, groups, _ctx = world()
+        entry = {
+            "name": "Karak Azgal Map",
+            "type": "Miscellaneous",
+            "setting": "karak-azgal",
+            "source": "Karak Azgal",
+            "link_url": "https://example.test/karak-azgal.pdf#page=6",
+            "flavour": "The Dwarf engineers who built Karak Azgal would have kept meticulous records.",
+            "cost": 10,
+            "dice": 4,
+            "rarity": 9,
+            "rules": [{"rule": "map"}],
+        }
+
+        [chart] = extra_items([entry], groups, {"map": {"slug": "map"}})
+
+        [row] = chart["availabilities"]
+        self.assertEqual(
+            (row["cost"], row["dice"], row["dice_multiplier"], row["rarity"], row["for_everyone"], row["warbands"]),
+            (10, 4, None, 9, True, []),
+        )
+        self.assertEqual(
+            (chart["rules"], chart["link_url"], chart["flavour"]),
+            ([{"rule": "map"}], entry["link_url"], entry["flavour"]),
+        )
+
     def test_a_shared_rule_no_rule_of_ours_has_stops_the_build(self) -> None:
         _types, _resolver, groups, _ctx = world()
         entry = {

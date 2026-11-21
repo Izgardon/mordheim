@@ -25,8 +25,8 @@ Answers go into `overrides.json`; the next build applies them.
 | shared item rules | 54 |
 | items (mordheimer) | 242 |
 | items (MiM) | 51 |
-| items (warband templates) | 18 |
-| price rows | 588 |
+| items (warband templates) | 19 |
+| price rows | 589 |
 | skills | 510 |
 | skill groups | 114 |
 | skill group links | 660 |

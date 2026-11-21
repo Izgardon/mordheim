@@ -18557,6 +18557,45 @@
     "availabilities": []
   },
   {
+    "slug": "karak-azgal-map",
+    "name": "Karak Azgal Map",
+    "variant": "",
+    "origin": "templates",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "karak-azgal",
+    "source": "Karak Azgal",
+    "link_url": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=6",
+    "tags": [
+      "karak azgal map"
+    ],
+    "flavour": "The Dwarf engineers who built Karak Azgal would have kept meticulous records and maps but they are long lost. Some have attempted to make new maps of the stronghold but the results are variable to say the least.",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "map"
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": 4,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": true,
+        "warbands": [],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "hedonist-whip",
     "name": "Hedonist Whip",
     "variant": "",
