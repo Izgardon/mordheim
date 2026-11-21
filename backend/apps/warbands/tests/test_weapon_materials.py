@@ -268,6 +268,9 @@ class MaterialWhoCanTests(RosterTestCase):
         self.assertEqual(only["text"], "Only a sword or a dagger may be made with one of these blades.")
         self.assertIn(self.sword.id, only["item_ids"])
         self.assertNotIn(self.axe.id, only["item_ids"])
+        # the sword and the dagger themselves, never a weapon merely named after one (William, 21 Nov 2026)
+        named_after = Item.objects.create(name="Sword Breaker", type="Weapon", subtype="Melee", tags=["sword"])
+        self.assertNotIn(named_after.id, self._materials()["dark-elf-blade"]["only"]["item_ids"])
         self.assertIsNone(self._materials()["darksteel"]["only"])  # any close-combat weapon may carry one
 
     def test_a_setting_the_campaign_has_not_ticked_is_named(self) -> None:

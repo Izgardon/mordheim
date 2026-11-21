@@ -78,11 +78,15 @@ class Material:
         return self.row_name or f"{self.name} Weapon"
 
     def allows(self, item: Any) -> bool:
-        """Whether its rule allows this weapon, by the item's name and tags; True where it names none."""
+        """Whether its rule allows this weapon; True where it names none.
+
+        The item's **own name, exactly** (William, 21 Nov 2026: the Dark Elf Blade "should literally only allow the
+        sword and the dagger item not variants"). Matching the name loosely, or matching the tags, let through every
+        weapon merely named after one -- the Broadsword, the Sword Breaker, Poison Daggers.
+        """
         if not self.only_names:
             return True
-        words = [str(getattr(item, "name", "") or ""), *(getattr(item, "tags", None) or [])]
-        return any(wanted in word.lower() for word in words for wanted in self.only_names)
+        return str(getattr(item, "name", "") or "").strip().lower() in self.only_names
 
     def price(self, base: int) -> int:
         """What the weapon costs made of this material, from its own price."""
