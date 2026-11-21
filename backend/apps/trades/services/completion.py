@@ -60,8 +60,8 @@ def _move_items(trade: TradeRequest, side: str, offer: dict[str, Any]) -> None:
     target = getattr(trade, f"{_other(side)}_warband_id")
     for offered_id, quantity in requested_items(offer["items"]).items():
         item_id, taken = _take(trade, source, offered_id, quantity)
-        # each copy keeps its cost (BUG-40, BUG-117), beside the receiver's own copies
-        add_costs(target, item_id, taken.costs)
+        # each copy keeps its cost (BUG-40, BUG-117), its material and its name, beside the receiver's own copies
+        add_costs(target, item_id, taken.costs, taken.materials, taken.shown_as)
 
 
 def _record_gold(trade: TradeRequest, offers: dict[str, dict[str, Any]]) -> None:

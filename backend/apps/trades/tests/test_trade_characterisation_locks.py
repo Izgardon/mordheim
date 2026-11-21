@@ -201,6 +201,17 @@ class TradeCompletionTests(TradeTestCase):
             },
         )
 
+    def test_traded_copies_keep_their_material_and_name(self):
+        # code review, 21 Nov 2026: a traded Gromril Sword used to arrive plain, and a kit's name for it was lost
+        WarbandItem.objects.filter(warband=self.warband, item=self.sword).update(material="gromril", shown_as="Kopis")
+        self._offer_both_ways()
+        self.lock(self.player, self.trade)
+
+        self.assertEqual(self.lock(self.viewer, self.trade).json()["status"], "completed")
+
+        rows = WarbandItem.objects.filter(warband=self.rival, item=self.sword)
+        self.assertEqual(list(rows.values_list("quantity", "material", "shown_as")), [(2, "gromril", "Kopis")])
+
     def test_either_side_may_lock_first(self):
         self._offer_both_ways()
         self.assertEqual(self.lock(self.viewer, self.trade).json()["to_accepted"], True)
