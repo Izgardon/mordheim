@@ -72,7 +72,8 @@
       "Strategist",
       "Scholar",
       "Starstruck",
-      "Pilot"
+      "Pilot",
+      "Smith (Academic)"
     ]
   },
   {
@@ -1142,6 +1143,28 @@
       "Jump back",
       "Sniper",
       "Throw voice"
+    ]
+  },
+  {
+    "name": "Holy",
+    "setting": null,
+    "for_everyone": true,
+    "warbands": [],
+    "large_only": false,
+    "note": "Path of The One (Preacher) and Path of Sigmar (Holy Vow) path-takers only",
+    "how": "skill_lists",
+    "open_to_all": false,
+    "skills": [
+      "Martyr",
+      "Charitable",
+      "Slayer of the Heretic",
+      "Aesthete",
+      "Light of Glory",
+      "Divine Guidance",
+      "On the Wings of Angels",
+      "Converter",
+      "Blessed Weapon",
+      "Iron Faith"
     ]
   },
   {

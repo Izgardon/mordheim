@@ -1,5 +1,5 @@
 {
-  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists (its setting and source, and its grade and Broheim PDF where it has them). drop_warband_types: a Broheim warband left out -> why (one William split into two, whose types are extra_warband_types entries); the seeder archives the type it drops. warband_type_names: a type's name as Broheim spells it -> as we show it (a typo or a capital \"Of\"; the slug stays the source's). persona_item_names: a name a dramatis persona's kit prints -> our item it means, for one that is ours under another word (Heinrich 'Altdorf' Schmidt's Whip is our Steel Whip; the Khemri equipment page prints no whip of its own, 11 Nov 2026). persona_names: a dramatis persona's name as mordheimer gives it -> ours (one casing: title case, small words lower case after the first; William, 5 Nov 2026). group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_names: a mordheimer item's name -> the name we show it under (name), the tags added with it (tags), the tags dropped (drop_tags), the kind and subtype it takes (type, subtype: the Magic Carpet is an Animal, a Mount, since the bestiary holds it), the range, strength or save it takes where mordheimer's is wrong (the Nehekharan Javelins' 8\", 12\" in their warband's own PDF) and why. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_own_rules: our item's name -> the rules William settles for it (rules: name, summary, text), in place of its own. item_notes: item name -> a soft note added to each of its price rows. item_rule_wordings: a shared item rule's slug -> the wording William settles for it (summary, text), the items whose own wording it now covers (covers: their own is dropped) and those that keep only what is theirs (items: name -> summary, text). whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note. hire_warbands_add: a hired sword's or dramatis persona's name -> type slugs added to its mordheimer hire list, and why (a list that then matches a group is stored as that group, so it follows the group). Skill groups (phase 1a): our skill rows merge by name into one skill each, linked into the group of every list that had it, and each list is a group; a list's skill_lists decision is its group's (who learns from it, large_only, note). skill_splits: a row (by label) whose rule differs stays its own skill under name, in its group alone, and why. skill_wordings: a merged skill's name -> the wording it takes (text, or the row label it is from) and why; any other merged skill keeps its longest. skill_group_learners: a group's name -> who learns from it (for_everyone, or warbands as {type} or {group} slugs), settling a group the report flags (its default is the warbands that may learn every skill in it). new_skill_groups: groups our lists lack -> the warband type that alone learns from it (type, or types), our skills it holds (skills) and new ones (new_skills; {name, rule} names one apart from the skill whose rules it takes) with rules from mordheimer, or from the source file in sources/ it names. seed_items_back: an item of our old seed (apps/items/data/standard-items.json) -> the setting and source it comes back with, and why: its price rows and properties as they were, single use kept. extra_items: items no source has: name, type, subtype, setting, source, link_url, flavour, cost (with dice and dice_multiplier for a dice price: 10+4D6 is cost 10, dice 4; cost_note in place of cost for a price with no fixed cost, \"3 x Price\") and rarity, a statblock for an animal sold as an item, the warband types that buy it (none: everyone), the price row's note, its rules (a shared rule by slug, or its own) and why. warband_items: an item a warband's special equipment brings in (warband_items.py) -> the snapshot page (testwarbands-2026-10-31), the entry when it is named otherwise, the warband type that buys it, its type and subtype: one price row for that type at the book's price and rarity. mim_merges: a Mutiny in Marienburg stub that duplicates a complete item of ours -> the item it joins (item), the tags carried with it (tags) and why; the stub is left out and the book's price becomes a price row of that item labelled \"Mutiny in Marienburg\", since a price row has no setting of its own (William, 15 Nov 2026). item_saves: an item's name -> what equipping it does to the wearer's armour save (bonus: the steps it moves it, read from the save it prints with no save as 7+, so a 6+ item is 1 and a 4+ item 3; slot: body, shield, mount or extra, where only one body item counts at a time), and the subtype it shows under. William, 18 Nov 2026: \"Armour items should be viewed as +1 (light), +2 (heavy) etc but if a piece of armoud is equipped already then ignore subsequent. taking it away should just minus that value up to 6+. Helmets do nothing. Things like shields and mounting a mount when equipped should plus their value and take away when unequipped, no checks needed on these its up to user to be normal.\" A save a condition qualifies takes no bonus, with `why` instead: one number can't hold the condition, so the item's rules text does the work. A mount's bonus is its kind's, not data (apps/bestiary/animal_items.py).",
+  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists (its setting and source, and its grade and Broheim PDF where it has them). drop_warband_types: a Broheim warband left out -> why (one William split into two, whose types are extra_warband_types entries); the seeder archives the type it drops. warband_type_names: a type's name as Broheim spells it -> as we show it (a typo or a capital \"Of\"; the slug stays the source's). persona_item_names: a name a dramatis persona's kit prints -> our item it means, for one that is ours under another word (Heinrich 'Altdorf' Schmidt's Whip is our Steel Whip; the Khemri equipment page prints no whip of its own, 11 Nov 2026). persona_names: a dramatis persona's name as mordheimer gives it -> ours (one casing: title case, small words lower case after the first; William, 5 Nov 2026). group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_names: a mordheimer item's name -> the name we show it under (name), the tags added with it (tags), the tags dropped (drop_tags), the kind and subtype it takes (type, subtype: the Magic Carpet is an Animal, a Mount, since the bestiary holds it), the range, strength or save it takes where mordheimer's is wrong (the Nehekharan Javelins' 8\", 12\" in their warband's own PDF) and why. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_own_rules: our item's name -> the rules William settles for it (rules: name, summary, text), in place of its own. item_notes: item name -> a soft note added to each of its price rows. item_rule_wordings: a shared item rule's slug -> the wording William settles for it (summary, text), the items whose own wording it now covers (covers: their own is dropped) and those that keep only what is theirs (items: name -> summary, text). whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note. hire_warbands_add: a hired sword's or dramatis persona's name -> type slugs added to its mordheimer hire list, and why (a list that then matches a group is stored as that group, so it follows the group). Skill groups (phase 1a): our skill rows merge by name into one skill each, linked into the group of every list that had it, and each list is a group; a list's skill_lists decision is its group's (who learns from it, large_only, note). skill_splits: a row (by label) whose rule differs stays its own skill under name, in its group alone, and why. skill_wordings: a merged skill's name -> the wording it takes (text, or the row label it is from) and why; any other merged skill keeps its longest. skill_group_learners: a group's name -> who learns from it (for_everyone, or warbands as {type} or {group} slugs), settling a group the report flags (its default is the warbands that may learn every skill in it). new_skill_groups: groups our lists lack -> the warband type that alone learns from it (type, or types), our skills it holds (skills) and new ones (new_skills; {name, rule} names one apart from the skill whose rules it takes) with rules from mordheimer, or from the source file in sources/ it names. seed_items_back: an item of our old seed (apps/items/data/standard-items.json) -> the setting and source it comes back with, and why: its price rows and properties as they were, single use kept. extra_items: items no source has: name, type, subtype, setting, source, link_url, flavour, cost (with dice and dice_multiplier for a dice price: 10+4D6 is cost 10, dice 4) and rarity, a statblock for an animal sold as an item, the warband types that buy it (none: everyone), the price row's note, its rules (a shared rule by slug, or its own) and why. warband_items: an item a warband's special equipment brings in (warband_items.py) -> the snapshot page (testwarbands-2026-10-31), the entry when it is named otherwise, the warband type that buys it, its type and subtype: one price row for that type at the book's price and rarity. mim_merges: a Mutiny in Marienburg stub that duplicates a complete item of ours -> the item it joins (item), the tags carried with it (tags) and why; the stub is left out and the book's price becomes a price row of that item labelled \"Mutiny in Marienburg\", since a price row has no setting of its own (William, 15 Nov 2026). item_saves: an item's name -> what equipping it does to the wearer's armour save (bonus: the steps it moves it, read from the save it prints with no save as 7+, so a 6+ item is 1 and a 4+ item 3; slot: body, shield, mount or extra, where only one body item counts at a time), and the subtype it shows under. William, 18 Nov 2026: \"Armour items should be viewed as +1 (light), +2 (heavy) etc but if a piece of armoud is equipped already then ignore subsequent. taking it away should just minus that value up to 6+. Helmets do nothing. Things like shields and mounting a mount when equipped should plus their value and take away when unequipped, no checks needed on these its up to user to be normal.\" A save a condition qualifies takes no bonus, with `why` instead: one number can't hold the condition, so the item's rules text does the work. A mount's bonus is its kind's, not data (apps/bestiary/animal_items.py).",
   "warband_aliases": {
     "Stromfels Reavers": [
       "shallows-beasts"
@@ -839,6 +839,11 @@
           "type": "guild-of-disgraced-engineers"
         }
       ]
+    },
+    "Holy": {
+      "for_everyone": true,
+      "note": "Path of The One (Preacher) and Path of Sigmar (Holy Vow) path-takers only",
+      "why": "Relics of the Crusades pp. 9-10: a path-taker on the Path of The One gains Holy Skills at Preacher and one on the Path of Sigmar at Holy Vow; a path is any warband's choice, not a warband type, so the group is open to everyone and the note says who (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
     }
   },
   "drop_skills": {
@@ -952,6 +957,72 @@
       "type": "Speed",
       "description": "The warrior may run or charge while climbing.",
       "source": "the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills"
+    },
+    {
+      "name": "Martyr",
+      "type": "Holy",
+      "description": "The warrior doesn't fear death, knowing that his god has decided in advance when he will die, and he inspires his comrades. While he is in close combat he gains the Leader skill. Every time he rolls on the Serious Injury chart he gains +1 experience point.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Charitable",
+      "type": "Holy",
+      "description": "The warrior indulges in charitable works and shuns money, so the poor of the towns follow him, aiding in any way they can. D3 mace-armed Novices (see the Sisters of Sigmar warband) accompany him in every battle and don't count towards the warband's limit. However, just before each battle he spends D6x5 dinars on the poor, and sells all of his equipment if the warband doesn't have the funds to pay.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Slayer of the Heretic",
+      "type": "Holy",
+      "description": "The warrior hates everyone who follows a path different to his. The warband must execute any prisoners he hates, and may not use Hired Swords or Dramatis Personae, as he will not suffer their blasphemous ways.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Aesthete",
+      "type": "Holy",
+      "description": "The warrior gives up his possessions, trusting in his god to protect him. His only possession is a staff (a mace or a double-handed weapon, as chosen). He passes any Leadership test (not Rout tests) and gains an unmodified 5+ save against any wound.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Light of Glory",
+      "type": "Holy",
+      "description": "A halo of light surrounds the warrior's head, which the undead shun instinctively. Undead fear the warrior (an exception to the Undead's immunity to psychology). The halo also acts as a light source in the same way as a torch.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Divine Guidance",
+      "type": "Holy",
+      "description": "The warrior performs a dangerous pilgrimage to attract his god's blessings. He must miss the next game and roll once on the Serious Injury chart. He can then roll for one spell from the Divine Interventions list.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "On the Wings of Angels",
+      "type": "Holy",
+      "description": "The warrior gains +1 to all his characteristics once his warband begins taking Rout tests.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Converter",
+      "type": "Holy",
+      "description": "During the post-battle sequence roll a D6: on a 6 the warrior has convinced a peasant to join the cause, and you may add a Novice (see the Sisters of Sigmar warband) to the warband as a new henchman. If the warband captures an enemy who isn't on the same path as the warband, the warrior may try to convert him: after every game roll 2D6 for the converter and for the captive, each adding his Leadership. If the captive scores higher he remains a prisoner; if the converter scores higher, the prisoner joins and fights for the warband with all of his original equipment.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Blessed Weapon",
+      "type": "Holy",
+      "description": "One of the warrior's weapons, chosen by the player, is blessed, and wounds any Undead, Chaotic or spellcasting model on a roll of 2+.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Iron Faith",
+      "type": "Holy",
+      "description": "The warrior is steadfast against the deceitfulness of sorcery, and gains an unmodified 5+ save against any spell that affects him.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Smith",
+      "type": "Academic",
+      "description": "Before each game he takes part in, the warrior may work on one close combat weapon or suit of heavy armour. The wielder of a smithed weapon may re-roll the first failed to-hit roll of the battle; the bearer of smithed armour may re-roll the first failed armour save.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Academic Skills"
     }
   ],
   "skill_descriptions": {
@@ -990,6 +1061,10 @@
     "Taunt (Militant Mootlanders)": {
       "name": "Taunt (Militant Mootlanders)",
       "why": "the Ostlanders' Taunt, which keeps the name, is worded for the Ostlander; the Militant Mootlanders' is MiM's, for a Halfling (William, 6 Nov 2026: \"sure unless its specific\")"
+    },
+    "Smith (Academic)": {
+      "name": "Smith (Academic)",
+      "why": "Relics of the Crusades' Academic Smith works one weapon or suit of armour before each game, a different rule from the Cursed Dwarves' Smith (half-price common weapons), which keeps the name: skills match ours only by name and effect (William, 6 Nov 2026)"
     }
   },
   "skill_wordings": {
@@ -1385,109 +1460,408 @@
       "why": "Karak Azgal p. 6: 10+4D6 gc, Rare 9, \"Use the rules for the Mordheim Map from the Mordheim rulebook\", so the Mordheim Map's shared Map rule (William, 21 Nov 2026: \"it will have the same rules as the mordheim or mim map\")"
     },
     {
-      "name": "Yew Staff",
-      "type": "Weapon",
-      "subtype": "Melee",
-      "setting": "athel-loren",
-      "source": "Athel Loren",
-      "warbands": [
-        "wood-elf-scouts"
-      ],
-      "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=32",
-      "cost": 35,
-      "rarity": 8,
-      "why": "Athel Loren pp. 32-36: 35 gc, Rare 8 at the Wood Elf Village and Pine Glade (Rare 5 at the Yew Glade), at the Wood Elf Village, Pine Glade and Yew Glade shops, the only shops that sell it, which only Wood Elf Scouts may visit; no rules anywhere in the PDF, the Wood Elf PDFs or mordheimer (William, 21 Nov 2026: \"Add those new items in now\")"
-    },
-    {
-      "name": "Sword of Orion",
-      "type": "Weapon",
-      "subtype": "Melee",
-      "setting": "athel-loren",
-      "source": "Athel Loren",
-      "warbands": [
-        "wood-elf-scouts"
-      ],
-      "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=32",
+      "name": "Astrolabe",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=16",
+      "flavour": "Devices invented in Araby, astrolabes were very helpful in navigating the deserts by observing the stars.",
       "cost": 20,
-      "rarity": 8,
-      "why": "Athel Loren pp. 32-36: 20 gc, Rare 8 at the Wood Elf Village and Pine Glade (Rare 6 at the Yew Glade), at the Wood Elf Village, Pine Glade and Yew Glade shops, the only shops that sell it, which only Wood Elf Scouts may visit; no rules anywhere in the PDF, the Wood Elf PDFs or mordheimer (William, 21 Nov 2026: \"Add those new items in now\")"
-    },
-    {
-      "name": "Yew Bow",
-      "type": "Weapon",
-      "subtype": "Ranged",
-      "setting": "athel-loren",
-      "source": "Athel Loren",
-      "warbands": [
-        "wood-elf-scouts"
-      ],
-      "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=32",
-      "cost_note": "3 x Price",
-      "rarity": 10,
-      "why": "Athel Loren pp. 32-36: 3 x Price, as the Ithilmar Weapon's, Rare 10 at the Wood Elf Village and Pine Glade (Rare 7 at the Yew Glade), at the Wood Elf Village, Pine Glade and Yew Glade shops, the only shops that sell it, which only Wood Elf Scouts may visit; no rules anywhere in the PDF, the Wood Elf PDFs or mordheimer (William, 21 Nov 2026: \"Add those new items in now\")"
-    },
-    {
-      "name": "Fighting Falcons",
-      "type": "Weapon",
-      "subtype": "Ranged",
-      "setting": "athel-loren",
-      "source": "Athel Loren",
-      "warbands": [
-        "wood-elf-scouts"
-      ],
-      "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=32",
-      "cost": 30,
-      "rarity": 7,
-      "why": "Athel Loren pp. 32-36, under Missile weapons: 30 gc, Rare 7 at the Wood Elf Village and Yew Glade (Common at the Pine Glade), at the Wood Elf Village, Pine Glade and Yew Glade shops, the only shops that sell it, which only Wood Elf Scouts may visit; no rules anywhere in the PDF, the Wood Elf PDFs or mordheimer (William, 21 Nov 2026: \"Add those new items in now\"); kept apart from our Hunting Bird, Falcon/Hawk, Falcon and Bird of Prey, whose names differ"
-    },
-    {
-      "name": "Yew Armour",
-      "type": "Armour",
-      "subtype": "Body Armour",
-      "setting": "athel-loren",
-      "source": "Athel Loren",
-      "warbands": [
-        "wood-elf-scouts"
-      ],
-      "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=33",
-      "cost": 25,
-      "rarity": 10,
-      "why": "Athel Loren pp. 33-36, printed Yew Armor: 25 gc, Rare 10 at the Wood Elf Village and Pine Glade (Rare 7 at the Yew Glade), at the Wood Elf Village, Pine Glade and Yew Glade shops, the only shops that sell it, which only Wood Elf Scouts may visit; no rules anywhere in the PDF, the Wood Elf PDFs or mordheimer (William, 21 Nov 2026: \"Add those new items in now\"); no save, since none is printed"
-    },
-    {
-      "name": "War Hawk",
-      "type": "Miscellaneous",
-      "setting": "athel-loren",
-      "source": "Athel Loren",
-      "warbands": [
-        "wood-elf-scouts"
-      ],
-      "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=33",
-      "cost": 150,
       "dice": 1,
-      "dice_multiplier": 10,
       "rarity": 9,
-      "why": "Athel Loren pp. 33-36, under Miscellaneous: 150 + D6 x 10 gc, Rare 9 at all three, at the Wood Elf Village, Pine Glade and Yew Glade shops, the only shops that sell it, which only Wood Elf Scouts may visit; no rules anywhere in the PDF, the Wood Elf PDFs or mordheimer (William, 21 Nov 2026: \"Add those new items in now\") (Forest Hazard 43, War Hawk Nest, gives one to a Wood Elf warband but says only that it may be sold or used in battle)"
+      "note": "Khalibon: 20+2D6 dinars, Rare 9.",
+      "rules": [
+        {
+          "text": "A warband with an astrolabe may re-roll any failed Lost in the Desert roll."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 15: 20+D6 dinars, Rare 9 at Dimashque (20+2D6, Rare 9 at Khalibon, in the note) (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
     },
     {
-      "name": "Wild Cat",
+      "name": "Surgeon",
       "type": "Miscellaneous",
-      "setting": "athel-loren",
-      "source": "Athel Loren",
-      "warbands": [
-        "wood-elf-scouts"
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=16",
+      "flavour": "The healing techniques of the Arabians were quite advanced for those times and it is said that even those who followed the true faith of Sigmar made use of them. Plus, they could also give a fine haircut.",
+      "cost": 50,
+      "dice": 2,
+      "rarity": 7,
+      "rules": [
+        {
+          "text": "Choose a warrior with a serious injury he wants mended, then roll a D6 for how the surgery goes.\n\n{{table:1}}",
+          "tables": [
+            {
+              "columns": [
+                "D6",
+                "Result"
+              ],
+              "rows": [
+                [
+                  "1-2",
+                  "Pray harder: the warrior must have displeased the gods, as there are complications during the surgery. Roll on the Serious Injuries chart for the unfortunate Hero and apply the result."
+                ],
+                [
+                  "3-4",
+                  "The One's will: the physician declares that The One has decreed in advance that you would not be cured today. The surgery has no benefit."
+                ],
+                [
+                  "5",
+                  "I thought I sterilised that...: the surgeon cures the injury, but there are complications. Replace the injury with Old Battle Wound."
+                ],
+                [
+                  "6",
+                  "By the will of The One!: the surgery is a success. Remove the serious injury from the warrior."
+                ]
+              ]
+            }
+          ]
+        }
       ],
-      "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=33",
+      "why": "Relics of the Crusades pp. 4 and 15: 50+2D6 dinars, Rare 7, sold only at Dimashque (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Ship of the Desert",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=16",
+      "flavour": "Great creatures, known as the Ships of the Desert can go for days without water and carry great burdens without fatigue. The Arabians would load one up with water that could last for days.",
+      "cost": 100,
+      "dice": 2,
+      "rarity": 7,
+      "note": "Khalibon: 100+2D6 dinars, Rare 8.",
+      "rules": [
+        {
+          "text": "For each ship of the desert it has, a warband can ignore the effects of horribly hot and burning sands for five of its members."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 15: 100+2D6 dinars, Rare 7 at Dimashque (Rare 8 at Khalibon, in the note) (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Master Astrologer",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=16",
+      "flavour": "The journals of those present during these times tell of magicians who could divine the future by analysing the heavens. It seems most were charlatans hoping to make a quick dinar from passing fools. However, it is rumoured that in some towns there were seers who could guide men to what they truly desired.",
       "cost": 25,
+      "dice": 3,
+      "rarity": 9,
+      "note": "Not available to warbands on the Path of Sigmar. Khalibon: 25+3D6 dinars, Rare 8.",
+      "rules": [
+        {
+          "text": "For the next D3 games the warband fights in a desert locale, it may roll an extra D6 during exploration, and this D6 may be modified by +1 or -1."
+        },
+        {
+          "name": "Charlatan",
+          "text": "If the warband fails the rarity roll, it has met a charlatan instead. Its leader must take an Initiative test. If he fails, the warband pays the price as if it had found the master astrologer, and rolls on the Lost in the Desert table, applying the result to its next battle."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 15: 25+3D6 dinars, Rare 9 at Dimashque (Rare 8 at Khalibon, in the note); not for the Path of Sigmar, a path rather than a warband type, so the note says so (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Magic Tattoo",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=16",
+      "flavour": "The knowledge of engraving a magical tattoo into skin is a combination of the arcane knowledge of many races, including dwarven rune smithing and the “arts” of the savage orcs.",
+      "cost": 200,
+      "dice": 1,
+      "dice_multiplier": 25,
+      "rarity": 11,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "text": "A hero who buys a magic tattoo chooses one spell from the Lesser Magic list, and may now cast it. Finding an artist who lets him choose from Necromancy, Chaos Rituals or Blessings of Nurgle adds +2 to the tattoo's rarity, taking it over 13, so the hero must have the Streetwise skill or something similar to get one."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 5 and 15: 200+D6x25 dinars, Rare 11, sold only at Khalibon (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Vermin Pot",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=16",
+      "flavour": "Vermin pots were invented by the ancient Khemrians and were in use during the crusades. Biting, poisonous insects were placed into ceramic pots then sealed within and kept alive by tiny air holes and a piece of rotten meat. When thrown, the vermin pot would smash to pieces and release the angry creatures within.",
+      "range": "Strength x 2\"",
+      "cost": 30,
+      "dice": 2,
+      "rarity": 9,
+      "note": "Heroes only. Khalibon: 25+D6 dinars, Rare 8.",
+      "rules": [
+        {
+          "rule": "thrown-weapon",
+          "text": "Models using vermin pots do not suffer penalties for range or moving."
+        },
+        {
+          "name": "Thrown Pot",
+          "text": "A vermin pot is a ranged weapon the character rolls to hit with as normal. If it hits, the pot lands on the target. If he misses, the pot lands D6\" away from the target in a random direction."
+        },
+        {
+          "name": "Vermin",
+          "text": "If the pot hits, place a vermin swarm in base contact with the target: it counts as charging in the close combat that follows. If it misses, place the swarm where the pot lands. The swarm charges and moves to get into close combat with the closest warrior, members of the thrower's warband included."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 15: 30+2D6 dinars, Rare 9 at Dimashque (25+D6, Rare 8 at Khalibon, in the note); range Strength x 2 inches (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Dimashquine Blade",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=16",
+      "flavour": "These are another secret of the Arabians that has passed into mystery. Dimashquine blades were reputed to be strong enough to cut through the swords of their enemies like they were pig’s cheese.",
+      "range": "Close Combat",
+      "strength": "As user",
+      "cost": 15,
+      "dice": 2,
+      "rarity": 9,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "rule": "parry",
+          "text": "A Dimashquine blade counts as a sword."
+        },
+        {
+          "text": "If its wielder scores 5+ on his parry roll, the weapon his opponent is attacking him with is destroyed. Only weapons of Common availability can be destroyed this way."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 15: 15+2D6 dinars, Rare 9, sold only at Dimashque; it counts as a sword, so the sword's Parry (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Stickfire Pot",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=17",
+      "flavour": "The secret of creating stickfire is now lost though it was well documented that it was used by Arabian defenders during the crusades.",
+      "range": "Strength x 2\"",
+      "cost": 35,
       "dice": 2,
       "rarity": 10,
+      "note": "Heroes only. Khalibon: 35+D6 dinars, Rare 12.",
+      "rules": [
+        {
+          "rule": "thrown-weapon",
+          "text": "Models using stickfire pots do not suffer penalties for range or moving."
+        },
+        {
+          "name": "Thrown Pot",
+          "text": "A stickfire pot is a ranged weapon the character rolls to hit with as normal. If it hits, the pot lands on the target, who is covered in stickfire. If he misses, the pot lands D6\" away from the target in a random direction, and anyone it lands on is covered in stickfire. The warrior has enough pots for one battle."
+        },
+        {
+          "name": "Stickfire",
+          "text": "All models within 1\" of a model covered in stickfire at the beginning of a turn count as being on fire and suffer a Strength 4 hit. A warrior who survives must score a 4+ in the Recovery phase or suffer a Strength 4 hit each turn he is on fire, and moves D6\" in a random direction. Other warriors cannot help to put out the flames, as they are too afraid. If a warrior carrying stickfire pots ever catches on fire, all his stickfire pots are destroyed, and he automatically suffers D3 Strength 5 hits as the flammable materials explode."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 16: 35+2D6 dinars, Rare 10 at Dimashque, printed Stickfire Pots (35+D6, Rare 12 at Khalibon, in the note); range Strength x 2 inches (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Stickfire Hose",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=17",
+      "flavour": "A dastardly invention, the stickfire hose was carried by a team that shot flaming stickfire at their enemies. Launched by a series of pumps or bellows, the stickfire would cover and burn all in its path.",
+      "range": "Special",
+      "cost": 190,
+      "dice": 1,
+      "dice_multiplier": 10,
+      "rarity": 11,
+      "rules": [
+        {
+          "rule": "move-or-fire",
+          "text": "You may not move and fire a stickfire hose in the same turn, other than to pivot on the spot to face your target or stand up from being knocked down."
+        },
+        {
+          "name": "Large and Complex",
+          "text": "It takes two warriors to carry a stickfire hose, and they must stay in base contact throughout the game. There is only enough stickfire for D3 uses, rolled after the first shot."
+        },
+        {
+          "name": "Dangerous",
+          "text": "Henchmen may use a stickfire hose, as its instability makes any hero wary of holding it."
+        },
+        {
+          "name": "Stream",
+          "text": "When the hose fires, draw a line 16\" long and 1\" wide in any direction from the firer (absolutely straight). Every model in its path is automatically hit by stickfire."
+        },
+        {
+          "name": "Stickfire",
+          "text": "All models within 1\" of a model covered in stickfire at the beginning of a turn count as being on fire and suffer a Strength 4 hit. A warrior who survives must score a 4+ in the Recovery phase or suffer a Strength 4 hit each turn he is on fire, and moves D6\" in a random direction. Other warriors cannot help to put out the flames, as they are too afraid. If a warrior carrying a stickfire hose ever catches on fire, the hose is destroyed and removed from his equipment, and he automatically suffers D3 Strength 5 hits as the flammable materials explode."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 16: 190+D6x10 dinars, Rare 11, sold only at Dimashque; Henchmen may use it, so no Heroes only note (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Perfume",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=17",
+      "flavour": "Used by the wealthiest merchants in Araby, perfume showed that the wearer had noble tastes.",
+      "cost": 20,
+      "dice": 1,
+      "rarity": 9,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "text": "A character wearing perfume makes a good impression on those he deals with. Once per post-battle sequence, he may deduct D6 dinars from the price of any single item he buys, to a minimum of 1 dinar."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 16: 20+D6 dinars, Rare 9, sold only at Dimashque (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Robe of Honour",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=17",
+      "flavour": "Generally granted to those who excel in the service of a Sultan or Caliph, a robe of honour would increase its wearer’s reputation dramatically.",
+      "cost": 50,
+      "dice": 2,
+      "rarity": 10,
+      "note": "Heroes only. Not available to warbands on the Path of Sigmar or the Path of the Worm, nor to a warband with a member barred from Dimashque.",
+      "rules": [
+        {
+          "text": "Warriors flock to join the warband. You may re-roll a D6 when seeing how experienced potential henchmen are when recruiting."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 16, its heading printed Robe of Honor: 50+2D6 dinars, Rare 10, sold only at Dimashque; its restrictions name paths, not warband types, so the note says them (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Standard of Sigmar",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=17",
+      "flavour": "This grand standard displayed the two-headed hammer in red on a white background. The sight of it flying over the battlefield steeled the hearts of those loyal to Sigmar.",
+      "cost": 60,
+      "dice": 2,
+      "rarity": 9,
+      "note": "Path of Sigmar only",
+      "rules": [
+        {
+          "text": "The standard requires one hand to use and can be carried by any Hero in the warband. While the Hero carrying it is still alive, the warband adds +1 to its Leadership for rout tests."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 3 and 16: 60+2D6 dinars, Rare 9, sold only at Tyrius; Path of Sigmar only, a path rather than a warband type, so the note says so (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Wash Bar",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=17",
+      "flavour": "Another invention from Araby that is now common amongst the higher classes of the Old World. Wash bars were used to keep the bodies of Arabians clean during their various religious rituals.",
+      "cost": 5,
+      "dice": 1,
+      "rarity": 6,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "text": "A wash bar lasts for D6 games and must be used in every post-battle sequence. Its user may add or deduct 1 from his rolls on the Serious Injuries chart."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 16: 5+D6 dinars, Rare 6, sold only at Dimashque (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Sharab",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=17",
+      "flavour": "The tinkle of the sharab sellers can be heard in most bazaars in Araby. These cold drinks of concentrated fruit would later come to the Old World under the names of ‘sirops’ or ‘sorbets’.",
+      "cost": 30,
+      "dice": 3,
+      "rarity": 8,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "text": "A warrior can spend a turn drinking sharab, and then ignores the Hot scenario rule for 2D6 turns. If he is affected by burning sands, he must drink it before the battle begins, and the 2D6 turns begin from turn 1. There is only enough sharab for one use."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 16: 30+3D6 dinars, Rare 8, sold only at Dimashque (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Khufa Beans",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=18",
+      "flavour": "A shepherd once noticed his goats becoming more lively after grazing on the beans from the Khufa plant. He suffered the same effect when he crushed the beans and mixed them with milk. This potion soon became a common drink throughout Araby.",
+      "cost": 20,
+      "dice": 2,
+      "rarity": 7,
+      "note": "Khalibon: 20+2D6 dinars, Rare 8.",
+      "rules": [
+        {
+          "text": "A warband that indulges in a jug of khufa before a scenario may re-roll any failed Initiative tests until the next battle begins. There are only enough khufa beans for one use."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 17: 20+2D6 dinars, Rare 7 at Dimashque (Rare 8 at Khalibon, in the note) (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Dwarf Helm",
+      "type": "Armour",
+      "subtype": "Helmet",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=18",
+      "flavour": "Invented by dwarfs to aid their work in the mines, a dwarf helm allows its bearer to see well in darkness and to also keep both hands free.",
+      "cost": 10,
+      "dice": 2,
+      "rarity": 8,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "rule": "avoid-stun",
+          "text": "A model equipped with a dwarf helm has a special 4+ save on a D6 against being stunned. If the save is made, treat the stunned result as knocked down instead. This save is not modified by the opponent's Strength."
+        },
+        {
+          "text": "A warrior equipped with a dwarf helm counts as wearing a helmet lit by a torch, and keeps both hands free."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 3 and 17: 10+2D6 dinars, Rare 8, sold only at Tyrius; it counts as a helmet, so the helmet's Avoid Stun (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Abacus",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=18",
+      "flavour": "An abacus is made up of beads threaded along rows of rods. It is very helpful for mathematical calculations and is commonly used by experienced merchants.",
+      "cost": 15,
+      "dice": 2,
+      "rarity": 8,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "text": "A character using an abacus looks extremely experienced when dealing with the average trader. He may re-roll one D6 when using the Haggle skill."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 17: 15+2D6 dinars, Rare 8, sold only at Dimashque (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Arabian Steed",
+      "type": "Animal",
+      "subtype": "Ridden Animals",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=5",
       "statblock": [
         {
-          "profile": "Wild Cat",
-          "m": "6",
-          "ws": "4",
+          "profile": "Arabian Steed",
+          "m": "9",
+          "ws": "3",
           "bs": "0",
-          "s": "4",
+          "s": "3",
           "t": "3",
           "w": "1",
           "i": "4",
@@ -1495,13 +1869,94 @@
           "ld": "5"
         }
       ],
+      "cost": 90,
+      "rarity": 10,
       "rules": [
         {
-          "name": "",
-          "text": "Wild cats are animals, but can climb trees."
+          "rule": "battle-schooled"
+        },
+        {
+          "text": "An Arabian steed is an Elven steed that may be ridden by humans."
         }
       ],
-      "why": "Athel Loren pp. 33-36, under Miscellaneous: 25 + 2D6 gc, Rare 10 at the Wood Elf Village and Yew Glade (Common at the Pine Glade), at the Wood Elf Village, Pine Glade and Yew Glade shops, which only Wood Elf Scouts may visit; its profile and its one rule are Forest Hazard 33's, Wild Cats (p. 9), the only rules the PDF gives a wild cat. Its price, rarity and profile are our Wardogs', but its name is not, so it stays apart"
+      "why": "Relics of the Crusades p. 4: 90 dinars, Rare 10, sold only at Dimashque, \"as Elven Steed, but may be ridden by humans\", so the Elven Steed's profile and Battle Schooled; a mount, so its beast is in apps/bestiary/data/bestiary.json (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "House",
+      "type": "Miscellaneous",
+      "subtype": "Dwelling",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=18",
+      "flavour": "Houses were generally for sale in any town in Araby, as long as you could gain the permission of the ruler. They offered quite a lot of comforts compared to other forms of accommodation.",
+      "cost": 50,
+      "dice": 5,
+      "rarity": 7,
+      "note": "Dimashque: 60+D6x10 dinars, Rare 8. Khalibon: 60+4D6 dinars, Rare 9.",
+      "rules": [
+        {
+          "text": "The warband gains the benefits of a town's citizens. When it sells treasure it counts as one size smaller, so a warband of 10-12 members counts as 7-9. Note the town the house is bought in: the warband gains +1 to any rarity roll when trading there."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 3-5 and 17, a dwelling: 50+5D6 dinars, Rare 7 at Tyrius (Dimashque's and Khalibon's prices in the note); its rules move here from the campaign rules' Dwellings (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Shoppe",
+      "type": "Miscellaneous",
+      "subtype": "Dwelling",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=18",
+      "flavour": "A shoppe was basically a two story house, with the ground level used to sell things.",
+      "cost": 60,
+      "dice": 2,
+      "rarity": 8,
+      "note": "Dimashque: 60+2D6 dinars, Rare 7. Khalibon: 50+2D6 dinars, Rare 10.",
+      "rules": [
+        {
+          "text": "The warband must own a house before buying a shoppe. It sells used equipment for 75% of its original cost, and adds 2D6 dinars to its treasury after every game. A Hero with the Smith (Academic) skill becomes an Inventor, as the Path of Knowledge advance."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 3-5 and 17, a dwelling: 60+2D6 dinars, Rare 8 at Tyrius (Dimashque's and Khalibon's in the note); its rules move here from the campaign rules' Dwellings (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Temple",
+      "type": "Miscellaneous",
+      "subtype": "Dwelling",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=18",
+      "flavour": "The lives of those who built temples to Sigmar were constantly filled with a steady stream of worshippers to their doors. Because of this they were constantly reminded of their duties and could not stray from the light.",
+      "cost": 150,
+      "dice": 1,
+      "dice_multiplier": 25,
+      "rarity": 9,
+      "note": "Dimashque: 150+D6x25 dinars, Rare 10.",
+      "rules": [
+        {
+          "text": "The warband may only build a temple if it owns a house. A warrior casting a Divine Intervention gains +1 to the attempt. The leader gains the Good Shepherd ability, which works much as the Children of the Horned Rat spell, bringing D3 hammer-wielding zealots from the Witch Hunter warband list in place of the rats."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 3-4 and 17, a dwelling: 150+D6x25 dinars, Rare 9 at Tyrius (Dimashque's in the note); its rules move here from the campaign rules' Dwellings (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Arabian Tent",
+      "type": "Miscellaneous",
+      "subtype": "Dwelling",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=18",
+      "flavour": "Arabian tents were majestic constructions that offered the comforts of city dwellings in the wilderness. A well made tent was hard to come by, as the desert nomads that make them were a surly, blasphemous lot.",
+      "cost": 60,
+      "dice": 2,
+      "rarity": 12,
+      "note": "Khalibon: 60+2D6 dinars, Rare 11.",
+      "rules": [
+        {
+          "text": "The warband is friends with the desert nomads. Its leader adds +1 to his Initiative when testing whether the warband is lost in the desert. If that test's roll is a 1, a merchant approaches and the warband may trade using Khalibon's trading chart."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 17, a dwelling: 60+2D6 dinars, Rare 12 at Dimashque (Rare 11 at Khalibon, in the note); its rules move here from the campaign rules' Dwellings (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
     }
   ],
   "warband_items": {
@@ -1637,7 +2092,18 @@
       "Dirty Blow (Strength)": "mutiny-in-marienburg",
       "Rigger (Strength)": "mutiny-in-marienburg",
       "Tunnel Rat (Speed)": "mutiny-in-marienburg",
-      "Spry (Speed)": "mutiny-in-marienburg"
+      "Spry (Speed)": "mutiny-in-marienburg",
+      "Martyr (Holy)": "relics-of-the-crusades",
+      "Charitable (Holy)": "relics-of-the-crusades",
+      "Slayer of the Heretic (Holy)": "relics-of-the-crusades",
+      "Aesthete (Holy)": "relics-of-the-crusades",
+      "Light of Glory (Holy)": "relics-of-the-crusades",
+      "Divine Guidance (Holy)": "relics-of-the-crusades",
+      "On the Wings of Angels (Holy)": "relics-of-the-crusades",
+      "Converter (Holy)": "relics-of-the-crusades",
+      "Blessed Weapon (Holy)": "relics-of-the-crusades",
+      "Iron Faith (Holy)": "relics-of-the-crusades",
+      "Smith (Academic)": "relics-of-the-crusades"
     },
     "hired_swords": {
       "Albino Stormvermin": "mutiny-in-marienburg",
