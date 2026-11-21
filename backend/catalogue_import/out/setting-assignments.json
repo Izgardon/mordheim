@@ -1081,6 +1081,61 @@
       "how": "overrides.json"
     },
     {
+      "name": "Martyr",
+      "setting": "relics-of-the-crusades",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Charitable",
+      "setting": "relics-of-the-crusades",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Slayer of the Heretic",
+      "setting": "relics-of-the-crusades",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Aesthete",
+      "setting": "relics-of-the-crusades",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Light of Glory",
+      "setting": "relics-of-the-crusades",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Divine Guidance",
+      "setting": "relics-of-the-crusades",
+      "how": "overrides.json"
+    },
+    {
+      "name": "On the Wings of Angels",
+      "setting": "relics-of-the-crusades",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Converter",
+      "setting": "relics-of-the-crusades",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Blessed Weapon",
+      "setting": "relics-of-the-crusades",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Iron Faith",
+      "setting": "relics-of-the-crusades",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Smith (Academic)",
+      "setting": "relics-of-the-crusades",
+      "how": "overrides.json"
+    },
+    {
       "name": "Chaos Engineer",
       "setting": "border-town-burning",
       "how": "overrides.json"

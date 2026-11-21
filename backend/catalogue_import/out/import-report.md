@@ -27,9 +27,9 @@ Answers go into `overrides.json`; the next build applies them.
 | items (MiM) | 51 |
 | items (warband templates) | 41 |
 | price rows | 611 |
-| skills | 510 |
-| skill groups | 114 |
-| skill group links | 660 |
+| skills | 521 |
+| skill groups | 115 |
+| skill group links | 671 |
 | serious injuries (D66) | 20 |
 | shared specials | 82 |
 | random mutation results (D66) | 36 |
@@ -206,7 +206,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 510 | 153 | 321 | 36 |
+| skills | 521 | 153 | 332 | 36 |
 | hired swords | 125 | 71 | 54 | 0 |
 | dramatis personae | 56 | 30 | 26 | 0 |
 
@@ -302,6 +302,7 @@ Every fee was read.
 | Undead Vampires | Undead | Vampire only | Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form |
 | Pirates (TBMF) | Pirates |  | Captain Blood, Treasure Hunter |
 | Dwarf Exiled Engineers | Guild of Disgraced Engineers |  | Tunneler, Tinkerer, Quick Thinker, Master Inventor |
+| Holy | everyone | Path of The One (Preacher) and Path of Sigmar (Holy Vow) path-takers only | Martyr, Charitable, Slayer of the Heretic, Aesthete, Light of Glory, Divine Guidance, On the Wings of Angels, Converter, Blessed Weapon, Iron Faith |
 
 Left out: Skills list prohibitions (Saurus), a rules note, not a skill (William): Saurus can't take Academic skills or use missile weapons
 Left out: Knowledge of Myths and Legends (Strigany), left out of the catalogue for now (William)
@@ -327,6 +328,17 @@ Added: Dirty Blow (Strength), from the Mutiny in Marienburg main document (Brohe
 Added: Rigger (Strength), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
 Added: Tunnel Rat (Speed), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
 Added: Spry (Speed), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
+Added: Martyr (Holy), from the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills.
+Added: Charitable (Holy), from the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills.
+Added: Slayer of the Heretic (Holy), from the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills.
+Added: Aesthete (Holy), from the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills.
+Added: Light of Glory (Holy), from the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills.
+Added: Divine Guidance (Holy), from the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills.
+Added: On the Wings of Angels (Holy), from the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills.
+Added: Converter (Holy), from the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills.
+Added: Blessed Weapon (Holy), from the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills.
+Added: Iron Faith (Holy), from the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills.
+Added: Smith (Academic), from the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Academic Skills.
 Description put right: Mutant (Beastmen Raiders).
 Description put right: Quick Thinker (Dwarf Exiled Engineers).
 Description put right: Ignore Pain (Skaven Clan Pestilens).
@@ -336,7 +348,7 @@ Description put right: Beastmaster (Strength).
 
 ## Skill groups
 
-`out/skills.json` is 510 skills, one per name; `out/skill-groups.json` is 114 groups holding them (660 links), the five core groups first.
+`out/skills.json` is 521 skills, one per name; `out/skill-groups.json` is 115 groups holding them (671 links), the five core groups first.
 
 ### Merged by name
 
@@ -374,6 +386,7 @@ Merged skills whose rows had different settings, given the lowest: Hide in Shado
 | Bellowing roar (Ogres) | Bellowing Roar (Ogres) | its rule differs from the Beastmen Raiders' Bellowing Roar, which keeps the name (William, 4 Nov 2026: "i agree with recs") |
 | Sea Legs (Pirates (TBMF)) | Sea Legs (TBMF) | its rule differs from the Pirates' Sea Legs, which keeps the name (William, 4 Nov 2026: "i agree with recs") |
 | Sniper (Shadow Warriors) | Sniper (Shadow Warriors) | its rule differs from the Hochland Bandits' Sniper, which keeps the name (William, 4 Nov 2026: "i agree with recs") |
+| Smith (Academic) | Smith (Academic) | Relics of the Crusades' Academic Smith works one weapon or suit of armour before each game, a different rule from the Cursed Dwarves' Smith (half-price common weapons), which keeps the name: skills match ours only by name and effect (William, 6 Nov 2026) |
 
 ### Every group
 
@@ -383,7 +396,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | --- | --- | --- | --- | --- |
 | Combat | everyone | intersection | - | Strike to Injure, Combat Master, Weapons Training, Web of Steel, Expert Swordsman, Step Aside, Elusive, Bulwark, Lunge |
 | Shooting | everyone | intersection | - | Quick Shot, Pistolier, Eagle Eyes, Weapons Expert, Nimble, Trick Shooter, Hunter, Knife-Fighter, Wilhelm Tellus, Axe Thrower, Target Practice, Crossfire, Hunter's Eye |
-| Academic | everyone | intersection | - | Battle Tongue, Sorcery, Streetwise, Haggle, Arcane Lore, Wyrdstone Hunter, Warrior Wizard, Scribe, Mind Focus, Tactician, Hunch, Magical Aptitude, Trap Expert, Driver, Strategist, Scholar, Starstruck, Pilot |
+| Academic | everyone | intersection | - | Battle Tongue, Sorcery, Streetwise, Haggle, Arcane Lore, Wyrdstone Hunter, Warrior Wizard, Scribe, Mind Focus, Tactician, Hunch, Magical Aptitude, Trap Expert, Driver, Strategist, Scholar, Starstruck, Pilot, Smith (Academic) |
 | Strength | everyone | intersection | - | Mighty Blow, Pit Fighter, Resilient, Fearsome, Strongman, Unstoppable Charge, Handyman, Beastmaster, Rough and Tumble, Dirty Blow, Rigger |
 | Speed | everyone | intersection | - | Leap, Sprint, Acrobat, Lightning Reflexes, Jump Up, Dodge, Scale Sheer Surfaces, Celebrity, Tunnel Rat, Spry |
 | Adventurers | Adventurers | new group | Fey and Fey Quickness are the Elf's; Ferocious Charge the Barbarian's and the Dwarf's; Magic Resistant, Monster Slayer and Berserker the Dwarf's. | Fey, Fey Quickness, Ferocious Charge, Monster Slayer, Berserker, Chosen of the White Tower, Hard to Kill, Instinctive Warrior, Trading Flair, Taunt (Adventurers), Magic Resistant |
@@ -432,6 +445,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Hobgoblin Horde | Hobgoblin Horde | new group | - | Infiltration, Strict Leader, Sneaky (Hobgoblin Horde), Discretion, Slaver (Hobgoblin Horde), Backstabber (Hobgoblin Horde), Mystic Aura |
 | Hobgoblins | Hobgoblins | new group | - | Ded Shooty (Hobgoblins), Ded Sneaky, Backstabba |
 | Hochland Bandits | Hochland Bandits | intersection | - | Banditry, Hide in Shadows, Jump back, Sniper, Throw voice |
+| Holy | everyone | skill_lists | Path of The One (Preacher) and Path of Sigmar (Holy Vow) path-takers only | Martyr, Charitable, Slayer of the Heretic, Aesthete, Light of Glory, Divine Guidance, On the Wings of Angels, Converter, Blessed Weapon, Iron Faith |
 | Horned Hunters | Horned Hunters | new group | - | Animal Friendship, Infiltration, Foul Odour, Hide in Shadows, Master Trapper, Pathfinder (Horned Hunters) |
 | Khorne Raiders | Khorne Raiders | new group | - | Mutant, Blood of Khorne, Berserker (Khorne Raiders), Massive Muscles, Stromfel's Boon, Master Tanner, Rite of Combat |
 | Knights Feats | Bretonnian Brigands, Bretonnian Knights-Errant, Disciples of Maldred | new group | In a Bretonnian Brigand warband only the Fallen Noble learns these; among the Disciples of Maldred only an untainted Questing Knight, who keeps any he has once corrupt. | Combat Charge, Lancer, Sword Master, Armour Specialist |

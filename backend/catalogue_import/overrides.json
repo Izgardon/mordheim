@@ -839,6 +839,11 @@
           "type": "guild-of-disgraced-engineers"
         }
       ]
+    },
+    "Holy": {
+      "for_everyone": true,
+      "note": "Path of The One (Preacher) and Path of Sigmar (Holy Vow) path-takers only",
+      "why": "Relics of the Crusades pp. 9-10: a path-taker on the Path of The One gains Holy Skills at Preacher and one on the Path of Sigmar at Holy Vow; a path is any warband's choice, not a warband type, so the group is open to everyone and the note says who (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
     }
   },
   "drop_skills": {
@@ -952,6 +957,72 @@
       "type": "Speed",
       "description": "The warrior may run or charge while climbing.",
       "source": "the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills"
+    },
+    {
+      "name": "Martyr",
+      "type": "Holy",
+      "description": "The warrior doesn't fear death, knowing that his god has decided in advance when he will die, and he inspires his comrades. While he is in close combat he gains the Leader skill. Every time he rolls on the Serious Injury chart he gains +1 experience point.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Charitable",
+      "type": "Holy",
+      "description": "The warrior indulges in charitable works and shuns money, so the poor of the towns follow him, aiding in any way they can. D3 mace-armed Novices (see the Sisters of Sigmar warband) accompany him in every battle and don't count towards the warband's limit. However, just before each battle he spends D6x5 dinars on the poor, and sells all of his equipment if the warband doesn't have the funds to pay.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Slayer of the Heretic",
+      "type": "Holy",
+      "description": "The warrior hates everyone who follows a path different to his. The warband must execute any prisoners he hates, and may not use Hired Swords or Dramatis Personae, as he will not suffer their blasphemous ways.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Aesthete",
+      "type": "Holy",
+      "description": "The warrior gives up his possessions, trusting in his god to protect him. His only possession is a staff (a mace or a double-handed weapon, as chosen). He passes any Leadership test (not Rout tests) and gains an unmodified 5+ save against any wound.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Light of Glory",
+      "type": "Holy",
+      "description": "A halo of light surrounds the warrior's head, which the undead shun instinctively. Undead fear the warrior (an exception to the Undead's immunity to psychology). The halo also acts as a light source in the same way as a torch.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Divine Guidance",
+      "type": "Holy",
+      "description": "The warrior performs a dangerous pilgrimage to attract his god's blessings. He must miss the next game and roll once on the Serious Injury chart. He can then roll for one spell from the Divine Interventions list.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "On the Wings of Angels",
+      "type": "Holy",
+      "description": "The warrior gains +1 to all his characteristics once his warband begins taking Rout tests.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Converter",
+      "type": "Holy",
+      "description": "During the post-battle sequence roll a D6: on a 6 the warrior has convinced a peasant to join the cause, and you may add a Novice (see the Sisters of Sigmar warband) to the warband as a new henchman. If the warband captures an enemy who isn't on the same path as the warband, the warrior may try to convert him: after every game roll 2D6 for the converter and for the captive, each adding his Leadership. If the captive scores higher he remains a prisoner; if the converter scores higher, the prisoner joins and fights for the warband with all of his original equipment.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Blessed Weapon",
+      "type": "Holy",
+      "description": "One of the warrior's weapons, chosen by the player, is blessed, and wounds any Undead, Chaotic or spellcasting model on a roll of 2+.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Iron Faith",
+      "type": "Holy",
+      "description": "The warrior is steadfast against the deceitfulness of sorcery, and gains an unmodified 5+ save against any spell that affects him.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Holy Skills"
+    },
+    {
+      "name": "Smith",
+      "type": "Academic",
+      "description": "Before each game he takes part in, the warrior may work on one close combat weapon or suit of heavy armour. The wielder of a smithed weapon may re-roll the first failed to-hit roll of the battle; the bearer of smithed armour may re-roll the first failed armour save.",
+      "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Academic Skills"
     }
   ],
   "skill_descriptions": {
@@ -990,6 +1061,10 @@
     "Taunt (Militant Mootlanders)": {
       "name": "Taunt (Militant Mootlanders)",
       "why": "the Ostlanders' Taunt, which keeps the name, is worded for the Ostlander; the Militant Mootlanders' is MiM's, for a Halfling (William, 6 Nov 2026: \"sure unless its specific\")"
+    },
+    "Smith (Academic)": {
+      "name": "Smith (Academic)",
+      "why": "Relics of the Crusades' Academic Smith works one weapon or suit of armour before each game, a different rule from the Cursed Dwarves' Smith (half-price common weapons), which keeps the name: skills match ours only by name and effect (William, 6 Nov 2026)"
     }
   },
   "skill_wordings": {
@@ -2017,7 +2092,18 @@
       "Dirty Blow (Strength)": "mutiny-in-marienburg",
       "Rigger (Strength)": "mutiny-in-marienburg",
       "Tunnel Rat (Speed)": "mutiny-in-marienburg",
-      "Spry (Speed)": "mutiny-in-marienburg"
+      "Spry (Speed)": "mutiny-in-marienburg",
+      "Martyr (Holy)": "relics-of-the-crusades",
+      "Charitable (Holy)": "relics-of-the-crusades",
+      "Slayer of the Heretic (Holy)": "relics-of-the-crusades",
+      "Aesthete (Holy)": "relics-of-the-crusades",
+      "Light of Glory (Holy)": "relics-of-the-crusades",
+      "Divine Guidance (Holy)": "relics-of-the-crusades",
+      "On the Wings of Angels (Holy)": "relics-of-the-crusades",
+      "Converter (Holy)": "relics-of-the-crusades",
+      "Blessed Weapon (Holy)": "relics-of-the-crusades",
+      "Iron Faith (Holy)": "relics-of-the-crusades",
+      "Smith (Academic)": "relics-of-the-crusades"
     },
     "hired_swords": {
       "Albino Stormvermin": "mutiny-in-marienburg",
