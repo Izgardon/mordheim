@@ -1,6 +1,149 @@
 {
  "rules": [
   {
+   "title": "Treasure, dinars and Divine Interventions",
+   "text": "The setting uses the Mordheim and Empire in Flames core rules and the Chaos on the Streets article. Throughout, read 'wyrdstone' as 'treasure', 'gold crowns' as 'dinars' and 'Prayers of Sigmar' as 'Divine Interventions'.\n\nNo warband may contain both spell casters and users of Divine Interventions.",
+   "umbrella": ""
+  },
+  {
+   "title": "Clarifications",
+   "text": "Ithilmar armour counts as light armour and Gromril armour as heavy armour. A staff may be wielded as a double-handed weapon or as a club.\n\nUndead are creatures that died and were raised by dark sorcery: vampires, revenants, skeletons, zombies, sgulls and dire wolves, but not necromancers, dregs or ghouls.",
+   "umbrella": ""
+  },
+  {
+   "title": "Organising games",
+   "text": "Players take turns to choose a locale for their warband to fight in, and whether by day or by night. That warband is always the attacker. Pick one of the other warbands at random to be the defender, leaving out any warband that is lost in a locale other than the one chosen (see The desert).\n\nOptionally, roll a further D6 when picking the defender: on a 1, add another D6 warbands to the scenario.",
+   "umbrella": ""
+  },
+  {
+   "title": "Trading in the towns",
+   "text": "Each town has its own trading chart: the Mordheim trading chart with the changes below, plus the items listed for it.\n\nTyrius: no blackpowder weapons, repeater crossbow or elf bow. It adds Scourge, Hammer of Witches, Horseman's Hammer, Sigmarite Warhammer, Brazier Iron, Toughened Leathers, Dwarf Helm, Barding (warhorses only), Mule, Riding Horse, Warhorse, House, Shoppe, Temple, Blessed Water, Bugman's Ale, Garlic, Halfling Cookbook, Holy Relic, Holy Tome, Hunting Arrows, Lantern, Lucky Charm, Rope & Hook, Wagon Stage Coach, Banner, Torch, Warhorn, Flaming Arrows, Standard of Sigmar and Slave.\n\nDimashque: no blackpowder weapons, repeater crossbow, Gromril armour or heavy armour. It adds Scourge, Dimashquine Blade, Vermin Pot, Stickfire Pots, Stickfire Hose, Mule, Riding Horse, Arabian Steed (as an Elven Steed, but may be ridden by humans), House, Shoppe, Temple, Arabian Tent, Blessed Water, Cathayan Silk Clothes, Garlic, Elven Cloak, Opulent Coach, Holy Relic, Holy Tome (only to those on the Path of The One), Hunting Arrows, Lantern, Healing Herbs, Lucky Charm, Rope & Hook, Wagon Stage Coach, Banner, Torch, Warhorn, Flaming Arrows, Abacus, Ship of the Desert, Master Astrologer, Surgeon, Perfume, Robe of Honour, Astrolabe, Wash Bar, Sharab, Khufa Beans and Slave.\n\nKhalibon: no blackpowder weapons, repeater crossbow, Ithilmar armour, Gromril armour or heavy armour. It adds Rapier, Scourge, Sword Breaker, Vermin Pot, Stickfire Pot, Toughened Leathers, Mule, Riding Horse, Nightmare, House, Shoppe, Arabian Tent, Healing Herbs, Hunting Arrows, Lantern, Lucky Charm, Rope & Hook, Wagon Stage Coach, Torch, Flaming Arrows, Magic Tattoo, Ship of the Desert, Master Astrologer, Lock Picks, Tarot Cards, Black Lotus, Astrolabe, Crimson Shade, Khufa Beans, Unholy Relic, Caltrops, Net, Tome of Magic and Slave. Khalibon's fences deal in forbidden goods, so a warband may also buy from its own equipment list there, with every item 2 rarer.",
+   "umbrella": ""
+  },
+  {
+   "title": "Following a path",
+   "text": "A warband may follow a path, and may only ever be part of one. The path-taker is at first the warband's leader. If he dies the new leader may take up the path, though he counts as being on it for 10 experience points fewer than the original path-taker. If he leaves the path the warband loses every bonus it gained from it, though it may start on a new path.\n\nEach advance shows in brackets the experience the path-taker must gain after starting on the path, and anything else he needs, before he gains it. A path-taker with 20 experience when he joins the Path of The One must gain 10 more, for 30 in all, and buy a Holy Tome for the first advance.",
+   "umbrella": "Paths"
+  },
+  {
+   "title": "The Path of The One",
+   "text": "Strictures\n\nShunners of Sorcery: no spell casters or non-humans may join the warband.\n\nClean Living: no warband member may consume drugs, Bugman's Ale included.\n\nDefenders of the Faith: if the warband is defeated by a warband following the Path of Sigmar, D3 random henchmen leave it, rolled after injuries have been resolved.\n\nAdvances\n\nKnowledge of Faith (10xp and Holy Tome): +1 Leadership when fighting in Dimashque.\n\nPreacher (20xp and Holy Relic): access to Holy skills.\n\nSultan's Patronage (30xp and Robe of Honour): +1 Leadership when fighting a warband following the Path of Sigmar or one containing Undead. This stacks with Knowledge of Faith, but no Leadership may exceed 10. He now hates Undead and practitioners of necromancy.\n\nBlessing of the Caliph (40xp and Arabian Steed): the path-taker gains a Relic of Battle, re-rolling a result of 23. He is barred from Tyrius.\n\nFief (50xp): before a scenario he may roll between 1 and 10 D6 and add the total in dinars to the warband's treasury. If any dice shows a 1 his subjects revolt: the warband gains no tax, and for each 1 rolled a random Hero misses the coming scenario putting the revolt down.\n\nChampion of the Faith (65xp and Temple): choose an Initiate from among your Heroes, who may now start on the Path of The One. You may roll 3D6 when seeing the experience of new henchmen you hire.",
+   "umbrella": "Paths"
+  },
+  {
+   "title": "The Path of Sigmar",
+   "text": "Strictures\n\nShunners of Sorcery: no spell casters may join the warband.\n\nDwarf-Friend: Dwarfs are the only non-humans who may join the warband.\n\nNo Retreat from Heresy: the warband may not rout voluntarily.\n\nAdvances\n\nWarrior Priest (10xp and one of Hammer, Double-handed Hammer, Hammer of Witches, Sigmarite Hammer or Horseman's Hammer): he may use any of those weapons, and adds +1 to hit with them.\n\nHoly Vow (30xp and a Dwarf hired sword for D6 games): access to Holy skills.\n\nConqueror (20xp and heavy armour and a Warhorse): +1 Leadership when mounted on a Warhorse.\n\nInduction (40xp and Holy Relic): he is granted a Divine Intervention of his choice.\n\nSigmar's Fury (50xp and Standard of Sigmar): he is subject to frenzy whenever fighting an opponent he hates. His warband is barred from Dimashque.\n\nKnight of the Inner Circle (65xp and Holy Tome): choose an Initiate from among the warband's Heroes, who may now start on the Path of Sigmar. The path-taker hates every enemy warrior he faces.",
+   "umbrella": "Paths"
+  },
+  {
+   "title": "The Path of Shadows",
+   "text": "Strictures\n\nNo Escape: the warband's Heroes may not use ranged weapons or poisons.\n\nSwift: no Hero in the warband may wear heavy armour.\n\nAdvances\n\nAssassin's Training (5xp and Rope & Hook): access to the Speed and Combat skill lists.\n\nRemove the Head (10xp and Expert Swordsman): he gains an extra experience point whenever he takes an enemy leader out of action.\n\nNight Fighter (20xp): he suffers no close combat penalty for fighting at night, and sees twice the visibility limit.\n\nNight Shadow (25xp): he causes fear at night.\n\nBlade Master (30xp and Strike to Injure): the Expert Swordsman re-roll counts with any bladed weapon he uses. Wielding a dagger in one or more hands he always wounds on at least a 4+, and he never suffers a penalty for using two hand weapons. The warband is now immune to the Reach of the Crimashin.\n\nInfiltrator (40xp and Lock Picks): he has the Infiltrate skill at night, and may infiltrate on ground level whenever the Crowded rule is used.\n\nMaster of Disguise (50xp and Acrobat): to disguise him, do not set him up. Before the battle write down an enemy henchman of his race and take an Initiative test for him. Failing, he misses the battle. Passing, at the start of your second or a later turn he may replace that henchman, who starts his next turn at the table edge nearest where his warband deployed, or a random edge if it deployed in the middle. When the Crowded rule is used he may instead blend into the crowd and reveal himself anywhere on the table at the start of your second or a later turn.\n\nScholar of Death (65xp): his apprentice may begin on the Path of Shadows. He gains one skill from the Speed or Combat lists, and Crimson Shade becomes a common item for the warband.",
+   "umbrella": "Paths"
+  },
+  {
+   "title": "The Path of the Worm",
+   "text": "Strictures\n\nShunners of the Light: the path-taker may not use metal weapons or armour, Ithilmar excepted. No warrior with access to prayers, or who hates spellcasters, may join the warband.\n\nNo Prisoners: a captive the warband takes by rolling 61 on the injury chart is never ransomed back to his warband; the Worm Worshippers must choose another option.\n\nAdvances\n\nCultist (10xp and Unholy Relic): he gains Arcane Lore and a ritual dagger, an Ithilmar dagger that cannot be sold. The warband now counts as Unholy, Undead and Chaotic. He adds +2 when looking for a Tome of Magic.\n\nRitual of the Worm (20xp and captives, not undead): you may hire any number of henchmen, slaves included, and keep them imprisoned until the ritual. They do not count towards the warband's size and cannot fight. After the ritual they rise as zombies and join the warband; any beyond its maximum are kept in the treasury and join as others are killed. He also gains the Spell of Awakening.\n\nThe Worm's Boon (30xp): he is barred from Tyrius and Dimashque. Roll a D6 for what the Worm grants him: 1 Lifestealer spell, 2 Black Blood mutation, 3 Tentacle mutation, 4 Eye of God ritual, 5 Scabrous Hide ritual, 6 Possessed! reward.\n\nDark Artist (40xp and Tome of Magic): through Arcane Lore he may gain spells from the Lesser Magic, Chaos Rituals, Nurgle Rituals and Necromancy lists.\n\nCoven (50xp): add D6x5 dinars to the treasury after every battle. On a roll of 6 you gain instead a new henchman with the profile of a Brethren from the Possessed warband.\n\nArch Magister (65xp): +1 to cast any spell, cumulative with any other bonus. He takes an apprentice, any Hero, who may now begin on the Path of the Worm.",
+   "umbrella": "Paths"
+  },
+  {
+   "title": "The Path of the Merchant",
+   "text": "Strictures\n\nLove of Money: no warrior with access to Divine Interventions or Holy skills may join the warband.\n\nAdvances\n\nBurgher (5xp and 25 dinars' worth of goods sold): access to the Academic skill list.\n\nFence (20xp and Abacus): when trading in a town he may choose from any town's trading chart.\n\nTrader (25xp and House): he gains an income of D6 dinars, rolled after every scenario, on top of any other income such as a Shoppe's.\n\nMerchant (30xp and Cathayan Silk Clothes): he gains the Streetwise skill. If he already has it, or gains it later, its bonus to finding rare items becomes +3.\n\nBulk Dealer (40xp): his haggling deducts from the total the warband buys in the trading phase, not from a single item.\n\nWhite Quill (45xp and Shoppe): when he sells used items, deduct only D6 dinars from their original price. He can also find buyers for Relics of Battle: he searches as for a Rare 12 item, and the buyer offers 2D6 x 20 dinars, which the player may accept or refuse.\n\nCaravan Runner (50xp and Ship of the Desert): the warband may trade in the desert, using Khalibon's trading chart. His income becomes 2D6 dinars.\n\nDealmaker (55xp): he gains the Haggle skill. If he already has it, or gains it later, its deduction becomes 4D6 dinars.\n\nMaster Merchant (60xp and Opulent Coach): he gains the Treasure Hunter skill, the same as Wyrdstone Hunter. If he already has it, or gains it later, you may re-roll 2 dice in the exploration phase.\n\nMember of the Silken Road (65xp): the warband may acquire equipment from any warband's special items list, even items only that race may use, such as Weeping Blades, each at Rare 12.",
+   "umbrella": "Paths"
+  },
+  {
+   "title": "The Path of Knowledge",
+   "text": "Strictures\n\nRational Mind: no warrior with access to prayers or spells, or who hates spellcasters, may follow this path, though he may still be in the warband.\n\nAdvances\n\nSeeker of Knowledge (10xp and Scholarly Works): he gains access to Academic skills. He cannot progress on the path without Scholarly Works.\n\nAlchemist (20xp): if he is uninjured after a game he may take an Initiative test. Passing, roll a D6 for what he invents: 1 Wash Bar, 2 Perfume, 3 Sharab, 4 D3 Black Lotus, 5 D3 Crimson Shade, 6 Stickfire Pot.\n\nInventor (30xp): if he is uninjured after a game he may take an Initiative test. Passing, roll a D6 for what he invents: 1 Hunting Arrows, 2 Abacus, 3 Sword, 4 Blunderbuss, 5 Repeater Crossbow, 6 Dimashquine Blade.\n\nScholar (40xp): he gains the abilities of a Scholar from the Arabian warbands and chooses a field of study.\n\nLecturer (50xp and House): the warband gains D6 dinars after every battle. On a 6 it gains a student, with the profile of a Novice from the Sisters of Sigmar.\n\nCertification from Al-Itzarr University (65xp and missing 1 game): he gains a random Relic of Battle, and D3 Mamluks with swords, shields, helmets and light armour accompany him to each battle. They must stay within 3 inches of him, cost nothing and do not count towards the warband's limit.",
+   "umbrella": "Paths"
+  },
+  {
+   "title": "Towns",
+   "text": "The towns are for trading; real treasure is found in the desert. After a scenario fought in a town, skip step 3 of the post-battle sequence, so there is no roll on the exploration chart.",
+   "umbrella": ""
+  },
+  {
+   "title": "The desert",
+   "text": "Merchants steer clear of the desert. After a battle in any desert locale, skip steps 4 to 8 of the post-battle sequence.\n\nAfter updating the warband rating, test whether the warband is lost: take a test against the leader's Initiative, adding +1 to the roll for each Hero with an Academic skill. A 6 always fails. A Dwarf leader counts as Initiative 5 for this after fighting in the Caverns of the Worm. Passing, the warband has made it out of the desert and may choose where it fights next. Failing, roll on the Lost in the Desert chart.",
+   "umbrella": "",
+   "chart": {
+    "title": "Lost in the Desert",
+    "description": "Rolled when a warband fails its test to find its way out of the desert.",
+    "dice": "D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "1",
+      "name": "Dehydrated",
+      "text": "The warband has wandered in circles and run out of water. Its next battle is in the Plain of Haytin. Roll a D3 for each warrior: on a 1 he passes out and misses the battle; on a 2 his S and T are reduced by 1; on a 3 he is stunned on a 2+ instead of a 3+."
+     },
+     {
+      "result": "2",
+      "name": "Monsters Lair",
+      "text": "The warband has stumbled into a Sand Spider's nest. Its next battle is in a randomly determined desert locale. After D3 turns the Sand Spider comes on from the centre of your table edge and attacks the closest model."
+     },
+     {
+      "result": "3",
+      "name": "Not this way",
+      "text": "The leader keeps taking the warband round in circles. Its next game must be in the same locale as its last, at the opposite time: a battle by day is followed by one by night."
+     },
+     {
+      "result": "4",
+      "name": "Lost in the Desert",
+      "text": "The warband's next battle is in a randomly determined desert locale."
+     },
+     {
+      "result": "5",
+      "name": "Just around the Corner...",
+      "text": "The warband cannot find its way out. Its next battle is in a desert locale of your choice."
+     },
+     {
+      "result": "6",
+      "name": "Follow the birds",
+      "text": "A flock of birds leads the warband back to civilisation. Roll a D3 for where its next battle is: 1 Tyrius, 2 Dimashque, 3 Khalibon."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Halt Villain!",
+   "text": "A Hero taken out of action by a Town Guard rolls on the Serious Injuries chart as normal. If he survives and rolls under 60 he becomes a prisoner in the town's dungeons; if he rolls Bitter Enmity he hates all Town Guards. He is held for 2D6 games and then meets his fate: unless the warband rescues him through the Dungeon Raid scenario, fought in the locale where he was captured, within that time, remove him from the roster.\n\nAny warrior who fights a Town Guard in close combat and survives is barred from entering the guard's town for D6 games.",
+   "umbrella": ""
+  },
+  {
+   "title": "Imperial Justice",
+   "text": "In a locale that applies Imperial Justice, a warrior who falls victim to Halt Villain! may defend himself against the charge after the battle, just after rolling for injuries, in a duel to the death with the accusing noble's Judicial Champion, who has the profile and weapons of a Pit Fighter. Place the Champion 8 inches from your warrior; only hand-to-hand weapons may be used. Each rolls a D6 and adds his Initiative, and the higher goes first.\n\nIf your warrior is taken out of action he is put to death: he is dead and removed from the roster. If he wins he gains D3 experience.",
+   "umbrella": ""
+  },
+  {
+   "title": "New equipment",
+   "text": "Only Heroes may buy and carry the setting's new equipment unless its rules say otherwise, but mounts may be given to Henchmen. No blackpowder weapons may be used in this setting unless specifically stated.",
+   "umbrella": ""
+  },
+  {
+   "title": "House",
+   "text": "The warband gains the benefits of a town's citizens. When it sells treasure it counts as one size smaller, so a warband of 10-12 members counts as 7-9. Note the town the house is bought in: the warband gains +1 to any rarity roll when trading there.",
+   "umbrella": "Dwellings"
+  },
+  {
+   "title": "Shoppe",
+   "text": "The warband must own a house before buying a shoppe. It sells used equipment for 75% of its original cost, and adds 2D6 dinars to its treasury after every game. A Hero with the Smith skill becomes an Inventor, as the Path of Knowledge advance.",
+   "umbrella": "Dwellings"
+  },
+  {
+   "title": "Temple",
+   "text": "The warband may only build a temple if it owns a house. A warrior casting a Divine Intervention gains +1 to the attempt. The leader gains the Good Shepherd ability, which works much as the Children of the Horned Rat spell, bringing D3 hammer-wielding zealots from the Witch Hunter warband list in place of the rats.",
+   "umbrella": "Dwellings"
+  },
+  {
+   "title": "Arabian Tent",
+   "text": "The warband is friends with the desert nomads. Its leader adds +1 to his Initiative when testing whether the warband is lost in the desert. If that test's roll is a 1, a merchant approaches and the warband may trade using Khalibon's trading chart.",
+   "umbrella": "Dwellings"
+  },
+  {
+   "title": "Choosing spells",
+   "text": "Whenever a wizard gains a new spell he may choose from those available to him rather than rolling.",
+   "umbrella": ""
+  },
+  {
    "title": "Warbands",
    "text": "These official warbands suit the setting and are used without modification unless noted: Mercenaries; the Cult of the Possessed, known here as the Worshippers of the Worm; Witch Hunters, replacing the Warhound entry with Riding and War Horses; Sisters of Sigmar; the Undead (see Undead warbands); Skaven; Orcs and Goblins, though they rarely face the horrors of the desert; and Dwarf Treasure Hunters.\n\nAlso fitting are the Bretonnians, as one of Sigmar's knightly orders, the Tileans, Arabyan Tomb Raiders and Tomb Guardians.\n\nThese are guidelines: if you and your friends agree another warband belongs in Araby, use it.",
    "umbrella": ""
@@ -9,6 +152,757 @@
    "title": "Undead warbands",
    "text": "Vampires are creatures of the night and do not suffer the darkness special rule. During the day, though, a Vampire takes a Strength 4 hit at the beginning of each turn he spends in the open.\n\nAn Undead warband may be led by a Necromancer Master instead: a necromancer who costs 70 dinars, starts with 20 experience, has +1 Weapon Skill, Ballistic Skill and Leadership, and has the Leader special rule. A warband with a Necromancer Master cannot have a Vampire.",
    "umbrella": ""
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "Tyrius",
+   "text": "Type: Town.\n\nDay: Crowded, Guards!, Imperial Justice.\n\nNight: Darkness, Guards!, Imperial Justice.",
+   "umbrella": "Locales",
+   "chart": {
+    "title": "Tyrius scenarios",
+    "description": "Rolled for the scenario of a battle in Tyrius.",
+    "dice": "2D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "2",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     },
+     {
+      "result": "3",
+      "name": "Street Fight",
+      "text": ""
+     },
+     {
+      "result": "4",
+      "name": "The Frenzied Mob",
+      "text": ""
+     },
+     {
+      "result": "5",
+      "name": "Bounty Hunting",
+      "text": ""
+     },
+     {
+      "result": "6",
+      "name": "Occupy",
+      "text": ""
+     },
+     {
+      "result": "7",
+      "name": "Skirmish",
+      "text": ""
+     },
+     {
+      "result": "8",
+      "name": "Breakthrough",
+      "text": ""
+     },
+     {
+      "result": "9",
+      "name": "Hidden Treasure",
+      "text": ""
+     },
+     {
+      "result": "10",
+      "name": "Chance Encounter",
+      "text": ""
+     },
+     {
+      "result": "11",
+      "name": "Stagecoach Ambush",
+      "text": ""
+     },
+     {
+      "result": "12",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Dimashque",
+   "text": "Type: Town.\n\nDay: Hot, Crowded, Guards!\n\nNight: Guards!",
+   "umbrella": "Locales",
+   "chart": {
+    "title": "Dimashque scenarios",
+    "description": "Rolled for the scenario of a battle in Dimashque.",
+    "dice": "2D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "2",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     },
+     {
+      "result": "3",
+      "name": "Street Fight",
+      "text": ""
+     },
+     {
+      "result": "4",
+      "name": "The Frenzied Mob",
+      "text": ""
+     },
+     {
+      "result": "5",
+      "name": "Hidden Treasure",
+      "text": ""
+     },
+     {
+      "result": "6",
+      "name": "Occupy",
+      "text": ""
+     },
+     {
+      "result": "7",
+      "name": "Skirmish",
+      "text": ""
+     },
+     {
+      "result": "8",
+      "name": "Breakthrough",
+      "text": ""
+     },
+     {
+      "result": "9",
+      "name": "Surprise Attack",
+      "text": ""
+     },
+     {
+      "result": "10",
+      "name": "Chance Encounter",
+      "text": ""
+     },
+     {
+      "result": "11",
+      "name": "Stagecoach Ambush",
+      "text": ""
+     },
+     {
+      "result": "12",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Khalibon",
+   "text": "Type: Town.\n\nDay: Hot, Unwanted Company.\n\nNight: Darkness, Unwanted Company.\n\nBestiary: 1-2 nothing, 3-6 D6 Thieves.",
+   "umbrella": "Locales",
+   "chart": {
+    "title": "Khalibon scenarios",
+    "description": "Rolled for the scenario of a battle in Khalibon.",
+    "dice": "2D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "2",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     },
+     {
+      "result": "3",
+      "name": "Street Fight",
+      "text": ""
+     },
+     {
+      "result": "4",
+      "name": "Bounty Hunting",
+      "text": ""
+     },
+     {
+      "result": "5",
+      "name": "The Wizard's Mansion",
+      "text": ""
+     },
+     {
+      "result": "6",
+      "name": "Occupy",
+      "text": ""
+     },
+     {
+      "result": "7",
+      "name": "Skirmish",
+      "text": ""
+     },
+     {
+      "result": "8",
+      "name": "Breakthrough",
+      "text": ""
+     },
+     {
+      "result": "9",
+      "name": "Surprise Attack",
+      "text": ""
+     },
+     {
+      "result": "10",
+      "name": "The Lost Prince",
+      "text": ""
+     },
+     {
+      "result": "11",
+      "name": "Stagecoach Ambush",
+      "text": ""
+     },
+     {
+      "result": "12",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Ma'arra",
+   "text": "Type: Desert.\n\nDay: Hot, Sand Storm, Unwanted Company.\n\nNight: Darkness, Sand Storm, Unwanted Company, Dangerous Ground.\n\nBestiary: 1 nothing, 2 D3 Vermin Swarms, 3 D6 Wild Dogs, 4 Sand Spider, 5 D3 Sgulls, 6 D6 Ghouls.",
+   "umbrella": "Locales",
+   "chart": {
+    "title": "Ma'arra scenarios",
+    "description": "Rolled for the scenario of a battle in Ma'arra.",
+    "dice": "2D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "2",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     },
+     {
+      "result": "3",
+      "name": "Monster Hunt",
+      "text": ""
+     },
+     {
+      "result": "4",
+      "name": "Hidden Treasure",
+      "text": ""
+     },
+     {
+      "result": "5",
+      "name": "Treasure Hunt",
+      "text": "As Wyrdstone Hunt."
+     },
+     {
+      "result": "6",
+      "name": "Occupy",
+      "text": ""
+     },
+     {
+      "result": "7",
+      "name": "Chance Encounter",
+      "text": ""
+     },
+     {
+      "result": "8",
+      "name": "Ambush",
+      "text": ""
+     },
+     {
+      "result": "9",
+      "name": "The Lost Prince",
+      "text": ""
+     },
+     {
+      "result": "10",
+      "name": "Defend the Find",
+      "text": ""
+     },
+     {
+      "result": "11",
+      "name": "The Thing in the Ruins",
+      "text": "As The Thing in the Woods, with Sand Spiders in place of the Thing and dense ruins in place of the woody terrain."
+     },
+     {
+      "result": "12",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Caverns of the Worm",
+   "text": "Type: Desert, Underground: no model may fly.\n\nIt is always night in the Caverns: Darkness, Unwanted Company, Dangerous Ground.\n\nBestiary: 1 nothing, 2 D3 Vermin Swarms, 3 2D3 Thieves, 4 D6 Skeletons, 5 Djinni, 6 Liche Retriever.",
+   "umbrella": "Locales",
+   "chart": {
+    "title": "Caverns of the Worm scenarios",
+    "description": "Rolled for the scenario of a battle in the Caverns of the Worm.",
+    "dice": "2D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "2",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     },
+     {
+      "result": "3",
+      "name": "The Thing in the Dark",
+      "text": "As The Thing in the Woods, with Sand Spiders in place of the Thing and stalagmites in place of the woody terrain."
+     },
+     {
+      "result": "4",
+      "name": "The Pool",
+      "text": ""
+     },
+     {
+      "result": "5",
+      "name": "Treasure Hunt",
+      "text": "As Wyrdstone Hunt."
+     },
+     {
+      "result": "6",
+      "name": "The Magister's Lair",
+      "text": "As The Wizard's Mansion."
+     },
+     {
+      "result": "7",
+      "name": "Chance Encounter",
+      "text": ""
+     },
+     {
+      "result": "8",
+      "name": "Monster Hunt",
+      "text": ""
+     },
+     {
+      "result": "9",
+      "name": "Ambush",
+      "text": ""
+     },
+     {
+      "result": "10",
+      "name": "The Lost Prince",
+      "text": ""
+     },
+     {
+      "result": "11",
+      "name": "Lost in the Dark",
+      "text": "As Lost in the Bogs."
+     },
+     {
+      "result": "12",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     }
+    ]
+   }
+  },
+  {
+   "title": "The Plain of Haytin",
+   "text": "Type: Desert.\n\nDay: Hot, Sand Storm, Unwanted Company.\n\nNight: Darkness, Sand Storm, Unwanted Company.\n\nBestiary: 1 nothing, 2 D6 Thieves, 3 D3 Sgulls, 4 D6 Sand Spiders, 5 D3 Djinn, 6 D3 Liche Retrievers.",
+   "umbrella": "Locales",
+   "chart": {
+    "title": "Plain of Haytin scenarios",
+    "description": "Rolled for the scenario of a battle on the Plain of Haytin.",
+    "dice": "2D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "2",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     },
+     {
+      "result": "3",
+      "name": "Monster Hunt",
+      "text": ""
+     },
+     {
+      "result": "4",
+      "name": "Lost in the Dunes",
+      "text": "As Lost in the Bogs."
+     },
+     {
+      "result": "5",
+      "name": "Treasure Hunt",
+      "text": "As Wyrdstone Hunt."
+     },
+     {
+      "result": "6",
+      "name": "Defend the Find",
+      "text": ""
+     },
+     {
+      "result": "7",
+      "name": "Chance Encounter",
+      "text": ""
+     },
+     {
+      "result": "8",
+      "name": "Ambush",
+      "text": ""
+     },
+     {
+      "result": "9",
+      "name": "The Lost Prince",
+      "text": ""
+     },
+     {
+      "result": "10",
+      "name": "Skirmish",
+      "text": ""
+     },
+     {
+      "result": "11",
+      "name": "The Oasis",
+      "text": "As The Pool."
+     },
+     {
+      "result": "12",
+      "name": "Lower rating chooses",
+      "text": "The player with the lower warband rating may choose which scenario is played."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Reach of the Crimashin",
+   "text": "A warband rated over 250 has drawn the Grand Master's attention. At the beginning of a battle in any town its player rolls a D6, deducting 1 if it follows the Path of Sigmar or The One. On a 1 or less one of the Grand Master's assassins targets it. If more than one warband in the battle is rated over 250, only the highest rated is targeted. Roll on the assassins chart for who is sent.\n\nAt the beginning of each of the targeted player's turns roll a D3: on a 1 the assassin strikes. His opponent places the assassin anywhere within 12 inches of the targeted leader and controls him for the rest of the game. The assassin must do his best to take the targeted leader out of action, and disappears after the game.",
+   "umbrella": "Locale battles",
+   "chart": {
+    "title": "Assassins",
+    "description": "Rolled for the assassin the Grand Master sends.",
+    "dice": "D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "1",
+      "name": "Crimashin",
+      "text": ""
+     },
+     {
+      "result": "2",
+      "name": "Ogre",
+      "text": ""
+     },
+     {
+      "result": "3",
+      "name": "Freelancer",
+      "text": ""
+     },
+     {
+      "result": "4",
+      "name": "(Dark) Elf Ranger",
+      "text": ""
+     },
+     {
+      "result": "5",
+      "name": "Warlock",
+      "text": ""
+     },
+     {
+      "result": "6",
+      "name": "Pit Fighter",
+      "text": ""
+     }
+    ]
+   }
+  },
+  {
+   "title": "Town battles",
+   "text": "No mounts may be used in towns, and the Empire in Flames rules for buildings apply.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Crowded",
+   "text": "All movement on ground level counts as difficult terrain, and every warrior on ground level counts as being in cover from any other warrior on ground level while the crowd remains. Line of sight between warriors on ground level is 2D6 inches, rolled at the beginning of each player's turn.\n\nAfter the first attack of the battle against a target on ground level the crowd tries to escape, stampeding through the streets for D6 turns. At the beginning of each of those turns every warrior on ground level must take a Toughness test or be knocked down. The crowd then disperses, with no further effect on the scenario.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Unwanted Company",
+   "text": "Roll a D6 on the locale's bestiary for the unwanted company. After all warbands have set up, infiltrators aside, place it as a group in the middle of the table, 12 inches from any other warrior. It counts as a separate warband and has the last turn. Its models keep within 3 inches of each other and head as quickly as they can, without running, for the closest warrior by day, or the closest illuminated model by night, and try to engage him in close combat.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Guards!",
+   "text": "Any close combat draws the watch. In D6 turns, D6 Town Guards arrive from a random table edge and run as fast as they can to the nearest close combat, attacking both sides when they arrive.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Hot",
+   "text": "Before the scenario begins roll a D6 for how hot the battlefield is. Warriors counted as Undead are not affected.",
+   "umbrella": "Locale battles",
+   "chart": {
+    "title": "Hot",
+    "description": "Rolled before a scenario that applies the Hot rule.",
+    "dice": "D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "1",
+      "name": "Dusk or Dawn",
+      "text": "The hottest time in the desert is yet to come or has passed. No effect on the battle."
+     },
+     {
+      "result": "2-3",
+      "name": "Desert Heat",
+      "text": "A fairly normal temperature for the desert. Warriors in light armour have their WS reduced by 1; warriors in heavy armour have their WS reduced by 2."
+     },
+     {
+      "result": "4-5",
+      "name": "Horribly Hot",
+      "text": "As Desert Heat, and each model not engaged in combat must take a Leadership test at the start of his turn. Failing, he must move in a random direction, distracted by mirages."
+     },
+     {
+      "result": "6",
+      "name": "Burning Sands",
+      "text": "As Horribly Hot, and each warrior must pass a Toughness test before the scenario or pass out from exhaustion and miss the battle."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Darkness",
+   "text": "At the beginning of the scenario roll 3D6 for the visibility limit in inches. Elves, Skaven, orcs, goblins, Dwarfs and Undead warriors add 6 inches to it for themselves.\n\nEvery warrior is at -1 to hit in close combat unless he is fighting an illuminated model. A model with a torch does not suffer this penalty. A warrior with a lantern can illuminate one model in line of sight, up to 24 inches away, at the end of his move. Any model with a torch or a lantern, or who is on fire, counts as illuminated.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Sand Storm",
+   "text": "Before the scenario begins roll a D6 for the storm that rolls in.",
+   "umbrella": "Locale battles",
+   "chart": {
+    "title": "Sand Storm",
+    "description": "Rolled before a scenario that applies the Sand Storm rule.",
+    "dice": "D6",
+    "note": "If another rule limits vision, such as Darkness, apply the lowest visibility.",
+    "rows": [
+     {
+      "result": "1",
+      "name": "Bit of a Breeze",
+      "text": "The odd small gust, but nothing to affect the battle."
+     },
+     {
+      "result": "2-3",
+      "name": "Heavy Wind",
+      "text": "All missile attacks are at -1 to hit."
+     },
+     {
+      "result": "4",
+      "name": "Gale",
+      "text": "All missile attacks and Initiative tests are at -1."
+     },
+     {
+      "result": "5",
+      "name": "Howling Wind",
+      "text": "Missile attacks and Initiative tests are at -2, and no model may fly. Models can only see D6 x 4 inches, rolled at the beginning of each turn. On a 6 the howling wind subsides to a Gale."
+     },
+     {
+      "result": "6",
+      "name": "Sand Storm!",
+      "text": "No missile attacks are possible, no model may run or fly and a charge is only a normal move, no spells may be cast and no model may use the leader's Leadership. At the end of each turn roll a D6: on a 6 the storm subsides to a Howling Wind."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Dangerous Ground",
+   "text": "All terrain on ground level counts as difficult terrain.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Barred",
+   "text": "A warrior barred from a locale is known to the authorities and chased out on sight. He may miss the game, or take an Initiative test: if he fails, D3 Town Guards come on from the table edge closest to him in D6 turns, attacking only him.\n\nAll non-humans except ogres and halflings, and anything Undead or mutated, are barred from Tyrius and Dimashque.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Sentries",
+   "text": "Defend the Find, Surprise Attack, The Wizard's Mansion, Ambush and Dungeon Raid use this rule.\n\nAt the beginning of the battle roll a D6 for each defending warrior. On a 6 he is a sentry, patrolling up to 10 inches from the defenders' deployment zone; if no 6 is rolled the player may choose a warrior. Until the alarm is sounded only the attacker's warband and the sentries take turns.\n\nAt the beginning of the defending player's movement phase take an Initiative test for each sentry: passing, the defender moves him; failing, the attacker does. Whoever moves him chooses which way he faces at the end of the move.\n\nAt the end of the defending player's movement the alarm is sounded if any enemy warrior is in a sentry's line of sight, though an attacking model in cover may take an Initiative test to stay concealed. Hidden warriors are detected within 1 inch of a sentry. Any hit or spell against a defending warrior that does not take him out of action also raises the alarm.",
+   "umbrella": ""
+  },
+  {
+   "title": "Skeletons",
+   "text": "Skeleton: M 4, WS 2, BS 2, S 3, T 3, W 1, I 2, A 1, Ld 5.\n\nUndead: skeletons are Undead and follow all the associated rules.\n\nRibs: thrusting and missile weapons are at -1 Strength against a skeleton, and bludgeoning weapons at +1 Strength.",
+   "umbrella": "Arabian bestiary"
+  },
+  {
+   "title": "Vermin Swarms",
+   "text": "Swarm: M 4, WS 3, BS 0, S 2, T 2, W 3, I 1, A 3, Ld 10.\n\nTiny: their attacks ignore all armour.\n\nSwarm: countless creatures on a single 40mm square base, treated as one model with several wounds and attacks. It fights at full effect until it has taken 3 wounds, and is then removed. Fire attacks cause 2 wounds on a swarm. Vermin swarms are immune to psychology.",
+   "umbrella": "Arabian bestiary"
+  },
+  {
+   "title": "Thieves",
+   "text": "Thief: M 4, WS 3, BS 3, S 3, T 3, W 1, I 3, A 1, Ld 7.\n\nWeapons: a dagger and a short bow.\n\nPickpocket: the warband deducts D6 dinars from its treasury for each Hero taken out of action by a thief.",
+   "umbrella": "Arabian bestiary"
+  },
+  {
+   "title": "Sand Spider",
+   "text": "Spider: M 5, WS 4, BS 0, S 5, T 4, W 2, I 4, A 2, Ld 6.\n\nPoisonous: its attacks are covered in Black Lotus.\n\nLair: a warrior who kills a sand spider and passes an Initiative test finds its lair, with items worth 2D6 dinars.",
+   "umbrella": "Arabian bestiary"
+  },
+  {
+   "title": "Djinni",
+   "text": "Djinni: M 5, WS 3, BS 3, S 3, T 3, W 1, I 5, A 1, Ld 7.\n\nMasters of Flame: a djinni has the spells Sword of Rezhebel and Fires of U'Zhul.\n\nWarrior Aspect: a djinni causes fear.",
+   "umbrella": "Arabian bestiary"
+  },
+  {
+   "title": "Town Guard",
+   "text": "Guard: M 4, WS 3, BS 3, S 3, T 3, W 1, I 3, A 1, Ld 7.\n\nWeapons and armour: mace, shield and light armour.\n\nHalt Villain!: a Hero a town guard takes out of action may be imprisoned after the battle, and any warrior who fights one and survives is barred from his town (see Halt Villain!).",
+   "umbrella": "Arabian bestiary"
+  },
+  {
+   "title": "Liche Retriever",
+   "text": "Liche: M 4, WS 3, BS 2, S 3, T 3, W 2, I 3, A 1, Ld 7.\n\nWeapons: a staff.\n\nUndead: Liche Retrievers are Undead and follow all the associated rules.\n\nEmbalmed: fire attacks cause 2 wounds against Liche Retrievers.\n\nNecromancer: a Liche Retriever casts Spell of Doom, Lifestealer and Summon Skeletons, adding +1 to its casting roll.",
+   "umbrella": "Arabian bestiary"
+  }
+ ],
+ "charts": [
+  {
+   "title": "Relics of Battle",
+   "description": "Rolled whenever a Hero may claim a Relic of Battle: roll 4D6 and add them together.",
+   "dice": "",
+   "note": "",
+   "rows": [
+    {
+     "result": "4",
+     "name": "Dagger of Truth",
+     "text": "The dagger wounds any member of a warband following a different Path on a 2+."
+    },
+    {
+     "result": "5",
+     "name": "The Ring of Divine Healing",
+     "text": "A Hero wearing the ring who goes out of action may re-roll his injury after the battle, but the second result counts, even if it is worse."
+    },
+    {
+     "result": "6",
+     "name": "Astrolabe of Desire",
+     "text": "If he is uninjured after a battle the Hero never rolls for exploration: he may instead take any one of the rolls the other Heroes made. If he is the only Hero who did not go out of action, he rolls as normal."
+    },
+    {
+     "result": "7",
+     "name": "Djinni's Ring",
+     "text": "Once per game, at the beginning of any of his turns, the wearer may summon the djinni. It appears within 3 inches of him under the summoning player's control, and returns to the ring after 2D3 turns."
+    },
+    {
+     "result": "8",
+     "name": "Martyr's Shard",
+     "text": "Counts as a Gromril dagger. When it hits, the wielder may deduct one of his own wounds to reduce his opponent to 0 wounds at once. If this reduces the wielder to 0 wounds he adds +2 to his opponent's injury roll, then rolls on the injury table himself."
+    },
+    {
+     "result": "9",
+     "name": "Armour of the Scorpion",
+     "text": "Light armour that grants a 5+ armour save. The Hero ignores difficult terrain and the Hot rule, and his unarmed attacks count as covered in Black Lotus."
+    },
+    {
+     "result": "10",
+     "name": "The Fisherman's Bottle",
+     "text": "The djinni grants the Hero D3 wishes. Before the Hero is involved in any roll he may use a wish to decide the result of the dice: four 6s on the exploration chart if he was not taken out of action last game, say, or Survives Against the Odds on the Serious Injury chart."
+    },
+    {
+     "result": "11",
+     "name": "Shield of Faith",
+     "text": "Any Hero may use it. It gives its bearer a +2 armour save when combined with heavy armour. On an armour save roll of 6, if the attacker's warband follows a different Path or none at all, it destroys the attacker's weapon permanently, unless that is a Relic."
+    },
+    {
+     "result": "12",
+     "name": "Bow of Seeking",
+     "text": "An Elven bow that always hits on a 2+, whatever the modifiers, and all its arrows count as Hunting Arrows (+1 on all Injury rolls). It may shoot any enemy in range the shooter can see, even only the tip of his weapon, not just the closest. If a Dwarf is an eligible target the arrows always swerve to hit the Dwarf instead. It cannot be used to shoot at Elves."
+    },
+    {
+     "result": "13",
+     "name": "Whirlpool Staff",
+     "text": "A spell caster may carry it, and it counts as a double-handed weapon. Each time an opponent casts a spell, roll 2D6 and add any modifiers as if casting it yourself, such as the bonus from Sorcery. Beating his roll dispels the spell."
+    },
+    {
+     "result": "14",
+     "name": "Sword of the Vengeful God",
+     "text": "Any Hero may use it. The user is subject to frenzy. In hand-to-hand combat each 6 rolled to hit gives an extra attack, for as long as 6s are rolled; each 1 rolled to hit strikes the bearer, rolling to wound as normal."
+    },
+    {
+     "result": "15",
+     "name": "Khrumak's Gift",
+     "text": "Gromril armour inscribed with three runes. Rune of Spell Eating: the wearer is immune to all spells. Rune of Feathers: it counts as light armour. Rune of Fortitude: the Hero has an extra wound, which may take him above his race's maximum."
+    },
+    {
+     "result": "16",
+     "name": "Mask of the Faith",
+     "text": "Any Hero may wear it. He causes terror: an enemy who fails a fear test against him flees 2D6 inches directly away from him. Warriors who cause fear, and the Undead, suffer fear when faced with him, an exception to the Undead's immunity to psychology."
+    },
+    {
+     "result": "17",
+     "name": "Flying Carpet",
+     "text": "It has the profile and special abilities of an Elven Steed, but may be used by any race. It carries two human-sized warriors, though its rider must always be a Hero. It flies, ignoring all terrain and moving vertically without penalty, and can neither attack nor be attacked."
+    },
+    {
+     "result": "18",
+     "name": "Chalice of Pain",
+     "text": "Before a battle one bladed, thrusting or missile weapon (using arrows, bolts, knives and the like) may be placed in the Chalice. It then wounds automatically on a to-hit roll of 5 or 6."
+    },
+    {
+     "result": "19",
+     "name": "Sandstorm Staff",
+     "text": "Any Hero may carry it, and it counts as a double-handed weapon. Once per game the Hero may spend his whole turn calling on it: mark out a 12 by 12 inch area of the table, which suffers Horribly Hot and Sand Storm! for 2D6 turns. The wielder is immune to every Hot and Sand Storm rule a scenario applies."
+    },
+    {
+     "result": "20",
+     "name": "Rope of Thieves",
+     "text": "The model moves normally, running and charging included, over any terrain, vertical surfaces too, adding the distance moved vertically to that moved horizontally with no Initiative test, except to jump a gap."
+    },
+    {
+     "result": "21",
+     "name": "The Dagger of the Grand Master",
+     "text": "Opponents it wounds are stunned on 1-3, Undead knocked down as normal, and put out of action on 4-6. It counts as always covered in Black Lotus."
+    },
+    {
+     "result": "22",
+     "name": "Ifrit's Blade",
+     "text": "Counts as a normal sword. Its words of power may be spoken instead of casting a spell, once per battle, for 2D3 turns. While it is active the wielder counts as holding the Sword of Rezhebel and has the Fires of U'Zhul spell."
+    },
+    {
+     "result": "23",
+     "name": "Pages from the Book of the Dead",
+     "text": "The Hero gains the Necromantic spell Dead Rising, identical to Children of the Horned Rat with zombies in place of giant rats. He is now a wizard with access to the Necromancy list, and gains +1 to cast any Necromancy spell. Once given to a Hero the Relic can never be exchanged or given up. Each time the Hero gains an advance he takes a Leadership test; failing, he rolls on the Relic's table.",
+     "chart": {
+      "description": "Rolled each time the Hero fails his Leadership test on gaining an advance. Effects are cumulative and no result may be re-rolled.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "Brittle bones",
+        "text": "Deduct 1 from his Toughness."
+       },
+       {
+        "result": "2",
+        "name": "Ageing joints",
+        "text": "He can no longer run, and deducts 1 from his Initiative."
+       },
+       {
+        "result": "3",
+        "name": "Eaters of Flesh",
+        "text": "He gains the Eaters of Flesh special rule."
+       },
+       {
+        "result": "4",
+        "name": "Stench of undeath",
+        "text": "Merchants are less willing to trade with the warband: items are +1 rarity when trading."
+       },
+       {
+        "result": "5",
+        "name": "Signs of undeath",
+        "text": "He causes Fear and counts as Undead."
+       },
+       {
+        "result": "6",
+        "name": "No Pain",
+        "text": "He gains the No Pain special rule."
+       }
+      ]
+     }
+    },
+    {
+     "result": "24",
+     "name": "Abode of Djinn",
+     "text": "The bearer sees every model on the table, even hidden or out of sight, and sees in the dark, ignoring the darkness special rule. He rolls two dice for himself on the exploration chart after a battle. He has an extra 6+ save against every hit, not modified by Strength or weapons, and access to the Academic skill list. His Weapon Skill and Ballistic Skill are each reduced by 1."
+    }
+   ]
   }
  ]
 }
