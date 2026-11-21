@@ -27,7 +27,7 @@ class CampaignChartRowSerializer(serializers.ModelSerializer):
     """One result: what was rolled, its short name, what it does, and its own table where the book hangs one off
     this result alone (Border Town Burning's Curious bloom). The table is read with the chart and never sent."""
 
-    result = serializers.CharField(max_length=20, trim_whitespace=True)
+    result = serializers.CharField(max_length=40, trim_whitespace=True)
     name = serializers.CharField(max_length=160, allow_blank=True, required=False, trim_whitespace=True)
     text = serializers.CharField(max_length=MAX_CHART_ROW_TEXT, allow_blank=True, required=False, trim_whitespace=True)
 

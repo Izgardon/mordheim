@@ -35,7 +35,7 @@
   {
    "title": "Scenarios",
    "umbrella": "",
-   "text": "Each of the supplement's nine scenarios is designed to tie in with a specific region of the Nemesis Crown campaign map, but players should feel free to adapt them as they wish.\n\nThe Draken Downs -- Scenario 1: Nightfall\nThe Drakwald Deeps -- Scenario 2: The Necromancer's Tower\nThe Reik's Marches -- Scenario 3: The Warmachine\nThe Howling Height -- Scenario 4: The Lost Mines of Khrazi Drudd\nThe Rauberthal -- Scenario 5: Last Orders\nThe Great Confluence -- Scenario 6: The Flood Plain\nThe Talabec Borders -- Scenario 7: The Shifting Paths\nThe Barren Hills -- Scenario 8: Fowl Play\nThe Taalford Lowlands -- Scenario 9: The Wild Wood"
+   "text": "Each of the supplement's nine scenarios is designed to tie in with a specific region of the Nemesis Crown campaign map, but players should feel free to adapt them as they wish."
   }
  ],
  "charts": [
@@ -262,6 +262,60 @@
      "result": "66",
      "name": "Taal smiles",
      "text": "Taal smiles upon this player. Roll twice on this table, ignoring further results of 66."
+    }
+   ]
+  },
+  {
+   "title": "Territory scenarios",
+   "description": "Which of the supplement's scenarios each region of the campaign map is suited to.",
+   "dice": "",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "The Draken Downs",
+     "name": "Scenario 1: Nightfall",
+     "text": ""
+    },
+    {
+     "result": "The Drakwald Deeps",
+     "name": "Scenario 2: The Necromancer's Tower",
+     "text": ""
+    },
+    {
+     "result": "The Reik's Marches",
+     "name": "Scenario 3: The Warmachine",
+     "text": ""
+    },
+    {
+     "result": "The Howling Height",
+     "name": "Scenario 4: The Lost Mines of Khrazi Drudd",
+     "text": ""
+    },
+    {
+     "result": "The Rauberthal",
+     "name": "Scenario 5: Last Orders",
+     "text": ""
+    },
+    {
+     "result": "The Great Confluence",
+     "name": "Scenario 6: The Flood Plain",
+     "text": ""
+    },
+    {
+     "result": "The Talabec Borders",
+     "name": "Scenario 7: The Shifting Paths",
+     "text": ""
+    },
+    {
+     "result": "The Barren Hills",
+     "name": "Scenario 8: Fowl Play",
+     "text": ""
+    },
+    {
+     "result": "The Taalford Lowlands",
+     "name": "Scenario 9: The Wild Wood",
+     "text": ""
     }
    ]
   }

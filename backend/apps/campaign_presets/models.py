@@ -114,7 +114,7 @@ class CampaignPresetChartRow(models.Model):
 
     chart = models.ForeignKey(CampaignPresetChart, related_name="rows", on_delete=models.CASCADE)
     order = models.PositiveIntegerField(default=0)
-    result = models.CharField(max_length=20)
+    result = models.CharField(max_length=40)
     name = models.CharField(max_length=160, blank=True, default="")
     text = models.TextField(max_length=MAX_CHART_ROW_TEXT, blank=True, default="")
 

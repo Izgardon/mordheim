@@ -32,7 +32,7 @@ export default function ChartRowsField({
             <Input
               aria-label={`Result ${index + 1} roll`}
               placeholder="3-4"
-              maxLength={20}
+              maxLength={40}
               className="w-20"
               value={row.result}
               onChange={(event) => setRow(index, { result: event.target.value })}

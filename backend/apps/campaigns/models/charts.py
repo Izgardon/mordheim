@@ -70,7 +70,7 @@ class CampaignChartRow(models.Model):
     whose bands are uneven needs nothing of its own; `name` is the result's short name, blank where it has none."""
 
     chart = models.ForeignKey(CampaignChart, related_name="rows", on_delete=models.CASCADE)
-    result = models.CharField(max_length=20)
+    result = models.CharField(max_length=40)
     name = models.CharField(max_length=160, blank=True, default="")
     text = models.TextField(max_length=MAX_CHART_ROW_TEXT, blank=True, default="")
     order = models.PositiveIntegerField(default=0)
