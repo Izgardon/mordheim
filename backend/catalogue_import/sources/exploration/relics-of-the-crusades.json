@@ -1,0 +1,223 @@
+{
+  "slug": "relics-of-the-crusades",
+  "name": "Relics of the Crusades Exploration",
+  "setting": "Relics of the Crusades",
+  "summary": "The exploration chart for the deserts of Araby, where the relics of Prince Arnyld's crusade still litter the battlefields. Exploration and income follow the rulebook. After a battle in a town there is no roll on the exploration chart, and after a battle in the desert the warband skips steps 4 to 8 of the post-battle sequence. A Relic of Battle is rolled on the campaign's Relics of Battle chart.",
+  "dice_per_hero": 1,
+  "dice_for_win": 1,
+  "max_dice": 10,
+  "max_chosen": 6,
+  "income": [
+    {
+      "max_total": 5,
+      "amount": 1
+    },
+    {
+      "max_total": 11,
+      "amount": 2
+    },
+    {
+      "max_total": 17,
+      "amount": 3
+    },
+    {
+      "max_total": 24,
+      "amount": 4
+    },
+    {
+      "max_total": 30,
+      "amount": 5
+    },
+    {
+      "max_total": 35,
+      "amount": 6
+    },
+    {
+      "max_total": null,
+      "amount": 7
+    }
+  ],
+  "income_note": "Wherever the rules say wyrdstone, read treasure, and dinars for gold crowns: treasure is found and sold on the rulebook's chart, which this chart keeps.",
+  "places": [
+    {
+      "count": 2,
+      "face": 1,
+      "name": "Abandoned Campsite",
+      "rules": "Sifting through the remains of a small fire, obviously vacated in a hurry, the warband finds D6 dinars."
+    },
+    {
+      "count": 2,
+      "face": 2,
+      "name": "Desert Daemon",
+      "rules": "A wildly unkempt man staggers blindly through the desert, whispering something about how 'the end is nigh'. As a random Hero approaches, the man falls to the ground and begs to be carried to the nearest town.\nIf the Hero passes a Leadership test he sees that all is not what it seems, and the man-thing attacks. If he then passes an Initiative test he strikes the daemon before it rises, gaining 3D6 valuables from the daemon's purse, all that is left of its previous victims. If he fails the Initiative test the daemon attacks him and disappears: roll on the Serious Injuries chart for him.\nIf he fails the Leadership test he picks the thing up to carry it to the next town, and the daemon's legs wrap around his neck. He cannot escape the daemon, and his allies risk his death if they try to attack it. In combat he gains an extra attack, but his Initiative is halved by the daemon perched on his shoulders. He may only get rid of the creature by finding a Master Astrologer."
+    },
+    {
+      "count": 2,
+      "face": 3,
+      "name": "Lost Children",
+      "rules": "The warband finds two children huddled together under a burned Arabian tent.\nIf the player wishes, the warband can help the children find their parents, who give it all they have of value: D6 dinars, or a single Treasure instead if a 6 is rolled.\nSlaver or money-conscious warbands may sell the children for 2D6 dinars, but may be ambushed by the children's relatives when they are brought to town: if the 2D6 roll is 4 or under, a random Hero suffers a Serious Injury and all the money is lost.\nUnholy warbands may sacrifice the children to their Dark Gods (or simply feed on them) and the leader gains 1 Experience."
+    },
+    {
+      "count": 2,
+      "face": 4,
+      "name": "Herd of Disciples",
+      "rules": "A motley collection of sorry-looking folk wrapped in rags, led by a well-dressed man claiming to be the Star King, has been wandering lost in circles for days.\nEvil or money-conscious warbands can sell the mob into slavery and gain 2D6 dinars.\nUnholy warbands can sacrifice or eat them, and the warband's leader gains +1 Experience.\nUndead warbands can kill one of them and gain a Zombie at no cost.\nAny other warband can interrogate them and gain insight into the area: the next time it rolls on the Exploration chart, it rolls one D6 more than usually allowed and discards any one dice (with three Heroes, roll 4D6 and pick any three)."
+    },
+    {
+      "count": 2,
+      "face": 5,
+      "name": "Abandoned Caravan",
+      "rules": "Half buried in the sand is an overturned merchant's cart. Roll a D6 to see what you find:\n1-2 Lucky charm\n3-4 A purse with 2D6 dinars\n5-6 Jewelled sword and dagger, which can be kept or sold for twice the value of a normal sword and dagger: the normal selling price is half the cost, so the jewelled sword sells for 10 dinars"
+    },
+    {
+      "count": 2,
+      "face": 6,
+      "name": "Sand Worm",
+      "rules": "A man-sized worm bursts from the ground, and will return below the surface if the warriors aren't quick. Any warband members with missile weapons may shoot at it. On a successful hit, at the warrior's base chance to hit, and a wound against Toughness 3, the worm is killed and the warband may have a feast: the next time it sells Treasure it counts as one size lower (a warband of 10-12 members counts as 7-9), as it has to buy less food to re-supply."
+    },
+    {
+      "count": 3,
+      "face": 1,
+      "name": "Fallen Encampment",
+      "rules": "The warband comes upon an encampment of The Fallen.\nAn evil inclined warband may approach and attempt to trade. Roll a D6: on a 1 The Fallen are truly chaotic and attack, following the rules for other warbands fighting them below. If they do not attack, the warband may buy any equipment at a 25% discount, rounding down and rolling for Rare items as normal, and may sell items to The Fallen for 75% of their base cost, rounding up.\nA warband not comprised of evil doers or Undead may report the encampment to the closest fief for a 2D6 dinars reward.\nAny warband may attack The Fallen instead: it receives D6 Experience, divided among the Heroes that did not go out of action, and 2D6 dinars in loot. Roll a D6 for each warband member: on a 1 or 2 that warrior is taken out of action and must roll for Serious Injuries as normal."
+    },
+    {
+      "count": 3,
+      "face": 2,
+      "name": "Skirmish Remains",
+      "rules": "Picking over the remains of a small battle between scouting units, roll a D6 to see what you find:\n1 Sword\n2 D3 Shields\n3 Flail\n4 D3 halberds\n5 Lance\n6 2D6 dinars"
+    },
+    {
+      "count": 3,
+      "face": 3,
+      "name": "Prisoners",
+      "rules": "A large caravan of cages holds a group of finely dressed people, who claim some horrible creature drove off their captors and beg to be set free.\nUnholy warbands can sacrifice or eat them, gaining D3 Experience distributed amongst the warband's Heroes.\nUndead warbands can kill them and gain D3 Zombies at no cost.\nEvil or money-conscious warbands can sell them into slavery for 3D6 dinars.\nSlavers can chain them up and gain D3 Slaves at no cost.\nOther warbands can escort them back to a town and are rewarded with 2D6 dinars. In addition one of the prisoners wishes to join the warband: if you can afford to equip him with weapons and armour, you may add a new Henchman to any of your human Henchman groups, with the same profile as the rest of the group, even if they have already gained experience."
+    },
+    {
+      "count": 3,
+      "face": 4,
+      "name": "Pilgrims",
+      "rules": "A small group of robed pilgrims shuffles towards the warband, singing religious songs. Roll a D3: on a 1 they follow the path of Sigmar, on a 2 the path of The One, on a 3 the path of the Worm.\nIf the warband follows the same path, the pilgrims tell of their travels and the leader gains some insight into where treasure may be found: the warband gains one piece of treasure.\nUnholy warbands, or warbands of a different path to them, may kill the pilgrims and take their possessions: D6 dinars and a Holy Relic.\nSlavers may gain D3 slaves."
+    },
+    {
+      "count": 3,
+      "face": 5,
+      "name": "Abandoned Crusader Camp",
+      "rules": "Searching a tumbled-down camp, the warband finds 2D6 dinars and piles of unlucky crusaders who starved to death.\nWarbands inclined to eating humans see this as a blessing: when working out their next earnings from selling valuables, reduce the warband's effective size by one (10-12 warriors counts as 7-9), as it needs to spend less on food.\nHoly inclined warbands may bury the dead and the leader gains +1 Experience.\nOther warbands may rifle through their possessions, finding a suit of heavy armour and D3 hammers."
+    },
+    {
+      "count": 3,
+      "face": 6,
+      "name": "Fanatical Mob",
+      "rules": "A ragged mob of peasants bearing the icons of their religion rushes the warband with a cry of 'Halt!'. Roll a D3 for the mob's path: on a 1 Sigmar, on a 2 The One, on a 3 the Worm.\nIf the warband follows the same path the mob lets it pass with only minor questions, and names a sympathetic merchant in one of the nearby towns: the next time the warband trades, prices are reduced by 10%, rounded down.\nIf the warband follows another path the mob attacks. At the end of a short fight the warband gains D6 Experience, D6 dinars, D3 swords, D3 shields and D3 helmets. Roll a D6 for each warband member: on a 1-2 that member was also taken out of action during the fight and must roll for Serious Injuries as normal.\nIf the warband doesn't follow a path, the mob gives it a stack of religious pamphlets and an (un)holy relic in the hope of converting it to their path."
+    },
+    {
+      "count": 4,
+      "face": 1,
+      "name": "Dead Tomb Raider",
+      "rules": "A pile of rocks that looks out of place turns out to be a skeleton clad in rusted armour, clutching a sack of valuables. Inside the sack the warband finds D6x10 dinars and a piece of treasure."
+    },
+    {
+      "count": 4,
+      "face": 2,
+      "name": "Shrine of the Worm",
+      "rules": "The warband has discovered a Shrine of the Worm, a hideous stone carving with a small pile of sacrifices at its base.\nIf the warband is not Unholy it may deface the shrine and sift through the offerings for valuables: the leader gains 1 Experience and the warband finds D3 Treasures.\nAn Unholy warband may leave a small offering of 10 dinars and worship at the shrine, asking for hidden knowledge. Roll a D6:\n1-2 One of the warband's Heroes screams as his mind is filled with insight. He must roll on the Serious Injuries chart, and if he survives he gains a single Academic skill, whether or not he could normally take one.\n3-4 D3 Experience, distributed randomly among the warband's Heroes.\n4-6 One of the warband's weapons becomes unholy and wounds on a 2+ any model that hates spellcasters or follows the paths of Sigmar or The One.\n(The ranges as printed overlap at 4.)"
+    },
+    {
+      "count": 4,
+      "face": 3,
+      "name": "Cursed Woman",
+      "rules": "A donkey packed with items gallops towards the warband, her eyes lighting up as she sees it.\nIf the warband contains any warriors that can cast spells or Divine Interventions, they may remove the curse from the woman, who tells a miraculous story of how she ended up as a donkey. She is a powerful merchant, and if the warband escorts her out of the desert she sells it items at a reduced fee: it may buy common items at a 25% discount, rounding the price up to the nearest dinar, and any Rare item may be searched for at -2 to the Difficulty, though she will only ever have one such item.\nIf the merchant is attacked she flees using a magical ring, but leaves behind 3D6 dinars worth of items."
+    },
+    {
+      "count": 4,
+      "face": 4,
+      "name": "Offerings to the Forgotten Martyr",
+      "rules": "Dishes of food and drink lie ahead, beneath a tattered banner covered in Arabian script.\nThe warband may take some of the food to re-supply: it counts as two sizes lower when selling Treasures (a warband of 10-12 members counts as 4-6), and any hirelings charge only half their normal upkeep. Roll a D3: on a 1 the djinni who watches over the shrine has cursed the warband, and for D3 games its members must re-roll all successful hits in close combat or shooting."
+    },
+    {
+      "count": 4,
+      "face": 5,
+      "name": "Wounded Warband",
+      "rules": "The warband finds a small band of warriors sprawled across the desert sands, covered in blood and gaping wounds.\nIf the warband helps these men in need, they give it their stash: 2D6 dinars and D3 Treasures.\nIf it dispatches them instead it gains D6 dinars and the warband's leader gains 1 Experience."
+    },
+    {
+      "count": 4,
+      "face": 6,
+      "name": "Books of Knowledge",
+      "rules": "The warband comes across one of the famed books of Ibn Firnas, the genius Arabian scholar. Some of the books can be sold and are worth D6x5 dinars. One of your Heroes may study the books before they are sold, and the extra wisdom lets him choose from Academic skills whenever he gains a new skill."
+    },
+    {
+      "count": 5,
+      "face": 1,
+      "name": "Arabian Tent",
+      "rules": "The warband finds a large nomad camping ground, its tents in good order and its horses numerous and healthy.\nIf the warband is inclined towards good rather than evil, the nomad and his wife offer it the desert nomad's legendary hospitality: when working out the warband's next earnings from selling valuables, reduce its effective size by two (10-12 warriors counts as 4-6), as it needs to spend less on food. The nomad also gives the warband the name of an honest merchant: the next time it buys equipment, prices are reduced by 25%, rounding the price up to the nearest dinar.\nIf the warband is Unholy it may kill the nomads and loot their possessions, receiving 2D6 dinars and D3 Experience distributed among its Heroes, and may reduce its warband size by two as above.\nSlavers may attack the nomads and gain 2D3 slaves.\nIf the warband attacks the nomads, roll a D6 for every member: on a 1 that member was taken out of action in the fight and must roll for Serious Injuries as normal."
+    },
+    {
+      "count": 5,
+      "face": 2,
+      "name": "Jewelled Sword",
+      "rules": "Amongst the looted bodies of a battle long past, one of your Heroes spies a jewel-encrusted sword lying under a corpse. Roll a D6 to see what jewels are embedded in its hilt:\n1-2 Quartz stones worth D6x5 dinars\n3-4 Amethyst worth 20 dinars\n5 Sapphire worth 50 dinars\n6 A diamond worth D6x15 dinars\nIf your warband does not sell the gems, one of your Heroes may keep the sword and display it proudly: he gains +1 to the rolls for locating rare items, as merchants flock to such an obviously wealthy warrior."
+    },
+    {
+      "count": 5,
+      "face": 3,
+      "name": "Plain of the Crucifix",
+      "rules": "On a vast plain of bodies crucified on planks of wood, one of the poor souls makes a weak plea for help. If the warband frees him, the Hired Sword (choose any available for this campaign setting) offers his services to the warband for free: no hiring cost, though his upkeep is paid as normal after the first game. Among the bodies the warband also finds D6 dinars hidden in boots and the like, D3 daggers and a Lucky Charm (obviously not working properly)."
+    },
+    {
+      "count": 5,
+      "face": 4,
+      "name": "The Oasis of the Djinn",
+      "rules": "You find D3 treasures lying in the pool.\nIf the warband is not Unholy it may sleep at the Oasis of the Djinn and gain a restful night's sleep: any of its warriors taken out of action last game are automatically healed to full health, with no need to roll for Serious Injuries.\nInstead of sleeping here, a warband on the Path of Sigmar or the Path of the Worm, or an evil-inclined warband, may destroy the oasis and receive D6 Experience, divided among its Heroes. The djinn then places a powerful curse on the warband: for D3 games, whenever any of its members are taken out of action, roll twice for Serious Injuries for each warrior and apply the lower result."
+    },
+    {
+      "count": 5,
+      "face": 5,
+      "name": "Exalted Cleric",
+      "rules": "A figure in robes approaches, a heavy symbol of faith displayed on his chest. Roll a D3: on a 1 the cleric follows the path of Sigmar, on a 2 the path of The One, on a 3 the path of the Worm.\nHe may be killed if you follow a different path to him or none at all: the warband leader gains 1 Experience and a Holy Tome.\nIf your path aligns with his, he reveals the resting place of one of your path's martyred warriors, and your warband finds a Relic of Battle at his tomb."
+    },
+    {
+      "count": 5,
+      "face": 6,
+      "name": "Cave of Thieves",
+      "rules": "Your warband follows some tracks that stop at a great wall of rock. On a D6 roll of 5+ one of your Heroes manages to speak the magical word that opens the doorway; add +1 to the roll for each of your Heroes with an Academic skill. Your warband finds D3 swords, 1 suit of light armour, D6 daggers, D3 spears, D6 shields and 3D6 dinars. In addition roll a D6: on a 5 the warband finds a piece of Treasure, on a 6 a Relic of Battle."
+    },
+    {
+      "count": 6,
+      "face": 1,
+      "name": "Khemrian Tomb",
+      "rules": "An opening in the ground leads to a vast underground chamber, empty but for dust-covered artifacts. A Hero may descend into the tomb with a rope around his waist and recover the artifacts one at a time; the tomb contains five. He must pass an Initiative test for each artifact he wishes to steal. If he fails a roll to climb up, he suffers a Strength 4 hit immediately and any artifact he is carrying is cracked and destroyed.\nEvery time after the first that he attempts the test, roll a D6: on a 1 the guardians of the tomb have awakened. He suffers D3 Strength 3 hits as his companions yank on the rope to pull him out of the tomb, and no more artifacts may be recovered. If he is reduced to 0 wounds, roll for him on the Serious Injuries chart.\nEach artifact recovered may be sold for 50+2D6 dinars."
+    },
+    {
+      "count": 6,
+      "face": 2,
+      "name": "Weapon of the Saints",
+      "rules": "A shining weapon lies stuck amongst the remains of a looted battlefield, engraved with something along the lines of: whoever can lift it shall be the next great Caliph, most Blessed of Sigmar, or slay every heretic he comes across. A Hero may lift it from beneath the pile of bodies if he rolls equal to or under half his Strength, rounded down. Each Hero gets only one test, and only his base Strength is used: no drugs or magical effects apply. A Hero who lifts it receives a magical weapon, which always hits on a 2+, and wounds on a 3+ against an enemy whose warband follows a differing path."
+    },
+    {
+      "count": 6,
+      "face": 3,
+      "name": "Ambushed Caravan",
+      "rules": "The warband finds an army's supply caravan, carrying equipment for some of the most elite units fighting in the holy war, that has been the victim of an ambush. Roll three times on the following table to see what you find:\n1 Suit of light armour\n2 Suit of heavy armour\n3 Ithilmar sword\n4 Gromril hammer\n5 Ithilmar armour\n6 Gromril armour"
+    },
+    {
+      "count": 6,
+      "face": 4,
+      "name": "Merchant's Corpse",
+      "rules": "On the tattered corpse of a rich merchant you find several valuable objects, which can be sold for 2D6x5 dinars. If you roll a double, instead of finding money you find the badge of the White Quill, the sign of an honest merchant: a Hero in possession of it gains the Haggle and Streetwise skills."
+    },
+    {
+      "count": 6,
+      "face": 5,
+      "name": "Plain of the Dead",
+      "rules": "The remains of an entire army lie scattered among the sands. After giving the dead their final rites, eating them or looting them, roll for every item separately, apart from the dinars and daggers, to see if you find it:\n3D6x5 dinars Auto\nD3 suits of light armour 4+\nSuit of heavy armour 5+\nD6 daggers Auto\nD3 crossbows 5+\nD3 swords 3+\nD3 shields 2+\nD3 bows 4+\nD3 helmets 2+\nRelic of Battle 5+"
+    },
+    {
+      "count": 6,
+      "face": 6,
+      "name": "Untouched Battlefield",
+      "rules": "A recent sandstorm has uncovered the scene of a huge battle. Roll a D6. On a 1-4, roll as if you had found Plain of the Dead (above), but add +1 to each D6 result. On a 5-6 you find the remains of holy warriors still clutching their possessions: treat this as a result of 1-4, and also roll on the Relics of Battle table for an additional relic."
+    }
+  ]
+}
