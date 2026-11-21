@@ -132,6 +132,41 @@ class ExtraItemTests(SimpleTestCase):
             ([{"rule": "map"}], entry["link_url"], entry["flavour"]),
         )
 
+    def test_a_price_with_no_fixed_cost_keeps_its_note(self) -> None:
+        # Athel Loren's Yew Bow, "3 x Price", Rare 10, as the Ithilmar Weapon's row reads (William, 21 Nov 2026)
+        _types, _resolver, groups, _ctx = world()
+        entry = {
+            "name": "Yew Bow",
+            "type": "Weapon",
+            "setting": "athel-loren",
+            "source": "Athel Loren",
+            "cost_note": "3 x Price",
+            "rarity": 10,
+        }
+
+        [bow] = extra_items([entry], groups, {})
+
+        [row] = bow["availabilities"]
+        self.assertEqual((row["cost"], row["dice"], row["cost_note"], row["rarity"]), (None, None, "3 x Price", 10))
+
+    def test_an_animal_sold_as_an_item_keeps_its_profile(self) -> None:
+        # Athel Loren's Wild Cat, with the profile its Wild Cats hazard prints
+        _types, _resolver, groups, _ctx = world()
+        profile = {"profile": "Wild Cat", "m": "6", "ws": "4", "bs": "0", "s": "4", "t": "3", "w": "1"}
+        entry = {
+            "name": "Wild Cat",
+            "type": "Miscellaneous",
+            "setting": "athel-loren",
+            "source": "Athel Loren",
+            "cost": 25,
+            "dice": 2,
+            "statblock": [profile],
+        }
+
+        [cat] = extra_items([entry], groups, {})
+
+        self.assertEqual(cat["statblock"], [profile])
+
     def test_a_shared_rule_no_rule_of_ours_has_stops_the_build(self) -> None:
         _types, _resolver, groups, _ctx = world()
         entry = {
