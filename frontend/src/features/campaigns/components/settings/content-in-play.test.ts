@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
 
 import type { Setting, SettingPreset } from "../../types/campaign-types";
-import { presetOf, scopeLine, toggleSetting, typesInScope, withAlwaysOn } from "./content-in-play";
+import {
+  gapWarning,
+  gradeGaps,
+  presetOf,
+  scopeLine,
+  toggleSetting,
+  typesInScope,
+  withAlwaysOn,
+} from "./content-in-play";
 
 const setting = (
   id: number,
@@ -47,5 +55,24 @@ describe("content in play", () => {
   it("counts the warband types the selection brings in", () => {
     expect(typesInScope([2], SETTINGS)).toBe(25);
     expect(scopeLine([1, 2, 3], SETTINGS)).toBe("30 warband types in scope.");
+  });
+
+  it("warns of a grade left out below the highest one ticked", () => {
+    const sartosa = setting(4, "Sartosa", "2b", 6);
+    const all = [...SETTINGS, sartosa];
+    const presets: SettingPreset[] = [
+      ...PRESETS,
+      { grade: "2b", label: "Up to 2b", description: "", setting_ids: [1, 2, 3, 4] },
+    ];
+
+    expect(gradeGaps([1, 2, 3], all, presets)).toEqual([]); // 1a, 1b, 2a: unbroken
+    expect(gradeGaps([1], all, presets)).toEqual([]); // only Mordheim
+    expect(gradeGaps([1, 4], all, presets)).toEqual(["1b", "2a"]);
+    expect(gradeGaps([1, 2, 4], all, presets)).toEqual(["2a"]);
+    expect(gapWarning([1, 2, 4], all, presets)).toBe(
+      "No 2a setting is ticked, though a 2b one is: anything first printed at that grade won't be in play."
+    );
+    expect(gapWarning([1, 4], all, presets)).toContain("No 1b or 2a setting is ticked");
+    expect(gapWarning([1, 2, 3], all, presets)).toBe("");
   });
 });

@@ -6,7 +6,7 @@ import { Chip } from "@/components/ui/chip";
 import { cn } from "@/lib/utils";
 
 import type { Setting, SettingPreset } from "../../types/campaign-types";
-import { presetOf, scopeLine, toggleSetting } from "./content-in-play";
+import { gapWarning, presetOf, scopeLine, toggleSetting } from "./content-in-play";
 import { CAPTION } from "./settings-ui";
 
 type ContentInPlayProps = {
@@ -32,6 +32,7 @@ export default function ContentInPlay(props: ContentInPlayProps) {
   const [adjusting, setAdjusting] = useState(!props.compact);
   const preset = presetOf(value, presets, settings);
   const presetInfo = presets.find((entry) => entry.grade === preset);
+  const gap = gapWarning(value, settings, presets);
 
   return (
     <div className="flex flex-col gap-3">
@@ -84,6 +85,7 @@ export default function ContentInPlay(props: ContentInPlayProps) {
           </div>
         </div>
       ) : null}
+      {gap ? <p className="m-0 text-xs font-semibold text-danger">{gap}</p> : null}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="m-0 text-sm text-text2">{scopeLine(value, settings)}</p>
         {props.compact ? (
