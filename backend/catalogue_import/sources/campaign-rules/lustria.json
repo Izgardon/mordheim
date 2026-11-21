@@ -133,8 +133,8 @@
     },
     {
      "result": "12",
-     "name": "The higher rating chooses",
-     "text": "The warband with the higher rating picks the scenario."
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating picks the scenario."
     }
    ]
   },
@@ -197,8 +197,8 @@
     },
     {
      "result": "12",
-     "name": "The higher rating chooses",
-     "text": "The warband with the higher rating picks the scenario."
+     "name": "The lower rating chooses",
+     "text": "The warband with the lower rating picks the scenario."
     }
    ]
   },
