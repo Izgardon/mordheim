@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from django.db.models import Model
+from django.utils import timezone
 
 from apps.core.seeding import parse_int
 from apps.items.models import Item
@@ -255,9 +256,14 @@ class BookLookups:
         """A hired sword's special skills, made sure of in the book and held by his own group ("Hired Sword -
         <name>", for everyone: only his skill access names it); whether he has any."""
         named = [(name, description) for name, description in map(name_and_description, items) if name]
-        if not named:
+        own: dict[str, Any] = {"campaign": None, "name": self.own_type_of(owner)}
+        if not named:  # none left (the Runesmith's runes became a lore): his group leaves the Skills page
+            SkillGroup.objects.filter(**own, archived_at__isnull=True).update(archived_at=timezone.now())
             return False
-        group, _created = SkillGroup.objects.get_or_create(campaign=None, name=self.own_type_of(owner))
+        group, _created = SkillGroup.objects.get_or_create(**own)
+        if group.archived_at is not None:
+            group.archived_at = None
+            group.save(update_fields=["archived_at"])
         # a skill no other group holds is his own: it takes his wording (the Runesmith's Rune Use and its table)
         others = set(SkillGroupSkill.objects.exclude(group=group).values_list("skill_id", flat=True))
         skills = []

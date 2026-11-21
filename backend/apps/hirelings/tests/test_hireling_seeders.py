@@ -216,6 +216,24 @@ class HirelingSeederTests(TestCase):
         skills = dict(Skill.objects.values_list("name", "description"))
         self.assertEqual((skills["Bully"], skills["Sprint"]), ("Shoves, with its table.", "Runs fast."))
 
+    def test_his_own_skill_group_is_archived_once_he_has_no_special_skills_and_back_when_he_has(self):
+        # William, 21 Nov 2026: the Runesmith's Rune Use is his rule and his runes a lore, so his special skills went;
+        # his group must not stay on the Skills page holding them
+        with data_file([OGRE]) as path:
+            run("seed_hired_swords", json_paths=[path])
+        bare = {**OGRE, "hired_sword": {**OGRE["hired_sword"], "available_special_skills": []}}  # type: ignore[dict-item]
+
+        with data_file([bare]) as path:
+            run("seed_hired_swords", json_paths=[path])
+
+        group = SkillGroup.objects.get(name="Hired Sword - Ogre Bodyguard", campaign__isnull=True)
+        self.assertIsNotNone(group.archived_at)
+        self.assertEqual(HiredSword.objects.get().available_skill_types, ["Combat"])
+        with data_file([OGRE]) as path:
+            run("seed_hired_swords", json_paths=[path])
+        group.refresh_from_db()
+        self.assertIsNone(group.archived_at)
+
     def test_a_dramatis_persona_keeps_how_long_it_stays_what_it_is_paid_and_an_unmatched_race_as_text(self):
         with data_file([AENUR]) as path:
             output = run("seed_dramatis_personae", json_paths=[path])

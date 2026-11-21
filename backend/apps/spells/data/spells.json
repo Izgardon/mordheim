@@ -417,5 +417,11 @@
   {"name": "Earth Lore", "type": "Earth Magic", "setting": "khemri-3", "dc": "Auto", "roll": 6, "description": "Cast after the battle. The caster may re-roll one dice and change one dice by +1 or -1, and the two need not be the same dice. He may not re-roll a re-roll. If he was taken out of action the spell may not be used."},
 
   {"name": "Light", "type": "All Lores", "setting": "relics-of-the-crusades", "dc": "5", "roll": null, "description": "A wizard or cleric casts the spell on himself or another warrior within 12\". That model counts as carrying a torch, but keeps his hands free. Every turn the caster must roll a D6: on a 1 or 2 the Light disappears."},
-  {"name": "Silence", "type": "All Lores", "setting": "relics-of-the-crusades", "dc": "6", "roll": null, "description": "The wizard encircles one enemy model within 24\" with a sphere of silence: it cannot cast spells, or sound the alarm if it is a sentry. It shrugs off the spell if it passes a Leadership test in its recovery phase."}
+  {"name": "Silence", "type": "All Lores", "setting": "relics-of-the-crusades", "dc": "6", "roll": null, "description": "The wizard encircles one enemy model within 24\" with a sphere of silence: it cannot cast spells, or sound the alarm if it is a sentry. It shrugs off the spell if it passes a Leadership test in its recovery phase."},
+  {"name": "Rune of Iron", "type": "Runes", "setting": "nemesis-crown", "dc": "6", "roll": null, "description": "Inscribed on armour: its wearer has a 6+ ward save."},
+  {"name": "Rune of Stone", "type": "Runes", "setting": "nemesis-crown", "dc": "6", "roll": null, "description": "Inscribed on armour: +1 to its wearer's armour save."},
+  {"name": "Rune of Fury", "type": "Runes", "setting": "nemesis-crown", "dc": "7", "roll": null, "description": "Inscribed on a weapon: its wielder has +1 Attack."},
+  {"name": "Rune of Striking", "type": "Runes", "setting": "nemesis-crown", "dc": "6", "roll": null, "description": "Inscribed on a weapon: its wielder has +1 Weapon Skill."},
+  {"name": "Rune of Speed", "type": "Runes", "setting": "nemesis-crown", "dc": "5", "roll": null, "description": "Inscribed on a weapon: its wielder has +1 Initiative."},
+  {"name": "Rune of Cleaving", "type": "Runes", "setting": "nemesis-crown", "dc": "8", "roll": null, "description": "Inscribed on a weapon: its wielder has +1 Strength."}
 ]

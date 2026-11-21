@@ -35,6 +35,10 @@
     "Hot Pot": {
       "roll": "2D6",
       "text": "Before each battle the Chef takes a Leadership test. If he passes, his pot holds stew to heal as many Wounds as he passed by, +1 (a roll of 7 against his Ld 8 heals up to 2 Wounds). Friendly models who sup it recover Wounds, none above its maximum."
+    },
+    "Rune Use": {
+      "roll": "2D6",
+      "text": "Before the battle the Runesmith may attempt to inscribe every Rune he knows, but once only. No Rune may be inscribed on an item with a Rune already on it. If he passes the difficulty roll he has succeeded and the Rune will affect the weapon/armour for the coming battle."
     }
   },
   "skill": {
@@ -49,10 +53,6 @@
     "Forbidden Rite": {
       "roll": "D3",
       "text": "If the hero with this skill did not search for rare items during their last exploration phase, then they start the next battle with a pool of D3+1 (+1) modifiers they can use to increase their casting rolls. They may use as many of these modifiers at a time as they desire."
-    },
-    "Rune Use": {
-      "roll": "2D6",
-      "text": "Before the battle the Runesmith may attempt to inscribe every Rune he knows, but once only. No Rune may be inscribed on an item with a Rune already on it. If he passes the difficulty roll he has succeeded and the Rune will affect the weapon/armour for the coming battle."
     },
     "Send False Signals": {
       "roll": "D6",

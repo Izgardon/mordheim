@@ -2192,7 +2192,7 @@
     "leadership": 9,
     "armour_save": null,
     "large": false,
-    "caster": "No",
+    "caster": "Priest",
     "specials": [
       {
         "name": "Runesmith",
@@ -2217,6 +2217,14 @@
       {
         "name": "Hard Head",
         "description": "Dwarfs ignore the special rules for maces, clubs etc. They are not very easy individuals to knock out."
+      },
+      {
+        "name": "Rune Use",
+        "description": "A Runesmith may inscribe Runes before a battle; they start knowing one Rune but may learn more as spellcasters learn spells. These Runes are only temporary due to the haste of the Runesmith but may not be dispelled during the game. Runes may be inscribed on axes, hammers, swords, two handed weapons, helmets, shields, light and heavy armour.\n\nThe Runes he may know are the Runes lore, each with its difficulty.\n\nBefore the battle the Runesmith may attempt to inscribe every Rune he knows, but once only. No Rune may be inscribed on an item with a Rune already on it. If he passes the difficulty roll he has succeeded and the Rune will affect the weapon/armour for the coming battle.\n\nIf he rolls a natural 2 the process has highlighted shoddy (and hence nondwarf) manufacturing and the item being inscribed on is broken, remove it from your roster.\n\nA gromril item (including dwarf axes) may reroll a result of 2 but a second 2 stands. If he rolls a natural 12 the rune is “durable” and will last beyond one battle else it fades after the game."
+      },
+      {
+        "name": "Durable",
+        "description": "If a Rune becomes durable roll a D6 after each battle, but not the first, on a roll of 1 or 2 it fades and ceases to be effective, otherwise it will be effective in the next battle."
       }
     ],
     "skills": [],
@@ -2241,16 +2249,7 @@
         "Combat",
         "Strength"
       ],
-      "available_special_skills": [
-        {
-          "name": "Rune Use",
-          "description": "A Runesmith may inscribe Runes before a battle; they start knowing one Rune but may learn more as spellcasters learn spells. These Runes are only temporary due to the haste of the Runesmith but may not be dispelled during the game. Runes may be inscribed on axes, hammers, swords, two handed weapons, helmets, shields, light and heavy armour.\n\nThe runes are:\n\nRune | Effect | Effective on | Difficulty\nIron | 6+ ward | Armour | 6\nStone | +1 armour save | Armour | 6\nFury | +1 A | Weapon | 7\nStriking | +1 WS | Weapon | 6\nSpeed | +1 I | Weapon | 5\nCleaving | +1 S | Weapon | 8\n\nBefore the battle the Runesmith may attempt to inscribe every Rune he knows, but once only. No Rune may be inscribed on an item with a Rune already on it. If he passes the difficulty roll he has succeeded and the Rune will affect the weapon/armour for the coming battle.\n\nIf he rolls a natural 2 the process has highlighted shoddy (and hence nondwarf) manufacturing and the item being inscribed on is broken, remove it from your roster.\n\nA gromril item (including dwarf axes) may reroll a result of 2 but a second 2 stands. If he rolls a natural 12 the rune is “durable” and will last beyond one battle else it fades after the game."
-        },
-        {
-          "name": "Durable",
-          "description": "If a Rune becomes durable roll a D6 after each battle, but not the first, on a roll of 1 or 2 it fades and ceases to be effective, otherwise it will be effective in the next battle."
-        }
-      ],
+      "available_special_skills": [],
       "grade": "1b",
       "rating": 15,
       "race": "Dwarf"
