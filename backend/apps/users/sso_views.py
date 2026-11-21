@@ -17,6 +17,7 @@ from rest_framework.views import APIView
 from apps.core.throttling import SSO_CALLBACK_THROTTLE_CLASSES, SSO_START_THROTTLE_CLASSES
 
 from .services.sso import complete, drop_stale_attempts, start
+from .services.sso_accounts import password_ended_notice
 from .sso.base import SsoError
 from .sso.registry import configured_providers
 from .views import signed_in
@@ -78,4 +79,7 @@ class SsoCallbackView(APIView):
             user, tokens, outcome = complete(provider, data["code"], data["state"], data["browser_token"])
         except SsoError as error:
             return _refused(error)
-        return signed_in(user, tokens, http_status=201 if outcome.created else 200)
+        response = signed_in(user, tokens, http_status=201 if outcome.created else 200)
+        if outcome.password_ended:  # a lossy change says so plainly, once, where it happened
+            response.data["notice"] = password_ended_notice(provider)
+        return response

@@ -65,8 +65,38 @@ class LinkingTests(SsoTestCase):
         # The account keeps its own display name; the provider doesn't rename it.
         self.pia.refresh_from_db()
         self.assertEqual(self.pia.first_name, "Pia")
-        # And the password still signs in.
-        self.assertEqual(self.me(self.sign_in()["access"]).status_code, 200)
+
+    def test_joining_a_password_account_ends_its_password_and_its_sessions(self):
+        # William, 21 Nov 2026: registering never proves the address, so whoever set the password may not own it
+        earlier = self.sign_in()
+
+        response = self.sign_in_with(profile(subject="g-5b", email="pia@example.com"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json()["notice"],
+            "Your Google sign-in is now joined to this account, so its password no longer works and its other "
+            "devices were signed out. To use a password again, choose Forgot password.",
+        )
+        self.pia.refresh_from_db()
+        self.assertFalse(self.pia.has_usable_password())
+        refused = self.me(earlier["access"])
+        self.assertEqual((refused.status_code, refused.json()["code"]), (401, "session_ended"))
+        self.assertEqual(self.me(response.json()["access"]).status_code, 200)
+        # signing in again by the same provider ends nothing more and says nothing
+        again = self.sign_in_with(profile(subject="g-5b", email="pia@example.com"))
+        self.assertNotIn("notice", again.json())
+        self.assertEqual(self.me(response.json()["access"]).status_code, 200)
+
+    def test_joining_an_sso_account_says_nothing(self):
+        first = self.sign_in_with(profile(subject="g-5c", email="nell@example.com"))
+        self.assertNotIn("notice", first.json())
+
+        second = self.sign_in_with(profile(subject="d-5c", email="nell@example.com"), provider="discord")
+
+        self.assertEqual(second.json()["user"]["id"], first.json()["user"]["id"])
+        self.assertNotIn("notice", second.json())
+        self.assertEqual(self.me(first.json()["access"]).status_code, 200)
 
     def test_an_unverified_email_never_links_and_makes_its_own_account(self):
         response = self.sign_in_with(
@@ -158,6 +188,9 @@ class SsoSessionTests(SsoTestCase):
 
     def test_a_password_change_on_a_linked_account_ends_its_sso_session(self):
         sso_tokens = self.sign_in_with(profile(subject="g-14", email="pia@example.com")).json()
+        self.pia.refresh_from_db()
+        self.pia.set_password(PASSWORD)  # set again by Forgot password, as joining ended it
+        self.pia.save(update_fields=["password"])
         password_tokens = self.sign_in()
 
         changed = self.bearer(password_tokens["access"]).post(

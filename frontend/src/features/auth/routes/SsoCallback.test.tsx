@@ -22,6 +22,8 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 }));
 vi.mock("@/lib/realtime/client", () => ({ disconnectRealtime: vi.fn() }));
 vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
+const { warning } = vi.hoisted(() => ({ warning: vi.fn() }));
+vi.mock("sonner", () => ({ toast: { warning } }));
 
 const CALLBACK = "POST /auth/sso/google/callback/";
 
@@ -44,6 +46,7 @@ beforeEach(() => {
   sessionStorage.clear();
   session.signOut();
   fakeApi.reset();
+  warning.mockReset();
 });
 
 describe("finishing a sign-in", () => {
@@ -60,6 +63,27 @@ describe("finishing a sign-in", () => {
       browser_token: "the-secret",
     });
     expect(session.get().user).toEqual(RAIDER);
+  });
+
+  it("says so, once, when joining the account ended its password", async () => {
+    rememberSsoAttempt({ provider: "google", state: "xyz", browserToken: "the-secret" });
+    fakeApi.on(CALLBACK, { ...loginAnswer(RAIDER), notice: "Its password no longer works." });
+
+    renderCallback("?code=the-code&state=xyz");
+
+    expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
+    expect(warning).toHaveBeenCalledTimes(1);
+    expect(warning).toHaveBeenCalledWith("Its password no longer works.", expect.anything());
+  });
+
+  it("says nothing when no password ended", async () => {
+    rememberSsoAttempt({ provider: "google", state: "xyz", browserToken: "the-secret" });
+    fakeApi.on(CALLBACK, loginAnswer(RAIDER));
+
+    renderCallback("?code=the-code&state=xyz");
+
+    expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
+    expect(warning).not.toHaveBeenCalled();
   });
 
   it("exchanges the code once, even though the attempt is read as the page mounts", async () => {

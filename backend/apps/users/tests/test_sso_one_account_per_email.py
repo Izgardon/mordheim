@@ -65,13 +65,13 @@ class RegisteringOverAnSsoAccountTests(SsoTestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {"email": [EMAIL_TAKEN]})
 
-    def test_a_password_account_that_later_linked_google_keeps_the_old_wording(self):
-        # He has a password, so "sign in with Google" would be the wrong advice: either way in works.
+    def test_a_password_account_that_later_linked_google_is_pointed_to_google(self):
+        # Joining it ended its password (William, 21 Nov 2026), so Google is the way in until he resets one
         self.sign_in_with(profile(subject="g-4", email="pia@example.com"))
 
         response = self.register("pia@example.com")
 
-        self.assertEqual(response.json(), {"email": [EMAIL_TAKEN]})
+        self.assertEqual(response.json(), {"email": ["You already have an account. Sign in with Google."]})
 
     def test_both_refusals_are_the_same_400_on_the_same_field(self):
         self.sign_in_with(profile(subject="g-5", email="nell@example.com"))

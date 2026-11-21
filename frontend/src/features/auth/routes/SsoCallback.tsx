@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 // components
 import { Button } from "@components/button";
@@ -34,6 +35,8 @@ export default function SsoCallback() {
   useEffect(() => {
     if (data) {
       adoptSession(data);
+      // a lossy change says so plainly, and stays until it is read
+      if (data.notice) toast.warning(data.notice, { duration: Infinity, closeButton: true });
       // The trip to the provider is a full navigation, so no redirect state survives it.
       navigate(returnPathFrom(null), { replace: true });
     }

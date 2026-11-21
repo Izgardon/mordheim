@@ -77,7 +77,9 @@ The full rules and the definition of done are in **`docs/ENGINEERING_RULES.md`**
   usable password; an unverified email never matches, and its address is kept on the identity row only. A deleted
   (inactive) account is never matched or resurrected, and deletion unlinks its providers. **One account per address,
   and only SSO may combine** (William, 19 Nov 2026: "lets combine if someone's account is the same email as their
-  Google or discord"): a verified email proves the person controls it, so SSO onto a password account links, but
+  Google or discord"): a verified email proves the person controls it, so SSO onto a password account links (and **ends its password
+  and every session**, because registering never proved the address: William, 21 Nov 2026; the callback answers a
+  `notice` in the server's words, shown once, and Forgot password sets one again), but
   typing an address into the register form proves nothing, so registration never attaches to an SSO account. It
   refuses, naming the provider(s) that account has (`serializers.email_taken_message`), matching every active
   account's `email` and not just the usernames, with `users/0003`'s partial unique index on `LOWER(email)` where

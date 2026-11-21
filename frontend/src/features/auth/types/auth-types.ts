@@ -11,6 +11,8 @@ export type AuthTokens = {
 
 export type AuthResponse = AuthTokens & {
   user: AuthUser;
+  /** Said once, in the server's words: a social sign-in ended the joined account's password. */
+  notice?: string;
 };
 
 export type LoginCredentials = {

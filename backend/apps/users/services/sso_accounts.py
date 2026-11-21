@@ -5,7 +5,8 @@ Three cases, in order:
 1. **The provider account is already linked** (`provider` + `subject`): that user signs in. Nothing else is
    considered, so renaming or re-pointing an email at the provider can't move the link.
 2. **The provider asserts a verified email matching an active account**: the identity is linked to it, so the
-   person who signed up with a password keeps one account. Matched on the username (the lowercased email, as
+   person who signed up with a password keeps one account. Its password stops working and its sessions end
+   (`_end_password`), because registering never proved the address. Matched on the username (the lowercased email, as
    registration stores it) and on the email column, so an earlier SSO account is found too.
 3. **Otherwise a new account** with no usable password.
 
@@ -38,6 +39,7 @@ from ..models import SocialIdentity, UserAccount
 from ..names import NAME_MAX_LENGTH
 from ..sso.base import ACCOUNT_UNAVAILABLE, SsoError, SsoProfile
 from ..sso.registry import PROVIDERS
+from .tokens import end_all_sessions
 
 # How the account was reached, for the API's answer and the tests.
 BY_IDENTITY = "identity"
@@ -56,6 +58,9 @@ class SignIn:
     user: Any
     how: str
     """`identity` (already linked), `verified_email` (linked to an existing account now) or `new`."""
+
+    password_ended: bool = False
+    """The account it joined had a password, which no longer works (`_end_password`)."""
 
     @property
     def created(self) -> bool:
@@ -128,6 +133,31 @@ def _new_user(profile: SsoProfile) -> Any:
     return user
 
 
+def _end_password(user: Any) -> bool:
+    """Joining a password account ends its password and every session it has (William, 21 Nov 2026).
+
+    Registering never proves the address, so whoever made the account may not be its owner: someone could sign up
+    with another person's email, wait for them to sign in with Google, and keep their own password into the joined
+    account. Ending it shuts that out; the real owner sets one again with Forgot password, which mails the address
+    the provider just proved. Changing the password's hash also spends any reset link already sent. False when the
+    account had no password (an SSO account)."""
+    if not user.has_usable_password():
+        return False
+    end_all_sessions(user)
+    user.set_unusable_password()
+    user.save(update_fields=["password"])
+    return True
+
+
+def password_ended_notice(provider: str) -> str:
+    """What the player is told, once, when signing in ended the account's password."""
+    label = PROVIDERS[provider].label
+    return (
+        f"Your {label} sign-in is now joined to this account, so its password no longer works and its other devices "
+        "were signed out. To use a password again, choose Forgot password."
+    )
+
+
 def link_or_create(provider: str, profile: SsoProfile) -> SignIn:
     """The user this sign-in belongs to, linking or creating as the module docstring says, in one transaction."""
     with transaction.atomic():
@@ -142,6 +172,7 @@ def link_or_create(provider: str, profile: SsoProfile) -> SignIn:
 
         user = account_for_email(profile.email) if profile.email_verified else None
         how = BY_VERIFIED_EMAIL if user is not None else NEW_ACCOUNT
+        password_ended = user is not None and _end_password(user)
         if user is None:
             user = _new_user(profile)
         SocialIdentity.objects.create(
@@ -151,4 +182,4 @@ def link_or_create(provider: str, profile: SsoProfile) -> SignIn:
             email=profile.email,
             email_verified=profile.email_verified,
         )
-        return SignIn(user=user, how=how)
+        return SignIn(user=user, how=how, password_ended=password_ended)
