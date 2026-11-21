@@ -5,8 +5,8 @@ unedited ones that were there previously?" Changing preset used to leave the old
 under the new one's -- Marienburg's 55 rules and 14 charts still sitting there under Khemri's.
 
 **Unedited means word for word.** A rule or chart is taken out only when it still matches some *other* published
-campaign's exactly: its kind, title, body and umbrella, or its title, when it is rolled, dice, note and every
-result. Anything the player wrote, and anything he changed by a single character, stays. That needs nothing stored
+campaign's exactly: its kind, title, body, umbrella and own tables, or its title, when it is rolled, dice, note,
+umbrella and every result with the tables hanging off it. Anything the player wrote, and anything he changed by a single character, stays. That needs nothing stored
 on the row -- no "came from here" column to keep true through every write path -- and it is self-correcting: edit a
 copied rule and it is his from then on.
 
@@ -27,26 +27,26 @@ def _words(text: Any) -> str:
     return str(text or "").strip()
 
 
-def _rule_print(kind: str, title: str, body: str, umbrella: str) -> tuple:
-    return (_words(kind), _words(title).lower(), _words(body), _words(umbrella).lower())
-
-
-def _chart_print(title: str, description: str, dice: str, note: str, rows: Any) -> tuple:
-    return (
-        _words(title).lower(),
-        _words(description),
-        _words(dice),
-        _words(note),
-        tuple((_words(row.result), _words(row.name), _words(row.text)) for row in rows),
+def _chart_print(chart: Any) -> tuple:
+    """A chart word for word: its title, when it is rolled, dice, note and umbrella, and every result with the tables
+    hanging off it (read from the prefetch)."""
+    rows = tuple(
+        (_words(row.result), _words(row.name), _words(row.text), tuple(_chart_print(c) for c in row.charts.all()))
+        for row in chart.rows.all()
     )
+    words = (chart.title, chart.description, chart.dice, chart.note, chart.umbrella)
+    return (*(_words(text) for text in words), rows)
 
 
-def _rule_prints(rows: Any) -> set[tuple]:
-    return {_rule_print(row.kind, row.title, row.text, row.umbrella) for row in rows}
+def _rule_print(rule: Any, body: str) -> tuple:
+    """A rule word for word: its kind, title, body and umbrella, and its own tables."""
+    tables = tuple(_chart_print(chart) for chart in rule.charts.all())
+    return (_words(rule.kind), _words(rule.title), _words(body), _words(rule.umbrella), tables)
 
 
-def _chart_prints(rows: Any) -> set[tuple]:
-    return {_chart_print(row.title, row.description, row.dice, row.note, row.rows.all()) for row in rows}
+# a rule's own tables and their results' tables, two deep: deeper than any book goes
+RULE_TABLES = ("charts__rows__charts__rows",)
+CHART_TABLES = ("rows__charts__rows",)
 
 
 def removable(campaign: Campaign, preset: CampaignPreset | None) -> tuple[list[int], list[int]]:
@@ -57,25 +57,24 @@ def removable(campaign: Campaign, preset: CampaignPreset | None) -> tuple[list[i
     same words), so matching "some other campaign" alone would offer to take out what the campaign is meant to
     have.
     """
-    every_rule = list(CampaignPresetRule.objects.all())
-    mine = _rule_prints(r for r in every_rule if preset is not None and r.preset_id == preset.pk)
-    theirs = _rule_prints(r for r in every_rule if preset is None or r.preset_id != preset.pk)
+    every_rule = list(CampaignPresetRule.objects.prefetch_related(*RULE_TABLES))
+    mine = {_rule_print(r, r.text) for r in every_rule if preset is not None and r.preset_id == preset.pk}
+    theirs = {_rule_print(r, r.text) for r in every_rule if preset is None or r.preset_id != preset.pk}
     rules = [
         rule.pk
-        for rule in CampaignRule.objects.filter(campaign=campaign)
-        if (print_ := _rule_print(rule.kind, rule.title, rule.body, rule.umbrella)) in theirs and print_ not in mine
+        for rule in CampaignRule.objects.filter(campaign=campaign).prefetch_related(*RULE_TABLES)
+        if (print_ := _rule_print(rule, rule.body)) in theirs and print_ not in mine
     ]
-    every_chart = list(CampaignPresetChart.objects.filter(rule__isnull=True, row__isnull=True).prefetch_related("rows"))
-    my_charts = _chart_prints(c for c in every_chart if preset is not None and c.preset_id == preset.pk)
-    their_charts = _chart_prints(c for c in every_chart if preset is None or c.preset_id != preset.pk)
+    every_chart = list(
+        CampaignPresetChart.objects.filter(rule__isnull=True, row__isnull=True).prefetch_related(*CHART_TABLES)
+    )
+    my_charts = {_chart_print(c) for c in every_chart if preset is not None and c.preset_id == preset.pk}
+    their_charts = {_chart_print(c) for c in every_chart if preset is None or c.preset_id != preset.pk}
+    looked_up = CampaignChart.objects.filter(campaign=campaign, rule__isnull=True, row__isnull=True)
     charts = [
         chart.pk
-        for chart in CampaignChart.objects.filter(
-            campaign=campaign, rule__isnull=True, row__isnull=True
-        ).prefetch_related("rows")
-        if (mark := _chart_print(chart.title, chart.description, chart.dice, chart.note, chart.rows.all()))
-        in their_charts
-        and mark not in my_charts
+        for chart in looked_up.prefetch_related(*CHART_TABLES)
+        if (mark := _chart_print(chart)) in their_charts and mark not in my_charts
     ]
     return rules, charts
 

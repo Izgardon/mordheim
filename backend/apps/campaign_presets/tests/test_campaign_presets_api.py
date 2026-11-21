@@ -10,7 +10,14 @@ from apps.campaign_presets.models import (
     CampaignPresetRule,
 )
 from apps.campaigns.in_play import preset_ids
-from apps.campaigns.models import Campaign, CampaignChart, CampaignRule, CampaignSettings, CampaignType
+from apps.campaigns.models import (
+    Campaign,
+    CampaignChart,
+    CampaignChartRow,
+    CampaignRule,
+    CampaignSettings,
+    CampaignType,
+)
 from apps.campaigns.tests.campaign_support import CampaignTestCase
 from apps.exploration.models import ExplorationChart
 
@@ -405,6 +412,28 @@ class PresetSwapTests(CampaignTestCase):
         self.change_to(campaign_id, self.khemri)
 
         self.assertIn("Booty", self.charts_of(campaign_id))
+
+    def test_any_edit_to_a_rule_or_chart_makes_it_his(self) -> None:
+        # code review, 21 Nov 2026: a title's case and a chart's heading were left out of the match, so these went
+        campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
+        CampaignRule.objects.filter(campaign_id=campaign_id, title="Cargo").update(title="CARGO")
+        CampaignChart.objects.filter(campaign_id=campaign_id, title="Booty").update(umbrella="Loot")
+
+        self.change_to(campaign_id, self.khemri)
+
+        self.assertIn("CARGO", self.rules_of(campaign_id))
+        self.assertIn("Booty", self.charts_of(campaign_id))
+
+    def test_a_rule_whose_own_table_the_player_edited_stays(self) -> None:
+        rule = CampaignPresetRule.objects.get(preset=self.marienburg, title="Cargo")
+        table = CampaignPresetChart.objects.create(preset=self.marienburg, rule=rule, title="Cargo table", dice="D6")
+        CampaignPresetChartRow.objects.create(chart=table, order=0, result="1", name="Silk", text="")
+        campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
+        CampaignChartRow.objects.filter(chart__campaign_id=campaign_id, name="Silk").update(name="Wine")
+
+        self.change_to(campaign_id, self.khemri)
+
+        self.assertIn("Cargo", self.rules_of(campaign_id))
 
     def test_a_rule_the_player_wrote_stays(self) -> None:
         campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
