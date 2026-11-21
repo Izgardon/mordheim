@@ -119,26 +119,6 @@
    "umbrella": ""
   },
   {
-   "title": "House",
-   "text": "The warband gains the benefits of a town's citizens. When it sells treasure it counts as one size smaller, so a warband of 10-12 members counts as 7-9. Note the town the house is bought in: the warband gains +1 to any rarity roll when trading there.",
-   "umbrella": "Dwellings"
-  },
-  {
-   "title": "Shoppe",
-   "text": "The warband must own a house before buying a shoppe. It sells used equipment for 75% of its original cost, and adds 2D6 dinars to its treasury after every game. A Hero with the Smith skill becomes an Inventor, as the Path of Knowledge advance.",
-   "umbrella": "Dwellings"
-  },
-  {
-   "title": "Temple",
-   "text": "The warband may only build a temple if it owns a house. A warrior casting a Divine Intervention gains +1 to the attempt. The leader gains the Good Shepherd ability, which works much as the Children of the Horned Rat spell, bringing D3 hammer-wielding zealots from the Witch Hunter warband list in place of the rats.",
-   "umbrella": "Dwellings"
-  },
-  {
-   "title": "Arabian Tent",
-   "text": "The warband is friends with the desert nomads. Its leader adds +1 to his Initiative when testing whether the warband is lost in the desert. If that test's roll is a 1, a merchant approaches and the warband may trade using Khalibon's trading chart.",
-   "umbrella": "Dwellings"
-  },
-  {
    "title": "Choosing spells",
    "text": "Whenever a wizard gains a new spell he may choose from those available to him rather than rolling.",
    "umbrella": ""

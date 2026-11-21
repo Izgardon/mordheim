@@ -91,14 +91,15 @@ def seed_items_back(
 
 def _extra_rules(entry: dict[str, Any], index: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     """An extra item's rules as out/items.json holds them: `{"rule": slug}` for a shared rule (a slug no shared rule
-    has stops the build), else the item's own `{name, summary, text}`."""
+    has stops the build), with the item's own `summary` and `text` where its wording differs (a vermin pot's Thrown
+    Weapon names the pot), else the item's own `{name, summary, text}`."""
     slugs = {rule["slug"] for rule in index.values()}
     rules = []
     for rule in entry.get("rules", []):
         if "rule" in rule:
             if rule["rule"] not in slugs:
                 raise ValueError(f"overrides.json extra_items {entry['name']!r}: no shared rule {rule['rule']!r}")
-            rules.append({"rule": rule["rule"]})
+            rules.append({key: rule[key] for key in ("rule", "summary", "text") if key in rule})
         else:
             rules.append({**{"name": "", "summary": "", "text": "", "tables": []}, **rule})
     return rules

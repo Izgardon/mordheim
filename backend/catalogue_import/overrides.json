@@ -1383,6 +1383,505 @@
         }
       ],
       "why": "Karak Azgal p. 6: 10+4D6 gc, Rare 9, \"Use the rules for the Mordheim Map from the Mordheim rulebook\", so the Mordheim Map's shared Map rule (William, 21 Nov 2026: \"it will have the same rules as the mordheim or mim map\")"
+    },
+    {
+      "name": "Astrolabe",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=16",
+      "flavour": "Devices invented in Araby, astrolabes were very helpful in navigating the deserts by observing the stars.",
+      "cost": 20,
+      "dice": 1,
+      "rarity": 9,
+      "note": "Khalibon: 20+2D6 dinars, Rare 9.",
+      "rules": [
+        {
+          "text": "A warband with an astrolabe may re-roll any failed Lost in the Desert roll."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 15: 20+D6 dinars, Rare 9 at Dimashque (20+2D6, Rare 9 at Khalibon, in the note) (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Surgeon",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=16",
+      "flavour": "The healing techniques of the Arabians were quite advanced for those times and it is said that even those who followed the true faith of Sigmar made use of them. Plus, they could also give a fine haircut.",
+      "cost": 50,
+      "dice": 2,
+      "rarity": 7,
+      "rules": [
+        {
+          "text": "Choose a warrior with a serious injury he wants mended, then roll a D6 for how the surgery goes.\n\n{{table:1}}",
+          "tables": [
+            {
+              "columns": [
+                "D6",
+                "Result"
+              ],
+              "rows": [
+                [
+                  "1-2",
+                  "Pray harder: the warrior must have displeased the gods, as there are complications during the surgery. Roll on the Serious Injuries chart for the unfortunate Hero and apply the result."
+                ],
+                [
+                  "3-4",
+                  "The One's will: the physician declares that The One has decreed in advance that you would not be cured today. The surgery has no benefit."
+                ],
+                [
+                  "5",
+                  "I thought I sterilised that...: the surgeon cures the injury, but there are complications. Replace the injury with Old Battle Wound."
+                ],
+                [
+                  "6",
+                  "By the will of The One!: the surgery is a success. Remove the serious injury from the warrior."
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 15: 50+2D6 dinars, Rare 7, sold only at Dimashque (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Ship of the Desert",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=16",
+      "flavour": "Great creatures, known as the Ships of the Desert can go for days without water and carry great burdens without fatigue. The Arabians would load one up with water that could last for days.",
+      "cost": 100,
+      "dice": 2,
+      "rarity": 7,
+      "note": "Khalibon: 100+2D6 dinars, Rare 8.",
+      "rules": [
+        {
+          "text": "For each ship of the desert it has, a warband can ignore the effects of horribly hot and burning sands for five of its members."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 15: 100+2D6 dinars, Rare 7 at Dimashque (Rare 8 at Khalibon, in the note) (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Master Astrologer",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=16",
+      "flavour": "The journals of those present during these times tell of magicians who could divine the future by analysing the heavens. It seems most were charlatans hoping to make a quick dinar from passing fools. However, it is rumoured that in some towns there were seers who could guide men to what they truly desired.",
+      "cost": 25,
+      "dice": 3,
+      "rarity": 9,
+      "note": "Not available to warbands on the Path of Sigmar. Khalibon: 25+3D6 dinars, Rare 8.",
+      "rules": [
+        {
+          "text": "For the next D3 games the warband fights in a desert locale, it may roll an extra D6 during exploration, and this D6 may be modified by +1 or -1."
+        },
+        {
+          "name": "Charlatan",
+          "text": "If the warband fails the rarity roll, it has met a charlatan instead. Its leader must take an Initiative test. If he fails, the warband pays the price as if it had found the master astrologer, and rolls on the Lost in the Desert table, applying the result to its next battle."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 15: 25+3D6 dinars, Rare 9 at Dimashque (Rare 8 at Khalibon, in the note); not for the Path of Sigmar, a path rather than a warband type, so the note says so (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Magic Tattoo",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=16",
+      "flavour": "The knowledge of engraving a magical tattoo into skin is a combination of the arcane knowledge of many races, including dwarven rune smithing and the “arts” of the savage orcs.",
+      "cost": 200,
+      "dice": 1,
+      "dice_multiplier": 25,
+      "rarity": 11,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "text": "A hero who buys a magic tattoo chooses one spell from the Lesser Magic list, and may now cast it. Finding an artist who lets him choose from Necromancy, Chaos Rituals or Blessings of Nurgle adds +2 to the tattoo's rarity, taking it over 13, so the hero must have the Streetwise skill or something similar to get one."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 5 and 15: 200+D6x25 dinars, Rare 11, sold only at Khalibon (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Vermin Pot",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=16",
+      "flavour": "Vermin pots were invented by the ancient Khemrians and were in use during the crusades. Biting, poisonous insects were placed into ceramic pots then sealed within and kept alive by tiny air holes and a piece of rotten meat. When thrown, the vermin pot would smash to pieces and release the angry creatures within.",
+      "range": "Strength x 2\"",
+      "cost": 30,
+      "dice": 2,
+      "rarity": 9,
+      "note": "Heroes only. Khalibon: 25+D6 dinars, Rare 8.",
+      "rules": [
+        {
+          "rule": "thrown-weapon",
+          "text": "Models using vermin pots do not suffer penalties for range or moving."
+        },
+        {
+          "name": "Thrown Pot",
+          "text": "A vermin pot is a ranged weapon the character rolls to hit with as normal. If it hits, the pot lands on the target. If he misses, the pot lands D6\" away from the target in a random direction."
+        },
+        {
+          "name": "Vermin",
+          "text": "If the pot hits, place a vermin swarm in base contact with the target: it counts as charging in the close combat that follows. If it misses, place the swarm where the pot lands. The swarm charges and moves to get into close combat with the closest warrior, members of the thrower's warband included."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 15: 30+2D6 dinars, Rare 9 at Dimashque (25+D6, Rare 8 at Khalibon, in the note); range Strength x 2 inches (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Dimashquine Blade",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=16",
+      "flavour": "These are another secret of the Arabians that has passed into mystery. Dimashquine blades were reputed to be strong enough to cut through the swords of their enemies like they were pig’s cheese.",
+      "range": "Close Combat",
+      "strength": "As user",
+      "cost": 15,
+      "dice": 2,
+      "rarity": 9,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "rule": "parry",
+          "text": "A Dimashquine blade counts as a sword."
+        },
+        {
+          "text": "If its wielder scores 5+ on his parry roll, the weapon his opponent is attacking him with is destroyed. Only weapons of Common availability can be destroyed this way."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 15: 15+2D6 dinars, Rare 9, sold only at Dimashque; it counts as a sword, so the sword's Parry (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Stickfire Pot",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=17",
+      "flavour": "The secret of creating stickfire is now lost though it was well documented that it was used by Arabian defenders during the crusades.",
+      "range": "Strength x 2\"",
+      "cost": 35,
+      "dice": 2,
+      "rarity": 10,
+      "note": "Heroes only. Khalibon: 35+D6 dinars, Rare 12.",
+      "rules": [
+        {
+          "rule": "thrown-weapon",
+          "text": "Models using stickfire pots do not suffer penalties for range or moving."
+        },
+        {
+          "name": "Thrown Pot",
+          "text": "A stickfire pot is a ranged weapon the character rolls to hit with as normal. If it hits, the pot lands on the target, who is covered in stickfire. If he misses, the pot lands D6\" away from the target in a random direction, and anyone it lands on is covered in stickfire. The warrior has enough pots for one battle."
+        },
+        {
+          "name": "Stickfire",
+          "text": "All models within 1\" of a model covered in stickfire at the beginning of a turn count as being on fire and suffer a Strength 4 hit. A warrior who survives must score a 4+ in the Recovery phase or suffer a Strength 4 hit each turn he is on fire, and moves D6\" in a random direction. Other warriors cannot help to put out the flames, as they are too afraid. If a warrior carrying stickfire pots ever catches on fire, all his stickfire pots are destroyed, and he automatically suffers D3 Strength 5 hits as the flammable materials explode."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 16: 35+2D6 dinars, Rare 10 at Dimashque, printed Stickfire Pots (35+D6, Rare 12 at Khalibon, in the note); range Strength x 2 inches (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Stickfire Hose",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=17",
+      "flavour": "A dastardly invention, the stickfire hose was carried by a team that shot flaming stickfire at their enemies. Launched by a series of pumps or bellows, the stickfire would cover and burn all in its path.",
+      "range": "Special",
+      "cost": 190,
+      "dice": 1,
+      "dice_multiplier": 10,
+      "rarity": 11,
+      "rules": [
+        {
+          "rule": "move-or-fire",
+          "text": "You may not move and fire a stickfire hose in the same turn, other than to pivot on the spot to face your target or stand up from being knocked down."
+        },
+        {
+          "name": "Large and Complex",
+          "text": "It takes two warriors to carry a stickfire hose, and they must stay in base contact throughout the game. There is only enough stickfire for D3 uses, rolled after the first shot."
+        },
+        {
+          "name": "Dangerous",
+          "text": "Henchmen may use a stickfire hose, as its instability makes any hero wary of holding it."
+        },
+        {
+          "name": "Stream",
+          "text": "When the hose fires, draw a line 16\" long and 1\" wide in any direction from the firer (absolutely straight). Every model in its path is automatically hit by stickfire."
+        },
+        {
+          "name": "Stickfire",
+          "text": "All models within 1\" of a model covered in stickfire at the beginning of a turn count as being on fire and suffer a Strength 4 hit. A warrior who survives must score a 4+ in the Recovery phase or suffer a Strength 4 hit each turn he is on fire, and moves D6\" in a random direction. Other warriors cannot help to put out the flames, as they are too afraid. If a warrior carrying a stickfire hose ever catches on fire, the hose is destroyed and removed from his equipment, and he automatically suffers D3 Strength 5 hits as the flammable materials explode."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 16: 190+D6x10 dinars, Rare 11, sold only at Dimashque; Henchmen may use it, so no Heroes only note (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Perfume",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=17",
+      "flavour": "Used by the wealthiest merchants in Araby, perfume showed that the wearer had noble tastes.",
+      "cost": 20,
+      "dice": 1,
+      "rarity": 9,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "text": "A character wearing perfume makes a good impression on those he deals with. Once per post-battle sequence, he may deduct D6 dinars from the price of any single item he buys, to a minimum of 1 dinar."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 16: 20+D6 dinars, Rare 9, sold only at Dimashque (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Robe of Honour",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=17",
+      "flavour": "Generally granted to those who excel in the service of a Sultan or Caliph, a robe of honour would increase its wearer’s reputation dramatically.",
+      "cost": 50,
+      "dice": 2,
+      "rarity": 10,
+      "note": "Heroes only. Not available to warbands on the Path of Sigmar or the Path of the Worm, nor to a warband with a member barred from Dimashque.",
+      "rules": [
+        {
+          "text": "Warriors flock to join the warband. You may re-roll a D6 when seeing how experienced potential henchmen are when recruiting."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 16, its heading printed Robe of Honor: 50+2D6 dinars, Rare 10, sold only at Dimashque; its restrictions name paths, not warband types, so the note says them (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Standard of Sigmar",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=17",
+      "flavour": "This grand standard displayed the two-headed hammer in red on a white background. The sight of it flying over the battlefield steeled the hearts of those loyal to Sigmar.",
+      "cost": 60,
+      "dice": 2,
+      "rarity": 9,
+      "note": "Path of Sigmar only",
+      "rules": [
+        {
+          "text": "The standard requires one hand to use and can be carried by any Hero in the warband. While the Hero carrying it is still alive, the warband adds +1 to its Leadership for rout tests."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 3 and 16: 60+2D6 dinars, Rare 9, sold only at Tyrius; Path of Sigmar only, a path rather than a warband type, so the note says so (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Wash Bar",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=17",
+      "flavour": "Another invention from Araby that is now common amongst the higher classes of the Old World. Wash bars were used to keep the bodies of Arabians clean during their various religious rituals.",
+      "cost": 5,
+      "dice": 1,
+      "rarity": 6,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "text": "A wash bar lasts for D6 games and must be used in every post-battle sequence. Its user may add or deduct 1 from his rolls on the Serious Injuries chart."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 16: 5+D6 dinars, Rare 6, sold only at Dimashque (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Sharab",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=17",
+      "flavour": "The tinkle of the sharab sellers can be heard in most bazaars in Araby. These cold drinks of concentrated fruit would later come to the Old World under the names of ‘sirops’ or ‘sorbets’.",
+      "cost": 30,
+      "dice": 3,
+      "rarity": 8,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "text": "A warrior can spend a turn drinking sharab, and then ignores the Hot scenario rule for 2D6 turns. If he is affected by burning sands, he must drink it before the battle begins, and the 2D6 turns begin from turn 1. There is only enough sharab for one use."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 16: 30+3D6 dinars, Rare 8, sold only at Dimashque (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Khufa Beans",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=18",
+      "flavour": "A shepherd once noticed his goats becoming more lively after grazing on the beans from the Khufa plant. He suffered the same effect when he crushed the beans and mixed them with milk. This potion soon became a common drink throughout Araby.",
+      "cost": 20,
+      "dice": 2,
+      "rarity": 7,
+      "note": "Khalibon: 20+2D6 dinars, Rare 8.",
+      "rules": [
+        {
+          "text": "A warband that indulges in a jug of khufa before a scenario may re-roll any failed Initiative tests until the next battle begins. There are only enough khufa beans for one use."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 17: 20+2D6 dinars, Rare 7 at Dimashque (Rare 8 at Khalibon, in the note) (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Dwarf Helm",
+      "type": "Armour",
+      "subtype": "Helmet",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=18",
+      "flavour": "Invented by dwarfs to aid their work in the mines, a dwarf helm allows its bearer to see well in darkness and to also keep both hands free.",
+      "cost": 10,
+      "dice": 2,
+      "rarity": 8,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "rule": "avoid-stun",
+          "text": "A model equipped with a dwarf helm has a special 4+ save on a D6 against being stunned. If the save is made, treat the stunned result as knocked down instead. This save is not modified by the opponent's Strength."
+        },
+        {
+          "text": "A warrior equipped with a dwarf helm counts as wearing a helmet lit by a torch, and keeps both hands free."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 3 and 17: 10+2D6 dinars, Rare 8, sold only at Tyrius; it counts as a helmet, so the helmet's Avoid Stun (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Abacus",
+      "type": "Miscellaneous",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=18",
+      "flavour": "An abacus is made up of beads threaded along rows of rods. It is very helpful for mathematical calculations and is commonly used by experienced merchants.",
+      "cost": 15,
+      "dice": 2,
+      "rarity": 8,
+      "note": "Heroes only",
+      "rules": [
+        {
+          "text": "A character using an abacus looks extremely experienced when dealing with the average trader. He may re-roll one D6 when using the Haggle skill."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4 and 17: 15+2D6 dinars, Rare 8, sold only at Dimashque (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Arabian Steed",
+      "type": "Animal",
+      "subtype": "Ridden Animals",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=5",
+      "statblock": [
+        {
+          "profile": "Arabian Steed",
+          "m": "9",
+          "ws": "3",
+          "bs": "0",
+          "s": "3",
+          "t": "3",
+          "w": "1",
+          "i": "4",
+          "a": "1",
+          "ld": "5"
+        }
+      ],
+      "cost": 90,
+      "rarity": 10,
+      "rules": [
+        {
+          "rule": "battle-schooled"
+        },
+        {
+          "text": "An Arabian steed is an Elven steed that may be ridden by humans."
+        }
+      ],
+      "why": "Relics of the Crusades p. 4: 90 dinars, Rare 10, sold only at Dimashque, \"as Elven Steed, but may be ridden by humans\", so the Elven Steed's profile and Battle Schooled; a mount, so its beast is in apps/bestiary/data/bestiary.json (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "House",
+      "type": "Miscellaneous",
+      "subtype": "Dwelling",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=18",
+      "flavour": "Houses were generally for sale in any town in Araby, as long as you could gain the permission of the ruler. They offered quite a lot of comforts compared to other forms of accommodation.",
+      "cost": 50,
+      "dice": 5,
+      "rarity": 7,
+      "note": "Dimashque: 60+D6x10 dinars, Rare 8. Khalibon: 60+4D6 dinars, Rare 9.",
+      "rules": [
+        {
+          "text": "The warband gains the benefits of a town's citizens. When it sells treasure it counts as one size smaller, so a warband of 10-12 members counts as 7-9. Note the town the house is bought in: the warband gains +1 to any rarity roll when trading there."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 3-5 and 17, a dwelling: 50+5D6 dinars, Rare 7 at Tyrius (Dimashque's and Khalibon's prices in the note); its rules move here from the campaign rules' Dwellings (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Shoppe",
+      "type": "Miscellaneous",
+      "subtype": "Dwelling",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=18",
+      "flavour": "A shoppe was basically a two story house, with the ground level used to sell things.",
+      "cost": 60,
+      "dice": 2,
+      "rarity": 8,
+      "note": "Dimashque: 60+2D6 dinars, Rare 7. Khalibon: 50+2D6 dinars, Rare 10.",
+      "rules": [
+        {
+          "text": "The warband must own a house before buying a shoppe. It sells used equipment for 75% of its original cost, and adds 2D6 dinars to its treasury after every game. A Hero with the Smith (Academic) skill becomes an Inventor, as the Path of Knowledge advance."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 3-5 and 17, a dwelling: 60+2D6 dinars, Rare 8 at Tyrius (Dimashque's and Khalibon's in the note); its rules move here from the campaign rules' Dwellings (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Temple",
+      "type": "Miscellaneous",
+      "subtype": "Dwelling",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=18",
+      "flavour": "The lives of those who built temples to Sigmar were constantly filled with a steady stream of worshippers to their doors. Because of this they were constantly reminded of their duties and could not stray from the light.",
+      "cost": 150,
+      "dice": 1,
+      "dice_multiplier": 25,
+      "rarity": 9,
+      "note": "Dimashque: 150+D6x25 dinars, Rare 10.",
+      "rules": [
+        {
+          "text": "The warband may only build a temple if it owns a house. A warrior casting a Divine Intervention gains +1 to the attempt. The leader gains the Good Shepherd ability, which works much as the Children of the Horned Rat spell, bringing D3 hammer-wielding zealots from the Witch Hunter warband list in place of the rats."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 3-4 and 17, a dwelling: 150+D6x25 dinars, Rare 9 at Tyrius (Dimashque's in the note); its rules move here from the campaign rules' Dwellings (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Arabian Tent",
+      "type": "Miscellaneous",
+      "subtype": "Dwelling",
+      "setting": "relics-of-the-crusades",
+      "source": "Relics of the Crusades",
+      "link_url": "https://www.broheim.net/downloads/campaigns/relics/Relics%20of%20the%20Crusades%20Pt1.pdf#page=18",
+      "flavour": "Arabian tents were majestic constructions that offered the comforts of city dwellings in the wilderness. A well made tent was hard to come by, as the desert nomads that make them were a surly, blasphemous lot.",
+      "cost": 60,
+      "dice": 2,
+      "rarity": 12,
+      "note": "Khalibon: 60+2D6 dinars, Rare 11.",
+      "rules": [
+        {
+          "text": "The warband is friends with the desert nomads. Its leader adds +1 to his Initiative when testing whether the warband is lost in the desert. If that test's roll is a 1, a merchant approaches and the warband may trade using Khalibon's trading chart."
+        }
+      ],
+      "why": "Relics of the Crusades pp. 4-5 and 17, a dwelling: 60+2D6 dinars, Rare 12 at Dimashque (Rare 11 at Khalibon, in the note); its rules move here from the campaign rules' Dwellings (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
     }
   ],
   "warband_items": {
