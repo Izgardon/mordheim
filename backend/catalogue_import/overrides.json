@@ -547,6 +547,16 @@
           "text": "Only a sword or a dagger may be made with one of these blades."
         }
       ]
+    },
+    "Lock Picks": {
+      "_why": "William, 21 Nov 2026: fix the simple book defects. The book's Lock Picks entry waives 'the -1 modifier', but Empire in Flames' own Locked doors rule tests Strength at -2, so the item now waives the -2 the rule imposes.",
+      "rules": [
+        {
+          "name": "",
+          "summary": "Open doors using Initiative instead of Strength",
+          "text": "A model equipped with a set of lock picks may make his test to open doors on his Initiative rather than his Strength characteristic if he wishes. This is done at the end of his Movement phase as if the model were ripping the door off its hinges, though he uses his Initiative rather than Strength, without the -2 to the test, and there is no chance that the door is too damaged to be locked again later."
+        }
+      ]
     }
   },
   "item_notes": {

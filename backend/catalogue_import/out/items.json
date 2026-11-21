@@ -10560,7 +10560,7 @@
       {
         "name": "",
         "summary": "Open doors using Initiative instead of Strength",
-        "text": "A model equipped with a set of lock picks may make his test to open doors on his Initiative rather than his Strength characteristic if he wishes. This is done at the end of his Movement phase as if the model were ripping the door off its hinges, though he uses his Initiative rather than Strength, there is no -1 modifier, and there is no chance that the door is too damaged to be locked again later.",
+        "text": "A model equipped with a set of lock picks may make his test to open doors on his Initiative rather than his Strength characteristic if he wishes. This is done at the end of his Movement phase as if the model were ripping the door off its hinges, though he uses his Initiative rather than Strength, without the -2 to the test, and there is no chance that the door is too damaged to be locked again later.",
         "tables": []
       }
     ],
