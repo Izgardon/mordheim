@@ -257,11 +257,14 @@ class BookLookups:
         named = [(name, description) for name, description in map(name_and_description, items) if name]
         if not named:
             return False
-        skills = [
-            self._own(Skill, self.skills, lookup_key(name), name, description, owner, "skill")
-            for name, description in named
-        ]
         group, _created = SkillGroup.objects.get_or_create(campaign=None, name=self.own_type_of(owner))
+        # a skill no other group holds is his own: it takes his wording (the Runesmith's Rune Use and its table)
+        others = set(SkillGroupSkill.objects.exclude(group=group).values_list("skill_id", flat=True))
+        skills = []
+        for name, description in named:
+            known = self.skills.get(lookup_key(name))
+            his = known is not None and known.pk not in others
+            skills.append(self._own(Skill, self.skills, lookup_key(name), name, description, owner, "skill", his))
         SkillGroupSkill.objects.bulk_create(
             [SkillGroupSkill(group=group, skill=skill) for skill in skills], ignore_conflicts=True
         )
@@ -326,16 +329,24 @@ class BookLookups:
         if general is not None:
             filled: Special = _filled(general, description)
             return filled
-        own: Special = self._own(
-            Special, self.own_specials, (self.own_type_of(owner), lookup_key(name)), name, description, owner, "special"
-        )
+        key = (self.own_type_of(owner), lookup_key(name))
+        own: Special = self._own(Special, self.own_specials, key, name, description, owner, "special", True)
         return own
 
     def _own(
-        self, model: type[Model], cache: dict[Any, Any], key: Any, name: str, description: str, owner: str, noun: str
+        self,
+        model: type[Model],
+        cache: dict[Any, Any],
+        key: Any,
+        name: str,
+        description: str,
+        owner: str,
+        noun: str,
+        his: bool = False,
     ) -> Any:
-        """The cached entry of the key, its description filled in when it has none; created as the owner's when the
-        book lacks it (a skill is the book's of its name: his group holds it)."""
+        """The cached entry of the key, its description filled in when it has none, or made the owner's wording when
+        it is `his` alone (a rule of his own, a skill only his group holds); created as the owner's when the book
+        lacks it (a skill is the book's of its name: his group holds it)."""
         row = cache.get(key)
         if row is None:
             kind = self.own_type_of(owner)
@@ -343,6 +354,10 @@ class BookLookups:
             row = model._default_manager.create(name=name, description=description, campaign=None, **typed)
             cache[key] = row
             self.warnings.append(f"  Created {noun} '{name}' ({kind}) for '{owner}'")
+            return row
+        if his and description and row.description != description:
+            row.description = description
+            row.save(update_fields=["description"])
             return row
         return _filled(row, description)
 

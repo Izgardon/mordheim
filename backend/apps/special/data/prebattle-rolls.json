@@ -52,7 +52,7 @@
     },
     "Rune Use": {
       "roll": "2D6",
-      "text": "Before the battle the Runesmith may attempt to inscribe every Rune he knows, but once only. No Rune may be inscribed on an item with a Rune already on it. If he passes the difficulty roll he has succeeded and the Rune will affect the weapon/armour for the coming battle. If he rolls a natural 2 the item being inscribed on is broken, remove it from your roster. A gromril item may reroll a result of 2 but a second 2 stands. If he rolls a natural 12 the rune is 'durable' and will last beyond one battle."
+      "text": "Before the battle the Runesmith may attempt to inscribe every Rune he knows, but once only. No Rune may be inscribed on an item with a Rune already on it. If he passes the difficulty roll he has succeeded and the Rune will affect the weapon/armour for the coming battle."
     },
     "Send False Signals": {
       "roll": "D6",

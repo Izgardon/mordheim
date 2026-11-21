@@ -189,6 +189,33 @@ class HirelingSeederTests(TestCase):
         self.assertEqual((again.id, again.hire_fee["gold"]), (first.id, 90))
         self.assertEqual(list(again.item_links.values_list("item_id", "quantity")), [(self.axe.id, 1)])
 
+    def test_a_second_run_rewords_his_own_rules_and_skills_but_never_a_shared_one(self):
+        # William, 21 Nov 2026: the Witch's Potions table, put back in the data, never reached a seeded database. His
+        # own rules and the special skills only his group holds are the data's; Fear and Sprint aren't his to reword.
+        own = {"name": "Thick Skull", "description": "Hard to stun."}
+        Skill.objects.filter(id=self.sprint.id).update(description="Runs fast.")
+        Special.objects.filter(id=self.fear.id).update(description="Causes fear.")
+        first = {**OGRE, "specials": [{"name": "Fear", "description": "Causes fear."}, own]}
+        with data_file([first]) as path:
+            run("seed_hired_swords", json_paths=[path])
+        reworded = {
+            **OGRE,
+            "skills": [{"name": "Sprint", "description": "His own way."}],
+            "specials": [{"name": "Fear", "description": "Other words."}, {**own, "description": "With its table."}],
+            "hired_sword": {
+                **OGRE["hired_sword"],  # type: ignore[dict-item]
+                "available_special_skills": [{"name": "Bully", "description": "Shoves, with its table."}],
+            },
+        }
+
+        with data_file([reworded]) as path:
+            run("seed_hired_swords", json_paths=[path])
+
+        words = dict(Special.objects.values_list("name", "description"))
+        self.assertEqual((words["Thick Skull"], words["Fear"]), ("With its table.", "Causes fear."))
+        skills = dict(Skill.objects.values_list("name", "description"))
+        self.assertEqual((skills["Bully"], skills["Sprint"]), ("Shoves, with its table.", "Runs fast."))
+
     def test_a_dramatis_persona_keeps_how_long_it_stays_what_it_is_paid_and_an_unmatched_race_as_text(self):
         with data_file([AENUR]) as path:
             output = run("seed_dramatis_personae", json_paths=[path])
