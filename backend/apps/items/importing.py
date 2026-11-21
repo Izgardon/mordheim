@@ -81,6 +81,8 @@ class ImportedItems:
     def __init__(self, out: Path = IMPORT_OUT) -> None:
         self.items = read_out("items.json", out)
         self.shared = read_out("item-rules.json", out)
+        # a shared rule holds no table of its own: an item taking its wording takes its tables (the Map's D6)
+        self.shared_tables = {row["slug"]: list(row.get("tables") or []) for row in self.shared}
         self.settings = dict(CampaignType.objects.values_list("slug", "id"))
         self.types = dict(WarbandType.objects.filter(campaign__isnull=True).values_list("slug", "id"))
         self.groups = dict(WarbandGroup.objects.values_list("slug", "id"))
@@ -161,7 +163,7 @@ class ImportedItems:
                     "name": "" if slug else clean(link.get("name")),
                     "summary": clean(link.get("summary")),
                     "text": clean(link.get("text")),
-                    "table": list(link.get("tables") or []),
+                    "table": list(link.get("tables") or ([] if link.get("text") else self.shared_tables.get(slug, []))),
                 }
             )
         return found

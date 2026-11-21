@@ -143,6 +143,27 @@ class SeedItemsTests(TestCase):
             [[(self.skaven.id, None, False)], [(None, self.elves.id, True)]],
         )
 
+    def test_a_shared_rules_table_comes_with_each_item_that_takes_it_as_written(self) -> None:
+        # William, 21 Nov 2026: the Map rule's D6 table was missing on every map. A shared rule holds no table of its
+        # own, so each item taking its wording takes its table; an item with its own wording keeps its own table.
+        chart = {
+            "slug": "map",
+            "name": "Map",
+            "summary": "A D6",
+            "text": "When you buy one, roll a D6:",
+            "tables": [TABLE],
+        }
+        own = {
+            "rule": "map",
+            "text": "Roll when bought:\n\n{{table:1}}",
+            "tables": [{**TABLE, "rows": [["1", "Lost"]]}],
+        }
+
+        seed([entry("Mordheim Map", rules=[{"rule": "map"}]), entry("Quarter Map", rules=[own])], [chart])
+
+        tables = {item.name: item.rule_links.get().table for item in Item.objects.filter(campaign__isnull=True)}
+        self.assertEqual(tables, {"Mordheim Map": [TABLE], "Quarter Map": own["tables"]})
+
     def test_a_reseed_upserts_by_name_and_variant_beside_a_campaigns_item(self) -> None:
         campaign = Campaign.objects.create(name="Shards", join_code="SHARDS")
         house = Item.objects.create(name="Lamp", type="Miscellaneous", campaign=campaign, flavour="House lamp")
