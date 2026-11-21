@@ -1,0 +1,14 @@
+{
+ "rules": [
+  {
+   "title": "Warbands",
+   "text": "These official warbands suit the setting and are used without modification unless noted: Mercenaries; the Cult of the Possessed, known here as the Worshippers of the Worm; Witch Hunters, replacing the Warhound entry with Riding and War Horses; Sisters of Sigmar; the Undead (see Undead warbands); Skaven; Orcs and Goblins, though they rarely face the horrors of the desert; and Dwarf Treasure Hunters.\n\nAlso fitting are the Bretonnians, as one of Sigmar's knightly orders, the Tileans, Arabyan Tomb Raiders and Tomb Guardians.\n\nThese are guidelines: if you and your friends agree another warband belongs in Araby, use it.",
+   "umbrella": ""
+  },
+  {
+   "title": "Undead warbands",
+   "text": "Vampires are creatures of the night and do not suffer the darkness special rule. During the day, though, a Vampire takes a Strength 4 hit at the beginning of each turn he spends in the open.\n\nAn Undead warband may be led by a Necromancer Master instead: a necromancer who costs 70 dinars, starts with 20 experience, has +1 Weapon Skill, Ballistic Skill and Leadership, and has the Leader special rule. A warband with a Necromancer Master cannot have a Vampire.",
+   "umbrella": ""
+  }
+ ]
+}

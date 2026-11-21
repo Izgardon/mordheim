@@ -78,7 +78,7 @@
    "title": "Two-player scenarios",
    "description": "Rolled before a battle between two warbands, in place of the table on page 126 of the rulebook.",
    "dice": "2D6",
-   "note": "The book gives result 12 to the warband with the lower rating, as result 2 does.",
+   "note": "",
    "umbrella": "Scenarios",
    "rows": [
     {
@@ -133,8 +133,8 @@
     },
     {
      "result": "12",
-     "name": "The lower rating chooses",
-     "text": "The warband with the lower rating picks the scenario."
+     "name": "The higher rating chooses",
+     "text": "The warband with the higher rating picks the scenario."
     }
    ]
   },
@@ -142,7 +142,7 @@
    "title": "Multi-player scenarios",
    "description": "Rolled before a battle between more than two warbands.",
    "dice": "2D6",
-   "note": "The book gives result 12 to the warband with the lower rating, as result 2 does.",
+   "note": "",
    "umbrella": "Scenarios",
    "rows": [
     {
@@ -197,8 +197,8 @@
     },
     {
      "result": "12",
-     "name": "The lower rating chooses",
-     "text": "The warband with the lower rating picks the scenario."
+     "name": "The higher rating chooses",
+     "text": "The warband with the higher rating picks the scenario."
     }
    ]
   },
