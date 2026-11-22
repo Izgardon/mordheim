@@ -30,7 +30,10 @@ export default function ChartTable({ rows, dice }: { rows: CampaignChartRow[]; d
     <table className="w-full border-collapse border-0 text-[13px]">
       <thead className="static border-0 bg-transparent">
         <tr className={`${HEAD} text-left`}>
-          <th scope="col" className={`${CELL} w-20 bg-transparent pr-3`}>
+          {/* as narrow as its widest result, so the effect gets the room (William, 22 Nov 2026); a
+              dice result ("11-15") keeps to one line, a place standing for one ("The Great
+              Confluence") may wrap */}
+          <th scope="col" className={`${CELL} w-px bg-transparent pr-3`}>
             {dice ? <span className="font-mono normal-case tracking-normal">{dice}</span> : "Roll"}
           </th>
           {hasNames ? (
@@ -52,7 +55,9 @@ export default function ChartTable({ rows, dice }: { rows: CampaignChartRow[]; d
           return (
             <Fragment key={key}>
               <tr className={table ? "" : "border-b border-line last:border-b-0"}>
-                <td className="py-2 pr-3 align-top font-mono text-[12px] font-bold text-head">
+                <td
+                  className={`${row.result.length > 7 ? "" : "whitespace-nowrap"} py-2 pr-3 align-top font-mono text-[12px] font-bold text-head`}
+                >
                   {row.result}
                 </td>
                 {hasNames ? (
