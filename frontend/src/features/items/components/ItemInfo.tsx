@@ -20,20 +20,26 @@ type ItemInfoProps = {
 
 /**
  * An item's details at the foot of the store, the stash or a loadout: its figures, price and
- * rarity, and its rules with their summaries and D6 tables as its Wargear card reads them, without
- * the flavour.
+ * rarity, who may buy it when not everyone may (the server's words), and its rules with their
+ * summaries and D6 tables as its Wargear card reads them, without the flavour. Its header closes
+ * it, as the X does (William, 22 Nov 2026).
  */
 export default function ItemInfo({ item, availability, onClose }: ItemInfoProps) {
   const heading = useId();
+  const who = availability?.who_text ?? "";
   return (
     <section aria-labelledby={heading} className="flex flex-col gap-3">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col">
-          <h3
-            id={heading}
-            className="m-0 font-display text-lg font-semibold leading-tight text-head"
-          >
-            {itemName(item)}
+          <h3 className="m-0 font-display text-lg font-semibold leading-tight text-head">
+            <button
+              type="button"
+              aria-label={`Close ${itemName(item)}`}
+              onClick={onClose}
+              className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <span id={heading}>{itemName(item)}</span>
+            </button>
           </h3>
           {kindOf(item) ? (
             <span className="text-xs text-muted-foreground">{kindOf(item)}</span>
@@ -44,6 +50,7 @@ export default function ItemInfo({ item, availability, onClose }: ItemInfoProps)
         </IconButton>
       </div>
       <FactLine facts={itemFacts(item, availability)} />
+      {who ? <p className="m-0 text-[13px] font-semibold text-ink">{who}</p> : null}
       <ItemRules item={item} />
     </section>
   );

@@ -134,12 +134,28 @@ describe("ItemInfo", () => {
     expect(screen.getByText("Stubborn (Mule)")).toBeInTheDocument();
   });
 
-  it("closes from its close button", () => {
+  it("closes from its close button, and from its name (William, 22 Nov 2026)", () => {
     const onClose = vi.fn();
     render(<ItemInfo item={halberd} availability={null} onClose={onClose} />);
 
     screen.getByRole("button", { name: "Close details" }).click();
+    screen.getByRole("button", { name: "Close Halberd" }).click();
 
-    expect(onClose).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalledTimes(2);
+  });
+
+  it("says who may buy the row when not everyone may, in the server's words", () => {
+    const { rerender } = render(
+      <ItemInfo
+        item={halberd}
+        availability={{ ...row, for_everyone: false, who_text: "For Skaven and Lizardmen." }}
+        onClose={vi.fn()}
+      />
+    );
+    expect(screen.getByText("For Skaven and Lizardmen.")).toBeInTheDocument();
+
+    // for everyone: the server sends nothing, and nothing shows
+    rerender(<ItemInfo item={halberd} availability={{ ...row, who_text: "" }} onClose={vi.fn()} />);
+    expect(screen.queryByText(/^For /)).toBeNull();
   });
 });

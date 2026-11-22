@@ -67,6 +67,11 @@ export type ItemAvailability = {
   rarity: number | null;
   for_everyone: boolean;
   warbands: AccessLine[];
+  /**
+   * Who may buy the row, in the server's words, when not everyone may ("For Skaven and
+   * Lizardmen.", "Not available for Dark Elves."); "" (or missing) for everyone.
+   */
+  who_text?: string;
   note: string;
 };
 
@@ -210,11 +215,16 @@ export type ItemOffer = {
   can_buy: boolean;
   reason: string;
   /**
-   * The store offers it to any unit whatever his own list sells (William, 20 Nov 2026): an animal
-   * or a miscellaneous item the warband reaches as everyone does, so no row of it names a warband.
-   * The server decides it; His list only reads it.
+   * The store offers it to any unit whatever their own list sells (William, 20 Nov 2026): an
+   * animal or a miscellaneous item the warband reaches as everyone does, so no row of it names a
+   * warband. The server decides it; Their list reads it for a hero.
    */
   always_open?: boolean;
+  /**
+   * The items it counts as on a unit's own list, while its setting is in play (Gromril and
+   * Ithilmar Armour count as Heavy Armour): Their list offers it to a hero whose list sells one.
+   */
+  counts_as?: number[];
 };
 
 /** Whether a warband can usually hire a hired sword or dramatis persona, and why not. */
@@ -242,6 +252,8 @@ export type WeaponMaterial = {
   rules: { name: string; text: string }[];
   can_take: boolean;
   reason: string;
+  /** Whether its setting is in play: Their list leaves out one that isn't (William, 22 Nov 2026). */
+  in_play?: boolean;
   /**
    * A rule naming the only weapons it may be made of (the Dark Elf Blade's swords and daggers):
    * the items it allows and the rule's own sentence. null: every melee weapon may be made of it.
