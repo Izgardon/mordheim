@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 
 import { saveRarityRoll } from "../api/purchase";
 import type { Item } from "../types/item-types";
+import { firstSearcher, NO_HERO, type Searcher, type SearchingHero } from "./rare-searchers";
 
 /** A search made in the store: who searched (no hero: null), the 2D6, the bonus and the outcome. */
 export type StoreSearch = {
@@ -24,9 +25,6 @@ export type StoreSearch = {
   found: boolean;
 };
 
-type Searcher = { id: number | null; who: string };
-
-const NO_HERO: Searcher = { id: null, who: "No hero" };
 const LABEL = "text-xs font-bold text-muted-foreground";
 const SIDES = [6, 6];
 
@@ -36,8 +34,8 @@ type RareSearchProps = {
   rarity: number;
   /** Where the bonus starts: the warband's variant's (Marienburg +1, the Kurgan -1). */
   startBonus: number;
-  searchers: { id: number; name: string; spent: boolean }[];
-  /** The hero the store was opened for: they search unless another is picked. */
+  searchers: SearchingHero[];
+  /** The hero the store was opened for: they search first while their trading action is unspent. */
   firstHeroId: number | null;
   search: StoreSearch | null;
   /** Nothing to search for (the item is free). */
@@ -59,21 +57,22 @@ type RareSearchProps = {
  * each die beside it, which the roll fills or the dice rolled at the table are typed into, and the
  * total against what the item needs; No search under that row. The search is saved at once (the
  * hero spends their trading action and the roll is logged), then Search locks as Searched and the
- * other searchers grey out: one search for the item.
+ * other searchers grey out once it is found. A search that fails leaves it open for another hero
+ * (William, 22 Nov 2026: "after a hero fails a trading action i should then be able to click on
+ * another hero and try again"), picking the next whose trading action is unspent.
  */
 export default function RareSearch(props: RareSearchProps) {
   const queryClient = useQueryClient();
   const { search, searchers } = props;
-  const [picked, setPicked] = useState<Searcher | null>(() => {
-    if (search) return { id: search.heroId, who: search.who };
-    const first = searchers.find((hero) => hero.id === props.firstHeroId);
-    if (first) return { id: first.id, who: first.name };
-    return searchers.length ? null : NO_HERO;
-  });
+  const [tried, setTried] = useState<(number | null)[]>(search ? [search.heroId] : []);
+  const [picked, setPicked] = useState<Searcher | null>(() =>
+    search ? { id: search.heroId, who: search.who } : firstSearcher(props, [])
+  );
   const [bonus, setBonus] = useState(search?.bonus ?? props.startBonus);
   const [saving, setSaving] = useState(false);
-  const shut = Boolean(search) || saving || props.disabled;
-  const cannotRoll = !picked || saving || props.disabled || props.noSearch.checked;
+  const found = Boolean(search?.found);
+  const shut = found || saving || props.disabled;
+  const cannotRoll = !picked || shut || props.noSearch.checked;
 
   const take = async (dice: number[]) => {
     if (!picked || cannotRoll) return;
@@ -97,6 +96,11 @@ export default function RareSearch(props: RareSearchProps) {
         total: roll + bonus,
         found,
       });
+      if (!found) {
+        const next = [...tried, picked.id];
+        setTried(next);
+        setPicked(firstSearcher(props, next));
+      }
     } catch (error) {
       toast.error("Couldn't save the search.", { description: getErrorMessage(error) });
     } finally {
@@ -111,8 +115,8 @@ export default function RareSearch(props: RareSearchProps) {
         key={searcher.id ?? "none"}
         pressed={mine}
         title={title}
-        disabled={search ? !mine : shut}
-        onClick={() => (search ? undefined : setPicked(searcher))}
+        disabled={found ? !mine : shut}
+        onClick={() => (found ? undefined : setPicked(searcher))}
         className={props.isMobile ? "min-h-10" : undefined}
       >
         {label}
@@ -123,16 +127,16 @@ export default function RareSearch(props: RareSearchProps) {
   const box = props.isMobile ? "h-12 w-12 text-xl" : "h-10 w-10 text-lg";
   const searchButton = (roll: () => void) => (
     <Button
-      onClick={search ? undefined : roll}
-      disabled={Boolean(search) || cannotRoll}
-      variant={search ? "secondary" : "primary"}
+      onClick={found ? undefined : roll}
+      disabled={cannotRoll}
+      variant={found ? "secondary" : "primary"}
       className={cn(
         props.isMobile ? "h-12 px-5" : "h-10",
-        search && "border-border bg-raised text-muted-foreground disabled:opacity-100"
+        found && "border-border bg-raised text-muted-foreground disabled:opacity-100"
       )}
     >
-      {search ? <Lock aria-hidden="true" /> : <Dices aria-hidden="true" />}
-      {search ? "Searched" : "Search"}
+      {found ? <Lock aria-hidden="true" /> : <Dices aria-hidden="true" />}
+      {found ? "Searched" : search ? "Search again" : "Search"}
     </Button>
   );
 
@@ -179,7 +183,7 @@ export default function RareSearch(props: RareSearchProps) {
         </IconButton>
       </div>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        {search ? (
+        {search?.found ? (
           <div className="flex items-center gap-2">
             {searchButton(() => undefined)}
             <span className="flex gap-1.5">
@@ -199,6 +203,7 @@ export default function RareSearch(props: RareSearchProps) {
           </div>
         ) : (
           <DiceEntry
+            key={tried.length}
             dice="2D6"
             size={props.isMobile ? "lg" : "md"}
             className="flex-nowrap"
@@ -210,6 +215,7 @@ export default function RareSearch(props: RareSearchProps) {
         <span role="status" className="flex flex-wrap items-baseline gap-1.5 text-sm">
           {search ? (
             <>
+              {found ? null : <span className="text-text2">{search.who}:</span>}{" "}
               <span className="font-mono font-bold text-head">
                 {search.bonus ? `${search.bonus > 0 ? "+" : ""}${search.bonus} ` : ""}={" "}
                 {search.total}

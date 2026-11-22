@@ -1,7 +1,7 @@
 /**
  * Getting an item: a price's dice and a rare item's search take the dice rolled at the table, and
- * a rare item's search (above its price, William 22 Nov 2026) is made once and lets it into the
- * basket when found, or with No search ticked.
+ * a rare item's search (above its price, William 22 Nov 2026) lets it into the basket when found,
+ * or with No search ticked; one that fails can be made again by another hero.
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -41,6 +41,7 @@ const price = (change: Partial<ItemAvailability>): ItemAvailability => ({
 const searchers = [
   { id: 5, name: "Aldric", spent: false },
   { id: 6, name: "Bertolt", spent: true },
+  { id: 7, name: "Casimir", spent: false },
 ];
 
 const GROMRIL = {
@@ -60,7 +61,12 @@ const GROMRIL = {
 };
 const show = (
   row: ItemAvailability,
-  more: { firstKey?: string; bonus?: number; material?: WeaponMaterial } = {}
+  more: {
+    firstKey?: string;
+    bonus?: number;
+    material?: WeaponMaterial;
+    searchers?: typeof searchers;
+  } = {}
 ) => {
   const onPick = vi.fn();
   const item = makeItem({
@@ -77,7 +83,7 @@ const show = (
       startBonus={more.bonus ?? 1}
       recipients={[{ key: "stash", label: "Stash", target: { kind: "stash" }, count: 1 } as never]}
       firstKey={more.firstKey ?? null}
-      searchers={searchers}
+      searchers={more.searchers ?? searchers}
       material={more.material ?? null}
       isMobile={false}
       onPick={onPick}
@@ -138,19 +144,46 @@ describe("AcquireForm", () => {
     expect(await screen.findByRole("status")).toHaveTextContent("+1 = 4 Not found");
   });
 
-  it("waits for someone to search", () => {
-    show(price({ rarity: 9 }));
-    expect(button("Search")).toBeDisabled();
-    expect(who().getByRole("button", { name: "Aldric" })).toHaveAttribute("aria-pressed", "false");
-  });
-
-  it("starts on the hero the store was opened for", () => {
+  // William, 22 Nov 2026: "the default searcher should be the first hero without a spent trading
+  // action"
+  it("starts on the first hero whose trading action is unspent", () => {
     show(price({ rarity: 9 }), { firstKey: "heroes:6" });
-    expect(who().getByRole("button", { name: /Bertolt/ })).toHaveAttribute("aria-pressed", "true");
+    expect(who().getByRole("button", { name: "Aldric" })).toHaveAttribute("aria-pressed", "true");
+    expect(who().getByRole("button", { name: /Bertolt/ })).toHaveAttribute("aria-pressed", "false");
     expect(button("Search")).toBeEnabled();
   });
 
-  it("searches once: the button locks as Searched and the other searchers grey out", async () => {
+  it("starts on the hero the store was opened for while their action is unspent", () => {
+    show(price({ rarity: 9 }), { firstKey: "heroes:7" });
+    expect(who().getByRole("button", { name: "Casimir" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("waits for someone to search when every hero's action is spent", () => {
+    show(price({ rarity: 9 }), { searchers: searchers.map((hero) => ({ ...hero, spent: true })) });
+    expect(button("Search")).toBeDisabled();
+    expect(who().getByRole("button", { name: /Aldric/ })).toHaveAttribute("aria-pressed", "false");
+  });
+
+  // William, 22 Nov 2026: "after a hero fails a trading action i should then be able to click on
+  // another hero and try again"
+  it("lets another hero search after one fails", async () => {
+    rolls(1, 1, 5, 4);
+    const user = setupUser();
+    show(price({ rarity: 9 }));
+    await user.click(button("Search"));
+    expect(await screen.findByRole("status")).toHaveTextContent("Aldric: +1 = 3 Not found");
+
+    // the next whose action is unspent is picked, and any other can be
+    expect(who().getByRole("button", { name: "Casimir" })).toHaveAttribute("aria-pressed", "true");
+    expect(who().getByRole("button", { name: /Bertolt/ })).toBeEnabled();
+    await user.click(button("Search again"));
+
+    expect(fakeApi.countOf(SEARCH)).toBe(2);
+    expect(fakeApi.bodyOf(SEARCH)).toMatchObject({ hero_id: 7, roll: 9, success: true });
+    expect(await screen.findByRole("button", { name: "Searched" })).toBeDisabled();
+  });
+
+  it("locks once found: the button reads Searched and the other searchers grey out", async () => {
     rolls(6, 6);
     const user = setupUser();
     show(price({ rarity: 9 }));
@@ -224,14 +257,14 @@ describe("AcquireForm", () => {
     expect(screen.getByLabelText("Second D6 rolled")).toBeInTheDocument();
   });
 
-  it("shows the dice rolled in the boxes once searched", async () => {
-    rolls(4, 2);
+  it("shows the dice rolled in the boxes once found", async () => {
+    rolls(5, 3);
     const user = setupUser();
     show(price({ rarity: 9 }), { firstKey: "heroes:5" });
     await user.click(button("Search"));
     expect(await screen.findByRole("button", { name: "Searched" })).toBeDisabled();
-    expect(screen.getByLabelText("First D6 rolled")).toHaveValue("4");
-    expect(screen.getByLabelText("Second D6 rolled")).toHaveValue("2");
+    expect(screen.getByLabelText("First D6 rolled")).toHaveValue("5");
+    expect(screen.getByLabelText("Second D6 rolled")).toHaveValue("3");
   });
 
   it("keeps the search open when it couldn't be saved", async () => {
