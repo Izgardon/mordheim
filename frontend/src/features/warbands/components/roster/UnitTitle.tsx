@@ -42,7 +42,7 @@ export default function UnitTitle({
       <Marker
         focusable="false"
         data-marker={marker}
-        className={cn("h-6 w-6 shrink-0", trim.text)}
+        className={cn("h-5 w-5 shrink-0", trim.text)}
         {...(marker === "leader"
           ? { role: "img", "aria-label": "Leader" }
           : { "aria-hidden": true })}
