@@ -934,11 +934,11 @@
     "specials": [
       {
         "name": "I said 'shut it'",
-        "description": "All models within 6\" of the Black Orc do not suffer from the effects of Animosity."
+        "description": "Whilst the Boss has this ferocious warrior in the warband the greenskins are reluctant to make trouble. Any orcs or goblins within 6\" of the Black Orc do not suffer from the effects of Animosity. The rest of the warband tests as normal."
       },
       {
         "name": "Who'se Da Man!",
-        "description": "If the warband's leader is killed, the Black Orc Overseer will take over as the warband leader."
+        "description": "If any Goblin leader is taken Out of Action during the battle, the Black Orc Hired Sword steps up to replace him. For the duration of the battle he gains the \"Leader\" ability. If the Goblin leader gets the \"Killed\" result after the battle, then the Black Orc decides to fill the new vacant position permanently. The Black Orc becomes the new warband leader, but he keeps his upkeep cost (hey, a Black Orc can't live on mushrooms and fungus alone). The Black Orc does not count towards the warband size when selling treasure."
       }
     ],
     "skills": [],
@@ -994,7 +994,7 @@
     "specials": [
       {
         "name": "Capture",
-        "description": "The Bounty Hunter will always be on the lookout for the outlaw he is pursuing. Such contracts are numerous, especially in Mordheim so at the start of each battle nominate one of your opponent's heroes as the Bounty Hunter's mark. The Bounty Hunter gets a +1 to hit this model and must always move towards them (if he can see them), unless he can shoot (in which case choose). If the Bounty Hunter takes his mark out of action, the warband gains an extra D6 gold crowns after the battle."
+        "description": "The Bounty Hunter will always be on the lookout for the outlaw he is pursuing. Such contracts are numerous, especially in Mordheim so at the start of each battle nominate one of your opponent's heroes as the Bounty Hunter’s mark. The Bounty Hunter gets a +1 to hit this model and must always move towards them (if he can see them), unless he can shoot (in which case choose). If the Bounty Hunter successfully takes the hero out of action he gains the hero's gold value as payment (of which he gives the warband half) +D3 experience if he survives the game and the Bounty Hunter's side wins. After the battle do not roll on the serious injury table for the hero, he simply counts as captured."
       }
     ],
     "skills": [],
@@ -1170,7 +1170,7 @@
       },
       {
         "name": "Warpfire Thrower",
-        "description": "The Clan Skryre Rat Ogre has a smaller version of the dreaded warpfire thrower built into one of its arms. It uses the Warpfire Thrower weapon profile."
+        "description": "The Clan Skryre Rat Ogre has a smaller version of the dreaded warpfire thrower built into one of its arms.\n\nRange: 6\"\nStrength: 4\nSave Modifier: -1"
       },
       {
         "name": "Unreliable",
@@ -1676,11 +1676,11 @@
       "available_special_skills": [
         {
           "name": "Wily Thief",
-          "description": "The Thief is an expert at quickly finding the valuables on a victim before moving on. To reflect this, if the Thief takes out any members of the enemy warband during a game (and he was not taken Out of Action himself), the Halfling Thief's warband receives one additional Treasure."
+          "description": "The Thief is an expert at quickly finding the valuables on a victim before moving on. To reflect this, if the Thief takes out any members of the enemy warband during a game (and he was not taken Out of Action himself), the Halfling Thief’s warband receives one additional Treasure (this does not affect the opposing warband’s number of Treasures... just assume this is one they WOULD have found and leave it at that). This is, of course, in addition to the normal +1 Treasure he already adds through his ‘Cutpurse’ special rule."
         },
         {
           "name": "Stealthy",
-          "description": "The Halfling Thief can hide after his movement even if he is in line of sight of an enemy model."
+          "description": "The Halfling Thief can hide even after running, and can run while within 8\" of enemy models if he starts and ends his move hidden."
         }
       ],
       "grade": "1b",
@@ -2009,11 +2009,11 @@
       },
       {
         "name": "Finders Keepers",
-        "description": "In any scenario where extra Treasures/Wyrdstone are involved, the Prospector will keep any that he somehow gets his hands on. This will not count as his upkeep, as he will deny that he found any."
+        "description": "In any scenario where extra Treasures/Wyrdstone are involved, the Prospector will keep any that he somehow gets his hands on. This will not count as his upkeep, as he will deny that he found any (\"You 'cusin me of claim-jumpin' sonny?\"). For the purpose of Chance Encounter he will keep the Wyrdstone of any enemy heroes that he takes out of action - neither warband will gain that shard. He has no effect on Defend the Find as the claim has already been staked."
       },
       {
         "name": "Old Coot",
-        "description": "The Prospector has staked his claim and won't share. Other warbands cannot search for Wyrdstone/Treasure in the same area as the claim has already been staked."
+        "description": "Prospectors are prone to wander off, either because they've heard of a better strike or because they have fallen out with their fellows. At the end of each game roll a D6. On a result of \"1\" the Prospector has pulled up his pegs and left the warband."
       }
     ],
     "skills": [
@@ -2346,7 +2346,7 @@
     "specials": [
       {
         "name": "Snake Charmer",
-        "description": "The Snake Charmer controls his snakes within 6\" of him. If a snake is not within 6\" it will not move or fight."
+        "description": "The Snake Charmer can control up to five snakes provided that they remain within 6\" of him. If a snake is not within 6\" of the Snake Charmer in the Movement phase, they will move 1D6\" in a random direction. If that takes them into contact with a model, either friend or foe, it will attack as if charging."
       },
       {
         "name": "Immune to Poison",
@@ -2416,7 +2416,7 @@
       },
       {
         "name": "Tea-Leaf!",
-        "description": "Naturally thieves are most adept at stealing items! A Thief may attempt to steal one item during the Trading phase. Choose any item, if it is a common item the Thief successfully steals it on a 2+ on a D6. A Rare item is successfully stolen by rolling higher than the availability number on 2D6. Any items stolen may be used exactly the same way as one that was bought. If the Thief fails to steal the item, roll a D6: on a 1 the Thief is caught and imprisoned."
+        "description": "Naturally thieves are most adept at stealing items! A Thief may attempt to steal one item during the Trading phase. Choose any item, if it is a common item the Thief successfully steals it on a 2+ on a D6. A Rare item is successfully stolen by rolling higher than the availability number on 2D6. Any items stolen may be used exactly the same way as one that was bought. If the Thief fails to steal the item roll a D6. On a score of 1-5 the thief is chased out of the trading post and escapes. On a score of a 6 the Thief is captured by whatever authorities there may be and is hung (remove him from the warband roster)."
       }
     ],
     "skills": [],
@@ -2588,7 +2588,7 @@
       },
       {
         "name": "Reluctant",
-        "description": "The Witch is reluctant to fight and will not engage in combat willingly."
+        "description": "Whilst she is happy to use her magic to aid the warband, the Witch is reluctant to enter the fray herself. As such the Witch will never charge (although if charged she will defend herself) and will always try to stay at least 8\" away from enemy models and must move away if she finds herself within this distance."
       }
     ],
     "skills": [],
@@ -2714,7 +2714,7 @@
       },
       {
         "name": "Wolf Companion",
-        "description": "Wolf Priests may be accompanied by a huge wolf. (See Wolf Companion entry following Wolf Priest rules.)"
+        "description": "Wolf Priests may be accompanied by a huge wolf. Warbands may only purchase a wolf companion if they have a Wolf Priest of Ulric in their midst. The priest may choose to be accompanied by a huge wild wolf, which often scouts ahead to warn the priest of danger."
       }
     ],
     "skills": [],
