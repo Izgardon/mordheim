@@ -2,7 +2,14 @@ import { useEffect, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
-import { SpecialIcon, type SpecialCategory, type SpecialKind } from "@/components/ui/game-icons";
+import { Circle, Minus, Plus, type LucideIcon } from "lucide-react";
+
+import {
+  SPECIAL_KIND_COLOURS,
+  SpecialIcon,
+  type SpecialCategory,
+  type SpecialKind,
+} from "@/components/ui/game-icons";
 import { NumberInput } from "@/components/ui/number-input";
 import { CatalogueFormDialog } from "@/features/catalogue/components/CatalogueFormDialog";
 import { CatalogueTypeField } from "@/features/catalogue/components/CatalogueTypeField";
@@ -13,14 +20,17 @@ import {
 } from "@/features/catalogue/components/form-layout";
 import PrebattleRollFields from "@/features/catalogue/components/PrebattleRollFields";
 import { useControllableOpen } from "@/features/catalogue/hooks/useControllableOpen";
+import { cn } from "@/lib/utils";
 
 import { useSpecialForm } from "../hooks/useSpecialForm";
 import type { Special } from "../types/special-types";
 
-const KINDS: [SpecialKind, string][] = [
-  ["boon", "Boon"],
-  ["bane", "Bane"],
-  ["trait", "Trait"],
+// each with its sign in its colour (William, 22 Nov 2026: "an indicator if it is pos neg or
+// neutral in the option")
+const KINDS: [SpecialKind, string, LucideIcon][] = [
+  ["boon", "Boon", Plus],
+  ["bane", "Bane", Minus],
+  ["trait", "Trait", Circle],
 ];
 
 const CATEGORIES: [SpecialCategory, string][] = [
@@ -96,16 +106,19 @@ export default function SpecialFormDialog({
         placeholder="Name"
         required
       />
-      <CatalogueTypeField
-        layout="dialog"
-        id="special-type"
-        copy={TYPE_COPY}
-        field={form.typeField}
-      />
       <CatalogueField layout="dialog" label="Kind">
         <div role="group" aria-label="Kind" className="flex flex-wrap gap-1.5">
-          {KINDS.map(([kind, label]) => (
+          {KINDS.map(([kind, label, Sign]) => (
             <Chip key={kind} pressed={values.kind === kind} onClick={() => set({ kind })}>
+              <Sign
+                aria-hidden="true"
+                className={cn(
+                  "h-3.5 w-3.5 shrink-0",
+                  kind === "trait" && "h-2.5 w-2.5",
+                  SPECIAL_KIND_COLOURS[kind]
+                )}
+                strokeWidth={kind === "trait" ? 3 : 2.5}
+              />
               {label}
             </Chip>
           ))}
@@ -125,6 +138,13 @@ export default function SpecialFormDialog({
           ))}
         </div>
       </CatalogueField>
+      <CatalogueTypeField
+        layout="dialog"
+        id="special-type"
+        copy={TYPE_COPY}
+        field={form.typeField}
+        required={false}
+      />
       <CatalogueField layout="dialog" label="Price (gc)" htmlFor="special-cost">
         <NumberInput
           id="special-cost"

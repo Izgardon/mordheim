@@ -265,17 +265,23 @@ describe("Adding a boon or bane", () => {
     expect(await row("Iron Will")).toHaveAttribute("aria-expanded", "true");
   });
 
-  it("asks for a type before saving", async () => {
+  // William, 22 Nov 2026, of the type: "It doesn't seem necessary to add"
+  it("saves one with no type", async () => {
+    fakeApi.on(
+      `POST /special/`,
+      special({ id: 9, campaign_id: CAMPAIGN_ID, name: "Iron Will", type: "" })
+    );
     const user = setupUser();
     renderApp(PAGE);
     await user.click(await screen.findByRole("button", { name: "Add new" }));
     const form = await screen.findByRole("dialog", { name: "Add a boon or bane" });
-    await user.type(within(form).getByLabelText("Name"), "Iron Will");
-    await user.type(within(form).getByLabelText("Description"), "Never flees.");
+    await user.type(within(form).getByRole("textbox", { name: "Name" }), "Iron Will");
     await user.click(within(form).getByRole("button", { name: "Add" }));
+    expect(within(form).getByText("Name and description are required.")).toBeInTheDocument();
 
-    expect(within(form).getByText("Name, type and description are required.")).toBeInTheDocument();
-    expect(fakeApi.countOf("POST /special/")).toBe(0);
+    await user.type(within(form).getByRole("textbox", { name: "Description" }), "Never flees.");
+    await user.click(within(form).getByRole("button", { name: "Add" }));
+    await waitFor(() => expect(fakeApi.bodyOf("POST /special/")).toMatchObject({ type: "" }));
   });
 
   it("edits one from its open row, a book one becoming the campaign's version", async () => {

@@ -90,8 +90,8 @@ export function useSpecialForm({
   const set = (change: Partial<SpecialFormValues>) => setValues((prev) => ({ ...prev, ...change }));
 
   const save = async (after?: () => void) => {
-    if (!values.name.trim() || !values.type.trim() || !values.description.trim()) {
-      setFormError("Name, type and description are required.");
+    if (!values.name.trim() || !values.description.trim()) {
+      setFormError("Name and description are required.");
       return;
     }
     if (!values.typeCommitted) {

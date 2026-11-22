@@ -64,3 +64,16 @@ class SpecialCostApiTests(RosterTestCase):
         self.assertEqual(kept.status_code, 200, kept.data)
         version.refresh_from_db()
         self.assertEqual((version.description, version.cost), ("A claw.", 45))
+
+
+class SpecialTypeOptionalTests(RosterTestCase):
+    """William, 22 Nov 2026, of the Add new form's type: "It doesn't seem necessary to add"."""
+
+    def test_a_custom_special_may_leave_its_type_blank(self):
+        self.client.force_authenticate(user=self.campaign_owner)
+        body = {"campaign_id": self.campaign.id, "name": "Iron Will", "kind": "boon", "description": "Never flees."}
+
+        for sent in ({}, {"type": ""}):
+            made = self.client.post("/api/special/", {**body, **sent, "name": f"Iron Will {len(sent)}"}, format="json")
+            self.assertEqual(made.status_code, 201, made.data)
+            self.assertEqual(made.json()["type"], "")

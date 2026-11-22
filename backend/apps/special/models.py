@@ -20,7 +20,8 @@ class Special(CatalogueEntry, PrebattleRoll):
         )
     )
     name = models.CharField(max_length=160)
-    type = models.CharField(max_length=80, db_index=True)
+    # the label under its name (Psychology, Injury, a mutation family); a campaign's own may leave it blank
+    type = models.CharField(max_length=80, db_index=True, blank=True, default="")
     description = models.TextField(max_length=4000, blank=True, default="")
     # Boons & Banes: whether it helps the unit (boon), holds it back (bane) or is neither (trait), set for the book's
     # from data/special-kinds.json (kinds.py)
