@@ -40,7 +40,9 @@ export default function PriceFields({ item, row, ...props }: PriceFieldsProps) {
           {props.isMobile ? "Price each" : "Price each (gc)"}
           <NumberInput
             aria-label={`Price each for ${item.name}`}
-            className={cn("font-mono", props.isMobile ? "h-11 w-24" : "w-[110px]")}
+            // the height is the box's, so the field and its − and + stand as tall as each other
+            containerClassName={props.isMobile ? "h-11 w-40" : "h-11 w-[174px]"}
+            className="font-mono"
             value={props.price}
             disabled={props.free}
             onChange={(event) => props.onPrice(event.target.value)}
