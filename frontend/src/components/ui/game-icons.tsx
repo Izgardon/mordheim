@@ -19,6 +19,7 @@ import {
   GiMeepleGroup,
   GiMuscleUp,
   GiPocketBow,
+  GiPointyHat,
   GiPotionBall,
   GiRoundShield,
   GiRuneStone,
@@ -29,6 +30,7 @@ import {
   GiSpikedTentacle,
   GiStitchedWound,
   GiSwapBag,
+  GiTemplarShield,
   GiThreeFriends,
   GiTombstone,
   GiTrade,
@@ -130,12 +132,16 @@ export const SPECIAL_KIND_COLOURS: Record<SpecialKind, string> = {
 
 /**
  * What a roster unit is, the mark before its name (William, 22 Nov 2026: "the leader's crown can
- * move into that space and the rest have helmets"): a henchmen group's figures, a hired sword's purse.
+ * move into that space and the rest have helmets"): a Priest's templar shield, a Wizard's pointy
+ * hat, a henchmen group's figures, a hired sword's purse.
  */
-export type UnitMarker = "leader" | "hero" | "henchmen" | "hired";
+export type UnitMarker = "leader" | "priest" | "wizard" | "hero" | "henchmen" | "hired";
 
 export const UNIT_MARKER_ICONS: Record<UnitMarker, IconType> = {
   leader: GiCrown,
+  // a hero who casts (William, 22 Nov 2026: "use templar shield if a priest, wizard hat if a wizard")
+  priest: GiTemplarShield,
+  wizard: GiPointyHat,
   hero: GiVisoredHelm,
   henchmen: GiMeepleGroup,
   hired: GiShinyPurse,

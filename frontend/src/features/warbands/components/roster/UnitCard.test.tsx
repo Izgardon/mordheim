@@ -105,6 +105,26 @@ describe("A roster card's trim", () => {
     expect(screen.getAllByRole("img", { name: "Leader" })).toHaveLength(1);
   });
 
+  // William, 22 Nov 2026: "use templar shield if a priest, wizard hat if a wizard, keep leader and
+  // other heroes the same"
+  it.each([
+    ["Priest", "priest"],
+    ["Wizard", "wizard"],
+    ["No", "hero"],
+  ] as const)("marks a hero who casts as %s", (caster, marker) => {
+    renderCard({ kind: "hero", unit: makeHero({ name: "Brother Anselm", caster }) });
+    const title = screen.getByRole("button", { name: /^Brother Anselm/ });
+    expect(title.querySelector("[data-marker]")).toHaveAttribute("data-marker", marker);
+  });
+
+  it("keeps the leader's crown when the leader casts", () => {
+    renderCard({
+      kind: "hero",
+      unit: makeHero({ name: "Aldric Voss", is_leader: true, caster: "Wizard" }),
+    });
+    expect(screen.getByRole("img", { name: "Leader" })).toHaveAttribute("data-marker", "leader");
+  });
+
   it("stays on an open card", () => {
     const [, entry] = CASES[0];
     renderCard(entry, true);

@@ -60,7 +60,11 @@ export const KIND_TRIM: Record<RosterUnit["kind"], ReturnType<typeof trim>> = {
 export function unitMarker(entry: RosterUnit): UnitMarker {
   if (entry.kind === "henchmen_group") return "henchmen";
   if (entry.kind === "hireling") return "hired";
-  return entry.unit.is_leader ? "leader" : "hero";
+  if (entry.unit.is_leader) return "leader";
+  // a hero who casts shows what kind of caster he is; the leader keeps his crown
+  if (entry.unit.caster === "Priest") return "priest";
+  if (entry.unit.caster === "Wizard") return "wizard";
+  return "hero";
 }
 
 /**
