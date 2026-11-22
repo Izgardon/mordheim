@@ -3,6 +3,7 @@ import type { UnitMarker } from "@/components/ui/game-icons";
 import type { StatKey } from "@/components/ui/stat-strip";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { STAT_FIELDS, statShown } from "@/features/catalogue/utils/statblock";
+import { itemKind } from "@/features/items/item-kind";
 import type { Item } from "@/features/items/types/item-types";
 
 import { getHeroLevelInfo } from "../heroes/utils/hero-level";
@@ -58,7 +59,12 @@ export const KIND_TRIM: Record<RosterUnit["kind"], ReturnType<typeof trim>> = {
 
 /** The game icon before a card's name: the leader's crown, a hero's helmet, a group, a hired sword. */
 export function unitMarker(entry: RosterUnit): UnitMarker {
-  if (entry.kind === "henchmen_group") return "henchmen";
+  if (entry.kind === "henchmen_group") {
+    const ranged = entry.unit.items.some((item) =>
+      ["missile", "blackpowder"].includes(itemKind(item))
+    );
+    return ranged ? "henchmen_ranged" : "henchmen";
+  }
   if (entry.kind === "hireling") return "hired";
   if (entry.unit.is_leader) return "leader";
   // a hero who casts shows what kind of caster he is; the leader keeps his crown

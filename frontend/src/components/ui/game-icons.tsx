@@ -4,19 +4,21 @@ import {
   GiBiceps,
   GiBlunderbuss,
   GiBowArrow,
+  GiBowman,
   GiBreastplate,
   GiBroadsword,
   GiCheckedShield,
   GiChest,
   GiCrossedSwords,
   GiCrown,
+  GiCrownCoin,
   GiCrystalGrowth,
   GiDeathSkull,
   GiHorseHead,
   GiKnapsack,
   GiLaurels,
   GiLightBackpack,
-  GiMeepleGroup,
+  GiLightHelm,
   GiMuscleUp,
   GiPocketBow,
   GiPointyHat,
@@ -24,12 +26,12 @@ import {
   GiRoundShield,
   GiRuneStone,
   GiScrollUnfurled,
-  GiShinyPurse,
   GiShop,
   GiSpellBook,
   GiSpikedTentacle,
   GiStitchedWound,
   GiSwapBag,
+  GiSwordman,
   GiTemplarShield,
   GiThreeFriends,
   GiTombstone,
@@ -38,7 +40,6 @@ import {
   GiTrophyCup,
   GiTwoCoins,
   GiUpgrade,
-  GiVisoredHelm,
   GiWingfoot,
   GiYinYang,
 } from "react-icons/gi";
@@ -133,18 +134,28 @@ export const SPECIAL_KIND_COLOURS: Record<SpecialKind, string> = {
 /**
  * What a roster unit is, the mark before its name (William, 22 Nov 2026: "the leader's crown can
  * move into that space and the rest have helmets"): a Priest's templar shield, a Wizard's pointy
- * hat, a henchmen group's figures, a hired sword's purse.
+ * hat, a henchmen group's bowman or swordsman, a hired sword's crown coin.
  */
-export type UnitMarker = "leader" | "priest" | "wizard" | "hero" | "henchmen" | "hired";
+export type UnitMarker =
+  | "leader"
+  | "priest"
+  | "wizard"
+  | "hero"
+  | "henchmen_ranged"
+  | "henchmen"
+  | "hired";
 
 export const UNIT_MARKER_ICONS: Record<UnitMarker, IconType> = {
   leader: GiCrown,
   // a hero who casts (William, 22 Nov 2026: "use templar shield if a priest, wizard hat if a wizard")
   priest: GiTemplarShield,
   wizard: GiPointyHat,
-  hero: GiVisoredHelm,
-  henchmen: GiMeepleGroup,
-  hired: GiShinyPurse,
+  hero: GiLightHelm,
+  // a henchmen group with a ranged weapon is a bowman, any other a swordsman; a hired sword the
+  // crown coin (William, 22 Nov 2026)
+  henchmen_ranged: GiBowman,
+  henchmen: GiSwordman,
+  hired: GiCrownCoin,
 };
 
 /** A game icon at the text's size and colour (the tokens), hidden from screen readers. */

@@ -8,7 +8,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
-import { makeHero, makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
+import { makeHero, makeItem, makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
 
 import type { WarbandHireling } from "../../types/warband-types";
 import UnitCard from "./UnitCard";
@@ -114,6 +114,23 @@ describe("A roster card's trim", () => {
   ] as const)("marks a hero who casts as %s", (caster, marker) => {
     renderCard({ kind: "hero", unit: makeHero({ name: "Brother Anselm", caster }) });
     const title = screen.getByRole("button", { name: /^Brother Anselm/ });
+    expect(title.querySelector("[data-marker]")).toHaveAttribute("data-marker", marker);
+  });
+
+  // William, 22 Nov 2026: "henchmen group, if they have ranged weapon make them bowman if not swordman"
+  it.each([
+    [
+      "a bow",
+      makeItem({ id: 7, name: "Bow", type: "Weapon", subtype: "Missile" }),
+      "henchmen_ranged",
+    ],
+    ["a sword", makeItem({ id: 8, name: "Sword", type: "Weapon", subtype: "Melee" }), "henchmen"],
+  ] as const)("marks a henchmen group with %s by its weapons", (_label, item, marker) => {
+    renderCard({
+      kind: "henchmen_group",
+      unit: { ...makeVeteranHenchmenGroup({ name: "Marksmen" }), items: [item] },
+    });
+    const title = screen.getByRole("button", { name: /^Marksmen/ });
     expect(title.querySelector("[data-marker]")).toHaveAttribute("data-marker", marker);
   });
 
