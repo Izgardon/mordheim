@@ -15,6 +15,17 @@ from rest_framework import serializers
 from apps.warbands.models import WarbandGroup, WarbandType
 
 
+def line_name(line: Any) -> str:
+    """The name of the type or group a line names (read with them)."""
+    named = line.warband_type if line.warband_type_id else line.warband_group
+    return str(named.name) if named is not None else ""
+
+
+def source_code(line: Any) -> str:
+    """A type's source code ("BTB"); a group's is blank."""
+    return str(line.warband_type.source_code) if line.warband_type_id and line.warband_type else ""
+
+
 class AccessLineSerializer(serializers.Serializer):
     """`{warband_type_id, warband_group_id, name, source_code, excluded}`: the line's type or group (one is null), its
     name and a type's source code (a group's is blank), which tells two types of one name apart ("Norse Explorers
@@ -27,11 +38,10 @@ class AccessLineSerializer(serializers.Serializer):
     excluded = serializers.BooleanField()
 
     def get_name(self, line: Any) -> str:
-        named = line.warband_type if line.warband_type_id else line.warband_group
-        return str(named.name) if named is not None else ""
+        return line_name(line)
 
     def get_source_code(self, line: Any) -> str:
-        return str(line.warband_type.source_code) if line.warband_type_id and line.warband_type else ""
+        return source_code(line)
 
 
 class AccessLineInputSerializer(serializers.Serializer):
@@ -68,3 +78,37 @@ def unique_lines(lines: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
         key = (line.get("warband_type_id"), line.get("warband_group_id"))
         keyed[key] = {**keyed.get(key, {}), **line}
     return list(keyed.values())
+
+
+def _listed(names: list[str]) -> str:
+    return names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]
+
+
+def line_names(lines: Iterable[Any]) -> list[tuple[str, bool]]:
+    """Each line's name and whether it is excluded, a type's with its source code where another line has its name
+    ("Norse Explorers (BTB)"), from lines read with their types and groups."""
+    read = [(line_name(line), line) for line in lines]
+    count: dict[str, int] = {}
+    for name, _line in read:
+        count[name] = count.get(name, 0) + 1
+    named = []
+    for name, line in read:
+        code = source_code(line)
+        named.append((f"{name} ({code})" if count[name] > 1 and code else name, bool(line.excluded)))
+    return named
+
+
+def who_text(for_everyone: bool, lines: Iterable[Any]) -> str:
+    """Who a who-can list is for, when it is for anyone less than everyone: "For Skaven and Lizardmen.", "For Humans,
+    except Witch Hunters.", "Not available for Dark Elves." (everyone else), "Not available for any warband."; blank for
+    everyone (William, 22 Nov 2026: the store's item says who it is for if it has a restriction)."""
+    named = line_names(lines)
+    included = [name for name, excluded in named if not excluded]
+    excluded = [name for name, excluded in named if excluded]
+    if for_everyone:
+        return f"Not available for {_listed(excluded)}." if excluded else ""
+    if not included:
+        return "Not available for any warband."
+    if excluded:
+        return f"For {_listed(included)}, except {_listed(excluded)}."
+    return f"For {_listed(included)}."
