@@ -168,23 +168,21 @@ export function xpInfo(entry: RosterUnit, campaign: CampaignSummary | null) {
 export const itemBoxKind = (item: Item): BoxTileKind =>
   item.beast_kind === "mount" ? "mount" : "item";
 
+/** How a kill was scored, as a kill's line ends (William, 22 Nov 2026). */
+const KILL_HOW: Record<NonNullable<UnitKill["how"]>, string> = {
+  melee: "in melee",
+  shooting: "with ranged",
+  magic: "with magic",
+  other: "by other means",
+};
+
 /**
- * One line of a unit's Kills list: "Magister Halvard · Street Fight · round 2 · melee", with the
- * model who scored it for a henchmen group ("· by Kurt"). A kill logged after the fight has no
- * round; a battle with no scenario shows its date.
+ * One line of a unit's Kills list: the victim's name and how they fell (William, 22 Nov 2026:
+ * "should just read the name followed by 'in melee' or with ranged or with magic etc"), "Magister
+ * Halvard in melee"; the victim alone when the battle logged no how.
  */
 export function killLine(kill: UnitKill) {
-  const when = kill.scenario.trim()
-    ? kill.scenario
-    : new Date(kill.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
-  const round = kill.round
-    ? `round ${kill.round}`
-    : kill.phase === "after"
-      ? "after the fight"
-      : "";
-  return [kill.victim, when, round, kill.how ?? "", kill.by ? `by ${kill.by}` : ""]
-    .filter(Boolean)
-    .join(" · ");
+  return kill.how ? `${kill.victim} ${KILL_HOW[kill.how]}` : kill.victim;
 }
 
 /** The open card's rows of boxes: items, skills, specials (his injuries among them) and spells. */

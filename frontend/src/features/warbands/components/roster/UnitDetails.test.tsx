@@ -11,7 +11,13 @@ import { skillGroup, spell } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
-import { dagger, makeHero, makeItem, sword } from "@/test/warband-fixtures";
+import {
+  dagger,
+  makeHero,
+  makeItem,
+  makeVeteranHenchmenGroup,
+  sword,
+} from "@/test/warband-fixtures";
 import type { WarbandHireling } from "../../types/warband-types";
 
 import RosterSections from "./RosterSections";
@@ -434,5 +440,67 @@ describe("An open card's boxes", () => {
         "max-[960px]:max-w-none"
       );
     expect(box(/^Sword/)).toHaveClass("min-w-[118px]", "max-w-[200px]");
+  });
+});
+
+// William, 22 Nov 2026: "Henchmen dont need kills displayed here, on their line is enough and it
+// can just be a button with the number and icon ... their dismiss button should be a red text
+// button"
+describe("An open group's members", () => {
+  const knives: RosterUnit = { kind: "henchmen_group", unit: makeVeteranHenchmenGroup() };
+  const kill = (id: number, victim: string, by: string) => ({
+    id,
+    victim,
+    victim_kind: "hero" as const,
+    victim_warband: "The Rats",
+    battle_id: 3,
+    scenario: "Skirmish",
+    date: "2026-11-01T12:00:00Z",
+    round: 2,
+    phase: "fight" as const,
+    how: "melee" as const,
+    by,
+  });
+
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /skill-groups/?campaign_id=1", []);
+    fakeApi.on("GET /warbands/9/stash/", []);
+    fakeApi.on("GET /warbands/9/henchmen-groups/21/kill-history/", {
+      total_kills: 3,
+      kills: [kill(1, "Snikrit", "Blade One"), kill(2, "Skab", "Blade Three")],
+    });
+  });
+
+  it("each show their own kills as a number, and Dismiss in red", async () => {
+    const user = setupUser();
+    renderWithQueryClient(
+      <MemoryRouter>
+        <UnitDetails
+          entry={knives}
+          campaign={{ id: 1 } as CampaignSummary}
+          canEdit
+          others={[]}
+          onXp={vi.fn()}
+          onMoveItem={vi.fn()}
+          onSellItem={vi.fn()}
+          onBuyAgain={vi.fn()}
+          onLoadout={vi.fn()}
+          campaignId={1}
+          warbandId={9}
+          onPick={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getAllByRole("button", { name: /^Kills \d/ })).toHaveLength(2);
+    const blade = screen.getByRole("button", { name: "Kills 2: the breakdown" });
+    expect(blade).toHaveTextContent(/^2$/);
+    expect(screen.getAllByRole("button", { name: "Dismiss" })[0]).toHaveClass("text-danger");
+
+    await user.click(blade);
+    const list = await screen.findByRole("dialog", { name: "Kills of Blade One" });
+    expect(await within(list).findByText("Snikrit in melee")).toBeInTheDocument();
+    expect(within(list).queryByText(/Skab/)).not.toBeInTheDocument();
   });
 });

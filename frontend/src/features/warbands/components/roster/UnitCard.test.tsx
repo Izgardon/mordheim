@@ -242,19 +242,15 @@ describe("A card's top row", () => {
     expect(row?.firstElementChild).toContainElement(kills);
   });
 
-  it("puts an open group's kills beside its members, with no row for them", () => {
+  // William, 22 Nov 2026: "Henchmen don't need kills displayed here, on their line is enough"
+  it("shows no kills for an open group by its members' names: each member's line has theirs", () => {
     renderCard(
       { kind: "henchmen_group", unit: makeVeteranHenchmenGroup({ unit_type: "Warrior" }) },
       true
     );
-    const kills = screen.getByRole("button", { name: /^Kills 3/ });
-    const members = screen.getByText("Blade One").parentElement?.parentElement;
 
     expect(screen.queryByRole("switch")).toBeNull();
-    expect(members).toContainElement(kills);
-    expect(
-      screen.getByRole("button", { name: "Close Black Knives" }).parentElement
-    ).not.toContainElement(kills);
+    expect(screen.queryByRole("button", { name: /^Kills 3/ })).toBeNull();
   });
 
   it("leaves a hired sword's kills in the head, beside his buttons", () => {

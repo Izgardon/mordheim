@@ -114,12 +114,13 @@ export default function UnitCard(props: UnitCardProps) {
   const name = unitName(unit);
   // the badges and (open) kills sit on the row under the head, leaving the head to the name
   // (William, 22 Nov 2026): opposite a hero's trading action, beside a group's members; a hired
-  // sword has no such row, so his stay in the head. Closed, no kills.
+  // sword has no such row, so theirs stay in the head. Closed, no kills.
   const badgesAt = entry.kind === "hero" ? "trading" : members.length ? "members" : "head";
   const badges = (
     <>
       <UnitBadges entry={entry} campaign={campaign} canEdit={canEdit} onRide={props.onRide} />
-      {open ? (
+      {/* a henchmen group's kills sit on each member's line in the members list (William, 22 Nov 2026) */}
+      {open && !isGroup(entry) ? (
         <UnitKills
           campaignId={campaign?.id ?? 0}
           warbandId={props.warbandId}

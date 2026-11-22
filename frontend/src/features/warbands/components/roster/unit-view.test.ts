@@ -30,22 +30,18 @@ const kill = (fields: Partial<UnitKill> = {}): UnitKill => ({
   ...fields,
 });
 
+// William, 22 Nov 2026: "The actual kills text in the popout should just read the name followed by
+// 'in melee' or with ranged or with magic etc for all units"
 describe("killLine", () => {
-  it("names the victim, the battle, the round and how", () => {
-    expect(killLine(kill())).toBe("Magister Halvard · Street Fight · round 2 · melee");
+  it("names the victim and how they fell", () => {
+    expect(killLine(kill())).toBe("Magister Halvard in melee");
+    expect(killLine(kill({ how: "shooting" }))).toBe("Magister Halvard with ranged");
+    expect(killLine(kill({ how: "magic" }))).toBe("Magister Halvard with magic");
+    expect(killLine(kill({ how: "other" }))).toBe("Magister Halvard by other means");
   });
 
-  it("says which model of a group scored it", () => {
-    expect(killLine(kill({ by: "Kurt", how: null }))).toBe(
-      "Magister Halvard · Street Fight · round 2 · by Kurt"
-    );
-  });
-
-  it("marks a kill logged after the fight, and dates a battle with no scenario", () => {
-    expect(killLine(kill({ round: null, phase: "after", how: "other" }))).toBe(
-      "Magister Halvard · Street Fight · after the fight · other"
-    );
-    expect(killLine(kill({ scenario: " " }))).toBe("Magister Halvard · 24 Mar · round 2 · melee");
+  it("is the victim alone when the battle logged no how", () => {
+    expect(killLine(kill({ by: "Kurt", how: null }))).toBe("Magister Halvard");
   });
 });
 

@@ -8,6 +8,7 @@ import { warbandStashQuery } from "../../api/economy-queries";
 import { useGroupLoadout, type ShareChoice } from "../../hooks/units/useGroupLoadout";
 import { gapLine, memberGaps, memberShare, sitsOut, type MemberGap } from "../../units/loadout";
 import type { Henchman, HenchmenGroup } from "../../types/warband-types";
+import UnitKills from "./UnitKills";
 import { liveMembers, memberName } from "./unit-view";
 
 type GroupMembersProps = {
@@ -110,9 +111,14 @@ export default function GroupMembers({ group, campaignId, warbandId, canEdit }: 
           <div key={member.id} className="flex flex-col gap-1.5 border-t border-line pt-2">
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-bold text-ink">{memberName(group, member)}</span>
-              {member.kills ? (
-                <span className="text-xs text-muted-foreground">{member.kills} kills</span>
-              ) : null}
+              {/* the group's kills live here, a member's own count opening their own kills */}
+              <UnitKills
+                campaignId={campaignId}
+                warbandId={warbandId}
+                entry={{ kind: "henchmen_group", unit: group }}
+                align="start"
+                member={{ name: memberName(group, member), kills: member.kills ?? 0 }}
+              />
               {out ? <ChipLabel tone="danger">Sits out the next battle</ChipLabel> : null}
               {canEdit ? (
                 <div className="ml-auto flex flex-wrap gap-1.5">
@@ -124,7 +130,12 @@ export default function GroupMembers({ group, campaignId, warbandId, canEdit }: 
                   >
                     Take their kit
                   </Button>
-                  <Button size="sm" variant="ghost" onClick={() => setAsking(member.id)}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-danger hover:text-danger"
+                    onClick={() => setAsking(member.id)}
+                  >
                     Dismiss
                   </Button>
                 </div>

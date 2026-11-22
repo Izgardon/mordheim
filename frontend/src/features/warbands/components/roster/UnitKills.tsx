@@ -25,17 +25,20 @@ function KillList({
   campaignId,
   warbandId,
   entry,
+  by,
 }: {
   campaignId: number;
   warbandId: number;
   entry: RosterUnit;
+  /** One member of a group: only the kills that model scored. */
+  by?: string;
 }) {
   const history = useQuery({
     queryKey: queryKeys.campaign.unitKills(campaignId, warbandId, unitKey(entry)),
     queryFn: () => unitApi(entry.kind).killHistory(warbandId, entry.unit.id),
     staleTime: 30_000,
   });
-  const kills = history.data?.kills ?? [];
+  const kills = (history.data?.kills ?? []).filter((kill) => by === undefined || kill.by === by);
   if (history.isPending)
     return <span className="text-[13px] text-muted-foreground">Reading the kills…</span>;
   if (history.isError)
@@ -66,18 +69,21 @@ export default function UnitKills({
   warbandId,
   entry,
   align = "end",
+  member,
 }: {
   campaignId: number;
   warbandId: number;
   entry: RosterUnit;
   /** The side of the count its web popover lines up with: its left edge on a card's left. */
   align?: "start" | "end";
+  /** One member of a henchmen group (the members list): their count and their own kills. */
+  member?: { name: string; kills: number };
 }) {
   const [open, setOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const box = useRef<HTMLSpanElement>(null);
-  const count = unitKillCount(entry);
-  const name = unitName(entry.unit);
+  const count = member ? member.kills : unitKillCount(entry);
+  const name = member ? member.name : unitName(entry.unit);
 
   useEffect(() => {
     if (!open || isMobile) return;
@@ -94,7 +100,9 @@ export default function UnitKills({
   }, [open, isMobile]);
 
   if (!count) return null;
-  const list = <KillList campaignId={campaignId} warbandId={warbandId} entry={entry} />;
+  const list = (
+    <KillList campaignId={campaignId} warbandId={warbandId} entry={entry} by={member?.name} />
+  );
   return (
     <span ref={box} className="relative inline-flex">
       <button
@@ -109,7 +117,7 @@ export default function UnitKills({
         )}
       >
         <GameIcon name="kills" className="h-3.5 w-3.5 text-danger" />
-        Kills <span className="font-mono">{count}</span>
+        <span className="font-mono">{count}</span>
       </button>
       {open && isMobile ? (
         <BottomSheet open onOpenChange={setOpen} kicker="Kills" title={name}>
