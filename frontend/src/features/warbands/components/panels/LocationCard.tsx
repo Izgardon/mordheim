@@ -120,7 +120,6 @@ export default function LocationCard({
             <RollControl
               dice="D6"
               lockedLabel="Rolled"
-              entry="above"
               size="sm"
               quiet
               faces={rolled === null ? null : [rolled]}

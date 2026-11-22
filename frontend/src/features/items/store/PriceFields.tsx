@@ -4,7 +4,6 @@ import { CheckboxField } from "@/components/ui/checkbox";
 import DiceEntry from "@/components/ui/dice-entry";
 import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
-import { cn } from "@/lib/utils";
 
 import type { Item, ItemAvailability } from "../types/item-types";
 import { diceLabel } from "../utils/item-prices";
@@ -19,8 +18,6 @@ type PriceFieldsProps = {
   free: boolean;
   reason: string;
   isMobile: boolean;
-  /** In a rare item's left column: Free beside the price, not at the row's end. */
-  inColumn?: boolean;
   onPrice: (text: string) => void;
   onRoll: (faces: number[]) => void;
   onFree: (free: boolean) => void;
@@ -40,7 +37,9 @@ export default function PriceFields({ item, row, ...props }: PriceFieldsProps) {
           {props.isMobile ? "Price each" : "Price each (gc)"}
           <NumberInput
             aria-label={`Price each for ${item.name}`}
-            className={cn("font-mono", props.isMobile ? "h-11 w-24" : "w-[110px]")}
+            // the height is the box's, so the field and its − and + stand as tall as each other
+            containerClassName={props.isMobile ? "h-11 w-40" : "h-11 w-[174px]"}
+            className="font-mono"
             value={props.price}
             disabled={props.free}
             onChange={(event) => props.onPrice(event.target.value)}
@@ -77,7 +76,7 @@ export default function PriceFields({ item, row, ...props }: PriceFieldsProps) {
         ) : null}
         <CheckboxField
           inline
-          labelClassName={props.inColumn ? "text-[13px]" : "ml-auto text-[13px]"}
+          labelClassName="ml-auto text-[13px]"
           checked={props.free}
           onChange={(event) => props.onFree(event.target.checked)}
         >

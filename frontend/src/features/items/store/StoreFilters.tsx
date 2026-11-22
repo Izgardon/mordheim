@@ -14,10 +14,8 @@ type StoreFiltersProps = {
   isMobile: boolean;
   query: string;
   onQuery: (query: string) => void;
-  onlyMine: boolean;
-  onOnlyMine: (on: boolean) => void;
-  /** His list's switch, for a unit recruited from the template; null: no list of his. */
-  his: { checked: boolean; onChange: (on: boolean) => void } | null;
+  /** The one switch: Their list for a unit recruited from the template, else Warband Only. */
+  filter: { label: string; checked: boolean; onChange: (on: boolean) => void };
   category: StoreCategory;
   onCategory: (category: StoreCategory) => void;
   /** `edit_catalogue`: Add item makes a campaign item here and opens its row. */
@@ -26,8 +24,8 @@ type StoreFiltersProps = {
 };
 
 /**
- * What the store is showing: the search, What I can buy, His list, Add item, and the category
- * chips, which scroll across on a phone with room under them for their scrollbar.
+ * What the store is showing: the search, its one switch (Their list or Warband Only), Add item,
+ * and the category chips, which scroll across on a phone with room under them for their scrollbar.
  */
 export default function StoreFilters(props: StoreFiltersProps) {
   return (
@@ -45,14 +43,9 @@ export default function StoreFilters(props: StoreFiltersProps) {
           />
         </label>
         <div className="flex gap-2.5">
-          <Switch checked={props.onlyMine} onCheckedChange={props.onOnlyMine}>
-            What I can buy
+          <Switch checked={props.filter.checked} onCheckedChange={props.filter.onChange}>
+            {props.filter.label}
           </Switch>
-          {props.his ? (
-            <Switch checked={props.his.checked} onCheckedChange={props.his.onChange}>
-              His list
-            </Switch>
-          ) : null}
           {props.canAddItem ? (
             <ItemFormDialog
               mode="create"

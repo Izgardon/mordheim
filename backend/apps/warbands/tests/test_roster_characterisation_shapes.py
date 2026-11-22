@@ -116,6 +116,7 @@ ITEM_DETAIL = {
                     "excluded": "bool",
                 }
             ],
+            "who_text": "str",
             "note": "str",
         }
     ],

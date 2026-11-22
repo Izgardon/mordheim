@@ -86,6 +86,6 @@ export function whoLine(list: { for_everyone: boolean; warbands: AccessLine[] })
   if (list.for_everyone) {
     return excluded ? `Everyone except ${excluded}` : "For everyone";
   }
-  if (!included) return "Not usually available to anyone";
+  if (!included) return "Not available for anyone";
   return excluded ? `For ${included}, not ${excluded}` : `For ${included}`;
 }

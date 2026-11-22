@@ -9,7 +9,6 @@ import type {
   HenchmenGroup,
   Warband,
   WarbandHero,
-  WarbandHireling,
   WarbandItemSummary,
 } from "../../types/warband-types";
 import LoadoutPanel from "../panels/LoadoutPanel";
@@ -30,7 +29,6 @@ type WarbandPanelsProps = {
   warband: Warband;
   heroes: WarbandHero[];
   henchmenGroups: HenchmenGroup[];
-  hirelings: WarbandHireling[];
   units: RosterUnit[];
   canEdit: boolean;
   canManageItems: boolean;
@@ -100,7 +98,6 @@ export default function WarbandPanels(props: WarbandPanelsProps) {
         warband={warband}
         heroes={props.heroes}
         henchmenGroups={props.henchmenGroups}
-        hirelings={props.hirelings}
         canBuy={props.canManageItems}
         opening={props.store}
       />

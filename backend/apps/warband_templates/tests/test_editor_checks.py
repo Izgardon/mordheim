@@ -93,7 +93,7 @@ class UsersAndWhoCanTests(EditorTestCase):
         self.assertTrue(offers[self.book_sword.id]["can_buy"])
         self.assertEqual(
             (offers[self.book_axe.id]["can_buy"], offers[self.book_axe.id]["reason"]),
-            (False, "Not usually available to Mercenaries."),
+            (False, "Not available for Mercenaries."),
         )
 
 

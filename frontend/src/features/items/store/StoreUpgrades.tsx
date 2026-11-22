@@ -9,8 +9,8 @@ import {
 } from "@/features/warbands/components/recruit/upgrade-draft";
 import type { TemplateUpgrade } from "@/features/warbands/types/hire-template-types";
 
-/** One he already has, or has only in the basket (buying it again links it twice). */
-const HAS_IT = "He has it already.";
+/** One they already have, or have only in the basket (buying it again links it twice). */
+const HAS_IT = "They have it already.";
 const IN_BASKET = "In the basket.";
 
 /**

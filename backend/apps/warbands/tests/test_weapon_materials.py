@@ -213,7 +213,7 @@ class MaterialWhoCanTests(RosterTestCase):
         obsidian = self._materials()["obsidian"]
 
         self.assertFalse(obsidian["can_take"])
-        self.assertIn("Not usually available to Sisters of Sigmar.", obsidian["reason"])
+        self.assertIn("Not available for Sisters of Sigmar.", obsidian["reason"])
 
     def test_a_warband_in_an_excluded_group_is_warned_too(self) -> None:
         dwarfs = WarbandType.objects.create(name="Dwarf Treasure Hunters", slug="dwarf-treasure-hunters")
@@ -237,6 +237,8 @@ class MaterialWhoCanTests(RosterTestCase):
         self.assertEqual(materials["gromril"]["price_note"], "4 x Price")
         self.assertEqual(materials["ithilmar"]["rarity"], 9)
         self.assertEqual(materials["silver"]["addition"], 60)
+        # whether its setting is in play, apart from who may take it: Their list leaves silver out (William, 22 Nov)
+        self.assertEqual([row["in_play"] for row in materials.values()], [True, True, False, False, False, False])
 
     def darksteel_template(self, slug: str, material: str, warband_type: WarbandType) -> None:
         """A book template serving the type, with a list line selling the material (as the Druchii's does)."""

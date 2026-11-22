@@ -41,17 +41,24 @@ function shown(material: WeaponMaterial, name: string, filters: MaterialFilters)
   return matchesSearchQuery(filters.query, name, material.name, "weapon");
 }
 
-/** His list's part: the material lines his lists sell, and the melee weapons those lists sell. */
-export type HisWeapons = { lines: HisMaterialLine[]; melee: StoreOffer[] };
+/**
+ * Their list's part: the material lines their lists sell, the melee weapons those lists sell, and
+ * whether the materials open to anyone show too (a hero's list, not a henchmen group's).
+ */
+export type HisWeapons = { lines: HisMaterialLine[]; melee: StoreOffer[]; open: boolean };
+
+/** On Their list a material from a setting not in play never shows (William, 22 Nov 2026). */
+const inPlay = (material: WeaponMaterial) => material.in_play !== false;
 
 /**
- * The material rows the store shows now, in the server's order. What I can buy hides one the
+ * The material rows the store shows now, in the server's order. Warband Only hides one the
  * warband isn't usually allowed, as it hides an item.
  *
- * On His list (`his`) the materials his lists sell show, as his list names them, each offering the
- * other melee weapons on that same list at the line's own price for them (the server's), never
- * every melee weapon in play; and after them the materials open to anyone (gromril and ithilmar,
- * which William's rule lets any unit use), offering his lists' melee weapons at their own price.
+ * On Their list (`his`) only materials whose setting is in play show: those their lists sell, as
+ * their list names them, each offering the other melee weapons on that same list at the line's own
+ * price for them (the server's), never every melee weapon in play; and, for a hero, the materials
+ * open to anyone (gromril and ithilmar, which William's rule lets any unit use), offering their
+ * lists' melee weapons at their own price.
  */
 export function materialRows(
   materials: WeaponMaterial[],
@@ -78,7 +85,7 @@ export function materialRows(
   const byId = new Map(offers.map((offer) => [offer.item.id, offer]));
   const sold = his.lines.flatMap((line) => {
     const material = materials.find((row) => row.slug === line.slug);
-    if (!material || !shown(material, line.name, filters)) return [];
+    if (!material || !inPlay(material) || !shown(material, line.name, filters)) return [];
     const weapons = line.choices.flatMap(({ itemId, price }) => {
       const offer = byId.get(itemId);
       return offer && allowed(material, itemId) ? [{ offer, price }] : [];
@@ -88,9 +95,10 @@ export function materialRows(
   const named = new Set(sold.map((row) => row.material.slug));
   const open = materials.flatMap((material) => {
     const name = material.row_name;
-    if (named.has(material.slug) || !material.for_everyone || !shown(material, name, filters)) {
+    if (!his.open || named.has(material.slug) || !material.for_everyone || !inPlay(material)) {
       return [];
     }
+    if (!shown(material, name, filters)) return [];
     return [
       {
         material,

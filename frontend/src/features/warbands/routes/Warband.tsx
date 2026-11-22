@@ -165,7 +165,6 @@ export default function Warband() {
         warband={warband}
         heroes={sheet.heroes}
         henchmenGroups={sheet.henchmenGroups}
-        hirelings={sheet.hirelings}
         units={units}
         canEdit={canEdit}
         canManageItems={capabilities.manage_items}

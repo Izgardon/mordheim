@@ -14,6 +14,7 @@ from apps.warbands.access_lines import (
     AccessLineSerializer,
     refuse_unknown_lines,
     unique_lines,
+    who_text,
 )
 
 from .materials import MATERIALS, WEAPON
@@ -95,6 +96,7 @@ class ItemAvailabilitySerializer(serializers.ModelSerializer):
     """A price row and who may buy it: `for_everyone` (minus the excluded lines), or the lines it names."""
 
     warbands = AccessLineSerializer(source="warband_links", many=True, read_only=True)
+    who_text = serializers.SerializerMethodField()
 
     class Meta:
         model = ItemAvailability
@@ -108,8 +110,13 @@ class ItemAvailabilitySerializer(serializers.ModelSerializer):
             "rarity",
             "for_everyone",
             "warbands",
+            "who_text",
             "note",
         )
+
+    def get_who_text(self, row: ItemAvailability) -> str:
+        """Who may buy the row in the server's words, when not everyone may (its lines read with it)."""
+        return who_text(row.for_everyone, row.warband_links.all())
 
 
 class BestiaryEntrySpecialSummarySerializer(serializers.Serializer):

@@ -38,22 +38,25 @@ export function itemFacts(item: Item, row: ItemAvailability | null) {
 /**
  * An item's rules as its Wargear card reads them: a beast's profile or a vehicle's statblock, each
  * rule (a shared one tagged "shared rule", the item's own unnamed one under the item's name) with
- * its summary and D6 tables, and a beast's specials.
+ * its summary and D6 tables; a beast's specials only when its item has no rules, since the item's
+ * are the same rules again (William, 22 Nov 2026: "I just need the top version").
  */
 export default function ItemRules({ item }: { item: Item }) {
   const beast = beastOf(item);
   const profile = beast?.has_profile ? beast : null;
   const table = profile ? null : statblockTable(item.statblock);
+  const rules = item.rules ?? [];
+  const specials = rules.length ? [] : (beast?.specials ?? []);
   return (
     <>
       {profile ? <ProfileStrip profile={profile} /> : null}
       {table ? <RuleTableView table={table} /> : null}
-      {item.rules?.length || beast?.specials?.length ? (
+      {rules.length || specials.length ? (
         <div className="flex flex-col gap-2.5">
-          {(item.rules ?? []).map((rule) => (
+          {rules.map((rule) => (
             <ItemRuleBlock key={rule.id} rule={rule} itemName={item.name} />
           ))}
-          {(beast?.specials ?? []).map((special) => (
+          {specials.map((special) => (
             <RuleBlock key={`special-${special.id}`} name={special.name}>
               {special.description}
             </RuleBlock>

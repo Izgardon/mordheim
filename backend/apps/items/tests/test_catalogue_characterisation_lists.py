@@ -225,6 +225,8 @@ class CatalogueMergeTests(CatalogueTestCase):
             (line["warband_group_id"], line["name"], line["excluded"], availability["for_everyone"]),
             (None, "Mercenaries", False, False),
         )
+        # who may buy it in the server's words, for the store's item details (William, 22 Nov 2026)
+        self.assertEqual(availability["who_text"], "For Mercenaries.")
 
     def test_type_and_search_filter_before_the_merge(self):
         make_entry(ITEMS, "Axe", campaign=self.campaign, type="Miscellaneous", subtype="")

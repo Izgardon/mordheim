@@ -186,7 +186,6 @@ export default function Wargear() {
           warband={warband}
           heroes={sheet.heroes}
           henchmenGroups={sheet.henchmenGroups}
-          hirelings={sheet.hirelings}
           canBuy={canBuy}
           opening={{ again: getting }}
         />

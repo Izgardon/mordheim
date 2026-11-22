@@ -45,7 +45,7 @@ const whoCan: WhoCan = {
   items: [],
   hired_swords: [
     { id: 17, can_hire: true, reason: "" },
-    { id: 18, can_hire: false, reason: "Not usually available to Reiklanders." },
+    { id: 18, can_hire: false, reason: "Not available for Reiklanders." },
   ],
   dramatis_personae: [{ id: 60, can_hire: true, reason: "" }],
   skill_group_ids: [],
@@ -115,7 +115,7 @@ describe("HireDrawer", () => {
 
     await user.click(screen.getByRole("switch", { name: "Show all" }));
     expect(names("Hired Swords")).toEqual(["Ogre Bodyguard", "Clan Skryre Rat Ogre"]);
-    expect(screen.getByText("Not usually available to Reiklanders.")).toBeInTheDocument();
+    expect(screen.getByText("Not available for Reiklanders.")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Dramatis Personae" }));
     expect(names("Dramatis Personae")).toEqual(["Bertha Bestraufrung"]);
@@ -129,7 +129,7 @@ describe("HireDrawer", () => {
     await user.click(screen.getByRole("button", { name: "Hire Clan Skryre Rat Ogre" }));
 
     const dialog = await screen.findByRole("dialog", { name: "Clan Skryre Rat Ogre" });
-    expect(within(dialog).getByText("Not usually available to Reiklanders.")).toBeInTheDocument();
+    expect(within(dialog).getByText("Not available for Reiklanders.")).toBeInTheDocument();
     await user.click(within(dialog).getByRole("button", { name: "Hire for 100 gc" }));
 
     await waitFor(() => expect(onHired).toHaveBeenCalledWith(77));
