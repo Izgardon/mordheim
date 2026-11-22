@@ -53,14 +53,15 @@ export default function WarbandSections(props: WarbandSectionsProps) {
               canEdit={canEdit}
               pricing={{ table: campaign?.wyrdstone_prices, band: warband.size_band ?? 0 }}
               onTreasury={() => show("Treasury")}
-            />
-            <WarbandRules
-              campaignId={campaignId}
-              warbandId={warbandId}
-              warbandName={warband.name}
-              rules={sheet.rules}
-              canEdit={canEdit}
-            />
+            >
+              <WarbandRules
+                campaignId={campaignId}
+                warbandId={warbandId}
+                warbandName={warband.name}
+                rules={sheet.rules}
+                canEdit={canEdit}
+              />
+            </WarbandInfo>
             <RosterSections
               warbandId={warbandId}
               campaign={campaign}

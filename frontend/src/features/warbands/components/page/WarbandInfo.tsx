@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { SalePricing } from "../../hooks/warband/useResourceSaleNumbers";
 import type {
   HenchmenGroup,
@@ -14,7 +15,8 @@ import { WARBAND_INFO } from "./warband-layout";
 /**
  * The top of the warband page's Roster tab (William, 20 Nov 2026): the info line (rating, gold,
  * units, record), then the resources, then its campaign points and plot while the campaign has
- * Plots on (`plot` left out: off), each a full-width section of its own.
+ * Plots on (`plot` left out: off), then what follows them (the warband rules), each a full-width
+ * section of its own spaced as the others are.
  */
 export default function WarbandInfo({
   campaignId,
@@ -28,6 +30,7 @@ export default function WarbandInfo({
   canEdit,
   pricing,
   onTreasury,
+  children,
 }: {
   campaignId: number;
   warband: Warband;
@@ -42,6 +45,8 @@ export default function WarbandInfo({
   pricing: SalePricing;
   /** Shows the Treasury tab (the Gold window's link). */
   onTreasury: () => void;
+  /** The sections after the plot (the warband rules), in this block's spacing. */
+  children?: ReactNode;
 }) {
   return (
     <div className={WARBAND_INFO}>
@@ -70,6 +75,7 @@ export default function WarbandInfo({
           canEdit={canEdit}
         />
       )}
+      {children}
     </div>
   );
 }
