@@ -50,3 +50,10 @@ export const itemStatsLine = (
   ]
     .filter(Boolean)
     .join(" · ");
+
+/**
+ * An item box's subtitle on a unit's card: its subtype ("Melee", "Shield", "Pet"), else its type,
+ * never its stats (William, 22 Nov 2026: the boxes "just need to show their Subtype").
+ */
+export const itemSubtype = (item: Pick<Item, "type" | "subtype">) =>
+  item.subtype?.trim() || item.type?.trim() || "";

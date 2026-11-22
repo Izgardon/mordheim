@@ -6,6 +6,8 @@ import { MemoryRouter } from "react-router-dom";
 import { screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
+import { skillGroup, spell } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
@@ -13,6 +15,8 @@ import { dagger, makeHero, makeItem, sword } from "@/test/warband-fixtures";
 import type { WarbandHireling } from "../../types/warband-types";
 
 import RosterSections from "./RosterSections";
+import UnitDetails from "./UnitDetails";
+import type { RosterUnit } from "./unit-view";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
@@ -350,5 +354,85 @@ describe("An open card's animals", () => {
     expect(within(panel).getByText("Cat Friend (Polecat)")).toBeInTheDocument();
     expect(within(panel).getByText(/Hates the warband's cats\./)).toBeInTheDocument();
     expect(within(panel).getByText("WS")).toBeInTheDocument();
+  });
+});
+
+describe("An open card's boxes", () => {
+  const aldric: RosterUnit = {
+    kind: "hero",
+    unit: makeHero({
+      id: 5,
+      name: "Aldric Voss",
+      available_skills: ["Combat"],
+      items: [
+        makeItem({ id: 101, name: "Sword", type: "Weapon", subtype: "Melee", strength: "As user" }),
+        makeItem({ id: 105, name: "Buckler", type: "Armour", subtype: "Shield", save: "6+" }),
+      ],
+      skills: [{ id: 7, name: "Strike to Injure", description: "" }],
+      spells: [spell({ id: 301, name: "Fires of U'Zhul", type: "Lesser Magic", dc: 7 })],
+      specials: [
+        { id: 2, name: "Old Battle Wound", type: "Injury", kind: "bane", category: "injury" },
+      ],
+    }),
+  };
+  const renderDetails = () =>
+    renderWithQueryClient(
+      <MemoryRouter>
+        <UnitDetails
+          entry={aldric}
+          campaign={{ id: 1 } as CampaignSummary}
+          canEdit
+          others={[]}
+          onXp={vi.fn()}
+          onMoveItem={vi.fn()}
+          onSellItem={vi.fn()}
+          onBuyAgain={vi.fn()}
+          onLoadout={vi.fn()}
+          campaignId={1}
+          warbandId={9}
+          onPick={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+  const box = (name: RegExp) => screen.getByRole("button", { name });
+
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /skill-groups/?campaign_id=1", [skillGroup({ id: 10, skill_ids: [7] })]);
+  });
+
+  // William, 22 Nov 2026: "they just need to show their Subtype not their other rules in their
+  // subtitles": an item's subtype, a skill's group, a spell's lore, a boon or bane's type
+  it("show what each is under its name, and nothing more", async () => {
+    renderDetails();
+
+    expect(box(/^Sword/)).toHaveTextContent(/^SwordMelee$/);
+    expect(box(/^Buckler/)).toHaveTextContent(/^BucklerShield$/);
+    expect(await screen.findByText("Combat")).toBeInTheDocument();
+    expect(box(/^Strike to Injure/)).toHaveTextContent(/^Strike to InjureCombat$/);
+    expect(box(/^Fires of U'Zhul/)).toHaveTextContent(/^Fires of U'ZhulLesser Magic$/);
+    expect(box(/^Old Battle Wound/)).toHaveTextContent(/^Old Battle WoundInjury$/);
+  });
+
+  it("keep the rest for the opened box", async () => {
+    const user = setupUser();
+    renderDetails();
+    await user.click(box(/^Fires of U'Zhul/));
+
+    expect(screen.getByText("Lesser Magic · Difficulty 7")).toBeInTheDocument();
+  });
+
+  // William, 22 Nov 2026: "max and min width half the space so 2 always fit on mobile, web they
+  // can be a normal size"
+  it("sit two abreast on a phone and keep their own size on the web", () => {
+    renderDetails();
+
+    for (const tile of [box(/^Sword/), box(/^Strike to Injure/), box(/^Add item/)])
+      expect(tile).toHaveClass(
+        "max-[960px]:w-[calc(50%-3px)]",
+        "max-[960px]:min-w-0",
+        "max-[960px]:max-w-none"
+      );
+    expect(box(/^Sword/)).toHaveClass("min-w-[118px]", "max-w-[200px]");
   });
 });
