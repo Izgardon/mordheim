@@ -105,6 +105,28 @@ def beast_abilities(row: Any) -> dict[str, list[dict[str, Any]]]:
     return found
 
 
+def beast_entry(row: Any) -> dict[str, Any] | None:
+    """An Animal item's beast as the catalogue's item payload gives it (`bestiary_entry`: its kind, its profile and its
+    specials), from a row read with `with_beasts`; None for any other item. Most beasts' rules are their specials, not
+    item rules, so a unit's card reads them here, switched on or not."""
+    beast = beast_of(row.item)
+    if beast is None:
+        return None
+    specials = beast_abilities(row)["specials"]
+    return {
+        **{name: getattr(beast, name) for name in ("id", "name", "kind", "has_profile", *STAT_FIELDS)},
+        "armour_save": beast.armour_save,
+        "specials": [
+            {"id": entry["id"], "name": entry["name"], "description": entry["description"]} for entry in specials
+        ],
+    }
+
+
+def beast_fields(row: Any) -> dict[str, Any]:
+    """A unit's copy's `beast_kind` and `bestiary_entry` (None for any item but an Animal one)."""
+    return {"beast_kind": beast_kind(row.item), "bestiary_entry": beast_entry(row)}
+
+
 def mount_payload(row: Any) -> dict[str, Any]:
     """What a unit payload says of its mount: the item row (to switch it off), the beast's Move and rating bonus, its
     profile when it has one (`movement` is None without) and its skills, specials and spells."""

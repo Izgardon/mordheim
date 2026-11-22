@@ -1,4 +1,5 @@
-import type { ItemRuleLink, RuleTable } from "../types/item-types";
+import type { Item, ItemRuleLink, RuleTable } from "../types/item-types";
+import { beastOf } from "./item-listing";
 
 const MARKER = /\{\{table:(\d+)\}\}/g;
 
@@ -41,3 +42,21 @@ export const plainRuleText = (rule: Pick<ItemRuleLink, "text" | "summary">) =>
     .replace(MARKER, "")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+
+/**
+ * An item's rules as lines of plain text (a unit's card, the battle sheet): its own and shared
+ * rules, then an Animal item's beast's specials, where most beasts keep their rules.
+ */
+export const itemRuleLines = (item: Pick<Item, "rules" | "type" | "bestiary_entry">) => [
+  ...(item.rules ?? []).map((rule) => ({ name: ruleName(rule), text: plainRuleText(rule) })),
+  ...(beastOf(item)?.specials ?? []).map((special) => ({
+    name: special.name,
+    text: special.description,
+  })),
+];
+
+/** An Animal item's beast's profile, when it has one (null for any other item). */
+export const beastProfile = (item: Pick<Item, "type" | "bestiary_entry">) => {
+  const beast = beastOf(item);
+  return beast?.has_profile ? beast : null;
+};

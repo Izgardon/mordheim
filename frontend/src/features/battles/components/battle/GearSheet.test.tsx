@@ -105,4 +105,59 @@ describe("the gear quick reference", () => {
     expect(screen.queryByText(/Blessed in the cathedral/)).toBeNull();
     expect(screen.queryByText("About")).toBeNull();
   });
+
+  // William, 22 Nov 2026: a beast's rules are its bestiary entry's specials, not item rules
+  it("reads out an animal's profile and its beast's specials", async () => {
+    const user = setupUser();
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(catalogueListKey(1, "items"), [
+      item({
+        id: 31,
+        name: "Polecat",
+        type: "Animal",
+        bestiary_entry: {
+          id: 4,
+          name: "Polecat",
+          kind: "pet",
+          has_profile: true,
+          movement: 6,
+          weapon_skill: 3,
+          ballistic_skill: 0,
+          strength: 2,
+          toughness: 2,
+          wounds: 1,
+          initiative: 4,
+          attacks: 1,
+          leadership: 4,
+          armour_save: null,
+          specials: [{ id: 8, name: "Cat Friend (Polecat)", description: "Hates cats." }],
+        },
+      }),
+    ]);
+    const owner = {
+      ...unit,
+      items: [{ id: 31, name: "Polecat", count: 1, singleUse: false }],
+      singleUseItems: [],
+    };
+    renderWithQueryClient(
+      <GearSheet
+        campaignId={1}
+        target={{ unit: owner as PrebattleUnit, tab: "gear" }}
+        canAct={false}
+        usedCount={() => 0}
+        busyKey={null}
+        onOpenChange={vi.fn()}
+        onUse={vi.fn()}
+        onUndoUse={vi.fn()}
+      />,
+      { queryClient }
+    );
+
+    await user.click(screen.getByRole("button", { name: /Polecat/ }));
+
+    expect(screen.getByText("Cat Friend (Polecat)")).toBeInTheDocument();
+    expect(screen.getByText(/Hates cats\./)).toBeInTheDocument();
+    expect(screen.getByText("WS")).toBeInTheDocument();
+    expect(screen.queryByText("No rules written down.")).toBeNull();
+  });
 });

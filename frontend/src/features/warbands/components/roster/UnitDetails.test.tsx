@@ -290,3 +290,65 @@ describe("An open card's items", () => {
     expect(screen.queryByText(/Blessed in the cathedral/)).toBeNull();
   });
 });
+
+describe("An open card's animals", () => {
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /warbands/9/template/", {
+      template: null,
+      variant: "",
+      list_prices_open: true,
+    });
+  });
+
+  // William, 22 Nov 2026: "Polecat doesn't show details on unit card when clicked": most beasts'
+  // rules are their bestiary entry's specials, not item rules
+  it("opens to the beast's profile and specials", async () => {
+    const beast = {
+      id: 4,
+      name: "Polecat",
+      kind: "pet" as const,
+      has_profile: true,
+      movement: 6,
+      weapon_skill: 3,
+      ballistic_skill: 0,
+      strength: 2,
+      toughness: 2,
+      wounds: 1,
+      initiative: 4,
+      attacks: 1,
+      leadership: 4,
+      armour_save: null,
+      specials: [{ id: 8, name: "Cat Friend (Polecat)", description: "Hates the warband's cats." }],
+    };
+    const polecat = makeItem({ id: 104, name: "Polecat", type: "Animal", bestiary_entry: beast });
+    renderWithQueryClient(
+      <MemoryRouter initialEntries={["/campaigns/1/warband"]}>
+        <RosterSections
+          warbandId={9}
+          campaign={null}
+          heroes={[makeHero({ id: 5, name: "Konrad Adler", items: [polecat] })]}
+          henchmenGroups={[]}
+          hirelings={[]}
+          canEdit={false}
+          canCreateRace={false}
+          onLoadout={vi.fn()}
+          onHire={vi.fn()}
+          onAdvance={vi.fn()}
+          onBuyAgain={vi.fn()}
+          renderEdit={() => null}
+        />
+      </MemoryRouter>
+    );
+    const user = setupUser();
+    await user.click(screen.getByRole("button", { name: "Open Konrad Adler" }));
+    await user.click(screen.getByRole("button", { name: /^Polecat/ }));
+
+    const panel = screen
+      .getByRole("button", { name: "Close rules" })
+      .closest(".bg-panel") as HTMLElement;
+    expect(within(panel).getByText("Cat Friend (Polecat)")).toBeInTheDocument();
+    expect(within(panel).getByText(/Hates the warband's cats\./)).toBeInTheDocument();
+    expect(within(panel).getByText("WS")).toBeInTheDocument();
+  });
+});
