@@ -7,6 +7,7 @@ from apps.warbands.models import Warband, WarbandResource, WarbandRule
 from apps.warbands.models.warband import MAX_RULE_TEXT
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.prices import sale_price
+from apps.warbands.services.rating_breakdown import rating_breakdown
 from apps.warbands.services.resources import MAX_AMOUNT
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.companions import beast_kind
@@ -77,6 +78,9 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
     resources = serializers.SerializerMethodField()
     rating = serializers.SerializerMethodField()
     mounts_rating = serializers.SerializerMethodField()  # the mounts' part of the rating (bestiary rewrite step 5)
+    rating_breakdown = (
+        serializers.SerializerMethodField()
+    )  # each unit's part of it and its level (the header's windows)
     gold = serializers.SerializerMethodField()
     heroes = serializers.SerializerMethodField()
     hirelings = serializers.SerializerMethodField()
@@ -113,6 +117,9 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
     def get_rating(self, obj):
         return self._units(obj).rating
 
+    def get_rating_breakdown(self, obj) -> list[dict[str, Any]]:
+        return rating_breakdown(self._units(obj), getattr(obj.campaign, "settings", None))
+
     def get_heroes(self, obj):
         return WarbandUnitSummarySerializer(self._units(obj).heroes, many=True).data
 
@@ -148,6 +155,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
             "resources",
             "rating",
             "mounts_rating",
+            "rating_breakdown",
             "gold",
             "heroes",
             "hirelings",

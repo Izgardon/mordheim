@@ -27,6 +27,7 @@ export default function WarbandInfo({
   setBreakdownOpen,
   canEdit,
   pricing,
+  onTreasury,
 }: {
   campaignId: number;
   warband: Warband;
@@ -39,16 +40,20 @@ export default function WarbandInfo({
   setBreakdownOpen: (open: boolean) => void;
   canEdit: boolean;
   pricing: SalePricing;
+  /** Shows the Treasury tab (the Gold window's link). */
+  onTreasury: () => void;
 }) {
   return (
     <div className={WARBAND_INFO}>
       <WarbandStats
+        campaignId={campaignId}
         warband={warband}
         heroes={heroes}
         hirelings={hirelings}
         henchmenGroups={henchmenGroups}
         breakdownOpen={breakdownOpen}
         setBreakdownOpen={setBreakdownOpen}
+        onTreasury={onTreasury}
       />
       <WarbandResources
         warbandId={warband.id}

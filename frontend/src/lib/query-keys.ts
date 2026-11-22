@@ -169,6 +169,9 @@ export const queryKeys = {
     warbandStash: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "stash"] as const,
     /** The warband's ledger, as the Treasury tab lists it. */
+    /** Its last ten ended battles (the header's Record window). */
+    warbandRecord: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "record"] as const,
     warbandTreasury: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "treasury"] as const,
     /** The warband's log entries, as the Logs tab lists them. */

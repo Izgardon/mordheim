@@ -13,6 +13,7 @@ from .ledger import (
     WarbandTradeListCreateView,
 )
 from .purchases import WarbandPurchaseView, WarbandRarityRollView
+from .record import WarbandRecordView
 from .rules import WarbandRuleDetailView, WarbandRuleFromTemplateView, WarbandRuleListCreateView
 from .sheet import WarbandSheetView
 from .types import CampaignWarbandTypesView
@@ -27,6 +28,7 @@ __all__ = [
     "CampaignWarbandTypesView",
     "WarbandGroupListView",
     "WarbandWhoCanView",
+    "WarbandRecordView",
     "WarbandBeastRecruitView",
     "WarbandDetailView",
     "WarbandListCreateView",

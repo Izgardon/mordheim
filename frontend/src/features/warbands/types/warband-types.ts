@@ -70,6 +70,7 @@ export type Warband = {
   rating?: number;
   /** The mounts' part of `rating`, from the summary. */
   mounts_rating?: number;
+  rating_breakdown?: RatingRow[];
   gold?: number;
   max_units?: number | null;
   /** Its template's variant (the templates plan, phase 2): its type's preset, else picked when raising. */
@@ -112,11 +113,41 @@ export type WarbandRosterCounts = {
   max_hired_swords?: number;
 };
 
+/**
+ * One unit's part of the rating, the server's (the header's Rating and Units windows): its
+ * models times `per_model` (5, 20 if large, or a hired sword's rating) plus its XP each, plus its
+ * mounts; a unit missing games adds nothing. `level` is the XP thresholds it has reached.
+ */
+export type RatingRow = {
+  kind: "hero" | "henchmen_group" | "hired_sword" | "dramatis_persona";
+  id: number;
+  name: string;
+  unit_type: string;
+  models: number;
+  per_model: number;
+  xp: number;
+  mounts: number;
+  total: number;
+  missing: boolean;
+  level: number;
+};
+
+/** A battle on a warband's record (`GET warbands/<id>/record/`), newest first. */
+export type WarbandRecordBattle = {
+  id: number;
+  number: number | null;
+  scenario: string;
+  date: string;
+  result: "won" | "lost" | "no_winner";
+  opponents: { id: number; name: string; won: boolean }[];
+};
+
 export type WarbandUnitsSummary = WarbandRosterCounts & {
   resources?: WarbandResource[];
   rating?: number;
   /** The mounts' part of `rating`, from the summary. */
   mounts_rating?: number;
+  rating_breakdown?: RatingRow[];
   gold?: number;
   heroes?: WarbandHero[];
   hirelings?: WarbandHireling[];
