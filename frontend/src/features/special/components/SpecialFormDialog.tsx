@@ -36,7 +36,7 @@ const CATEGORIES: [SpecialCategory, string][] = [
   ["injury", "Injury"],
   ["mutation", "Mutation"],
   ["aura", "Aura"],
-  ["body", "Body"],
+  ["body", "Physical"],
 ];
 
 /** Boons & Banes' Add new, and its Edit (Revert, Delete): a boon, bane or trait. */

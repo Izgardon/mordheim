@@ -1,6 +1,6 @@
 """What a special is (William, 4-5 Nov 2026), which picks its icon: an injury (the serious injury results), a mutation
 (Great Claw, Tentacle, Daemon Soul, every family's), an aura (mental, leadership, fear, magic, marks and the like; the
-default) or the body (Large, a Troll's Regeneration, a Kroxigor's Scaly Skin, Hard to Kill, the animals' rules). Its
+default) or the body, shown as Physical (William, 22 Nov 2026) (Large, a Troll's Regeneration, a Kroxigor's Scaly Skin, Hard to Kill, the animals' rules). Its
 Boons & Banes kind colours the icon.
 
 The book's are set by `book_category`, which every seeder of a book special calls (seed_spells_and_special, the
@@ -16,7 +16,7 @@ from pathlib import Path
 from .kinds import INJURY as INJURY_TYPE
 
 INJURY, MUTATION, AURA, BODY = "injury", "mutation", "aura", "body"
-CATEGORY_CHOICES = ((INJURY, "Injury"), (MUTATION, "Mutation"), (AURA, "Aura"), (BODY, "Body"))
+CATEGORY_CHOICES = ((INJURY, "Injury"), (MUTATION, "Mutation"), (AURA, "Aura"), (BODY, "Physical"))
 CATEGORIES_PATH = Path(__file__).resolve().parent / "data" / "special-categories.json"
 SHARED_PATH = Path(__file__).resolve().parent / "data" / "shared-specials.json"
 

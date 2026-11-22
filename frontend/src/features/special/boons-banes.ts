@@ -23,7 +23,7 @@ export const CATEGORY_FILTERS: { id: CategoryFilter; label: string }[] = [
   { id: "injury", label: "Injury" },
   { id: "mutation", label: "Mutation" },
   { id: "aura", label: "Aura" },
-  { id: "body", label: "Body" },
+  { id: "body", label: "Physical" },
 ];
 
 /** A special's category, an aura when it has none (as the server's default is). */

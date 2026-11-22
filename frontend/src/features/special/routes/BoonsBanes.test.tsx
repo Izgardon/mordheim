@@ -156,6 +156,9 @@ describe("The Boons & Banes page", () => {
     expect(within(categories).getByRole("button", { name: /Mutation/ })).toHaveTextContent(
       "Mutation1"
     );
+    // William, 22 Nov 2026: "rename the body type to Physical everywhere for boons and banes"
+    expect(within(categories).getByRole("button", { name: /Physical/ })).toBeInTheDocument();
+    expect(within(categories).queryByRole("button", { name: /Body/ })).toBeNull();
     await user.click(within(categories).getByRole("button", { name: /Injury/ }));
     expect(names()).toEqual(["Old Battle WoundInjury"]);
     // one setting in play: no Setting filter
@@ -240,7 +243,7 @@ describe("Adding a boon or bane", () => {
 
     await user.type(within(form).getByLabelText("Name"), "Iron Will");
     await user.click(within(form).getByRole("button", { name: "Boon" }));
-    await user.click(within(form).getByRole("button", { name: /Body/ }));
+    await user.click(within(form).getByRole("button", { name: /Physical/ }));
     await user.type(within(form).getByLabelText("Price (gc)"), "20");
     await user.type(within(form).getByLabelText("Description"), "Never flees.");
     // the list read again after the save holds it

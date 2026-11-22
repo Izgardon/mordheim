@@ -18,7 +18,7 @@ const CATEGORIES: { value: SpecialCategory; label: string }[] = [
   { value: "injury", label: "Injury" },
   { value: "mutation", label: "Mutation" },
   { value: "aura", label: "Aura" },
-  { value: "body", label: "Body" },
+  { value: "body", label: "Physical" },
 ];
 
 const SELECT = "h-9 border border-strong bg-page px-2 text-sm text-ink";

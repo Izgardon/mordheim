@@ -26,7 +26,7 @@ const SPECIAL_CATEGORIES: [SpecialCategory, string][] = [
   ["injury", "Injury"],
   ["mutation", "Mutation"],
   ["aura", "Aura"],
-  ["body", "Body"],
+  ["body", "Physical"],
 ];
 
 /** The new rule's category, each with its icon in the kind picked. */
