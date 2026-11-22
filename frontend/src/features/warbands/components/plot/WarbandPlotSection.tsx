@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronDown, Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { IconButton } from "@/components/ui/icon-button";
-import { Input } from "@/components/ui/input";
 import { PlotTrack } from "@/components/ui/plot-track";
 import { getErrorMessage } from "@/lib/get-error-message";
 
@@ -14,9 +13,9 @@ import PlotDetailsDialog from "./PlotDetailsDialog";
 
 /**
  * Campaign points and the plot the warband follows (apps/plots), shown while the campaign has
- * Plots on. Collapsed it is one line, as a resource reads: the plot's name, the total with − and +
- * (and typed in, the player's own number either way — nothing here computes, adds to or takes from
- * it), and the arrow that opens the rest. Open, it shows Plot Details (the plot's own plan, read
+ * Plots on. Collapsed it is one line, as a resource reads (William, 22 Nov 2026): the plot's
+ * name, the total as a resource shows its amount with − and + (the player's own number: nothing
+ * here computes, adds to or takes from it), and the arrow that opens the rest. Open, it shows Plot Details (the plot's own plan, read
  * only) and the track. The plot is picked in warband Settings only (William, 22 Nov 2026).
  *
  * Only the rungs the total has reached are warband rules (`warbands/services/plot_rules.py`); the
@@ -37,15 +36,12 @@ export default function WarbandPlotSection({
   canEdit: boolean;
 }) {
   const save = useWarbandPlot(campaignId, warbandId);
-  const [typed, setTyped] = useState(String(total));
-  useEffect(() => setTyped(String(total)), [total]);
   const [open, setOpen] = useState(false);
   const [details, setDetails] = useState(false);
   const onError = (error: unknown) => toast.error(getErrorMessage(error, "Couldn't save that."));
 
   const write = (next: number) => {
     const points = Math.max(0, Math.trunc(next || 0));
-    setTyped(String(points));
     if (points !== total) save.mutate({ campaign_points: points }, { onError });
   };
 
@@ -66,24 +62,9 @@ export default function WarbandPlotSection({
               <Minus aria-hidden="true" />
             </IconButton>
           ) : null}
-          {canEdit ? (
-            <Input
-              type="number"
-              inputMode="numeric"
-              min={0}
-              max={999}
-              aria-label="Campaign points"
-              className="h-9 w-16 text-center font-mono md:h-9"
-              value={typed}
-              onChange={(event) => setTyped(event.target.value)}
-              onBlur={() => write(Number(typed))}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") event.currentTarget.blur();
-              }}
-            />
-          ) : (
-            <span className="font-display text-2xl font-semibold text-head">{total}</span>
-          )}
+          <span className="min-w-[26px] text-center font-display text-2xl font-semibold text-head">
+            {total}
+          </span>
           {canEdit ? (
             <IconButton
               aria-label="One campaign point more"

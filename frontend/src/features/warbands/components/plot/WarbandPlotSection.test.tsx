@@ -1,6 +1,6 @@
 /**
  * Campaign points on the warband page (William, 20 Nov 2026): collapsed, the section is the plot's
- * name, the total with − and + (and typed, as every number in the app can be) and the arrow that
+ * name, the total shown as a resource's amount with − and + (William, 22 Nov 2026) and the arrow that
  * opens the rest — no plot to edit, nothing about it. Open, it shows Plot details and the track from
  * that plot's ladder; the plot itself is picked in warband Settings only (William, 22 Nov 2026). A
  * viewer reads it and changes nothing.
@@ -59,25 +59,11 @@ describe("the warband's campaign points", () => {
 
     const section = screen.getByRole("region", { name: "Campaign points" });
     expect(within(section).getByText("Drowning the Witch")).toBeVisible();
-    expect(within(section).getByRole("spinbutton", { name: "Campaign points" })).toHaveValue(7);
+    expect(within(section).getByText("7")).toBeVisible();
+    expect(within(section).queryByRole("spinbutton")).toBeNull(); // a number, as a resource shows
     expect(within(section).queryByRole("button", { name: "Plot details" })).toBeNull();
     expect(within(section).queryByRole("img")).toBeNull();
     expect(within(section).queryByRole("button", { name: /^Plot:/ })).toBeNull();
-  });
-
-  it("sends the total typed, and nothing when it hasn't changed", async () => {
-    const user = setupUser();
-    show();
-
-    const box = screen.getByRole("spinbutton", { name: "Campaign points" });
-    await user.type(box, "{Enter}"); // Enter leaves the box, which sends what changed
-    expect(fakeApi.countOf("PATCH /warbands/9/")).toBe(0);
-
-    await user.clear(box);
-    await user.type(box, "12{Enter}");
-
-    expect(fakeApi.bodyOf("PATCH /warbands/9/")).toEqual({ campaign_points: 12 });
-    expect(fakeApi.countOf("PATCH /warbands/9/")).toBe(1);
   });
 
   it("adds and takes away one with − and +", async () => {
@@ -145,7 +131,7 @@ describe("the warband's campaign points", () => {
     show({ canEdit: false });
 
     expect(screen.getByText("Drowning the Witch")).toBeVisible();
-    expect(screen.queryByRole("spinbutton", { name: "Campaign points" })).toBeNull();
+    expect(screen.getByText("7")).toBeVisible();
     expect(screen.queryByRole("button", { name: "One campaign point more" })).toBeNull();
     await open(user);
 
