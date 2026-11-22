@@ -100,6 +100,9 @@ export default function StorePanel(props: StorePanelProps) {
     <SidePanel
       open={props.open}
       onOpenChange={props.onOpenChange}
+      // on a phone the sheet stays full height whatever a search leaves in the list, so the basket
+      // doesn't jump up and down as the player types (William, 22 Nov 2026)
+      className="max-[960px]:h-[calc(100dvh-env(safe-area-inset-top,0px))]"
       kicker={
         opening.forUnit
           ? `Buying for ${opening.forUnit.name}`
