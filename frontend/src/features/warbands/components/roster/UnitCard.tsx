@@ -9,7 +9,7 @@ import type { CampaignSummary } from "@/features/campaigns/types/campaign-types"
 import { cn } from "@/lib/utils";
 
 import { useItemLabel } from "../../hooks/units/useItemLabel";
-import UnitBadges, { UnitTradingAction } from "./UnitBadges";
+import UnitBadges, { hasBadges, UnitTradingAction } from "./UnitBadges";
 import UnitKills from "./UnitKills";
 import UnitLines from "./UnitLines";
 import UnitProfile from "./UnitProfile";
@@ -195,7 +195,8 @@ export default function UnitCard(props: UnitCardProps) {
           entry={entry}
           canEdit={canEdit}
           onTradingAction={props.onTradingAction}
-          start={badgesAt === "trading" ? badges : null}
+          open={open}
+          start={badgesAt === "trading" && (open || hasBadges(entry, campaign)) ? badges : null}
         />
         {members.length ? (
           <div className="flex flex-wrap items-center justify-between gap-1.5">

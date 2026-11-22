@@ -223,7 +223,7 @@ describe("A card's top row", () => {
   // the head is his name's (William, 22 Nov 2026: "name and type deserve more width"): a hero's
   // badges sit opposite his trading action, on its row
   it("puts a hero's badges opposite his trading action, out of the head", () => {
-    renderCard(mounted);
+    renderCard(mounted, true);
     const row = screen.getByRole("switch", { name: /Trading action/ }).closest("div.flex");
 
     expect(row?.firstElementChild).toContainElement(
@@ -231,6 +231,22 @@ describe("A card's top row", () => {
     );
     expect(row?.firstElementChild).toContainElement(screen.getByText(/^Missing/));
     expect(row?.firstElementChild).not.toContainElement(screen.getByRole("switch"));
+  });
+
+  // William, 22 Nov 2026: "Hide trading action on simple unit card too, already shows where it
+  // matters"
+  it("leaves the trading action off a closed card, keeping his badges under the head", () => {
+    renderCard(mounted);
+
+    expect(screen.queryByRole("switch", { name: /Trading action/ })).toBeNull();
+    expect(screen.getByRole("button", { name: "On foot" })).toBeInTheDocument();
+  });
+
+  it("leaves out the line under a closed hero's head when he has no badges", () => {
+    const { container } = renderCard({ kind: "hero", unit: makeHero({ trading_action: true }) });
+
+    expect(screen.queryByRole("switch")).toBeNull();
+    expect(container.querySelector("article > div > div.justify-between")).toBeNull();
   });
 
   it("puts a hero's kills opposite his trading action when open", () => {

@@ -57,35 +57,51 @@ export default function UnitBadges({
   );
 }
 
+/** Whether the unit has a badge to show: a mount, Missing or a blood pact. */
+export function hasBadges(entry: RosterUnit, campaign: CampaignSummary | null) {
+  const { unit } = entry;
+  return Boolean(
+    unit.mounts?.length ||
+      unit.missing_games ||
+      (campaign?.enable_blood_pacts && entry.kind === "hireling" && entry.unit.blood_pacted)
+  );
+}
+
 /**
  * A hero's trading action, off the badge row and on a line of its own under the head (William, 12
  * Nov 2026: "trading actions are especially space-consuming"); `start` sits opposite it (his
- * badges and the open card's kills).
+ * badges and the open card's kills). Shown on an open card only (William, 22 Nov 2026: "Hide trading
+ * action on simple unit card too, already shows where it matters"): closed, the line holds his
+ * badges, and is left out when he has none.
  */
 export function UnitTradingAction({
   entry,
   canEdit,
   onTradingAction,
   start,
+  open,
 }: {
   entry: RosterUnit;
   canEdit: boolean;
+  open: boolean;
   onTradingAction?: (on: boolean) => void;
   start?: ReactNode;
 }) {
-  if (entry.kind !== "hero") return null;
+  if (entry.kind !== "hero" || (!open && !start)) return null;
   return (
     <div className="flex items-center justify-between gap-2">
       <div className="flex min-w-0 flex-wrap items-center gap-1.5">{start}</div>
-      <Switch
-        look="plain"
-        className="min-h-[30px] text-xs"
-        checked={Boolean(entry.unit.trading_action)}
-        disabled={!canEdit || !onTradingAction}
-        onCheckedChange={(on) => onTradingAction?.(on)}
-      >
-        Trading action
-      </Switch>
+      {open ? (
+        <Switch
+          look="plain"
+          className="min-h-[30px] text-xs"
+          checked={Boolean(entry.unit.trading_action)}
+          disabled={!canEdit || !onTradingAction}
+          onCheckedChange={(on) => onTradingAction?.(on)}
+        >
+          Trading action
+        </Switch>
+      ) : null}
     </div>
   );
 }
