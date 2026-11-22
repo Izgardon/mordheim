@@ -11,7 +11,7 @@ export function itemKind(item: Pick<Item, "type" | "subtype" | "beast_kind">): I
     if (subtype.includes("ranged") || subtype.includes("missile")) return "missile";
     return "melee";
   }
-  if (type === "armour") return "armour";
+  if (type === "armour") return subtype === "shield" ? "shield" : "armour";
   if (type === "animal" || item.beast_kind) return "animal";
   if (/poison|drug|consumable|ammunition/.test(subtype)) return "consumable";
   if (subtype.includes("trade")) return "trade";
@@ -23,6 +23,7 @@ export const ITEM_KIND_LABEL: Record<ItemKind, string> = {
   missile: "Ranged weapon",
   blackpowder: "Blackpowder",
   armour: "Armour",
+  shield: "Shield",
   animal: "Animal",
   consumable: "Consumable",
   trade: "Trade good",

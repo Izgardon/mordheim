@@ -18,6 +18,7 @@ import {
   GiMuscleUp,
   GiPocketBow,
   GiPotionBall,
+  GiRoundShield,
   GiRuneStone,
   GiScrollUnfurled,
   GiShop,
@@ -73,6 +74,7 @@ export type ItemKind =
   | "missile"
   | "blackpowder"
   | "armour"
+  | "shield"
   | "animal"
   | "consumable"
   | "trade"
@@ -83,6 +85,7 @@ export const ITEM_KIND_ICONS: Record<ItemKind, IconType> = {
   missile: GiPocketBow,
   blackpowder: GiBlunderbuss,
   armour: GiBreastplate,
+  shield: GiRoundShield, // a shield's own (William, 22 Nov 2026: "subtype shields should have a shield icon")
   animal: GiHorseHead,
   consumable: GiPotionBall,
   trade: GiTrade,
