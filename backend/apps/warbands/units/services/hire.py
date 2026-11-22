@@ -2,7 +2,8 @@
 
 The server copies the campaign's current entry (its version of a book entry, CAT-TWEAK-03) onto the warband as a new
 hireling that keeps no link back: everything but the description (fluff), with both fees, and the skills, specials
-and spells as the campaign's current entries. The kit becomes one item row per copy (the Ogre's two swords are two
+and spells as the campaign's current entries; a Wizard or Priest whose profile lists no spell starts with one to pick
+(`pending_spells`, William, 22 Nov 2026: "start with a free spell"). The kit becomes one item row per copy (the Ogre's two swords are two
 rows) with no cost, since the fee includes it. A dramatis persona also takes the Hero injury table, no level-ups, how
 long it stays and what it is paid in. A hand-typed hire (`custom`) is the name, type and fees sent.
 
@@ -55,6 +56,7 @@ COPIED = (  # with the nine characteristics, written values as written (stat_inp
     "upkeep_fee",
 )
 PERSONA = {"injury_table": "hero", "no_level_ups": True}  # what a dramatis persona's kind brings
+CASTERS = ("Wizard", "Priest")
 
 
 @dataclass
@@ -193,6 +195,14 @@ def _kit(unit: Hireling, entry: Any, campaign_id: int) -> bool:
     return mount is not None
 
 
+def _first_spell(unit: Hireling, entry: Any) -> None:
+    """A Wizard or Priest hired knowing no spell picks one from his card, free (William, 22 Nov 2026: "when hired
+    with a lore (wizard or priest) ... they start with a free spell"); his profile's spells, where it lists them, are
+    the ones he knows. One query, only for such a caster."""
+    if entry.caster in CASTERS and not unit.pending_spells and not entry.spell_links.all():
+        Hireling.objects.filter(pk=unit.pk).update(pending_spells=1)
+
+
 def hire(warband: Warband, writer: Any, source: str, entry: Any, terms: HireTerms) -> Hired:
     """Recruit the validated hireling (`writer`, from `hire_payload` or `custom_payload`) with the entry's kit (none
     for a custom hire), paying `terms`, in one transaction."""
@@ -208,6 +218,8 @@ def hire(warband: Warband, writer: Any, source: str, entry: Any, terms: HireTerm
         settled = f"Paid: {terms.settled}" if terms.settled else ""
         sent = {**writer.initial_data, "paid": " ".join(part for part in (payment.note, settled) if part)}
         unit: Hireling = recruit(HIRELING, warband, writer, sent=sent, locked=True)  # type: ignore[assignment]
+        if entry is not None:
+            _first_spell(unit, entry)
         warnings += payment.warnings
         if entry is not None and _kit(unit, entry, warband.campaign_id):
             warnings += unit_warnings(HIRELING, warband, unit)

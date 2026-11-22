@@ -65,6 +65,18 @@ class HireCopyTests(HireTestCase):
         self.assertIn(body["deeds"], (None, ""))  # the description is fluff: never copied
         self.assertEqual(body["warnings"], [])
 
+    def test_a_caster_hired_knowing_no_spell_starts_with_one_to_pick(self):
+        # William, 22 Nov 2026: "hired swords when hired with a lore (wizard or priest) ... start with a free spell"
+        HiredSword.objects.filter(id=self.ogre.id).update(caster="Priest")
+        self.assertEqual(self.hire().data["pending_spells"], 1)
+        # one whose profile lists the spells he knows has them, and nothing more to pick
+        self.ogre.spell_links.create(spell=self.spells[0])
+        self.assertEqual(self.hire(name="Second").data["pending_spells"], 0)
+        # and one who casts nothing picks nothing
+        HiredSword.objects.filter(id=self.ogre.id).update(caster="No")
+        self.ogre.spell_links.all().delete()
+        self.assertEqual(self.hire(name="Third").data["pending_spells"], 0)
+
     def test_the_hire_is_recorded_in_the_ledger_and_the_log(self):
         self.hire(name="Grukk")
 
