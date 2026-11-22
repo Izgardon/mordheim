@@ -6,6 +6,7 @@ import { IconButton } from "@/components/ui/icon-button";
 
 import type { WarbandRule } from "../../types/warband-types";
 import { SECTION_TITLE } from "../page/warband-layout";
+import AddRuleDialog from "./AddRuleDialog";
 import WarbandRulesDialog, { type RulesOpening } from "./WarbandRulesDialog";
 
 /** Whether the pills' one line holds them all, measured whenever the rules or the width change. */
@@ -28,8 +29,8 @@ function useOverflows(rules: WarbandRule[]) {
 /**
  * The warband's own rules on its sheet, laid out as Resources is (William, 22 Nov 2026): the
  * section's title with Add rule across from it, then one line of the rules' pills, an arrow
- * showing the rest when they don't all fit. A pill opens the modal at its rule. Left out for a
- * viewer when there are none.
+ * showing the rest when they don't all fit. A pill opens the modal at its rule; Add rule opens a
+ * form of its own (AddRuleDialog). Left out for a viewer when there are none.
  */
 export default function WarbandRules({
   campaignId,
@@ -48,6 +49,7 @@ export default function WarbandRules({
 }) {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [adding, setAdding] = useState(false);
   const editable = canEdit && warbandId !== undefined;
   const [opening, setOpening] = useState<RulesOpening>({});
   const { line, overflows } = useOverflows(rules);
@@ -65,7 +67,7 @@ export default function WarbandRules({
         {editable ? (
           <button
             type="button"
-            onClick={() => show({ adding: true })}
+            onClick={() => setAdding(true)}
             className="min-h-8 border border-dashed border-strong px-2.5 text-xs font-bold text-accent-text"
           >
             Add rule
@@ -110,6 +112,15 @@ export default function WarbandRules({
         rules={rules}
         canEdit={editable}
       />
+      {editable && warbandId !== undefined ? (
+        <AddRuleDialog
+          open={adding}
+          onOpenChange={setAdding}
+          campaignId={campaignId}
+          warbandId={warbandId}
+          warbandName={warbandName}
+        />
+      ) : null}
     </section>
   );
 }

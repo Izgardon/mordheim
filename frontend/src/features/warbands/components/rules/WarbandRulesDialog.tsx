@@ -7,22 +7,23 @@ import { ModalSheet } from "@/components/ui/modal-sheet";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 
-import { useRuleCreate, useRuleDelete, useRuleUpdate } from "../../api/rule-queries";
+import { useRuleDelete, useRuleUpdate } from "../../api/rule-queries";
 import type { WarbandRule } from "../../types/warband-types";
 import AddTemplateRules from "./AddTemplateRules";
 import RuleForm from "./RuleForm";
 
-/** Where the modal opens: at one rule (its pill), on the add form, or at the top. */
-export type RulesOpening = { ruleId?: number; adding?: boolean };
+/** Where the modal opens: at one rule (its pill), or at the top. */
+export type RulesOpening = { ruleId?: number };
 
-type Editing = { kind: "add" } | { kind: "edit"; rule: WarbandRule } | null;
+type Editing = { kind: "edit"; rule: WarbandRule } | null;
 
 const scrollTo = (node: HTMLElement | null) => node?.scrollIntoView?.({ block: "nearest" });
 
 /**
  * The warband's rules in one modal (a bottom sheet on a phone): every rule's title and
- * description, the one its pill opened at picked out. The warband's editors add, edit and delete
- * them here, and with a campaign given, Add the template's rules copies the missing ones.
+ * description, the one its pill opened at picked out. The warband's editors edit and delete them
+ * here (adding is the section's Add rule, a form of its own), and with a campaign given, Add the
+ * template's rules copies the missing ones.
  */
 export default function WarbandRulesDialog({
   open,
@@ -44,7 +45,6 @@ export default function WarbandRulesDialog({
   rules: WarbandRule[];
   canEdit: boolean;
 }) {
-  const create = useRuleCreate(warbandId ?? 0); // none: read only (canEdit is off)
   const update = useRuleUpdate(warbandId ?? 0);
   const remove = useRuleDelete(warbandId ?? 0);
   const [editing, setEditing] = useState<Editing>(null);
@@ -52,8 +52,8 @@ export default function WarbandRulesDialog({
   const done = { onSuccess: () => setEditing(null), onError };
 
   useEffect(() => {
-    if (open) setEditing(opening.adding && canEdit ? { kind: "add" } : null);
-  }, [open, opening, canEdit]);
+    if (open) setEditing(null);
+  }, [open, opening]);
 
   return (
     <ModalSheet
@@ -108,19 +108,8 @@ export default function WarbandRulesDialog({
           )
         )}
       </div>
-      {canEdit && editing?.kind === "add" ? (
-        <RuleForm
-          label="Add a rule"
-          initial={{ title: "", description: "" }}
-          submitLabel="Add rule"
-          pending={create.isPending}
-          onSubmit={(payload) => create.mutate(payload, done)}
-          onCancel={() => setEditing(null)}
-        />
-      ) : null}
-      {/* Add rule is on the sheet's section (William, 22 Nov 2026); the template's rules stay here,
-          beside the new rule's form too, so a warband with none still reaches them */}
-      {canEdit && editing?.kind !== "edit" && campaignId && warbandId ? (
+      {/* Add rule is the section's own form (William, 22 Nov 2026); the template's rules stay here */}
+      {canEdit && !editing && campaignId && warbandId ? (
         <AddTemplateRules campaignId={campaignId} warbandId={warbandId} open={open} />
       ) : null}
     </ModalSheet>

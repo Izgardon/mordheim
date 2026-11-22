@@ -85,13 +85,17 @@ describe("WarbandRules", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("lets an editor add the first rule", async () => {
+  // William, 22 Nov 2026: "The add warband rule form should be its own form, not part of the
+  // warband rules modal"
+  it("lets an editor add the first rule in a form of its own", async () => {
     const user = setupUser();
     fakeApi.on("POST /warbands/9/rules/", (body: object) => ({ id: 3, ...body }));
     renderRules([], true);
 
     await user.click(screen.getByRole("button", { name: "Add rule" }));
-    const form = await screen.findByRole("form", { name: "Add a rule" });
+    const adding = await screen.findByRole("dialog", { name: "Add rule" });
+    expect(screen.queryByRole("dialog", { name: "Warband rules" })).toBeNull();
+    const form = within(adding).getByRole("form", { name: "Add a rule" });
     await user.type(within(form).getByLabelText("Title"), " Wyrdstone hunters ");
     await user.type(within(form).getByLabelText("Description"), "+1 to search.");
     await user.click(within(form).getByRole("button", { name: "Add rule" }));
@@ -100,11 +104,7 @@ describe("WarbandRules", () => {
       title: "Wyrdstone hunters",
       description: "+1 to search.",
     });
-    const dialog = screen.getByRole("dialog", { name: "Warband rules" });
-    expect(await within(dialog).findByRole("article", { name: "Wyrdstone hunters" })).toBeVisible();
-    expect(screen.queryByRole("form")).toBeNull();
-
-    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull()); // the form closes on saving
     const section = await screen.findByRole("region", { name: "Warband rules" });
     expect(within(section).getByRole("button", { name: "Wyrdstone hunters" })).toBeVisible();
     expect(within(section).getByRole("button", { name: "Add rule" })).toBeVisible();
