@@ -37,38 +37,54 @@ const TYPE_COPY = {
   actionAriaLabel: "Add custom type",
 };
 
-/** Boons & Banes' Add new: a campaign's own boon, bane or trait. */
+/** Boons & Banes' Add new, and its Edit (Revert, Delete): a boon, bane or trait. */
 export default function SpecialFormDialog({
   campaignId,
+  special = null,
   typeOptions,
+  canDelete = false,
   onSaved,
+  onDeleted,
   trigger,
 }: {
   campaignId: number;
+  /** The special being edited; none when adding one. */
+  special?: Special | null;
   /** The types the catalogue's specials already use. */
   typeOptions: readonly string[];
+  canDelete?: boolean;
   onSaved: (special: Special) => void;
+  onDeleted?: (specialId: number) => void;
   trigger: ReactNode;
 }) {
   const dialog = useControllableOpen({});
-  const form = useSpecialForm({ campaignId, typeOptions, resetKey: dialog.open, onSaved });
+  const form = useSpecialForm({
+    campaignId,
+    special,
+    typeOptions,
+    resetKey: dialog.open,
+    onSaved,
+    onDeleted,
+  });
   const { load } = form;
   const { values, set } = form;
 
   useEffect(() => {
-    if (dialog.open) load();
-  }, [dialog.open, load]);
+    if (dialog.open) load(special);
+  }, [dialog.open, load, special]);
 
   return (
     <CatalogueFormDialog
       form={form}
       dialog={dialog}
-      title="Add a boon or bane"
+      editing={special}
+      title={special ? "Edit boon or bane" : "Add a boon or bane"}
       noun="boon or bane"
       trigger={trigger}
-      defaultTrigger={<Button>Add new</Button>}
-      submitLabel="Add"
-      onReset={load}
+      defaultTrigger={<Button>{special ? "Edit" : "Add new"}</Button>}
+      submitLabel={special ? "Save changes" : "Add"}
+      canDelete={canDelete}
+      onReset={() => load(special)}
     >
       <CatalogueNameField
         layout="dialog"

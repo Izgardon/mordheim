@@ -42,6 +42,18 @@ export function listSpecial(options: ListSpecialOptions = {}) {
   return apiRequest<Special[]>(path, { signal: options.signal });
 }
 
+/** A special's edit; a book special's first edit makes the campaign's version (`campaign_id`). */
+export function updateSpecial(
+  specialId: number,
+  payload: Omit<SpecialCreatePayload, "campaign_id"> & { campaign_id?: number }
+) {
+  return apiRequest<Special>(`/special/${specialId}/`, {
+    method: "PATCH",
+    headers: socketIdHeaders(),
+    body: payload,
+  });
+}
+
 export function createSpecial(payload: SpecialCreatePayload) {
   return apiRequest<Special>("/special/", {
     method: "POST",

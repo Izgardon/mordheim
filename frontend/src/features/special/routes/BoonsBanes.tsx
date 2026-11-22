@@ -40,7 +40,8 @@ const COLUMNS = [{ label: "Type", className: "w-[200px] shrink-0" }];
  * its type, searched by name, type or rules and filtered by category and setting. A row opens to
  * its price where a list sells it, its setting and its rules (a psychology special's with its
  * part of the Rules page); `?open=` lands on one (Search everything's links). Add new adds the
- * campaign's own (William, 22 Nov 2026); there is no Edit yet.
+ * campaign's own and an open row's Edit changes one (William, 22 Nov 2026), Revert and Delete
+ * as the other catalogue pages have them.
  */
 export default function BoonsBanes() {
   const { id } = useParams();
@@ -48,7 +49,9 @@ export default function BoonsBanes() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const specials = useCatalogue("specials", campaignId);
   const settings = useSettingsById();
-  const canAdd = useCampaignCapabilities(campaignId).edit_catalogue;
+  const capabilities = useCampaignCapabilities(campaignId);
+  const canAdd = capabilities.edit_catalogue;
+  const types = specialTypes(specials.data);
   const params = useReferenceParams(!specials.isLoading);
   const category = params.get("category", "all") as CategoryFilter;
   const setting = params.get("setting", ALL_SETTINGS);
@@ -72,7 +75,7 @@ export default function BoonsBanes() {
         canAdd ? (
           <SpecialFormDialog
             campaignId={campaignId}
-            typeOptions={specialTypes(specials.data)}
+            typeOptions={types}
             onSaved={(special) =>
               params.reveal(String(special.id), { q: null, category: null, setting: null })
             }
@@ -161,6 +164,21 @@ export default function BoonsBanes() {
                   </p>
                 ) : null}
                 <PsychologyRuleLink specialName={special.name} />
+                {canAdd ? (
+                  <SpecialFormDialog
+                    campaignId={campaignId}
+                    special={special}
+                    typeOptions={types}
+                    canDelete={capabilities.delete_catalogue}
+                    onSaved={(saved) => params.reveal(String(saved.id))}
+                    onDeleted={params.close}
+                    trigger={
+                      <Button variant="secondary" className="min-h-10 self-start">
+                        Edit
+                      </Button>
+                    }
+                  />
+                ) : null}
               </ReferenceDetail>
             </ReferenceRow>
           );

@@ -19,5 +19,8 @@ export type Special = CatalogueBadgeFields & {
   description?: string | null;
   /** Its price in gold crowns where a list sells it (the mutations); null: none. Nothing charges it. */
   cost?: number | null;
+  /** A pre-battle roll's dice ("" for none) and what the roll does. */
+  prebattle_roll?: string;
+  prebattle_text?: string;
   campaign_id?: number | null;
 };

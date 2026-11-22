@@ -277,4 +277,40 @@ describe("Adding a boon or bane", () => {
     expect(within(form).getByText("Name, type and description are required.")).toBeInTheDocument();
     expect(fakeApi.countOf("POST /special/")).toBe(0);
   });
+
+  it("edits one from its open row, a book one becoming the campaign's version", async () => {
+    const version = {
+      ...wound,
+      id: 11,
+      campaign_id: CAMPAIGN_ID,
+      replaces: wound.id,
+      kind: "trait" as const,
+    };
+    fakeApi.on(`PATCH /special/${wound.id}/`, version);
+    const user = setupUser();
+    renderApp(`${PAGE}?open=${wound.id}`);
+    await user.click(await screen.findByRole("button", { name: "Edit" }));
+    const form = await screen.findByRole("dialog", { name: "Edit boon or bane" });
+
+    expect(within(form).getByRole("textbox", { name: "Name" })).toHaveValue("Old Battle Wound");
+    expect(within(form).getByRole("button", { name: "Bane" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    await user.click(within(form).getByRole("button", { name: "Trait" }));
+    fakeApi.on(`GET /special/?campaign_id=${CAMPAIGN_ID}`, [version, tail, fear]);
+    await user.click(within(form).getByRole("button", { name: "Save changes" }));
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf(`PATCH /special/${wound.id}/`)).toMatchObject({
+        campaign_id: CAMPAIGN_ID,
+        name: "Old Battle Wound",
+        type: "Injury",
+        kind: "trait",
+        category: "injury",
+        description: "Roll a D6 before each battle.",
+      })
+    );
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+  });
 });
