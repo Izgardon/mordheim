@@ -36,9 +36,9 @@ const heroOf = (key: string | null) =>
  * Getting one item (design E, the items rebuild): the price row (a choice when the warband may use
  * several: "Brace"), its note ("Heroes only") shown and never checked; the price each, prefilled
  * and editable, a price with dice ("25 + 2D6") rolled or typed and sent with its row so the server
- * adds the roll; Free, for an item found or given; for a rare item the search beside the price
- * (layout D), then one button per recipient with its total, which puts the item in the basket. A
- * rare item's buttons wait until it was found, or No search is ticked, or it is free.
+ * adds the roll; Free, for an item found or given; for a rare item the search above the price
+ * (William, 22 Nov 2026: the price "isn't important unless it's found"), then Add to basket. A
+ * rare item waits until it was found, or No search is ticked, or it is free.
  *
  * Opened from a material's row (weapon materials), the weapon is already picked and `material`
  * says what it is made of: the price is the server's for that material and the rarity rolled is
@@ -102,7 +102,6 @@ export default function AcquireForm(props: AcquireFormProps) {
       free={free}
       reason={reason}
       isMobile={props.isMobile}
-      inColumn={rare}
       onPrice={(text) => {
         setPrice(text);
         setEdited(true);
@@ -130,35 +129,35 @@ export default function AcquireForm(props: AcquireFormProps) {
         </p>
       ) : null}
       {rare ? (
-        <RareSearch
-          key={`${row.id}:${material?.slug ?? ""}`}
-          warbandId={props.warbandId}
-          item={item}
-          rarity={rarity ?? 2}
-          startBonus={props.startBonus ?? 0}
-          searchers={props.searchers}
-          firstHeroId={heroOf(props.firstKey)}
-          search={search}
-          disabled={free}
-          isMobile={props.isMobile}
-          price={fields}
-          onSearch={setSearch}
-        />
+        <>
+          <RareSearch
+            key={`${row.id}:${material?.slug ?? ""}`}
+            warbandId={props.warbandId}
+            item={item}
+            rarity={rarity ?? 2}
+            startBonus={props.startBonus ?? 0}
+            searchers={props.searchers}
+            firstHeroId={heroOf(props.firstKey)}
+            search={search}
+            disabled={free}
+            isMobile={props.isMobile}
+            noSearch={{ checked: noSearch, onChange: setNoSearch }}
+            onSearch={setSearch}
+          />
+          <div className="flex flex-col gap-3 border-t border-line pt-3">{fields}</div>
+        </>
       ) : (
         fields
       )}
-      {rare || cleared ? (
-        <AddToBasket
-          recipients={props.recipients}
-          firstKey={props.firstKey}
-          each={each}
-          free={free}
-          isMobile={props.isMobile}
-          noSearch={rare ? { checked: noSearch, onChange: setNoSearch } : null}
-          enabled={cleared}
-          onAdd={pick}
-        />
-      ) : null}
+      <AddToBasket
+        recipients={props.recipients}
+        firstKey={props.firstKey}
+        each={each}
+        free={free}
+        isMobile={props.isMobile}
+        enabled={cleared}
+        onAdd={pick}
+      />
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import { CheckboxField } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
 import type { Recipient } from "./useStoreBasket";
@@ -10,12 +9,7 @@ type AddToBasketProps = {
   each: number;
   free: boolean;
   isMobile: boolean;
-  /**
-   * A rare item's No search tick (William, 7 Nov 2026: "add to basket is blocked unless someone
-   * has found it OR there is a checkbox next to button that says No Search"): the row sits at the
-   * right, and the buttons wait while `enabled` is false.
-   */
-  noSearch?: { checked: boolean; onChange: (checked: boolean) => void } | null;
+  /** Off: a rare item not yet found (nor No search ticked); the buttons wait. */
   enabled: boolean;
   onAdd: (recipient: Recipient) => void;
 };
@@ -45,29 +39,5 @@ export default function AddToBasket(props: AddToBasketProps) {
       </button>
     );
   });
-  if (!props.noSearch) return <div className="flex flex-wrap gap-1.5">{buttons}</div>;
-  return (
-    <div
-      className={cn(
-        "flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-line pt-2.5",
-        !props.isMobile && "justify-end"
-      )}
-    >
-      <CheckboxField
-        checked={props.noSearch.checked}
-        onChange={(event) => props.noSearch?.onChange(event.target.checked)}
-        labelClassName="text-[13px]"
-      >
-        No search
-      </CheckboxField>
-      <div
-        role="group"
-        aria-label="Add to basket"
-        className={cn("flex flex-wrap items-center gap-1.5", !props.isMobile && "justify-end")}
-      >
-        <span className="text-xs font-bold text-muted-foreground">Add to basket</span>
-        {buttons}
-      </div>
-    </div>
-  );
+  return <div className="flex flex-wrap gap-1.5">{buttons}</div>;
 }

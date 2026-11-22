@@ -1,7 +1,7 @@
 /**
  * Getting an item: a price's dice and a rare item's search take the dice rolled at the table, and
- * a rare item's search (layout D) is made once and lets it into the basket when found, or with No
- * search ticked.
+ * a rare item's search (above its price, William 22 Nov 2026) is made once and lets it into the
+ * basket when found, or with No search ticked.
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -111,10 +111,11 @@ describe("AcquireForm", () => {
   it("searches with the 2D6 typed in, its bonus added, and saves it", async () => {
     const user = setupUser();
     show(price({ rarity: 9 }));
-    expect(screen.getByText("Need 9+ on 2D6")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Need 9+");
     await user.click(who().getByRole("button", { name: "Aldric" }));
-    await user.click(button("or enter your dice"));
-    await user.keyboard("53");
+    // the two boxes stand beside Search, always (William: no "or enter your dice")
+    await user.type(screen.getByLabelText("First D6 rolled"), "5");
+    await user.keyboard("3");
     expect(fakeApi.bodyOf(SEARCH)).toEqual({
       item_id: 201,
       hero_id: 5,
@@ -123,7 +124,7 @@ describe("AcquireForm", () => {
       rarity: "Rare 9",
       success: true,
     });
-    expect(await screen.findByRole("status")).toHaveTextContent("5 3 +1 = 9 Found");
+    expect(await screen.findByRole("status")).toHaveTextContent("+1 = 9 Found");
     expect(rollDie).not.toHaveBeenCalled();
   });
 
@@ -132,21 +133,21 @@ describe("AcquireForm", () => {
     const user = setupUser();
     show(price({ rarity: 9 }));
     await user.click(who().getByRole("button", { name: "No hero" }));
-    await user.click(button("Roll to search"));
+    await user.click(button("Search"));
     expect(fakeApi.bodyOf(SEARCH)).toMatchObject({ hero_id: null, roll: 3, success: false });
-    expect(await screen.findByRole("status")).toHaveTextContent("1 2 +1 = 4 Not found");
+    expect(await screen.findByRole("status")).toHaveTextContent("+1 = 4 Not found");
   });
 
   it("waits for someone to search", () => {
     show(price({ rarity: 9 }));
-    expect(button("Roll to search")).toBeDisabled();
+    expect(button("Search")).toBeDisabled();
     expect(who().getByRole("button", { name: "Aldric" })).toHaveAttribute("aria-pressed", "false");
   });
 
   it("starts on the hero the store was opened for", () => {
     show(price({ rarity: 9 }), { firstKey: "heroes:6" });
     expect(who().getByRole("button", { name: /Bertolt/ })).toHaveAttribute("aria-pressed", "true");
-    expect(button("Roll to search")).toBeEnabled();
+    expect(button("Search")).toBeEnabled();
   });
 
   it("searches once: the button locks as Searched and the other searchers grey out", async () => {
@@ -154,7 +155,7 @@ describe("AcquireForm", () => {
     const user = setupUser();
     show(price({ rarity: 9 }));
     await user.click(who().getByRole("button", { name: "Aldric" }));
-    await user.click(button("Roll to search"));
+    await user.click(button("Search"));
 
     expect(await screen.findByRole("button", { name: "Searched" })).toBeDisabled();
     expect(who().getByRole("button", { name: /Bertolt/ })).toBeDisabled();
@@ -172,7 +173,7 @@ describe("AcquireForm", () => {
     expect(bonus.getByText("+1")).toBeInTheDocument();
     await user.click(bonus.getByRole("button", { name: "Raise the bonus" }));
     expect(bonus.getByText("+2")).toBeInTheDocument();
-    await user.click(button("Roll to search"));
+    await user.click(button("Search"));
     expect(fakeApi.bodyOf(SEARCH)).toMatchObject({ roll: 7, modifier: 2, success: true });
   });
 
@@ -181,7 +182,7 @@ describe("AcquireForm", () => {
     const user = setupUser();
     const onPick = show(price({ rarity: 9 }), { firstKey: "heroes:5" });
     expect(button(/Stash/)).toBeDisabled();
-    await user.click(button("Roll to search"));
+    await user.click(button("Search"));
     expect(await screen.findByRole("status")).toHaveTextContent("Found");
     await user.click(button(/Stash/));
     expect(onPick).toHaveBeenCalledWith(
@@ -193,7 +194,7 @@ describe("AcquireForm", () => {
     rolls(1, 1);
     const user = setupUser();
     const onPick = show(price({ rarity: 9 }), { firstKey: "heroes:5" });
-    await user.click(button("Roll to search"));
+    await user.click(button("Search"));
     expect(await screen.findByRole("status")).toHaveTextContent("Not found");
     expect(button(/Stash/)).toBeDisabled();
     await user.click(screen.getByRole("checkbox", { name: "No search" }));
@@ -205,10 +206,32 @@ describe("AcquireForm", () => {
     const user = setupUser();
     const onPick = show(price({ rarity: 9 }), { firstKey: "heroes:5" });
     await user.click(screen.getByRole("checkbox", { name: "Free" }));
-    expect(button("Roll to search")).toBeDisabled();
+    expect(button("Search")).toBeDisabled();
     await user.click(button(/Stash · free/));
     expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ price: 0, free: true }));
     expect(fakeApi.countOf(SEARCH)).toBe(0);
+  });
+
+  it("puts the search above the price, with No search under the search's row", () => {
+    show(price({ rarity: 9 }), { firstKey: "heroes:5" });
+    const search = button("Search");
+    const noSearch = screen.getByRole("checkbox", { name: "No search" });
+    const priceBox = screen.getByLabelText("Price each for Hunting Arrows");
+    const before = (a: Element, b: Element) =>
+      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(before(search, noSearch)).toBe(true);
+    expect(before(noSearch, priceBox)).toBe(true);
+    expect(screen.getByLabelText("Second D6 rolled")).toBeInTheDocument();
+  });
+
+  it("shows the dice rolled in the boxes once searched", async () => {
+    rolls(4, 2);
+    const user = setupUser();
+    show(price({ rarity: 9 }), { firstKey: "heroes:5" });
+    await user.click(button("Search"));
+    expect(await screen.findByRole("button", { name: "Searched" })).toBeDisabled();
+    expect(screen.getByLabelText("First D6 rolled")).toHaveValue("4");
+    expect(screen.getByLabelText("Second D6 rolled")).toHaveValue("2");
   });
 
   it("keeps the search open when it couldn't be saved", async () => {
@@ -216,8 +239,8 @@ describe("AcquireForm", () => {
     rolls(6, 6);
     const user = setupUser();
     show(price({ rarity: 9 }), { firstKey: "heroes:5" });
-    await user.click(button("Roll to search"));
-    expect(await screen.findByRole("button", { name: "Roll to search" })).toBeEnabled();
+    await user.click(button("Search"));
+    expect(await screen.findByRole("button", { name: "Search" })).toBeEnabled();
     expect(button(/Stash/)).toBeDisabled();
   });
 });

@@ -148,8 +148,8 @@ describe("StorePanel", () => {
     await user.click(screen.getByRole("button", { name: "Get" }));
     const searchers = within(screen.getByRole("group", { name: "Who searches" }));
     await user.click(searchers.getByRole("button", { name: "Aldric" }));
-    await user.click(screen.getByRole("button", { name: "Roll to search" }));
-    expect(await screen.findByRole("status")).toHaveTextContent("5 3 = 8 Found");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+    expect(await screen.findByRole("status")).toHaveTextContent("= 8 Found");
     expect(fakeApi.bodyOf(`POST /warbands/${WARBAND}/rarity-rolls/`)).toMatchObject({
       hero_id: 4,
       roll: 8,
