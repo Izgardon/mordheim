@@ -22,7 +22,6 @@ export type HirelingCatalogueConfig = {
     noun: string;
     /** "Hired sword": a card's kind line. */
     singular: string;
-    add: string;
     search: string;
     /** The list says this when the catalogue holds none at all. */
     emptyTitle: string;
@@ -42,7 +41,6 @@ export const HIRED_SWORDS: HirelingCatalogueConfig = {
     title: "Hired Swords",
     noun: "hired sword",
     singular: "Hired sword",
-    add: "Add hired sword",
     search: "Search hired swords",
     emptyTitle: "No hired swords yet",
     noMatches: "No hired swords match",
@@ -59,7 +57,6 @@ export const DRAMATIS_PERSONAE: HirelingCatalogueConfig = {
     title: "Dramatis Personae",
     noun: "dramatis persona",
     singular: "Dramatis persona",
-    add: "Add dramatis persona",
     search: "Search dramatis personae",
     emptyTitle: "No dramatis personae yet",
     noMatches: "No dramatis personae match",

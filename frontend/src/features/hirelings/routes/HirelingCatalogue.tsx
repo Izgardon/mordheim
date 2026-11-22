@@ -110,7 +110,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
             className={isMobile ? "min-h-10" : undefined}
             onClick={() => setEditing({ id: null })}
           >
-            {isMobile ? "Add" : config.labels.add}
+            Add new
           </Button>
         ) : null
       }

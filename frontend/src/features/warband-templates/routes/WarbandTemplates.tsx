@@ -98,7 +98,7 @@ export default function WarbandTemplates() {
             className={isMobile ? "min-h-10" : undefined}
             onClick={() => setMaking({})}
           >
-            Make a template
+            Add new
           </Button>
         ) : null
       }

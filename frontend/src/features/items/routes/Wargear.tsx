@@ -75,7 +75,7 @@ export default function Wargear() {
       onCreated={(item) => params.set({ open: String(item.id), q: null })}
       trigger={
         <Button variant="secondary" className={isMobile ? "min-h-10" : undefined}>
-          Add item
+          Add new
         </Button>
       }
     />

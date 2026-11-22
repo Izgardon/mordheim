@@ -1,7 +1,9 @@
 import { useParams } from "react-router-dom";
 
+import { Button } from "@/components/ui/button";
 import { SpecialIcon } from "@/components/ui/game-icons";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
+import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
 import { ALL_SETTINGS, entrySettingName } from "@/features/reference/in-play";
 import { FactLine, ReferenceDetail } from "@/features/reference/ReferenceDetail";
 import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
@@ -18,8 +20,15 @@ import PsychologyRuleLink from "@/features/rules/components/PsychologyRuleLink";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { useMediaQuery } from "@/lib/use-media-query";
 
+import SpecialFormDialog from "../components/SpecialFormDialog";
 import { SPECIAL_KIND_LABELS, boonBaneRows, categoryOf, type CategoryFilter } from "../boons-banes";
 import { specialCost } from "../special-cost";
+import type { Special } from "../types/special-types";
+
+/** The types the specials already use: the Add new form's type box offers them. */
+const specialTypes = (specials: Special[] | undefined) => [
+  ...new Set((specials ?? []).map((special) => special.type?.trim() ?? "").filter(Boolean)),
+];
 
 // William, 7 Nov 2026: "Boons and Banes drop setting and price"; an open row shows them
 const COLUMNS = [{ label: "Type", className: "w-[200px] shrink-0" }];
@@ -30,8 +39,8 @@ const COLUMNS = [{ label: "Type", className: "w-[200px] shrink-0" }];
  * dramatis persona's own show with them), each with its category's icon in its kind's colour and
  * its type, searched by name, type or rules and filtered by category and setting. A row opens to
  * its price where a list sells it, its setting and its rules (a psychology special's with its
- * part of the Rules page); `?open=` lands on one (Search everything's links). Read only: specials
- * have no catalogue Edit.
+ * part of the Rules page); `?open=` lands on one (Search everything's links). Add new adds the
+ * campaign's own (William, 22 Nov 2026); there is no Edit yet.
  */
 export default function BoonsBanes() {
   const { id } = useParams();
@@ -39,6 +48,7 @@ export default function BoonsBanes() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const specials = useCatalogue("specials", campaignId);
   const settings = useSettingsById();
+  const canAdd = useCampaignCapabilities(campaignId).edit_catalogue;
   const params = useReferenceParams(!specials.isLoading);
   const category = params.get("category", "all") as CategoryFilter;
   const setting = params.get("setting", ALL_SETTINGS);
@@ -58,6 +68,22 @@ export default function BoonsBanes() {
     <ReferencePage
       title="Boons & Banes"
       section="boons-banes"
+      actions={
+        canAdd ? (
+          <SpecialFormDialog
+            campaignId={campaignId}
+            typeOptions={specialTypes(specials.data)}
+            onSaved={(special) =>
+              params.reveal(String(special.id), { q: null, category: null, setting: null })
+            }
+            trigger={
+              <Button variant="secondary" className={isMobile ? "min-h-10" : undefined}>
+                Add new
+              </Button>
+            }
+          />
+        ) : null
+      }
       filters={
         <>
           <FilterRow isMobile={isMobile}>

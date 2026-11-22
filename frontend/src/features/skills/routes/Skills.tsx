@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
-import { Button } from "@/components/ui/button";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
@@ -18,6 +17,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import GroupSkills from "../components/GroupSkills";
 import SkillFormDialog from "../components/SkillFormDialog";
 import SkillGroupFormDialog from "../components/SkillGroupFormDialog";
+import SkillsAddNew from "../components/SkillsAddNew";
 import {
   NO_GROUP_KEY,
   openRowOf,
@@ -93,29 +93,12 @@ export default function Skills() {
   const keepGroup = openGroup ? groupParam(openGroup) : null;
 
   const actions = capabilities.edit_catalogue ? (
-    <>
-      <SkillFormDialog
-        mode="create"
-        campaignId={campaignId}
-        onCreated={(skill) => params.reveal(String(skill.id), { q: null, group: null })}
-        trigger={
-          <Button variant="secondary" className={isMobile ? "min-h-10" : undefined}>
-            Add skill
-          </Button>
-        }
-      />
-      <SkillGroupFormDialog
-        campaignId={campaignId}
-        group={null}
-        onSaved={(group) => params.set({ group: String(group.id), open: null, q: null })}
-        trigger={
-          // a phone's Section picker shares the row: the short name
-          <Button variant="secondary" className={isMobile ? "min-h-10" : undefined}>
-            {isMobile ? "Add group" : "Add skill group"}
-          </Button>
-        }
-      />
-    </>
+    <SkillsAddNew
+      campaignId={campaignId}
+      isMobile={isMobile}
+      onSkill={(skill) => params.reveal(String(skill.id), { q: null, group: null })}
+      onGroup={(group) => params.set({ group: String(group.id), open: null, q: null })}
+    />
   ) : null;
 
   return (

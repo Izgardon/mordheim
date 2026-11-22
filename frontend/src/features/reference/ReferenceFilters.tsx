@@ -5,6 +5,8 @@ import { Chip } from "@/components/ui/chip";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
+import { useReferenceActions } from "./reference-actions";
+
 const CAPTION = "text-[11px] font-bold uppercase tracking-[0.14em] text-faint";
 
 /** One filter with its small caption above it (the web); a phone shows the control alone. */
@@ -51,7 +53,7 @@ type ReferenceSearchProps = {
   isMobile: boolean;
 };
 
-/** A reference page's search box. */
+/** A reference page's search box; on a phone the page's buttons (Add new) sit beside it. */
 export function ReferenceSearch({
   value,
   onChange,
@@ -59,19 +61,30 @@ export function ReferenceSearch({
   label,
   isMobile,
 }: ReferenceSearchProps) {
+  const actions = useReferenceActions();
+  const box = (
+    <label className="flex min-h-11 min-w-0 items-center gap-2 border border-strong bg-rail px-3 text-muted-foreground">
+      <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+      <input
+        type="search"
+        value={value}
+        placeholder={placeholder}
+        aria-label={label}
+        onChange={(event) => onChange(event.target.value)}
+        className="min-w-0 flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-faint"
+      />
+    </label>
+  );
   return (
     <FilterField label="Search" isMobile={isMobile}>
-      <label className="flex min-h-11 items-center gap-2 border border-strong bg-rail px-3 text-muted-foreground">
-        <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
-        <input
-          type="search"
-          value={value}
-          placeholder={placeholder}
-          aria-label={label}
-          onChange={(event) => onChange(event.target.value)}
-          className="min-w-0 flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-faint"
-        />
-      </label>
+      {isMobile && actions ? (
+        <div className="flex items-center gap-2 [&>button]:min-h-11 [&>button]:shrink-0 [&>label]:flex-1">
+          {box}
+          {actions}
+        </div>
+      ) : (
+        box
+      )}
     </FilterField>
   );
 }

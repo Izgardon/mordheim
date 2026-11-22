@@ -20,6 +20,10 @@ export type SpecialCreatePayload = {
   /** Left out: an aura. */
   category?: SpecialCategory;
   description: string;
+  /** Its price in gold crowns where a list sells it; null: none. */
+  cost?: number | null;
+  prebattle_roll?: string;
+  prebattle_text?: string;
 };
 
 export function listSpecial(options: ListSpecialOptions = {}) {

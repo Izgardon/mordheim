@@ -93,7 +93,7 @@ describe("Hired swords opened for a warband", () => {
     expect(await screen.findByText("Ogre Bodyguard")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /not in the list/ })).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Add hired sword" }));
+    await user.click(screen.getByRole("button", { name: "Add new" }));
     const form = await screen.findByRole("dialog", { name: "Add hired sword" });
     await user.type(within(form).getByRole("textbox", { name: "Name" }), "Tilean Duellist");
     await user.click(within(form).getByRole("button", { name: "Create" }));

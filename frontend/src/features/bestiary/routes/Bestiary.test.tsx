@@ -81,7 +81,7 @@ describe("A beast's rating", () => {
     renderApp(PAGE);
     await row("Dragon Ogre");
 
-    await user.click(screen.getByRole("button", { name: "Add beast" }));
+    await user.click(screen.getByRole("button", { name: "Add new" }));
     const adding = await screen.findByRole("dialog", { name: "Add bestiary entry" });
     await user.type(within(adding).getByRole("textbox", { name: /Name/ }), "Ymir");
     await user.type(within(adding).getByRole("spinbutton", { name: "Rating" }), "35");
@@ -146,7 +146,7 @@ describe("A beast's shop prices", () => {
     renderApp(PAGE);
     await row("Dragon Ogre");
 
-    await user.click(screen.getByRole("button", { name: "Add beast" }));
+    await user.click(screen.getByRole("button", { name: "Add new" }));
     const adding = await screen.findByRole("dialog", { name: "Add bestiary entry" });
     await user.click(within(adding).getByRole("checkbox", { name: "Available in the shop" }));
 

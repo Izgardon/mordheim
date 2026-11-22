@@ -187,7 +187,7 @@ export default function Bestiary() {
             className={isMobile ? "min-h-10" : undefined}
             onClick={() => setEditing({ id: null })}
           >
-            Add beast
+            Add new
           </Button>
         ) : null
       }

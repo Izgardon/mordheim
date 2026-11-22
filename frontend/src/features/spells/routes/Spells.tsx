@@ -68,7 +68,7 @@ export default function Spells() {
       onSaved={(spell) => params.reveal(String(spell.id), { q: null, lore: null })}
       trigger={
         <Button variant="secondary" className={isMobile ? "min-h-10" : undefined}>
-          Add spell
+          Add new
         </Button>
       }
     />

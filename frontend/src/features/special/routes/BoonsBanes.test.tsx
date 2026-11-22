@@ -218,3 +218,63 @@ describe("The Boons & Banes page", () => {
     await waitFor(() => expect(scrolledTo).toEqual([`ref-${tail.id}`]));
   });
 });
+
+// William, 22 Nov 2026: "We also need a way to add a special (boon and bane)"
+describe("Adding a boon or bane", () => {
+  it("adds the campaign's own, opened in the list", async () => {
+    const added = special({
+      id: 9,
+      campaign_id: CAMPAIGN_ID,
+      name: "Iron Will",
+      type: "Psychology",
+      kind: "boon",
+      category: "body",
+      cost: 20,
+      description: "Never flees.",
+    });
+    fakeApi.on(`POST /special/`, added);
+    const user = setupUser();
+    renderApp(PAGE);
+    await user.click(await screen.findByRole("button", { name: "Add new" }));
+    const form = await screen.findByRole("dialog", { name: "Add a boon or bane" });
+
+    await user.type(within(form).getByLabelText("Name"), "Iron Will");
+    await user.type(within(form).getByLabelText("Type"), "Psych");
+    await user.click(within(form).getByRole("button", { name: "Psychology" }));
+    await user.click(within(form).getByRole("button", { name: "Boon" }));
+    await user.click(within(form).getByRole("button", { name: /Body/ }));
+    await user.type(within(form).getByLabelText("Price (gc)"), "20");
+    await user.type(within(form).getByLabelText("Description"), "Never flees.");
+    // the list read again after the save holds it
+    fakeApi.on(`GET /special/?campaign_id=${CAMPAIGN_ID}`, [wound, tail, fear, added]);
+    await user.click(within(form).getByRole("button", { name: "Add" }));
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf("POST /special/")).toEqual({
+        campaign_id: CAMPAIGN_ID,
+        name: "Iron Will",
+        type: "Psychology",
+        kind: "boon",
+        category: "body",
+        cost: 20,
+        description: "Never flees.",
+        prebattle_roll: "",
+        prebattle_text: "",
+      })
+    );
+    expect(await row("Iron Will")).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("asks for a type before saving", async () => {
+    const user = setupUser();
+    renderApp(PAGE);
+    await user.click(await screen.findByRole("button", { name: "Add new" }));
+    const form = await screen.findByRole("dialog", { name: "Add a boon or bane" });
+    await user.type(within(form).getByLabelText("Name"), "Iron Will");
+    await user.type(within(form).getByLabelText("Description"), "Never flees.");
+    await user.click(within(form).getByRole("button", { name: "Add" }));
+
+    expect(within(form).getByText("Name, type and description are required.")).toBeInTheDocument();
+    expect(fakeApi.countOf("POST /special/")).toBe(0);
+  });
+});

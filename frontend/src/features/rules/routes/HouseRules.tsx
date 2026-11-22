@@ -52,7 +52,7 @@ export default function HouseRules() {
             className={isMobile ? "min-h-10" : undefined}
             onClick={page.openForm}
           >
-            {isMobile ? "Add" : "Add house rule"}
+            Add new
           </Button>
         ) : null
       }
