@@ -107,7 +107,7 @@ class PriceRowChoiceTests(WhoCanTestCase):
             (offers[other.id]["can_buy"], offers[other.id]["availability_id"], offers[other.id]["options"]),
             (False, first.id, [first.id]),
         )
-        self.assertEqual(offers[other.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
+        self.assertEqual(offers[other.id]["reason"], "Not available for Skaven of Clan Pestilens.")
 
     def test_a_row_naming_the_type_beats_a_group_row_and_everyone(self) -> None:
         blowpipe = self.item(
@@ -145,7 +145,7 @@ class PriceRowChoiceTests(WhoCanTestCase):
 
         self.assertEqual([offers[item.id]["can_buy"] for item in (wardogs, lotus, nobody)], [False, False, False])
         self.assertTrue(offers[others.id]["can_buy"])
-        self.assertEqual(offers[wardogs.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
+        self.assertEqual(offers[wardogs.id]["reason"], "Not available for Skaven of Clan Pestilens.")
 
     def test_an_exclusion_naming_its_type_beats_a_group_row_that_lets_it_in(self) -> None:
         """A row for the Skaven group excluding Clan Pestilens shuts it out: a named type is the most specific
@@ -156,7 +156,7 @@ class PriceRowChoiceTests(WhoCanTestCase):
 
         offers = self.offers()
 
-        self.assertEqual((offers[blades.id]["can_buy"], offers[blades.id]["reason"]), (False, "Not usually available to Skaven of Clan Pestilens."))  # fmt: skip
+        self.assertEqual((offers[blades.id]["can_buy"], offers[blades.id]["reason"]), (False, "Not available for Skaven of Clan Pestilens."))  # fmt: skip
         self.assertTrue(offers[others.id]["can_buy"])  # the exclusion names another type
         self.assertEqual(offers[counted.id]["can_buy"], False)
 
@@ -181,7 +181,7 @@ class PriceRowChoiceTests(WhoCanTestCase):
         self.assertEqual((offers[scorpion.id]["can_buy"], offers[scorpion.id]["reason"]), (False, "Khemri isn't in this campaign."))  # fmt: skip
         self.assertEqual(
             offers[barred.id]["reason"],
-            "Not usually available to Skaven of Clan Pestilens. Khemri isn't in this campaign.",
+            "Not available for Skaven of Clan Pestilens. Khemri isn't in this campaign.",
         )
         self.assertTrue(offers[house.id]["can_buy"])
         self.assertNotIn(empty.id, offers)  # nothing to buy
@@ -198,7 +198,7 @@ class PriceRowChoiceTests(WhoCanTestCase):
         offers = self.offers()
 
         self.assertEqual((offers[sword.id]["can_buy"], offers[claws.id]["can_buy"]), (True, False))
-        self.assertEqual(offers[claws.id]["reason"], "Not usually available to this warband.")
+        self.assertEqual(offers[claws.id]["reason"], "Not available for this warband.")
 
 
 class WhoCanHireAndLearnTests(WhoCanTestCase):
@@ -219,7 +219,7 @@ class WhoCanHireAndLearnTests(WhoCanTestCase):
         body = self.who_can()
 
         hired = {row["id"]: (row["can_hire"], row["reason"]) for row in body["hired_swords"]}
-        not_usually = "Not usually available to Skaven of Clan Pestilens."
+        not_usually = "Not available for Skaven of Clan Pestilens."
         self.assertEqual(
             [hired[entry.id] for entry in (ratcatcher, knight, slayer, tomb)],
             [(True, ""), (False, not_usually), (False, not_usually), (False, "Khemri isn't in this campaign.")],
@@ -236,7 +236,7 @@ class WhoCanHireAndLearnTests(WhoCanTestCase):
         body = self.who_can()
 
         hired = {row["id"]: (row["can_hire"], row["reason"]) for row in body["hired_swords"]}
-        self.assertEqual(hired[assassin.id], (False, "Not usually available to Skaven of Clan Pestilens."))
+        self.assertEqual(hired[assassin.id], (False, "Not available for Skaven of Clan Pestilens."))
         self.assertEqual(hired[ratcatcher.id], (True, ""))
         self.assertEqual(body["dramatis_personae"], [{"id": shadow.id, "can_hire": True, "reason": ""}])
 
@@ -388,7 +388,7 @@ class HisListTests(WhoCanTestCase):
         self.assertEqual((offers[arrows.id]["can_buy"], offers[arrows.id]["reason"]), (True, ""))
         self.assertEqual((offers[staff.id]["can_buy"], offers[staff.id]["reason"]), (True, ""))
         # an item no list of its own sells is unchanged
-        self.assertEqual(offers[halberd.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
+        self.assertEqual(offers[halberd.id]["reason"], "Not available for Skaven of Clan Pestilens.")
 
     def test_an_item_its_own_list_sells_is_in_play_whatever_its_setting(self) -> None:
         # William, 21 Nov 2026: an item's setting is the first book that printed it, so a later book's warband list
@@ -447,7 +447,7 @@ class HisListTests(WhoCanTestCase):
         offers = self.offers()
 
         self.assertEqual(offers[cloak.id]["can_buy"], False)
-        self.assertEqual(offers[cloak.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
+        self.assertEqual(offers[cloak.id]["reason"], "Not available for Skaven of Clan Pestilens.")
         self.warband.template_variant = "lahmia"
         self.warband.save(update_fields=["template_variant"])
         self.assertTrue(self.offers()[cloak.id]["can_buy"])
@@ -467,7 +467,7 @@ class HisListTests(WhoCanTestCase):
         offers = self.offers()
 
         self.assertEqual((offers[arrows.id]["can_buy"], offers[arrows.id]["reason"]), (True, ""))
-        self.assertEqual(offers[halberd.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
+        self.assertEqual(offers[halberd.id]["reason"], "Not available for Skaven of Clan Pestilens.")
 
     def test_a_warband_with_no_template_reads_the_rows_alone(self) -> None:
         cloak = self.item("Sea Dragon Cloak", {"types": [self.reiklanders], "cost": 50})

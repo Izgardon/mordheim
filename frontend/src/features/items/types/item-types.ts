@@ -200,8 +200,8 @@ export type ItemUpdatePayload = Partial<ItemWritePayload> & { campaign_id?: numb
 
 /**
  * What one item offers a warband (`GET warbands/<id>/who-can/`): the price row it sees, the other
- * rows it may use (the chosen first), whether it can usually buy it, and why not ("Not usually
- * available to Skaven.", "Khemri isn't in this campaign."). The server decides; pages show it.
+ * rows it may use (the chosen first), whether it can usually buy it, and why not ("Not available
+ * for Skaven.", "Khemri isn't in this campaign."). The server decides; pages show it.
  */
 export type ItemOffer = {
   item_id: number;

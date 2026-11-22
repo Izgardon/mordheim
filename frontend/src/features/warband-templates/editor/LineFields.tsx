@@ -24,7 +24,7 @@ export default function LineFields({
   line: LineDraft;
   /** "Wargear · chart: 10 gc, Common". */
   chart: string;
-  /** Why its types can't usually buy it ("Not usually available to Night Watch."). */
+  /** Why its types can't usually buy it ("Not available for Night Watch."). */
   reason: string;
   fighters: TemplateFighter[];
   variants: TemplateVariant[];

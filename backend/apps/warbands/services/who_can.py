@@ -14,7 +14,8 @@ A list says whether it is for everyone and names warband types or groups, each i
 4. otherwise, for an item its own warband template list sells in its variant, every row of the item, ranked among
    themselves as step 1: a warband's own list is the strongest statement that it may buy the thing, whatever the
    rows name (William: the rows the Nehekharan arrows and the Sea Dragon Cloak name are another warband's);
-5. otherwise the item is "not usually available": it can still be bought at its first row, with the reason.
+5. otherwise the item is not usually available ("Not available for Skaven."): it can still be bought at its first row,
+   with the reason.
 
 An animal or a miscellaneous item a warband reaches as everyone does (step 3, no line naming any warband) is
 `always_open`: the store offers it to any unit whatever his own list sells (William, 20 Nov 2026), while weapons and
@@ -41,7 +42,7 @@ SortKey = tuple[int, bool, int, int, int, int]
 @dataclass(frozen=True)
 class Buyer:
     """A warband as a who-can list reads it: its types (its own and those it counts as), their groups, and the name
-    a reason gives it ("Not usually available to Skaven")."""
+    a reason gives it ("Not available for Skaven")."""
 
     type_ids: frozenset[int]
     group_ids: frozenset[int]
@@ -93,7 +94,7 @@ def _rank(row: Any, index: int, at: int) -> SortKey:
 
 
 def not_usually(buyer: Buyer) -> str:
-    return f"Not usually available to {buyer.name}."
+    return f"Not available for {buyer.name}."
 
 
 def out_of_play(setting: str) -> str:

@@ -213,7 +213,7 @@ class MaterialWhoCanTests(RosterTestCase):
         obsidian = self._materials()["obsidian"]
 
         self.assertFalse(obsidian["can_take"])
-        self.assertIn("Not usually available to Sisters of Sigmar.", obsidian["reason"])
+        self.assertIn("Not available for Sisters of Sigmar.", obsidian["reason"])
 
     def test_a_warband_in_an_excluded_group_is_warned_too(self) -> None:
         dwarfs = WarbandType.objects.create(name="Dwarf Treasure Hunters", slug="dwarf-treasure-hunters")

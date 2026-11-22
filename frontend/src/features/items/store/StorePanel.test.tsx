@@ -243,7 +243,7 @@ function renderHisStore(
       availability_id: item.availabilities![0].id,
       options: [item.availabilities![0].id],
       can_buy: item !== whip,
-      reason: item === whip ? "Not usually available to Mercenaries." : "",
+      reason: item === whip ? "Not available for Mercenaries." : "",
       always_open: item === rope,
     })),
   });
@@ -621,7 +621,7 @@ const OBSIDIAN = {
   rarity: 12,
   rules: [],
   can_take: false,
-  reason: "Not usually available to Dwarfs.",
+  reason: "Not available for Dwarfs.",
 };
 
 function renderMaterialStore(materials = [GROMRIL]) {
@@ -681,7 +681,7 @@ describe("StorePanel materials", () => {
 
     expect(names()).toEqual(["Gromril Weapon", "Lance"]);
     await user.click(screen.getByRole("switch", { name: "What I can buy" }));
-    expect(screen.getByText("Not usually available to Dwarfs.")).toBeInTheDocument();
+    expect(screen.getByText("Not available for Dwarfs.")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: /Gromril Weapon/ }));
 
     expect(screen.getByText("A gromril weapon has an extra -1 save modifier.")).toBeInTheDocument();

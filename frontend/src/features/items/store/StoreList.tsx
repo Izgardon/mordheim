@@ -55,7 +55,7 @@ export type StoreListProps = {
 
 /**
  * The store's list (design E, the items rebuild): search, "What I can buy" (on: what the warband
- * can't usually buy is hidden; off: it shows with the server's reason, "Not usually available to
+ * can't usually buy is hidden; off: it shows with the server's reason, "Not available for
  * Skaven.", and can still be bought), His list when buying for a unit from the template (on: only
  * his lists' items, as they name them, at the store's price; both on: his items the warband can
  * usually buy), category chips, a hero's Upgrades (his template's), a row per weapon material
