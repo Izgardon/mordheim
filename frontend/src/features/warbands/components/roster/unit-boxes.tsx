@@ -16,7 +16,17 @@ import { spellDifficulty } from "./advance/advance-table";
 import type { BoxDetail } from "./RulesPanel";
 import { pendingPicks, type PendingList, type RosterUnit } from "./unit-view";
 
-export type Box = BoxDetail & { boxKind: BoxTileKind; icon?: ReactNode; pending?: PendingList };
+/**
+ * A box in an open card's rows: `subtitle` is its tile's second line, only what it is (an item's
+ * subtype, a skill's group, a spell's lore, a special's type: William, 22 Nov 2026), while `kind`
+ * keeps the rest (stats, difficulty) for its opened panel.
+ */
+export type Box = BoxDetail & {
+  subtitle?: string;
+  boxKind: BoxTileKind;
+  icon?: ReactNode;
+  pending?: PendingList;
+};
 export type Row = { key: string; label: string; icon: GameIconName; boxes: Box[] };
 
 /**
@@ -60,9 +70,9 @@ const PENDING_ICON: Record<PendingList, ReactNode> = {
 };
 
 /**
- * One list's boxes on an open card: each entry with its second line (a skill's group, a spell's
- * lore and his difficulty, "Difficulty 7 → 6" once he rolled it again), then the picks an
- * advance left for later, each picked from its box.
+ * One list's boxes on an open card: each entry with what it is (a skill's group, a spell's lore)
+ * and its panel's line (a spell's lore and his difficulty, "Difficulty 7 → 6" once he rolled it
+ * again), then the picks an advance left for later, each picked from its box.
  */
 export function entryBoxes(unit: RosterUnit, list: PendingList, entries: Entry[]): Box[] {
   return [
@@ -73,6 +83,7 @@ export function entryBoxes(unit: RosterUnit, list: PendingList, entries: Entry[]
         .join(" · ");
       return {
         name: entry.name,
+        subtitle: entry.type ?? "",
         kind: line,
         text: entry.description,
         special: list === "specials",
@@ -82,6 +93,7 @@ export function entryBoxes(unit: RosterUnit, list: PendingList, entries: Entry[]
     }),
     ...Array.from({ length: pendingPicks(unit, list) }, () => ({
       name: `${NOUN[list]} to choose`,
+      subtitle: "Pick one",
       kind: "Pick one",
       boxKind: "pending" as BoxTileKind,
       icon: PENDING_ICON[list],

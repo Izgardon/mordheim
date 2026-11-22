@@ -1,9 +1,8 @@
 import type { MouseEvent, ReactNode } from "react";
-import { ChevronDown, ChevronsUp, Crown, PawPrint, Pencil } from "lucide-react";
+import { ChevronDown, ChevronsUp, Pencil } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChipLabel } from "@/components/ui/chip";
 import { GameIcon } from "@/components/ui/game-icons";
 import { IconButton } from "@/components/ui/icon-button";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
@@ -11,11 +10,12 @@ import { cn } from "@/lib/utils";
 
 import { useItemLabel } from "../../hooks/units/useItemLabel";
 import UnitBadges, { UnitTradingAction } from "./UnitBadges";
+import UnitKills from "./UnitKills";
 import UnitLines from "./UnitLines";
 import UnitProfile from "./UnitProfile";
+import UnitTitle from "./UnitTitle";
 import {
   buysItems,
-  isCreature,
   isGroup,
   KIND_TRIM,
   liveMembers,
@@ -23,7 +23,6 @@ import {
   statValues,
   unitDomId,
   unitName,
-  unitTypeLine,
   xpInfo,
   type RosterUnit,
 } from "./unit-view";
@@ -89,7 +88,6 @@ export default function UnitCard(props: UnitCardProps) {
   const { unit } = entry;
   const xp = xpInfo(entry, campaign);
   const stats = statValues(entry);
-  const creature = isCreature(entry);
   const members = isGroup(entry) ? liveMembers(entry.unit) : [];
   const countText = isGroup(entry)
     ? `×${members.length}${open && entry.unit.max_size ? `/${entry.unit.max_size}` : ""}`
@@ -113,17 +111,43 @@ export default function UnitCard(props: UnitCardProps) {
     )
   ) : null;
 
+  const name = unitName(unit);
+  // the badges and (open) kills sit on the row under the head, leaving the head to the name
+  // (William, 22 Nov 2026): opposite a hero's trading action, beside a group's members; a hired
+  // sword has no such row, so his stay in the head. Closed, no kills.
+  const badgesAt = entry.kind === "hero" ? "trading" : members.length ? "members" : "head";
+  const badges = (
+    <>
+      <UnitBadges entry={entry} campaign={campaign} canEdit={canEdit} onRide={props.onRide} />
+      {open ? (
+        <UnitKills
+          campaignId={campaign?.id ?? 0}
+          warbandId={props.warbandId}
+          entry={entry}
+          align={entry.kind === "hero" ? "start" : "end"}
+        />
+      ) : null}
+    </>
+  );
+
+  // open, Edit takes the Loadout's place (Add item is further down): the pencil alone on a phone
   const buttons = (
     <div className="flex shrink-0 items-center gap-1.5">
       {open && canEdit ? (
-        <Button size="sm" variant="secondary" className="h-9" onClick={props.onEdit}>
+        <Button
+          size="sm"
+          variant="secondary"
+          aria-label={`Edit ${name}`}
+          className="h-9 max-[960px]:w-9 max-[960px]:px-0"
+          onClick={props.onEdit}
+        >
           <Pencil aria-hidden="true" />
-          Edit
+          <span className="max-[960px]:hidden">Edit</span>
         </Button>
       ) : null}
-      {buysItems(entry) ? (
+      {!open && buysItems(entry) ? (
         <IconButton
-          aria-label={`Loadout of ${unitName(unit)}`}
+          aria-label={`Loadout of ${name}`}
           className="h-9 w-9 bg-page text-accent-text"
           onClick={props.onLoadout}
         >
@@ -131,7 +155,7 @@ export default function UnitCard(props: UnitCardProps) {
         </IconButton>
       ) : null}
       <IconButton
-        aria-label={open ? `Close ${unitName(unit)}` : `Open ${unitName(unit)}`}
+        aria-label={open ? `Close ${name}` : `Open ${name}`}
         aria-expanded={open}
         className="h-9 w-9"
         onClick={props.onToggle}
@@ -142,35 +166,6 @@ export default function UnitCard(props: UnitCardProps) {
         />
       </IconButton>
     </div>
-  );
-
-  const title = (
-    <button
-      type="button"
-      aria-expanded={open}
-      onClick={props.onToggle}
-      className="flex min-w-0 flex-col gap-0.5 text-left"
-    >
-      <span className="flex flex-wrap items-center gap-2 font-display text-[19px] font-semibold text-head">
-        <span className="inline-flex items-baseline gap-2">
-          <span aria-hidden="true" className={trim.gem} />
-          {unitName(unit)}
-        </span>
-        {"is_leader" in unit && unit.is_leader ? (
-          <Crown className="h-[15px] w-[15px] text-accent-text" aria-label="Leader" />
-        ) : null}
-        {creature ? (
-          <ChipLabel className="min-h-0 gap-1 px-1.5 py-px text-[11px]">
-            <PawPrint className="h-3 w-3" aria-hidden="true" />
-            Creature
-          </ChipLabel>
-        ) : null}
-      </span>
-      <span className={cn("text-[13px]", trim.text)}>
-        {unitTypeLine(entry)}
-        {countText ? <span className="ml-1.5 font-mono">{countText}</span> : null}
-      </span>
-    </button>
   );
 
   return (
@@ -187,15 +182,11 @@ export default function UnitCard(props: UnitCardProps) {
       {advance}
       <div className="flex cursor-pointer flex-col gap-3" onClick={headClick}>
         <div className="flex items-start gap-2.5">
-          <div className="min-w-28 flex-1">{title}</div>
+          <div className="min-w-28 flex-1">
+            <UnitTitle entry={entry} open={open} countText={countText} onToggle={props.onToggle} />
+          </div>
           <div className="flex flex-wrap items-center justify-end gap-1.5">
-            <UnitBadges
-              entry={entry}
-              campaign={campaign}
-              warbandId={props.warbandId}
-              canEdit={canEdit}
-              onRide={props.onRide}
-            />
+            {badgesAt === "head" ? badges : null}
             {buttons}
           </div>
         </div>
@@ -203,20 +194,24 @@ export default function UnitCard(props: UnitCardProps) {
           entry={entry}
           canEdit={canEdit}
           onTradingAction={props.onTradingAction}
+          start={badgesAt === "trading" ? badges : null}
         />
         {members.length ? (
-          <div className="flex flex-wrap gap-1.5">
-            {members.map((member) => (
-              <span
-                key={member.id}
-                className="inline-flex min-h-[30px] items-center gap-1.5 border border-border bg-raised px-2.5 text-xs font-bold text-ink"
-              >
-                {isGroup(entry) ? memberName(entry.unit, member) : member.name}
-                {member.gaps?.length ? (
-                  <span className="font-medium text-danger">lacks {member.gaps.length}</span>
-                ) : null}
-              </span>
-            ))}
+          <div className="flex flex-wrap items-center justify-between gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
+              {members.map((member) => (
+                <span
+                  key={member.id}
+                  className="inline-flex min-h-[30px] items-center gap-1.5 border border-border bg-raised px-2.5 text-xs font-bold text-ink"
+                >
+                  {isGroup(entry) ? memberName(entry.unit, member) : member.name}
+                  {member.gaps?.length ? (
+                    <span className="font-medium text-danger">lacks {member.gaps.length}</span>
+                  ) : null}
+                </span>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">{badges}</div>
           </div>
         ) : null}
         <UnitProfile

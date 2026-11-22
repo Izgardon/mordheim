@@ -9,18 +9,21 @@ import {
   GiCheckedShield,
   GiChest,
   GiCrossedSwords,
+  GiCrown,
   GiCrystalGrowth,
   GiDeathSkull,
   GiHorseHead,
   GiKnapsack,
   GiLaurels,
   GiLightBackpack,
+  GiMeepleGroup,
   GiMuscleUp,
   GiPocketBow,
   GiPotionBall,
   GiRoundShield,
   GiRuneStone,
   GiScrollUnfurled,
+  GiShinyPurse,
   GiShop,
   GiSpellBook,
   GiSpikedTentacle,
@@ -33,6 +36,7 @@ import {
   GiTrophyCup,
   GiTwoCoins,
   GiUpgrade,
+  GiVisoredHelm,
   GiWingfoot,
   GiYinYang,
 } from "react-icons/gi";
@@ -122,6 +126,19 @@ export const SPECIAL_KIND_COLOURS: Record<SpecialKind, string> = {
   boon: "text-kind-special",
   bane: "text-danger",
   trait: "text-ink",
+};
+
+/**
+ * What a roster unit is, the mark before its name (William, 22 Nov 2026: "the leader's crown can
+ * move into that space and the rest have helmets"): a henchmen group's figures, a hired sword's purse.
+ */
+export type UnitMarker = "leader" | "hero" | "henchmen" | "hired";
+
+export const UNIT_MARKER_ICONS: Record<UnitMarker, IconType> = {
+  leader: GiCrown,
+  hero: GiVisoredHelm,
+  henchmen: GiMeepleGroup,
+  hired: GiShinyPurse,
 };
 
 /** A game icon at the text's size and colour (the tokens), hidden from screen readers. */

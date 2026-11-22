@@ -1,6 +1,6 @@
 /**
  * A roster card is trimmed in its kind's metal (William, 7 Nov 2026: "heroes gold HS silver hench
- * bronze"; mockup C): the stripe down its left edge, the gem before its name and its type line,
+ * bronze"; mockup C): the stripe down its left edge, the marker before its name and its type line,
  * closed or open. A dramatis persona is a hired sword.
  */
 import { screen, within } from "@testing-library/react";
@@ -37,13 +37,14 @@ const renderCard = (
     />
   );
 
-const CASES: [string, RosterUnit, string, string, string][] = [
+const CASES: [string, RosterUnit, string, string, string, string][] = [
   [
     "a hero",
     { kind: "hero", unit: makeHero({ name: "Aldric Voss", unit_type: "Mercenary Captain" }) },
     "Aldric Voss",
     "Mercenary Captain",
     "gold",
+    "hero",
   ],
   [
     "a henchmen group",
@@ -51,6 +52,7 @@ const CASES: [string, RosterUnit, string, string, string][] = [
     "Black Knives",
     "Warrior",
     "bronze",
+    "henchmen",
   ],
   [
     "a hired sword",
@@ -58,6 +60,7 @@ const CASES: [string, RosterUnit, string, string, string][] = [
     "Grukk",
     "Ogre Bodyguard",
     "silver",
+    "hired",
   ],
   [
     "a dramatis persona",
@@ -68,22 +71,38 @@ const CASES: [string, RosterUnit, string, string, string][] = [
     "Bertha",
     "Dramatis persona",
     "silver",
+    "hired",
   ],
 ];
 
 describe("A roster card's trim", () => {
-  it.each(CASES)("is %s's metal", (_label, entry, name, typeLine, metal) => {
+  it.each(CASES)("is %s's metal", (_label, entry, name, typeLine, metal, marker) => {
     renderCard(entry);
     const card = screen.getByRole("article");
+    const title = screen.getByRole("button", { name: new RegExp(`^${name}`) });
 
     expect(card).toHaveClass("border-l-[3px]", `border-l-metal-${metal}`);
-    expect(screen.getByText(name).querySelector("[aria-hidden=true]")).toHaveClass(
-      "rotate-45",
-      `bg-metal-${metal}`
-    );
-    expect(screen.getByText(typeLine)).toHaveClass(`text-metal-${metal}`);
+    // William, 22 Nov 2026: "the diamond icon to be something different depending on whether
+    // hero, hench or hired"; the type sits under the name, beside the one marker
+    expect(title.querySelector("[data-marker]")).toHaveAttribute("data-marker", marker);
+    expect(title.querySelector("[data-marker]")).toHaveClass(`text-metal-${metal}`);
+    expect(within(title).getByText(typeLine)).toHaveClass(`text-metal-${metal}`);
     // only its own metal, on any part of the card
     expect(new Set(card.outerHTML.match(/metal-[a-z]+/g))).toEqual(new Set([`metal-${metal}`]));
+  });
+
+  it("crowns the leader in the marker's place, with no crown line of its own", () => {
+    renderCard({
+      kind: "hero",
+      unit: makeHero({ name: "Aldric Voss", unit_type: "Mercenary Captain", is_leader: true }),
+    });
+    const title = screen.getByRole("button", { name: /^Leader Aldric Voss/ });
+
+    expect(within(title).getByRole("img", { name: "Leader" })).toHaveAttribute(
+      "data-marker",
+      "leader"
+    );
+    expect(screen.getAllByRole("img", { name: "Leader" })).toHaveLength(1);
   });
 
   it("stays on an open card", () => {
@@ -152,23 +171,87 @@ describe("A card's top row", () => {
     }),
   };
 
-  it("wears one chip size: the mount, Missing and the kills alike", () => {
+  // William, 22 Nov 2026: "When not expanded we don't need to show kills at all"
+  it("shows no kills while closed, and keeps the mount and Missing", () => {
     renderCard(mounted);
 
+    expect(screen.queryByRole("button", { name: /^Kills/ })).toBeNull();
     for (const badge of [
       screen.getByRole("button", { name: "On foot" }),
       screen.getByText(/^Missing/),
-      screen.getByRole("button", { name: /^Kills 3/ }),
     ])
       expect(badge).toHaveClass("min-h-[30px]", "px-2.5", "text-xs", "font-bold");
   });
 
-  it("keeps the trading action off it, on a line of its own", () => {
+  // the head is his name's (William, 22 Nov 2026: "name and type deserve more width"): a hero's
+  // badges sit opposite his trading action, on its row
+  it("puts a hero's badges opposite his trading action, out of the head", () => {
     renderCard(mounted);
-    const badges = screen.getByRole("button", { name: /^Kills 3/ }).closest("div.flex-wrap");
+    const row = screen.getByRole("switch", { name: /Trading action/ }).closest("div.flex");
 
-    expect(badges).not.toBeNull();
-    expect(within(badges as HTMLElement).queryByRole("switch")).toBeNull();
-    expect(screen.getByRole("switch", { name: /Trading action/ })).toBeVisible();
+    expect(row?.firstElementChild).toContainElement(
+      screen.getByRole("button", { name: "On foot" })
+    );
+    expect(row?.firstElementChild).toContainElement(screen.getByText(/^Missing/));
+    expect(row?.firstElementChild).not.toContainElement(screen.getByRole("switch"));
+  });
+
+  it("puts a hero's kills opposite his trading action when open", () => {
+    renderCard(mounted, true);
+    const kills = screen.getByRole("button", { name: /^Kills 3/ });
+    const row = screen.getByRole("switch", { name: /Trading action/ }).closest("div.flex");
+
+    expect(kills).toHaveClass("min-h-[30px]", "px-2.5", "text-xs", "font-bold");
+    expect(row?.firstElementChild).toContainElement(kills);
+  });
+
+  it("puts an open group's kills beside its members, with no row for them", () => {
+    renderCard(
+      { kind: "henchmen_group", unit: makeVeteranHenchmenGroup({ unit_type: "Warrior" }) },
+      true
+    );
+    const kills = screen.getByRole("button", { name: /^Kills 3/ });
+    const members = screen.getByText("Blade One").parentElement?.parentElement;
+
+    expect(screen.queryByRole("switch")).toBeNull();
+    expect(members).toContainElement(kills);
+    expect(
+      screen.getByRole("button", { name: "Close Black Knives" }).parentElement
+    ).not.toContainElement(kills);
+  });
+
+  it("leaves a hired sword's kills in the head, beside his buttons", () => {
+    renderCard({ kind: "hireling", unit: hired({ name: "Grukk", kills: 2 }) }, true);
+
+    expect(
+      screen.getByRole("button", { name: /^Kills 2/ }).closest("div.flex-wrap")
+    ).toContainElement(screen.getByRole("button", { name: "Close Grukk" }));
+  });
+});
+
+describe("An open card's Edit", () => {
+  const aldric: RosterUnit = { kind: "hero", unit: makeHero({ name: "Aldric Voss" }) };
+
+  // William, 22 Nov 2026: "When expanded the loadout icon button can disappear ... so the Edit
+  // button takes its place, which on mobile should just be the edit icon"
+  it("takes the Loadout's place", () => {
+    renderCard(aldric, false, null, true);
+    expect(screen.getByRole("button", { name: "Loadout of Aldric Voss" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Aldric Voss" })).toBeNull();
+  });
+
+  it("replaces it once open, labelled on the web", () => {
+    renderCard(aldric, true, null, true);
+
+    expect(screen.queryByRole("button", { name: "Loadout of Aldric Voss" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Edit Aldric Voss" })).toHaveTextContent("Edit");
+  });
+
+  it("is the pencil alone on a phone, still named for him", () => {
+    renderCard(aldric, true, null, true);
+    const edit = screen.getByRole("button", { name: "Edit Aldric Voss" });
+
+    expect(edit).toHaveClass("max-[960px]:w-9");
+    expect(within(edit).getByText("Edit")).toHaveClass("max-[960px]:hidden");
   });
 });

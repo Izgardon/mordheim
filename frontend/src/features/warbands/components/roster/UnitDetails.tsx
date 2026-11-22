@@ -3,8 +3,9 @@ import { useState, type ReactNode } from "react";
 import { BoxTile } from "@/components/ui/box-tile";
 import { ItemKindIcon } from "@/components/ui/game-icons";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
-import { itemKind, itemStatsLine } from "@/features/items/item-kind";
+import { itemKind, itemStatsLine, itemSubtype } from "@/features/items/item-kind";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { cn } from "@/lib/utils";
 import { beastProfile, itemRuleLines } from "@/features/items/utils/item-rules";
 import type { Item } from "@/features/items/types/item-types";
 import { cameThrough, unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
@@ -41,6 +42,12 @@ type UnitDetailsProps = {
   onPick: (pick: AdvancePick) => void;
 };
 
+/**
+ * On a phone a row's boxes are two abreast, each half the row less half the gap, their text
+ * ending in "…" (William, 22 Nov 2026: "so 2 always fit on mobile"); the web keeps their own size.
+ */
+const PILL = "max-[960px]:w-[calc(50%-3px)] max-[960px]:min-w-0 max-[960px]:max-w-none";
+
 /** An open card's body: experience across the top, then design E's columns on the web (items, skills and the rest). */
 export default function UnitDetails(props: UnitDetailsProps) {
   const { entry, campaign, canEdit, others } = props;
@@ -65,6 +72,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
     icon: "items",
     boxes: lists.items.map((item) => ({
       name: itemLabel(entry.unit, item),
+      subtitle: itemSubtype(item),
       kind: itemStatsLine(item),
       rules: itemRuleLines(item),
       profile: beastProfile(item),
@@ -122,9 +130,10 @@ export default function UnitDetails(props: UnitDetailsProps) {
           <BoxTile
             key={`${box.name}-${index}`}
             name={box.name}
-            type={box.kind}
+            type={box.subtitle}
             kind={box.boxKind}
             icon={box.icon}
+            className={PILL}
             pressed={selected === box}
             onClick={() => setOpen(selected === box ? null : { row: line.key, index })}
           />
@@ -150,7 +159,10 @@ export default function UnitDetails(props: UnitDetailsProps) {
                 <button
                   type="button"
                   onClick={props.onLoadout}
-                  className="min-h-12 border border-dashed border-strong px-3 text-[13px] font-bold text-accent-text hover:bg-raised"
+                  className={cn(
+                    "min-h-12 border border-dashed border-strong px-3 text-[13px] font-bold text-accent-text hover:bg-raised",
+                    PILL
+                  )}
                 >
                   Add item
                 </button>
