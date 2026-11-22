@@ -171,19 +171,20 @@ chart's result takes 40 characters.
   shops sold that we lacked (Yew Staff, Sword of Orion, Yew Bow, Fighting Falcons, Yew Armour, War Hawk, Wild Cat)
   are not imported, since none has rules (William, 21 Nov 2026: "if not rules then dont import, i dont want dead
   items lying around"); the store keeps its normal prices.
-- **Relics of the Crusades Part 1** (items, skills and spells imported, 21 Nov 2026). Open: Light and Silence join
-  "all spell and prayer lists", so they are one lore of their own, All Lores, rather than copies in every lore; the
+- **Relics of the Crusades Part 1** (items, skills and spells imported, 21 Nov 2026). Light and Silence join
+  "all spell and prayer lists" in the book: they are one lore, Light and Silence, which a caster playing that campaign
+  adds himself (William, 22 Nov 2026: "Just add a light and silence lore that people playing that campaign can add
+  themselves"); no campaign rule of Relics' says it. Open: the
   Holy group is open to everyone with the paths as its note, and like every group but Grade 3's carries no setting, so
   it lists outside Relics with its skills out of play; Scholarly Works (Path of Knowledge, 50+2D6, Rare 9) is not
   an item, having no rules; other towns' prices are notes on each item's one price row. Flaming Arrows are left out
   (William). Its own exploration chart is imported, and its preset explores by it.
-- **Darksteel's naming.** The material is called Dark Elf Blade, and a copy reads "Dark Elf Sword", because
-  "Dark Elf Blade Sword" does not read. Darksteel's own copies read "Darksteel Sword".
-- **Silver's book text** still carries the book's sentence about silvering a weapon the warband already owns, though
-  that mechanism is gone: items are never transformed. Kept as reference text the player settles at the table.
+- **Settled 22 Nov 2026:** Darksteel's naming stands (the Dark Elf Blade material, copies reading "Dark Elf
+  Sword"; Darksteel's own "Darksteel Sword": "works well"). Silver's book sentence on silvering a weapon already owned
+  stays: it is the rule, and the app's way to a silvered weapon "doesn't need perfection". The Sealed City's
+  "Pirates of the Great Ocean" are any Pirates warband ("just say any pirates may take it").
 - **One flavour clause dropped.** The Sealed City's Protect and Serve Bounty rung has a lawful warband put a price
   on a head "through their evil schemes", copied from Reign from Shadows. The four words are not in ours.
-- **Pirates of the Great Ocean** (a Sealed City plot's who-can text) may or may not be our Mordheim 1b Pirates.
 - **Left as printed:** Athel Loren's Dwarf Outpost asks for a Mountain Hazard no chart holds, and Lustria's
   opening hazard D6 is never used. Fixing either means inventing a rule.
 - **Mordheim** has no rules file: its rules are the rulebook and its preset dictates nothing. **Relics of the

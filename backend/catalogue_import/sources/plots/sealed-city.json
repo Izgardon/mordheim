@@ -8,7 +8,7 @@
     "no_alliance_with": [
       "kings-greed"
     ],
-    "who_text": "House Guard, Mercenary warbands and Pirates of the Great Ocean may follow this plot.",
+    "who_text": "House Guard, Mercenary warbands and any Pirates warband may follow this plot.",
     "scoring": [
       {
         "points": 1,
@@ -361,7 +361,7 @@
       "protect-and-serve",
       "reign-from-shadows"
     ],
-    "who_text": "The Cult of the Possessed, Pirates of the Great Ocean and The Brood of Ghurash may follow this plot.",
+    "who_text": "The Cult of the Possessed, any Pirates warband and The Brood of Ghurash may follow this plot.",
     "scoring": [
       {
         "points": 1,
