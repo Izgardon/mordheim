@@ -1,7 +1,8 @@
 /**
- * The warband's own rules (William, 3 Nov 2026): a pill per rule beside Warband rules, which opens
- * them all in a modal; a pill opens it at its rule. The warband's editors add, edit and delete
- * them there (Delete asks again); a viewer only reads, and sees nothing when there are none.
+ * The warband's own rules (William, 3 Nov 2026), laid out as Resources is (22 Nov 2026): the
+ * title with Add rule across from it, one line of pills with an arrow for the rest, a pill opening
+ * the modal at its rule. The warband's editors add (from the section), edit and delete them (in
+ * the modal; Delete asks again); a viewer only reads, and sees nothing when there are none.
  */
 import { useQuery } from "@tanstack/react-query";
 import { screen, waitFor, within } from "@testing-library/react";
@@ -65,16 +66,18 @@ describe("WarbandRules", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
   });
 
-  it("opens them all from Warband rules", async () => {
+  it("has a title and no Add rule for a viewer, and a pill opens every rule", async () => {
     const user = setupUser();
-    renderRules([hatred], false);
+    renderRules([hatred, burn], false);
 
-    await user.click(screen.getByRole("button", { name: "Warband rules" }));
+    const section = screen.getByRole("region", { name: "Warband rules" });
+    expect(within(section).getByRole("heading", { name: "Warband rules" })).toBeVisible();
+    expect(within(section).queryByRole("button", { name: "Add rule" })).toBeNull();
+    await user.click(within(section).getByRole("button", { name: "Burn the witch" }));
 
     const dialog = await screen.findByRole("dialog", { name: "Warband rules" });
-    expect(within(dialog).getByRole("article", { name: "Hatred" })).not.toHaveAttribute(
-      "data-opened"
-    );
+    expect(within(dialog).getByRole("article", { name: "Hatred" })).toBeVisible();
+    expect(within(dialog).queryByRole("button", { name: "Add rule" })).toBeNull();
   });
 
   it("is left out for a viewer when there are none", () => {
@@ -87,7 +90,7 @@ describe("WarbandRules", () => {
     fakeApi.on("POST /warbands/9/rules/", (body: object) => ({ id: 3, ...body }));
     renderRules([], true);
 
-    await user.click(screen.getByRole("button", { name: "Add a rule" }));
+    await user.click(screen.getByRole("button", { name: "Add rule" }));
     const form = await screen.findByRole("form", { name: "Add a rule" });
     await user.type(within(form).getByLabelText("Title"), " Wyrdstone hunters ");
     await user.type(within(form).getByLabelText("Description"), "+1 to search.");
@@ -104,7 +107,7 @@ describe("WarbandRules", () => {
     await user.keyboard("{Escape}");
     const section = await screen.findByRole("region", { name: "Warband rules" });
     expect(within(section).getByRole("button", { name: "Wyrdstone hunters" })).toBeVisible();
-    expect(within(section).queryByRole("button", { name: "Add a rule" })).toBeNull();
+    expect(within(section).getByRole("button", { name: "Add rule" })).toBeVisible();
   });
 
   it("lets an editor edit a rule, and delete it after asking again", async () => {
@@ -113,7 +116,7 @@ describe("WarbandRules", () => {
     fakeApi.on("DELETE /warbands/9/rules/1/", null);
     renderRules([hatred, burn], true);
 
-    await user.click(screen.getByRole("button", { name: "Warband rules" }));
+    await user.click(screen.getByRole("button", { name: "Hatred" }));
     const dialog = await screen.findByRole("dialog", { name: "Warband rules" });
     await user.click(within(dialog).getByRole("button", { name: "Edit Hatred" }));
     const form = within(dialog).getByRole("form", { name: "Edit Hatred" });
@@ -163,7 +166,7 @@ describe("Add the template's rules", () => {
     fakeApi.on("POST /warbands/9/rules/from-template/", [hatred, burn]);
     const user = setupUser();
     renderWithTemplate(1);
-    await user.click(screen.getByRole("button", { name: "Warband rules" }));
+    await user.click(await screen.findByRole("button", { name: "Hatred" }));
     const dialog = await screen.findByRole("dialog", { name: "Warband rules" });
     await user.click(
       await within(dialog).findByRole("button", { name: "Add the template's rules" })
@@ -177,7 +180,7 @@ describe("Add the template's rules", () => {
   it("is left out when none are missing", async () => {
     const user = setupUser();
     renderWithTemplate(0);
-    await user.click(screen.getByRole("button", { name: "Warband rules" }));
+    await user.click(await screen.findByRole("button", { name: "Hatred" }));
     const dialog = await screen.findByRole("dialog", { name: "Warband rules" });
     await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/template/")).toBe(1));
     expect(within(dialog).queryByRole("button", { name: "Add the template's rules" })).toBeNull();

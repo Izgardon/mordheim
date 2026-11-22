@@ -118,19 +118,10 @@ export default function WarbandRulesDialog({
           onCancel={() => setEditing(null)}
         />
       ) : null}
-      {canEdit && !editing ? (
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setEditing({ kind: "add" })}
-            className="min-h-9 self-start border border-dashed border-strong px-3 text-xs font-bold text-accent-text"
-          >
-            Add rule
-          </button>
-          {campaignId && warbandId ? (
-            <AddTemplateRules campaignId={campaignId} warbandId={warbandId} open={open} />
-          ) : null}
-        </div>
+      {/* Add rule is on the sheet's section (William, 22 Nov 2026); the template's rules stay here,
+          beside the new rule's form too, so a warband with none still reaches them */}
+      {canEdit && editing?.kind !== "edit" && campaignId && warbandId ? (
+        <AddTemplateRules campaignId={campaignId} warbandId={warbandId} open={open} />
       ) : null}
     </ModalSheet>
   );
