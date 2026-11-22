@@ -16,20 +16,12 @@ type CatalogueTypeFieldProps = {
   id: string;
   copy: TypeFieldCopy;
   field: CatalogueTypeFieldState;
-  /** Left out: required in a dialog (a special's type may be blank). */
-  required?: boolean;
 };
 
 const formatTypeLabel = (value: string) => value.replace(/_/g, " ");
 
 /** The type box the skill, spell and special forms share: search the types, or add one. */
-export function CatalogueTypeField({
-  layout,
-  id,
-  copy,
-  field,
-  required = layout === "dialog",
-}: CatalogueTypeFieldProps) {
+export function CatalogueTypeField({ layout, id, copy, field }: CatalogueTypeFieldProps) {
   return (
     <CatalogueField
       layout={layout}
@@ -48,7 +40,7 @@ export function CatalogueTypeField({
         actionAriaLabel={copy.actionAriaLabel}
         actionDisabled={!field.canAdd}
         onAction={field.add}
-        required={required}
+        required={layout === "dialog"}
         autoComplete="off"
       >
         <ActionSearchDropdown open={field.isMenuOpen} onClose={field.closeMenu} className="z-50">

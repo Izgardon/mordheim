@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/game-icons";
 import { NumberInput } from "@/components/ui/number-input";
 import { CatalogueFormDialog } from "@/features/catalogue/components/CatalogueFormDialog";
-import { CatalogueTypeField } from "@/features/catalogue/components/CatalogueTypeField";
 import {
   CatalogueDescriptionField,
   CatalogueField,
@@ -40,18 +39,10 @@ const CATEGORIES: [SpecialCategory, string][] = [
   ["body", "Body"],
 ];
 
-const TYPE_COPY = {
-  label: "Type",
-  placeholder: "Search or add a type",
-  actionLabel: "Add type",
-  actionAriaLabel: "Add custom type",
-};
-
 /** Boons & Banes' Add new, and its Edit (Revert, Delete): a boon, bane or trait. */
 export default function SpecialFormDialog({
   campaignId,
   special = null,
-  typeOptions,
   canDelete = false,
   onSaved,
   onDeleted,
@@ -60,8 +51,6 @@ export default function SpecialFormDialog({
   campaignId: number;
   /** The special being edited; none when adding one. */
   special?: Special | null;
-  /** The types the catalogue's specials already use. */
-  typeOptions: readonly string[];
   canDelete?: boolean;
   onSaved: (special: Special) => void;
   onDeleted?: (specialId: number) => void;
@@ -71,7 +60,6 @@ export default function SpecialFormDialog({
   const form = useSpecialForm({
     campaignId,
     special,
-    typeOptions,
     resetKey: dialog.open,
     onSaved,
     onDeleted,
@@ -138,13 +126,6 @@ export default function SpecialFormDialog({
           ))}
         </div>
       </CatalogueField>
-      <CatalogueTypeField
-        layout="dialog"
-        id="special-type"
-        copy={TYPE_COPY}
-        field={form.typeField}
-        required={false}
-      />
       <CatalogueField layout="dialog" label="Price (gc)" htmlFor="special-cost">
         <NumberInput
           id="special-cost"

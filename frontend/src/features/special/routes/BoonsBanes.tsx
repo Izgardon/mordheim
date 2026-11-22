@@ -23,12 +23,6 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import SpecialFormDialog from "../components/SpecialFormDialog";
 import { SPECIAL_KIND_LABELS, boonBaneRows, categoryOf, type CategoryFilter } from "../boons-banes";
 import { specialCost } from "../special-cost";
-import type { Special } from "../types/special-types";
-
-/** The types the specials already use: the Add new form's type box offers them. */
-const specialTypes = (specials: Special[] | undefined) => [
-  ...new Set((specials ?? []).map((special) => special.type?.trim() ?? "").filter(Boolean)),
-];
 
 // William, 7 Nov 2026: "Boons and Banes drop setting and price"; an open row shows them
 const COLUMNS = [{ label: "Type", className: "w-[200px] shrink-0" }];
@@ -51,7 +45,6 @@ export default function BoonsBanes() {
   const settings = useSettingsById();
   const capabilities = useCampaignCapabilities(campaignId);
   const canAdd = capabilities.edit_catalogue;
-  const types = specialTypes(specials.data);
   const params = useReferenceParams(!specials.isLoading);
   const category = params.get("category", "all") as CategoryFilter;
   const setting = params.get("setting", ALL_SETTINGS);
@@ -75,7 +68,6 @@ export default function BoonsBanes() {
         canAdd ? (
           <SpecialFormDialog
             campaignId={campaignId}
-            typeOptions={types}
             onSaved={(special) =>
               params.reveal(String(special.id), { q: null, category: null, setting: null })
             }
@@ -168,7 +160,6 @@ export default function BoonsBanes() {
                   <SpecialFormDialog
                     campaignId={campaignId}
                     special={special}
-                    typeOptions={types}
                     canDelete={capabilities.delete_catalogue}
                     onSaved={(saved) => params.reveal(String(saved.id))}
                     onDeleted={params.close}

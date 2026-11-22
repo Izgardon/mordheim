@@ -67,7 +67,7 @@ class SpecialCostApiTests(RosterTestCase):
 
 
 class SpecialTypeOptionalTests(RosterTestCase):
-    """William, 22 Nov 2026, of the Add new form's type: "It doesn't seem necessary to add"."""
+    """William, 22 Nov 2026: "Lets remove type field on edit and creation, keep it fixed for seeded stuff"."""
 
     def test_a_custom_special_may_leave_its_type_blank(self):
         self.client.force_authenticate(user=self.campaign_owner)
@@ -77,3 +77,13 @@ class SpecialTypeOptionalTests(RosterTestCase):
             made = self.client.post("/api/special/", {**body, **sent, "name": f"Iron Will {len(sent)}"}, format="json")
             self.assertEqual(made.status_code, 201, made.data)
             self.assertEqual(made.json()["type"], "")
+
+    def test_an_edit_that_sends_no_type_keeps_the_book_s(self):
+        book = Special.objects.create(name="Fear", type="Psychology")
+        self.client.force_authenticate(user=self.campaign_owner)
+
+        edited = self.client.patch(
+            f"/api/special/{book.id}/", {"campaign_id": self.campaign.id, "description": "Causes fear."}, format="json"
+        )
+        self.assertEqual(edited.status_code, 200, edited.data)
+        self.assertEqual(Special.objects.get(campaign=self.campaign, replaces=book).type, "Psychology")

@@ -14,7 +14,8 @@ type ListSpecialOptions = {
 export type SpecialCreatePayload = {
   campaign_id: number;
   name: string;
-  type: string;
+  /** Left out: none (the book's keep theirs; a campaign's own has no type). */
+  type?: string;
   /** Left out: a trait. */
   kind?: SpecialKind;
   /** Left out: an aura. */

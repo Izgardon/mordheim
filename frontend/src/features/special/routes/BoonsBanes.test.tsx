@@ -239,8 +239,6 @@ describe("Adding a boon or bane", () => {
     const form = await screen.findByRole("dialog", { name: "Add a boon or bane" });
 
     await user.type(within(form).getByLabelText("Name"), "Iron Will");
-    await user.type(within(form).getByLabelText("Type"), "Psych");
-    await user.click(within(form).getByRole("button", { name: "Psychology" }));
     await user.click(within(form).getByRole("button", { name: "Boon" }));
     await user.click(within(form).getByRole("button", { name: /Body/ }));
     await user.type(within(form).getByLabelText("Price (gc)"), "20");
@@ -253,7 +251,6 @@ describe("Adding a boon or bane", () => {
       expect(fakeApi.bodyOf("POST /special/")).toEqual({
         campaign_id: CAMPAIGN_ID,
         name: "Iron Will",
-        type: "Psychology",
         kind: "boon",
         category: "body",
         cost: 20,
@@ -265,23 +262,19 @@ describe("Adding a boon or bane", () => {
     expect(await row("Iron Will")).toHaveAttribute("aria-expanded", "true");
   });
 
-  // William, 22 Nov 2026, of the type: "It doesn't seem necessary to add"
-  it("saves one with no type", async () => {
-    fakeApi.on(
-      `POST /special/`,
-      special({ id: 9, campaign_id: CAMPAIGN_ID, name: "Iron Will", type: "" })
-    );
+  // William, 22 Nov 2026: "Lets remove type field on edit and creation, keep it fixed for seeded
+  // stuff"
+  it("asks for no type: a new one has none, and an edit keeps the book's", async () => {
     const user = setupUser();
     renderApp(PAGE);
     await user.click(await screen.findByRole("button", { name: "Add new" }));
     const form = await screen.findByRole("dialog", { name: "Add a boon or bane" });
+    expect(within(form).queryByLabelText("Type")).toBeNull();
     await user.type(within(form).getByRole("textbox", { name: "Name" }), "Iron Will");
     await user.click(within(form).getByRole("button", { name: "Add" }));
-    expect(within(form).getByText("Name and description are required.")).toBeInTheDocument();
 
-    await user.type(within(form).getByRole("textbox", { name: "Description" }), "Never flees.");
-    await user.click(within(form).getByRole("button", { name: "Add" }));
-    await waitFor(() => expect(fakeApi.bodyOf("POST /special/")).toMatchObject({ type: "" }));
+    expect(within(form).getByText("Name and description are required.")).toBeInTheDocument();
+    expect(fakeApi.countOf("POST /special/")).toBe(0);
   });
 
   it("edits one from its open row, a book one becoming the campaign's version", async () => {
@@ -307,11 +300,12 @@ describe("Adding a boon or bane", () => {
     fakeApi.on(`GET /special/?campaign_id=${CAMPAIGN_ID}`, [version, tail, fear]);
     await user.click(within(form).getByRole("button", { name: "Save changes" }));
 
+    await waitFor(() => expect(fakeApi.countOf(`PATCH /special/${wound.id}/`)).toBe(1));
+    expect(fakeApi.bodyOf(`PATCH /special/${wound.id}/`)).not.toHaveProperty("type");
     await waitFor(() =>
       expect(fakeApi.bodyOf(`PATCH /special/${wound.id}/`)).toMatchObject({
         campaign_id: CAMPAIGN_ID,
         name: "Old Battle Wound",
-        type: "Injury",
         kind: "trait",
         category: "injury",
         description: "Roll a D6 before each battle.",
