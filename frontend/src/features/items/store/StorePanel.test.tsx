@@ -92,7 +92,6 @@ function renderStore(heroes: ReturnType<typeof makeHero>[] = []) {
       warband={{ id: WARBAND, name: "Clan Eshin", gold: 100 }}
       heroes={heroes}
       henchmenGroups={[]}
-      hirelings={[]}
       canBuy
       opening={{}}
     />,
@@ -156,7 +155,7 @@ describe("StorePanel", () => {
       rarity: "Rare 8",
       success: true,
     });
-    await user.click(screen.getByRole("button", { name: "Stash · 40 gc" }));
+    await user.click(screen.getByRole("button", { name: "Add to basket · 40 gc" }));
     await user.click(screen.getByRole("button", { name: "Buy all" }));
 
     await waitFor(() =>
@@ -269,7 +268,6 @@ function renderHisStore(
       warband={{ id: WARBAND, name: "The Silver Hammers", gold: 100 }}
       heroes={[otto, typed]}
       henchmenGroups={[]}
-      hirelings={[]}
       canBuy
       opening={{ forUnit }}
     />,
@@ -464,7 +462,6 @@ describe("StorePanel, Upgrades for a hero from the template", () => {
         warband={{ id: WARBAND, name: "The Silver Hammers", gold: 100 }}
         heroes={[marked]}
         henchmenGroups={[]}
-        hirelings={[]}
         canBuy
         opening={{ forUnit: { key: "heroes:5", name: "Otto" } }}
       />,
@@ -546,7 +543,6 @@ describe("StorePanel, Add item", () => {
         warband={{ id: WARBAND, name: "Clan Eshin", gold: 100 }}
         heroes={[]}
         henchmenGroups={[]}
-        hirelings={[]}
         canBuy
         opening={{}}
       />,
@@ -639,7 +635,6 @@ function renderMaterialStore(materials = [GROMRIL]) {
       warband={{ id: WARBAND, name: "Clan Eshin", gold: 500 }}
       heroes={[]}
       henchmenGroups={[]}
-      hirelings={[]}
       canBuy
       opening={{}}
     />,

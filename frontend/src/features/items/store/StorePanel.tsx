@@ -4,12 +4,7 @@ import { SidePanel } from "@/components/ui/side-panel";
 import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
 import { useWarbandHireTemplate } from "@/features/warbands/api/warband-template-queries";
 import type { TemplateUpgrade } from "@/features/warbands/types/hire-template-types";
-import type {
-  HenchmenGroup,
-  Warband,
-  WarbandHero,
-  WarbandHireling,
-} from "@/features/warbands/types/warband-types";
+import type { HenchmenGroup, Warband, WarbandHero } from "@/features/warbands/types/warband-types";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useWhoCan } from "../api/who-can-queries";
@@ -34,7 +29,6 @@ type StorePanelProps = {
   warband: Pick<Warband, "id" | "name" | "gold">;
   heroes: WarbandHero[];
   henchmenGroups: HenchmenGroup[];
-  hirelings: WarbandHireling[];
   /** `capabilities.manage_items`: without it the store is only read. */
   canBuy: boolean;
   opening: StoreOpening;
@@ -53,10 +47,10 @@ export default function StorePanel(props: StorePanelProps) {
   const { warband, opening } = props;
   const basket = useStoreBasket(warband.id);
   const firstKey = opening.forUnit?.key ?? null;
-  const { heroes, henchmenGroups, hirelings } = props;
+  const { heroes, henchmenGroups } = props;
   const recipients = useMemo(
-    () => recipientsFor({ heroes, henchmenGroups, hirelings }, firstKey),
-    [firstKey, heroes, henchmenGroups, hirelings]
+    () => recipientsFor({ heroes, henchmenGroups }, firstKey),
+    [firstKey, heroes, henchmenGroups]
   );
   const searchers = heroes.map((hero) => ({
     id: hero.id,

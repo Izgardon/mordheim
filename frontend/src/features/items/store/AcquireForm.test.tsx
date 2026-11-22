@@ -103,7 +103,7 @@ describe("AcquireForm", () => {
     await user.type(screen.getByLabelText("First D6 rolled"), "3");
     await user.keyboard("4");
     expect(screen.getByLabelText("Price each for Hunting Arrows")).toHaveValue(60);
-    await user.click(button(/Stash/));
+    await user.click(button(/Add to basket/));
     expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ price: 60, diceRoll: 7 }));
     expect(rollDie).not.toHaveBeenCalled();
   });
@@ -181,10 +181,10 @@ describe("AcquireForm", () => {
     rolls(5, 4);
     const user = setupUser();
     const onPick = show(price({ rarity: 9 }), { firstKey: "heroes:5" });
-    expect(button(/Stash/)).toBeDisabled();
+    expect(button(/Add to basket/)).toBeDisabled();
     await user.click(button("Search"));
     expect(await screen.findByRole("status")).toHaveTextContent("Found");
-    await user.click(button(/Stash/));
+    await user.click(button(/Add to basket/));
     expect(onPick).toHaveBeenCalledWith(
       expect.objectContaining({ availabilityId: 21, price: 25, free: false })
     );
@@ -196,9 +196,9 @@ describe("AcquireForm", () => {
     const onPick = show(price({ rarity: 9 }), { firstKey: "heroes:5" });
     await user.click(button("Search"));
     expect(await screen.findByRole("status")).toHaveTextContent("Not found");
-    expect(button(/Stash/)).toBeDisabled();
+    expect(button(/Add to basket/)).toBeDisabled();
     await user.click(screen.getByRole("checkbox", { name: "No search" }));
-    await user.click(button(/Stash/));
+    await user.click(button(/Add to basket/));
     expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ price: 25 }));
   });
 
@@ -207,7 +207,7 @@ describe("AcquireForm", () => {
     const onPick = show(price({ rarity: 9 }), { firstKey: "heroes:5" });
     await user.click(screen.getByRole("checkbox", { name: "Free" }));
     expect(button("Search")).toBeDisabled();
-    await user.click(button(/Stash · free/));
+    await user.click(button("Add to basket · free"));
     expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ price: 0, free: true }));
     expect(fakeApi.countOf(SEARCH)).toBe(0);
   });
@@ -241,7 +241,7 @@ describe("AcquireForm", () => {
     show(price({ rarity: 9 }), { firstKey: "heroes:5" });
     await user.click(button("Search"));
     expect(await screen.findByRole("button", { name: "Search" })).toBeEnabled();
-    expect(button(/Stash/)).toBeDisabled();
+    expect(button(/Add to basket/)).toBeDisabled();
   });
 });
 
@@ -258,7 +258,7 @@ describe("AcquireForm materials", () => {
 
     expect(screen.getByLabelText("Price each for Hunting Arrows")).toHaveValue(100);
     await user.click(screen.getByRole("checkbox", { name: "No search" }));
-    await user.click(button(/Stash · 100 gc/));
+    await user.click(button("Add to basket · 100 gc"));
 
     expect(onPick).toHaveBeenCalledWith(
       expect.objectContaining({ material: "gromril", price: 100 })

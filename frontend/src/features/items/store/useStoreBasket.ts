@@ -2,11 +2,7 @@ import { useState, useSyncExternalStore } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import type {
-  HenchmenGroup,
-  WarbandHero,
-  WarbandHireling,
-} from "@/features/warbands/types/warband-types";
+import type { HenchmenGroup, WarbandHero } from "@/features/warbands/types/warband-types";
 import { isWarbandQuery } from "@/features/warbands/api/warband-cache";
 import { isCreatureGroup } from "@/features/warbands/utils/companions";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -38,12 +34,12 @@ export const recipientKey = (kind: "hero" | "henchmen_group" | "hireling", id: n
   `${kind === "hero" ? "heroes" : kind === "henchmen_group" ? "henchmen" : "hirelings"}:${id}`;
 
 /**
- * Everyone who can receive an item: the stash, the heroes, the henchmen groups (×members, not a
- * group of creatures, which carries nothing) and the hired swords; the unit the store was opened
- * for comes first.
+ * Everyone who can receive an item: the stash, the heroes and the henchmen groups (×members, not a
+ * group of creatures, which carries nothing); never a hired sword, whose kit only their Edit form
+ * changes (William, 21 Nov 2026). The unit the store was opened for comes first.
  */
 export function recipientsFor(
-  units: { heroes: WarbandHero[]; henchmenGroups: HenchmenGroup[]; hirelings: WarbandHireling[] },
+  units: { heroes: WarbandHero[]; henchmenGroups: HenchmenGroup[] },
   firstKey: string | null
 ): Recipient[] {
   const all: Recipient[] = [
@@ -62,12 +58,6 @@ export function recipientsFor(
         target: { kind: "henchmen" as const, unit },
         count: Math.max(1, unit.henchmen?.length ?? 1),
       })),
-    ...units.hirelings.map((unit) => ({
-      key: `hirelings:${unit.id}`,
-      label: nameOf(unit, "Hired sword"),
-      target: { kind: "hirelings" as const, unit },
-      count: 1,
-    })),
   ];
   const first = all.find((entry) => entry.key === firstKey);
   return first ? [first, ...all.filter((entry) => entry !== first)] : all;
