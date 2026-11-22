@@ -145,7 +145,7 @@ export function battleFeed(
         line(`${text(payload.name) || "A creature"} joined the fight`);
         break;
       case "participant_finished_battle":
-        line(`${player(event.actor_user_id)} finished his battle`);
+        line(`${player(event.actor_user_id)} finished their battle`);
         break;
       default:
         break;

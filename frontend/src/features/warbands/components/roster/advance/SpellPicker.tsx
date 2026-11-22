@@ -104,7 +104,7 @@ export default function SpellPicker({
   return (
     <div className="flex flex-col gap-2">
       {own.length ? null : (
-        <span className="text-xs font-semibold text-danger">He knows no lore yet: any lore</span>
+        <span className="text-xs font-semibold text-danger">They know no lore yet: any lore</span>
       )}
       <div role="group" aria-label="Lores" className="flex flex-wrap gap-1.5">
         {[...lores, ...(own.length && all ? others : [])].map((name) => (
@@ -112,7 +112,7 @@ export default function SpellPicker({
             key={name}
             pressed={lore === name}
             className={lores.includes(name) ? undefined : "opacity-60"}
-            title={lores.includes(name) ? undefined : "Not one of his lores"}
+            title={lores.includes(name) ? undefined : "Not one of their lores"}
             onClick={() => {
               setLore(name);
               onChange(null);
@@ -128,7 +128,7 @@ export default function SpellPicker({
         ) : null}
       </div>
       {lore && !lores.includes(lore) ? (
-        <span className="text-xs font-semibold text-danger">Not one of his lores</span>
+        <span className="text-xs font-semibold text-danger">Not one of their lores</span>
       ) : null}
       {lore ? (
         <>

@@ -42,7 +42,7 @@ export const upgradePriceText = (price: number | null) =>
 export function overUpgradeMax(upgrade: TemplateUpgrade, count: number): string | null {
   const max = upgrade.max_per_fighter;
   return max !== null && count > max
-    ? `At most ${max} from ${upgrade.group}: he would have ${count}.`
+    ? `At most ${max} from ${upgrade.group}: they would have ${count}.`
     : null;
 }
 

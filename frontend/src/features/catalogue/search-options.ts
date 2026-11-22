@@ -26,7 +26,7 @@ import type { Spell } from "@/features/spells/types/spell-types";
 type Settings = Map<number, Setting>;
 
 /** A skill outside the unit's skill groups: a warning, never a block. */
-export const OUTSIDE_ACCESS = "Not in his skill groups";
+export const OUTSIDE_ACCESS = "Not in their skill groups";
 
 export type SkillContext = {
   settings: Settings;
@@ -90,7 +90,7 @@ const fold = (text?: string | null) => (text ?? "").trim().toLowerCase();
 
 /**
  * Spells for a caster, his lores first (as the advance's spell picker has them): those of his
- * lores under "His lores", then the rest under "Other lores", the greyed rows last in each. With
+ * lores under "Their lores", then the rest under "Other lores", the greyed rows last in each. With
  * no lore of his, every spell as one list.
  */
 export function spellOptions(spells: Spell[], settings: Settings, lores: string[] = []) {
@@ -101,7 +101,7 @@ export function spellOptions(spells: Spell[], settings: Settings, lores: string[
         .filter((spell) => his.has(fold(spell.type)) === mine)
         .map((spell) => ({ ...spellOption(spell, settings), group }))
     );
-  return his.size ? [...rows(true, "His lores"), ...rows(false, "Other lores")] : rows(false);
+  return his.size ? [...rows(true, "Their lores"), ...rows(false, "Other lores")] : rows(false);
 }
 
 export const specialOption = (special: Special, settings: Settings): SearchOption => ({

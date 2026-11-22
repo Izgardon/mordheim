@@ -175,9 +175,9 @@ def change_warnings(participant: BattleParticipant, draft: dict) -> list[Warning
     done = applied(participant)
     warnings: list[Warning] = []
     if INJURIES in done and _unit_results_changed(stored, draft, INJURY_FIELDS):
-        warnings.append(_already("The injuries are already in your warband", "Change a unit on his card."))
+        warnings.append(_already("The injuries are already in your warband", "Change a unit on their card."))
     if XP in done and _unit_results_changed(stored, draft, XP_FIELDS):
-        warnings.append(_already("The experience is already in your warband", "Change a unit on his card."))
+        warnings.append(_already("The experience is already in your warband", "Change a unit on their card."))
     if EXPLORE in done and _exploration_changed(stored, draft):
         shards = block(participant).get("received", {}).get("shards")
         found = f"The {shards} found stay as they are." if shards else "What was found stays as it is."

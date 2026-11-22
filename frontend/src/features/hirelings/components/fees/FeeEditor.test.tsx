@@ -88,7 +88,7 @@ describe("FeeEditor", () => {
   it("never offers an upkeep a hero's place", () => {
     render(<Harness kinds={UPKEEP_KINDS} />);
     const kinds = screen.getAllByRole("option").map((option) => option.textContent);
-    expect(kinds).toEqual(["A fee", "See his rules", "None"]);
+    expect(kinds).toEqual(["A fee", "See their rules", "None"]);
   });
 
   it("asks how he is hired for a fee in his rules, and shows a fee's own note", async () => {
@@ -96,8 +96,8 @@ describe("FeeEditor", () => {
     render(<Harness fee={{ ...blankFee(), gold: 15, note: "15 gc*" }} />);
     expect(screen.getByRole("textbox", { name: "Note" })).toHaveValue("15 gc*");
     await user.selectOptions(screen.getByRole("combobox", { name: "Hire fee kind" }), "special");
-    expect(screen.getByRole("textbox", { name: "How he is hired" })).toBeInTheDocument();
-    expect(reads()).toBe("Hire: See his rules");
+    expect(screen.getByRole("textbox", { name: "How they are hired" })).toBeInTheDocument();
+    expect(reads()).toBe("Hire: See their rules");
   });
 
   it("keeps a stored fee with several resources as it is until Replace", async () => {

@@ -84,7 +84,7 @@ export default function EditGroupModels({
           {member.id !== undefined && asking === member.id ? (
             <div className="flex flex-wrap items-center gap-1.5 text-[13px] text-ink">
               <span>
-                His share (
+                Their share (
                 {memberShare(group, member)
                   .map((row) => row.name)
                   .join(", ") || "nothing"}
@@ -98,10 +98,10 @@ export default function EditGroupModels({
                 variant="secondary"
                 onClick={() => dismissWith(index, member.id!, "leaves")}
               >
-                He leaves with it
+                They leave with it
               </Button>
               <Button size="sm" variant="ghost" onClick={() => setAsking(null)}>
-                Keep him
+                Keep them
               </Button>
             </div>
           ) : null}

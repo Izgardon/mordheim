@@ -74,7 +74,7 @@ def apply_advances(context: FinaliseContext, unit_results: dict[str, dict]) -> l
                 warnings.append(_skipped(name, label, "the unit is no longer on the roster"))
                 continue
             if advance["id"] == PENDING:
-                warnings.append(_skipped(name, label, "its D6 wasn't rolled, so the level-up is still on his card"))
+                warnings.append(_skipped(name, label, "its D6 wasn't rolled, so the level-up is still on their card"))
                 continue
             try:
                 apply_advance(kind, context.warband, unit, _payload(name_key, name, advance))  # own savepoint

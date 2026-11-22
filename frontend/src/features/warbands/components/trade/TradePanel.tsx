@@ -141,7 +141,7 @@ export default function TradePanel({
           </div>
           {trader && trader.trading_action === false && !myAccepted ? (
             <p className="m-0 text-xs text-danger">
-              {unitName(trader)} has used his trading action this round. You can still send him.
+              {unitName(trader)} has used their trading action this round. You can still send them.
             </p>
           ) : null}
         </div>

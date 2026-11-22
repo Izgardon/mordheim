@@ -33,7 +33,7 @@ describe("henchmen loadouts", () => {
   });
 
   it("says a member whose kit was taken sits out, and what his share is", () => {
-    expect(sitsOut(group, skritt)).toBe("His kit went to the stash (Light Armour)");
+    expect(sitsOut(group, skritt)).toBe("Their kit went to the stash (Light Armour)");
     expect(sitsOut(group, { ...skritt, gaps: [] })).toBeNull();
     expect(memberShare(group, skritt).map((item) => item.name)).toEqual(["Sword"]);
   });

@@ -32,7 +32,7 @@ const PLAYER_STATUS: Record<string, string> = {
   canceled_prebattle: "backed out",
   declined: "declined",
   in_battle: "fighting",
-  finished_battle: "in his post-game",
+  finished_battle: "in their post-game",
   confirmed_postbattle: "done",
 };
 
@@ -205,7 +205,7 @@ function ResultsSheet({ tools }: { tools: ActiveBattleTools }) {
     >
       <p className="m-0 text-sm text-text2">
         {ending
-          ? "Everyone still fighting goes to his post-game with these results. Pick the warbands that won; none picked is no winner."
+          ? "Everyone still fighting goes to their post-game with these results. Pick the warbands that won; none picked is no winner."
           : changing
             ? "Pick the warbands that won; none picked is no winner. Wins and losses are recorded when the battle ends, so they follow this."
             : "Pick the warbands that won; none picked is no winner. The battle ends once every post-game is done."}

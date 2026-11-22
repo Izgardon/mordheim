@@ -114,7 +114,7 @@ export default function HirelingDetail(props: HirelingDetailProps) {
       <ProfileStrip profile={entry} />
       {detail.error && !full ? <p className="m-0 text-sm text-danger">{detail.error}</p> : null}
       {!full && !detail.error ? (
-        <span className="text-[13px] text-muted-foreground">Reading his rules…</span>
+        <span className="text-[13px] text-muted-foreground">Reading their rules…</span>
       ) : null}
       {rules.length ? (
         <div className="flex flex-col gap-2.5">

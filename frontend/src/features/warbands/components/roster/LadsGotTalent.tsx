@@ -61,7 +61,9 @@ export default function LadsGotTalent({
         removedHeroIds: atCap && dismissId !== null ? [dismissId] : [],
         summary: result.summary,
       });
-      toast.success(`${result.hero.name ?? "He"} joins the heroes, with an advance to take.`);
+      toast.success(
+        `${result.hero.name ?? "The new hero"} joins the heroes, with an advance to take.`
+      );
       onPromoted(result.group === null);
     } catch (error) {
       toast.error("The promotion didn't save.", { description: getErrorMessage(error) });

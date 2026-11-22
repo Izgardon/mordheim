@@ -214,7 +214,7 @@ class FeeKindTests(HireTestCase):
         paid = self.hire("dramatis_persona", bertha.id, fee_paid=True)
 
         self.assertEqual(paid.status_code, 201, paid.data)
-        self.assertEqual(trade_rows(self.warband), [("Hire", "Bertha", 0, "Paid: See his rules.")])
+        self.assertEqual(trade_rows(self.warband), [("Hire", "Bertha", 0, "Paid: See their rules.")])
 
     def test_paid_adds_nothing_to_a_fee_the_hire_charges(self):
         WarbandResource.objects.create(warband=self.warband, name="Wyrdstone shards", amount=2)

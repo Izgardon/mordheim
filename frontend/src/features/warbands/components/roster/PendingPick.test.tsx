@@ -77,7 +77,7 @@ describe("A pick left for later", () => {
     expect(screen.queryByRole("option", { name: /Sprint/ })).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Show all" }));
     expect(screen.getByRole("option", { name: /Sprint/ })).toHaveTextContent(
-      "Not in his skill groups"
+      "Not in their skill groups"
     );
     expect(screen.queryByRole("option", { name: /Sand Walker/ })).not.toBeInTheDocument();
   });

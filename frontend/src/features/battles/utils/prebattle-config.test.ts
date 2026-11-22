@@ -53,7 +53,7 @@ describe("prebattle-config", () => {
         ...group,
         members: group.members.map((member) => ({
           ...member,
-          outReason: "His kit went to the stash",
+          outReason: "Their kit went to the stash",
         })),
       })),
     } as typeof roster;

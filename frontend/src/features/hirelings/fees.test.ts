@@ -26,7 +26,7 @@ describe("structured fees", () => {
     );
     expect(feeReads(fee({ dice: 2, dice_multiplier: 5 }))).toBe("2D6×5 gc");
     expect(feeReads(fee({ resources: wyrdstone }))).toBe("1 Wyrdstone");
-    expect(feeReads(fee({ kind: "special" }))).toBe("See his rules");
+    expect(feeReads(fee({ kind: "special" }))).toBe("See their rules");
     expect(feeReads(fee({}))).toBe("-");
   });
 

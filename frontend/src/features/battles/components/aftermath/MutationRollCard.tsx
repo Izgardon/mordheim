@@ -16,7 +16,7 @@ import {
 import RollCard from "./RollCard";
 
 /** A result the unit has already: the table rolls again (a warning, never a block). */
-export const HAS_IT = "He has it already. Roll again.";
+export const HAS_IT = "They have it already. Roll again.";
 
 /**
  * The D100 Mutation's follow-up on the Injuries step: a D66 on the random mutation table, rolled

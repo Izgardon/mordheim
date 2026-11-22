@@ -100,7 +100,7 @@ describe("Upgrades in the hire dialog", () => {
     await user.click(within(theMarks).getByRole("button", { name: "Mark of Tchar free" }));
     await user.click(within(theMarks).getByRole("button", { name: /Mark of Arkhar/ }));
     expect(
-      within(tally).getByText("At most 1 from Mark of the Dark Gods: he would have 2.")
+      within(tally).getByText("At most 1 from Mark of the Dark Gods: they would have 2.")
     ).toBeInTheDocument();
     expect(screen.getByText("Gold 200 → 100 gc")).toBeInTheDocument();
 

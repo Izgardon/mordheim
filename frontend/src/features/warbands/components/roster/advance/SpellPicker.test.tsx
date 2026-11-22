@@ -53,7 +53,7 @@ describe("The spell picker", () => {
   });
 });
 
-describe("His lores first", () => {
+describe("Their lores first", () => {
   const bolt: Spell = { id: 71, name: "Fireball", type: "Lesser Magic", dc: "7", roll: 1 };
   beforeEach(() => {
     fakeApi.reset();
@@ -75,11 +75,11 @@ describe("His lores first", () => {
     expect(await within(lores).findByRole("button", { name: "Show all" })).toBeInTheDocument();
     expect(within(lores).getByRole("button", { name: "Lesser Magic" })).toBeInTheDocument();
     expect(within(lores).queryByRole("button", { name: LORE })).toBeNull();
-    expect(screen.queryByText("He knows no lore yet: any lore")).toBeNull();
+    expect(screen.queryByText("They know no lore yet: any lore")).toBeNull();
 
     await user.click(within(lores).getByRole("button", { name: "Show all" }));
     await user.click(within(lores).getByRole("button", { name: LORE }));
-    expect(screen.getByText("Not one of his lores")).toBeInTheDocument();
+    expect(screen.getByText("Not one of their lores")).toBeInTheDocument();
     expect(await screen.findByRole("table", { name: `${LORE} spells` })).toBeInTheDocument();
   });
 });

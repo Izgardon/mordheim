@@ -92,7 +92,7 @@ export default function HireKit({
   if (!open) {
     return (
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-bold text-muted-foreground">His lists · {lists}</span>
+        <span className="text-xs font-bold text-muted-foreground">Their lists · {lists}</span>
         {groups.map(([type, group]) => (
           <div key={type} className="flex flex-col gap-0.5">
             <span className={CAPTION}>{type}</span>

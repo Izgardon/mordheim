@@ -212,7 +212,7 @@ export default function FeeEditor(props: FeeEditorProps) {
           </div>
           {value.kind === "special" || value.hasNote ? (
             <label className={`flex flex-col gap-1 ${LABEL}`}>
-              {value.kind === "special" ? "How he is hired" : "Note"}
+              {value.kind === "special" ? "How they are hired" : "Note"}
               <Input
                 id={`${idPrefix}-note`}
                 inputSize="sm"

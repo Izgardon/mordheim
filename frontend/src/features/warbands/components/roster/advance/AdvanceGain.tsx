@@ -39,7 +39,7 @@ export function gainLine(
       return { text: `${stat} ${written}`, warning: `${written} has no number to add 1 to` };
     const change = statChange(stat, current, statOf(race, stat), written);
     const notes = [
-      change.overMax ? "Above his race maximum" : null,
+      change.overMax ? "Above their race maximum" : null,
       written !== undefined ? "Only the first number goes up" : null,
     ].filter(Boolean);
     return { text: change.text, warning: notes.length ? notes.join(". ") : undefined };

@@ -11,7 +11,7 @@ import type { GapReason, Henchman, HenchmenGroup } from "../types/warband-types"
 const REASON: Record<GapReason, string> = {
   lost: "lost after the last battle",
   used: "used up in the last battle",
-  kit_taken: "his kit went to the stash",
+  kit_taken: "their kit went to the stash",
   short: "joined without it",
 };
 
@@ -34,13 +34,13 @@ export function memberGaps(group: Pick<HenchmenGroup, "items">, member: Henchman
 
 /** "Skritt has no Horse (lost after the last battle)." */
 export const gapLine = (member: Pick<Henchman, "name">, gap: MemberGap) =>
-  `${member.name || "He"} has no ${gap.row.name} (${gap.why}).`;
+  `${member.name || "This member"} has no ${gap.row.name} (${gap.why}).`;
 
 /** Why the next battle leaves him out at first: his kit went to the stash (null when it didn't). */
 export function sitsOut(group: Pick<HenchmenGroup, "items">, member: Henchman) {
   const taken = memberGaps(group, member).filter((gap) => gap.reason === "kit_taken");
   return taken.length
-    ? `His kit went to the stash (${taken.map((gap) => gap.row.name).join(", ")})`
+    ? `Their kit went to the stash (${taken.map((gap) => gap.row.name).join(", ")})`
     : null;
 }
 

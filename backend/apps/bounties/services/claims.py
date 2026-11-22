@@ -71,7 +71,7 @@ def _unit(claim: BountyClaim, warband: Warband, raw: Any) -> None:
     """The unit the request names, one of the claimant's own still in his warband (a 400 on `unit` otherwise)."""
     kind = raw.get("kind") if isinstance(raw, dict) else None
     if kind not in UNIT_MODELS:
-        raise field_error("unit", "Name the unit that took him out: a hero, a henchmen group or a hired sword.")
+        raise field_error("unit", "Name the unit that took them out: a hero, a henchmen group or a hired sword.")
     unit_kind, model = UNIT_MODELS[kind]
     unit_id = whole(raw, "id", low=1, high=2**63 - 1)
     unit = not_dismissed(model.objects.filter(id=unit_id, warband_id=warband.id)).first()

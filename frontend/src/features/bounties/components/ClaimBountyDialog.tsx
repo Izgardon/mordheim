@@ -50,7 +50,7 @@ export default function ClaimBountyDialog({
     unit || (record?.units[0] ? `${record.units[0].kind}:${record.units[0].id}` : "");
   const battleValue = battle || (candidate ? String(candidate.battle.id) : "");
   const poster = bounty?.posted_by.user_name ?? "The poster";
-  const unitLabel = `Which of your units took ${bounty?.target.name ?? "him"} out`;
+  const unitLabel = `Which of your units took ${bounty?.target.name ?? "them"} out`;
 
   // A fresh form each time it opens (not as it closes, which would show while it animates out).
   const [shown, setShown] = useState(open);
