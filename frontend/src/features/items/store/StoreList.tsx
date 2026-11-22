@@ -92,8 +92,9 @@ export default function StoreList(props: StoreListProps) {
   const entries = storeEntries(offers, props.materials ?? [], {
     query,
     category,
-    // a unit with a list has only Their list's switch: off, the warband's usual store
-    onlyMine: list ? true : onlyMine,
+    // a unit with a list has only Their list's switch: off, everything, with the warnings
+    // (William, 22 Nov 2026: "Yes show everything with warnings")
+    onlyMine: list ? onlyHis : onlyMine,
     his: list && onlyHis ? list : null,
     openId,
     inBasket: props.inBasket ?? NONE,

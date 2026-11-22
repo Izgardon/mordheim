@@ -12,6 +12,7 @@ import ItemInfo, { useShownItem } from "../components/ItemInfo";
 import { hisListFor, hisUpgrades, variantTerms } from "./his-list";
 import StoreBasket from "./StoreBasket";
 import StoreList from "./StoreList";
+import { RecipientChoiceContext, useRecipientChoiceState } from "./recipient-choice";
 import { isUpgradeLine, recipientsFor, useStoreBasket } from "./useStoreBasket";
 
 /** Where the store was opened from: a unit (its loadout, Buy again), maybe with an item to get. */
@@ -46,6 +47,7 @@ export default function StorePanel(props: StorePanelProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { warband, opening } = props;
   const basket = useStoreBasket(warband.id);
+  const recipientChoice = useRecipientChoiceState();
   const firstKey = opening.forUnit?.key ?? null;
   const { heroes, henchmenGroups } = props;
   const recipients = useMemo(
@@ -131,26 +133,28 @@ export default function StorePanel(props: StorePanelProps) {
         ) : undefined
       }
     >
-      <StoreList
-        key={`${opening.again?.itemId ?? ""}:${firstKey ?? ""}`}
-        campaignId={props.campaignId}
-        warbandId={warband.id}
-        canBuy={props.canBuy}
-        canAddItem={canAddItem}
-        recipients={recipients}
-        firstKey={firstKey}
-        searchers={searchers}
-        again={opening.again}
-        isMobile={isMobile}
-        his={his}
-        variant={variantTerms(template)}
-        materials={materials}
-        inBasket={inBasket}
-        upgrades={upgrades ? { ...upgrades, onGet: getUpgrade } : null}
-        onPick={basket.add}
-        isShown={details.isShown}
-        onToggleShown={details.toggle}
-      />
+      <RecipientChoiceContext.Provider value={recipientChoice}>
+        <StoreList
+          key={`${opening.again?.itemId ?? ""}:${firstKey ?? ""}`}
+          campaignId={props.campaignId}
+          warbandId={warband.id}
+          canBuy={props.canBuy}
+          canAddItem={canAddItem}
+          recipients={recipients}
+          firstKey={firstKey}
+          searchers={searchers}
+          again={opening.again}
+          isMobile={isMobile}
+          his={his}
+          variant={variantTerms(template)}
+          materials={materials}
+          inBasket={inBasket}
+          upgrades={upgrades ? { ...upgrades, onGet: getUpgrade } : null}
+          onPick={basket.add}
+          isShown={details.isShown}
+          onToggleShown={details.toggle}
+        />
+      </RecipientChoiceContext.Provider>
     </SidePanel>
   );
 }

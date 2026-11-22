@@ -48,7 +48,8 @@ describe("materialRows on Their list", () => {
     expect(names(materialRows([SILVER], [], everything, sold))).toEqual([]);
   });
 
-  it("gives a henchmen group only the materials their list sells", () => {
+  // William, 22 Nov 2026: a henchmen group's Their list shows no material, even one their list sells
+  it("gives a henchmen group no material at all", () => {
     const group = {
       lines: [
         { slug: "gromril", name: "Gromril blade", priceNote: "3 × price", off: "", choices: [] },
@@ -57,9 +58,7 @@ describe("materialRows on Their list", () => {
       open: false,
     };
     const ithilmar = material({ slug: "ithilmar", name: "Ithilmar", row_name: "Ithilmar Weapon" });
-    expect(names(materialRows([material({}), ithilmar], [], everything, group))).toEqual([
-      "Gromril blade",
-    ]);
+    expect(names(materialRows([material({}), ithilmar], [], everything, group))).toEqual([]);
   });
 
   it("shows a material out of play in the warband's store, with its reason", () => {

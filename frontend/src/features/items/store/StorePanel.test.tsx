@@ -128,6 +128,19 @@ describe("StorePanel", () => {
     expect(screen.queryByRole("region", { name: "Lance" })).not.toBeInTheDocument();
   });
 
+  // William, 22 Nov 2026: the warband store's dropdown remembers the last unit picked
+  it("starts each item's Who gets it on the unit picked last", async () => {
+    const user = setupUser();
+    renderStore([makeHero({ id: 5, name: "Aldric Voss" })]);
+
+    await user.click(screen.getByRole("button", { name: "Get" }));
+    await pickOption(user, screen.getByRole("combobox", { name: "Who gets it" }), "Aldric Voss");
+    await user.click(screen.getByRole("button", { name: "Close" }));
+    await user.click(screen.getByRole("button", { name: "Get" }));
+
+    expect(screen.getByRole("combobox", { name: "Who gets it" })).toHaveTextContent("Aldric Voss");
+  });
+
   it("buys a rare item once a hero's search found it", async () => {
     fakeApi.on(`POST /warbands/${WARBAND}/rarity-rolls/`, { hero_id: 4, warnings: [] });
     fakeApi.on(`POST /warbands/${WARBAND}/purchases/`, {
@@ -322,8 +335,8 @@ describe("StorePanel, buying for a unit from the template", () => {
     expect(screen.getByText("Gaolers only")).toBeInTheDocument();
     expect(screen.getByText("At most 1 in the warband: it would hold 2.")).toBeInTheDocument();
 
-    // Their list off: the warband's usual store, the common kit first; the Lance it can't usually
-    // buy stays hidden
+    // Their list off: everything, with the warnings (William, 22 Nov 2026: "Yes show everything
+    // with warnings"), so the Lance the warband can't usually buy shows too
     await user.click(screen.getByRole("switch", { name: "Their list" }));
     expect(names()).toEqual([
       "Dagger",
@@ -331,9 +344,9 @@ describe("StorePanel, buying for a unit from the template", () => {
       "Rope & Hook",
       "Steel Whip",
       "Sword",
+      "Lance",
       "Gromril Armour",
     ]);
-    expect(screen.queryByText("Gaolers only")).toBeNull();
   });
 
   it("gives a henchmen group only their list: no oddments, materials or armour that counts as theirs", () => {

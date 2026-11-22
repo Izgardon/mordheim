@@ -1,10 +1,9 @@
-import { useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import { SectionedSelect, type SelectSection } from "@/components/ui/sectioned-select";
 import { cn } from "@/lib/utils";
 
 import type { Recipient } from "./useStoreBasket";
+import { useRecipientChoice } from "./recipient-choice";
 
 type AddToBasketProps = {
   recipients: Recipient[];
@@ -55,7 +54,7 @@ function sectionsFor(recipients: Recipient[], each: number, free: boolean): Sele
  */
 export default function AddToBasket(props: AddToBasketProps) {
   const unit = props.recipients.find((recipient) => recipient.key === props.firstKey) ?? null;
-  const [key, setKey] = useState("stash");
+  const { key, set: setKey } = useRecipientChoice();
   const picked =
     unit ?? props.recipients.find((recipient) => recipient.key === key) ?? props.recipients[0];
   if (!picked) return null;

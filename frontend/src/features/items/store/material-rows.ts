@@ -43,7 +43,7 @@ function shown(material: WeaponMaterial, name: string, filters: MaterialFilters)
 
 /**
  * Their list's part: the material lines their lists sell, the melee weapons those lists sell, and
- * whether the materials open to anyone show too (a hero's list, not a henchmen group's).
+ * whether it is a hero's list (`open`): a henchmen group's shows no material at all.
  */
 export type HisWeapons = { lines: HisMaterialLine[]; melee: StoreOffer[]; open: boolean };
 
@@ -82,6 +82,9 @@ export function materialRows(
         : [];
     });
   }
+  // a henchmen group's list shows no material at all, even one their list sells (William, 22 Nov
+  // 2026); `open` is a hero's list
+  if (!his.open) return [];
   const byId = new Map(offers.map((offer) => [offer.item.id, offer]));
   const sold = his.lines.flatMap((line) => {
     const material = materials.find((row) => row.slug === line.slug);
