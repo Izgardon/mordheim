@@ -117,8 +117,9 @@ def always_open(item: Any, at: int | None) -> bool:
 @dataclass(frozen=True)
 class Offer:
     """The price row an item offers a warband (`availability_id`), the other rows it may use (`options`, the chosen
-    first), whether it can usually buy it, why not, and whether the store offers it to any unit whatever his own
-    list sells (`always_open`)."""
+    first), whether it can usually buy it, why not, whether the store offers it to any unit whatever his own
+    list sells (`always_open`), and the items it counts as on a unit's own list (`counts_as`: Gromril Armour is
+    Heavy Armour's, `offers.counts_as_ids`)."""
 
     item_id: int
     availability_id: int
@@ -126,6 +127,7 @@ class Offer:
     can_buy: bool
     reason: str
     always_open: bool = False
+    counts_as: tuple[int, ...] = ()
 
     def payload(self) -> dict[str, Any]:
         return {
@@ -135,6 +137,7 @@ class Offer:
             "can_buy": self.can_buy,
             "reason": self.reason,
             "always_open": self.always_open,
+            "counts_as": list(self.counts_as),
         }
 
 

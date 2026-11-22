@@ -418,6 +418,19 @@ class HisListTests(WhoCanTestCase):
         self.assertTrue(offers[ithilmar.id]["can_buy"])
         self.assertFalse(offers[light.id]["can_buy"])  # nothing else rides on the line
 
+    def test_gromril_and_ithilmar_armour_say_they_count_as_heavy_armour_while_in_play(self) -> None:
+        # William, 22 Nov 2026: "Their list armour section should show gromril and ithilmar if they have heavy there",
+        # still subject to the settings in play: the store reads which item each counts as from the server
+        heavy = self.item("Heavy Armour", {"everyone": True, "cost": 50}, type="Armour")
+        gromril = self.item("Gromril Armour", {"everyone": True, "cost": 150}, type="Armour")
+        ithilmar = self.item("Ithilmar Armour", {"everyone": True}, type="Armour", campaign_type=self.khemri)
+
+        offers = self.offers()
+
+        self.assertEqual(offers[gromril.id]["counts_as"], [heavy.id])
+        self.assertEqual(offers[ithilmar.id]["counts_as"], [])  # Khemri isn't ticked
+        self.assertEqual(offers[heavy.id]["counts_as"], [])
+
     def test_an_armour_no_list_sells_and_nothing_counts_as_is_unchanged(self) -> None:
         gromril = self.item("Gromril Mail", {"types": [self.reiklanders], "cost": 150}, type="Armour")
         sword = self.item("Falchion", {"types": [self.reiklanders]})

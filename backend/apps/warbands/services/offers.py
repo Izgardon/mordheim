@@ -48,8 +48,21 @@ def current_items(campaign_id: int) -> list[Any]:
 def item_offers(campaign_id: int, buyer: Buyer, items: Sequence[Any] | None = None) -> list[dict[str, Any]]:
     """Each of the campaign's current items' offer to the buyer (a warband, or a template's types: the editor)."""
     rows = items if items is not None else current_items(campaign_id)
+    counted = counts_as_ids(rows)
     offers = (offer(item, buyer, item.in_play, _setting(item)) for item in rows)
-    return [found.payload() for found in offers if found is not None]
+    return [replace(found, counts_as=counted.get(found.item_id, ())).payload() for found in offers if found is not None]
+
+
+def counts_as_ids(items: Sequence[Any]) -> dict[int, tuple[int, ...]]:
+    """For each item in play that counts as another on a unit's own list (`COUNTS_AS_ITEMS`), that item's ids (its
+    own, and the book's a campaign's version stands in for): Gromril and Ithilmar Armour count as Heavy Armour, so the
+    store's Their list offers them to a hero whose list sells it (William, 22 Nov 2026), while the settings in play
+    still apply. No extra query: these are the items already read."""
+    ids_of: dict[str, list[int]] = {}
+    for item in items:
+        for name in COUNTS_AS_ITEMS.get(item.name, ()):
+            ids_of.setdefault(name, []).extend(pk for pk in (item.pk, getattr(item, "replaces_id", None)) if pk)
+    return {item.pk: tuple(ids_of[item.name]) for item in items if item.name in ids_of and item.in_play}
 
 
 def counts_as_sold(items: Sequence[Any], sells: frozenset[int]) -> frozenset[int]:
