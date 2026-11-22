@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { makeItem } from "@/test/warband-fixtures";
@@ -93,6 +93,45 @@ describe("ItemInfo", () => {
         .map((heading) => heading.textContent)
     ).toEqual(["Halberd", "Two-handedshared rule", "Hooked", "Halberd"]);
     expect(info).not.toHaveTextContent("this item");
+  });
+
+  it("lists an animal's rules once: its own, not its beast's copies of them", () => {
+    // William, 22 Nov 2026: "Animals in store all list their rules twice, I just need the top version"
+    const beast = {
+      id: 3,
+      name: "Mule",
+      kind: "mount" as const,
+      has_profile: false,
+      movement: 0,
+      weapon_skill: 0,
+      ballistic_skill: 0,
+      strength: 0,
+      toughness: 0,
+      wounds: 0,
+      initiative: 0,
+      attacks: 0,
+      leadership: 0,
+      armour_save: null,
+      specials: [{ id: 40, name: "Stubborn (Mule)", description: "Won't budge." }],
+    };
+    const rule = { id: 4, rule_id: null, shared: false, summary: "", table: [] };
+    const mule = makeItem({
+      id: 8,
+      name: "Mule",
+      type: "Animal",
+      bestiary_entry: beast,
+      rules: [{ ...rule, name: "Stubborn", text: "Won't budge." }],
+    });
+    render(<ItemInfo item={mule} availability={null} onClose={vi.fn()} />);
+
+    const info = screen.getByRole("region", { name: "Mule" });
+    expect(within(info).getAllByText("Won't budge.")).toHaveLength(1);
+    expect(within(info).queryByText("Stubborn (Mule)")).toBeNull();
+
+    // a beast whose item has no rules of its own shows the beast's
+    cleanup();
+    render(<ItemInfo item={{ ...mule, rules: [] }} availability={null} onClose={vi.fn()} />);
+    expect(screen.getByText("Stubborn (Mule)")).toBeInTheDocument();
   });
 
   it("closes from its close button", () => {
