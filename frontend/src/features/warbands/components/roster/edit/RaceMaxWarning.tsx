@@ -2,7 +2,7 @@ import { STAT_FIELDS, numberOnly } from "@/features/catalogue/utils/statblock";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
 /**
- * "Above his race maximum" in the Edit form, as the advance dialog warns (a warning: the save goes
+ * "Above their race maximum" in the Edit form, as the advance dialog warns (a warning: the save goes
  * through): each characteristic the form sets above his race's maximum.
  */
 export default function RaceMaxWarning({
@@ -27,7 +27,7 @@ export default function RaceMaxWarning({
   if (!over.length) return null;
   return (
     <p className="m-0 text-xs font-semibold text-danger">
-      Above his race maximum: {over.join(", ")}
+      Above their race maximum: {over.join(", ")}
     </p>
   );
 }

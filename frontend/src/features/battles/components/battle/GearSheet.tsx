@@ -4,7 +4,8 @@ import { ChevronDown } from "lucide-react";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import type { PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
-import { plainRuleText, ruleName } from "@/features/items/utils/item-rules";
+import { beastProfile, itemRuleLines } from "@/features/items/utils/item-rules";
+import { ProfileStrip, type CatalogueProfile } from "@/features/reference/profile";
 import { cameThrough, unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +16,8 @@ type GearEntry = {
   name: string;
   kind: string;
   rules: { name: string; text: string }[];
+  /** An Animal item's beast's profile (its specials are among `rules`). */
+  profile?: CatalogueProfile | null;
   /** A single-use item: its id, how many it has and how many are used. */
   single?: { itemId: number; quantity: number; used: number };
 };
@@ -75,16 +78,13 @@ export default function GearSheet({
           const item = items.find((entry) => entry.id === owned.id);
           const single = unit.singleUseItems?.find((entry) => entry.id === owned.id);
           const stats = [item?.range, strengthLabel(item?.strength)].filter(Boolean);
-          const rules = (item?.rules ?? []).map((rule) => ({
-            name: ruleName(rule),
-            text: plainRuleText(rule),
-          }));
           return {
             key: `item:${owned.id}`,
             name: owned.count > 1 ? `${owned.name} ×${owned.count}` : owned.name,
             kind: [item?.type, stats.join(" ")].filter(Boolean).join(" · ") || "Item",
             // the fluff stays on the item's page: this is the quick reference (William, 12 Nov 2026)
-            rules,
+            rules: item ? itemRuleLines(item) : [],
+            profile: item ? beastProfile(item) : null,
             single:
               owned.singleUse || single
                 ? {
@@ -181,7 +181,8 @@ export default function GearSheet({
               </button>
               {isOpen ? (
                 <div className="flex flex-col gap-1.5 px-3 pb-2.5">
-                  {entry.rules.length === 0 ? (
+                  {entry.profile ? <ProfileStrip profile={entry.profile} /> : null}
+                  {entry.rules.length === 0 && !entry.profile ? (
                     <p className="m-0 text-[13px] text-muted-foreground">No rules written down.</p>
                   ) : null}
                   {entry.rules.map((rule) => (

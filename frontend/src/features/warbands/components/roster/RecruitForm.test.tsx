@@ -245,7 +245,7 @@ describe("Recruiting from the warband's template", () => {
     renderForm();
     const user = setupUser();
     await user.click(await screen.findByRole("radio", { name: /Champion/ }));
-    expect(screen.getByText("His lists · Mercenary list")).toBeInTheDocument();
+    expect(screen.getByText("Their lists · Mercenary list")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Sword 10 gc" })).toBeNull();
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>

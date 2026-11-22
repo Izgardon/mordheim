@@ -21,7 +21,7 @@ const LABEL = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
 
 /**
  * An open group's members (henchmen loadouts): each with the loadout rows he lacks (Buy one, Take
- * from stash, Leave it), Take his kit to the stash, and Dismiss, which asks where his share goes.
+ * from stash, Leave it), Take their kit to the stash, and Dismiss, which asks where his share goes.
  */
 export default function GroupMembers({ group, campaignId, warbandId, canEdit }: GroupMembersProps) {
   const loadout = useGroupLoadout(campaignId, warbandId);
@@ -76,13 +76,13 @@ export default function GroupMembers({ group, campaignId, warbandId, canEdit }: 
       >
         <span className="text-ink">
           {share.length
-            ? `Dismiss ${memberName(group, member)}: his share (${share.map((item) => item.name).join(", ")}) to the stash, or he leaves with it?`
-            : `Dismiss ${memberName(group, member)}? He carries nothing of the loadout.`}
+            ? `Dismiss ${memberName(group, member)}: their share (${share.map((item) => item.name).join(", ")}) to the stash, or do they leave with it?`
+            : `Dismiss ${memberName(group, member)}? They carry nothing of the loadout.`}
         </span>
         <div className="flex flex-wrap gap-1.5">
           {share.length ? (
             <Button size="sm" onClick={() => choose("stash")}>
-              His share to the stash
+              Their share to the stash
             </Button>
           ) : null}
           <Button
@@ -90,7 +90,7 @@ export default function GroupMembers({ group, campaignId, warbandId, canEdit }: 
             variant={share.length ? "secondary" : "primary"}
             onClick={() => choose("leaves")}
           >
-            {share.length ? "He leaves with it" : "Dismiss him"}
+            {share.length ? "They leave with it" : "Dismiss them"}
           </Button>
           <Button size="sm" variant="ghost" onClick={() => setAsking(null)}>
             Cancel
@@ -122,7 +122,7 @@ export default function GroupMembers({ group, campaignId, warbandId, canEdit }: 
                     disabled={loadout.busy || memberShare(group, member).length === 0}
                     onClick={() => loadout.takeKit(group, member)}
                   >
-                    Take his kit
+                    Take their kit
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => setAsking(member.id)}>
                     Dismiss
@@ -138,7 +138,7 @@ export default function GroupMembers({ group, campaignId, warbandId, canEdit }: 
               >
                 <span className={gap.left ? "text-text2" : "text-danger"}>
                   {gap.left
-                    ? `${member.name || "He"} goes without ${gap.row.name}.`
+                    ? `${member.name || "This member"} goes without ${gap.row.name}.`
                     : gapLine(member, gap)}
                 </span>
                 {canEdit ? gapActions(gap) : null}

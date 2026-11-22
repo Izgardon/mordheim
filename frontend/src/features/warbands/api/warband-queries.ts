@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 
 import { queryKeys } from "@/lib/query-keys";
-import { getWarband, getWarbandSheet } from "./warbands-api";
+import { getWarband, getWarbandRecord, getWarbandSheet } from "./warbands-api";
 
 import type { WarbandSheet } from "../types/warband-sheet";
 import type { Warband, WarbandUnitsSummary } from "../types/warband-types";
@@ -25,6 +25,13 @@ export const warbandSheetQuery = (campaignId: number, warbandId: number) =>
     queryFn: (): Promise<WarbandSheet> => getWarbandSheet(warbandId),
   });
 
+/** Its last ten ended battles (the header's Record window, read when it opens). */
+export const warbandRecordQuery = (campaignId: number, warbandId: number) =>
+  queryOptions({
+    queryKey: queryKeys.campaign.warbandRecord(campaignId, warbandId),
+    queryFn: () => getWarbandRecord(warbandId),
+  });
+
 /** The page's warband: the warband body with the summary's gold, rating and lists over it. */
 export const sheetWarband = (sheet: WarbandSheet): Warband => ({
   ...sheet.warband,
@@ -36,6 +43,7 @@ const SUMMARY_FIELDS = [
   "resources",
   "rating",
   "mounts_rating",
+  "rating_breakdown",
   "gold",
   "heroes",
   "hirelings",

@@ -58,7 +58,7 @@ export default function HirelingProfileFormFields({
           className="flex flex-col gap-1 text-xs font-bold text-muted-foreground"
           htmlFor="hireling-note"
         >
-          The book's words on who hires him
+          The book's words on who hires them
           <Input
             id="hireling-note"
             value={form.values.hire_note}

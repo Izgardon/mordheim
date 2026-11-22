@@ -36,7 +36,7 @@ def _spend_searcher(warband: Warband, hero_id: int) -> tuple[str, list[dict[str,
     name = hero.name or f"Hero {hero.id}"
     if heroes.filter(trading_action=True).update(trading_action=False, updated_at=timezone.now()):
         return name, []
-    message = f"{name} already used his trading action this round."
+    message = f"{name} already used their trading action this round."
     return name, [{"code": TRADING_ACTION_SPENT, "message": message, "hero_id": hero.id}]
 
 

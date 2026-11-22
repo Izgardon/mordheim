@@ -63,7 +63,7 @@ export default function Chronicle({
         aria-label="Show"
         className={cn(
           "flex gap-1.5",
-          isMobile ? "-mx-3 overflow-x-auto overscroll-x-contain px-3 pb-0.5" : "flex-wrap"
+          isMobile ? "-mx-3 overflow-x-auto overscroll-x-contain px-3 pb-2" : "flex-wrap"
         )}
       >
         {FILTERS.map((entry) => (

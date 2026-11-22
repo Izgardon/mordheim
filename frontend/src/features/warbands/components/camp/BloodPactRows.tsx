@@ -71,7 +71,7 @@ function PactRow({ camp, line }: { camp: OpenCamp; line: PactLine }) {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className={cn("text-xs font-bold", sworn ? "text-good" : "text-muted-foreground")}>
             {total}
-            {sworn ? " · he swears the pact" : ` · ${PACT_ROLL} forms a pact`}
+            {sworn ? " · they swear the pact" : ` · ${PACT_ROLL} forms a pact`}
           </span>
           <Button
             size="sm"

@@ -50,7 +50,7 @@ describe("BloodPactRows", () => {
 
     await type(user, "5", "5"); // 10 on the dice, 12 with his bonus
 
-    expect(screen.getByText("12 · he swears the pact")).toBeVisible();
+    expect(screen.getByText("12 · they swear the pact")).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Form the pact" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("PATCH /warbands/7/hirelings/3/")).toEqual({ blood_pacted: true })

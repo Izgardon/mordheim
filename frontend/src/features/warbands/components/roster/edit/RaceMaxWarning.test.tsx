@@ -40,7 +40,7 @@ describe("RaceMaxWarning", () => {
       />
     );
     expect(
-      await screen.findByText("Above his race maximum: S 5 (max 4), A 5 (max 4)")
+      await screen.findByText("Above their race maximum: S 5 (max 4), A 5 (max 4)")
     ).toBeInTheDocument();
   });
 

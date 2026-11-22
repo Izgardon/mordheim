@@ -28,7 +28,7 @@ def fee_warnings(warband: Warband, fee: Mapping[str, Any], name: str) -> list[di
     """The warnings a fee's kind brings: a fee in his rules, or a hero's place when the heroes are full."""
     kind = fee.get("kind")
     if kind == "special":
-        message = f"{name}'s fee is in his rules: check them. The hire took only what you set."
+        message = f"{name}'s fee is in their rules: check them. The hire took only what you set."
         return [{"code": "fee_special", "message": message}]
     if kind != "replaces_hero":
         return []

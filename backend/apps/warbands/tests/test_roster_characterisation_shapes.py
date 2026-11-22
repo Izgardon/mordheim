@@ -84,6 +84,7 @@ ITEM_DETAIL = {
     "shown_as": "str",  # it is called
     "material_name": "str",
     "beast_kind": None,
+    "bestiary_entry": None,  # an Animal item's beast: its profile and specials (William, 22 Nov 2026)
     "rules": [  # with its pre-battle roll (a shared rule's, or the item's own rule's)
         {
             "id": "int",

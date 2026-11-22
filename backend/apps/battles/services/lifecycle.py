@@ -135,7 +135,7 @@ def end_if_everyone_finished(battle: Battle, actor_user, events: list[dict]) -> 
         end_battle(battle, actor_user, events)
 
 
-POSTBATTLE_APPLIED = "A player has applied his postbattle, so this battle can't be cancelled; end it instead"
+POSTBATTLE_APPLIED = "A player has applied their postbattle, so this battle can't be cancelled; end it instead"
 
 
 def someone_finalised(battle_id: int) -> bool:

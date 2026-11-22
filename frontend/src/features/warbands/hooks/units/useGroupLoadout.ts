@@ -38,14 +38,14 @@ export function useGroupLoadout(campaignId: number, warbandId: number) {
     mutationFn: (vars: { group: HenchmenGroup; gapId: number; body: GapActionBody }) =>
       actOnGap(warbandId, vars.group.id, vars.gapId, vars.body),
     onSuccess: apply,
-    onError: fail("Couldn't change his gear."),
+    onError: fail("Couldn't change their gear."),
   });
 
   const kit = useMutation({
     mutationFn: (vars: { group: HenchmenGroup; member: Henchman }) =>
       takeMemberKit(warbandId, vars.group.id, vars.member.id),
     onSuccess: apply,
-    onError: fail("Couldn't take his kit."),
+    onError: fail("Couldn't take their kit."),
   });
 
   const dismiss = useMutation({
@@ -75,7 +75,7 @@ export function useGroupLoadout(campaignId: number, warbandId: number) {
         queryKey: queryKeys.campaign.warbandStash(campaignId, warbandId),
       });
     },
-    onError: fail("Couldn't dismiss him."),
+    onError: fail("Couldn't dismiss them."),
   });
 
   return {

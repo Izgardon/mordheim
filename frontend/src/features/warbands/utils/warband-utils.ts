@@ -121,7 +121,7 @@ export const toNumber = (value: number | string | null | undefined) => {
 // ── Warband rating ──────────────────────────────────────────────────────
 
 /** Each rider's mount bonus, as the server adds it to the rating (`unitMountBonus`). */
-export const mountsRating = (
+const mountsRating = (
   heroes: WarbandHero[],
   hirelings: WarbandHireling[],
   henchmenGroups: HenchmenGroup[]

@@ -571,7 +571,7 @@ describe("StorePanel, Upgrades for a hero from the template", () => {
     expect(tchar).toHaveTextContent("In the basket.");
     expect(tchar).not.toHaveTextContent("They have it already.");
     expect(tchar).not.toHaveTextContent("would have");
-    expect(arkhar).toHaveTextContent("At most 1 from Mark of the Dark Gods: he would have 2.");
+    expect(arkhar).toHaveTextContent("At most 1 from Mark of the Dark Gods: they would have 2.");
     await user.click(screen.getByRole("button", { name: "Get Great Claw" }));
     await user.clear(screen.getByLabelText("Price for Great Claw"));
     await user.type(screen.getByLabelText("Price for Great Claw"), "90");

@@ -27,9 +27,9 @@ describe("spellOptions", () => {
   it("puts his lores first, then the rest, the greyed rows last in each", () => {
     const rows = spellOptions(spells, new Map(), ["Chaos Rituals", "lesser magic"]);
     expect(rows.map((row) => [row.title, row.group])).toEqual([
-      ["Vision of Torment", "His lores"],
-      ["Fireball", "His lores"],
-      ["Dark Blood", "His lores"],
+      ["Vision of Torment", "Their lores"],
+      ["Fireball", "Their lores"],
+      ["Dark Blood", "Their lores"],
       ["Age of Stone", "Other lores"],
       ["Angvar's Fury", "Other lores"],
     ]);

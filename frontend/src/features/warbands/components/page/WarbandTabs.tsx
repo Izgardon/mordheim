@@ -8,11 +8,20 @@ export type WarbandTab = (typeof TABS)[number];
 
 /**
  * The warband page's tabs (design E): Roster, Treasury, Backstory and Log, each rendered here. A
- * tab change keeps the tab bar at the top of the screen, never the page's top (`useTabScroll`).
+ * tab change keeps the tab bar at the top of the screen, never the page's top (`useTabScroll`);
+ * `show` changes it from inside a tab (the Gold window's Treasury link), landing the bar there.
  */
-export default function WarbandTabs({ render }: { render: (tab: WarbandTab) => ReactNode }) {
+export default function WarbandTabs({
+  render,
+}: {
+  render: (tab: WarbandTab, show: (tab: WarbandTab) => void) => ReactNode;
+}) {
   const [tab, setTab] = useState<WarbandTab>("Roster");
   const tabs = useTabScroll();
+  const show = (name: WarbandTab) => {
+    tabs.reveal();
+    setTab(name);
+  };
   return (
     <>
       <div
@@ -42,7 +51,7 @@ export default function WarbandTabs({ render }: { render: (tab: WarbandTab) => R
           </button>
         ))}
       </div>
-      {render(tab)}
+      {render(tab, show)}
     </>
   );
 }

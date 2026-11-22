@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -63,15 +63,22 @@ export default function BattleRows({
   campaignId,
   isMobile,
   record = false,
+  linkedId = null,
 }: {
   battles: CampaignBattleHistoryEntry[];
   campaignId: number;
   isMobile: boolean;
   record?: boolean;
+  /** A battle a link opened the page on (`?battle=`): it starts open, scrolled to. */
+  linkedId?: number | null;
 }) {
-  // The newest battle starts open (undefined), until a row is toggled.
+  // The linked battle, else the newest, starts open (undefined), until a row is toggled.
   const [picked, setOpenId] = useState<number | null | undefined>(undefined);
-  const openId = picked === undefined ? (battles[0]?.id ?? null) : picked;
+  const linked = battles.some((battle) => battle.id === linkedId) ? linkedId : null;
+  const openId = picked === undefined ? (linked ?? battles[0]?.id ?? null) : picked;
+  const scrollTo = useCallback((row: HTMLLIElement | null) => {
+    row?.scrollIntoView?.({ block: "start" });
+  }, []);
   if (!battles.length) {
     return <p className="m-0 text-sm text-text2">No battles fought yet.</p>;
   }
@@ -82,7 +89,11 @@ export default function BattleRows({
         const line = battleLine(battle);
         const count = battle.moments?.length ?? 0;
         return (
-          <li key={battle.id} className={index ? "border-t border-line" : undefined}>
+          <li
+            key={battle.id}
+            ref={picked === undefined && battle.id === linked ? scrollTo : undefined}
+            className={index ? "border-t border-line" : undefined}
+          >
             <button
               type="button"
               aria-expanded={open}

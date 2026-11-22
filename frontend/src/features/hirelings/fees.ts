@@ -41,7 +41,7 @@ export type Fee = {
 export const FEE_KINDS: { value: FeeKind; label: string }[] = [
   { value: "gold", label: "A fee" },
   { value: "replaces_hero", label: "Takes a hero's place" },
-  { value: "special", label: "See his rules" },
+  { value: "special", label: "See their rules" },
   { value: "none", label: "None" },
 ];
 
@@ -69,7 +69,7 @@ export function formatFee(raw: Fee | null | undefined) {
   const fee = feeOf(raw);
   if (fee.kind === "none") return "None";
   if (fee.kind === "replaces_hero") return "Takes a hero's place";
-  if (fee.kind === "special") return "See his rules";
+  if (fee.kind === "special") return "See their rules";
   const parts = [
     fee.gold !== null ? `${fee.gold} gc` : "",
     fee.dice ? `${fee.dice}D6${fee.dice_multiplier ? `×${fee.dice_multiplier}` : ""}` : "",

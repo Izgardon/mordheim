@@ -34,7 +34,7 @@ const variantNote = (template: WarbandTemplate, fighter: TemplateFighter | null)
     (key) => template.variants.find((variant) => variant.key === key)?.name ?? key
   );
   return names.length
-    ? `${names.join(", ")} change${names.length === 1 ? "s" : ""} him as well.`
+    ? `${names.join(", ")} change${names.length === 1 ? "s" : ""} them as well.`
     : "";
 };
 
@@ -208,7 +208,7 @@ export default function FighterForm(props: FighterFormProps) {
       </SaveRow>
       {deleting ? (
         <p className="m-0 text-xs font-semibold text-danger">
-          Units recruited as him keep what they have.
+          Units recruited as them keep what they have.
         </p>
       ) : null}
     </div>

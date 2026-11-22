@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { ROW_SELECT, SectionedSelect } from "@/components/ui/sectioned-select";
 import type { Item } from "@/features/items/types/item-types";
+import { ProfileStrip, type CatalogueProfile } from "@/features/reference/profile";
 import PsychologyRuleLink from "@/features/rules/components/PsychologyRuleLink";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
@@ -19,6 +20,8 @@ export type BoxDetail = {
   text?: string | null;
   /** An item's rules, each read out: the fluff is not one of them (William, 12 Nov 2026). */
   rules?: { name: string; text: string }[];
+  /** An Animal item's beast's profile (its specials are among `rules`). */
+  profile?: CatalogueProfile | null;
   item?: Item;
   /** A boon or bane: a psychology one links its part of the Rules page ("Fear in the rules"). */
   special?: boolean;
@@ -57,6 +60,7 @@ export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelP
           <X aria-hidden="true" />
         </IconButton>
       </div>
+      {detail.profile ? <ProfileStrip profile={detail.profile} /> : null}
       {detail.rules?.map((rule) => (
         <p key={rule.name} className="m-0 whitespace-pre-line text-[13px] text-text2">
           <span className="font-bold text-accent-hi">{rule.name}</span>

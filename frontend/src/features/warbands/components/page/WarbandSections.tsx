@@ -38,7 +38,7 @@ export default function WarbandSections(props: WarbandSectionsProps) {
 
   return (
     <WarbandTabs
-      render={(tab) =>
+      render={(tab, show) =>
         tab === "Roster" ? (
           <div className="flex flex-col gap-6">
             <WarbandInfo
@@ -52,6 +52,7 @@ export default function WarbandSections(props: WarbandSectionsProps) {
               setBreakdownOpen={props.setBreakdownOpen}
               canEdit={canEdit}
               pricing={{ table: campaign?.wyrdstone_prices, band: warband.size_band ?? 0 }}
+              onTreasury={() => show("Treasury")}
             />
             <WarbandRules
               campaignId={campaignId}

@@ -48,7 +48,7 @@ export default function TradeInvitePanel({
   return (
     <SidePanel open={open} onOpenChange={onOpenChange} kicker="Warband" title="Trade with a player">
       <p className="m-0 text-sm text-text2">
-        Send a hero along and the trade uses his trading action.
+        Send a hero along and the trade uses their trading action.
       </p>
       {players.isPending ? (
         <p className="text-sm text-muted-foreground">Finding the players…</p>

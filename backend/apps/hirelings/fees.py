@@ -132,7 +132,7 @@ def gold_due(fee: Mapping[str, Any], dice_roll: int | None = None) -> int:
 
 def settle_text(fee: Mapping[str, Any]) -> str:
     """What a fee asks that no gold and no counter settles, in its own words: a fee in his rules ("One holy or unholy
-    relic.", else "See his rules."), or one that charges nothing and says something instead. "" when there is nothing
+    relic.", else "See their rules."), or one that charges nothing and says something instead. "" when there is nothing
     to settle by hand, which is what the Paid button goes by (William, 18 Nov 2026: a fee with no gold "should still
     have a button that says Paid that logs their hire/upkeep string/resource fee just as a log line"): a fee of none
     and a hero's place ask for nothing the player settles, and gold, dice and resources are charged and written on
@@ -143,7 +143,7 @@ def settle_text(fee: Mapping[str, Any]) -> str:
         return ""
     note = (fee.get("note") or "").strip()
     if kind == "special":
-        return note or "See his rules."
+        return note or "See their rules."
     charged = fee.get("gold") or fee.get("dice") or (fee.get("resources") or [])
     return "" if charged else note
 

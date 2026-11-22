@@ -15,7 +15,7 @@ def unit_left_warband(unit_key: str, unit_name: str) -> Warning:
     """Finalise left out a unit dismissed since the battle started (BUG-73)."""
     return {
         "code": UNIT_LEFT_WARBAND,
-        "message": f"{unit_name} has left the warband, so his results were not applied.",
+        "message": f"{unit_name} has left the warband, so their results were not applied.",
         "unit_key": unit_key,
     }
 

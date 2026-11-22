@@ -212,7 +212,7 @@ class RarityRollPurchaseTests(PurchaseTestCase):
             [
                 {
                     "code": "trading_action_spent",
-                    "message": "Ana already used his trading action this round.",
+                    "message": "Ana already used their trading action this round.",
                     "hero_id": ana.id,
                 },
                 {"code": "rarity_roll_failed", "message": "Ana's rarity roll for Sword failed.", "hero_id": ana.id},

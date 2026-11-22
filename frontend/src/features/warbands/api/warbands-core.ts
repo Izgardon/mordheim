@@ -5,6 +5,7 @@ import type {
   Warband,
   WarbandCreatePayload,
   WarbandUpdatePayload,
+  WarbandRecordBattle,
   WarbandUnitsSummary,
 } from "../types/warband-types";
 
@@ -17,6 +18,11 @@ export async function getWarband(campaignId: number) {
 
 export function getWarbandSummary(warbandId: number) {
   return apiRequest<WarbandUnitsSummary>(`/warbands/${warbandId}/summary/`);
+}
+
+/** Its last ten ended battles, newest first, each with its result and the other warbands. */
+export function getWarbandRecord(warbandId: number) {
+  return apiRequest<WarbandRecordBattle[]>(`/warbands/${warbandId}/record/`);
 }
 
 export function getWarbandSheet(warbandId: number) {

@@ -48,7 +48,7 @@ describe("battleFeed and the rounds", () => {
       event(1, "round_started", { round: 2, forced: false }),
       event(2, "participant_finished_battle"),
     ]);
-    expect(lines[1]).toMatchObject({ round: 2, text: "Cap finished his battle" });
+    expect(lines[1]).toMatchObject({ round: 2, text: "Cap finished their battle" });
   });
 
   it("still logs everything else the battle does (William, 18 Nov 2026)", () => {
@@ -74,7 +74,7 @@ describe("battleFeed and the rounds", () => {
       "A model is out of action",
       "A model used Blessed Water",
       "Giant Rats joined the fight (3)",
-      "Cap finished his battle",
+      "Cap finished their battle",
     ]);
     expect(lines.filter((line) => line.kill)).toHaveLength(1);
   });

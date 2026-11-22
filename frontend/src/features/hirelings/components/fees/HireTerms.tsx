@@ -27,8 +27,8 @@ function HisRules({
   return (
     <div className={BOX}>
       <span className="font-semibold text-danger">
-        His fee is in his rules: hired at what you set below (0 gc unless you change it).
-        {fee.gold !== null ? ` His listed fee is ${fee.gold} gc.` : ""}
+        Their fee is in their rules: hired at what you set below (0 gc unless you change it).
+        {fee.gold !== null ? ` Their listed fee is ${fee.gold} gc.` : ""}
       </span>
       {rules.length ? (
         <div className="flex max-h-48 flex-col gap-1.5 overflow-y-auto overscroll-contain">
@@ -39,7 +39,7 @@ function HisRules({
           ))}
         </div>
       ) : (
-        <span className="text-muted-foreground">{detail.error || "Reading his rules…"}</span>
+        <span className="text-muted-foreground">{detail.error || "Reading their rules…"}</span>
       )}
     </div>
   );
@@ -79,11 +79,11 @@ export default function HireTerms({
   const full = maxHeroes !== null && heroCount >= maxHeroes;
   return (
     <div className={BOX}>
-      <span className="text-ink">He takes one of the heroes&apos; places: no fee in gold.</span>
+      <span className="text-ink">They take one of the heroes&apos; places: no fee in gold.</span>
       {full ? (
         <>
           <span className="font-semibold text-danger">
-            {heroCount} of {maxHeroes} heroes. Let a hero go to make room, or hire him anyway.
+            {heroCount} of {maxHeroes} heroes. Let a hero go to make room, or hire them anyway.
           </span>
           <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
             Let go (carried items are lost)

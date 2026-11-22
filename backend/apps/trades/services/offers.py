@@ -2,7 +2,7 @@
 
 An offer is `{"trader_id", "trader_name", "gold", "items": [{"id", "name", "quantity", "cost"}]}`. Loose input
 is coerced or dropped silently, as it always was; what the warband can't offer is a TradeError (400). A trader who
-already used his trading action this round is a warning, not a refusal (decision 9, ECON-TWEAK-01).
+already used their trading action this round is a warning, not a refusal (decision 9, ECON-TWEAK-01).
 """
 
 from typing import Any
@@ -17,9 +17,13 @@ TradeWarning = dict[str, Any]  # {"code", "message", ...}: answered to the playe
 
 
 def trader_spent_warning(hero: Hero) -> TradeWarning:
-    """The warning for a trader who already used his trading action this round."""
+    """The warning for a trader who already used their trading action this round."""
     name = hero.name or f"Hero {hero.id}"
-    return {"code": TRADER_SPENT, "message": f"{name} already used his trading action this round.", "hero_id": hero.id}
+    return {
+        "code": TRADER_SPENT,
+        "message": f"{name} already used their trading action this round.",
+        "hero_id": hero.id,
+    }
 
 
 def _whole(value: Any) -> int | None:

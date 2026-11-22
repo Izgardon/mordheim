@@ -1,4 +1,4 @@
-import { useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
 import { SectionHead } from "@/components/ui/section-title";
 import { SkeletonHeading, SkeletonPage } from "@/components/ui/skeleton";
@@ -24,6 +24,7 @@ import type { CampaignLayoutContext } from "./CampaignLayout";
 export default function Battles() {
   const { id } = useParams();
   const campaignId = Number(id);
+  const linkedId = Number(useSearchParams()[0].get("battle")) || null;
   const { campaign, openBattleDialog } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const history = useCampaignBattleHistory(campaignId);
@@ -82,7 +83,13 @@ export default function Battles() {
           {history.error ? (
             <p className="m-0 text-sm text-danger">{getErrorMessage(history.error)}</p>
           ) : (
-            <BattleRows battles={battles} campaignId={campaignId} isMobile={isMobile} record />
+            <BattleRows
+              battles={battles}
+              campaignId={campaignId}
+              isMobile={isMobile}
+              record
+              linkedId={linkedId}
+            />
           )}
         </>
       )}

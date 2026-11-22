@@ -71,7 +71,7 @@ class FeeTests(SimpleTestCase):
         self.assertEqual(
             settle_text(make_fee("special", note="One holy or unholy relic.")), "One holy or unholy relic."
         )
-        self.assertEqual(settle_text(make_fee("special")), "See his rules.")
+        self.assertEqual(settle_text(make_fee("special")), "See their rules.")
         self.assertEqual(settle_text(make_fee(note="She takes a retainer before each battle.")), "She takes a retainer before each battle.")  # fmt: skip
         self.assertEqual(fee_payload(make_fee("special", note="A body part."))["settle"], "A body part.")
         for charged in (make_fee(gold=15, note="15 gc*"), make_fee(dice=1, note="1D6 gc."), make_fee(resources=[("Wyrdstone", 1)], note="1 wyrdstone.")):  # fmt: skip

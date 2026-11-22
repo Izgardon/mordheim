@@ -161,7 +161,7 @@ class AftermathStepTests(BattleTestCase):
             warning["message"] for warning in answer.data["warnings"] if warning["code"] == "aftermath_already_applied"
         ]
         self.assertTrue(all("only changes the battle's record" in message for message in messages), messages)
-        self.assertTrue(any("Change a unit on his card" in message for message in messages), messages)
+        self.assertTrue(any("Change a unit on their card" in message for message in messages), messages)
         self.hero.refresh_from_db()
         self.assertEqual((self.hero.xp, self.hero.dead), (Decimal(3), False))  # the record changed, not the warband
 

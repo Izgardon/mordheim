@@ -91,7 +91,7 @@ function UpkeepRow({ camp, line }: { camp: OpenCamp; line: UpkeepLine }) {
         removedHirelingIds: [line.id],
       });
     } catch (error) {
-      toast.error("Couldn't let him go.", { description: getErrorMessage(error) });
+      toast.error("Couldn't let them go.", { description: getErrorMessage(error) });
     }
   };
   const button = camp.isMobile ? "h-10 text-xs" : "h-8 text-xs";

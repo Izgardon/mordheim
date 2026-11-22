@@ -45,10 +45,10 @@ type AftermathBodyProps = {
  */
 function settled(tab: AftermathTab, locks: PostgameDraft["locks"]) {
   if (tab === "injuries" && locks.injuries) {
-    return "These injuries are in your warband. A change here only corrects the battle's record: change a unit on his card.";
+    return "These injuries are in your warband. A change here only corrects the battle's record: change a unit on their card.";
   }
   if (tab === "xp" && locks.xp) {
-    return "This experience and these advances are in your warband. A change here only corrects the battle's record: change a unit on his card.";
+    return "This experience and these advances are in your warband. A change here only corrects the battle's record: change a unit on their card.";
   }
   if (tab === "explore" && locks.explore) {
     return `${receivedLine(locks.received)} already went to your warband. Sell or move an item from the stash, and change gold in the warband's ledger; the dice can still be corrected.`;

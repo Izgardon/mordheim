@@ -5,7 +5,7 @@ import { ItemKindIcon } from "@/components/ui/game-icons";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { itemKind, itemStatsLine } from "@/features/items/item-kind";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { plainRuleText, ruleName } from "@/features/items/utils/item-rules";
+import { beastProfile, itemRuleLines } from "@/features/items/utils/item-rules";
 import type { Item } from "@/features/items/types/item-types";
 import { cameThrough, unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
 import { skillList } from "@/features/skills/skill-list";
@@ -66,10 +66,8 @@ export default function UnitDetails(props: UnitDetailsProps) {
     boxes: lists.items.map((item) => ({
       name: itemLabel(entry.unit, item),
       kind: itemStatsLine(item),
-      rules: (item.rules ?? []).map((rule) => ({
-        name: ruleName(rule),
-        text: plainRuleText(rule),
-      })),
+      rules: itemRuleLines(item),
+      profile: beastProfile(item),
       item,
       boxKind: itemBoxKind(item),
       icon: <ItemKindIcon kind={itemKind(item)} />,

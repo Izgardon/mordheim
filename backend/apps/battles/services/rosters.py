@@ -223,7 +223,7 @@ def _gaps(member, links: list) -> list[dict]:
 def _out_reason(gaps: list[dict]) -> str | None:
     """Why prebattle leaves a member out at first (he may still be brought): his kit went to the stash."""
     taken = [gap["name"] for gap in gaps if gap["reason"] == KIT_TAKEN]
-    return f"His kit went to the stash ({', '.join(taken)}); re-equip him to bring him back." if taken else None
+    return f"Their kit went to the stash ({', '.join(taken)}); re-equip them to bring them back." if taken else None
 
 
 def henchman_entry(group: HenchmenGroup, member, links: list, number: int = 1) -> dict:

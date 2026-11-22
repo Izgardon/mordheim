@@ -65,7 +65,7 @@ describe("The skill picker", () => {
 
     await user.click(screen.getByRole("button", { name: "Show all" }));
     expect(screen.getByRole("option", { name: /Sprint/ })).toHaveTextContent(
-      "Not in his skill groups"
+      "Not in their skill groups"
     );
     expect(screen.getByRole("option", { name: /Brick Wall/ })).toHaveTextContent(
       "For Large units only; this one isn't Large."

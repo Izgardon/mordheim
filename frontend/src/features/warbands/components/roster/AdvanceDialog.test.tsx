@@ -75,7 +75,7 @@ describe("The advance dialog", () => {
     );
     await user.selectOptions(screen.getByRole("combobox", { name: "Characteristic" }), "WS");
     expect(screen.getAllByText(/WS 3 → 4/)).toHaveLength(1);
-    expect(await screen.findByText("Above his race maximum")).toBeInTheDocument();
+    expect(await screen.findByText("Above their race maximum")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Confirm" }));
     expect(fakeApi.bodyOf(LEVEL_UP)).toEqual({
       payload: {

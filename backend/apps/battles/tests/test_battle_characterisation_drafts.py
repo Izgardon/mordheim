@@ -207,8 +207,8 @@ class PostbattleDraftTests(BattleTestCase):
         self.assertEqual(
             response.data["warnings"],
             [
-                {"code": "unit_left_warband", "message": f"{self.h} has left the warband, so his results were not applied.", "unit_key": self.h},
-                {"code": "unit_left_warband", "message": f"{self.s} has left the warband, so his results were not applied.", "unit_key": self.s},
+                {"code": "unit_left_warband", "message": f"{self.h} has left the warband, so their results were not applied.", "unit_key": self.h},
+                {"code": "unit_left_warband", "message": f"{self.s} has left the warband, so their results were not applied.", "unit_key": self.s},
             ],
         )  # fmt: skip
         self.hero.refresh_from_db()

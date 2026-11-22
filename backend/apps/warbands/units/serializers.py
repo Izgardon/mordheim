@@ -36,7 +36,7 @@ from .catalogue import (
     SpellSummarySerializer,
 )
 from .catalogue_scope import CampaignCatalogueScopeMixin
-from .companions import COMPANION_KINDS, beast_kind, companions, effective_stats, mount_payload, pet_payload
+from .companions import COMPANION_KINDS, beast_fields, companions, effective_stats, mount_payload, pet_payload
 from .hooks import Recruit
 from .kinds import LinkSpec, UnitKindSpec
 from .services.create import apply_create
@@ -168,7 +168,8 @@ def detail_item_entries(rows: Iterable[Any]) -> list[Any]:
         if not row.item_id:
             continue
         data = ItemDetailSerializer(row.item).data
-        data["row_id"], data["companion"], data["beast_kind"] = row.pk, row.companion, beast_kind(row.item)
+        data["row_id"], data["companion"] = row.pk, row.companion
+        data |= beast_fields(row)  # its beast's kind, profile and specials: most beasts' rules are there
         data["material"] = row.material  # what this copy is made of (weapon materials); "" plain
         data["shown_as"] = row.shown_as  # the name it was given ("Hammer"); "" its own
         data["material_name"] = copy_name(row.material, row.shown_as, row.item.name)
