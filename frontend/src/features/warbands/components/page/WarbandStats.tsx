@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { GameIcon, type GameIconName } from "@/components/ui/game-icons";
+import { useFitText } from "@/lib/use-fit-text";
 
 import GoldWindow from "../header/GoldWindow";
 import RatingWindow from "../header/RatingWindow";
@@ -28,6 +29,35 @@ type WarbandStatsProps = {
 
 type Window = "gold" | "units" | "record";
 
+type Total = {
+  label: string;
+  icon: GameIconName;
+  value: string | number;
+  unit?: string;
+  hint: string;
+  onClick: () => void;
+};
+
+/**
+ * A total's value, opening its window: on one line, its text shrinking to fit a narrow column
+ * (William, 22 Nov 2026: "I would rather the text shrank ... data should try and stay on one line").
+ */
+function StatValue({ label, value, unit, hint, onClick }: Total) {
+  const fit = useFitText<HTMLButtonElement>(26, [value, unit]);
+  return (
+    <button
+      ref={fit}
+      type="button"
+      onClick={onClick}
+      className="block w-full overflow-hidden whitespace-nowrap text-left font-display text-[26px] font-semibold text-head underline-offset-4 hover:underline"
+      aria-label={`${label} ${value}${unit ? ` ${unit}` : ""}: ${hint}`}
+    >
+      {value}{" "}
+      {unit ? <span className="font-sans text-[0.5em] font-medium text-faint">{unit}</span> : null}
+    </button>
+  );
+}
+
 /**
  * The info line (design E): Rating, Gold, Units of the maximum and Record, each with its small
  * icon, and each opening a window on what makes it up (William, 22 Nov 2026).
@@ -39,14 +69,7 @@ export default function WarbandStats(props: WarbandStatsProps) {
   const units = warband.unit_count ?? getWarbandUnitCount(heroes, hirelings, henchmenGroups);
   const record = `${warband.wins ?? 0}–${warband.losses ?? 0}`;
   const rows = warband.rating_breakdown ?? [];
-  const totals: {
-    label: string;
-    icon: GameIconName;
-    value: string | number;
-    unit?: string;
-    hint: string;
-    onClick: () => void;
-  }[] = [
+  const totals: Total[] = [
     {
       label: "Rating",
       icon: "rating",
@@ -90,17 +113,7 @@ export default function WarbandStats(props: WarbandStatsProps) {
               {total.label}
             </dt>
             <dd className="m-0 min-w-0">
-              <button
-                type="button"
-                onClick={total.onClick}
-                className="max-w-full text-left font-display text-[26px] font-semibold text-head underline-offset-4 hover:underline"
-                aria-label={`${total.label} ${total.value}${total.unit ? ` ${total.unit}` : ""}: ${total.hint}`}
-              >
-                {total.value}{" "}
-                {total.unit ? (
-                  <span className="font-sans text-[13px] font-medium text-faint">{total.unit}</span>
-                ) : null}
-              </button>
+              <StatValue {...total} />
             </dd>
           </div>
         ))}
