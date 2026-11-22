@@ -1,4 +1,5 @@
 import type { BoxTileKind } from "@/components/ui/box-tile";
+import type { UnitMarker } from "@/components/ui/game-icons";
 import type { StatKey } from "@/components/ui/stat-strip";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { STAT_FIELDS, statShown } from "@/features/catalogue/utils/statblock";
@@ -40,25 +41,27 @@ const KIND_WORD: Record<RosterUnit["kind"], string> = {
   hireling: "Hired sword",
 };
 
-// a 3px stripe, the content where the 1px border left it; the gem's lower point on the baseline
+// a 3px stripe, the content where the 1px border left it
 const STRIPE = "border-l-[3px] pl-4";
-const GEM = "inline-block h-[7px] w-[7px] shrink-0 -translate-y-[1.5px] rotate-45";
-const trim = (stripe: string, gem: string, text: string) => ({
-  stripe: `${STRIPE} ${stripe}`,
-  gem: `${GEM} ${gem}`,
-  text,
-});
+const trim = (stripe: string, text: string) => ({ stripe: `${STRIPE} ${stripe}`, text });
 
 /**
  * A roster card's trim in its kind's metal (William, 7 Nov 2026: "heroes gold HS silver hench
- * bronze"; mockup C): a stripe down its left edge, a gem (a 7px square turned 45°) before its
- * name, and its type line. A dramatis persona is a hired sword here.
+ * bronze"; mockup C): a stripe down its left edge, and its marker and type line. A dramatis
+ * persona is a hired sword here.
  */
 export const KIND_TRIM: Record<RosterUnit["kind"], ReturnType<typeof trim>> = {
-  hero: trim("border-l-metal-gold", "bg-metal-gold", "text-metal-gold"),
-  henchmen_group: trim("border-l-metal-bronze", "bg-metal-bronze", "text-metal-bronze"),
-  hireling: trim("border-l-metal-silver", "bg-metal-silver", "text-metal-silver"),
+  hero: trim("border-l-metal-gold", "text-metal-gold"),
+  henchmen_group: trim("border-l-metal-bronze", "text-metal-bronze"),
+  hireling: trim("border-l-metal-silver", "text-metal-silver"),
 };
+
+/** The game icon before a card's name: the leader's crown, a hero's helmet, a group, a hired sword. */
+export function unitMarker(entry: RosterUnit): UnitMarker {
+  if (entry.kind === "henchmen_group") return "henchmen";
+  if (entry.kind === "hireling") return "hired";
+  return entry.unit.is_leader ? "leader" : "hero";
+}
 
 /**
  * The line under a card's name: its type, or what it is when the type is the name already (a

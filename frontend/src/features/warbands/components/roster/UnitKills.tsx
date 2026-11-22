@@ -57,7 +57,7 @@ function KillList({
 }
 
 /**
- * The kill count on a card's top row (William: "just display a number that is clickable for a
+ * The kill count on an open card (William: "just display a number that is clickable for a
  * breakdown"): "Kills 3", which opens the kill history in a popover on the web, a sheet on a
  * phone. A henchmen group's are its members', each kill naming the model.
  */
@@ -65,10 +65,13 @@ export default function UnitKills({
   campaignId,
   warbandId,
   entry,
+  align = "end",
 }: {
   campaignId: number;
   warbandId: number;
   entry: RosterUnit;
+  /** The side of the count its web popover lines up with: its left edge on a card's left. */
+  align?: "start" | "end";
 }) {
   const [open, setOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -116,7 +119,10 @@ export default function UnitKills({
         <div
           role="dialog"
           aria-label={`Kills of ${name}`}
-          className="absolute right-0 top-full z-30 mt-1 flex w-[min(24rem,80vw)] flex-col gap-2 border border-accent-line bg-panel p-3 text-left shadow-[0_16px_40px_var(--color-shadow)]"
+          className={cn(
+            "absolute top-full z-30 mt-1 flex w-[min(24rem,80vw)] flex-col gap-2 border border-accent-line bg-panel p-3 text-left shadow-[0_16px_40px_var(--color-shadow)]",
+            align === "start" ? "left-0" : "right-0"
+          )}
         >
           <div className="flex items-center justify-between gap-2">
             <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">

@@ -1,29 +1,28 @@
+import type { ReactNode } from "react";
+
 import { Chip, ChipLabel } from "@/components/ui/chip";
 import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
 import { BADGE } from "./badge-style";
-import UnitKills from "./UnitKills";
 import type { RosterUnit } from "./unit-view";
 
 /**
  * A card's top row of badges, every one the same chip (William, 12 Nov 2026: the row "is busy, with
- * different element sizes and styles crammed together"): the mount it rides, Missing, a pact-sworn
- * hired sword's Blood pact (while the campaign has them on) and the kill count with its breakdown.
- * A hero's trading action is a line of its own under the head (`UnitTradingAction`), Advance ready
- * sits on the card's top edge (UnitCard), and a hero's bounties show only on the overview (William:
- * "dont need to see the bounty on the warband sheet for a unit").
+ * different element sizes and styles crammed together"): the mount it rides, Missing and a
+ * pact-sworn hired sword's Blood pact (while the campaign has them on), in the head or, a hero's,
+ * opposite his trading action (UnitCard). Advance ready sits on the card's top edge, and a hero's
+ * bounties show only on the overview (William: "dont need to see the bounty on the warband sheet
+ * for a unit").
  */
 export default function UnitBadges({
   entry,
   campaign,
-  warbandId,
   canEdit,
   onRide,
 }: {
   entry: RosterUnit;
   campaign: CampaignSummary | null;
-  warbandId: number;
   canEdit: boolean;
   onRide: (rowId: number, on: boolean) => void;
 }) {
@@ -54,27 +53,30 @@ export default function UnitBadges({
           Blood pact
         </ChipLabel>
       ) : null}
-      <UnitKills campaignId={campaign?.id ?? 0} warbandId={warbandId} entry={entry} />
     </>
   );
 }
 
 /**
  * A hero's trading action, off the badge row and on a line of its own under the head (William, 12
- * Nov 2026: "trading actions are especially space-consuming"), so the badges stay chips.
+ * Nov 2026: "trading actions are especially space-consuming"); `start` sits opposite it (his
+ * badges and the open card's kills).
  */
 export function UnitTradingAction({
   entry,
   canEdit,
   onTradingAction,
+  start,
 }: {
   entry: RosterUnit;
   canEdit: boolean;
   onTradingAction?: (on: boolean) => void;
+  start?: ReactNode;
 }) {
   if (entry.kind !== "hero") return null;
   return (
-    <div className="flex justify-end">
+    <div className="flex items-center justify-between gap-2">
+      <div className="flex min-w-0 flex-wrap items-center gap-1.5">{start}</div>
       <Switch
         look="plain"
         className="min-h-[30px] text-xs"
