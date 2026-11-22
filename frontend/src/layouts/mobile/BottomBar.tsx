@@ -4,8 +4,10 @@ import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+// -mt-px over the bar's top border and the bar's top padding moved inside: the current item's
+// line sits flush on the bar's top edge (William, 22 Nov 2026)
 const ITEM =
-  "flex min-h-[52px] flex-col items-center justify-center gap-[3px] text-[11px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring [&_svg]:size-5";
+  "-mt-px flex min-h-[52px] flex-col pt-[5px] items-center justify-center gap-[3px] text-[11px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring [&_svg]:size-5";
 
 const itemClass = (current: boolean) =>
   cn(
@@ -18,10 +20,7 @@ const itemClass = (current: boolean) =>
 /** The phone's flat five-item bar (design E): the bottom nav and the battle tools share it. */
 export function BottomBar({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <nav
-      aria-label={label}
-      className="grid grid-cols-5 border-t border-line bg-rail px-1.5 pb-2 pt-1"
-    >
+    <nav aria-label={label} className="grid grid-cols-5 border-t border-line bg-rail px-1.5 pb-2">
       {children}
     </nav>
   );
