@@ -28,6 +28,7 @@ import { isCampaignId, useCampaignQuery } from "../hooks/useCampaignQuery";
 
 import type { BattleDialogMode } from "../hooks/overview/useStartBattleForm";
 import type { CampaignSummary } from "../types/campaign-types";
+import { useCampaignRulesTitle } from "@/features/rules/hooks/useCampaignRulesTitle";
 
 /**
  * What the layout shares with every campaign page. It owns the campaign query (pages read the
@@ -60,6 +61,9 @@ export default function CampaignLayout() {
   const segments = pathname.split("/").filter(Boolean);
   const isBattleRoute = isBattlePath(pathname);
   const isOverview = segments.length === 2;
+  // the Campaign rules page is named for the published campaign it plays, in the top bar too
+  const onRules = segments[2] === "campaign-rules";
+  const rulesTitle = useCampaignRulesTitle(campaign?.preset_id, onRules);
   // The Aftermath and the battle screen bring their own header and
   // footer on a phone.
   const ownChrome = isBattleRoute && (segments[4] === "postbattle" || segments[4] === "active");
@@ -152,7 +156,7 @@ export default function CampaignLayout() {
           topBar: (
             <MobileTopBar
               kicker={campaign.name}
-              title={campaignSectionTitle(pathname)}
+              title={onRules ? rulesTitle : campaignSectionTitle(pathname)}
               tools={tools}
             />
           ),

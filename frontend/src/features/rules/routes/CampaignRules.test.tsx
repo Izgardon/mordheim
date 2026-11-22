@@ -300,13 +300,22 @@ describe("The Campaign rules page", () => {
     );
   });
 
+  it("is named for the published campaign it plays", async () => {
+    fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, { ...campaignFor("player"), preset_id: 3 });
+    fakeApi.on("GET /campaign-presets/", [{ id: 3, slug: "khemri", name: "Khemri" }]);
+    renderApp(PAGE);
+
+    expect(await screen.findByRole("heading", { level: 1, name: "Khemri" })).toBeInTheDocument();
+  });
+
   it("is under the Rules eyebrow and says when a list is empty", async () => {
     fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("player"));
     fakeApi.on(`GET ${RULES}`, []);
     fakeApi.on(`GET ${CHARTS}`, []);
     renderApp(PAGE);
 
-    const heading = await screen.findByRole("heading", { level: 1, name: "Campaign rules" });
+    // named for the published campaign it plays, Mordheim when none (William, 22 Nov 2026)
+    const heading = await screen.findByRole("heading", { level: 1, name: "Mordheim" });
     expect(heading.previousElementSibling).toHaveTextContent(/^Rules$/);
     expect(await screen.findByText("No campaign rules yet.")).toBeInTheDocument();
     expect(screen.getByText("No battle rules yet.")).toBeInTheDocument();

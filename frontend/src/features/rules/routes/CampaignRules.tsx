@@ -12,6 +12,7 @@ import { useCampaignCharts, useCampaignRules } from "../api/rule-queries";
 import ChartsSection from "../components/ChartsSection";
 import RulesSection from "../components/RulesSection";
 import { useCampaignChartWrites } from "../hooks/useCampaignChartWrites";
+import { useCampaignRulesTitle } from "../hooks/useCampaignRulesTitle";
 import { useCampaignRuleWrites } from "../hooks/useCampaignRuleWrites";
 
 /**
@@ -32,6 +33,7 @@ export default function CampaignRules() {
   const chartWrites = useCampaignChartWrites(campaignId);
   const params = useReferenceParams(!rules.isPending && !charts.isPending);
   const canManage = campaignCapabilities(campaign).manage_campaign_rules;
+  const title = useCampaignRulesTitle(campaign?.preset_id);
   const allRules = rules.data ?? [];
   const allCharts = charts.data ?? [];
   const failure = rules.error || charts.error ? getErrorMessage(rules.error ?? charts.error) : "";
@@ -46,7 +48,7 @@ export default function CampaignRules() {
 
   return (
     <ReferencePage
-      title="Campaign rules"
+      title={title}
       section="campaign-rules"
       filters={
         <FilterRow isMobile={isMobile}>
