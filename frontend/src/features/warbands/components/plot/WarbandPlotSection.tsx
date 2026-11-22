@@ -11,14 +11,13 @@ import { useWarbandPlot } from "../../api/plot-queries";
 import type { WarbandPlot } from "../../types/warband-types";
 import { SECTION_TITLE } from "../page/warband-layout";
 import PlotDetailsDialog from "./PlotDetailsDialog";
-import PlotSelect from "./PlotSelect";
 
 /**
  * Campaign points and the plot the warband follows (apps/plots), shown while the campaign has
  * Plots on. Collapsed it is one line, as a resource reads: the plot's name, the total with − and +
  * (and typed in, the player's own number either way — nothing here computes, adds to or takes from
- * it), and the arrow that opens the rest. Open, it shows the track, Plot Details (the plot's own
- * plan, read only) and the plot picked, changed for nothing (William: "editable for free").
+ * it), and the arrow that opens the rest. Open, it shows Plot Details (the plot's own plan, read
+ * only) and the track. The plot is picked in warband Settings only (William, 22 Nov 2026).
  *
  * Only the rungs the total has reached are warband rules (`warbands/services/plot_rules.py`); the
  * plan is this section's, not a rule (William, 20 Nov 2026).
@@ -40,9 +39,6 @@ export default function WarbandPlotSection({
   const save = useWarbandPlot(campaignId, warbandId);
   const [typed, setTyped] = useState(String(total));
   useEffect(() => setTyped(String(total)), [total]);
-  // the plot shown while the sheet that holds it is read again
-  const [picked, setPicked] = useState(plot?.id ?? null);
-  useEffect(() => setPicked(plot?.id ?? null), [plot?.id]);
   const [open, setOpen] = useState(false);
   const [details, setDetails] = useState(false);
   const onError = (error: unknown) => toast.error(getErrorMessage(error, "Couldn't save that."));
@@ -113,26 +109,14 @@ export default function WarbandPlotSection({
       </div>
       {open ? (
         <div className="flex flex-col gap-2.5">
-          <div className="flex flex-wrap items-start gap-x-4 gap-y-2">
-            <button
-              type="button"
-              onClick={() => setDetails(true)}
-              disabled={!plot}
-              className="min-h-9 border border-strong px-3 text-[13px] font-bold text-accent-text hover:bg-raised disabled:opacity-50"
-            >
-              Plot details
-            </button>
-            {canEdit ? (
-              <PlotSelect
-                campaignId={campaignId}
-                value={picked}
-                onChange={(plotId) => {
-                  setPicked(plotId);
-                  save.mutate({ plot_id: plotId }, { onError });
-                }}
-              />
-            ) : null}
-          </div>
+          <button
+            type="button"
+            onClick={() => setDetails(true)}
+            disabled={!plot}
+            className="min-h-9 self-start border border-strong px-3 text-[13px] font-bold text-accent-text hover:bg-raised disabled:opacity-50"
+          >
+            Plot details
+          </button>
           <PlotTrack total={total} rungs={plot?.rungs ?? []} />
         </div>
       ) : null}

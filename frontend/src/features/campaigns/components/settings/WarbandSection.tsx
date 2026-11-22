@@ -17,6 +17,7 @@ import { leaveMode, useLeaveCampaign } from "../../hooks/settings/useLeaveCampai
 import type { CampaignSummary } from "../../types/campaign-types";
 import RemovalPreview, { ownVoice } from "./RemovalPreview";
 import { Field, FormError, SettingsCard } from "./settings-ui";
+import WarbandPlotCard from "./WarbandPlotCard";
 import WarbandTypeCard from "./WarbandTypeCard";
 import { SettingsRowsLoading } from "./SettingsSkeleton";
 
@@ -344,7 +345,7 @@ function LeaveCampaign({ campaign }: { campaign: CampaignSummary }) {
 
 /**
  * Settings → Your warband (every member): its name and size, its warband type and what it counts
- * as, the warband sheet link, Delete warband, and Leave campaign. An archived campaign reads only, and keeps Leave.
+ * as, its plot while the campaign has Plots on, the warband sheet link, Delete warband, and Leave campaign. An archived campaign reads only, and keeps Leave.
  */
 export default function WarbandSection({ campaign }: { campaign: CampaignSummary }) {
   const navigate = useNavigate();
@@ -362,6 +363,9 @@ export default function WarbandSection({ campaign }: { campaign: CampaignSummary
         <>
           <WarbandDetails warband={mine} canEdit={!archived} onSaved={onSaved} />
           <WarbandTypeCard warband={mine} canEdit={!archived} onSaved={onSaved} />
+          {campaign.enable_campaign_points ? (
+            <WarbandPlotCard warband={mine} canEdit={!archived} onSaved={onSaved} />
+          ) : null}
           <WarbandSheetLink warband={mine} canEdit={!archived} onSaved={onSaved} />
           {archived ? null : (
             <DeleteWarband

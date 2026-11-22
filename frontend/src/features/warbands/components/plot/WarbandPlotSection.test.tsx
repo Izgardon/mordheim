@@ -1,9 +1,9 @@
 /**
  * Campaign points on the warband page (William, 20 Nov 2026): collapsed, the section is the plot's
  * name, the total with − and + (and typed, as every number in the app can be) and the arrow that
- * opens the rest — no plot to edit, nothing about it. Open, it shows Plot details, the plot picked
- * from the campaign's list with its own words on who may follow it, and the track from that plot's
- * ladder. A viewer reads it and changes nothing.
+ * opens the rest — no plot to edit, nothing about it. Open, it shows Plot details and the track from
+ * that plot's ladder; the plot itself is picked in warband Settings only (William, 22 Nov 2026). A
+ * viewer reads it and changes nothing.
  */
 import { screen, within } from "@testing-library/react";
 import { describe, beforeEach, expect, it, vi } from "vitest";
@@ -111,28 +111,16 @@ describe("the warband's campaign points", () => {
     );
   });
 
-  // William: "editable for free" — no cost, no confirmation, and nothing greys the choice
-  it("changes the plot for nothing and reads out who may follow the one picked", async () => {
+  // William, 22 Nov 2026: "I want the dropdown allowing plot changing gone from here [and the text
+  // underneath). It should only be changeable from warband settings page"
+  it("offers no plot to pick, nor who may follow it, once opened", async () => {
     const user = setupUser();
     show();
     await open(user);
 
-    expect(await screen.findByText("Witch Hunters and Sisters of Sigmar.")).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "Plot: Drowning the Witch" }));
-    await user.click(screen.getByRole("option", { name: /The Shards/ }));
-
-    expect(fakeApi.bodyOf("PATCH /warbands/9/")).toEqual({ plot_id: 5 });
+    expect(screen.getByRole("button", { name: "Plot details" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: /^Plot:/ })).toBeNull();
     expect(screen.queryByText("Witch Hunters and Sisters of Sigmar.")).toBeNull();
-  });
-
-  it("follows none again", async () => {
-    const user = setupUser();
-    show();
-    await open(user);
-
-    await user.click(await screen.findByRole("button", { name: "No plot" }));
-
-    expect(fakeApi.bodyOf("PATCH /warbands/9/")).toEqual({ plot_id: null });
   });
 
   it("opens the plot's plan in Plot details, read only, the rungs reached marked", async () => {
