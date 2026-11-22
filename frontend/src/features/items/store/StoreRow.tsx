@@ -15,11 +15,13 @@ export type StoreOffer = {
   availability: ItemAvailability;
   rows: ItemAvailability[];
   warning: string;
-  /** The server offers it to any unit whatever his own list sells (an unscoped animal or oddment). */
+  /** The server offers it to any unit whatever their own list sells (an unscoped animal or oddment). */
   alwaysOpen?: boolean;
+  /** The items it counts as on a unit's own list (the server's: Gromril Armour, Heavy Armour's). */
+  countsAs?: number[];
 };
 
-/** What His list adds to a row: his list's name for the item, why it is dimmed, the limit's warning. */
+/** What Their list adds to a row: their list's name for the item, why it is dimmed, the limit's warning. */
 export type HisRowView = { name: string; off: string; limit: string | null };
 
 type StoreRowProps = {
@@ -43,10 +45,10 @@ type StoreRowProps = {
 };
 
 /**
- * A row of the store (design E): the item's name (on His list, as his list names it), its kind,
- * the price row the server picked, Common or Rare N, the server's reason it isn't usually sold
- * here, and on His list a line he isn't meant to take dimmed with its reason; Get opens its
- * acquire form.
+ * A row of the store (design E): the item's name (on Their list, as their list names it), its
+ * kind, the price row the server picked, Common or Rare N, the server's reason it isn't usually
+ * sold here, and on Their list a line they aren't meant to take dimmed with its reason; Get opens
+ * its acquire form.
  */
 export default function StoreRow({ offer, his, ...props }: StoreRowProps) {
   const { item, availability, rows, warning } = offer;

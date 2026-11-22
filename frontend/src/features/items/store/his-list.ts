@@ -52,6 +52,25 @@ export type HisMaterialLine = {
   choices: { itemId: number; price: number | null }[];
 };
 
+/**
+ * Whether Their list offers more than the list's own lines: a hero's also offers the weapon
+ * materials open to anyone, the armour that counts as their list's and the animals and oddments
+ * anyone may use, while a henchmen group's offers only its list (William, 22 Nov 2026: "A henchman
+ * store Their list should literally only show the items from their list").
+ */
+export const takesExtras = (his: HisList) => his.fighter.kind === "hero";
+
+/**
+ * An item Their list offers a hero beyond their lines: one the server offers any unit (an animal
+ * or an oddment nobody's rows name), or one that counts as an item on their list (William, 22 Nov
+ * 2026: gromril and ithilmar armour "if they have heavy there"; the server says which).
+ */
+export function hisExtra(his: HisList, offer: { alwaysOpen?: boolean; countsAs?: number[] }) {
+  if (!takesExtras(his)) return false;
+  if (offer.alwaysOpen) return true;
+  return (offer.countsAs ?? []).some((id) => his.lines.some((line) => line.item?.id === id));
+}
+
 /** The weapon materials his lists sell, each once (the first line naming it), in his lists' order. */
 export function hisMaterials(his: HisList): HisMaterialLine[] {
   const found = new Map<string, HisMaterialLine>();

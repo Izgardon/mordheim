@@ -56,27 +56,39 @@ export function searchRank(query: string, name: string): number {
 }
 
 /** The lowest rarity the warband is offered the item at; Common (null) counts as 0. */
-const rarityOf = (rows: { rarity: number | null }[]) =>
+export const rarityOf = (rows: { rarity: number | null }[]) =>
   Math.min(...rows.map((row) => row.rarity ?? 0));
 
-type StoreSortable = {
-  offer: { item: Item; rows: { rarity: number | null }[] };
-  /** His list, which renames the item: ranked and sorted by the name the row shows. */
-  view?: { name: string } | null;
-};
+/** What a store row is ordered by: the name it shows and its rarity (Common 0). */
+export type StoreSort = { name: string; rarity: number };
 
 /**
  * The store's order (William, 18 Nov 2026: "by rarity, but string matching still matters most"):
  * the closest name match first, then the easiest to find, then by name. With nothing typed every
- * row ranks the same, so the common kit sits at the top.
+ * row ranks the same, so the common kit sits at the top, and a weapon material's row sits among
+ * the items of its rarity (William, 22 Nov 2026: "mixed in properly").
  */
-export function inStoreOrder<T extends StoreSortable>(rows: T[], query: string): T[] {
-  const shown = (row: T) => row.view?.name ?? row.offer.item.name;
+export function storeOrder<T>(rows: T[], query: string, sortOf: (row: T) => StoreSort): T[] {
   return [...rows].sort((a, b) => {
-    const rank = searchRank(query, shown(a)) - searchRank(query, shown(b));
+    const left = sortOf(a);
+    const right = sortOf(b);
+    const rank = searchRank(query, left.name) - searchRank(query, right.name);
     if (rank !== 0) return rank;
-    const rarity = rarityOf(a.offer.rows) - rarityOf(b.offer.rows);
+    const rarity = left.rarity - right.rarity;
     if (rarity !== 0) return rarity;
-    return shown(a).localeCompare(shown(b));
+    return left.name.localeCompare(right.name);
   });
 }
+
+type StoreSortable = {
+  offer: { item: Item; rows: { rarity: number | null }[] };
+  /** Their list, which renames the item: ranked and sorted by the name the row shows. */
+  view?: { name: string } | null;
+};
+
+/** Item rows in the store's order (`storeOrder`), by the name each shows. */
+export const inStoreOrder = <T extends StoreSortable>(rows: T[], query: string): T[] =>
+  storeOrder(rows, query, (row) => ({
+    name: row.view?.name ?? row.offer.item.name,
+    rarity: rarityOf(row.offer.rows),
+  }));
