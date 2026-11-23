@@ -6,5 +6,6 @@
     "Relics of the Crusades"
   ],
   "exploration_chart": "relics-of-the-crusades",
-  "rules": "relics-of-the-crusades"
+  "rules": "relics-of-the-crusades",
+  "main_resource": "Treasure"
 }

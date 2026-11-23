@@ -6,5 +6,6 @@
     "Karak Azgal"
   ],
   "exploration_chart": "karak-azgal",
-  "rules": "karak-azgal"
+  "rules": "karak-azgal",
+  "main_resource": "Treasure"
 }

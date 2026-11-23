@@ -6,5 +6,6 @@
     "Lustria"
   ],
   "exploration_chart": "lustria",
-  "rules": "lustria"
+  "rules": "lustria",
+  "main_resource": "Valuables"
 }

@@ -1,10 +1,11 @@
 {
- "slug": "sylvania",
- "name": "Sylvania",
- "sort_order": 11,
- "settings": [
-  "Sylvania"
- ],
- "exploration_chart": "sylvania",
- "rules": "sylvania"
+  "slug": "sylvania",
+  "name": "Sylvania",
+  "sort_order": 11,
+  "settings": [
+    "Sylvania"
+  ],
+  "exploration_chart": "sylvania",
+  "rules": "sylvania",
+  "main_resource": "Treasure"
 }

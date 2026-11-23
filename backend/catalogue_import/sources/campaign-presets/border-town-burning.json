@@ -8,5 +8,9 @@
   "exploration_chart": "border-town-burning",
   "enable_campaign_points": true,
   "hero_death_roll": "d66",
-  "rules": "border-town-burning"
+  "rules": "border-town-burning",
+  "main_resource": "Treasure",
+  "resources": [
+    "Wyrdstone"
+  ]
 }

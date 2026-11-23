@@ -8,5 +8,6 @@
   "exploration_chart": "sartosa",
   "enable_locations": false,
   "hero_death_roll": "d66",
-  "rules": "sartosa"
+  "rules": "sartosa",
+  "main_resource": "Cargo"
 }

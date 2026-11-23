@@ -6,5 +6,6 @@
     "The Nemesis Crown"
   ],
   "rules": "nemesis-crown",
-  "exploration_chart": "empire-in-flames"
+  "exploration_chart": "empire-in-flames",
+  "main_resource": "Treasure"
 }

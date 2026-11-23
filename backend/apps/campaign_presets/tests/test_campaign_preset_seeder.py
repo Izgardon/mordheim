@@ -58,6 +58,9 @@ class PresetSeederTests(TestCase):
             ),
             (True, True, True, True, 6, "d66", ExplorationChart.objects.get(slug="mutiny-in-marienburg").pk),
         )
+        # its resources (William, 23 Nov 2026: "treasure and wyrdstone for MiM where treasure is the default")
+        self.assertEqual((marienburg.main_resource, marienburg.resources), ("Treasure", ["Wyrdstone"]))
+        self.assertEqual((presets["mordheim"].main_resource, presets["mordheim"].resources), ("", []))
         self.assertEqual([setting.name for setting in marienburg.settings.all()], [MARIENBURG])
         # its campaign rules first, then its battle rules, then its charts with their results
         rules = list(marienburg.rules.all())

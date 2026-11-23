@@ -6,5 +6,10 @@
     "The Sealed City"
   ],
   "enable_campaign_points": true,
-  "rules": "sealed-city"
+  "rules": "sealed-city",
+  "main_resource": "Moonstones",
+  "resources": [
+    "Key fragments",
+    "Orichalcum tokens"
+  ]
 }

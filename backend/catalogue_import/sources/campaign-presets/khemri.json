@@ -7,5 +7,9 @@
     "Khemri 3"
   ],
   "exploration_chart": "khemri",
-  "rules": "khemri"
+  "rules": "khemri",
+  "main_resource": "Treasure",
+  "resources": [
+    "Water"
+  ]
 }

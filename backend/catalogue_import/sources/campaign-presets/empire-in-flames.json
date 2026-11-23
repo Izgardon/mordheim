@@ -6,5 +6,6 @@
     "Empire in Flames"
   ],
   "exploration_chart": "empire-in-flames",
-  "rules": "empire-in-flames"
+  "rules": "empire-in-flames",
+  "main_resource": "Treasure"
 }

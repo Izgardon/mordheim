@@ -6,5 +6,6 @@
     "Albion"
   ],
   "exploration_chart": "albion",
-  "rules": "albion"
+  "rules": "albion",
+  "main_resource": "Valuables"
 }

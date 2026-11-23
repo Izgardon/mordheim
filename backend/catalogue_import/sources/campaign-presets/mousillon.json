@@ -1,10 +1,11 @@
 {
- "slug": "mousillon",
- "name": "Mousillon",
- "sort_order": 14,
- "settings": [
-  "Mousillon"
- ],
- "exploration_chart": "mousillon",
- "rules": "mousillon"
+  "slug": "mousillon",
+  "name": "Mousillon",
+  "sort_order": 14,
+  "settings": [
+    "Mousillon"
+  ],
+  "exploration_chart": "mousillon",
+  "rules": "mousillon",
+  "main_resource": "Treasure"
 }

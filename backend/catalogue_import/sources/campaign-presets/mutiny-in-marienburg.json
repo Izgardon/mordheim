@@ -12,5 +12,9 @@
   "enable_blood_pacts": true,
   "max_heroes": 6,
   "hero_death_roll": "d66",
-  "rules": "mutiny-in-marienburg"
+  "rules": "mutiny-in-marienburg",
+  "main_resource": "Treasure",
+  "resources": [
+    "Wyrdstone"
+  ]
 }
