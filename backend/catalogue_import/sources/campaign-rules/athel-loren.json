@@ -920,5 +920,136 @@
     }
    ]
   }
+ ],
+ "location_groups": [
+  {
+   "name": "Wood Elf Glades",
+   "description": "The villages and glades of the Wood Elves in the forest of Athel Loren.",
+   "restrictions": "Wood Elf Scouts only.",
+   "locations": [
+    {
+     "name": "Wood Elf Village",
+     "rules": "The whole warband goes. On the way, roll once on the Forest Hazards chart.\n\nHand-to-hand combat weapons: Axe 5 gc (Rare 8); Staff 3 gc (Common); Dagger 2 gc (Common); Double-Handed Staff 15 gc (Rare 8); Ithilmar Weapon 3 x Price (Rare 12); Lance 40 gc (Rare 8); Morning Star 10 gc (Rare 10); Spear 10 gc (Common); Sword 10 gc (Common); Sword of Orion 20 gc (Rare 8); Yew Staff 35 gc (Rare 8).\n\nMissile weapons: Bolas 5 gc (Rare 6); Bow 10 gc (Common); Elf Bow 35 + D6 gc (Common); Fighting Falcons 30 gc (Rare 7); Javelin 5 gc (Common); Long Bow 15 gc (Common); Sling 2 gc (Rare 7); Short Bow 5 gc (Rare 5); Throwing Knives 15 gc (Rare 8); Yew Bow 3 x Price (Rare 10).\n\nArmour: Barding 80 gc (Rare 10); Buckler 5 gc (Common); Helmet 10 gc (Common); Ithilmar Armor 90 gc (Rare 12); Light Armor 20 gc (Rare 6); Magic War Paint 10 gc (Rare 7); Shield 5 gc (Common); Yew Armor 25 gc (Rare 10).\n\nMiscellaneous: Blessed Water 20 + 3D6 gc (Rare 9); Elven Boots 50 gc + D6 x 10 (Rare 8); Elven Cloak 75 gc + D6 x 10 (Rare 10); Elven Steed 90 gc (Rare 12); Halfling Cookbook 35 + 3D6 gc (Rare 8); Healing Herbs 20 gc (Rare 5); Healing Potion 50 + 3D6 gc (Rare 8); Holy Relic 30 + 3D6 gc (Rare 10); Hunting Arrows 20 gc (Rare 5); Lantern 10 gc (Common); Lucky Charm 10 gc (Rare 6); Net 2 gc (Common); Rope and Hook 5 gc (Common); Tome of Magic 200 + D6 x 50 gc (Rare 12); War Hawk 150 + D6 x 10 gc (Rare 9); Wild Cat 25 + 2D6 gc (Rare 10).\n\nRecruits, with the dice rolled for experienced troops: Wood Elf Archers 3D6, Dryads D6, Glade Guards 3D6, Wardancers D6. The shop's Wood Elf Archers are the Wood Elf Scouts' Archers. The book prints no cost for any recruit, and has no entry for Dryads or Wardancers.",
+     "min_heroes": "all",
+     "max_heroes": "all",
+     "trading_action": false,
+     "tables": [],
+     "charts": [
+      "Forest Hazards"
+     ]
+    },
+    {
+     "name": "Pine Glade",
+     "rules": "The whole warband goes. On the way, roll twice on the Forest Hazards chart.\n\nHand-to-hand combat weapons: Axe 5 gc (Rare 8); Staff 3 gc (Common); Dagger 2 gc (Common); Double-Handed Staff 15 gc (Rare 8); Ithilmar Weapon 3 x Price (Rare 12); Lance 40 gc (Rare 5); Spear 10 gc (Common); Sword 10 gc (Common); Sword of Orion 20 gc (Rare 8); Yew Staff 35 gc (Rare 8).\n\nMissile weapons: Bolas 5 gc (Common); Bow 10 gc (Common); Elf Bow 35 + D6 gc (Common); Fighting Falcons 30 gc (Common); Javelin 5 gc (Common); Long Bow 15 gc (Common); Sling 2 gc (Rare 7); Short Bow 5 gc (Rare 5); Throwing Knives 15 gc (Rare 8); Yew Bow 3 x Price (Rare 10).\n\nArmour: Barding 80 gc (Rare 10); Buckler 5 gc (Common); Helmet 10 gc (Common); Ithilmar Armor 90 gc (Rare 12); Light Armor 20 gc (Rare 6); Magic War Paint 10 gc (Rare 7); Shield 5 gc (Common); Yew Armor 25 gc (Rare 10).\n\nMiscellaneous: Blessed Water 20 + 3D6 gc (Rare 9); Elven Boots 50 gc + D6 x 10 (Rare 8); Elven Cloak 75 gc + D6 x 10 (Rare 10); Elven Steed 90 gc (Rare 11); Halfling Cookbook 35 + 3D6 gc (Rare 8); Healing Herbs 20 gc (Rare 5); Healing Potion 50 + 3D6 gc (Rare 8); Holy Relic 30 + 3D6 gc (Rare 10); Hunting Arrows 20 gc (Rare 5); Lantern 10 gc (Common); Lucky Charm 10 gc (Rare 6); Net 2 gc (Common); Rope and Hook 5 gc (Common); Tome of Magic 200 + D6 x 50 gc (Rare 6); War Hawk 150 + D6 x 10 gc (Rare 9); Wild Cat 25 + 2D6 gc (Common).\n\nRecruits, with the dice rolled for experienced troops: Wood Elf Archers 3D6, Dryads D3, Glade Guards 3D6, Wardancers D6. The shop's Wood Elf Archers are the Wood Elf Scouts' Archers. The book prints no cost for any recruit, and has no entry for Dryads or Wardancers.",
+     "min_heroes": "all",
+     "max_heroes": "all",
+     "trading_action": false,
+     "tables": [],
+     "charts": [
+      "Forest Hazards"
+     ]
+    },
+    {
+     "name": "Yew Glade",
+     "rules": "The whole warband goes. On the way, roll twice on the Forest Hazards chart.\n\nHand-to-hand combat weapons: Axe 5 gc (Rare 8); Staff 3 gc (Common); Dagger 2 gc (Common); Double-Handed Staff 15 gc (Rare 6); Ithilmar Weapon 3 x Price (Rare 12); Spear 10 gc (Common); Sword 10 gc (Common); Sword of Orion 20 gc (Rare 6); Yew Staff 35 gc (Rare 5).\n\nMissile weapons: Bolas 5 gc (Rare 6); Bow 10 gc (Common); Elf Bow 35 + D6 gc (Common); Fighting Falcons 30 gc (Rare 7); Javelin 5 gc (Common); Long Bow 15 gc (Common); Sling 2 gc (Rare 7); Short Bow 5 gc (Common); Throwing Knives 15 gc (Rare 8); Yew Bow 3 x Price (Rare 7).\n\nArmour: Buckler 5 gc (Common); Helmet 10 gc (Common); Ithilmar Armor 90 gc (Rare 12); Light Armor 20 gc (Rare 6); Magic War Paint 10 gc (Rare 5); Shield 5 gc (Common); Yew Armor 25 gc (Rare 7).\n\nMiscellaneous: Blessed Water 20 + 3D6 gc (Rare 9); Elven Boots 50 gc + D6 x 10 (Rare 6); Elven Cloak 75 gc + D6 x 10 (Rare 7); Elven Steed 90 gc (Rare 12); Halfling Cookbook 35 + 3D6 gc (Rare 8); Healing Herbs 20 gc (Common); Healing Potion 50 gc (Common); Holy Relic 30 + 3D6 gc (Rare 10); Hunting Arrows 20 gc (Common); Lantern 10 gc (Common); Lucky Charm 10 gc (Rare 6); Net 2 gc (Common); Rope and Hook 5 gc (Common); Tome of Magic 200 + D6 x 50 gc (Rare 12); War Hawk 150 + D6 x 10 gc (Rare 9); Wild Cat 25 + 2D6 gc (Rare 10).\n\nRecruits, with the dice rolled for experienced troops: Wood Elf Archers 3D6, Dryads 2D6, Glade Guards 3D6, Wardancers 2D6. The shop's Wood Elf Archers are the Wood Elf Scouts' Archers. The book prints no cost for any recruit, and has no entry for Dryads or Wardancers.",
+     "min_heroes": "all",
+     "max_heroes": "all",
+     "trading_action": false,
+     "tables": [],
+     "charts": [
+      "Forest Hazards"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Orc Lands",
+   "description": "The camp and black market of the orc army marching on the forest.",
+   "restrictions": "Savage Orcs only.",
+   "locations": [
+    {
+     "name": "Orc Camp",
+     "rules": "The whole warband goes. On the way, roll once on the Forest Hazards chart and once on the Orc Army Hazards chart.\n\nHand-to-hand combat weapons: Axe 5 gc (Common); Club 3 gc (Common); Dagger 2 gc (Common); Double-Handed Weapon 15 gc (Common); Dwarf Axe 15 (printed without gc) (Rare 10); Halberd 10 gc (Rare 7); Mace 3 gc (Common); Morning Star 10 gc (Rare 5); Spear 10 gc (Common); Sword 10 gc (Rare 7).\n\nMissile weapons: Bow 10 gc (Common); Crossbow 25 gc (Rare 7); Short Bow 5 gc (Common).\n\nArmour: Heavy Armour 50 gc (Rare 10); Helmet 10 gc (Common); Light Armour 20 gc (Common); Magic War Paint 10 gc (Rare 9); Shield 5 gc (Common).\n\nMiscellaneous: Black Lotus 10 + D6 gc (Rare 10); Boar 40 + 10D6 gc (Rare 9); Crimson Shade 45 + D6 gc (Rare 10); Dark Venom 45 + 2D6 gc (Rare 10); Hunting Arrows 40 + D6 gc (Rare 9); Lantern 10 gc (Common); Lucky Charm 10 gc (Rare 6); Mad Cap Mushrooms 30 gc (Common); Mandrake Root 40 + D6 gc (Rare 10); Net 5 gc (Common); Rope and Hook 5 gc (Common); Unholy Relic 15 + 3D6 gc (Rare 8).\n\nRecruits, with the dice rolled for experienced troops: Forest Goblins 2D6, Orcs 3D6, Savage Orcs 2D6. The shop's Orcs are the Savage Orcs' Orc Boyz, and its Savage Orcs their Savage Orc Boyz. The book prints no cost for any recruit.",
+     "min_heroes": "all",
+     "max_heroes": "all",
+     "trading_action": false,
+     "tables": [],
+     "charts": [
+      "Forest Hazards",
+      "Orc Army Hazards"
+     ]
+    },
+    {
+     "name": "Orc Black Market",
+     "rules": "The whole warband goes. On the way, roll once on the Forest Hazards chart and three times on the Orc Army Hazards chart.\n\nHand-to-hand combat weapons: Axe 5 gc (Common); Club 3 gc (Common); Dagger 2 gc (Common); Double-Handed Weapon 15 gc (Common); Dwarf Axe 15 (printed without gc) (Rare 5); Gromril Weapon 4 x Price (Rare 10); Halberd 10 gc (Common); Ithilmar Weapon 3 x Price (Rare 8); Mace 3 gc (Common); Morning Star 10 gc (Common); Spear 10 gc (Common); Sword 10 gc (Common).\n\nMissile weapons: Bow 10 gc (Common); Crossbow 25 gc (Rare 4); Short Bow 5 gc (Common).\n\nArmour: Gromril Armour 150 gc (Rare 10); Heavy Armour 50 gc (Rare 6); Helmet 10 gc (Common); Ithilmar Armour 90 gc (Rare 10); Light Armour 20 gc (Common); Magic War Paint 10 gc (Rare 5); Shield 5 gc (Common).\n\nMiscellaneous: Black Lotus 10 + D6 gc (Rare 7); Boar 40 + 10D6 gc (Rare 9); Crimson Shade 45 + D6 gc (Rare 7); Dark Venom 45 + 2D6 gc (Rare 7); Hunting Arrows 40 + D6 gc (Rare 6); Lantern 10 gc (Common); Lucky Charm 10 gc (Rare 3); Mad Cap Mushrooms 30 gc (Common); Mandrake Root 40 + D6 gc (Rare 7); Net 5 gc (Common); Rope and Hook 5 gc (Common); Unholy Relic 15 + 3D6 gc (Rare 5).\n\nRecruits, with the dice rolled for experienced troops: Forest Goblins 2D6, Orcs 3D6, Savage Orcs 2D6. The shop's Orcs are the Savage Orcs' Orc Boyz, and its Savage Orcs their Savage Orc Boyz. The book prints no cost for any recruit.",
+     "min_heroes": "all",
+     "max_heroes": "all",
+     "trading_action": false,
+     "tables": [],
+     "charts": [
+      "Forest Hazards",
+      "Orc Army Hazards"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Dwarf Outpost",
+   "description": "A dwarf outpost in the mountains beyond the forest.",
+   "restrictions": "Dwarf Troll Slayers only.",
+   "locations": [
+    {
+     "name": "Dwarf Outpost",
+     "rules": "The whole warband goes. On the way, roll once on the Underground Hazards chart, and once for a Mountain Hazard, though the book prints no Mountain Hazards chart.\n\nThe Slayers' list of shops also names the Runesmith and the Human Shop, which the book never prints.\n\nHand-to-hand combat weapons: Gromril Weapon 4 x Price (Rare 8); Axe 5 gc (Common); Club 3 gc (Common); Dagger 2 gc (Common); Double-Handed Weapon 15 gc (Common); Dwarf Axe 15 gc (Rare 8); Mace 3 gc (Common); Morning Star 10 gc (Rare 5); Spear 10 gc (Common).\n\nMissile weapons: Crossbow 25 gc (Common); Handgun 35 gc (Rare 8); Blunderbuss 30 gc (Rare 9); Crossbow Pistol 35 gc (Rare 9); Duelling Pistol 30 gc (60 brace) (Rare 10); Pistol 15 gc (30 brace) (Rare 8); Throwing Knives 15 gc (Rare 5); Throwing Hammers 20 gc (Rare 5); Throwing Axes 25 gc (Rare 6).\n\nArmour: Gromril Armour 150 gc (Rare 9); Heavy Armour 50 gc (Common); Light Armor 20 gc (Common); Helmet 10 gc (Common); Shield 5 gc (Common); Buckler 5 gc (Common).\n\nMiscellaneous: Bugman's Ale 10 + D6 gc (Rare 8); Halfling Cookbook 30 + 3D6 gc (Rare 7); Healing Herbs 20 + 2D6 gc (Rare 8); Holy Relic 15 + 3D6 gc (Rare 8); Lantern 10 gc (Common); Lucky Charm 10 gc (Rare 6); Net 5 gc (Common); Superior Blackpowder 25 gc (Rare 10); Rope and Hook 5 gc (Common).\n\nRecruits, with the dice rolled for experienced troops: Dwarf Trooper 2D6, Slayer D6. The book prints no cost for any recruit, has no entry for a Dwarf Trooper, and does not say which Slayer is meant (the Dwarf Troll Slayers' henchmen are Skaven Slayers, Troll Slayers and Squig Slayers).",
+     "min_heroes": "all",
+     "max_heroes": "all",
+     "trading_action": false,
+     "tables": [],
+     "charts": [
+      "Underground Hazards"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Skaven Warrens",
+   "description": "The armouries of the Skaven tunnels beneath Athel Loren.",
+   "restrictions": "Skaven of Clan Skryre only.",
+   "locations": [
+    {
+     "name": "Skaven Armoury",
+     "rules": "The whole warband goes. On the way, roll once on the Underground Hazards chart.\n\nHand-to-hand combat weapons: Dagger 2 gc (Common); Club 3 gc (Common); Sword 10 gc (Common); Gromril Weapon 4 x Price (Rare 10); Flail 15 gc (Common); Spear 10 gc (Common); Halberd 10 gc (Common); Ithilmar Weapon 3 x Price (Rare 10).\n\nMissile weapons: Sling 2 gc (Common); Warplock Pistols 35 gc (70 brace) (Rare 10); Poison Wind Globes 60 gc (Rare 8); Warplock Jezzail 100 + 4D6 gc (Rare 12).\n\nArmour: Light Armour 20 gc (Common); Helmet 10 gc (Common); Shield 5 gc (Common); Warpstone Armour 60 + 3D6 gc (Rare 12).\n\nMiscellaneous: Jezzail Support 10 gc (Rare 6); Warpfire Barrel 20 + 2D6 gc (Rare 10); Skavenbrew 25 + 2D6 gc (Rare 8); Black Lotus 10 + D6 gc (Rare 10); Crimson Shade 35 + D6 gc (Rare 9); Dark Venom 30 + 2D6 gc (Rare 9); Skalm (Healing Herbs) 20 + 2D6 gc (Rare 8); Unholy Relic 15 + 3D6 gc (Rare 8); Mandrake Root 25 + D6 gc (Rare 8).\n\nRecruits, with the dice rolled for experienced troops: Clanrats 3D6, Slaves 2D6, Initiates D6. The book prints no cost for any recruit.",
+     "min_heroes": "all",
+     "max_heroes": "all",
+     "trading_action": false,
+     "tables": [],
+     "charts": [
+      "Underground Hazards"
+     ]
+    },
+    {
+     "name": "Clan Skryre Armoury",
+     "rules": "The whole warband goes. On the way, roll twice on the Underground Hazards chart.\n\nHand-to-hand combat weapons: Dagger 2 gc (Common); Club 3 gc (Common); Gromril Weapon 4 x Price (Rare 9); Flail 15 gc (Common); Spear 10 gc (Common); Ithilmar Weapon 3 x Price (Rare 11).\n\nMissile weapons: Warplock Pistols 35 gc (70 brace) (Common); Poison Wind Globes 50 gc (Rare 6); Warplock Jezzail 100 gc (Rare 10); Warpfire Thrower 40 gc (Rare 10).\n\nArmour: Light Armour 20 gc (Common); Helmet 10 gc (Rare 5); Shield 5 gc (Common); Warpstone Armour 60 gc (Rare 10).\n\nMiscellaneous: Jezzail Support 10 gc (Common); Warpfire Barrel 20 (printed without gc) (Common); Skavenbrew 25 + 2D6 gc (Rare 6); Warpstone Shard 30 gc (Rare 10); Skalm (Healing Herbs) 20 + 2D6 gc (Rare 7); Unholy Relic 15 + 3D6 gc (Rare 8).\n\nRecruits, with the dice rolled for experienced troops: Clanrats 2D6, Slaves 3D6, Initiates 3D6. The book prints no cost for any recruit.",
+     "min_heroes": "all",
+     "max_heroes": "all",
+     "trading_action": false,
+     "tables": [],
+     "charts": [
+      "Underground Hazards"
+     ]
+    },
+    {
+     "name": "Warlock's Inner Sanctum",
+     "rules": "The whole warband goes. On the way, roll four times on the Underground Hazards chart.\n\nHand-to-hand combat weapons: none.\n\nMissile weapons: Warplock Pistols 30 gc (60 brace) (Common); Poison Wind Globes 50 gc (Common); Warplock Jezzail 90 gc (Rare 8); Warpfire Thrower 30 gc (Rare 8).\n\nArmour: Warpstone Armour 60 gc (Common).\n\nMiscellaneous: Skavenbrew 25 gc (Common); Warpstone Shard 30 gc (Rare 6); Skalm (Healing Herbs) 20 gc (Rare 6).\n\nRecruits, with the dice rolled for experienced troops: Initiates 4D6. The book prints no cost for any recruit.",
+     "min_heroes": "all",
+     "max_heroes": "all",
+     "trading_action": false,
+     "tables": [],
+     "charts": [
+      "Underground Hazards"
+     ]
+    }
+   ]
+  }
  ]
 }

@@ -5,6 +5,7 @@
   "settings": [
     "The Sealed City"
   ],
+  "enable_locations": true,
   "enable_campaign_points": true,
   "rules": "sealed-city",
   "main_resource": "Moonstones",

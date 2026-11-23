@@ -5,5 +5,6 @@
   "settings": [
     "Athel Loren"
   ],
+  "enable_locations": true,
   "rules": "athel-loren"
 }
