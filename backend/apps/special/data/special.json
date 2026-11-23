@@ -797,5 +797,161 @@
     "type": "Animal",
     "description": "A Trained Monkey counts towards the number of warriors in a warband but is not counted for rout tests, neither in working out the warband's starting size nor as a model lost.",
     "setting": "sartosa"
+  },
+  {
+    "name": "Daemonic Flesh (Marienburg Annual)",
+    "type": "Animal",
+    "description": "The daemon has a base armour save of 5+, modified by the Strength of the attack as normal and negated completely by magic weapons and spells. Its attacks count as magical, and it is immune to all poison and disease.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Daemon Mind (Marienburg Annual)",
+    "type": "Animal",
+    "description": "The daemon is immune to all psychology and never needs to take a psychology test. If its warband routs, it dissolves back into the void.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Summoned Instability (Marienburg Annual)",
+    "type": "Animal",
+    "description": "Every turn after the first, a summoned daemon loses 1 Leadership and must pass a Leadership test, or it is pulled back into the warp.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Mounts of the Gods (Marienburg Annual)",
+    "type": "Animal",
+    "description": "A beast daemon that is ridden, or pulls a cart or chariot, does not suffer from summoned instability. The warband that summoned it needs no Ride skill to ride it.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Violently Unstable (Marienburg Annual)",
+    "type": "Animal",
+    "description": "A greater daemon loses 3 Leadership each turn for summoned instability, not 1. If it rolls a double 1 for the test it has stabilised, and stays for the rest of the game.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Gigantic Monster (Marienburg Annual)",
+    "type": "Animal",
+    "description": "Any model may shoot at it with +2 to hit, even when it is not the closest target. It treats a stunned result as knocked down. Each knocked down result takes 1 Attack from it until it recovers in the Recovery phase of its next turn, several results taking one each. A Hero or Henchman earns +1 Experience for each wound he inflicts on it.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Fly (Marienburg Annual)",
+    "type": "Animal",
+    "description": "The model flies, by the Annual's Flying rule. It is either grounded or airborne: it may triple its Movement in any direction, ignoring terrain and counting height, and is airborne after flying and in the turn after. A model on the ground may charge an airborne one, but hits it in close combat only on a 6 (unless attacking with a spear); unless it is hit, it stays airborne, is not in combat, and may fly off or charge in its own turn. Shooting at an airborne model is at +1 to hit, and a missile hit does not ground it. A model charging from the air is grounded. Knocked down while airborne, it must pass D3 Initiative tests to land knocked down, or take D3 hits at a Strength of half the distance it moved last turn; a stunned flier takes the hits automatically.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Brain Strike (Fleshlicker)",
+    "type": "Animal",
+    "description": "If the Fleshlicker rolls a 6 to hit and a 6 to wound, its tongue has gone through the warrior's brain: a warrior not wearing a helmet is dead, struck from his roster.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Disgustingly Resilient (Rot Fly)",
+    "type": "Animal",
+    "description": "The Rot Fly's daemonic flesh save is 4+. Its rider gets this save too, instead of a mount's usual +1 armour save, and may not combine it with his own armour.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Servile Conduit (Disc of Tzeentch)",
+    "type": "Animal",
+    "description": "A wizard riding the disc has +2 to his spellcasting rolls.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Screamer (Disc of Tzeentch)",
+    "type": "Animal",
+    "description": "If its rider is dismounted, the disc turns back into a Screamer and shoots off the battlefield: draw a straight line from its front to the board edge, and every model under the line takes a Strength 3 hit. The disc is gone.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Corpulent Mass (Great Unclean One)",
+    "type": "Animal",
+    "description": "Once per game, any friendly hero in base contact with the Great Unclean One may heal D3 wounds and gain a random Blessing of Nurgle.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Plague Wind (Great Unclean One)",
+    "type": "Animal",
+    "description": "In the shooting phase pick one enemy model within 14\": it takes D3 wounds with no armour save. Every enemy model between it and the Great Unclean One must pass an Initiative test or take a wound as well, and every friendly model between them heals 1 wound.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "The Changer (Lord of Change)",
+    "type": "Animal",
+    "description": "Once per game, any model in base contact with the Lord of Change gains a random mutation.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Mastery of Magic (Lord of Change)",
+    "type": "Animal",
+    "description": "The Lord of Change knows every spell of Tchar's and of Chaos's lists and may cast 2 spells a turn. When casting, he may change the lowest dice to match the highest.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Hatred of the Gods (Bloodthirster)",
+    "type": "Animal",
+    "description": "The Bloodthirster hates every other god: it moves towards and charges any Chaos warband not aligned with Khorne, and any priest in line of sight.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Outrageous Carnage (Bloodthirster)",
+    "type": "Animal",
+    "description": "Nominate one attack dice as the Great Axe of Khorne. If its wound roll is 6 or more, the target is killed with no save of any kind, and every warrior within 8\" takes 1 wound from the shockwave. A warrior the shockwave takes out of action is killed too, struck from his roster.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Delicate Precision (Keeper of Secrets)",
+    "type": "Animal",
+    "description": "The Keeper of Secrets may re-roll any 1 it rolls, for any reason.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Dark Temptation (Keeper of Secrets)",
+    "type": "Animal",
+    "description": "Once per turn pick one enemy hero in line of sight: he takes a Leadership test on 3D6, discarding the lowest dice. If he fails, he turns on his comrades, charging and attacking them at once, and stays under the Keeper of Secrets' control for as long as the daemon remains.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Flying Charge (Great Eagle)",
+    "type": "Animal",
+    "description": "The Great Eagle may fly up to 16\", and any model it touches while flying counts as charged. It may not charge a stunned or knocked down model, which lies too close to the ground.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Aerial Escape (Great Eagle)",
+    "type": "Animal",
+    "description": "If the charged model strikes first, the combat is fought as normal. Otherwise the eagle attacks and at once retreats 2D6\" to a lofty position, before its foe can react; as when escaping from combat, it takes an automatic hit from its opponent unless it passes a Leadership test.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Drop Attack (Great Eagle)",
+    "type": "Animal",
+    "description": "If both its attacks hit in the first round of combat, the eagle carries its foe up and drops him instead of wounding him. Roll a D6 and a scatter dice for how far and which way from the fight he lands, and another D6 for the height he falls from: he takes D3 hits at a Strength equal to that height. One landing in a building counts his fall to where he lands, and falls again if he is within 1\" of the platform's edge. A model he lands on takes a Strength 3 hit. A Large target is dropped only D3\". The eagle then retreats 2D6\" to its nest or a nearby rooftop.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Talons (Great Eagle)",
+    "type": "Animal",
+    "description": "The Great Eagle fights unarmed without penalty.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Grounded (Great Eagle)",
+    "type": "Animal",
+    "description": "If the eagle could not flee after the combat phase, it has landed and may be charged. On the ground it moves at its Movement, and flies again once it can.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Forest Walk (Great Stag)",
+    "type": "Animal",
+    "description": "The Great Stag moves through woods without penalty.",
+    "setting": "marienburg-annual"
+  },
+  {
+    "name": "Thunderous Charge (Great Stag)",
+    "type": "Animal",
+    "description": "On a turn it charges more than 8\", the Great Stag causes D3 impact hits at its own basic Strength.",
+    "setting": "marienburg-annual"
   }
 ]

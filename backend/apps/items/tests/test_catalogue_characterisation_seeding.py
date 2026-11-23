@@ -95,11 +95,11 @@ class SeedAllTests(TestCase):
                 # five fewer than before: Gromril Weapon, Ithilmar Weapon, Obsidian Weapon, Silver Weapons and
                 # the Dark Elf Blade are weapon materials now, not items (19 and 20 Nov 2026), so seed_items
                 # skips them
-                "Item": 558,  # the import's 445 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey; the Cardinal of Contagion's Pox Staff is one more, with no price row, so nobody buys it (William, 13 Nov 2026); ten Mutiny in Marienburg stubs that duplicate an item of ours are merged away, their prices carried onto it, and the Border Town Burning bear and Marienburg's wild dogs join ours, two Animal items fewer (William, 15 Nov 2026); Marienburg's boar mount is our War Boar, one Animal item fewer (William, 16 Nov 2026); the Karak Azgal Map is one more (William, 21 Nov 2026); Athel Loren's seven shop items are left out again, since none has rules (William, 21 Nov 2026: "if not rules then dont import"); Relics of the Crusades brings 21 items more and its Arabian Steed one more Animal item (William, 21 Nov 2026)
+                "Item": 568,  # the import's 445 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey; the Cardinal of Contagion's Pox Staff is one more, with no price row, so nobody buys it (William, 13 Nov 2026); ten Mutiny in Marienburg stubs that duplicate an item of ours are merged away, their prices carried onto it, and the Border Town Burning bear and Marienburg's wild dogs join ours, two Animal items fewer (William, 15 Nov 2026); Marienburg's boar mount is our War Boar, one Animal item fewer (William, 16 Nov 2026); the Karak Azgal Map is one more (William, 21 Nov 2026); Athel Loren's seven shop items are left out again, since none has rules (William, 21 Nov 2026: "if not rules then dont import"); Relics of the Crusades brings 21 items more and its Arabian Steed one more Animal item (William, 21 Nov 2026); the Marienburg Annual's ten beasts (eight daemons, the Great Eagle and the Great Stag) bring 10 Animal items more (23 Nov 2026)
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 563,  # the import's 521 (one per name, Relics of the Crusades' ten Holy skills and its Smith (Academic), Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 42 hired swords' own skills the book lacks (the Runesmith's Rune Use and Durable are his rules, William, 21 Nov 2026), 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 142,  # the import's 111 (Athel Loren's three, Relics of the Crusades' Holy) + a group of his own for each of 27 hired swords, 9 of them broheim's hireling sections'
-                "Spell": 425,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026)
+                "Spell": 473,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026); the Marienburg Annual's eight College lores, 48 spells (23 Nov 2026)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -142,7 +142,9 @@ class SeedAllTests(TestCase):
                 # the three Arabian tribes are one template with a variant each (13 Nov 2026): 4 rows fewer
                 # the Runesmith's Rune Use and Durable are his rules, not special skills (21 Nov 2026): 2 more
                 # the Alchemist's Potion Recipes rule is a lore now (21 Nov 2026): 1 fewer
-                "Special": 1957,
+                # the Marienburg Annual's ten beasts add 26 of their own to special.json (23 Nov 2026): the daemons'
+                # rules as the Annual words them, and each beast's own
+                "Special": 1983,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -151,7 +153,9 @@ class SeedAllTests(TestCase):
                 # Beasts of the East, Sartosa's Trained Monkey); its bear and Marienburg's wild dogs joined ours
                 # (William, 15 Nov 2026) and Marienburg's boar mount our War Boar (William, 16 Nov 2026)
                 # Relics of the Crusades' Arabian Steed is one mount more (William, 21 Nov 2026)
-                "BestiaryEntry": 83,
+                # the Marienburg Annual's eight daemons we lacked (three beast daemons are mounts) and the Horn of the
+                # Wild Hunt's Great Eagle and Great Stag (23 Nov 2026)
+                "BestiaryEntry": 93,
                 # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin), Mutiny in
                 # Marienburg's eleven Specialists and three Dramatis Personae, and broheim's hired sword section's
                 # 35 (Karak Azgal 6, Mousillon 6, Khemri 3, the Sealed City 6, Sartosa 6, the fan-made trees 8)
@@ -182,15 +186,22 @@ class SeedAllTests(TestCase):
                         # the Bloodletter's Frenzy is the shared one now (William, 7 Nov 2026)
                         # and the Sealed City's 14 Stygian mutations (12 Nov 2026)
                         # and Sartosa's Trained Monkey's four (12 Nov 2026)
+                        # and the Marienburg Annual's beasts' 26 (23 Nov 2026)
                         self.assertEqual(
                             slugs,
-                            {"mutiny-in-marienburg": 10, "border-town-burning": 30, "sealed-city": 14, "sartosa": 4},
+                            {
+                                "mutiny-in-marienburg": 10,
+                                "border-town-burning": 30,
+                                "sealed-city": 14,
+                                "sartosa": 4,
+                                "marienburg-annual": 26,
+                            },
                         )
                     elif model in (Race, Spell, SkillGroup):  # what the Khemri 3, Grade 3 and Athel Loren
                         # warbands brought: the Khemri races and lores, the Grade 3 lores and groups, and the
                         # three Athel Loren skill groups, and Relics of the Crusades' six spells and the
                         # Runesmith's Runes and the Alchemist's Potion Recipes, each its hired sword's setting
-                        # (21 Nov 2026)
+                        # (21 Nov 2026), and the Marienburg Annual's College lores (23 Nov 2026)
                         rest = model._default_manager.filter(**{"campaign_type__isnull": False}).exclude(
                             **{
                                 "campaign_type__slug__in": (
@@ -200,6 +211,7 @@ class SeedAllTests(TestCase):
                                     "relics-of-the-crusades",
                                     "nemesis-crown",
                                     "mousillon",
+                                    "marienburg-annual",
                                 )
                             }
                         )
@@ -340,8 +352,8 @@ class SeedAllTests(TestCase):
                     0,
                     11,
                     9,
-                    28,
-                ),  # fighters, upgrades, hired swords, dramatis personae, beasts (13 of the East, 12 Marienburg's)
+                    37,
+                ),  # fighters, upgrades, hired swords, dramatis personae, beasts (13 of the East, 12 Marienburg's, 9 the Annual's)
                 "Stupidity": (11, 0, 0, 0, 4),  # Marienburg's Troll and Chaos Troll
                 "Immune to Psychology": (66, 0, 2, 7, 1),  # Marienburg's Cultists of Chaos
                 "Immune to Poison": (63, 0, 4, 5, 8),
@@ -357,8 +369,8 @@ class SeedAllTests(TestCase):
                     4,
                     0,
                     0,
-                    1,
-                ),  # the Plague Bearer's and the Nurgling's, the Carnival's, Marauders', Fen Guard's and Underworld Alliance's, the Plaguebearer of the East's
+                    2,
+                ),  # the Plague Bearer's and the Nurgling's, the Carnival's, Marauders', Fen Guard's and Underworld Alliance's, the Plaguebearer of the East's and the Annual's Nurgling
             },
         )
         hideous = TemplateUpgrade.objects.filter(special__name="Hideous").values_list("cost", flat=True)

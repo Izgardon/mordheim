@@ -1,5 +1,6 @@
 """Seed the book's bestiary from JSON (`apps/bestiary/data/bestiary.json`, Mutiny in Marienburg's
-`mim-bestiary.json` and Border Town Burning's Beasts of the East, `btb-bestiary.json`): the beasts, each a mount, a pet
+`mim-bestiary.json`, Border Town Burning's Beasts of the East, `btb-bestiary.json`, and the Marienburg Annual's
+daemons and Horn of the Wild Hunt animals, `annual-bestiary.json`): the beasts, each a mount, a pet
 or a creature (`kind`), with its profile (a stat as the book writes it, "-" or "5*", kept as written), whether it has
 one (`has_profile`: off, its stats are kept at 0 and its save empty), gains XP, what it adds to a rider's rating
 (`rating_bonus`) and to his armour save (`save_bonus`, left out by every mount worth the standard step) and whether
@@ -47,6 +48,7 @@ DEFAULT_JSON_PATHS = [
     Path("apps/bestiary/data/bestiary.json"),
     Path("apps/bestiary/data/mim-bestiary.json"),
     Path("apps/bestiary/data/btb-bestiary.json"),
+    Path("apps/bestiary/data/annual-bestiary.json"),
 ]
 MIM = "mutiny-in-marienburg"
 

@@ -1,0 +1,110 @@
+[
+  {
+    "slug": "da-waaagh",
+    "name": "Da Waaagh",
+    "setting": "Marienburg Annual",
+    "summary": "",
+    "variant_of": "",
+    "no_alliance_with": [],
+    "who_text": "Greenskin warbands: Orcs, Goblins and their kin. The book prints no list; it is written for Greenskins throughout.",
+    "scoring": [
+      {
+        "points": 1,
+        "text": "Playing a scenario."
+      },
+      {
+        "points": 1,
+        "text": "Winning a scenario."
+      },
+      {
+        "points": 1,
+        "text": "Killing a model with the Great Beast rule."
+      },
+      {
+        "points": 1,
+        "text": "Every three warriors the leader takes out of action in one game."
+      },
+      {
+        "points": 1,
+        "text": "Taking an enemy leader out of action."
+      },
+      {
+        "points": null,
+        "dice": "D3",
+        "text": "More when that enemy leader was a Greenskin, on top of the point for taking him out of action."
+      },
+      {
+        "points": null,
+        "dice": "D3",
+        "text": "Burning down an encampment."
+      },
+      {
+        "points": 1,
+        "text": "Winning three games in a row. The heading says D3, its text a single point."
+      },
+      {
+        "points": null,
+        "dice": "D3",
+        "text": "Completing a prophecy (Da Prophecy)."
+      },
+      {
+        "points": null,
+        "dice": "-D3",
+        "text": "Losing three games in a row."
+      },
+      {
+        "points": -1,
+        "text": "Whenever the leader is taken out of action."
+      },
+      {
+        "points": -5,
+        "text": "When the leader dies."
+      },
+      {
+        "points": -1,
+        "text": "Whenever a warrior is captured. An Orc warband counts only its Orcs."
+      },
+      {
+        "points": -1,
+        "text": "Whenever a Hero dies."
+      }
+    ],
+    "achievements": [
+      {
+        "points": 5,
+        "name": "WAGH!",
+        "text": "A Greenskin camp gathers around the warband: its Heroes may now visit Da Camp instead of searching for a rare item, and its leader takes his first prophecy from Da Prophet there."
+      },
+      {
+        "points": 10,
+        "name": "WAAGH!",
+        "text": "The warband's maximum size rises by 2."
+      },
+      {
+        "points": 15,
+        "name": "WAAAGH!!",
+        "text": "You Balong to da Boss Now: once per game, after a member of the warband takes a warrior out of action, he may declare at once that the warrior is captured."
+      },
+      {
+        "points": 20,
+        "name": "WAAAAGH!!",
+        "text": "The warband's maximum size rises by a further 3."
+      },
+      {
+        "points": 25,
+        "name": "WAAAAAGH",
+        "text": "War Chant: once per game the leader may let out a deafening war chant, and for D3 turns every friendly model within range of his Leadership is subject to frenzy and causes fear."
+      },
+      {
+        "points": 35,
+        "name": "WAAAAAAAGH!!!",
+        "text": "Unkillabull: the leader may re-roll any result of Dead on the serious injury chart."
+      },
+      {
+        "points": 40,
+        "name": "WAAAAAAAAGH!!!!",
+        "text": "Not a win by itself. Once the warband has completed all 6 prophecies and has full WAAAGH, it may choose the special scenario Nice Day for a Waaagh Beheadin'; winning it wins the campaign, and losing it costs the leader's warband 2D6 Campaign Points."
+      }
+    ]
+  }
+]
