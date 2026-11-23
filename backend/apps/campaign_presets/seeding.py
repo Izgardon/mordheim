@@ -26,7 +26,8 @@ from apps.core.seeding import clean, parse_int
 from apps.exploration.models import ExplorationChart
 
 from .chart_sources import Skipped, one_chart, read_source, write_charts
-from .models import CampaignPreset, CampaignPresetChart, CampaignPresetRule
+from .location_seeding import merged_groups, read_location_groups, write_location_groups
+from .models import CampaignPreset, CampaignPresetChart, CampaignPresetLocation, CampaignPresetRule
 
 PRESET_SOURCES = Path(django_settings.BASE_DIR) / "catalogue_import" / "sources" / "campaign-presets"
 RULE_SOURCES = Path(django_settings.BASE_DIR) / "catalogue_import" / "sources" / "campaign-rules"
@@ -220,6 +221,8 @@ def write_preset(
     preset_charts = [chart for one in named for chart in read_charts(one, name, rule_folder)]
     _unique([rule["title"] for rule in rules], name, "rules")
     _unique([chart["title"] for chart in preset_charts], name, "charts")
+    titles = {chart["title"].casefold() for chart in preset_charts}
+    groups = merged_groups([read_location_groups(one, name, rule_folder) for one in named], name, titles)
     setting_ids = _setting_ids(entry, name, settings)
     defaults: dict[str, Any] = {
         "name": name,
@@ -241,6 +244,7 @@ def write_preset(
     write_charts(preset, preset_charts)
     # a rule's own table: the same chart rows, pointed at the rule rather than standing on their own
     write_charts(preset, [t for t in tables if t], [r for r, t in zip(written, tables, strict=True) if t], keep=True)
+    write_location_groups(preset, groups)  # after the charts, which its locations point to by title
     return preset
 
 
@@ -250,6 +254,7 @@ class SeedResult:
     rules: int = 0
     charts: int = 0
     skipped: list[str] = dataclass_field(default_factory=list)  # a preset naming something we don't hold, and why
+    locations: int = 0
 
 
 def seed_presets(folder: Path = PRESET_SOURCES, rule_folder: Path = RULE_SOURCES) -> SeedResult:
@@ -265,7 +270,8 @@ def seed_presets(folder: Path = PRESET_SOURCES, rule_folder: Path = RULE_SOURCES
             seen.append(write_preset(entry, settings, charts, rule_folder).pk)
         except Skipped as skip:
             skipped.append(str(skip))
-    return SeedResult(len(seen), _rule_count(seen), _chart_count(seen), skipped)
+    locations = CampaignPresetLocation.objects.filter(group__preset_id__in=seen).count()
+    return SeedResult(len(seen), _rule_count(seen), _chart_count(seen), skipped, locations)
 
 
 def _rule_count(preset_ids: Iterable[int]) -> int:
