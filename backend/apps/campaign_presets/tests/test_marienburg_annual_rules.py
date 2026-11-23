@@ -20,7 +20,7 @@ class MarienburgAnnualRulesTests(SimpleTestCase):
 
         self.assertEqual(
             (sum(rule["kind"] == "campaign" for rule in rules), sum(rule["kind"] == "battle" for rule in rules)),
-            (10, 6),
+            (9, 4),  # less the Grail Quest, Dual wielding and the special scenario (William, 23 Nov 2026)
         )
         self.assertEqual(len(charts), 8)
         self.assertEqual(titles(rules) & titles(read_rules(MARIENBURG, MARIENBURG)), set())
