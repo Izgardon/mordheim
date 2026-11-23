@@ -21,11 +21,6 @@
    "umbrella": "Dwarf Slayers"
   },
   {
-   "title": "The Grail Quest",
-   "text": "A Bretonnian warband may replace any six of a kind it rolls for exploration with The Grail: a Questing Knight sees the Lady beckoning, goes to her alone and drinks from the Grail she holds. All his permanent injuries are healed, he becomes a Grail Knight, and he gains Blessed: +1 Wound and +1 Toughness, and he and his mount are +1 to hit in close combat and cause double wounds to Possessed, Daemon and Undead models.",
-   "umbrella": ""
-  },
-  {
    "title": "Eye of the Gods",
    "text": "Every Chaos warband in the campaign is encouraged to use the Eye of the Gods, the Marks of the Dark Gods and Gifted Servants, which the Annual reprints from Border Town Burning (p183) and Corrupted Characters.\n\nAny Chaos warband may add 15 gc to its leader's hire cost to give him the Eye of the Gods, as the Marauders of Chaos warband has it. If he becomes a Chaos Spawn the warband may keep it, and it passes to each new leader.",
    "umbrella": "Branded by Chaos"
@@ -53,11 +48,6 @@
  ],
  "battle_rules": [
   {
-   "title": "Dual wielding",
-   "text": "A warrior fighting with two weapons is at -1 to hit with both. A warrior with the Ambidextrous skill ignores this, and every hired sword who comes with at least two weapons counts as Ambidextrous.",
-   "umbrella": ""
-  },
-  {
    "title": "Flying",
    "text": "A model with the Fly special rule is either grounded or airborne; tokens help to show which.\n\nMovement: it may move up to three times its Movement in any direction, ignoring terrain, and height climbed counts towards the distance. A model that flies is airborne, and is still airborne in the turn after.\n\nHard target: a model on the ground may charge an airborne model, but hits it in close combat only on a 6 to hit, unless it attacks with a spear. Until it is hit, the airborne model stays airborne, does not count as in combat, and may fly off or charge in its own turn. A flying model that charges is grounded.\n\nEasy target: shooting at an airborne model is at +1 to hit, on top of any other modifiers, and a missile hit does not ground it.\n\nTransports: boarding and leaving an airborne transport follow the rules for a moving cart, and a grounded one a stationary cart. A transport flies at its own fixed rate and does not triple it.\n\nMounts: a flying mount follows the Whoa Boy rules, except that a result of 3-4 while airborne gives the rider D3 hits at a Strength of half the distance it moved last turn.\n\nA model flying on its own that is knocked down while airborne must pass D3 Initiative tests to land knocked down; if it fails, it takes D3 hits at a Strength of half the distance it moved last turn. A stunned flier takes these hits automatically.",
    "umbrella": ""
@@ -76,11 +66,6 @@
    "title": "Daemons of Chaos",
    "text": "Every daemon causes fear and has these rules.\n\nDaemonic Flesh: a base armour save of 5+, modified by the Strength of the attack as normal and negated completely by magic weapons and spells. Its attacks count as magical, and it is immune to all poison and disease.\n\nDaemon Mind: it is immune to all psychology and never takes a psychology test. If its warband routs, it dissolves back into the void.\n\nSummoned Instability: every turn after the first it loses 1 Leadership and must pass a Leadership test, or it is pulled back into the warp. A greater daemon loses 3 a turn instead, and one that rolls a double 1 for the test has stabilised and stays for the rest of the game.\n\nMounts of the Gods: a beast daemon that is ridden, or pulls a cart or chariot, suffers no instability, and the warband that summoned it needs no Ride skill to ride it.",
    "umbrella": "Daemonic summoning"
-  },
-  {
-   "title": "Nice Day for a Waaagh Beheadin'",
-   "text": "The special scenario Da Waaagh's 40 rung opens. Terrain: set it up as the largest encampment, or encampments, of the campaign (the stronghold in Marienburg, say), walled if it has no wall, 2\" by 2\" in the middle of a board of 4\" by 4\", 6\" by 4\" or 6\" by 6\" by the number of players. The book prints these sizes in inches.\n\nSet-up: every other Greenskin warband in the campaign joins the warband that opened it, under its orders, and the Greenskins set up within 8\" of any side. For each extra Greenskin warband the defenders, who own the encampment, may take one ally; they set up inside its walls. The attackers take the first turn.\n\nI'm Da Boss!: any warband leader taken out of action by the leader of the Greenskin alliance is killed. WAAAGH: while that leader lives, the Greenskins pass every Leadership-based test automatically, rout tests included.\n\nEnding the game: when the defenders have all routed, the Greenskins win the campaign. When the Greenskins have all routed, they lose, and the leader's warband loses 2D6 Campaign Points.\n\nExperience: +1 for each Hero or Henchman group that survives; +1 for the winning leader; +1 to a Hero for each enemy he takes out of action; +6 to the warrior who kills the Warboss in close combat.",
-   "umbrella": ""
   }
  ],
  "charts": [
