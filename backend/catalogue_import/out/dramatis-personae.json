@@ -1733,6 +1733,125 @@
     }
   },
   {
+    "name": "Hauppman Heinrich of the River Watch",
+    "description": "A River Watch captain from Marienburg's campaign, still a Knight of Purity in his own eyes despite his corruption.",
+    "movement": 5,
+    "weapon_skill": 6,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 4,
+    "attacks": 4,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Knight of Purity",
+        "description": "He follows every rule of a Knight of Purity, unless a Gaze of the Gods warband hires him."
+      },
+      {
+        "name": "Dark Secret",
+        "description": "He hides a scorpion tail under his cape, which gives him +1 Attack at Strength 5 (Strength 3 against a target immune to poison)."
+      },
+      {
+        "name": "Coping Mechanisms",
+        "description": "He is addicted to Daemon Dust and needs two doses for its usual effect (+1 Strength, +1 Initiative, frenzy). Hired with Daemon Dust, he takes it before the battle."
+      },
+      {
+        "name": "Melee Expert",
+        "description": "Named among his skills; the Annual gives it no rule."
+      }
+    ],
+    "skills": [
+      "Step Aside",
+      "Mighty Blow",
+      "Strike to Injure",
+      "Pit Fighter",
+      "Resilient",
+      "Weapons Training",
+      "Bulwark",
+      "Combat Master",
+      "Lightning Reflexes"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Kraken-tooth Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Gromril Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      },
+      {
+        "item": "Sea Dragon Cloak",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      },
+      {
+        "item": "Elven Boots",
+        "quantity": 1
+      },
+      {
+        "item": "Venom Ring",
+        "quantity": 1
+      },
+      {
+        "item": "Scrimshaw Bauble",
+        "quantity": 1
+      },
+      {
+        "item": "Lucky Charm",
+        "quantity": 1
+      },
+      {
+        "item": "Rabbit's Foot",
+        "quantity": 1
+      },
+      {
+        "item": "Healing Herbs",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 100,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "Or two doses of Daemon Dust, which a Drowning the Witch warband may not pay."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 100,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Warbands following the Guarding the Peace, Drowning the Witch or Gaze of the Gods plots may hire him.",
+      "warbands": [],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
     "name": "Heinrich 'Altdorf' Schmidt",
     "description": "Dr. Heinrich Schmidt is renowned at the University of Altdorf. However, most of this renown is not out of his scholarly works, but rather the priceless artifacts he sends home from his journeys. Thanks to him, artifacts from Kislev or Norsca, as well as far off places­ such as Cathay and Lustria have found their way home to Altdorf. Since all his findings are shipped back to Altdorf, this has earned him the nickname 'Altdorf' Schmidt. His main arena for relic hunting however, has come to be in Araby and Khemri, with its grand tombs and priceless treasures. The acquisition of the relics is not often discussed, as most of the scholars agree that they are more capable of appreciating them than the inhabitants of the lands from which they came.\n\nAlso has: Tomb Explorer, Whip Master, Mule Skinner listing.",
     "movement": 4,
@@ -3167,6 +3286,86 @@
     }
   },
   {
+    "name": "Mor'Kahn, the Black Sea Devil",
+    "description": "A Dark Elf corsair from Marienburg's campaign, disfigured in the warp and masked in burnished gold. The Annual prints his Attacks as 3/4; his profile holds 3.",
+    "movement": 5,
+    "weapon_skill": 7,
+    "ballistic_skill": 5,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 6,
+    "attacks": 3,
+    "leadership": 10,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Depthless Mask",
+        "description": "Enemies attacking him in hand-to-hand combat are at -1 to hit. He may move his full Movement over water terrain as if it were solid ground."
+      },
+      {
+        "name": "Blood Stone",
+        "description": "He has a bite, claw or horn attack (use the rules for a bite). If he takes all his enemies out of action in hand-to-hand combat, he becomes frenzied on a 4+."
+      }
+    ],
+    "skills": [
+      "Step Aside",
+      "Dodge",
+      "Fey Quickness",
+      "Web of Steel",
+      "Strike to Injure",
+      "Fury of Khaine"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dark Elf Blade",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Sea Dragon Cloak",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": 100,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "He takes any reward the warband gains this round, from a scenario's victory or from exploration (a Booty chart roll, extra treasure, an artefact), in place of his fee; if it gains none, he charges 100 gc."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 100,
+      "grade": "2b",
+      "race": "Elf",
+      "unique_to": "Warbands following the Secret Deal or the Ten Great Families plots may hire him.",
+      "warbands": [],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
     "name": "Myrina and her Keiki",
     "description": "Myrina, an Amazon, and Keiki, the orphan girl she has taken in. The row's profile is Myrina's.",
     "movement": 4,
@@ -3258,6 +3457,96 @@
         }
       ],
       "stays": "one_battle",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Nibbles, the Grand Sneak/Stab of Bitter Stink",
+    "description": "A Skaven assassin from Marienburg's campaign, tortured by Chaos Dwarfs and never the same since.",
+    "movement": 6,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 4,
+    "leadership": 4,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hatred of Stunties",
+        "description": "He hates every short race: Chaos Dwarfs, Dwarfs and Halflings."
+      },
+      {
+        "name": "Dwarven Flashbacks",
+        "description": "At the start of each of his turns you may send him into a rage: he is subject to frenzy and has +1 Strength. If he has taken no model out of action by the end of that turn, he passes out from the fury and is out of action himself."
+      },
+      {
+        "name": "Horrible Scars",
+        "description": "Named among his skills; the Annual gives it no rule."
+      }
+    ],
+    "skills": [
+      "Infiltrate",
+      "Art of Silent Death",
+      "Tail Fighting",
+      "Play Dead",
+      "Expert Swordsman",
+      "Step Aside"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Weeping Blades",
+        "quantity": 1
+      },
+      {
+        "item": "Veteran's Hand",
+        "quantity": 1
+      },
+      {
+        "item": "Smoke Bomb",
+        "quantity": 3
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Wyrdstone",
+            "amount": 3
+          }
+        ],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Wyrdstone",
+            "amount": 3
+          }
+        ],
+        "note": "Each game."
+      },
+      "rating": 100,
+      "grade": "2b",
+      "race": "Skaven",
+      "unique_to": "Warbands following the Poisoning the Well plot may hire him.",
+      "warbands": [],
+      "stays": "always",
       "payment_note": "",
       "available_skill_types": [],
       "available_special_skills": []
@@ -3701,6 +3990,126 @@
     }
   },
   {
+    "name": "Oxyotl",
+    "description": "A Chameleon Skink millennia old, who has hunted daemons through the Realm of Chaos with trinkets stolen from Greater Daemons. His kit also names a Dagger of Secrets, which the Annual gives no profile, and his rules a Chameleon Skin, which it gives no text.",
+    "movement": 4,
+    "weapon_skill": 5,
+    "ballistic_skill": 7,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 3,
+    "initiative": 9,
+    "attacks": 4,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Immune to Psychology",
+        "description": ""
+      },
+      {
+        "name": "Scaly Skin",
+        "description": "He has a natural 6+ armour save. Strength modifiers can't lower it, but an injury or effect that allows no armour save removes it."
+      },
+      {
+        "name": "Cold Blooded",
+        "description": "When he takes a psychology test he rolls 3D6 and uses the lowest two."
+      },
+      {
+        "name": "Aquatic",
+        "description": "He moves through water terrain without penalty, and counts as in cover while in water."
+      },
+      {
+        "name": "Jungle-born",
+        "description": "He moves through jungle terrain without penalty."
+      },
+      {
+        "name": "The First Chameleon",
+        "description": "Enemies trying to detect him while he is hidden halve their Initiative, and missile fire against him is at -4 to hit."
+      },
+      {
+        "name": "Soteks Wrath",
+        "description": "A dagger: close combat, Strength as user, Parry. Daemon Bane: his attacks with it wound Daemons on a 3+ and cause double wounds."
+      },
+      {
+        "name": "Poison of the Gods",
+        "description": "His poisoned attacks affect models immune to poison and disease too, the Undead and Venom Ring wearers among them."
+      },
+      {
+        "name": "Amulet of Change",
+        "description": "He is immune to enemy magic."
+      },
+      {
+        "name": "The Golden Blowpipe of P'Toohee",
+        "description": "Range 12\", Strength 1. Deadly Poison: its hits cause a critical wound on a 5 or 6, whatever the target's Toughness. Legendary Hunter: while hidden he may combine Quick Shot and Knife-Fighter with it to shoot 6 times a turn. The Annual prints it under his rules but not in his kit."
+      }
+    ],
+    "skills": [
+      "Sprint",
+      "Spry",
+      "Step Aside",
+      "Leap",
+      "Quick Shot",
+      "Knife-Fighter",
+      "Trick Shooter",
+      "Eagle Eyes",
+      "Infiltration",
+      "Dodge"
+    ],
+    "spells": [],
+    "equipment": [],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 100,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "50 gc when he fights a Chaos warband."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 100,
+      "grade": "2b",
+      "race": "Skink",
+      "unique_to": "Once he is freed from the warp, any warband except Chaos, Skaven, Undead, Beastmen and Orcs & Goblins may hire him. He can't be hired for two battles in a row.",
+      "warbands": [
+        {
+          "group": "chaos",
+          "excluded": true
+        },
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "group": "beastmen",
+          "excluded": true
+        },
+        {
+          "group": "orcs-and-goblins",
+          "excluded": true
+        }
+      ],
+      "stays": "one_battle",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
     "name": "Penthesilea, Mark of the Serpent",
     "description": "'I am the hunter and you are my prey.'\n\nPenthesilea is known as one of the greatest Amazon warriors and is a legend amongst her people. The Amazons were outraged by the oafish menfolk of the Norse settlement of Skeggi when they captured some Amazons in a raid planning to keep them as slaves. Penthesilea led a warband on a night raid against the timber halls of the Norse settlement. Her silent warriors slew the guards and they liberated their captured sisters. Before she could make good her escape, however, Penthesilea was set upon by the Norse Jarl Sigursen the Impaler, he who had led the raid to enslave her sisters. She slew this giant of a man in single combat and held his severed head high causing the rest of the Norse to flee. To further quench her thirst for revenge she kidnapped Sigursen's entire family to be used as slaves and sacrifices to the Serpent God. The battle of Skeggi was a milestone battle for the Amazons. None had accomplished what Penthesilea had. For it was her and her small band of Amazon warriors that had taken the fight straight to the supposedly invulnerable Norse stronghold and rescued their sisters slaying many men in the process. It was her brilliant guerrilla tactics and her ruthlessness that won the day. Since then, the men of the New World settlements live in fear and shudder at the mention of her name. Tales have it that no man has survived an encounter with her and many a mighty warrior's head hangs from her belt its mouth sewn shut as a sign of obedience.\n\nAlso has: Mesmerising dance, Savage Fury, Elixir of life, Weapon Master, Concealment.",
     "movement": 5,
@@ -3844,6 +4253,142 @@
       "unique_to": "Sigmund may be hired by any evil or chaotically aligned warband.",
       "stays": "always",
       "payment_note": ""
+    }
+  },
+  {
+    "name": "Slave Master Haggard, the Stone Daemon of Suidock",
+    "description": "A Marienburg crime boss far gone with the Curse of Stone, kept moving by the mechanical suit he calls the Hide of the Daemon.",
+    "movement": 5,
+    "weapon_skill": 5,
+    "ballistic_skill": 3,
+    "strength": 5,
+    "toughness": 5,
+    "wounds": 3,
+    "initiative": 4,
+    "attacks": 5,
+    "leadership": 10,
+    "armour_save": "3+",
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Fear",
+        "description": ""
+      },
+      {
+        "name": "The Hide of the Daemon",
+        "description": "His mechanical suit holds a rope and hook, two wrist-mounted blunderbusses and a pair of veteran's hands; the Movement it gives and the hands' Attacks and Strength are already in his profile."
+      },
+      {
+        "name": "Blessing of Stone",
+        "description": "His 3+ armour save can't be lowered past 5+, even by critical hits. He also has a helmet's 4+ save against being stunned, and is immune to poison."
+      },
+      {
+        "name": "Sorcerer and Necromancer",
+        "description": "He knows Lifestealer, Spell of Doom and Spell of Awakening of Necromancy, Flickering Hide, Lava Flow and Sacrificial Ritual of the Rituals of Hashut, and his own Combustion."
+      },
+      {
+        "name": "Sinks Like a Stone",
+        "description": "He can't swim: if he falls into water he is taken out of action."
+      },
+      {
+        "name": "Slaves to Darkness",
+        "description": "Models his Spell of Awakening raises stay with him as his slaves, and a warband that hires him gains the undead heroes he has raised; each adds 20 gc to his hire fee."
+      },
+      {
+        "name": "Hard to Kill",
+        "description": "His injury rolls are 1-2 knocked down, 3-5 stunned and 6 out of action."
+      },
+      {
+        "name": "Hard Head",
+        "description": "He ignores the special rules for concussion."
+      },
+      {
+        "name": "King of the Underworld",
+        "description": "He can't be arrested."
+      },
+      {
+        "name": "Deathspeaker",
+        "description": "At the start of the battle he may deploy D3 Zombies for free. They don't count towards the warband's most warriors but add to its rating as normal, may be used for Combustion, and last only for that battle."
+      }
+    ],
+    "skills": [
+      "Slaver",
+      "Sorcery",
+      "Step Aside",
+      "Pit Fighter"
+    ],
+    "spells": [
+      {
+        "name": "Lifestealer",
+        "lore": "Necromancy"
+      },
+      {
+        "name": "Spell of Doom",
+        "lore": "Necromancy"
+      },
+      {
+        "name": "Spell of Awakening",
+        "lore": "Necromancy"
+      },
+      {
+        "name": "Flickering Hide",
+        "lore": "Rituals of Hashut"
+      },
+      {
+        "name": "Lava Flow",
+        "lore": "Rituals of Hashut"
+      },
+      {
+        "name": "Sacrificial Ritual",
+        "lore": "Rituals of Hashut"
+      },
+      {
+        "name": "Combustion",
+        "description": "Difficulty 8. Range 12\". Haggard detonates one zombie, friendly or not: every model within 4\" of the corpse takes a Strength 4 hit, which can set it on fire."
+      }
+    ],
+    "equipment": [
+      {
+        "item": "Blunderbuss",
+        "quantity": 2
+      },
+      {
+        "item": "Rope & Hook",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "D3 campaign points, and 20 gc more for each undead hero he has raised."
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Campaign points",
+            "amount": 1
+          }
+        ],
+        "note": "For every battle after the first he fights in."
+      },
+      "rating": 150,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Warbands following the Price of Power, the Promise of Power or the Body Trade plots may hire him.",
+      "warbands": [],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
     }
   },
   {

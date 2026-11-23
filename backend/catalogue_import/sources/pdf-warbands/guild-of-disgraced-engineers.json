@@ -44,7 +44,7 @@
     }
   ],
   "specialEquipment": [
-    {"title": "Cinderblast Bomb", "alias": "", "cost": {"cost": 45}, "availability": "Rare 10 Sapper only"}
+    {"title": "Cinderblast Bomb", "alias": "", "cost": {"cost": 45, "numD6": 3}, "availability": "Rare 10 Sapper only"}
   ],
   "fighters": [
     {

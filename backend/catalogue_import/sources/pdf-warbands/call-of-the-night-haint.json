@@ -18,7 +18,7 @@
       "caveat": "",
       "items": [
         {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
-        {"name": "Spirit Knife", "alias": "", "cost": {"cost": 20, "costSuffix": "Cairn Wraith, Tomb Banshee and Malignant Spirits only"}},
+        {"name": "Spirit Knife", "alias": "", "cost": {"cost": 25, "costSuffix": "Cairn Wraith, Tomb Banshee and Malignant Spirits only"}},
         {"name": "sword", "alias": "", "cost": {"cost": 10}},
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
@@ -31,7 +31,7 @@
         {"name": "buckler", "alias": "", "cost": {"cost": 5}},
         {"name": "light armour", "alias": "", "cost": {"cost": 25}},
         {"name": "heavy armour", "alias": "", "cost": {"cost": 50, "costSuffix": "Malignant Spirits only"}},
-        {"name": "Mortis Engine", "alias": "", "cost": {"cost": 195}}
+        {"name": "Mortis Engine", "alias": "", "cost": {"cost": 125}}
       ]
     }
   ],
@@ -248,6 +248,7 @@
       "rarity": 8,
       "dice": null,
       "rulesPage": 3,
+      "cost": 20,
       "range": "Close Combat",
       "strength": "As user",
       "rules": [
@@ -260,6 +261,7 @@
       "name": "Mortis Engine",
       "type": "Miscellaneous",
       "subtype": "Vehicles",
+      "cost": 195,
       "rarity": null,
       "dice": null,
       "rulesPage": 3,
@@ -286,8 +288,8 @@
     {"page": 1, "what": "Ethereal is printed among the warband's rules; it is each Ethereal fighter's own rule, worded for any model. The Requilary's summoning: \"for each point your pass by you may deploy that many members\" is read as one warrior for each point passed by."},
     {"page": 2, "what": "The skill table's ticks are symbol glyphs, read from where the text layer places them. The special skills are \"Spirits may choose to use\", so the group's note says Spirits only; the Corpse Master, who is no Spirit, ticks Special in the table and keeps it."},
     {"page": 2, "what": "The list prints the Bow at 15 gc and the Crossbow at 10 gc (ours 10 and 25), perhaps swapped, and Light Armour at 25 gc (ours 20): as printed. Its Dagger is \"Free\\2gc\", read as 1st free/2."},
-    {"page": 2, "what": "The Spirit Knife is 25 gc on the list but 20 gc in its entry (p3): the line is 20, the entry's (William: \"use 120\" for the Fen Guard's Horn). Its starred \"Ethereal Heroes only\" is the Cairn Wraith, Tomb Banshee and Malignant Spirits. Its Spectral Touch names \"a Spirit Dagger\"."},
-    {"page": 2, "what": "The Mortis Engine is 125 gc on the list but 195 gc in its entry (p3): the line is 195, the entry's. No rarity is printed: Common."},
+    {"page": 2, "what": "The Spirit Knife is 25 gc on the list but 20 gc in its entry (p3): the line is the list's 25, the warband's starting price, and the item the entry's 20 in the store (William, 23 Nov 2026: \"The price in the items list are correct for our store, the other prices are generally for a specific warband starting price\"); until then the line took the entry's (William: \"use 120\" for the Fen Guard's Horn). Its starred \"Ethereal Heroes only\" is the Cairn Wraith, Tomb Banshee and Malignant Spirits. Its Spectral Touch names \"a Spirit Dagger\"."},
+    {"page": 2, "what": "The Mortis Engine is 125 gc on the list but 195 gc in its entry (p3): the line is the list's 125, the warband's starting price, and the item the entry's 195 in the store (William, 23 Nov 2026, as for the Spirit Knife). No rarity is printed: Common."},
     {"page": 2, "what": "The Scythe prints no rules: it is the Vampire Hunters of Sylvania's Scythe stub, one item with a price row for each warband."},
     {"page": 3, "what": "The Mortis Engine is a stub with its rules (Wagon our shared rule) and profile rows: Engine T6 W4, Requilary T6 W3 Ld7, Nightmare M6 T3 W1. The PDF doesn't say how the warband gets the corpses its rituals need. The Purple Wind's -2 is printed without a range: read with the +2's 12\"."},
     {"page": 4, "what": "The Cairn Wraith's rules list no Leader, though he must lead the warband: he is given Leader (6\")."},

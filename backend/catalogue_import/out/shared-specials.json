@@ -800,6 +800,11 @@
       "name": "Hard to Kill (Dwarf Slayer Pirate)"
     },
     {
+      "owner": "Slave Master Haggard, the Stone Daemon of Suidock",
+      "rule": "Hard to Kill",
+      "name": "Hard to Kill (Slave Master Haggard, the Stone Daemon of Suidock)"
+    },
+    {
       "owner": "Dwarf Troll Slayer",
       "rule": "Hard Head",
       "name": "Hard Head (Dwarf Troll Slayer)"
@@ -823,6 +828,11 @@
       "owner": "Dwarf Slayer Pirate",
       "rule": "Hard Head",
       "name": "Hard Head (Dwarf Slayer Pirate)"
+    },
+    {
+      "owner": "Slave Master Haggard, the Stone Daemon of Suidock",
+      "rule": "Hard Head",
+      "name": "Hard Head (Slave Master Haggard, the Stone Daemon of Suidock)"
     },
     {
       "owner": "Elf Ranger",
@@ -885,6 +895,31 @@
       "name": "Set Traps (Ungor Trapper)"
     },
     {
+      "owner": "Gnoblar Trappa",
+      "rule": "Set Traps",
+      "name": "Set Traps (Gnoblar Trappa)"
+    },
+    {
+      "owner": "Chameleon Skink",
+      "rule": "Cold Blooded",
+      "name": "Cold Blooded (Chameleon Skink)"
+    },
+    {
+      "owner": "Oxyotl",
+      "rule": "Cold Blooded",
+      "name": "Cold Blooded (Oxyotl)"
+    },
+    {
+      "owner": "Chameleon Skink",
+      "rule": "Aquatic",
+      "name": "Aquatic (Chameleon Skink)"
+    },
+    {
+      "owner": "Oxyotl",
+      "rule": "Aquatic",
+      "name": "Aquatic (Oxyotl)"
+    },
+    {
       "owner": "Dwarf Pathfinder",
       "rule": "Explorer",
       "name": "Explorer (Dwarf Pathfinder)"
@@ -898,6 +933,16 @@
       "owner": "Elf Mage",
       "rule": "Wanderer",
       "name": "Wanderer (Elf Mage)"
+    },
+    {
+      "owner": "Chaos Wanderer",
+      "rule": "Wanderer",
+      "name": "Wanderer (Chaos Wanderer)"
+    },
+    {
+      "owner": "Chaos Berserker",
+      "rule": "Wanderer",
+      "name": "Wanderer (Chaos Berserker)"
     },
     {
       "owner": "Aenur, the Sword of Twilight",
@@ -958,6 +1003,11 @@
       "owner": "Bearman Bodyguard",
       "rule": "Drunken",
       "name": "Drunken (Bearman Bodyguard)"
+    },
+    {
+      "owner": "Ex-Blood Bowl Player",
+      "rule": "Drunken",
+      "name": "Drunken (Ex-Blood Bowl Player)"
     },
     {
       "owner": "Swordsmith",

@@ -19617,6 +19617,72 @@
     ]
   },
   {
+    "slug": "howdah",
+    "name": "Howdah",
+    "variant": "",
+    "origin": "templates",
+    "type": "Miscellaneous",
+    "subtype": "Vehicles",
+    "setting": "marienburg-annual",
+    "source": "Marienburg Annual",
+    "link_url": "",
+    "tags": [
+      "howdah"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Howdah",
+        "summary": "",
+        "text": "A howdah may be fitted to any great beast. The beast then follows every special rule for a cart (Vehicles of the Empire), except as below.",
+        "tables": []
+      },
+      {
+        "name": "Movement",
+        "summary": "",
+        "text": "The beast moves and runs at its own Movement, at -1 for every passenger after the first. It may turn up to 90 degrees in its movement phase without penalty; if it turns further, it moves at half pace and may not charge that turn.",
+        "tables": []
+      },
+      {
+        "name": "Out of Control",
+        "summary": "",
+        "text": "The beast goes out of control only if it fails a Leadership test, which it may take on its driver's Leadership.",
+        "tables": []
+      },
+      {
+        "name": "Combat",
+        "summary": "",
+        "text": "The beast charges as normal. A passenger fights in close combat only with a thrusting weapon (a mancatcher, spear or halberd, for instance) and only from the space of the howdah nearest the enemy.",
+        "tables": []
+      },
+      {
+        "name": "Shooting",
+        "summary": "",
+        "text": "Passengers may shoot at enemies engaged with the beast.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 80,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": true,
+        "warbands": [],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "hedonist-whip",
     "name": "Hedonist Whip",
     "variant": "",
@@ -22999,13 +23065,23 @@
       "greenwood scythe"
     ],
     "flavour": "",
-    "range": "",
-    "strength": "",
+    "range": "Close Combat",
+    "strength": "+1",
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "two-handed"
+      },
+      {
+        "name": "Treescuttle Venom",
+        "summary": "",
+        "text": "An injury roll for a model the Greenwood Scythe wounds is at +1.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -23044,8 +23120,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Iron Bark",
+        "summary": "",
+        "text": "Iron Bark adds +2 to its wearer's armour save, and breaks the first time he fails an armour save.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -23063,7 +23146,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 2,
+    "save_slot": "extra"
   },
   {
     "slug": "horn-of-the-wild-hunt",
@@ -23084,8 +23169,48 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Call of the Hunt",
+        "summary": "",
+        "text": "Before each battle the Branchnymph may take a Leadership test to blow the horn. If she passes, roll a D6: the animals that answer fight for the warband in that battle and leave once it ends, and count neither towards its rout tests nor its most warriors.",
+        "tables": [
+          {
+            "columns": [
+              "D6",
+              "Result"
+            ],
+            "rows": [
+              [
+                "1",
+                "Nothing answers the call."
+              ],
+              [
+                "2",
+                "D3+1 Hunting Hounds."
+              ],
+              [
+                "3",
+                "A Tiger."
+              ],
+              [
+                "4",
+                "A Bear."
+              ],
+              [
+                "5",
+                "A Great Stag."
+              ],
+              [
+                "6",
+                "A Great Eagle."
+              ]
+            ]
+          }
+        ]
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -23257,7 +23382,7 @@
         "cost": 45,
         "dice": 3,
         "dice_multiplier": null,
-        "cost_note": "",
+        "cost_note": "+3D6",
         "rarity": 10,
         "for_everyone": false,
         "warbands": [

@@ -78,7 +78,7 @@
     "Nicodemus, the cursed pilgrim": "Nicodemus, the Cursed Pilgrim",
     "Penthesilea, Mark Of The Serpent": "Penthesilea, Mark of the Serpent",
     "Veskit, high executioner of clan eshin": "Veskit, High Executioner of Clan Eshin",
-    "William Schäke­stange, Master Bard": "William Schäkestange, Master Bard"
+    "William Sch\u00e4ke\u00adstange, Master Bard": "William Sch\u00e4kestange, Master Bard"
   },
   "group_members": {
     "add": {
@@ -513,7 +513,7 @@
         {
           "name": "",
           "summary": "Flying mount with 16\" movement; destroyed outright by fire",
-          "text": "A magic carpet is indeed just that – a carpet that flies! It counts as a mount and allows movement of 16\" with no restrictions for terrain. You can move onto the roofs of buildings and other high places with no penalty. The carpet may carry up to three men or one large creature and a man. One of the riders must be a character. Due to its magical nature it cannot be destroyed, except by fire: taken out of action by fire it is destroyed outright, with no roll on the Henchmen injury chart."
+          "text": "A magic carpet is indeed just that \u2013 a carpet that flies! It counts as a mount and allows movement of 16\" with no restrictions for terrain. You can move onto the roofs of buildings and other high places with no penalty. The carpet may carry up to three men or one large creature and a man. One of the riders must be a character. Due to its magical nature it cannot be destroyed, except by fire: taken out of action by fire it is destroyed outright, with no roll on the Henchmen injury chart."
         }
       ],
       "why": "William, 12 Nov 2026: the Khemri equipment page destroys the carpet by fire where ours said only that its magical nature means it cannot be destroyed, so the fire rule is added to ours; the bestiary mount already carried it"
@@ -726,8 +726,9 @@
       "why": "its page prints no save for it"
     },
     "Iron Bark": {
-      "subtype": "Body Armour",
-      "why": "its page prints no save for it"
+      "bonus": 2,
+      "slot": "extra",
+      "subtype": "Body Armour"
     },
     "Magic War Paint": {
       "subtype": "Body Armour",
@@ -809,7 +810,9 @@
     },
     "Large Special": {
       "for_everyone": true,
-      "large_only": true
+      "large_only": true,
+      "note": "A Large warrior knows one Large skill at a time: learning another forgets the first.",
+      "why": "the Marienburg Annual p. 9: only one Large skill may be learnt by a Large warrior, and a new one replaces the first (William, 23 Nov 2026)"
     },
     "Skaven Metal Mongers": {
       "warbands": [
@@ -1023,13 +1026,67 @@
       "type": "Academic",
       "description": "Before each game he takes part in, the warrior may work on one close combat weapon or suit of heavy armour. The wielder of a smithed weapon may re-roll the first failed to-hit roll of the battle; the bearer of smithed armour may re-roll the first failed armour save.",
       "source": "the Relics of the Crusades Part 1 PDF (Broheim, Relics of the Crusades), New skills & spells, Academic Skills"
+    },
+    {
+      "name": "Ambidextrous",
+      "type": "Combat",
+      "description": "The warrior is practised at fighting with two weapons and ignores the -1 to hit the Annual's Dual Wielding rule gives each attack made with two weapons. Under that rule a hired sword who comes with two or more weapons counts as having this skill.",
+      "source": "the Marienburg Annual (Broheim, Mutiny in Marienburg), General Rules, New common Skill (p. 5)"
+    },
+    {
+      "name": "Splintering Blow",
+      "type": "Strength",
+      "description": "The warrior's axe blows tear through armour: every axe he fights with has an armour save modifier of -2.",
+      "source": "the Marienburg Annual (Broheim, Mutiny in Marienburg), New Skills, Strength Skills (p. 9)"
+    },
+    {
+      "name": "Beat Down",
+      "type": "Strength",
+      "description": "When the warrior fights with a morning star or flail of any kind and wounds an enemy in the first round of a combat, he keeps the weapon's Strength bonus into the next round, and goes on keeping it for every round in which he wounds an opponent.",
+      "source": "the Marienburg Annual (Broheim, Mutiny in Marienburg), New Skills, Strength Skills (p. 9)"
+    },
+    {
+      "name": "Fortitude",
+      "type": "Strength",
+      "description": "The warrior re-rolls every side effect roll for a drug he takes, even a result that would help him.",
+      "source": "the Marienburg Annual (Broheim, Mutiny in Marienburg), New Skills, Strength Skills (p. 9)"
+    },
+    {
+      "name": "Impressive Bulk",
+      "type": "Strength",
+      "description": "Whenever the Hero takes a Strength or Toughness test, that characteristic counts as 1 higher for the test.",
+      "source": "the Marienburg Annual (Broheim, Mutiny in Marienburg), New Skills, Strength Skills (p. 9)"
+    },
+    {
+      "name": "Man At Arms",
+      "type": "Combat",
+      "description": "The warrior switches between thrusting and slashing with a halberd: when he fights with one, he may roll each critical hit on either the thrusting or the bladed weapons' critical hit chart.",
+      "source": "the Marienburg Annual (Broheim, Mutiny in Marienburg), New Skills, Combat Skills (p. 9)"
+    },
+    {
+      "name": "Frightful Crack",
+      "type": "Combat",
+      "description": "When the warrior uses the Whipcrack special rule, each hit he scores leaves his opponent at -1 WS for the rest of that round of combat, even if the hit fails to wound.",
+      "source": "the Marienburg Annual (Broheim, Mutiny in Marienburg), New Skills, Combat Skills (p. 9)"
+    },
+    {
+      "name": "Weak Spot",
+      "type": "Combat",
+      "description": "When the warrior fights with a dagger of any kind in each hand and both his main-hand and off-hand attacks hit, he causes a critical hit on a 5+, whatever his Strength.",
+      "source": "the Marienburg Annual (Broheim, Mutiny in Marienburg), New Skills, Combat Skills (p. 9)"
+    },
+    {
+      "name": "Resilience",
+      "type": "Strength",
+      "description": "The warrior shrugs off blows that would fell a lesser fighter: when he suffers a critical wound, the attacker is at -1 on the critical hit chart.",
+      "source": "the Marienburg Annual (Broheim, Mutiny in Marienburg), Errata (p. 7)"
     }
   ],
   "skill_descriptions": {
     "Quick Thinker (Dwarf Exiled Engineers)": "The dwarf may add +1 to any roll on the experimental weapons chart. (MiM)",
     "Trap Expert (Academic)": "This Hero is able to detect traps in the tombs with relative ease. A character who possesses this skill will never set off traps himself (but may be subject to their effects if he is too close when it goes off). He can attempt to disarm traps by stopping at the trap during his Movement phase, and may do nothing else that turn. To disarm a Simple trap, roll 6+ on 2D6. To disarm a Complex trap, roll 8+ on 2D6. If unsuccessful, he must test against his Initiative; a failed test means he sets off the trap himself. He can also attempt to restore dud or previously de-activated traps: roll a D6 (1-4 Simple, 5-6 Complex), then roll 6+ on 2D6 to restore a Simple trap or 8+ on 2D6 for a Complex trap. Failure means the trap fails to activate. Either half may be taken up to four times, taking 1 off its roll each time, so that at the limit a Simple trap is disarmed on a 2+ and a Complex trap on a 4+.",
     "Mutant (Beastmen Raiders)": "The Hero may buy one mutation from the Possessed Mutation list. This skill may be taken only once. (EiF 74)",
-    "Ignore Pain (Skaven Clan Pestilens)": "A Clan Pestilens member with this skill treats “Stunned” injuries as “Knocked Down.” (TC 29)",
+    "Ignore Pain (Skaven Clan Pestilens)": "A Clan Pestilens member with this skill treats \u201cStunned\u201d injuries as \u201cKnocked Down.\u201d (TC 29)",
     "Handyman (Strength)": "The warrior is skilled in fixing minor damage on a wagon, cart or coach. If the wagon is stationary and has not moved during the last turn then if the warrior is in contact with the wagon, he may repair one previously damaged wheel. He can even set in a new wheel if it flew off. The Hero may do nothing else that turn and the wagon may not be moved. A wagon cannot be repaired if an enemy model is in contact with the handyman or the wagon. (MiM)",
     "Beastmaster (Strength)": "The Hero is able to communicate on a primal level with any beast he encounters. If the model confronts an animal (not mount) in hand-to-hand combat, before combat he may take a Leadership test. If the test fails, combat proceeds as normal. If successful the animal falls under his command. Place the models 1\" apart. The player may control the animal, but the beastmaster must pass a Leadership test at the beginning of his turn or control is lost. The animal must remain within 6\" of the Hero or control is lost. No more than one animal can be controlled this way. (MiM)"
   },
@@ -1065,6 +1122,10 @@
     "Smith (Academic)": {
       "name": "Smith (Academic)",
       "why": "Relics of the Crusades' Academic Smith works one weapon or suit of armour before each game, a different rule from the Cursed Dwarves' Smith (half-price common weapons), which keeps the name: skills match ours only by name and effect (William, 6 Nov 2026)"
+    },
+    "Resilience (Strength)": {
+      "name": "Resilience (Annual)",
+      "why": "the Annual's errata Resilience (p. 7: the attacker is at -1 on the critical hit chart) is not Clan Pestilens' Resilience (+1 Toughness), which keeps the name: skills match ours only by name and effect (William, 23 Nov 2026: \"Resilience (Annual)\" in the Strength group)"
     }
   },
   "skill_wordings": {
@@ -1566,7 +1627,7 @@
       "setting": "relics-of-the-crusades",
       "source": "Relics of the Crusades",
       "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=16",
-      "flavour": "The knowledge of engraving a magical tattoo into skin is a combination of the arcane knowledge of many races, including dwarven rune smithing and the “arts” of the savage orcs.",
+      "flavour": "The knowledge of engraving a magical tattoo into skin is a combination of the arcane knowledge of many races, including dwarven rune smithing and the \u201carts\u201d of the savage orcs.",
       "cost": 200,
       "dice": 1,
       "dice_multiplier": 25,
@@ -1615,7 +1676,7 @@
       "setting": "relics-of-the-crusades",
       "source": "Relics of the Crusades",
       "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=16",
-      "flavour": "These are another secret of the Arabians that has passed into mystery. Dimashquine blades were reputed to be strong enough to cut through the swords of their enemies like they were pig’s cheese.",
+      "flavour": "These are another secret of the Arabians that has passed into mystery. Dimashquine blades were reputed to be strong enough to cut through the swords of their enemies like they were pig\u2019s cheese.",
       "range": "Close Combat",
       "strength": "As user",
       "cost": 15,
@@ -1723,7 +1784,7 @@
       "setting": "relics-of-the-crusades",
       "source": "Relics of the Crusades",
       "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=17",
-      "flavour": "Generally granted to those who excel in the service of a Sultan or Caliph, a robe of honour would increase its wearer’s reputation dramatically.",
+      "flavour": "Generally granted to those who excel in the service of a Sultan or Caliph, a robe of honour would increase its wearer\u2019s reputation dramatically.",
       "cost": 50,
       "dice": 2,
       "rarity": 10,
@@ -1777,7 +1838,7 @@
       "setting": "relics-of-the-crusades",
       "source": "Relics of the Crusades",
       "link_url": "https://www.broheim.net/downloads/fo/96RelicsoftheCrusadesPt1.pdf#page=17",
-      "flavour": "The tinkle of the sharab sellers can be heard in most bazaars in Araby. These cold drinks of concentrated fruit would later come to the Old World under the names of ‘sirops’ or ‘sorbets’.",
+      "flavour": "The tinkle of the sharab sellers can be heard in most bazaars in Araby. These cold drinks of concentrated fruit would later come to the Old World under the names of \u2018sirops\u2019 or \u2018sorbets\u2019.",
       "cost": 30,
       "dice": 3,
       "rarity": 8,
@@ -1957,6 +2018,38 @@
         }
       ],
       "why": "Relics of the Crusades pp. 4-5 and 17, a dwelling: 60+2D6 dinars, Rare 12 at Dimashque (Rare 11 at Khalibon, in the note); its rules move here from the campaign rules' Dwellings (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Howdah",
+      "type": "Miscellaneous",
+      "subtype": "Vehicles",
+      "setting": "marienburg-annual",
+      "source": "Marienburg Annual",
+      "cost": 80,
+      "rarity": 10,
+      "rules": [
+        {
+          "name": "Howdah",
+          "text": "A howdah may be fitted to any great beast. The beast then follows every special rule for a cart (Vehicles of the Empire), except as below."
+        },
+        {
+          "name": "Movement",
+          "text": "The beast moves and runs at its own Movement, at -1 for every passenger after the first. It may turn up to 90 degrees in its movement phase without penalty; if it turns further, it moves at half pace and may not charge that turn."
+        },
+        {
+          "name": "Out of Control",
+          "text": "The beast goes out of control only if it fails a Leadership test, which it may take on its driver's Leadership."
+        },
+        {
+          "name": "Combat",
+          "text": "The beast charges as normal. A passenger fights in close combat only with a thrusting weapon (a mancatcher, spear or halberd, for instance) and only from the space of the howdah nearest the enemy."
+        },
+        {
+          "name": "Shooting",
+          "text": "Passengers may shoot at enemies engaged with the beast."
+        }
+      ],
+      "why": "the Marienburg Annual p. 10 (New Vehicles): 80 gc, Rare 10, for any great beast, so for everyone; a vehicle bought as an item, as the Skeleton Chariot and the Mortis Engine are (William, 23 Nov 2026: \"Add the Howdah if it is an item a warband buys\"). The page's Chariot is not added"
     }
   ],
   "warband_items": {
@@ -2103,7 +2196,16 @@
       "Converter (Holy)": "relics-of-the-crusades",
       "Blessed Weapon (Holy)": "relics-of-the-crusades",
       "Iron Faith (Holy)": "relics-of-the-crusades",
-      "Smith (Academic)": "relics-of-the-crusades"
+      "Smith (Academic)": "relics-of-the-crusades",
+      "Ambidextrous (Combat)": "marienburg-annual",
+      "Splintering Blow (Strength)": "marienburg-annual",
+      "Beat Down (Strength)": "marienburg-annual",
+      "Fortitude (Strength)": "marienburg-annual",
+      "Impressive Bulk (Strength)": "marienburg-annual",
+      "Man At Arms (Combat)": "marienburg-annual",
+      "Frightful Crack (Combat)": "marienburg-annual",
+      "Weak Spot (Combat)": "marienburg-annual",
+      "Resilience (Strength)": "marienburg-annual"
     },
     "hired_swords": {
       "Albino Stormvermin": "mutiny-in-marienburg",
@@ -2159,11 +2261,19 @@
       "Warlock Engineer": "sealed-city",
       "Whaler": "mutiny-in-marienburg",
       "White Lady": "mousillon",
-      "Witch Elf (Dark Elf Corsairs)": "mousillon"
+      "Witch Elf (Dark Elf Corsairs)": "mousillon",
+      "Ex-Blood Bowl Player": "marienburg-annual",
+      "Chaos Wanderer": "marienburg-annual",
+      "Chaos Berserker": "marienburg-annual",
+      "Gnoblar Trappa": "marienburg-annual",
+      "Orc Bully": "marienburg-annual",
+      "Nasty Skulker": "marienburg-annual",
+      "Snotling Helpa": "marienburg-annual",
+      "Hobgoblin Sneaky Git": "marienburg-annual"
     },
     "dramatis_personae": {
       "Alchec of Strigos": "karak-azgal",
-      "Billie Rattenmörder and Butcher": "grade-3",
+      "Billie Rattenm\u00f6rder and Butcher": "grade-3",
       "Dalla Burgansdotter, the Iron Maiden": "karak-azgal",
       "Dashing Swordsman": "grade-3",
       "Doctor Doppler and Mr. Genag": "grade-3",
@@ -2173,7 +2283,7 @@
       "Gaz Er Unga Og": "grade-3",
       "Grey Seer Neekit": "karak-azgal",
       "Im Abav Yub": "grade-3",
-      "Iñigo 'Toothpick' Tio": "grade-3",
+      "I\u00f1igo 'Toothpick' Tio": "grade-3",
       "Jeremiah Bane, the Devil King": "sartosa",
       "Kromwell the Blackhearted": "sartosa",
       "Krushj the Anchorman": "sartosa",
@@ -2187,7 +2297,12 @@
       "The Fishmonger": "grade-3",
       "The Grandmother": "grade-3",
       "The Headsman": "grade-3",
-      "Zleda the Jaded": "grade-3"
+      "Zleda the Jaded": "grade-3",
+      "Oxyotl": "marienburg-annual",
+      "Nibbles, the Grand Sneak/Stab of Bitter Stink": "marienburg-annual",
+      "Slave Master Haggard, the Stone Daemon of Suidock": "marienburg-annual",
+      "Mor'Kahn, the Black Sea Devil": "marienburg-annual",
+      "Hauppman Heinrich of the River Watch": "marienburg-annual"
     }
   }
 }

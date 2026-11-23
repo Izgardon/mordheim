@@ -1136,6 +1136,51 @@
       "how": "overrides.json"
     },
     {
+      "name": "Ambidextrous",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Splintering Blow",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Beat Down",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Fortitude",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Impressive Bulk",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Man At Arms",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Frightful Crack",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Weak Spot",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Resilience (Annual)",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
       "name": "Chaos Engineer",
       "setting": "border-town-burning",
       "how": "overrides.json"
@@ -3231,6 +3276,46 @@
       "name": "Tosher",
       "setting": "grade-3",
       "how": "overrides.json"
+    },
+    {
+      "name": "Ex-Blood Bowl Player",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Chaos Wanderer",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Chaos Berserker",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Gnoblar Trappa",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Orc Bully",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Nasty Skulker",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Snotling Helpa",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Hobgoblin Sneaky Git",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
     }
   ],
   "dramatis_personae": [
@@ -3335,6 +3420,11 @@
       "how": "overrides.json"
     },
     {
+      "name": "Hauppman Heinrich of the River Watch",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
       "name": "Heinrich 'Altdorf' Schmidt",
       "setting": "mordheim-1b",
       "how": "mordheimer"
@@ -3415,8 +3505,18 @@
       "how": "mordheimer"
     },
     {
+      "name": "Mor'Kahn, the Black Sea Devil",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
       "name": "Myrina and her Keiki",
       "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Nibbles, the Grand Sneak/Stab of Bitter Stink",
+      "setting": "marienburg-annual",
       "how": "overrides.json"
     },
     {
@@ -3440,6 +3540,11 @@
       "how": "overrides.json"
     },
     {
+      "name": "Oxyotl",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
       "name": "Penthesilea, Mark of the Serpent",
       "setting": "lustria",
       "how": "mordheimer"
@@ -3448,6 +3553,11 @@
       "name": "Sigmund Spindle, the Harvester of Flesh",
       "setting": "mordheim-2a",
       "how": "mordheimer"
+    },
+    {
+      "name": "Slave Master Haggard, the Stone Daemon of Suidock",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
     },
     {
       "name": "The Crow Master",

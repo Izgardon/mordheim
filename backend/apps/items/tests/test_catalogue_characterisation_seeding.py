@@ -95,11 +95,11 @@ class SeedAllTests(TestCase):
                 # five fewer than before: Gromril Weapon, Ithilmar Weapon, Obsidian Weapon, Silver Weapons and
                 # the Dark Elf Blade are weapon materials now, not items (19 and 20 Nov 2026), so seed_items
                 # skips them
-                "Item": 568,  # the import's 445 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey; the Cardinal of Contagion's Pox Staff is one more, with no price row, so nobody buys it (William, 13 Nov 2026); ten Mutiny in Marienburg stubs that duplicate an item of ours are merged away, their prices carried onto it, and the Border Town Burning bear and Marienburg's wild dogs join ours, two Animal items fewer (William, 15 Nov 2026); Marienburg's boar mount is our War Boar, one Animal item fewer (William, 16 Nov 2026); the Karak Azgal Map is one more (William, 21 Nov 2026); Athel Loren's seven shop items are left out again, since none has rules (William, 21 Nov 2026: "if not rules then dont import"); Relics of the Crusades brings 21 items more and its Arabian Steed one more Animal item (William, 21 Nov 2026); the Marienburg Annual's ten beasts (eight daemons, the Great Eagle and the Great Stag) bring 10 Animal items more (23 Nov 2026)
+                "Item": 569,  # the import's 445 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey; the Cardinal of Contagion's Pox Staff is one more, with no price row, so nobody buys it (William, 13 Nov 2026); ten Mutiny in Marienburg stubs that duplicate an item of ours are merged away, their prices carried onto it, and the Border Town Burning bear and Marienburg's wild dogs join ours, two Animal items fewer (William, 15 Nov 2026); Marienburg's boar mount is our War Boar, one Animal item fewer (William, 16 Nov 2026); the Karak Azgal Map is one more (William, 21 Nov 2026); Athel Loren's seven shop items are left out again, since none has rules (William, 21 Nov 2026: "if not rules then dont import"); Relics of the Crusades brings 21 items more and its Arabian Steed one more Animal item (William, 21 Nov 2026); the Marienburg Annual's ten beasts (eight daemons, the Great Eagle and the Great Stag) bring 10 Animal items more and its Howdah one more (23 Nov 2026)
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
-                "Skill": 563,  # the import's 521 (one per name, Relics of the Crusades' ten Holy skills and its Smith (Academic), Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 42 hired swords' own skills the book lacks (the Runesmith's Rune Use and Durable are his rules, William, 21 Nov 2026), 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
+                "Skill": 572,  # the import's 530 (one per name, the Marienburg Annual's nine (eight new Strength and Combat skills and Resilience (Annual)), Relics of the Crusades' ten Holy skills and its Smith (Academic), Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 42 hired swords' own skills the book lacks (the Runesmith's Rune Use and Durable are his rules, William, 21 Nov 2026), 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 142,  # the import's 111 (Athel Loren's three, Relics of the Crusades' Holy) + a group of his own for each of 27 hired swords, 9 of them broheim's hireling sections'
-                "Spell": 473,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026); the Marienburg Annual's eight College lores, 48 spells (23 Nov 2026)
+                "Spell": 474,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026); the Marienburg Annual's eight College lores, 48 spells, and Slave Master Haggard's Combustion (23 Nov 2026)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -144,7 +144,10 @@ class SeedAllTests(TestCase):
                 # the Alchemist's Potion Recipes rule is a lore now (21 Nov 2026): 1 fewer
                 # the Marienburg Annual's ten beasts add 26 of their own to special.json (23 Nov 2026): the daemons'
                 # rules as the Annual words them, and each beast's own
-                "Special": 1983,
+                
+                # the Marienburg Annual's eight hired swords' own rules (23 Nov 2026): 32 more, and its five
+                # dramatis personae's 26
+                "Special": 2041,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -160,10 +163,12 @@ class SeedAllTests(TestCase):
                 # Marienburg's eleven Specialists and three Dramatis Personae, and broheim's hired sword section's
                 # 35 (Karak Azgal 6, Mousillon 6, Khemri 3, the Sealed City 6, Sartosa 6, the fan-made trees 8)
                 # the Cardinal of Contagion, whose stats William confirmed (13 Nov 2026), makes the fan-made trees 9
-                "HiredSword": 125,
-                # mordheimer's 30 and our own 26 (apps/hirelings/data/dramatis-personae.json: Karak Azgal 5,
-                # Sartosa 5, Albion 2, Khemri 1, the fan-made trees 13), through the catalogue import
-                "DramatisPersona": 56,
+                # the Marienburg Annual's three and its five Workin' Boyz (William, 23 Nov 2026)
+                "HiredSword": 133,
+                # mordheimer's 30 and our own 31 (apps/hirelings/data/dramatis-personae.json: Karak Azgal 5,
+                # Sartosa 5, Albion 2, Khemri 1, the fan-made trees 13, the Marienburg Annual 5), through the
+                # catalogue import
+                "DramatisPersona": 61,
                 "WarbandTemplate": 149,  # mordheimer's New Warband Format pages (Tileans (old) left out), the PDFs' (the first seven grade 3 warbands and Athel Loren's four among them) and the two web pages'; the Arabian Tribes serve all three tribes
             },
         )
@@ -350,12 +355,18 @@ class SeedAllTests(TestCase):
                 "Fear": (
                     114,
                     0,
-                    11,
-                    9,
+                    13,
+                    10,
                     37,
                 ),  # fighters, upgrades, hired swords, dramatis personae, beasts (13 of the East, 12 Marienburg's, 9 the Annual's)
                 "Stupidity": (11, 0, 0, 0, 4),  # Marienburg's Troll and Chaos Troll
-                "Immune to Psychology": (66, 0, 2, 7, 1),  # Marienburg's Cultists of Chaos
+                "Immune to Psychology": (
+                    66,
+                    0,
+                    4,
+                    8,
+                    1,
+                ),  # Marienburg's Cultists of Chaos, the Annual's two Chaos swords and Oxyotl
                 "Immune to Poison": (63, 0, 4, 5, 8),
                 "Hideous": (
                     0,
@@ -745,7 +756,8 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
         # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
         # the two lists are two groups sharing Cutlass Master and Swashbuckler
-        self.assertIn("Skills import complete. Created: 521, Updated: 0", self.output)
+        # the Marienburg Annual's nine among them (William, 23 Nov 2026)
+        self.assertIn("Skills import complete. Created: 530, Updated: 0", self.output)
         self.assertIn("If he Falls during a battle", Skill.objects.get(name="Sea Legs").description)
         self.assertIn("swings through rope and rigging", Skill.objects.get(name="Sea Legs (TBMF)").description)
         second = SkillGroup.objects.get(name="Pirates (TBMF)").skill_links.values_list("skill__name", flat=True)
@@ -838,8 +850,9 @@ class SeedAllTests(TestCase):
         self.assertLessEqual({"Combat", "Shooting", "Speed"}, set(scout.available_skill_types))
         self.assertLessEqual({"Combat", "Academic", "Strength"}, set(skinner.available_skill_types))
         races = dict(HiredSword.objects.values_list("name", "race__name"))
-        # the Sealed City's Clocked crook and Reactivated archivist are clockwork constructs, of no race at all
-        raceless = {"Chaos Fury", "Clocked Crook", "Reactivated Archivist"}
+        # the Sealed City's Clocked crook and Reactivated archivist are clockwork constructs, of no race at all, and
+        # the Marienburg Annual's Ex-Blood Bowl Player takes the race of whoever hires him
+        raceless = {"Chaos Fury", "Clocked Crook", "Reactivated Archivist", "Ex-Blood Bowl Player"}
         self.assertEqual({name for name, race in races.items() if race is None}, raceless)
         mapped = {"Chameleon Skink": "Skink", "Dark Elf Assassin": "Elf", "Shadow Warrior": "Elf"}
         mapped |= {"Wood Elf Hunter": "Elf", "Ungor Trapper": "Ungor"}
@@ -953,13 +966,29 @@ class SeedAllTests(TestCase):
         # exclusions and he stays for everyone
         everyone = HiredSword.objects.filter(for_everyone=True)
         self.assertFalse(everyone.filter(warband_links__excluded=False).exists())
-        # broheim's pages read "any warband may hire him" for seven, who name no warband at all; everyone else does
+        # broheim's pages read "any warband may hire him" for seven, who name no warband at all, and the Marienburg
+        # Annual's "any race" for its Ex-Blood Bowl Player; everyone else does
         open_to_all = set(HiredSword.objects.filter(warband_links__isnull=True).values_list("name", flat=True))
         self.assertEqual(
             open_to_all,
-            {"Alchemist", "Barber Surgeon", "Dark Maiden", "Genie", "Knight Panther", "Lazar", "Reactivated Archivist"},
+            {
+                *("Alchemist", "Barber Surgeon", "Dark Maiden", "Genie", "Knight Panther", "Lazar"),
+                *("Reactivated Archivist", "Ex-Blood Bowl Player"),
+            },
         )
         self.assertFalse(HiredSword.objects.filter(for_everyone=False, warband_links__isnull=True).exists())
+        # the Marienburg Annual's eight sit in its setting; its Sneaky Git is "any warband except" five
+        annual = HiredSword.objects.filter(campaign_type__slug="marienburg-annual")
+        self.assertEqual(annual.count(), 8)
+        # and its five dramatis personae, Haggard's spells read in the lore each names (Lifestealer is four lores')
+        self.assertEqual(DramatisPersona.objects.filter(campaign_type__slug="marienburg-annual").count(), 5)
+        haggard = DramatisPersona.objects.get(name__startswith="Slave Master Haggard")
+        lores = dict(haggard.spell_links.values_list("spell__name", "spell__type"))
+        self.assertEqual((lores["Lifestealer"], lores["Lava Flow"]), ("Necromancy", "Rituals of Hashut"))
+        self.assertEqual(lores["Combustion"], f"Dramatis Persona - {haggard.name}")
+        git = annual.get(name="Hobgoblin Sneaky Git")
+        self.assertEqual((git.for_everyone, git.warband_links.filter(excluded=True).count()), (True, 5))
+        self.assertEqual(set(annual.get(name="Chaos Berserker").skill_links.values_list("skill__name", flat=True)), {"Ambidextrous", "Pit Fighter", "Mighty Blow", "Step Aside"})  # fmt: skip
         self.assertTrue(SkillGroup.objects.get(name="Speed").for_everyone)
         skaven = SkillGroup.objects.get(name="Skaven")
         self.assertFalse(skaven.for_everyone)
@@ -986,6 +1015,17 @@ class SeedAllTests(TestCase):
         large = group("Large Special")
         self.assertEqual((len(holds("Large Special")), large.large_only, large.for_everyone), (5, True, True))
         self.assertEqual(list(SkillGroup.objects.filter(large_only=True)), [large])
+        # the Marienburg Annual p. 9: a Large warrior knows one Large skill at a time (William, 23 Nov 2026)
+        self.assertIn("one Large skill at a time", large.learn_note)
+        # its new Strength and Combat skills sit in the group it prints them under, in its own setting, and its
+        # errata Resilience is a skill apart from Clan Pestilens' (William, 23 Nov 2026)
+        annual = {"Splintering Blow", "Beat Down", "Fortitude", "Impressive Bulk", "Resilience (Annual)"}
+        self.assertLessEqual(annual, holds("Strength"))
+        self.assertLessEqual({"Ambidextrous", "Man At Arms", "Frightful Crack", "Weak Spot"}, holds("Combat"))
+        in_annual = Skill.objects.filter(campaign_type__slug="marienburg-annual")
+        self.assertEqual(in_annual.count(), 9)
+        self.assertIn("-1 on the critical hit chart", Skill.objects.get(name="Resilience (Annual)").description)
+        self.assertIn("Toughness is increased by +1", Skill.objects.get(name="Resilience").description)
         vampires = group("Undead Vampires")
         self.assertEqual((vampires.learn_note, vampires.for_everyone, learners("Undead Vampires")), ("Vampire only", False, {"undead"}))  # fmt: skip
         self.assertIn("Mist Form", holds("Undead Vampires"))
