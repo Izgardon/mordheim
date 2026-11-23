@@ -55,8 +55,8 @@ export default function CampaignRules() {
           <ReferenceSearch
             value={params.query}
             onChange={params.setQuery}
-            placeholder="Search the rules and tables"
-            label="Search the campaign rules, battle rules and tables"
+            placeholder="Search the rules and charts"
+            label="Search the campaign rules, battle rules and charts"
             isMobile={isMobile}
           />
         </FilterRow>

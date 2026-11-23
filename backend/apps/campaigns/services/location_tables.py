@@ -9,7 +9,7 @@ from typing import Any
 from ..errors import CampaignError
 from ..models import CampaignChart, CampaignChartRow, CampaignLocation, CampaignLocationChart
 
-UNKNOWN_CHART = "Point only to the campaign's own tables."
+UNKNOWN_CHART = "Point only to the campaign's own charts."
 
 
 def write_tables(location: CampaignLocation, tables: list[dict[str, Any]]) -> None:

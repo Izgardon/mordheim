@@ -49,7 +49,7 @@ export default function LocationDetail({
         </div>
       ) : null}
       {location.charts.length ? (
-        <div role="group" aria-label="Tables" className="flex flex-wrap gap-1.5">
+        <div role="group" aria-label="Charts" className="flex flex-wrap gap-1.5">
           {location.charts.map((link) => (
             <Chip key={link.id} onClick={() => open(link.id)}>
               {link.title}

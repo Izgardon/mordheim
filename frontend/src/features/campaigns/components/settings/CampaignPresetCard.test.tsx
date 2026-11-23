@@ -92,7 +92,7 @@ describe("the campaign preset", () => {
     expect(screen.getByText("It sets Locations on · Most heroes 6.")).toBeInTheDocument();
     expect(
       screen.getByText(
-        /Its 18 rules and 4 tables are copied in, and the ones the campaign still holds/
+        /Its 18 rules and 4 charts are copied in, and the ones the campaign still holds/
       )
     ).toBeInTheDocument();
     expect(screen.getByText(/Anything you wrote or edited stays/)).toBeInTheDocument();

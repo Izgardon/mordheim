@@ -61,7 +61,7 @@ class CampaignChartSerializer(serializers.ModelSerializer):
 
     def validate_rows(self, value: list[dict]) -> list[dict]:
         if len(value) > MAX_ROWS:
-            raise serializers.ValidationError(f"A table holds at most {MAX_ROWS} results.")
+            raise serializers.ValidationError(f"A chart holds at most {MAX_ROWS} results.")
         return value
 
 

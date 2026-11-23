@@ -69,7 +69,7 @@ class SubTableSerializer(serializers.Serializer):
 
     def validate_rows(self, value: list[dict]) -> list[dict]:
         if len(value) > MAX_ROWS:
-            raise serializers.ValidationError(f"A table holds at most {MAX_ROWS} results.")
+            raise serializers.ValidationError(f"A chart holds at most {MAX_ROWS} results.")
         return value
 
 
@@ -88,9 +88,9 @@ class LocationTableSerializer(serializers.Serializer):
 
     def validate_rows(self, value: list[dict]) -> list[dict]:
         if not value:
-            raise serializers.ValidationError("A table needs at least one result.")
+            raise serializers.ValidationError("A chart needs at least one result.")
         if len(value) > MAX_ROWS:
-            raise serializers.ValidationError(f"A table holds at most {MAX_ROWS} results.")
+            raise serializers.ValidationError(f"A chart holds at most {MAX_ROWS} results.")
         return value
 
 
@@ -153,7 +153,7 @@ class CampaignLocationWriteSerializer(serializers.Serializer):
 
     def validate_tables(self, value: list[dict]) -> list[dict]:
         if len(value) > MAX_TABLES:
-            raise serializers.ValidationError(f"A location holds at most {MAX_TABLES} tables.")
+            raise serializers.ValidationError(f"A location holds at most {MAX_TABLES} charts.")
         return value
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:

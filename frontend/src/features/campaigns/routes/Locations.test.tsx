@@ -68,7 +68,7 @@ describe("The Locations page", () => {
     expect(screen.queryByRole("button", { name: /^(Edit|Remove|Add)/ })).toBeNull();
 
     await user.click(
-      within(screen.getByRole("group", { name: "Tables" })).getByRole("button", {
+      within(screen.getByRole("group", { name: "Charts" })).getByRole("button", {
         name: "Forest Hazards",
       })
     );
@@ -110,7 +110,7 @@ describe("The Locations page", () => {
     await user.selectOptions(within(dialog).getByLabelText("Most heroes"), "all");
     await user.click(within(dialog).getByRole("switch", { name: "Takes the trading action" }));
     await user.click(within(dialog).getByRole("button", { name: "Forest Hazards" }));
-    await user.click(within(dialog).getByRole("button", { name: "Add a table" }));
+    await user.click(within(dialog).getByRole("button", { name: "Add a chart" }));
     await user.type(within(dialog).getByLabelText("Title"), "Haggling");
     await user.type(within(dialog).getByLabelText("Result 1 roll"), "1-3");
     await user.type(within(dialog).getByLabelText("Result 1 effect"), "Pay double.");

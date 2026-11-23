@@ -26,11 +26,11 @@ export default function CampaignRulesLink({
   const held = [
     campaignRules ? count(campaignRules, "campaign rule") : "",
     battleRules ? count(battleRules, "battle rule") : "",
-    charts.length ? count(charts.length, "table") : "",
+    charts.length ? count(charts.length, "chart") : "",
   ].filter(Boolean);
 
   return (
-    <section aria-label="Campaign rules and tables">
+    <section aria-label="Campaign rules and charts">
       <Link
         to={`/campaigns/${campaignId}/campaign-rules`}
         className="flex min-h-[52px] items-center gap-2.5 border-y border-line px-1 text-left no-underline"

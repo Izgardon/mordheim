@@ -250,13 +250,13 @@ describe("the overview's campaign rules link", () => {
     renderApp(BASE);
 
     // the rail has a Campaign rules link of its own, so this looks only at the page's own row
-    const row = await screen.findByRole("region", { name: "Campaign rules and tables" });
+    const row = await screen.findByRole("region", { name: "Campaign rules and charts" });
     const link = within(row).getByRole("link", { name: /Campaign rules/ });
     expect(row.previousElementSibling?.tagName).toBe("DL");
     expect(row.previousElementSibling).toHaveTextContent("Heroes lost");
     expect(link).toHaveAttribute("href", `/campaigns/${CAMPAIGN_ID}/campaign-rules`);
     await waitFor(() =>
-      expect(link).toHaveTextContent("1 campaign rule · 1 battle rule · 1 table")
+      expect(link).toHaveTextContent("1 campaign rule · 1 battle rule · 1 chart")
     );
     // the rules themselves are read on that page now, not here
     expect(screen.queryByText("No warband leaves.")).toBeNull();
@@ -270,6 +270,6 @@ describe("the overview's campaign rules link", () => {
 
     await screen.findByRole("heading", { level: 1 });
     await waitFor(() => expect(fakeApi.countOf(`GET ${BASE}/campaign-rules/`)).toBe(1));
-    expect(screen.queryByRole("region", { name: "Campaign rules and tables" })).toBeNull();
+    expect(screen.queryByRole("region", { name: "Campaign rules and charts" })).toBeNull();
   });
 });

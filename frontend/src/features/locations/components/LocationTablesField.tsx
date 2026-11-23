@@ -24,7 +24,7 @@ export default function LocationTablesField({
     onChange(tables.map((entry, place) => (place === index ? table : entry)));
   return (
     <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
-      <legend className={LABEL}>Its tables</legend>
+      <legend className={LABEL}>Its charts</legend>
       {tables.map((table, index) => (
         <div key={index} className="flex flex-col gap-3 border border-line p-3">
           <CampaignChartFields
@@ -38,7 +38,7 @@ export default function LocationTablesField({
             className="self-start"
             onClick={() => onChange(tables.filter((_entry, place) => place !== index))}
           >
-            Remove {table.title.trim() || `table ${index + 1}`}
+            Remove {table.title.trim() || `chart ${index + 1}`}
           </Button>
         </div>
       ))}
@@ -48,7 +48,7 @@ export default function LocationTablesField({
         className="self-start"
         onClick={() => onChange([...tables, { ...BLANK_TABLE, rows: [...BLANK_TABLE.rows] }])}
       >
-        Add a table
+        Add a chart
       </Button>
     </fieldset>
   );

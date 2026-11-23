@@ -106,8 +106,8 @@ export default function LocationFields({
         </Switch>
       </div>
       {charts.length ? (
-        <div role="group" aria-label="Campaign tables it points to" className="flex flex-col gap-2">
-          <span className={LABEL}>Campaign tables it points to</span>
+        <div role="group" aria-label="Campaign charts it points to" className="flex flex-col gap-2">
+          <span className={LABEL}>Campaign charts it points to</span>
           <div className="flex flex-wrap gap-1.5">
             {charts.map((chart) => (
               <Chip

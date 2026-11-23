@@ -133,7 +133,7 @@ describe("Search everything's campaign rules and charts", () => {
     const groups = searchEverything("mutiny", { ...nothing, campaignCharts });
 
     expect(groups[0].hits.map((hit) => [hit.title, hit.meta, hit.to])).toEqual([
-      ["Seaside Situations", "Table · D66", "campaign-rules?open=c9"],
+      ["Seaside Situations", "Chart · D66", "campaign-rules?open=c9"],
     ]);
   });
 });

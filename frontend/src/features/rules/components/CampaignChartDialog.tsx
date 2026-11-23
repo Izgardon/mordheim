@@ -88,7 +88,7 @@ export default function CampaignChartDialog({
         setOpen(false);
         onSaved?.(saved);
       },
-      onError: (failure: unknown) => setError(getErrorMessage(failure, "Couldn't save the table.")),
+      onError: (failure: unknown) => setError(getErrorMessage(failure, "Couldn't save the chart.")),
     };
     if (chart) writes.update.mutate({ id: chart.id, ...payload }, done);
     else writes.create.mutate(payload, done);
@@ -101,7 +101,7 @@ export default function CampaignChartDialog({
         setOpen(false);
         onDeleted?.();
       },
-      onError: (failure) => setError(getErrorMessage(failure, "Couldn't delete the table.")),
+      onError: (failure) => setError(getErrorMessage(failure, "Couldn't delete the chart.")),
     });
 
   return (
@@ -109,8 +109,8 @@ export default function CampaignChartDialog({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-[820px]">
         <DialogHeader>
-          <DialogKicker>Tables</DialogKicker>
-          <DialogTitle>{chart ? "Edit the table" : "Add a table"}</DialogTitle>
+          <DialogKicker>Charts</DialogKicker>
+          <DialogTitle>{chart ? "Edit the chart" : "Add a chart"}</DialogTitle>
         </DialogHeader>
         <CampaignChartFields value={form} onChange={setForm} />
         {error ? (
@@ -127,7 +127,7 @@ export default function CampaignChartDialog({
             <span />
           )}
           <Button onClick={save} disabled={busy || !form.title.trim()}>
-            {busy ? "Saving…" : chart ? "Save changes" : "Add table"}
+            {busy ? "Saving…" : chart ? "Save changes" : "Add chart"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -141,7 +141,7 @@ export default function CampaignChartDialog({
             This can&apos;t be undone.
           </span>
         }
-        confirmText={writes.remove.isPending ? "Deleting…" : "Delete table"}
+        confirmText={writes.remove.isPending ? "Deleting…" : "Delete chart"}
         confirmDisabled={busy}
         isConfirming={writes.remove.isPending}
         onConfirm={remove}
