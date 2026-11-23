@@ -47,7 +47,7 @@ class FactionMappingMigrationTests(TransactionTestCase):
         self.assertEqual(types["far"].campaign_id, other.id)  # one custom type per campaign
         self.assertNotEqual(types["far"].pk, types["own"].pk)
         settings = new.get_model("campaigns", "CampaignType").objects
-        self.assertEqual(settings.count(), 20)  # 20 since Albion joined them (17 Nov 2026)
+        self.assertEqual(settings.count(), 21)  # 21 since the Marienburg Annual joined Albion (23 Nov 2026)
         ticked = new.get_model("campaigns", "CampaignCampaignType").objects.filter(campaign_id=campaign.id)
         expected = set(settings.filter(grade__in=("1a", "1b", "1c")).values_list("id", flat=True))
         self.assertEqual(set(ticked.values_list("campaign_type_id", flat=True)), expected)  # Up to 1c
