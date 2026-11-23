@@ -21,11 +21,12 @@ from typing import Any
 from django.conf import settings as django_settings
 from django.core.management.base import CommandError
 
-from apps.campaigns.models import CHART_DICE, HERO_DEATH_ROLL_CHOICES, CampaignType
+from apps.campaigns.models import HERO_DEATH_ROLL_CHOICES, CampaignType
 from apps.core.seeding import clean, parse_int
 from apps.exploration.models import ExplorationChart
 
-from .models import CampaignPreset, CampaignPresetChart, CampaignPresetChartRow, CampaignPresetRule
+from .chart_sources import Skipped, one_chart, read_source, write_charts
+from .models import CampaignPreset, CampaignPresetChart, CampaignPresetRule
 
 PRESET_SOURCES = Path(django_settings.BASE_DIR) / "catalogue_import" / "sources" / "campaign-presets"
 RULE_SOURCES = Path(django_settings.BASE_DIR) / "catalogue_import" / "sources" / "campaign-rules"
@@ -47,13 +48,6 @@ KEYS = frozenset(
         *FLAGS,
     }
 )
-
-
-class Skipped(Exception):
-    """The preset names something we do not hold: it is skipped, never seeded without it."""
-
-    def __init__(self, preset: str, reason: str) -> None:
-        super().__init__(f"{preset}: {reason}; the preset is skipped.")
 
 
 def read_presets(folder: Path = PRESET_SOURCES) -> list[dict[str, Any]]:
@@ -90,32 +84,15 @@ def _rules_of(rows: Any, kind: str, name: str, label: str) -> list[dict[str, str
             "umbrella": clean(row.get("umbrella")),
         }
         if row.get("chart") is not None:  # the rule's own table, not a chart of its own
-            entry["table"] = _one_chart(row["chart"], entry["title"], label, name)
+            entry["table"] = one_chart(row["chart"], entry["title"], label, name)
         rules.append(entry)
     return rules
-
-
-def _one_chart(row: Any, title: str, label: str, name: str) -> dict[str, Any]:
-    """One chart as the file gives it, by the rules `read_charts` applies."""
-    if not isinstance(row, dict):
-        raise CommandError(f"{label}: the chart on '{title}' in {name}.json should be an object.")
-    dice = clean(row.get("dice"))
-    if dice and dice not in CHART_DICE:
-        raise CommandError(f"{label}: the chart '{title}' rolls {dice}, which isn't a die we hold.")
-    return {
-        "title": clean(row.get("title")) or title,
-        "description": clean(row.get("description")),
-        "dice": dice,
-        "note": clean(row.get("note")),
-        "umbrella": clean(row.get("umbrella")),
-        "rows": _chart_rows(row.get("rows"), title, label, name),
-    }
 
 
 def read_rules(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict[str, Any]]:
     """The rules of `name.json` in `folder`, in its order: the campaign rules under `rules`, then the battle rules
     under `battle_rules` (William, 19 Nov 2026). A plain list is read as campaign rules, as the first files held."""
-    data = _read_source(name, label, folder)
+    data = read_source(name, label, folder)
     rows = data.get("rules") if isinstance(data, dict) else data
     rules = _rules_of(rows, "campaign", name, label)
     if isinstance(data, dict) and data.get("battle_rules") is not None:
@@ -129,7 +106,7 @@ def read_rules(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict[
 def read_charts(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict[str, Any]]:
     """The charts of `name.json`, in its order: each its title, when it is rolled, its dice and a row per result.
     A file with no `charts` key holds no charts, which is not the same as holding none we could read."""
-    data = _read_source(name, label, folder)
+    data = read_source(name, label, folder)
     rows = data.get("charts") if isinstance(data, dict) else None
     if rows is None:
         return []
@@ -139,43 +116,11 @@ def read_charts(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict
     for row in rows:
         if not isinstance(row, dict) or not clean(row.get("title")):
             raise CommandError(f"{label}: each chart in {name}.json needs a title.")
-        charts.append(_one_chart(row, clean(row.get("title")), label, name))
+        charts.append(one_chart(row, clean(row.get("title")), label, name))
     titles = [chart["title"].lower() for chart in charts]
     if len(set(titles)) != len(titles):
         raise CommandError(f"{label}: {name}.json holds two charts of the same title.")
     return charts
-
-
-def _chart_rows(rows: Any, title: str, label: str, name: str) -> list[dict[str, Any]]:
-    """A chart's results, in the order the file gives them. A result carrying a `chart` is one the book hangs a
-    table of its own off (Border Town Burning's Curious bloom), read here and written with the result."""
-    if not isinstance(rows, list) or not rows:
-        raise CommandError(f"{label}: the chart '{title}' needs at least one result.")
-    results = []
-    for row in rows:
-        if not isinstance(row, dict) or not clean(row.get("result")):
-            raise CommandError(f"{label}: each result on the chart '{title}' needs what was rolled.")
-        result: dict[str, Any] = {
-            "result": clean(row.get("result")),
-            "name": clean(row.get("name")),
-            "text": clean(row.get("text")),
-        }
-        if row.get("chart") is not None:
-            under = f"{title}: {result['name'] or result['result']}"
-            result["table"] = _one_chart(row["chart"], under, label, name)
-        results.append(result)
-    return results
-
-
-def _read_source(name: str, label: str, folder: Path) -> Any:
-    """One campaign's rules file, parsed."""
-    path = folder / f"{name}.json"
-    if not path.is_file():
-        raise Skipped(label, f"its rules file {name}.json isn't there")
-    try:
-        return json.loads(path.read_text(encoding="utf-8-sig"))
-    except (OSError, ValueError) as exc:
-        raise CommandError(f"Unable to read the campaign rules {path}: {exc}") from exc
 
 
 def _flags(entry: Mapping[str, Any], label: str) -> dict[str, bool | None]:
@@ -293,46 +238,10 @@ def write_preset(
     written = CampaignPresetRule.objects.bulk_create(
         CampaignPresetRule(preset=preset, order=place, **rule) for place, rule in enumerate(rules)
     )
-    _write_charts(preset, preset_charts)
+    write_charts(preset, preset_charts)
     # a rule's own table: the same chart rows, pointed at the rule rather than standing on their own
-    _write_charts(preset, [t for t in tables if t], [r for r, t in zip(written, tables, strict=True) if t], keep=True)
+    write_charts(preset, [t for t in tables if t], [r for r, t in zip(written, tables, strict=True) if t], keep=True)
     return preset
-
-
-def _write_charts(
-    preset: CampaignPreset,
-    charts: list[dict[str, Any]],
-    rules: list[Any] | None = None,
-    keep: bool = False,
-) -> None:
-    """The preset's charts, written afresh with their results. With `rules`, each chart is that rule's own table;
-    `keep` leaves the charts already written in place (the rules' tables are written after the standalone ones)."""
-    if not keep:
-        preset.charts.all().delete()
-    for place, chart in enumerate(charts):
-        rows = chart.pop("rows")
-        written = CampaignPresetChart.objects.create(
-            preset=preset, order=place, rule=rules[place] if rules else None, **chart
-        )
-        tables = [row.pop("table", None) for row in rows]
-        stored = CampaignPresetChartRow.objects.bulk_create(
-            CampaignPresetChartRow(chart=written, order=index, **row) for index, row in enumerate(rows)
-        )
-        for row, table in zip(stored, tables, strict=True):
-            if table is not None:
-                _write_row_table(preset, row, table)
-
-
-def _write_row_table(preset: CampaignPreset, row: CampaignPresetChartRow, table: dict[str, Any]) -> None:
-    """The table the book hangs off one result, written under that result."""
-    rows = table.pop("rows")
-    written = CampaignPresetChart.objects.create(preset=preset, order=0, row=row, **table)
-    CampaignPresetChartRow.objects.bulk_create(
-        CampaignPresetChartRow(
-            chart=written, order=index, **{key: value for key, value in entry.items() if key != "table"}
-        )
-        for index, entry in enumerate(rows)
-    )
 
 
 @dataclass
