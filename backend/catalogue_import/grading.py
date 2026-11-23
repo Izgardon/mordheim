@@ -55,6 +55,7 @@ SETTING_NAMES = {
     "border-town-burning": "Border Town Burning",
     "sylvania": "Sylvania",
     "mutiny-in-marienburg": "Mutiny in Marienburg",
+    "marienburg-annual": "Marienburg Annual",  # the Annual's own content (William, 23 Nov 2026), beside Marienburg's
     "sartosa": "Sartosa",
     "mousillon": "Mousillon",
     "karak-azgal": "Karak Azgal",
@@ -74,7 +75,7 @@ KINDS = ("warbands", "items", "skills", "hired_swords", "dramatis_personae")
 # Marienburg, Sartosa, Mousillon, Karak Azgal, Relics of the Crusades, The Sealed City). Our Albion Barbarians and
 # their two dramatis personae are no evidence against it: they are an experimental PDF, graded 3 by broheim and
 # left in Grade 3 by overrides.json, not the supplement's own content.
-EMPTY_SETTINGS = {"albion": "2b"}
+EMPTY_SETTINGS = {"albion": "2b", "marienburg-annual": "2b"}
 
 
 def setting_part(base: str, grade: str | None) -> str:

@@ -19,7 +19,7 @@ Answers go into `overrides.json`; the next build applies them.
 
 | What | Rows |
 | --- | --- |
-| settings | 20 |
+| settings | 21 |
 | warband types | 160 |
 | warband groups | 20 |
 | shared item rules | 54 |
@@ -184,6 +184,7 @@ No membership questions left.
 | Border Town Burning | 1c | majority of 31 graded entries | 1b: 1, 1c: 30 |
 | Sylvania | 2a | majority of 5 graded entries | 2a: 5 |
 | Mutiny in Marienburg | 2b | majority of 59 graded entries | 2b: 59 |
+| Marienburg Annual | 2b | stated here: nothing graded in it yet |  |
 | Sartosa | 2b | majority of 12 graded entries | 2b: 12 |
 | Mousillon | 2b | majority of 10 graded entries | 2b: 10 |
 | Karak Azgal | 2b | majority of 8 graded entries | 2b: 8 |
