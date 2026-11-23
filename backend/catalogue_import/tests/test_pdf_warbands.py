@@ -1111,7 +1111,7 @@ class PdfImportTests(SimpleTestCase):
 
         def store(name: str) -> int:
             [row] = self.items[name]["availabilities"]
-            return row["cost"]
+            return int(row["cost"])
 
         for slug, name, listed, stored in (
             ("fen-guard", "Horn of the Wild Hunt", 110, 120),
