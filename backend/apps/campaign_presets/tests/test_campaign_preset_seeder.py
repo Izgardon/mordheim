@@ -80,17 +80,36 @@ class PresetSeederTests(TestCase):
         )
         self.assertEqual(rules[0].title, "Campaign points")
         charts = list(marienburg.charts.prefetch_related("rows").select_related("row__chart"))
-        # a table belonging to a rule or to one result is not a chart of its own (William, 20 Nov 2026)
-        self.assertEqual(sum(1 for chart in charts if chart.rule_id is None and chart.row_id is None), 14)
+        # a table belonging to a rule, to one result or to a location is not a chart of its own (William, 20 Nov 2026)
+        self.assertEqual(sum(1 for chart in charts if chart.is_standalone), 14)
+        self.assertEqual(
+            [(group.name, group.locations.count()) for group in marienburg.location_groups.all()],
+            [
+                ("Marketplace", 13),
+                ("Infamous Haunts", 14),
+                ("Craftsmarket", 2),
+                ("Daemon Swamp", 4),
+                ("The Undercity", 9),
+            ],
+        )
         owned = [chart.rule for chart in charts if chart.rule is not None]
         self.assertEqual(
             sorted(rule.title for rule in owned),
             ["Breaking into buildings", "Setting buildings on fire", "Under arrest"],
         )
         # the sewer and booty tables hang off single results of the charts that send the player to them
+        hung = [chart for chart in charts if chart.row is not None]
         on_results = {
-            chart.title: (chart.row.chart.title, chart.row.result) for chart in charts if chart.row is not None
+            chart.title: (chart.row.chart.title, chart.row.result)
+            for chart in hung
+            if chart.row.chart.location_id is None
         }
+        at_locations = {
+            chart.title: (chart.row.chart.title, chart.row.result) for chart in hung if chart.row.chart.location_id
+        }
+        # a location's tables hang their own off a result too, as Fine Feathered Friends does (William, 22 Nov 2026)
+        self.assertEqual(at_locations["Fine Feathered Friends"], ("Speciality Animals", "5"))
+        self.assertEqual(len(at_locations), 14)
         self.assertEqual(
             on_results,
             {
