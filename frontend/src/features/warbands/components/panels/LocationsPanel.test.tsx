@@ -82,7 +82,11 @@ describe("LocationsPanel", () => {
       "aria-pressed",
       "true"
     );
-    expect(within(picker).getByRole("button", { name: /Aldric/ })).toHaveTextContent("spent");
+    // spent reads as a style, not a word (William, 23 Nov 2026)
+    const aldric = within(picker).getByRole("button", { name: /Aldric/ });
+    expect(aldric).not.toHaveTextContent("spent");
+    expect(aldric).toHaveClass("line-through", "border-dashed");
+    expect(aldric).toHaveAccessibleDescription("Trading action spent");
     await user.click(screen.getByRole("button", { name: "Visit" }));
 
     await waitFor(() =>

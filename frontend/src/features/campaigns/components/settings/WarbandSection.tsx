@@ -231,7 +231,7 @@ function DeleteWarband({ warband, onDeleted }: { warband: Warband; onDeleted: ()
       description={`${warband.name} and every unit in it go for good.`}
       action={
         <Button variant="danger" onClick={() => setOpen(true)}>
-          Delete warband
+          Delete
         </Button>
       }
     >

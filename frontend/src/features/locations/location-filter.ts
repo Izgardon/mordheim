@@ -21,7 +21,3 @@ export function filterGroups(groups: LocationGroup[], query: string): LocationGr
 /** "3 locations", the line under a group's name. */
 export const locationCount = (group: LocationGroup) =>
   `${group.locations.length} ${group.locations.length === 1 ? "location" : "locations"}`;
-
-/** "1 hero · Trading action", the line under a location's name. */
-export const locationSub = (place: { heroes_text: string; takes_trading_action: boolean }) =>
-  place.takes_trading_action ? `${place.heroes_text} · Trading action` : place.heroes_text;

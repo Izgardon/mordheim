@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { filterGroups, locationCount, locationSub } from "./location-filter";
+import { filterGroups, locationCount } from "./location-filter";
 import type { CampaignLocation, LocationGroup } from "./types";
 
 const place = (id: number, name: string, rules = ""): CampaignLocation => ({
@@ -48,11 +48,8 @@ describe("filterGroups", () => {
 });
 
 describe("the row lines", () => {
-  it("counts a group's locations and says what a location takes", () => {
+  it("counts a group's locations", () => {
     expect(locationCount(GROUPS[1])).toBe("1 location");
     expect(locationCount(GROUPS[0])).toBe("2 locations");
-    expect(locationSub({ heroes_text: "2 heroes", takes_trading_action: true })).toBe(
-      "2 heroes · Trading action"
-    );
   });
 });

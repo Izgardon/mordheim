@@ -1,10 +1,10 @@
 /**
  * The warband's resources (William, 20 Nov 2026): the section's title with Add resource spaced
  * apart from it, then a column per resource, the name on the left and the number with its buttons
- * on the right, the line never wrapping. The campaign's default resource comes first, with no
- * icon, and its ⋮ offers only Sell (the campaign names it, and it is never deleted); the rest keep
- * Rename, Sell and Delete, and a Wyrdstone-named one keeps its icon. Add resource takes a name
- * only.
+ * on the right, the line never wrapping. The campaign's default resource comes first, and its ⋮
+ * offers only Sell (the campaign names it, and it is never deleted); the rest keep Rename, Sell and
+ * Delete. No resource wears an icon (William, 23 Nov 2026: "Stop giving the wyrdstone resource the
+ * icon"). Add resource takes a name only.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -45,7 +45,7 @@ const renderResources = (canEdit = true) =>
   );
 
 describe("WarbandResources", () => {
-  it("lists the default resource first, with no icon", () => {
+  it("lists the default resource first, and gives none an icon", () => {
     renderResources(false);
 
     const names = within(screen.getByRole("region", { name: "Resources" }))
@@ -54,7 +54,7 @@ describe("WarbandResources", () => {
     expect(names).toEqual(["Warpstone", "Amber", "Wyrdstone shards"]);
     const label = (name: string) => screen.getByText(name).parentElement;
     expect(label("Warpstone")?.querySelector("svg")).toBeNull();
-    expect(label("Wyrdstone shards")?.querySelector("svg")).not.toBeNull();
+    expect(label("Wyrdstone shards")?.querySelector("svg")).toBeNull();
   });
 
   it("heads the section and keeps Add resource out of the resources", () => {

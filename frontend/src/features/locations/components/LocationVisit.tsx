@@ -5,6 +5,7 @@ import { Chip } from "@/components/ui/chip";
 import { unitName } from "@/features/warbands/components/roster/unit-view";
 import type { WarbandHero } from "@/features/warbands/types/warband-types";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { cn } from "@/lib/utils";
 
 import { useLocationVisit } from "../api/location-queries";
 import { firstPick, outsideRange } from "../hero-picks";
@@ -65,11 +66,17 @@ export default function LocationVisit({
         {heroes.map((hero) => {
           const spent = location.takes_trading_action && hero.trading_action === false;
           return (
-            <Chip key={hero.id} pressed={picked.includes(hero.id)} onClick={() => toggle(hero.id)}>
+            // a spent trading action reads at a glance, struck through and faded, not as a word
+            // (William, 23 Nov 2026); it can still go, and the server warns
+            <Chip
+              key={hero.id}
+              pressed={picked.includes(hero.id)}
+              onClick={() => toggle(hero.id)}
+              title={spent ? "Trading action spent" : undefined}
+              aria-description={spent ? "Trading action spent" : undefined}
+              className={cn(spent && "border-dashed opacity-55 line-through")}
+            >
               {unitName(hero)}
-              {spent ? (
-                <span className="text-[11px] font-normal text-muted-foreground">spent</span>
-              ) : null}
             </Chip>
           );
         })}

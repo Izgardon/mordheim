@@ -1,7 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { EllipsisVertical, Minus, Plus } from "lucide-react";
 
-import { GameIcon } from "@/components/ui/game-icons";
 import { IconButton } from "@/components/ui/icon-button";
 
 import type { WarbandResource } from "../../types/warband-types";
@@ -42,9 +41,6 @@ export default function ResourceRow({
       ].join(" ")}
     >
       <span className="flex min-w-0 items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
-        {!isDefault && /wyrd/i.test(name) ? (
-          <GameIcon name="wyrdstone" className="h-3.5 w-3.5 shrink-0 text-good" />
-        ) : null}
         <span className="truncate">{name}</span>
       </span>
       <span className="flex shrink-0 items-center gap-1.5">

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ReferenceList, ReferenceRow } from "@/features/reference/ReferenceList";
 
-import { locationCount, locationSub } from "../location-filter";
+import { locationCount } from "../location-filter";
 import type { CampaignLocation, LocationGroup } from "../types";
 import LocationDetail, { type VisitFrom } from "./LocationDetail";
 
@@ -73,45 +73,49 @@ export default function LocationGroupRow({
           </div>
         ) : null}
         {group.locations.length ? (
-          <ReferenceList isEmpty={false}>
-            {group.locations.map((place) => (
-              <ReferenceRow
-                key={place.id}
-                id={`l${place.id}`}
-                open={isOpen(place.id)}
-                onToggle={() => onToggleLocation(place.id)}
-                name={place.name}
-                sub={locationSub(place)}
-              >
-                <LocationDetail
-                  campaignId={campaignId}
-                  location={place}
-                  visit={visit}
-                  actions={
-                    manage ? (
-                      <>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => manage.editLocation(place)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-danger"
-                          onClick={() => manage.removeLocation(place)}
-                        >
-                          Remove
-                        </Button>
-                      </>
-                    ) : null
-                  }
-                />
-              </ReferenceRow>
-            ))}
-          </ReferenceList>
+          // edge to edge in the group (William, 23 Nov 2026: "full width of container as they have
+          // a lot of text")
+          <div className="-mx-3">
+            <ReferenceList isEmpty={false}>
+              {group.locations.map((place) => (
+                <ReferenceRow
+                  key={place.id}
+                  id={`l${place.id}`}
+                  open={isOpen(place.id)}
+                  onToggle={() => onToggleLocation(place.id)}
+                  name={place.name}
+                  sub={place.heroes_text}
+                >
+                  <LocationDetail
+                    campaignId={campaignId}
+                    location={place}
+                    visit={visit}
+                    actions={
+                      manage ? (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => manage.editLocation(place)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-danger"
+                            onClick={() => manage.removeLocation(place)}
+                          >
+                            Remove
+                          </Button>
+                        </>
+                      ) : null
+                    }
+                  />
+                </ReferenceRow>
+              ))}
+            </ReferenceList>
+          </div>
         ) : null}
       </div>
     </ReferenceRow>

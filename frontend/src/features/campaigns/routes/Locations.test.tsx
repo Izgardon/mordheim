@@ -59,7 +59,9 @@ describe("The Locations page", () => {
     expect(screen.getByText("Tunnels under the Pit.")).toBeInTheDocument();
     expect(screen.getByText("Skaven warbands only.")).toBeInTheDocument();
     const row = screen.getByRole("button", { name: /Altar of the Horned Rat/ });
-    expect(row).toHaveTextContent("1 hero · Trading action");
+    // the trading action is the rules' to say, not the row's (William, 23 Nov 2026)
+    expect(row).toHaveTextContent("1 hero");
+    expect(row).not.toHaveTextContent("Trading action");
 
     await user.click(row);
     expect(screen.getByText("Pay 10 gc and roll a D6.")).toBeInTheDocument();
