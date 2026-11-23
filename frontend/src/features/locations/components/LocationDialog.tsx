@@ -106,7 +106,7 @@ export default function LocationDialog({
     <Dialog open={editing !== undefined} onOpenChange={(next) => !next && discard.close()}>
       <DialogContent className="max-w-[860px]">
         <DialogHeader>
-          <DialogKicker>Locations</DialogKicker>
+          <DialogKicker>Trade Locations</DialogKicker>
           <DialogTitle>{location ? "Edit the location" : "Add a location"}</DialogTitle>
         </DialogHeader>
         <LocationFields value={form} onChange={setForm} groups={groups} charts={charts} />

@@ -19,9 +19,9 @@ type LocationsPanelProps = {
 };
 
 /**
- * The warband page's Locations panel: the campaign's location groups to read, and Visit to send
+ * The warband page's Trade Locations panel: the campaign's location groups to read, and Visit to send
  * your heroes. It never edits them (William, 7 Nov 2026: "shouldn't be able to edit locations in
- * the location sidebar within warband"); Go to page opens the campaign's Locations page, where
+ * the location sidebar within warband"); Go to page opens the campaign's Trade Locations page, where
  * those with `manage_locations` add, edit and remove them.
  */
 export default function LocationsPanel(props: LocationsPanelProps) {
@@ -34,7 +34,7 @@ export default function LocationsPanel(props: LocationsPanelProps) {
       open={props.open}
       onOpenChange={props.onOpenChange}
       kicker="Campaign"
-      title="Locations"
+      title="Trade Locations"
     >
       <Button asChild variant="secondary" className="self-start">
         <Link to={`/campaigns/${campaignId}/locations`}>Go to page</Link>

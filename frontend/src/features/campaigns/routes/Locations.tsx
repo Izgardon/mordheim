@@ -8,10 +8,11 @@ import { campaignCapabilities } from "../capabilities";
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
 /**
- * The campaign's Locations page (`/campaigns/:id/locations`, the nav's Locations): its location
- * groups, each opening to its locations (William, 23 Nov 2026). Those with `manage_locations` add,
- * edit and remove them here; every member reads them. The warband page's Locations panel sends
- * heroes. `?place=` opens it searched for that location (Search everything's links).
+ * The campaign's Trade Locations page (`/campaigns/:id/locations`, the nav's Trade Locations): its
+ * location groups, each opening to its locations (William, 23 Nov 2026). Those with
+ * `manage_locations` add, edit and remove them here; every member reads them. The warband page's
+ * Trade Locations panel sends heroes. `?place=` opens it searched for that location (Search
+ * everything's links).
  */
 export default function Locations() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
@@ -28,7 +29,7 @@ export default function Locations() {
             Campaign
           </span>
           <h1 className="m-0 font-display text-[40px] font-semibold leading-tight text-head">
-            Locations
+            Trade Locations
           </h1>
         </header>
       )}
@@ -40,7 +41,7 @@ export default function Locations() {
         />
       ) : (
         <p className="m-0 border border-border bg-surface px-4 py-5 text-sm text-text2">
-          Locations are switched off for this campaign.
+          Trade Locations are switched off for this campaign.
         </p>
       )}
     </div>

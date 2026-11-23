@@ -75,7 +75,7 @@ export default function LocationGroupDialog({
     <Dialog open={group !== undefined} onOpenChange={(next) => !next && onClose()}>
       <DialogContent className="max-w-[560px]">
         <DialogHeader>
-          <DialogKicker>Locations</DialogKicker>
+          <DialogKicker>Trade Locations</DialogKicker>
           <DialogTitle>{group ? "Edit the group" : "Add a group"}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">

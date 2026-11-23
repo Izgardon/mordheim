@@ -49,9 +49,9 @@ const SEARCH_PATH = "search";
 export const BATTLES_ICON = Swords;
 
 /**
- * "My warband": the warband, the Encampment page and the campaign's Locations page (William, 7 Nov
- * 2026: "clicking locations in nav takes you there"), the last two when the campaign has them
- * switched on.
+ * "My warband": the warband, the Encampment page and the campaign's Trade Locations page (William,
+ * 7 Nov 2026: "clicking locations in nav takes you there"; named Trade Locations on 23 Nov), the
+ * last two when the campaign has them switched on.
  */
 export function warbandLinks(campaign: CampaignNavFlags): NavLink[] {
   return [
@@ -59,7 +59,9 @@ export function warbandLinks(campaign: CampaignNavFlags): NavLink[] {
     ...(campaign.enable_encampments
       ? [{ label: "Encampment", path: "encampments", icon: Tent }]
       : []),
-    ...(campaign.enable_locations ? [{ label: "Locations", path: "locations", icon: Map }] : []),
+    ...(campaign.enable_locations
+      ? [{ label: "Trade Locations", path: "locations", icon: Map }]
+      : []),
   ];
 }
 
@@ -67,7 +69,7 @@ const SECTION_TITLES: Record<string, string> = {
   warband: "Warband",
   warbands: "Warband",
   encampments: "Encampment",
-  locations: "Locations",
+  locations: "Trade Locations",
   settings: "Settings",
   account: "Account",
   battles: "Battle",
