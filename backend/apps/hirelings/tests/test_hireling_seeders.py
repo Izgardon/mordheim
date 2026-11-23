@@ -285,7 +285,7 @@ class HirelingSeederTests(TestCase):
 
         output = run("seed_dramatis_personae")
 
-        self.assertIn("Created: 56, updated: 0.", output)
+        self.assertIn("Created: 61, updated: 0.", output)  # the Marienburg Annual's five among them
         aenur = DramatisPersona.objects.get(name="Aenur, the Sword of Twilight")
         self.assertEqual((aenur.hire_fee["gold"], aenur.stays, aenur.weapon_skill), (150, "one_battle", 8))
         self.assertFalse(aenur.for_everyone)

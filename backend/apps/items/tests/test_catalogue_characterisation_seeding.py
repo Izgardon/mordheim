@@ -99,7 +99,7 @@ class SeedAllTests(TestCase):
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 572,  # the import's 530 (one per name, the Marienburg Annual's nine (eight new Strength and Combat skills and Resilience (Annual)), Relics of the Crusades' ten Holy skills and its Smith (Academic), Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 42 hired swords' own skills the book lacks (the Runesmith's Rune Use and Durable are his rules, William, 21 Nov 2026), 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 142,  # the import's 111 (Athel Loren's three, Relics of the Crusades' Holy) + a group of his own for each of 27 hired swords, 9 of them broheim's hireling sections'
-                "Spell": 425,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026)
+                "Spell": 426,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026); Slave Master Haggard's Combustion (the Marienburg Annual, 23 Nov 2026)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -142,8 +142,9 @@ class SeedAllTests(TestCase):
                 # the three Arabian tribes are one template with a variant each (13 Nov 2026): 4 rows fewer
                 # the Runesmith's Rune Use and Durable are his rules, not special skills (21 Nov 2026): 2 more
                 # the Alchemist's Potion Recipes rule is a lore now (21 Nov 2026): 1 fewer
-                # the Marienburg Annual's eight hired swords' own rules (23 Nov 2026): 32 more
-                "Special": 1989,
+                # the Marienburg Annual's eight hired swords' own rules (23 Nov 2026): 32 more, and its five
+                # dramatis personae's 26
+                "Special": 2015,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -159,9 +160,10 @@ class SeedAllTests(TestCase):
                 # the Cardinal of Contagion, whose stats William confirmed (13 Nov 2026), makes the fan-made trees 9
                 # the Marienburg Annual's three and its five Workin' Boyz (William, 23 Nov 2026)
                 "HiredSword": 133,
-                # mordheimer's 30 and our own 26 (apps/hirelings/data/dramatis-personae.json: Karak Azgal 5,
-                # Sartosa 5, Albion 2, Khemri 1, the fan-made trees 13), through the catalogue import
-                "DramatisPersona": 56,
+                # mordheimer's 30 and our own 31 (apps/hirelings/data/dramatis-personae.json: Karak Azgal 5,
+                # Sartosa 5, Albion 2, Khemri 1, the fan-made trees 13, the Marienburg Annual 5), through the
+                # catalogue import
+                "DramatisPersona": 61,
                 "WarbandTemplate": 149,  # mordheimer's New Warband Format pages (Tileans (old) left out), the PDFs' (the first seven grade 3 warbands and Athel Loren's four among them) and the two web pages'; the Arabian Tribes serve all three tribes
             },
         )
@@ -341,7 +343,7 @@ class SeedAllTests(TestCase):
                     114,
                     0,
                     13,
-                    9,
+                    10,
                     28,
                 ),  # fighters, upgrades, hired swords, dramatis personae, beasts (13 of the East, 12 Marienburg's)
                 "Stupidity": (11, 0, 0, 0, 4),  # Marienburg's Troll and Chaos Troll
@@ -349,9 +351,9 @@ class SeedAllTests(TestCase):
                     66,
                     0,
                     4,
-                    7,
+                    8,
                     1,
-                ),  # Marienburg's Cultists of Chaos, the Annual's two Chaos swords
+                ),  # Marienburg's Cultists of Chaos, the Annual's two Chaos swords and Oxyotl
                 "Immune to Poison": (63, 0, 4, 5, 8),
                 "Hideous": (
                     0,
@@ -965,6 +967,12 @@ class SeedAllTests(TestCase):
         # the Marienburg Annual's eight sit in its setting; its Sneaky Git is "any warband except" five
         annual = HiredSword.objects.filter(campaign_type__slug="marienburg-annual")
         self.assertEqual(annual.count(), 8)
+        # and its five dramatis personae, Haggard's spells read in the lore each names (Lifestealer is four lores')
+        self.assertEqual(DramatisPersona.objects.filter(campaign_type__slug="marienburg-annual").count(), 5)
+        haggard = DramatisPersona.objects.get(name__startswith="Slave Master Haggard")
+        lores = dict(haggard.spell_links.values_list("spell__name", "spell__type"))
+        self.assertEqual((lores["Lifestealer"], lores["Lava Flow"]), ("Necromancy", "Rituals of Hashut"))
+        self.assertEqual(lores["Combustion"], f"Dramatis Persona - {haggard.name}")
         git = annual.get(name="Hobgoblin Sneaky Git")
         self.assertEqual((git.for_everyone, git.warband_links.filter(excluded=True).count()), (True, 5))
         self.assertEqual(set(annual.get(name="Chaos Berserker").skill_links.values_list("skill__name", flat=True)), {"Ambidextrous", "Pit Fighter", "Mighty Blow", "Step Aside"})  # fmt: skip
