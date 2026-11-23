@@ -200,3 +200,25 @@ class PresetSeederTests(TestCase):
         for bad in ("Wyrdstone", [""], [3]):
             with self.assertRaises(CommandError):
                 self.seed({"slug": "m", "name": MARIENBURG, "resources": bad})
+
+    # several rules files, and its own wording of book skills (William, 23 Nov 2026: MiM + Annual)
+
+    def test_a_preset_reads_several_rules_files_in_order(self) -> None:
+        rules = {"mim": [{"title": "Cargo", "text": "Crates."}], "annual": [{"title": "Flying", "text": "Wings."}]}
+        self.seed({"slug": "m", "name": MARIENBURG, "rules": ["mim", "annual"]}, rules=rules)
+        titles = list(CampaignPresetRule.objects.filter(preset__slug="m").values_list("title", flat=True))
+        self.assertEqual(titles, ["Cargo", "Flying"])
+
+    def test_two_files_holding_the_same_title_stop_the_run(self) -> None:
+        rules = {"mim": [{"title": "Cargo", "text": "Crates."}], "annual": [{"title": "cargo", "text": "Again."}]}
+        with self.assertRaises(CommandError):
+            self.seed({"slug": "m", "name": MARIENBURG, "rules": ["mim", "annual"]}, rules=rules)
+
+    def test_a_preset_seeds_its_skill_wordings(self) -> None:
+        wording = {"skill": "Mighty Blow", "description": "+1 Strength with any hammer or mace."}
+        self.seed({"slug": "m", "name": MARIENBURG, "skill_wordings": [wording]})
+        self.assertEqual(CampaignPreset.objects.get(slug="m").skill_wordings, [wording])
+
+    def test_a_skill_wording_without_a_description_stops_the_run(self) -> None:
+        with self.assertRaises(CommandError):
+            self.seed({"slug": "m", "name": MARIENBURG, "skill_wordings": [{"skill": "Mighty Blow"}]})

@@ -56,6 +56,9 @@ class CampaignPreset(models.Model):
     # others are counters every warband is given and may not delete (Marienburg's Wyrdstone)
     main_resource = models.CharField(max_length=120, blank=True, default="")
     resources = models.JSONField(default=list, blank=True)
+    # its own wording of book skills, [{"skill": name, "description": text}]: a campaign taking it up gets its version
+    # of each, as though someone had edited it there (William, 23 Nov 2026, of the Annual's errata Mighty Blow)
+    skill_wordings = models.JSONField(default=list, blank=True)
 
     class Meta:
         db_table = "campaign_preset"

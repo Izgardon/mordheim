@@ -6,6 +6,7 @@ from apps.campaign_presets.models import CampaignPreset
 from apps.campaign_presets.services.resources import other_resources
 from apps.campaigns.models import CampaignSettings
 from apps.campaigns.tests.campaign_support import CampaignTestCase, book_warband_type
+from apps.skills.models import Skill
 from apps.warbands.models import Warband, WarbandResource
 
 
@@ -104,3 +105,56 @@ class PresetResourceTests(CampaignTestCase):
         self.assertEqual(CampaignSettings.objects.get(campaign=self.campaign).default_resource_name, "Wyrdstone")
         self.assertEqual(other_resources(self.mordheim), [])
         self.assertFalse(WarbandResource.objects.filter(warband__campaign=self.campaign, fixed=True).exists())
+
+
+class PresetSkillWordingTests(CampaignTestCase):
+    """William, 23 Nov 2026, of the Marienburg Annual's errata Mighty Blow: "Can it edit Mighty Blow for that campaign
+    setting as if a human edited it"."""
+
+    annual: CampaignPreset
+    book: Skill
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+        cls.book = Skill.objects.create(name="Mighty Blow", description="+1 Strength in close combat.")
+        cls.annual = CampaignPreset.objects.create(
+            slug="mim-annual",
+            name="Mutiny in Marienburg + Annual",
+            skill_wordings=[
+                {"skill": "Mighty Blow", "description": "+1 Strength with any hammer or mace."},
+                {"skill": "No Such Skill", "description": "Passed over."},
+            ],
+        )
+
+    def version_of(self, campaign_id: int) -> Skill | None:
+        return Skill.objects.filter(campaign_id=campaign_id, replaces=self.book).first()
+
+    def test_taking_the_preset_up_makes_the_campaigns_version_and_leaves_the_book(self) -> None:
+        response = self.patch_as(self.owner, self.url(), {"preset_id": self.annual.pk})
+        self.assertEqual(response.status_code, 200, response.data)
+
+        version = self.version_of(self.campaign.pk)
+        self.assertIsNotNone(version)
+        assert version is not None
+        self.assertEqual((version.name, version.description), ("Mighty Blow", "+1 Strength with any hammer or mace."))
+        self.book.refresh_from_db()
+        self.assertEqual(self.book.description, "+1 Strength in close combat.")
+
+    def test_a_campaign_created_with_it_has_the_version_from_the_start(self) -> None:
+        created = self.post_as(
+            self.owner, "/api/campaigns/", {"name": "Annual", "max_players": 4, "preset_id": self.annual.pk}
+        )
+        self.assertEqual(created.status_code, 201, created.data)
+        self.assertIsNotNone(self.version_of(created.data["id"]))
+
+    def test_a_version_the_campaign_already_has_is_its_own_and_stays(self) -> None:
+        Skill.objects.create(
+            name="Mighty Blow", description="House wording.", campaign=self.campaign, replaces=self.book
+        )
+
+        self.patch_as(self.owner, self.url(), {"preset_id": self.annual.pk})
+
+        version = self.version_of(self.campaign.pk)
+        assert version is not None
+        self.assertEqual(version.description, "House wording.")

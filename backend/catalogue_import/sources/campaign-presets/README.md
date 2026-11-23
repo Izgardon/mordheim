@@ -20,7 +20,8 @@ field in from another preset or from the app's defaults: silence is data.
 | `hero_death_roll` | `d66` or `d100`. |
 | `main_resource` | What every warband's default resource is called (Treasure in Marienburg); left out, the campaign names it (Wyrdstone unless changed). |
 | `resources` | Other counters every warband is given and may not delete or rename, by name (Marienburg's `["Wyrdstone"]`). |
-| `rules` | A file in `sources/campaign-rules/` (without `.json`) holding the campaign's rules, battle rules and charts — see below. Leave it out for a campaign whose rules we have not written yet. |
+| `skill_wordings` | Its own wording of book skills, `[{"skill", "description"}]`: a campaign taking the preset up gets its version of each, as though edited there (Revert takes it back); one it already has a version of is left alone. |
+| `rules` | A file in `sources/campaign-rules/` (without `.json`) holding the campaign's rules, battle rules and charts — see below — or a list of them, read in order (Mutiny in Marienburg + Annual: Marienburg's file, then the Annual's on top; no title may repeat across them). Leave it out for a campaign whose rules we have not written yet. |
 
 A preset naming a setting, a chart or a rules file we do not hold is **skipped with a warning** and never seeded
 half-built. A preset the folder drops is left where it is, because a campaign may have picked it.

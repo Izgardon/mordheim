@@ -43,6 +43,7 @@ KEYS = frozenset(
         "rules",
         "main_resource",
         "resources",
+        "skill_wordings",
         *FLAGS,
     }
 )
@@ -191,6 +192,35 @@ def _flags(entry: Mapping[str, Any], label: str) -> dict[str, bool | None]:
     return values
 
 
+def _rule_files(entry: Mapping[str, Any], label: str) -> list[str]:
+    """The rules files it names: one name, or a list read in order; none for a campaign we hold no rules of."""
+    named = entry.get("rules")
+    if named is None or named == "":
+        return []
+    names = named if isinstance(named, list) else [named]
+    if not all(isinstance(one, str) and one.strip() for one in names):
+        raise CommandError(f"{label}: rules should name a file, or a list of files.")
+    return [one.strip() for one in names]
+
+
+def _unique(titles: list[str], label: str, what: str) -> None:
+    """Two of its files must not hold the same title: both are copied into the same campaign."""
+    lowered = [title.lower() for title in titles]
+    if len(set(lowered)) != len(lowered):
+        raise CommandError(f"{label}: its {what} files hold two of the same title.")
+
+
+def _skill_wordings(entry: Mapping[str, Any], label: str) -> list[dict[str, str]]:
+    """Its own wording of book skills, each {"skill", "description"}; matched by name when a campaign takes it up."""
+    rows = entry.get("skill_wordings") or []
+    wordings = []
+    for row in rows if isinstance(rows, list) else [None]:
+        if not isinstance(row, dict) or not clean(row.get("skill")) or not clean(row.get("description")):
+            raise CommandError(f"{label}: each skill wording needs a skill and a description.")
+        wordings.append({"skill": clean(row.get("skill")), "description": clean(row.get("description"))})
+    return wordings
+
+
 def _resources(entry: Mapping[str, Any], label: str) -> dict[str, Any]:
     """Its main resource (blank: it says nothing) and the others every warband is given, each a name."""
     others = entry.get("resources") or []
@@ -238,10 +268,13 @@ def write_preset(
     slug, name = clean(entry.get("slug")), clean(entry.get("name"))
     if not slug or not name:
         raise CommandError(f"A campaign preset needs a slug and a name: {entry.get('slug') or entry.get('name')}")
-    # everything the preset names is found before anything is written, so a skipped preset leaves no half-built row
-    named = clean(entry.get("rules"))
-    rules = read_rules(named, name, rule_folder) if named else []
-    preset_charts = read_charts(named, name, rule_folder) if named else []
+    # everything the preset names is found before anything is written, so a skipped preset leaves no half-built row;
+    # its rules may come from several files, in order (Marienburg's, then the Annual's on top)
+    named = _rule_files(entry, name)
+    rules = [rule for one in named for rule in read_rules(one, name, rule_folder)]
+    preset_charts = [chart for one in named for chart in read_charts(one, name, rule_folder)]
+    _unique([rule["title"] for rule in rules], name, "rules")
+    _unique([chart["title"] for chart in preset_charts], name, "charts")
     setting_ids = _setting_ids(entry, name, settings)
     defaults: dict[str, Any] = {
         "name": name,
@@ -250,6 +283,7 @@ def write_preset(
         "max_heroes": None if entry.get("max_heroes") is None else parse_int(entry.get("max_heroes")),
         "hero_death_roll": _death_roll(entry, name),
         **_resources(entry, name),
+        "skill_wordings": _skill_wordings(entry, name),
         **_flags(entry, name),
     }
     preset, _created = CampaignPreset.objects.update_or_create(slug=slug, defaults=defaults)

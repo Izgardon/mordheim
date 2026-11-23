@@ -10,6 +10,7 @@ from django.db import transaction
 from apps.campaign_presets.services import apply as presets_apply
 from apps.campaign_presets.services import charts as preset_charts
 from apps.campaign_presets.services import rules as preset_rules
+from apps.campaign_presets.services.skill_wordings import apply_skill_wordings
 from apps.exploration.selectors import book_chart_id
 from apps.plots.writes import give_default_plots
 
@@ -80,6 +81,7 @@ def create_campaign(owner: Any, validated: dict[str, Any]) -> Campaign:
             give_default_plots(campaign.pk)
         preset_rules.copy_rules(campaign, preset)
         preset_charts.copy_charts(campaign, preset)
+        apply_skill_wordings(campaign.pk, preset)  # its own wording of book skills (the Annual's Mighty Blow)
         CampaignMembership.objects.create(campaign=campaign, user=owner, role_id=codes.role_ref(OWNER))
     return campaign
 
