@@ -11,14 +11,12 @@ trading action is spent.
 from collections.abc import Mapping
 from typing import Any
 
-from django.utils import timezone
-
 from apps.items.models import Item
 from apps.warbands.models import Hero, Warband, on_roster
 
 from . import economy_log
+from .trading_action import spend_trading_action, spent_warning
 
-TRADING_ACTION_SPENT = "trading_action_spent"
 RARITY_ROLL_FAILED = "rarity_roll_failed"
 NO_HERO = "No hero"
 
@@ -34,10 +32,7 @@ def _spend_searcher(warband: Warband, hero_id: int) -> tuple[str, list[dict[str,
     if hero is None:
         raise RollRefused("Not a hero on this warband's roster.")
     name = hero.name or f"Hero {hero.id}"
-    if heroes.filter(trading_action=True).update(trading_action=False, updated_at=timezone.now()):
-        return name, []
-    message = f"{name} already used their trading action this round."
-    return name, [{"code": TRADING_ACTION_SPENT, "message": message, "hero_id": hero.id}]
+    return name, [] if spend_trading_action(heroes) else [spent_warning(hero)]
 
 
 def record_roll(warband: Warband, item: Item, roll: Mapping[str, Any]) -> list[dict[str, Any]]:

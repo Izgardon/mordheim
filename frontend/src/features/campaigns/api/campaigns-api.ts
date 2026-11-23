@@ -13,8 +13,6 @@ import type {
   CampaignEncampmentPayload,
   CampaignActiveBattle,
   CampaignJoinPayload,
-  CampaignLocation,
-  CampaignLocationPayload,
   CampaignMember,
   CampaignMessage,
   CampaignPermission,
@@ -132,37 +130,6 @@ export function updateCampaignEncampment(
   return apiRequest<CampaignEncampment>(`/campaigns/${campaignId}/encampments/${encampmentId}/`, {
     method: "PATCH",
     body: payload,
-  });
-}
-
-export function listCampaignLocations(campaignId: number) {
-  return apiRequest<CampaignLocation[]>(`/campaigns/${campaignId}/locations/`, {
-    method: "GET",
-  });
-}
-
-export function createCampaignLocation(campaignId: number, payload: CampaignLocationPayload) {
-  return apiRequest<CampaignLocation>(`/campaigns/${campaignId}/locations/`, {
-    method: "POST",
-    body: payload,
-  });
-}
-
-export function updateCampaignLocation(
-  campaignId: number,
-  locationId: number,
-  payload: Partial<CampaignLocationPayload>
-) {
-  return apiRequest<CampaignLocation>(`/campaigns/${campaignId}/locations/${locationId}/`, {
-    method: "PATCH",
-    body: payload,
-  });
-}
-
-/** Soft-deletes a location (manage_locations); it leaves the list for everyone. */
-export function deleteCampaignLocation(campaignId: number, locationId: number) {
-  return apiRequest<void>(`/campaigns/${campaignId}/locations/${locationId}/`, {
-    method: "DELETE",
   });
 }
 

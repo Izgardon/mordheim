@@ -19,12 +19,8 @@ def missing_charts(campaign_id: int, preset: CampaignPreset | None) -> list[Camp
         title.strip().lower()
         for title in CampaignChart.objects.filter(campaign_id=campaign_id).values_list("title", flat=True)
     }
-    # a chart belonging to a rule or a result rides with its owner, never on its own (rules.py)
-    return [
-        chart
-        for chart in preset.charts.all()
-        if chart.rule_id is None and chart.row_id is None and chart.title.strip().lower() not in held
-    ]
+    # a chart belonging to a rule, a result or a location rides with its owner, never on its own (rules.py)
+    return [chart for chart in preset.charts.all() if chart.is_standalone and chart.title.strip().lower() not in held]
 
 
 def copy_charts(campaign: Campaign, preset: CampaignPreset | None) -> int:
@@ -53,11 +49,11 @@ def copy_charts(campaign: Campaign, preset: CampaignPreset | None) -> int:
         for copy, chart in zip(written, charts, strict=True)
         for index, row in enumerate(chart.rows.all())
     )
-    _copy_row_tables(campaign, sources, rows)
+    copy_row_tables(campaign, sources, rows)
     return len(charts)
 
 
-def _copy_row_tables(campaign: Campaign, sources: list, rows: list[CampaignChartRow]) -> None:
+def copy_row_tables(campaign: Campaign, sources: list, rows: list[CampaignChartRow]) -> None:
     """The tables hanging off single results, copied onto the results they were written for (Border Town Burning's
     Curious bloom under Perilous phenomenon). Two INSERTs, and none at all where no result holds one."""
     pairs = [(copy, table) for copy, row in zip(rows, sources, strict=True) for table in row.charts.all()[:1]]

@@ -124,6 +124,7 @@ describe("log formatters, by feature", () => {
         "trading_action:rarity roll",
         "trading_action:custom_dice_roll",
         "dice_roll:dice_roll",
+        "location:visit",
         "personnel:serious_injury",
         "personnel:stats_kept",
         "personnel:new_hireling",
@@ -167,6 +168,18 @@ describe("log formatters, by feature", () => {
     const expected = "Wolves rolled 3, 4 (D6) = 7 (Wyrdstone)";
     expect(textOf(log("dice_roll", "dice_roll", roll))).toBe(expected);
     expect(textOf(log("trading_action", "custom_dice_roll", roll))).toBe(expected);
+  });
+
+  it("say which heroes visited a location", () => {
+    const visit = {
+      location: "the Bog",
+      heroes: ["Aldric", "Bruno", "Carl"],
+      trading_action: true,
+    };
+    expect(textOf(log("location", "visit", visit))).toBe("Aldric, Bruno and Carl visited the Bog");
+    expect(textOf(log("location", "visit", { location: "the Pit", heroes: ["Ana"] }))).toBe(
+      "Ana visited the Pit"
+    );
   });
 
   it("say who joined or left, and how a battle went", () => {

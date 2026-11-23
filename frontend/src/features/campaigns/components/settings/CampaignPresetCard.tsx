@@ -10,11 +10,11 @@ import { useCampaignSave } from "./CampaignSection";
 import { setsLine } from "./campaign-preset";
 import { SettingRow, SettingsCard } from "./settings-ui";
 
-/** "55 rules and 14 charts", leaving out whichever the preset has none of. */
+/** "55 rules and 14 tables", leaving out whichever the preset has none of. */
 function countWords(rules: number, charts: number) {
   const parts = [
     rules ? `${rules} ${rules === 1 ? "rule" : "rules"}` : "",
-    charts ? `${charts} ${charts === 1 ? "chart" : "charts"}` : "",
+    charts ? `${charts} ${charts === 1 ? "table" : "tables"}` : "",
   ].filter(Boolean);
   return parts.join(" and ");
 }
@@ -68,11 +68,15 @@ export default function CampaignPresetCard({ campaign }: { campaign: CampaignSum
     if (!changing) return;
     if (await save({ preset_id: changing.id })) {
       setChanging(null);
-      // what it dictates moved: this card, the chart the post-game explores by and its plots
+      // what it dictates moved: this card, the chart the post-game explores by and its plots; and
+      // the swap changed its rules, tables and locations
       for (const key of [
         queryKeys.campaign.preset(campaign.id),
         queryKeys.campaign.explorationChart(campaign.id),
         queryKeys.campaign.plots(campaign.id),
+        queryKeys.campaign.campaignRules(campaign.id),
+        queryKeys.campaign.campaignCharts(campaign.id),
+        queryKeys.campaign.locations(campaign.id),
       ]) {
         void queryClient.invalidateQueries({ queryKey: key });
       }

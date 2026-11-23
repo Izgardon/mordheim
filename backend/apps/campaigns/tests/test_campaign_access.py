@@ -25,6 +25,7 @@ from apps.campaigns.models import (
     CampaignEncampment,
     CampaignHouseRule,
     CampaignLocation,
+    CampaignLocationGroup,
     CampaignMessage,
     CampaignRule,
 )
@@ -55,8 +56,11 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("POST", "encampments/", {"name": "Camp"}, (201, 201, 201, 201)),  # any member (decision 9)
     ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}, (403, 200, 200, 200)),  # nobody's: manage_encampments
     ("DELETE", "encampments/{camp}/", None, (403, 204, 204, 204)),
-    ("GET", "locations/", None, OK_ALL),
-    ("POST", "locations/", {"name": "Ruin"}, (403, 201, 201, 201)),
+    ("GET", "location-groups/", None, OK_ALL),
+    ("POST", "location-groups/", {"name": "Docks"}, (403, 201, 201, 201)),
+    ("PATCH", "location-groups/{place_group}/", {"name": "Docks 2"}, (403, 200, 200, 200)),
+    ("DELETE", "location-groups/{place_group}/", None, (403, 204, 204, 204)),
+    ("POST", "locations/", {"group_id": "{place_group}", "name": "Ruin"}, (403, 201, 201, 201)),
     ("PATCH", "locations/{place}/", {"name": "Ruin 2"}, (403, 200, 200, 200)),
     ("DELETE", "locations/{place}/", None, (403, 204, 204, 204)),
     ("GET", "members/", None, (403, 403, 200, 200)),
@@ -107,7 +111,7 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "manage_rules": ("POST", "rules/", {"title": "No running"}),
     "manage_warbands": ("PATCH", "/api/warbands/{rival_warband}/", {"name": "Rats"}),
     "manage_encampments": ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}),  # an encampment nobody owns
-    "manage_locations": ("POST", "locations/", {"name": "Ruin"}),
+    "manage_locations": ("POST", "location-groups/", {"name": "Docks"}),
     "manage_battles": ("POST", "active-battles/{battle}/cancel/", {}),
 }
 
@@ -137,6 +141,7 @@ class CampaignAccessFixture(CampaignTestCase):
         battle = Battle.objects.create(
             campaign=campaign, created_by_user=cls.player, scenario="Ford", status=Battle.STATUS_INVITING
         )
+        place_group = CampaignLocationGroup.objects.create(campaign=campaign, name="Old Town")
         cls.refs = {
             "campaign": campaign.id,
             "rival": cls.rival.id,
@@ -145,7 +150,8 @@ class CampaignAccessFixture(CampaignTestCase):
             "battle": battle.id,
             "message": CampaignMessage.objects.create(campaign=campaign, user=cls.rival, username="Rex", body="Hi").id,
             "camp": CampaignEncampment.objects.create(campaign=campaign, name="Old Camp").id,
-            "place": CampaignLocation.objects.create(campaign=campaign, name="Old Ruin").id,
+            "place_group": place_group.id,
+            "place": CampaignLocation.objects.create(campaign=campaign, group=place_group, name="Old Ruin").id,
             "rule": CampaignHouseRule.objects.create(campaign=campaign, title="Old rule").id,
             "campaign_rule": CampaignRule.objects.create(campaign=campaign, title="Old ruling").id,
             "item": Item.objects.create(campaign=campaign, name="Lucky Charm", type="Miscellaneous").id,
@@ -196,7 +202,7 @@ class AccessMatrixTests(CampaignAccessFixture):
 
     def test_switched_off_pages_are_404_for_every_member(self):
         self.enable_features(encampments=False, locations=False)
-        rows = [row for row in MATRIX if row[1].startswith(("encampments/", "locations/"))]
+        rows = [row for row in MATRIX if row[1].startswith(("encampments/", "locations/", "location-groups/"))]
         for method, template, body, _expected in rows:
             for actor in MEMBERS:
                 with self.subTest(route=f"{method} {template}", actor=actor):

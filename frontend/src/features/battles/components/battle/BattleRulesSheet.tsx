@@ -103,7 +103,7 @@ export default function BattleRulesSheet({
     charts.length
       ? {
           id: CHARTS,
-          label: "Charts",
+          label: "Tables",
           panel: (
             <div className="flex flex-col gap-5">
               {charts.map((chart) => (

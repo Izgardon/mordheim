@@ -1,4 +1,4 @@
-"""Campaign content: encampments, locations and house rules."""
+"""Campaign content: encampments and house rules."""
 
 from rest_framework import status
 from rest_framework.exceptions import NotFound
@@ -11,10 +11,8 @@ from ..serializers.content import (
     CampaignEncampmentWriteSerializer,
     CampaignHouseRuleCreateSerializer,
     CampaignHouseRuleSerializer,
-    CampaignLocationSerializer,
-    CampaignLocationWriteSerializer,
 )
-from ..services import encampments, house_rules, locations
+from ..services import encampments, house_rules
 from .base import CampaignScopedView
 
 
@@ -68,44 +66,6 @@ class CampaignEncampmentDetailView(CampaignScopedView):
             raise NotFound("Not found")
         self.check_rule("edit_encampment", entry)
         return entry
-
-
-class CampaignLocationsView(CampaignScopedView):
-    """GET: the locations. POST: add one (manage_locations). Both need the Locations page switched on."""
-
-    feature_flag = "enable_locations"
-    rules = {"GET": "view", "POST": "manage_locations"}
-
-    def get(self, request, campaign_id):
-        return Response(CampaignLocationSerializer(locations.locations(campaign_id), many=True).data)
-
-    def post(self, request, campaign_id):
-        serializer = CampaignLocationWriteSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        entry = locations.create(campaign_id, serializer.validated_data)
-        return Response(CampaignLocationSerializer(entry).data, status=status.HTTP_201_CREATED)
-
-
-class CampaignLocationDetailView(CampaignScopedView):
-    """PATCH: edit a location. DELETE: remove it (a soft delete). Both manage_locations, with the page switched on."""
-
-    feature_flag = "enable_locations"
-    rules = {"PATCH": "manage_locations", "DELETE": "manage_locations"}
-
-    def patch(self, request, campaign_id, location_id):
-        entry = locations.locations(campaign_id).filter(id=location_id).first()
-        if not entry:
-            return not_found()
-        serializer = CampaignLocationWriteSerializer(entry, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        return Response(CampaignLocationSerializer(locations.update(entry, serializer.validated_data)).data)
-
-    def delete(self, request, campaign_id, location_id):
-        entry = locations.locations(campaign_id).filter(id=location_id).first()
-        if not entry:
-            return not_found()
-        locations.remove(entry, request.user)
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CampaignHouseRulesView(CampaignScopedView):

@@ -7,6 +7,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { Item, ItemRule } from "@/features/items/types/item-types";
+import type { LocationGroup } from "@/features/locations/types";
 import type { Skill, SkillGroup } from "@/features/skills/types/skill-types";
 import { referenceSpecials } from "@/features/special/boons-banes";
 import type { Special } from "@/features/special/types/special-types";
@@ -35,7 +36,7 @@ const nothing: SearchSources = {
   houseRules: [],
   campaignRules: [],
   campaignCharts: [],
-  locations: [],
+  locationGroups: [],
   campaign: undefined,
   myWarbandId: null,
 };
@@ -132,7 +133,7 @@ describe("Search everything's campaign rules and charts", () => {
     const groups = searchEverything("mutiny", { ...nothing, campaignCharts });
 
     expect(groups[0].hits.map((hit) => [hit.title, hit.meta, hit.to])).toEqual([
-      ["Seaside Situations", "Chart · D66", "campaign-rules?open=c9"],
+      ["Seaside Situations", "Table · D66", "campaign-rules?open=c9"],
     ]);
   });
 });
@@ -352,24 +353,34 @@ describe("Search everything's wargear rules and skill groups", () => {
 });
 
 describe("Search everything's locations", () => {
-  it("open the Locations page searched for the location", () => {
-    const locations = [
+  it("finds a location by its name or rules, under its group, linking to the page searched for it", () => {
+    const locationGroups: LocationGroup[] = [
       {
-        id: 4,
+        id: 2,
         campaign_id: 1,
-        name: "Sigmar's Haven",
-        area: "Old Town",
-        content: "A shrine.",
-        d6_1: "",
-        d6_2: "",
-        d6_3: "",
-        d6_4: "",
-        d6_5: "",
-        d6_6: "",
+        name: "Old Town",
+        description: "",
+        restrictions: "",
+        order: 0,
+        locations: [
+          {
+            id: 3,
+            group_id: 2,
+            name: "Sigmar's Haven",
+            rules: "A shrine.",
+            min_heroes: 1,
+            max_heroes: 1,
+            heroes_text: "1 hero",
+            takes_trading_action: false,
+            order: 0,
+            tables: [],
+            charts: [],
+          },
+        ],
       },
     ];
 
-    const [found] = searchEverything("haven", { ...nothing, locations });
+    const [found] = searchEverything("haven", { ...nothing, locationGroups });
 
     expect([found.label, found.hits.map((hit) => [hit.title, hit.meta, hit.to])]).toEqual([
       "Locations",

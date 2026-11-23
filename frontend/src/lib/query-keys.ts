@@ -62,7 +62,7 @@ export const queryKeys = {
     /** Open battles a battle manager can act on (Settings → Active Battles, manage_battles). */
     activeBattles: (campaignId: number) => ["campaign", campaignId, "battles", "active"] as const,
     encampments: (campaignId: number) => ["campaign", campaignId, "encampments"] as const,
-    /** The campaign's locations (the warband page's panel, settings, Search everything). */
+    /** The campaign's location groups with their locations (the page, the warband's panel, Search everything). */
     locations: (campaignId: number) => ["campaign", campaignId, "locations"] as const,
     /** The resources its warbands hold, by name (a fee's resource picker; the server's list). */
     resources: (campaignId: number) => ["campaign", campaignId, "resources"] as const,

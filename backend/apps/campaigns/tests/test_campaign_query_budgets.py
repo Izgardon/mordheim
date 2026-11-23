@@ -17,6 +17,7 @@ from apps.campaigns.models import (
     CampaignEncampment,
     CampaignHouseRule,
     CampaignLocation,
+    CampaignLocationGroup,
     CampaignMembership,
     CampaignMessage,
     CampaignRole,
@@ -43,7 +44,8 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
     "permissions": ("player", "permissions/", 1),  # served from the constants (BUG-15)
     "messages": ("player", "messages/", 2),
     "encampments": ("player", "encampments/", 2),  # the feature flag comes with the membership
-    "locations": ("player", "locations/", 2),
+    # the groups, their locations, those's own tables, the tables' results and their tables, and the links
+    "location groups": ("player", "location-groups/", 8),
     "house rules": ("player", "rules/", 2),
     # the rules, their own tables and those tables' results: three, whatever the campaign holds
     "campaign rules": ("player", "campaign-rules/", 3),
@@ -64,10 +66,11 @@ class CampaignQueryBudgetTests(CampaignTestCase):
         campaign = cls.campaign
         campaign.settings.enable_encampments = campaign.settings.enable_locations = True
         campaign.settings.save()
+        group = CampaignLocationGroup.objects.create(campaign=campaign, name="Old Town")
         for user in (cls.player, cls.rival):
             CampaignMessage.objects.create(campaign=campaign, user=user, username=user.first_name, body="Hi")
             CampaignEncampment.objects.create(campaign=campaign, name=f"Camp {user.first_name}", owner=user)
-            CampaignLocation.objects.create(campaign=campaign, name=f"Ruin {user.first_name}")
+            CampaignLocation.objects.create(campaign=campaign, group=group, name=f"Ruin {user.first_name}")
         CampaignHouseRule.objects.create(campaign=campaign, title="No running")
         CampaignRule.objects.create(campaign=campaign, title="Curfew")
         Hero.objects.create(warband=cls.warband, name="Abbess", unit_type="Matriarch", kills=3)

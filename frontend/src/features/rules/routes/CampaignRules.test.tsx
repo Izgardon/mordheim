@@ -116,7 +116,7 @@ describe("The Campaign rules page", () => {
     fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("player"));
     renderApp(PAGE);
 
-    for (const title of ["Campaign rules", "Battle rules", "Charts"]) {
+    for (const title of ["Campaign rules", "Battle rules", "Tables"]) {
       expect(await screen.findByRole("heading", { level: 2, name: title })).toBeInTheDocument();
     }
     // the battle rules sharing an umbrella are one row, named by it
@@ -168,7 +168,7 @@ describe("The Campaign rules page", () => {
     renderApp(PAGE);
 
     const search = await screen.findByLabelText(
-      "Search the campaign rules, battle rules and charts"
+      "Search the campaign rules, battle rules and tables"
     );
     await user.type(search, "squall");
 
@@ -198,7 +198,7 @@ describe("The Campaign rules page", () => {
     renderApp(PAGE);
 
     const search = await screen.findByLabelText(
-      "Search the campaign rules, battle rules and charts"
+      "Search the campaign rules, battle rules and tables"
     );
     await user.type(search, "squig");
 
@@ -281,12 +281,12 @@ describe("The Campaign rules page", () => {
     const user = setupUser();
     renderApp(PAGE);
 
-    await user.click(await screen.findByRole("button", { name: "Add chart" }));
-    const dialog = await screen.findByRole("dialog", { name: "Add a chart" });
+    await user.click(await screen.findByRole("button", { name: "Add table" }));
+    const dialog = await screen.findByRole("dialog", { name: "Add a table" });
     await user.type(within(dialog).getByLabelText("Title"), "Spring weather");
     await user.type(within(dialog).getByLabelText("Result 1 roll"), "1-2");
     await user.type(within(dialog).getByLabelText("Result 1 name"), "Clear");
-    await user.click(within(dialog).getByRole("button", { name: "Add chart" }));
+    await user.click(within(dialog).getByRole("button", { name: "Add table" }));
 
     await waitFor(() =>
       expect(fakeApi.bodyOf(`POST ${CHARTS}`)).toEqual({
@@ -319,6 +319,6 @@ describe("The Campaign rules page", () => {
     expect(heading.previousElementSibling).toHaveTextContent(/^Rules$/);
     expect(await screen.findByText("No campaign rules yet.")).toBeInTheDocument();
     expect(screen.getByText("No battle rules yet.")).toBeInTheDocument();
-    expect(screen.getByText("No charts yet.")).toBeInTheDocument();
+    expect(screen.getByText("No tables yet.")).toBeInTheDocument();
   });
 });

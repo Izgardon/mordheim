@@ -9,21 +9,11 @@ from typing import Any
 
 from apps.warbands.models import Hero, WarbandItem, on_roster
 from apps.warbands.services.summary import warband_gold
+from apps.warbands.services.trading_action import spent_warning
 
 from .errors import TradeError
 
-TRADER_SPENT = "trading_action_spent"  # the same code purchases use for a spent searcher
 TradeWarning = dict[str, Any]  # {"code", "message", ...}: answered to the player who acted, never broadcast
-
-
-def trader_spent_warning(hero: Hero) -> TradeWarning:
-    """The warning for a trader who already used their trading action this round."""
-    name = hero.name or f"Hero {hero.id}"
-    return {
-        "code": TRADER_SPENT,
-        "message": f"{name} already used their trading action this round.",
-        "hero_id": hero.id,
-    }
 
 
 def _whole(value: Any) -> int | None:
@@ -95,7 +85,7 @@ def build_offer(payload: Any, warband_id: int) -> tuple[dict[str, Any], list[Tra
         if hero is None:  # missing, dead or dismissed: refused, that's data, not a game rule (BUG-109)
             raise TradeError("Trader not found.")
         if not hero.trading_action:  # traded this round: warn and allow (decision 9)
-            warnings.append(trader_spent_warning(hero))
+            warnings.append(spent_warning(hero))
         trader_name = hero.name or f"Hero {hero.id}"
     gold = offer_gold(data)
     if gold > max(warband_gold(warband_id), 0):

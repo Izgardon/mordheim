@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { useCampaignLocations } from "@/features/campaigns/api/campaign-queries";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
+import { useLocationGroups } from "@/features/locations/api/location-queries";
 import { inPlayOnly } from "@/features/reference/in-play";
 import { referenceSpecials } from "@/features/special/boons-banes";
 import {
@@ -46,7 +46,7 @@ export function useSearchSources(
   const campaignRules = useCampaignRules(campaignId);
   const campaignCharts = useCampaignCharts(campaignId);
   const withLocations = Boolean(campaign?.enable_locations);
-  const locations = useCampaignLocations(campaignId, { enabled: withLocations });
+  const locations = useLocationGroups(campaignId, { enabled: withLocations });
   const mine = useQuery(myWarbandQuery(campaignId));
   const server = useCampaignSearch(campaignId, settled);
 
@@ -66,7 +66,7 @@ export function useSearchSources(
       houseRules: houseRules.data ?? [],
       campaignRules: campaignRules.data ?? [],
       campaignCharts: campaignCharts.data ?? [],
-      locations: withLocations ? (locations.data ?? []) : [],
+      locationGroups: withLocations ? (locations.data ?? []) : [],
       campaign: server.data,
       myWarbandId: mine.data?.id ?? null,
     }),

@@ -27,7 +27,7 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(
                 f"Campaign presets import complete. Presets: {result.presets}, rules: {result.rules}, "
-                f"charts: {result.charts}, "
+                f"charts: {result.charts}, locations: {result.locations}, "
                 f"skipped: {len(result.skipped)}"
             )
         )

@@ -1,13 +1,13 @@
-"""Encampments and locations (decision 9; CAMP-UX-03).
+"""Encampments (decision 9; CAMP-UX-03).
 
-Both pages sit behind a settings flag (404 while it's off). Encampments (decision 9, CAMP-TWEAK-08): any member adds
+The page sits behind a settings flag (404 while it's off). Encampments (decision 9, CAMP-TWEAK-08): any member adds
 one, owned by himself unless he picks another member; its owner or `manage_encampments` edits, reassigns and removes it
-(a soft delete). Locations: writes need `manage_locations`, and removing one is a soft delete (next step 7b).
+(a soft delete). Locations are test_campaign_locations.py.
 """
 
 from typing import Any
 
-from apps.campaigns.models import CampaignEncampment, CampaignLocation
+from apps.campaigns.models import CampaignEncampment
 
 from .campaign_support import CampaignTestCase
 
@@ -117,61 +117,3 @@ class EncampmentTests(CampaignTestCase):
         elsewhere = CampaignEncampment.objects.create(campaign=self.elsewhere, name="Foreign")
         self.enable_features()
         self.assertEqual(self.edit(self.owner, elsewhere.id, name="Mine").status_code, 404)
-
-
-class LocationTests(CampaignTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.enable_features()
-
-    def add(self, user: Any, **body: Any) -> Any:
-        return self.post_as(user, self.url("locations/"), {"name": "River Quarter", **body})
-
-    def test_writes_need_manage_locations_and_a_removal_is_soft(self):
-        self.assertEqual(self.add(self.player).status_code, 403)
-        location = self.add(self.admin).data
-        url = self.url(f"locations/{location['id']}/")
-        self.assertEqual(self.patch_as(self.player, url, {"d6_1": "Ambush"}).status_code, 403)
-        self.assertEqual(self.delete_as(self.player, url).status_code, 403)
-        self.assertEqual(self.get_as(self.player, self.url("locations/")).status_code, 200)
-
-        self.grant(self.player, "manage_locations")
-
-        self.assertEqual(self.patch_as(self.player, url, {"d6_1": "Ambush"}).data["d6_1"], "Ambush")
-        # next step 7b: settings' Locations section removes one; it leaves the list but the row stays
-        self.assertEqual(self.delete_as(self.player, url).status_code, 204)
-        self.assertEqual(self.get_as(self.player, self.url("locations/")).data, [])
-        self.assertEqual(self.patch_as(self.owner, url, {"name": "Back"}).status_code, 404)
-        self.assertEqual(self.delete_as(self.owner, url).status_code, 404)
-        removed = CampaignLocation.objects.get(id=location["id"])
-        self.assertEqual(removed.removed_by_id, self.player.id)
-
-    def test_a_location_has_an_optional_area_trimmed_and_editable(self):
-        plain = self.add(self.owner).data
-        docks = self.add(self.owner, name="Wharf", area="  The Docks ").data
-        url = self.url(f"locations/{plain['id']}/")
-
-        self.assertEqual((plain["area"], docks["area"]), ("", "The Docks"))
-        self.assertEqual(self.patch_as(self.owner, url, {"area": "Merchant Quarter"}).data["area"], "Merchant Quarter")
-        listed = {row["name"]: row["area"] for row in self.get_as(self.player, self.url("locations/")).data}
-        self.assertEqual(listed, {"River Quarter": "Merchant Quarter", "Wharf": "The Docks"})
-
-    def test_content_is_sanitised_and_rolls_are_kept_as_typed(self):
-        response = self.add(
-            self.owner, content="<p>Main text</p><script>alert(1)</script>", d6_6="<strong>Secret route</strong>"
-        )
-
-        self.assertEqual(response.status_code, 201)
-        self.assertIn("<p>Main text</p>", response.data["content"])
-        self.assertNotIn("<script", response.data["content"])
-        self.assertEqual(response.data["d6_6"], "<strong>Secret route</strong>")  # rendered as text (LocationsTable)
-
-    def test_the_page_answers_404_while_it_is_off(self):
-        location = CampaignLocation.objects.create(campaign=self.campaign, name="River Quarter")
-        self.enable_features(locations=False)
-
-        self.assertEqual(self.get_as(self.owner, self.url("locations/")).status_code, 404)
-        self.assertEqual(self.add(self.owner).status_code, 404)
-        self.assertEqual(
-            self.patch_as(self.owner, self.url(f"locations/{location.id}/"), {"name": "X"}).status_code, 404
-        )

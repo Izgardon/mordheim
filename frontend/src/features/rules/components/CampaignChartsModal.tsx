@@ -19,7 +19,7 @@ export default function CampaignChartsModal({
     <ModalSheet
       open={row !== null}
       onOpenChange={(open) => !open && onClose()}
-      kicker="Charts"
+      kicker="Tables"
       title={row?.name ?? ""}
       className="max-w-[720px]"
       closeButton

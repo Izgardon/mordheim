@@ -1,8 +1,9 @@
-"""The rest of a lived-in campaign, each through its own endpoint: the map (locations with their areas and D6
-tables), the encampments, a house rule, the chat, the bounties (one paid, one still open), a completed trade, a
+"""The rest of a lived-in campaign, each through its own endpoint: the map (two groups of locations, one with a
+table of its own), the encampments, a house rule, the chat, the bounties (one paid, one still open), a completed trade, a
 reported result approved by the other player, and optionally a battle left in pre-battle."""
 
 from datetime import timedelta
+from typing import Any
 
 from django.utils import timezone
 
@@ -14,10 +15,35 @@ from .battles import Battle
 from .plans import BattlePlan
 from .raising import Demo
 
-LOCATIONS = (
-    ("The Merchants' Quarter", "East Bank", "Burnt-out shops, and cellars nobody has looted yet.", "A purse: D6 gc"),
-    ("The Pit", "Old Town", "The comet's crater. Wyrdstone glitters in the ash.", "A shard of wyrdstone"),
-    ("Sigmar's Haven", "West Bank", "The last temple standing, ringed by beggars and zealots.", "A blessing: re-roll"),
+RUBBLE: dict[str, Any] = {
+    "title": "Rummaging",
+    "dice": "D6",
+    "rows": [{"result": "1-5", "text": "Nothing but rubble."}],
+}
+Place = tuple[str, str, int, int | str, bool, list[dict[str, Any]]]
+LOCATION_GROUPS: tuple[tuple[str, str, str, tuple[Place, ...]], ...] = (
+    (
+        "The East Bank",
+        "Burnt-out shops and the merchants' cellars.",
+        "",
+        (
+            (
+                "The Merchants' Quarter",
+                "Cellars nobody has looted yet. Roll a D6.",
+                1,
+                1,
+                True,
+                [{**RUBBLE, "rows": [*RUBBLE["rows"], {"result": "6", "name": "A purse", "text": "D6 gc."}]}],
+            ),
+            ("Sigmar's Haven", "The last temple standing. A hero may pray for a re-roll.", 1, "all", False, []),
+        ),
+    ),
+    (
+        "The Old Town",
+        "The comet's crater and the streets round it.",
+        "Only warbands that have fought a battle.",
+        (("The Pit", "Wyrdstone glitters in the ash. 2 heroes go together.", 2, 2, True, []),),
+    ),
 )
 ENCAMPMENTS = (
     ("cap", "The Eagle's Roost", "A watchtower on the city wall, its stair barricaded."),
@@ -35,9 +61,12 @@ CHAT = (
 def setting_the_scene(api: Api, demo: Demo) -> None:
     """The owner's map, encampments and house rule, and the players' first chat."""
     owner, base = demo.users["cap"], f"campaigns/{demo.campaign_id}/"
-    for name, area, content, roll in LOCATIONS:
-        rolls = {f"d6_{face}": roll if face == 6 else "Nothing but rubble" for face in range(1, 7)}
-        api.post(owner, f"{base}locations/", {"name": name, "area": area, "content": content, **rolls})
+    for group_name, description, restrictions, places in LOCATION_GROUPS:
+        group = {"name": group_name, "description": description, "restrictions": restrictions}
+        group_id = api.post(owner, f"{base}location-groups/", group)["id"]
+        for name, rules, least, most, trading, tables in places:
+            body = {"group_id": group_id, "name": name, "rules": rules, "min_heroes": least, "max_heroes": most}
+            api.post(owner, f"{base}locations/", body | {"takes_trading_action": trading, "tables": tables})
     for player, name, description in ENCAMPMENTS:
         body = {"name": name, "owner_id": demo.users[player].id, "description": description}
         api.post(owner, f"{base}encampments/", body)

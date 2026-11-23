@@ -19,11 +19,11 @@ from .content import (
     MOMENT_UNIT_KINDS,
     CampaignEncampment,
     CampaignHouseRule,
-    CampaignLocation,
     CampaignMessage,
     CampaignRule,
     PivotalMoment,
 )
+from .locations import MAX_LOCATION_RULES_TEXT, CampaignLocation, CampaignLocationChart, CampaignLocationGroup
 
 __all__ = [
     "CAMPAIGN_RULE_KINDS",
@@ -34,6 +34,7 @@ __all__ = [
     "GRADE_LABELS",
     "HERO_DEATH_ROLL_CHOICES",
     "MAX_CAMPAIGN_RULE_TEXT",
+    "MAX_LOCATION_RULES_TEXT",
     "MOMENT_UNIT_KINDS",
     "ROLE_SLUGS",
     "Campaign",
@@ -43,6 +44,8 @@ __all__ = [
     "CampaignEncampment",
     "CampaignHouseRule",
     "CampaignLocation",
+    "CampaignLocationChart",
+    "CampaignLocationGroup",
     "CampaignMembership",
     "CampaignMembershipPermission",
     "CampaignMessage",

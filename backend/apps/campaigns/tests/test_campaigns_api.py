@@ -7,7 +7,6 @@ from rest_framework.test import APIClient, APITestCase
 from apps.battles.models import Battle, BattleEvent, BattleKill, BattleParticipant
 from apps.campaigns.models import (
     CampaignEncampment,
-    CampaignLocation,
     CampaignMembership,
     CampaignMembershipPermission,
     CampaignPermission,
@@ -979,96 +978,6 @@ class CampaignApiTests(APITestCase):
 
         self._grant_campaign_permission(campaign["id"], player, "manage_encampments")
         self.assertEqual(self.client.patch(nobodys_url, {"name": "Mine"}, format="json").status_code, 200)
-
-    def test_location_create_list_and_patch_flow(self):
-        owner = self._create_user("owner@example.com", "Owner")
-        campaign = self._create_campaign(owner, pages=True)
-
-        self.client.force_authenticate(user=owner)
-        create_response = self.client.post(
-            f"/api/campaigns/{campaign['id']}/locations/",
-            {
-                "name": "River Quarter",
-                "content": "<p>Main district text.</p>",
-                "d6_1": "Collapsed bridge",
-                "d6_6": "<strong>Secret route</strong>",
-            },
-            format="json",
-        )
-        self.assertEqual(create_response.status_code, 201)
-        self.assertEqual(create_response.data["content"], "<p>Main district text.</p>")
-        self.assertEqual(create_response.data["d6_1"], "Collapsed bridge")
-        self.assertEqual(create_response.data["d6_6"], "<strong>Secret route</strong>")
-
-        list_response = self.client.get(f"/api/campaigns/{campaign['id']}/locations/")
-        self.assertEqual(list_response.status_code, 200)
-        self.assertEqual(len(list_response.data), 1)
-        self.assertEqual(list_response.data[0]["id"], create_response.data["id"])
-
-        patch_response = self.client.patch(
-            f"/api/campaigns/{campaign['id']}/locations/{create_response.data['id']}/",
-            {"d6_2": "Canal ambush", "content": "<p>Updated text.</p>"},
-            format="json",
-        )
-        self.assertEqual(patch_response.status_code, 200)
-        self.assertEqual(patch_response.data["d6_2"], "Canal ambush")
-        self.assertEqual(patch_response.data["content"], "<p>Updated text.</p>")
-
-        location = CampaignLocation.objects.get(id=create_response.data["id"])
-        self.assertEqual(location.d6_2, "Canal ambush")
-        self.assertEqual(location.content, "<p>Updated text.</p>")
-
-        other_campaign = self._create_campaign(owner, name="Other Locations", pages=True)
-        other_location = CampaignLocation.objects.create(campaign_id=other_campaign["id"], name="Elsewhere")
-        wrong_patch_response = self.client.patch(
-            f"/api/campaigns/{campaign['id']}/locations/{other_location.id}/",
-            {"name": "Nope"},
-            format="json",
-        )
-        self.assertEqual(wrong_patch_response.status_code, 404)
-
-    def test_location_endpoints_require_feature_and_write_permission(self):
-        owner = self._create_user("owner@example.com", "Owner")
-        standard_campaign = self._create_campaign(owner)
-
-        self.client.force_authenticate(user=owner)
-        disabled_list_response = self.client.get(f"/api/campaigns/{standard_campaign['id']}/locations/")
-        self.assertEqual(disabled_list_response.status_code, 404)
-        disabled_create_response = self.client.post(
-            f"/api/campaigns/{standard_campaign['id']}/locations/",
-            {"name": "Not Yet"},
-            format="json",
-        )
-        self.assertEqual(disabled_create_response.status_code, 404)
-
-        campaign = self._create_campaign(owner, name="Enabled Locations", pages=True)
-        player = self._create_user("player@example.com", "Player")
-        self.client.force_authenticate(user=player)
-        join_response = self.client.post(
-            "/api/campaigns/join/",
-            {"join_code": campaign["join_code"]},
-            format="json",
-        )
-        self.assertEqual(join_response.status_code, 201)
-
-        list_response = self.client.get(f"/api/campaigns/{campaign['id']}/locations/")
-        self.assertEqual(list_response.status_code, 200)
-
-        forbidden_create_response = self.client.post(
-            f"/api/campaigns/{campaign['id']}/locations/",
-            {"name": "Player Location"},
-            format="json",
-        )
-        self.assertEqual(forbidden_create_response.status_code, 403)
-
-        self._grant_campaign_permission(campaign["id"], player, "manage_locations")
-        allowed_create_response = self.client.post(
-            f"/api/campaigns/{campaign['id']}/locations/",
-            {"name": "Player Location", "d6_3": "Lucky find"},
-            format="json",
-        )
-        self.assertEqual(allowed_create_response.status_code, 201)
-        self.assertEqual(allowed_create_response.data["d6_3"], "Lucky find")
 
     def test_member_permissions_require_admin_or_owner(self):
         owner = self._create_user("owner@example.com", "Owner")

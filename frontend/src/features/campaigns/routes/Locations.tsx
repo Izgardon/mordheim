@@ -1,6 +1,6 @@
 import { useOutletContext, useSearchParams } from "react-router-dom";
 
-import LocationsList from "@/features/warbands/components/panels/LocationsList";
+import LocationTree from "@/features/locations/components/LocationTree";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 
@@ -8,12 +8,10 @@ import { campaignCapabilities } from "../capabilities";
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
 /**
- * The campaign's Locations page (`/campaigns/:id/locations`, the nav's Locations): where those with
- * `manage_locations` add, edit and remove the locations (William, 7 Nov 2026: "shouldn't be able
- * to edit locations in the location sidebar within warband"); every member reads them here too,
- * two to a row on the web. The warband page's Locations panel rolls on them and sends heroes.
- * Shown while the campaign has Locations switched on. `?place=` opens it searched for that
- * location (Search everything's links).
+ * The campaign's Locations page (`/campaigns/:id/locations`, the nav's Locations): its location
+ * groups, each opening to its locations (William, 23 Nov 2026). Those with `manage_locations` add,
+ * edit and remove them here; every member reads them. The warband page's Locations panel sends
+ * heroes. `?place=` opens it searched for that location (Search everything's links).
  */
 export default function Locations() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
@@ -35,18 +33,11 @@ export default function Locations() {
         </header>
       )}
       {campaign.enable_locations ? (
-        <div className="flex w-full flex-col gap-3">
-          <LocationsList
-            campaignId={campaign.id}
-            warbandId={0}
-            heroes={[]}
-            canSend={false}
-            canManage={campaignCapabilities(campaign).manage_locations}
-            enabled
-            page
-            initialSearch={params.get("place") ?? undefined}
-          />
-        </div>
+        <LocationTree
+          campaignId={campaign.id}
+          canManage={campaignCapabilities(campaign).manage_locations}
+          initialSearch={params.get("place") ?? undefined}
+        />
       ) : (
         <p className="m-0 border border-border bg-surface px-4 py-5 text-sm text-text2">
           Locations are switched off for this campaign.

@@ -1,8 +1,7 @@
-"""House rules, campaign rules, encampments, locations and chat messages."""
+"""House rules, campaign rules, encampments and chat messages."""
 
 from rest_framework import serializers
 
-from apps.core.html import sanitize_rich_text
 from apps.users.names import display_name
 
 from ..access import CAMPAIGN_RULES
@@ -13,7 +12,6 @@ from ..models import (
     MAX_CAMPAIGN_RULE_TEXT,
     CampaignEncampment,
     CampaignHouseRule,
-    CampaignLocation,
     CampaignMembership,
     CampaignMessage,
     CampaignRule,
@@ -153,42 +151,6 @@ class CampaignEncampmentWriteSerializer(serializers.ModelSerializer):
         ):
             raise serializers.ValidationError("Owner must be a member of the campaign.")
         return value
-
-
-class CampaignLocationSerializer(serializers.ModelSerializer):
-    campaign_id = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = CampaignLocation
-        fields = ("id", "campaign_id", "name", "area", "content", "d6_1", "d6_2", "d6_3", "d6_4", "d6_5", "d6_6")
-
-
-class CampaignLocationWriteSerializer(serializers.ModelSerializer):
-    area = serializers.CharField(required=False, allow_blank=True, max_length=80)
-    content = serializers.CharField(required=False, allow_blank=True)
-    d6_1 = serializers.CharField(required=False, allow_blank=True)
-    d6_2 = serializers.CharField(required=False, allow_blank=True)
-    d6_3 = serializers.CharField(required=False, allow_blank=True)
-    d6_4 = serializers.CharField(required=False, allow_blank=True)
-    d6_5 = serializers.CharField(required=False, allow_blank=True)
-    d6_6 = serializers.CharField(required=False, allow_blank=True)
-
-    class Meta:
-        model = CampaignLocation
-        fields = ("name", "area", "content", "d6_1", "d6_2", "d6_3", "d6_4", "d6_5", "d6_6")
-
-    def validate_area(self, value):
-        return str(value or "").strip()
-
-    def validate_name(self, value):
-        cleaned = str(value or "").strip()
-        if not cleaned:
-            raise serializers.ValidationError("Name is required.")
-        return cleaned
-
-    def validate_content(self, value):
-        # Rendered as HTML for every campaign member, so it must never carry scripts.
-        return sanitize_rich_text(value)
 
 
 class RemovablePostSerializer(serializers.ModelSerializer):

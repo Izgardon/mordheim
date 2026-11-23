@@ -18,7 +18,11 @@ from .content import (
     CampaignEncampmentsView,
     CampaignHouseRuleDetailView,
     CampaignHouseRulesView,
+)
+from .locations import (
     CampaignLocationDetailView,
+    CampaignLocationGroupDetailView,
+    CampaignLocationGroupsView,
     CampaignLocationsView,
 )
 from .members import (
@@ -61,6 +65,8 @@ __all__ = [
     "CampaignLeaveView",
     "CampaignListCreateView",
     "CampaignLocationDetailView",
+    "CampaignLocationGroupDetailView",
+    "CampaignLocationGroupsView",
     "CampaignLocationsView",
     "CampaignMemberPermissionsView",
     "CampaignMemberRemovalPreviewView",
