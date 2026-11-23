@@ -2,7 +2,7 @@
  "rules": [
   {
    "title": "Da Waaagh",
-   "text": "Da Waaagh, the Marienburg Annual's plot for Greenskins, does not run like the other plots. Its warband gains and loses Campaign Points faster, and when its total drops below a rung it loses that rung's achievement until its total rises to it again, where the other plots keep an achievement once reached. Its Waagh level, which Da Camp's items and locations read, is the number of rungs it holds, not its total of points.\n\nAt 5 Campaign Points Da Camp opens: any Greenskin Hero, and no other, may visit it instead of searching for a rare item, and Da Prophet there gives the leader his first prophecy (the Da Prophecy charts). Each prophecy completed scores D3 Campaign Points.\n\nThe 40 rung is not a win by itself. It needs all six prophecies completed and full WAAAGH, and opens the special scenario Nice Day for a Waaagh Beheadin': winning it wins the campaign, and losing it costs the warband 2D6 Campaign Points.",
+   "text": "Da Waaagh, the Marienburg Annual's plot for Greenskins, does not run like the other plots. Its warband gains and loses Campaign Points faster, and when its total drops below a rung it loses that rung's achievement until its total rises to it again, where the other plots keep an achievement once reached. Its Waagh level, which Da Camp's items and locations read, is the number of rungs it holds, not its total of points.\n\nAt 5 Campaign Points Da Camp opens: any Greenskin Hero, and no other, may visit it instead of searching for a rare item, and Da Prophet there gives the leader his first prophecy (the tables at Da Prophet, in Da Camp). Each prophecy completed scores D3 Campaign Points.\n\nThe 40 rung is not a win by itself. It needs all six prophecies completed and full WAAAGH, and opens the special scenario Nice Day for a Waaagh Beheadin': winning it wins the campaign, and losing it costs the warband 2D6 Campaign Points.",
    "umbrella": "Campaign points and plots"
   },
   {
@@ -238,290 +238,6 @@
        }
       ]
      }
-    }
-   ]
-  },
-  {
-   "title": "Da Prophecy",
-   "description": "Da Prophet's prophecies for a warband following Da Waaagh: the first at 5 Campaign Points, each completed scoring D3.",
-   "dice": "2D6",
-   "note": "Re-roll a prophecy that can't be completed because that race or item isn't in the game. A Warboss who can't complete one after 3 games may go off alone to complete it in secret: he misses D3 games, swears on his return that he did it, and Da Prophet gives him his next.",
-   "umbrella": "Da Prophecy",
-   "rows": [
-    {
-     "result": "2",
-     "name": "I see ya riding on...",
-     "text": "Roll on the Animal? table. The leader must learn to ride the animal rolled, find one, and ride it into battle."
-    },
-    {
-     "result": "3",
-     "name": "I see ya holding dat magical thing",
-     "text": "Roll on a random magical artefact table. The leader must acquire and use the artefact rolled."
-    },
-    {
-     "result": "4",
-     "name": "You'se sittin in...'s 'ouse, eatin'...",
-     "text": "Roll on the What? table, then the Who? table, then the Animal? table. The leader must take the encampment of the warrior rolled and eat the animal rolled."
-    },
-    {
-     "result": "5",
-     "name": "I seez ya snackin on a...",
-     "text": "Roll on the Animal? table. The leader must eat the animal rolled."
-    },
-    {
-     "result": "6",
-     "name": "I see da boss standin' over da broken body of...",
-     "text": "Roll on the What? table, then the Who? table, then the How? table. The leader must defeat the warrior rolled in the way rolled, and has the skill Taunt until the prophecy is done."
-    },
-    {
-     "result": "7",
-     "name": "Da greatest Green won az emerged victorias",
-     "text": "Roll on the Who? table, then on a scenario table. Defeat the enemy rolled in the scenario rolled."
-    },
-    {
-     "result": "8",
-     "name": "Da one who will be Gork (or Mork) haz grabbed da...",
-     "text": "Roll on the What? table, then the Who? table, then the With? table. Capture the enemy rolled and do with him what was rolled."
-    },
-    {
-     "result": "9",
-     "name": "Da ... was in da most troubles until da best boss saved 'im",
-     "text": "Roll on the Who? table twice. Ally with the warband first rolled against the enemy second rolled."
-    },
-    {
-     "result": "10",
-     "name": "Youse with ya 5 most trusted boyz",
-     "text": "Roll on a scenario table. Win the scenario rolled with 6 Heroes alive."
-    },
-    {
-     "result": "11",
-     "name": "Its da boss, he's on da ground, taken a beatin",
-     "text": "Roll on the Who? table, then on a scenario table. Lose the scenario rolled against the enemy rolled, with the Warboss out of action."
-    },
-    {
-     "result": "12",
-     "name": "Nah you ain't the chosen one",
-     "text": "Roll on the serious injury chart at once until a result of 16-35 comes up. The prophecy is fulfilled as soon as the injury is taken."
-    }
-   ]
-  },
-  {
-   "title": "Da Prophecy: What?",
-   "description": "",
-   "dice": "D6",
-   "note": "",
-   "umbrella": "Da Prophecy",
-   "rows": [
-    {
-     "result": "1",
-     "name": "Da Strongest",
-     "text": "The highest Strength."
-    },
-    {
-     "result": "2",
-     "name": "Da Weakest",
-     "text": "The lowest Toughness."
-    },
-    {
-     "result": "3",
-     "name": "Da Biggest",
-     "text": "The most Wounds."
-    },
-    {
-     "result": "4",
-     "name": "Da Oliest",
-     "text": "A priest, or the most serious injuries."
-    },
-    {
-     "result": "5",
-     "name": "Da Grossest",
-     "text": "The most mutations."
-    },
-    {
-     "result": "6",
-     "name": "Burstin with Magics",
-     "text": "A spellcaster or an artefact holder."
-    }
-   ]
-  },
-  {
-   "title": "Da Prophecy: Who?",
-   "description": "",
-   "dice": "D6",
-   "note": "The book heads this table D6, but its results run from 2 to 12.",
-   "umbrella": "Da Prophecy",
-   "rows": [
-    {
-     "result": "2",
-     "name": "Da vision was blurry",
-     "text": "It could 'ave been anyone: any race."
-    },
-    {
-     "result": "3",
-     "name": "Tall and Pointy one",
-     "text": "An Elf."
-    },
-    {
-     "result": "4",
-     "name": "Stuntie",
-     "text": "A Dwarf or Halfling."
-    },
-    {
-     "result": "5",
-     "name": "Rat man",
-     "text": "Skaven."
-    },
-    {
-     "result": "6",
-     "name": "Beast thing",
-     "text": "Beastmen."
-    },
-    {
-     "result": "7",
-     "name": "A Dirty Humie",
-     "text": "Human."
-    },
-    {
-     "result": "8",
-     "name": "A Greenie",
-     "text": "Greenskin."
-    },
-    {
-     "result": "9",
-     "name": "Scaly Boyz",
-     "text": "Lizardmen."
-    },
-    {
-     "result": "10",
-     "name": "Taint'd thing",
-     "text": "Chaos."
-    },
-    {
-     "result": "11",
-     "name": "Somethin Big!",
-     "text": "Large."
-    },
-    {
-     "result": "12",
-     "name": "Somethin Weird",
-     "text": "Anything else: Fimir, Dryads, ghosts, undead and the like."
-    }
-   ]
-  },
-  {
-   "title": "Da Prophecy: How?",
-   "description": "",
-   "dice": "D6",
-   "note": "",
-   "umbrella": "Da Prophecy",
-   "rows": [
-    {
-     "result": "1",
-     "name": "One on One",
-     "text": ""
-    },
-    {
-     "result": "2",
-     "name": "With ya Bare Fistz!",
-     "text": ""
-    },
-    {
-     "result": "3",
-     "name": "Atop the tallest thing in the land",
-     "text": ""
-    },
-    {
-     "result": "4",
-     "name": "Under the Groundz",
-     "text": ""
-    },
-    {
-     "result": "5",
-     "name": "On a Burnin Boatz",
-     "text": ""
-    },
-    {
-     "result": "6",
-     "name": "In da Jungle",
-     "text": ""
-    }
-   ]
-  },
-  {
-   "title": "Da Prophecy: With?",
-   "description": "",
-   "dice": "D6",
-   "note": "",
-   "umbrella": "Da Prophecy",
-   "rows": [
-    {
-     "result": "1",
-     "name": "Eat",
-     "text": ""
-    },
-    {
-     "result": "2",
-     "name": "Let Go",
-     "text": ""
-    },
-    {
-     "result": "3",
-     "name": "Sell to slavers",
-     "text": ""
-    },
-    {
-     "result": "4",
-     "name": "Sell to necromancers",
-     "text": ""
-    },
-    {
-     "result": "5",
-     "name": "Fight in pit fight",
-     "text": ""
-    },
-    {
-     "result": "6",
-     "name": "Sacrifice to the bitz pile",
-     "text": "For D6 bitz."
-    }
-   ]
-  },
-  {
-   "title": "Da Prophecy: Animal?",
-   "description": "",
-   "dice": "D6",
-   "note": "The book heads this table D6 but prints no 6: its results are 1 to 5 and 7.",
-   "umbrella": "Da Prophecy",
-   "rows": [
-    {
-     "result": "1",
-     "name": "A Rat thing",
-     "text": "Roll on the Moulder Market chart."
-    },
-    {
-     "result": "2",
-     "name": "A Boring thing",
-     "text": "Roll on the speciality animals chart."
-    },
-    {
-     "result": "3",
-     "name": "A Fly'n thing",
-     "text": "Roll on the feathered friends chart."
-    },
-    {
-     "result": "4",
-     "name": "A lovely green thing",
-     "text": "Roll on the Greenskins animal chart."
-    },
-    {
-     "result": "5",
-     "name": "A jungle thing",
-     "text": "Roll on the Lustrian animal chart."
-    },
-    {
-     "result": "7",
-     "name": "Somethin random",
-     "text": "Roll on a random Seaside Situations monster chart."
     }
    ]
   }
@@ -939,6 +655,294 @@
          "result": "10 wins",
          "name": "",
          "text": "After 9 wins, the next challenge is two Mangler Squigs and two Trolls. A win pays a purse of 250 gold crowns and a further D3 experience; roll twice on the Custom Weapons chart and give him the weapon of his choice of the two."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Da Prophet",
+     "rules": "Da Prophet gives the leader of a warband following Da Waaagh its prophecies: the first when the warband reaches 5 Campaign Points, and the next once one is completed. Each prophecy completed scores D3 Campaign Points, and the 40 rung needs all six.\n\nRoll 2D6 on the Da Prophecy table, then fill in what it asks for from the What?, Who?, How?, With? and Animal? tables beside it.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": false,
+     "tables": [
+      {
+       "title": "Da Prophecy",
+       "description": "Da Prophet's prophecies for a warband following Da Waaagh: the first at 5 Campaign Points, each completed scoring D3.",
+       "dice": "2D6",
+       "note": "Re-roll a prophecy that can't be completed because that race or item isn't in the game. A Warboss who can't complete one after 3 games may go off alone to complete it in secret: he misses D3 games, swears on his return that he did it, and Da Prophet gives him his next.",
+       "rows": [
+        {
+         "result": "2",
+         "name": "I see ya riding on...",
+         "text": "Roll on the Animal? table. The leader must learn to ride the animal rolled, find one, and ride it into battle."
+        },
+        {
+         "result": "3",
+         "name": "I see ya holding dat magical thing",
+         "text": "Roll on a random magical artefact table. The leader must acquire and use the artefact rolled."
+        },
+        {
+         "result": "4",
+         "name": "You'se sittin in...'s 'ouse, eatin'...",
+         "text": "Roll on the What? table, then the Who? table, then the Animal? table. The leader must take the encampment of the warrior rolled and eat the animal rolled."
+        },
+        {
+         "result": "5",
+         "name": "I seez ya snackin on a...",
+         "text": "Roll on the Animal? table. The leader must eat the animal rolled."
+        },
+        {
+         "result": "6",
+         "name": "I see da boss standin' over da broken body of...",
+         "text": "Roll on the What? table, then the Who? table, then the How? table. The leader must defeat the warrior rolled in the way rolled, and has the skill Taunt until the prophecy is done."
+        },
+        {
+         "result": "7",
+         "name": "Da greatest Green won az emerged victorias",
+         "text": "Roll on the Who? table, then on a scenario table. Defeat the enemy rolled in the scenario rolled."
+        },
+        {
+         "result": "8",
+         "name": "Da one who will be Gork (or Mork) haz grabbed da...",
+         "text": "Roll on the What? table, then the Who? table, then the With? table. Capture the enemy rolled and do with him what was rolled."
+        },
+        {
+         "result": "9",
+         "name": "Da ... was in da most troubles until da best boss saved 'im",
+         "text": "Roll on the Who? table twice. Ally with the warband first rolled against the enemy second rolled."
+        },
+        {
+         "result": "10",
+         "name": "Youse with ya 5 most trusted boyz",
+         "text": "Roll on a scenario table. Win the scenario rolled with 6 Heroes alive."
+        },
+        {
+         "result": "11",
+         "name": "Its da boss, he's on da ground, taken a beatin",
+         "text": "Roll on the Who? table, then on a scenario table. Lose the scenario rolled against the enemy rolled, with the Warboss out of action."
+        },
+        {
+         "result": "12",
+         "name": "Nah you ain't the chosen one",
+         "text": "Roll on the serious injury chart at once until a result of 16-35 comes up. The prophecy is fulfilled as soon as the injury is taken."
+        }
+       ]
+      },
+      {
+       "title": "Da Prophecy: What?",
+       "description": "",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Da Strongest",
+         "text": "The highest Strength."
+        },
+        {
+         "result": "2",
+         "name": "Da Weakest",
+         "text": "The lowest Toughness."
+        },
+        {
+         "result": "3",
+         "name": "Da Biggest",
+         "text": "The most Wounds."
+        },
+        {
+         "result": "4",
+         "name": "Da Oliest",
+         "text": "A priest, or the most serious injuries."
+        },
+        {
+         "result": "5",
+         "name": "Da Grossest",
+         "text": "The most mutations."
+        },
+        {
+         "result": "6",
+         "name": "Burstin with Magics",
+         "text": "A spellcaster or an artefact holder."
+        }
+       ]
+      },
+      {
+       "title": "Da Prophecy: Who?",
+       "description": "",
+       "dice": "D6",
+       "note": "The book heads this table D6, but its results run from 2 to 12.",
+       "rows": [
+        {
+         "result": "2",
+         "name": "Da vision was blurry",
+         "text": "It could 'ave been anyone: any race."
+        },
+        {
+         "result": "3",
+         "name": "Tall and Pointy one",
+         "text": "An Elf."
+        },
+        {
+         "result": "4",
+         "name": "Stuntie",
+         "text": "A Dwarf or Halfling."
+        },
+        {
+         "result": "5",
+         "name": "Rat man",
+         "text": "Skaven."
+        },
+        {
+         "result": "6",
+         "name": "Beast thing",
+         "text": "Beastmen."
+        },
+        {
+         "result": "7",
+         "name": "A Dirty Humie",
+         "text": "Human."
+        },
+        {
+         "result": "8",
+         "name": "A Greenie",
+         "text": "Greenskin."
+        },
+        {
+         "result": "9",
+         "name": "Scaly Boyz",
+         "text": "Lizardmen."
+        },
+        {
+         "result": "10",
+         "name": "Taint'd thing",
+         "text": "Chaos."
+        },
+        {
+         "result": "11",
+         "name": "Somethin Big!",
+         "text": "Large."
+        },
+        {
+         "result": "12",
+         "name": "Somethin Weird",
+         "text": "Anything else: Fimir, Dryads, ghosts, undead and the like."
+        }
+       ]
+      },
+      {
+       "title": "Da Prophecy: How?",
+       "description": "",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "One on One",
+         "text": ""
+        },
+        {
+         "result": "2",
+         "name": "With ya Bare Fistz!",
+         "text": ""
+        },
+        {
+         "result": "3",
+         "name": "Atop the tallest thing in the land",
+         "text": ""
+        },
+        {
+         "result": "4",
+         "name": "Under the Groundz",
+         "text": ""
+        },
+        {
+         "result": "5",
+         "name": "On a Burnin Boatz",
+         "text": ""
+        },
+        {
+         "result": "6",
+         "name": "In da Jungle",
+         "text": ""
+        }
+       ]
+      },
+      {
+       "title": "Da Prophecy: With?",
+       "description": "",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Eat",
+         "text": ""
+        },
+        {
+         "result": "2",
+         "name": "Let Go",
+         "text": ""
+        },
+        {
+         "result": "3",
+         "name": "Sell to slavers",
+         "text": ""
+        },
+        {
+         "result": "4",
+         "name": "Sell to necromancers",
+         "text": ""
+        },
+        {
+         "result": "5",
+         "name": "Fight in pit fight",
+         "text": ""
+        },
+        {
+         "result": "6",
+         "name": "Sacrifice to the bitz pile",
+         "text": "For D6 bitz."
+        }
+       ]
+      },
+      {
+       "title": "Da Prophecy: Animal?",
+       "description": "",
+       "dice": "D6",
+       "note": "The book heads this table D6 but prints no 6: its results are 1 to 5 and 7.",
+       "rows": [
+        {
+         "result": "1",
+         "name": "A Rat thing",
+         "text": "Roll on the Moulder Market chart."
+        },
+        {
+         "result": "2",
+         "name": "A Boring thing",
+         "text": "Roll on the speciality animals chart."
+        },
+        {
+         "result": "3",
+         "name": "A Fly'n thing",
+         "text": "Roll on the feathered friends chart."
+        },
+        {
+         "result": "4",
+         "name": "A lovely green thing",
+         "text": "Roll on the Greenskins animal chart."
+        },
+        {
+         "result": "5",
+         "name": "A jungle thing",
+         "text": "Roll on the Lustrian animal chart."
+        },
+        {
+         "result": "7",
+         "name": "Somethin random",
+         "text": "Roll on a random Seaside Situations monster chart."
         }
        ]
       }
