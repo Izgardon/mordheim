@@ -1,0 +1,30 @@
+{
+  "slug": "mutiny-in-marienburg-annual",
+  "name": "Mutiny in Marienburg + Annual",
+  "sort_order": 13,
+  "settings": [
+    "Mutiny in Marienburg",
+    "Marienburg Annual"
+  ],
+  "exploration_chart": "mutiny-in-marienburg",
+  "enable_locations": true,
+  "enable_encampments": true,
+  "enable_campaign_points": true,
+  "enable_blood_pacts": true,
+  "max_heroes": 6,
+  "hero_death_roll": "d66",
+  "rules": [
+    "mutiny-in-marienburg",
+    "marienburg-annual"
+  ],
+  "main_resource": "Treasure",
+  "resources": [
+    "Wyrdstone"
+  ],
+  "skill_wordings": [
+    {
+      "skill": "Mighty Blow",
+      "description": "The warrior knows how to put his strength behind a heavy weapon: with any hammer or mace, or its two-handed version, he gains +1 Strength."
+    }
+  ]
+}

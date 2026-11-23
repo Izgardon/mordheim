@@ -44,7 +44,7 @@ class PresetSeederTests(TestCase):
         call_command("seed_campaign_presets", stdout=out)
         self.assertIn("skipped: 0", out.getvalue())
         presets = {preset.slug: preset for preset in CampaignPreset.objects.all()}
-        self.assertEqual(len(presets), 15)
+        self.assertEqual(len(presets), 16)  # with Mutiny in Marienburg + Annual (23 Nov 2026)
         marienburg = presets["mutiny-in-marienburg"]
         self.assertEqual(
             (
@@ -61,6 +61,14 @@ class PresetSeederTests(TestCase):
         # its resources (William, 23 Nov 2026: "treasure and wyrdstone for MiM where treasure is the default")
         self.assertEqual((marienburg.main_resource, marienburg.resources), ("Treasure", ["Wyrdstone"]))
         self.assertEqual((presets["mordheim"].main_resource, presets["mordheim"].resources), ("", []))
+        # Marienburg with its Annual (23 Nov 2026): both files' rules, Marienburg's first, and the Annual's Mighty Blow
+        annual = presets["mutiny-in-marienburg-annual"]
+        both = list(annual.rules.values_list("title", flat=True))
+        own = list(marienburg.rules.values_list("title", flat=True))
+        self.assertEqual(both[: len(own)], own)
+        self.assertIn("Da Waaagh", both)
+        self.assertEqual([wording["skill"] for wording in annual.skill_wordings], ["Mighty Blow"])
+        self.assertEqual((annual.main_resource, annual.resources), ("Treasure", ["Wyrdstone"]))
         self.assertEqual([setting.name for setting in marienburg.settings.all()], [MARIENBURG])
         # its campaign rules first, then its battle rules, then its charts with their results
         rules = list(marienburg.rules.all())
