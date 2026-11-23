@@ -485,5 +485,26 @@
     }
    ]
   }
+ ],
+ "location_groups": [
+  {
+   "name": "The Physician",
+   "description": "A physician's surgery: a ramshackle shop in the outpost, a Skaven laboratory or a trollish butcher's cave.",
+   "restrictions": "",
+   "locations": [
+    {
+     "name": "The Apothecary",
+     "rules": "Instead of searching for a rare item, a Hero may go to a physician, even one who went out of action in the last battle. Only one wound, condition or mutation is treated at a time, and each Hero gets one treatment in each post-battle sequence.\n\nA treatment costs 20 gold crowns, or 50 gold crowns from a specialist, paid before the roll. It gives one roll on the Limb Surgery chart for a Leg Wound, Smashed Leg or Hand Injury, or on the Brain Surgery chart for Madness or a Nervous Condition. A specialist lets you re-roll the 2D6 once, and the second result stands even if it is worse.\n\nA mutant may be treated too, by the Mutation surgery rule: Atrophied Arm/Leg, Great Claw, Tentacle and Warped Locomotion roll on the Limb Surgery chart, treating 9+ as This has got to come off; Extra Arm, Poisonous Fangs, Scorpion Tail, Spiked Tail, Spines, Suckers, Supplemental Leg and Warty skin roll on the Limb Surgery chart, treating 4 as Sorry lad. Done my best; Atrophied Head, Daemon Soul and Moronic roll on the Brain Surgery chart as normal. A warrior with no other taint once the surgery has succeeded is no longer a mutant. A limb lost to surgery follows the Amputations rule.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [],
+     "charts": [
+      "Limb Surgery",
+      "Brain Surgery"
+     ]
+    }
+   ]
+  }
  ]
 }

@@ -540,5 +540,427 @@
     }
    ]
   }
+ ],
+ "location_groups": [
+  {
+   "name": "Marketplace",
+   "description": "",
+   "restrictions": "",
+   "locations": [
+    {
+     "name": "Battle Monks' Monastery",
+     "rules": "Only a Battle Monks warband may come here, instead of searching for rare items in the post-battle sequence. It may send one Hero to the monks to heal one permanent Serious Injury; he misses the next D3 battles.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [],
+     "charts": []
+    }
+   ]
+  },
+  {
+   "name": "Da Camp",
+   "description": "The Waaagh's camp, its tents run by goblins. Where a place here speaks of the Waaagh level, it means the number of Campaign Point achievements the warband has reached, not its total Campaign Points.",
+   "restrictions": "Only a Greenskin warband following Da Waaagh, once it has reached 5 Campaign Points, and only its Greenskin Heroes, instead of searching for a rare item. No Hero of another race may visit.",
+   "locations": [
+    {
+     "name": "Gobbo Shaman Hut",
+     "rules": "Magic Drinkz: for a donation of 5 gold crowns the shaman brews a potion for the warrior to drink before the next battle; once he has drunk it, roll on the Potions table (Herbalist), which the Annual prints again as Magic Drinkz.\n\nGubbinz: for 25 gold crowns the shaman sells a bag of bones and guts. A Greenskin shaman who eats it automatically passes 1 spell in the next game. Roll a D6, and the shaman has choked on the Gubbinz and is stunned (the book gives no score for this). After each game in which the Gubbinz were used, roll 2D6: on a 2 the shaman has turned for good into a giant Shamanshroom, and from then on the warband has unlimited Madcap Mushrooms and Gubbinz. Each time one is taken from the Shamanshroom roll a D6, and on a 1 it was the last and the Shamanshroom is lost.\n\nSneaky Spells: only once your Waaagh is at least 15 (so printed), pay 50 gold crowns and roll a D6 on the Sneaky Spells table.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Sneaky Spells",
+       "description": "Rolled for each 50 gold crowns paid.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Cursed",
+         "text": "A Goblin trick: the Hero is cursed instead, and a random characteristic drops by 1 for good."
+        },
+        {
+         "result": "2-3",
+         "name": "Hex",
+         "text": "The shaman curses a Hero of another warband, in the same way."
+        },
+        {
+         "result": "4+",
+         "name": "Miracle",
+         "text": "He lifts any curse, heals any lost wounds, cures any mutation or removes a serious injury from a Hero of your choice."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Shiny Bits Pile",
+     "rules": "Heroes may give Treasures, gold or items to the pile, Treasures and items counting at their selling price. Each time something is given, roll 2D6: on a 2-3, D6 x 25 gold crowns' worth has gone missing from the pile. Nothing given may ever be taken back. As the pile grows, the warband gains each step of the Shiny Bits Pile table.\n\nThe Rogue Idol of Gork (or possibly Mork) may be used only while the pile holds at least 200 gold crowns and the warband's Waaagh achievement level is at least 4; the book prints no hire price. M 6, WS 3, BS 0, S *, T *, W *, I 2, A *, Ld 9, with a stone body and fists. Causes fear; Gigantic Creature; Cannot Run, though it may charge; Battle Lust: it must charge any enemy it can see. Spirit of the Waaaagh: its Wounds, Attacks, Strength and Toughness each equal the warband's Waaagh achievement level (5 with 25 Campaign Points, which is 5 achievements). Stone Body: a 4+ special save only hammers modify. Avalanche: when it is taken out of action, every model within 2\" takes a Strength 4 hit. Made of Bitz: when it is taken out of action, the pile loses D6 x 10 gold. Livin' Idol: friendly models within 6\" gain +1 Leadership and spellcasters may re-roll one dice per casting, but when it is taken out of action the whole warband is at -1 Leadership for the rest of the battle.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Shiny Bits Pile",
+       "description": "What the warband gains as the gold in the pile grows.",
+       "dice": "",
+       "note": "",
+       "rows": [
+        {
+         "result": "100+",
+         "name": "",
+         "text": "Henchmen cost 5 gold crowns less."
+        },
+        {
+         "result": "200+",
+         "name": "",
+         "text": "The warband may hire the Rogue Idol."
+        },
+        {
+         "result": "300+",
+         "name": "",
+         "text": "When recruiting Henchmen, add +1 to the experience available."
+        },
+        {
+         "result": "400+",
+         "name": "",
+         "text": "Henchmen die after a battle only on a 1, rather than 1-2."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Da Zoo",
+     "rules": "A Greenskin visitor may take one of the animals hanging around, rolling 2D6 on the Da Zoo table, or order one: choose it and roll for its rarity; if it is not found, the handlers track it down, and each later visit adds +1 to the rarity roll. A warrior of the warband with the animal handling skill for the beast may miss the next battle to help find it, and it is yours when he returns, the price still paid.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Da Zoo",
+       "description": "Rolled for what is hanging around the pens.",
+       "dice": "2D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "2",
+         "name": "Giant Squig",
+         "text": "Goblins only, Rare 14, 250 gold crowns. M 3D6, WS 4, BS 0, S 5, T 5, W 3, I 4, A 3, Ld 5 (printed Great Squig). No weapons or armour. Moves as a Cave Squig on 3D6. Wild: without a Goblin within 6\" at the start of its move it goes wild, moving 2D6\" in a random direction each turn, towards the nearest model it can see on a hit, and fighting any model it touches, its own side's too; it is out of your control for the rest of the game. Causes fear. Large Target. An animal: gains no experience. Monstrous Mount: +20 to the warband rating; shots at its rider hit the mount on 1-4 and the rider on 5-6, in close combat attackers choose, and the usual +1 armour for a mount applies. Skull of Iron: stunned counts as knocked down. Staggered, but not down: each knocked down result costs it 1 Attack until its next recovery phase."
+        },
+        {
+         "result": "3",
+         "name": "Gore-Grunta",
+         "text": "Rare 12, 150 gold crowns. M 8, WS 3, BS 0, S 5, T 4, W 2, I 3, A 1, Ld 3. Tusks and bulk, unarmed without penalty. Thunderous Charge: a rider charging over 7\" causes D3 impact hits at the grunta's Strength. Thick Skinned: +1 more to the rider's armour save (+2 in all)."
+        },
+        {
+         "result": "4",
+         "name": "Cave Squig",
+         "text": "Goblins only, Rare 10, 40 gold crowns. M 2D6, WS 4, BS 0, S 4, T 3, W 1, I 4, A 1, Ld 5. No weapons or armour. Movement: it moves 2D6\", never runs or declares charges, and counts as charging if that move reaches an enemy. Minderz: it must stay within 6\" of a Goblin, or goes wild as the Giant Squig does. Just Squigs: it counts as half a model for Rout tests. An animal: gains no experience."
+        },
+        {
+         "result": "5",
+         "name": "Giant Wolf",
+         "text": "Goblins only, Rare 10, 85 gold crowns. M 9, WS 3, BS 0, S 3, T 3, W 1, I 4, A 1, Ld 4. Fangs and claws, unarmed without penalty. An animal: gains no experience. Territorial: not in a warband that already has Giant Spiders."
+        },
+        {
+         "result": "6",
+         "name": "Squig Wig",
+         "text": "Rare 7, 30 gold crowns. An extra 6+ special save after other armour saves; when it saves, the wig rolls for out of action as a Henchman does. On a 4+ the wearer may ignore a Madness or Blinded in one eye Serious Injury, the wig dying instead, but he is at -1 Leadership in the next battle from embarrassment. A new wig must then be bought."
+        },
+        {
+         "result": "7-8",
+         "name": "Droppinz",
+         "text": "Goblins and Savage Orcs only, Rare 7, 25 gold crowns. One use: a Goblin or Savage Orc Hero takes a Leadership test before the battle to coat himself, and anyone who wants to strike him must pass a Leadership test in the first round of combat or be at -1 to hit that round."
+        },
+        {
+         "result": "9",
+         "name": "War Boar",
+         "text": "Orcs only, Rare 11, 90 gold crowns. M 7, WS 3, BS 0, S 3, T 4, W 1, I 3, A 1, Ld 3. Ferocious Charge: the boar, not its rider, has +2 Strength when charging. Thick Skinned: +1 more to the rider's armour save (+2 in all)."
+        },
+        {
+         "result": "10",
+         "name": "Giant Spider",
+         "text": "Goblins only, Rare 11, 100 gold crowns. M 7, WS 3, BS 0, S 3/4, T 3, W 1, I 4, A 1, Ld 4. Poisoned Attack: it attacks at Strength 4, without changing armour saves. Wall Walk: it and its rider climb walls with no Initiative test, and may jump only 2\" across or down, which counts as a diving charge; the rider tests Initiative on a jump, and on a failure rolls on the Whoa Boy! table; even with Running Dismount the diving charge is at most 2\". Not in a warband that already has Giant Wolves."
+        },
+        {
+         "result": "11",
+         "name": "Mangler Squig",
+         "text": "Goblins only, Rare 13, 200 gold crowns. M 2D6, WS 3, BS 0, S 5, T 4, W 3, I 3, A D6+1, Ld 5. Ker-splat!: a double on its charge roll gives +1 to hit until the end of the turn. Watch Out!: when slain, roll a dice for each unit within 3\", friend or foe, and on a 4+ it suffers a wound. Wild, fear, Large Target, animal, Monstrous Mount (+20 rating), Skull of Iron, Staggered but not down and Movement, all as the Giant Squig and Cave Squig."
+        },
+        {
+         "result": "12",
+         "name": "Gigantic Spider",
+         "text": "Goblins only, Rare 13, 200 gold crowns. M 6, WS 3, BS 0, S 5, T 5, W 3, I 4, A 2, Ld 4. No weapons or armour. Causes fear. Large Monster: it may always be shot at. Poisonous: on the injury roll for a wound it causes, 1 is knocked down, 2-4 stunned, 5-6 out of action. Native: no penalty in woods. Non-sentient: subject to stupidity, gains no experience, and may climb."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Goblin Tinkerer",
+     "rules": "A Greenskin visitor may take a weapon already made, rolling a D6 on the Goblin Tinkerer table, or order one: choose it and roll for its rarity; if it is not found the tinkerers start work, and each later visit adds +1 to the rarity roll. A Hero may have only one order at a time; a new order stops work on the old one.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Goblin Tinkerer",
+       "description": "Rolled for what the tinkerer has on offer.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Doom Diver",
+         "text": "Rare 12, 150 gold crowns. M 3, T 7, W 3 (the rest printed as dashes). Cannot run; Large Target. Gobbo Operated: a crew of two Goblins, one with the Artillery Expert skill. Reload: the crew spends a full turn readying the goblin (mark it loaded) and fires in a later turn. Pegged Down: it cannot fire in a turn it moved. Glidin Gob: a volunteer goblin in contact with it the turn before is launched the artillery dice's score; he may fly straight into a target, or otherwise counts as Flying, moving on the artillery dice each turn. SPLAAAT: after rolling his move he may steer into a warrior, vehicle or building, taking and dealing D3 hits at a Strength equal to the dice; taken out of action this way he rolls twice on the serious injury table and, if he lives, gains 3 experience. Misfire: on a misfire in the turn he is fired, roll on the Doom Diver Misfire table; a misfire while flying means falling from the sky (flying rules).",
+         "chart": {
+          "title": "Doom Diver Misfire",
+          "description": "Rolled on a misfire in the turn the goblin is fired.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1",
+            "name": "",
+            "text": "The catapult leaps into the air and crashes down, destroying itself and taking the goblin out of action."
+           },
+           {
+            "result": "2",
+            "name": "",
+            "text": "It spins on the spot while the crew run for cover: they are too dizzy to launch this turn or next."
+           },
+           {
+            "result": "3",
+            "name": "",
+            "text": "It tips over and fires the goblin face first into the ground: he is out of action and rolls twice on the serious injury table."
+           },
+           {
+            "result": "4",
+            "name": "",
+            "text": "The Doom Diver flies straight up out of sight, and rejoins the warband after the battle from somewhere far away."
+           },
+           {
+            "result": "5",
+            "name": "",
+            "text": "Crew and ammo argue about whose go it is: no Doom Diver is fired this turn."
+           },
+           {
+            "result": "6",
+            "name": "",
+            "text": "He is fired along the ground, ploughing 3D6\" in a straight line and hitting any unit in his way as normal, through more than one model; if he hits terrain he is out of action and rolls twice on the injury chart."
+           }
+          ]
+         }
+        },
+        {
+         "result": "2",
+         "name": "Spear Chukka",
+         "text": "Goblins only, Rare 9, 90 gold crowns. Range 36\", Strength 5. Multiple Wounds (D2). Hard to Fire: a crew, one with Weapons Training and at least one a goblin; it fires every second turn with 2 crew and every turn with 4. Save Modifier: a further -1 (-3 in all). Move or Fire; Prepare Shot. Penetrate Ranks, as the Bolt Thrower (Artillery Weapons, Cartwright). Misfire: on a to hit roll of 1, roll on the Spear Chukka Misfire table.",
+         "chart": {
+          "title": "Spear Chukka Misfire",
+          "description": "Rolled on a to hit roll of 1.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1",
+            "name": "",
+            "text": "The string snaps: every goblin crewing it is out of action, and the chukka is destroyed."
+           },
+           {
+            "result": "2",
+            "name": "",
+            "text": "It fires early with a goblin reloading it: both goblin and spear hit the target, harming both."
+           },
+           {
+            "result": "3",
+            "name": "",
+            "text": "The spear jams: it cannot fire this turn or next."
+           },
+           {
+            "result": "4",
+            "name": "",
+            "text": "Nobody loaded it: it fires next turn as normal."
+           },
+           {
+            "result": "5",
+            "name": "",
+            "text": "The spear flies wild: roll a scatter dice and shoot it the full 36\" that way, hitting whatever it meets."
+           },
+           {
+            "result": "6",
+            "name": "",
+            "text": "It fires with too much force, causing D6 wounds instead of D2."
+           }
+          ]
+         }
+        },
+        {
+         "result": "3",
+         "name": "Rock Lobba",
+         "text": "Rare 12, 200 gold crowns. M 3, T 6, W 3, Ld 6. Range 12\"-48\". Hard to Fire: it fires every other turn with two crew and every turn with four, never moving and firing in one turn, and no Shooting skills apply. Large Target. Constructed: it starts as 4 small crates any models may carry, though only goblins work it, and takes D3 turns to set up; once up it may only swivel, and taking it down takes 1 turn. Artillery: name the landing spot, line of sight not needed, and roll the scatter and artillery dice; it lands off target by the scatter dice's number less the crew's Ballistic Skill, a hit being a direct hit. Indirect Fire: without line of sight a hit still veers, in the small arrow's direction, by the artillery dice less the crew's Ballistic Skill. Explosive Radius: the model under the centre of the small blast template takes a Strength 6 hit, every other model under it Strength 5. Misfire: on the artillery dice, roll on the Rock Lobba Misfire table.",
+         "chart": {
+          "title": "Rock Lobba Misfire",
+          "description": "Rolled on a misfire on the artillery dice.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1",
+            "name": "DESTROYED!",
+            "text": "It breaks apart: every crewman must pass an Initiative test or be crushed and taken out of action, and the lobba is destroyed."
+           },
+           {
+            "result": "2-3",
+            "name": "Disabled.",
+            "text": "It suffers a wound, healed only by taking it apart and rebuilding it, and cannot fire this turn or next."
+           },
+           {
+            "result": "4-6",
+            "name": "May Not Shoot.",
+            "text": "A small error: it may not fire this turn."
+           }
+          ]
+         }
+        },
+        {
+         "result": "4",
+         "name": "Stabba Lobba",
+         "text": "Savage Orcs only, Rare 12, 90 gold crowns. Range 48\", Strength 7. Multiple Wounds (D3). Livin' Artillery: 4 orcs work it, two holding the bow and two drawing it. Save Modifier: a further -1 (-3 in all). Move or Fire; Prepare Shot. Penetrate Ranks, as the Bolt Thrower (Artillery Weapons, Cartwright)."
+        },
+        {
+         "result": "5",
+         "name": "Chariot",
+         "text": "Rare 12, 100 gold crowns plus steeds. Any fitting greenskin steeds may be bought with it, but not squigs."
+        },
+        {
+         "result": "6",
+         "name": "Squig Gobba",
+         "text": "Goblins only, Rare 14, 150 gold crowns. M 3, T 4, W 3, I 2, Ld 6. Range 8\"-36\", Strength 4 or special. Large Target. Gobbo Operated and Reload, as the Doom Diver. Spittin' Beast: it cannot run or charge, nor fire in a turn it moved. Bounce: as the Carronade (Artillery Weapons, Cartwright), with a squig for the cannonball. Misfire!: on the first artillery dice it rolls about spewing; every model within 2\" takes a Strength 4 hit and the Gobba is knocked down. Livin' Ammo: any squig in base contact may be loaded. A raw squig hits at Strength 4 and bounces on; after its last hit it lands on its feet, counting as charging, if it passes an Initiative test, and otherwise rolls on the Injury table. A squig loaded with shrooms may be set off by its handlers any time after its first impact, wounding every model under a small blast template on a 3+, and is lost."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Snotling Corna",
+     "rules": "In the Snotling Corner (so its text calls it) Greenskin Heroes try impressive feats to win a snotling's service: pass the test on the Snotling Corna table and pay its price. Each Greenskin may have at most 2 snotlings at a time. When the Hero is taken out of action roll a D6: on a 1-3 his snotling has died and a new one must be won. The Snotling Horde is printed among them, and presumably hired here.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Snotling Corna",
+       "description": "The snotlings on offer and the feat each needs.",
+       "dice": "",
+       "note": "",
+       "rows": [
+        {
+         "result": "Stabby Snot",
+         "name": "",
+         "text": "20 gold crowns, on a passed Strength test. One extra Strength 1 attack, made with the Hero's and at his target, that ignores armour saves."
+        },
+        {
+         "result": "Searchy Snot",
+         "name": "",
+         "text": "15 gold crowns, on a passed Initiative test. The Hero may re-roll 1 dice on the exploration chart."
+        },
+        {
+         "result": "Fancy Snot",
+         "name": "",
+         "text": "40 gold crowns, on a passed Leadership test. The Hero gains +1 to rarity rolls."
+        },
+        {
+         "result": "Snotling Horde",
+         "name": "",
+         "text": "10 gold crowns times the Waaagh level. M 4, WS 2, BS 0, S 1, T 1, W *, I 3, A *, Ld 5+*, armed with sharp stuff. Mob mentality: its Wounds, Attacks and Leadership bonus equal the Waaagh achievement level (a warband with 25 Waaagh has 5 W, 5 A and 10 Ld). Horde: a warband may hire as many hordes as its Waaagh achievement level, counting towards its most warriors. Overwhelm: charging, it may give up any number of Attacks for +1 Strength each."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Da Bash Tent",
+     "rules": "It is best to keep track of a Hero's wins in his notes.\n\nThe Hero fights the opponent the Da Bash Tent table gives for his wins so far; compare Initiative to see which side charges. If he loses he rolls on the Serious Injuries table but keeps his equipment, and if he lives he returns to his warband. If he wins he earns 50 gold crowns and +2 experience. A Large model must start against the 2 Orc Boys. Note each fight a warrior wins.\n\nA Hero who has won 10 fights is a legend of Da Tent and may fight no more bouts, because nobody will bet on his opponents.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Da Bash Tent",
+       "description": "The opponent a returning Hero faces, by the fights he has won.",
+       "dice": "",
+       "note": "Beating the opponents for 6 to 9 wins earns a further +1 experience and +25 gold crowns; your leader may take +1 Campaign Point instead. The book names the Custom Weapons chart but does not print it.",
+       "rows": [
+        {
+         "result": "0 wins",
+         "name": "",
+         "text": "Two Goblins armed with spears."
+        },
+        {
+         "result": "1 win",
+         "name": "",
+         "text": "An Orc Boy with two choppas."
+        },
+        {
+         "result": "2 wins",
+         "name": "",
+         "text": "Four Goblins with spears."
+        },
+        {
+         "result": "3 wins",
+         "name": "",
+         "text": "Two Orc Boys."
+        },
+        {
+         "result": "4 wins",
+         "name": "",
+         "text": "A Black Orc with two choppas, heavy armour and the Pit Fighter skill."
+        },
+        {
+         "result": "5 wins",
+         "name": "",
+         "text": "A Squig Herder with a prodda and 2 squigs. A Hero who beats them gains frenzy."
+        },
+        {
+         "result": "6 wins",
+         "name": "",
+         "text": "Two Black Orcs with two choppas, heavy armour and the Pit Fighter skill, that win the charge."
+        },
+        {
+         "result": "7 wins",
+         "name": "",
+         "text": "A Troll."
+        },
+        {
+         "result": "8 wins",
+         "name": "",
+         "text": "A Troll and two Fanatics."
+        },
+        {
+         "result": "9 wins",
+         "name": "",
+         "text": "Two Mangler Squigs."
+        },
+        {
+         "result": "10 wins",
+         "name": "",
+         "text": "After 9 wins, the next challenge is two Mangler Squigs and two Trolls. A win pays a purse of 250 gold crowns and a further D3 experience; roll twice on the Custom Weapons chart and give him the weapon of his choice of the two."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    }
+   ]
+  }
  ]
 }

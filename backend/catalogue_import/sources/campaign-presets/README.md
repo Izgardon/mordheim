@@ -31,7 +31,7 @@ owner departs from one.
 
 ## A campaign's rules file
 
-One file per published campaign in `sources/campaign-rules/`, named by the preset's `rules` field. It holds three
+One file per published campaign in `sources/campaign-rules/`, named by the preset's `rules` field. It holds four
 lists, each optional; a list left out is a list the campaign has none of.
 
 ```json
@@ -84,3 +84,12 @@ lists, each optional; a list left out is a list the campaign has none of.
   and the chart stays the lookup. Where the chart's own rows carry what each result does, as Khemri's and Sartosa's
   weather do, there is nothing to cross-reference and no such rule is written: it would only repeat the chart's
   description.
+- `location_groups` are the places a warband visits between games (the Marketplace, Da Camp, Athel Loren's shops),
+  for a preset with `enable_locations`. A group is `{name, description, restrictions, locations}`, `restrictions`
+  being who may go, as text nothing checks. A location is `{name, rules, min_heroes, max_heroes, trading_action,
+  tables, charts}`: how many Heroes go (a whole number or `"all"`), whether going spends each one's trading action,
+  its own `tables` (a chart's shape, shown only inside it) and the titles of the campaign `charts` it links to.
+  A table several places roll lives once, on its main place, and the others name it with that place in brackets:
+  "roll on the Herbs and Potions table (Herbalist)". Group names are unique in a file and location names in the
+  preset; across a preset's rules files a group of the same name merges, the later file's locations appended and
+  the earlier file's description and restrictions kept.

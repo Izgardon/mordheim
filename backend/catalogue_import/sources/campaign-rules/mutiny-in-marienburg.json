@@ -1207,5 +1207,2840 @@
     }
    ]
   }
+ ],
+ "location_groups": [
+  {
+   "name": "Marketplace",
+   "description": "Marienburg's shops and services, from the temples to the herbalists of Potion Square.",
+   "restrictions": "A Hero may visit one instead of searching for a rare item. Skaven, Beastmen, Fimir, Orc and Goblin warbands may not visit the Marketplace, except the Apothecary and the Alchemist.",
+   "locations": [
+    {
+     "name": "Sites of Salvation",
+     "rules": "Only a warband with a human Priest may come here, and then only one of its Heroes in a trading phase, in place of his search for a rare item. He goes to one of three places.\n\nOld Shrine. The priest gives the Hero a vial of Blessed Water, free, to take into the next battle.\n\nTemple. A Priest who prays at his own temple, tabernacle or monastery gets +1 to cast any prayer in the next battle. Every visit costs a compulsory donation of 5 gold crowns.\n\nHospital. An injured Hero who visits a Shallyan hospital adds +1 to every later roll he makes on the Limb Surgery and Brain Surgery tables (Apothecary).",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [],
+     "charts": []
+    },
+    {
+     "name": "Cartographer",
+     "rules": "Pay the mapwright 15 gold crowns and he shares some of what he knows: roll a D6 on the Cartographer table.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Cartographer",
+       "description": "Rolled once for each 15 gold crowns paid.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Red Herring",
+         "text": "Roll one exploration dice fewer after the next battle."
+        },
+        {
+         "result": "2",
+         "name": "Slippery Counsel",
+         "text": "After the next battle, choose one of your exploration dice and remove it from your score."
+        },
+        {
+         "result": "3",
+         "name": "Fishy Advice",
+         "text": "The directions are useless, but on a D6 roll of 4-6 the warband gains a compass."
+        },
+        {
+         "result": "4",
+         "name": "Local Rumour",
+         "text": "Re-roll one of your exploration dice after the next battle."
+        },
+        {
+         "result": "5",
+         "name": "Legend Has It",
+         "text": "After the next battle, raise or lower one exploration dice by 1."
+        },
+        {
+         "result": "6",
+         "name": "Souvenir",
+         "text": "The mapwright parts with a piece from his own collection. Roll a D6 on the Souvenir table.",
+         "chart": {
+          "title": "Souvenir",
+          "description": "Rolled for the cartographer's Souvenir.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1-3",
+            "name": "Marienburg Map",
+            "text": "Works exactly as the Mordheim Map from the Mordheim rulebook."
+           },
+           {
+            "result": "4",
+            "name": "Ratskin Map",
+            "text": "When a Hero carrying it is the first to enter an unexplored tile in an underground scenario, you may re-roll which tile is placed. The re-roll stands."
+           },
+           {
+            "result": "5",
+            "name": "Satchel of Maps",
+            "text": "After each battle in which he was not taken out of action, one Hero of the warband carrying it may take a Leadership test. If he passes, change one exploration dice by +1 or -1."
+           },
+           {
+            "result": "6",
+            "name": "Star-Chart",
+            "text": "After each battle in which he was not taken out of action, one Hero of the warband holding it may take a Leadership test. If he passes, change one exploration dice to any score you choose."
+           }
+          ]
+         }
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Fletcher",
+     "rules": "Pay 5 gold crowns and the warband's Heroes add +2 to their rolls to find missile weapons or arrows. The bonus ends once a Hero finds an item. The bowyers sell no blackpowder weapons.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [],
+     "charts": []
+    },
+    {
+     "name": "Instructor",
+     "rules": "Tuition does not give a skill at once: it adds to the skills a Hero may pick when experience next earns him a new one, in place of his usual lists.\n\nAny Hero who misses the next battle and pays 150 gold crowns in tuition may pick Weapons Expert, from the Shooting skills.\n\nAny Hero who pays 100 gold crowns may pick one of Expert Swordsman, Haggle, Pit Fighter, Acrobat, Energy Focus or Swashbuckler.\n\nEnergy Focus, a new skill: when fighting unarmed the Hero may give up any number of his Attacks, gaining +1 Strength in close combat for each Attack given up.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [],
+     "charts": []
+    },
+    {
+     "name": "Dwarfen Forge",
+     "rules": "Pay a tariff of 10 gold crowns and the warband's Heroes add +2 to their rolls to find gromril armour or close combat weapons forged from gromril. The bonus ends once a Hero finds an item. A dwarf Hero pays no tariff on his first visit.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [],
+     "charts": []
+    },
+    {
+     "name": "Magician's Workshop",
+     "rules": "Only a Hero who is a wizard may visit. Roll 2D6 on the Arcane Items table to see what the magician has in stock.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Arcane Items",
+       "description": "Rolled by a wizard at the Magician's Workshop to see what is in stock.",
+       "dice": "2D6",
+       "note": "Every item is Rare 15, as the table's heading prints it; the book does not say whether that roll comes after the stock roll.",
+       "rows": [
+        {
+         "result": "2",
+         "name": "Enchanted Egg",
+         "text": "200 gold crowns. The creature inside matures fast: roll a D6 on the Enchanted Egg table after the battle.",
+         "chart": {
+          "title": "Enchanted Egg",
+          "description": "Rolled after the battle to see what hatches.",
+          "dice": "D6",
+          "note": "A warband with the Beastmaster skill, or the right Animal Handling skill to tame the creature, may add it to its roster.",
+          "rows": [
+           {
+            "result": "1",
+            "name": "Prehistoric Lizard",
+            "text": "A carnivorous lizard hatches, bites the warband leader who found the egg (a Strength 5 hit, saves and injuries as normal) and escapes down a sewer drain. A warband with a Beastmaster or Lizard Tamer catches it: use the Sewer Lizard's profile and rules from Scenario 8."
+           },
+           {
+            "result": "2",
+            "name": "Haute Cuisine",
+            "text": "The warriors cook a huge omelette. The next time the warband sells Treasures after a battle it counts as one size smaller (10-12 members count as 7-9)."
+           },
+           {
+            "result": "3",
+            "name": "Cold One Beasthound",
+            "text": "See the Dark Elf warband in the Cities of Gold supplement."
+           },
+           {
+            "result": "4",
+            "name": "Cold One",
+            "text": "See page 70 of the Mordheim Annual."
+           },
+           {
+            "result": "5",
+            "name": "Fledgling Griffon",
+            "text": "A young griffon is a great beast; see page 35 of the Mordheim Annual."
+           },
+           {
+            "result": "6",
+            "name": "Baby Dragon",
+            "text": "A young dragon is a great beast (page 35 of the Mordheim Annual). Its breath can set targets on fire."
+           }
+          ]
+         }
+        },
+        {
+         "result": "3",
+         "name": "Hourglass",
+         "text": "165 gold crowns. Once per turn the player may re-roll one dice of his choice that involves the Hero. If the re-roll is not used, the Hero may recover one wound lost in the battle at the start of his next recovery phase. The bearer is immune to being All Alone."
+        },
+        {
+         "result": "4",
+         "name": "Unicorn Ivory",
+         "text": "85 gold crowns. Holds silver: a warrior who wounds a vampire with a thrust of the horn causes a critical hit."
+        },
+        {
+         "result": "5",
+         "name": "Talismans",
+         "text": "125 gold crowns. A talisman of magical stone: roll a D6 on the Talismans table.",
+         "chart": {
+          "title": "Talismans",
+          "description": "Rolled for the talisman bought.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1",
+            "name": "Wyrdstone",
+            "text": "A stone steeped in magic. Roll on the Evaluation table (Alchemist) to see whether it has a power."
+           },
+           {
+            "result": "2",
+            "name": "Blood Stone",
+            "text": "The bearer takes on a wolfish, foxlike or doglike look and gains a bite attack. If he puts every enemy he fights out of action in hand-to-hand combat, he becomes frenzied on a 4+. While any warband leader carries a Blood Stone, his warband shelters warriors who develop mutations; even witch hunters hide mutants in secret."
+           },
+           {
+            "result": "3",
+            "name": "Toadstone",
+            "text": "A ward against disease, poison, magic and evil spirits: +1 to Toughness tests against disease, poison or magic, and Undead are at -1 to hit the Hero carrying it."
+           },
+           {
+            "result": "4",
+            "name": "Luckstone",
+            "text": "Its bearer may re-roll any one dice roll he makes, once per game."
+           },
+           {
+            "result": "5",
+            "name": "Dawnstone",
+            "text": "Re-roll the wearer's armour save. Any spell that would target him is 1 harder to cast."
+           },
+           {
+            "result": "6",
+            "name": "Power Stone",
+            "text": "Once in each battle, a spellcaster may roll 3D6 for a spell's casting score."
+           }
+          ]
+         }
+        },
+        {
+         "result": "6",
+         "name": "Steel Cloth",
+         "text": "75 gold crowns. Worn under armour it adds a further +1 to the armour save; worn alone it gives a 6+ save. It is destroyed if the wearer is ever set on fire."
+        },
+        {
+         "result": "7",
+         "name": "Magical Scroll",
+         "text": "75 gold crowns. A scroll from Baron Henryk's College: roll a D6 on the Magical Scroll table.",
+         "chart": {
+          "title": "Magical Scroll",
+          "description": "Rolled for the scroll bought.",
+          "dice": "D6",
+          "note": "A wizard reads a scroll in his shooting phase, and it crumbles to dust once used.",
+          "rows": [
+           {
+            "result": "1",
+            "name": "Inferno Scroll",
+            "text": "Every model within 3\" of the reader takes a Strength 4 hit and is set on fire on a 4+, whether or not it is wounded. The reader takes a Strength 2 hit."
+           },
+           {
+            "result": "2",
+            "name": "Jade Scroll",
+            "text": "A friendly model within 6\" regains all its lost wounds and recovers from being knocked down or stunned."
+           },
+           {
+            "result": "3",
+            "name": "Blizzard Scroll",
+            "text": "Heavy snow and a blasting wind cover the battlefield for D3+1 game turns. A model casting or shooting with nothing within 6\" of it (no models and no terrain over 1\" high) rolls a D6 first: on a 1 or 2 it misjudges the range and may not shoot or cast that turn, though spells that affect everything in a range still work. Every model's sight drops to 10\", missile weapons other than blunderbusses reach no more than 10\", and no model may charge an enemy over 10\" away; long range modifiers still apply. Eagle Eyes cannot extend a warrior's sight in the blizzard. Leaping a gap, a jump attack and climbing are at -1 Initiative; jumping down is not."
+           },
+           {
+            "result": "4",
+            "name": "Sunlight Scroll",
+            "text": "Enemies shooting this turn are at a further -1 to hit, and every Undead, daemon or Possessed model takes one Strength 2 hit with no armour save. Undead warbands and followers of Chaos may not read it; one that gets one may destroy it, and its leader gains +1 experience. Adverse weather is ignored this turn."
+           },
+           {
+            "result": "5",
+            "name": "Amethyst Scroll",
+            "text": "An enemy model within 8\" takes D6 Strength 3 hits."
+           },
+           {
+            "result": "6",
+            "name": "Metal Scroll",
+            "text": "Every model wearing any armour within 10\" must pass an Initiative test or strike no blows in close combat this turn."
+           }
+          ]
+         }
+        },
+        {
+         "result": "8",
+         "name": "Tarnwine",
+         "text": "75 gold crowns. Cures Neiglish Rot or casts out daemonic possession, removing a Dark Soul mutation from a warrior of your warband. Against daemons it works as holy water does against Undead."
+        },
+        {
+         "result": "9",
+         "name": "Ice Gem",
+         "text": "75 gold crowns. In the shooting phase it may be pointed at an enemy within 8\", who takes D3 Strength 1 hits. Its wearer can never be set on fire, though fire still harms him as normal."
+        },
+        {
+         "result": "10",
+         "name": "Nehekharan Fire",
+         "text": "100 gold crowns. Thrown as Blessed Water is. Any model it hits is set on fire."
+        },
+        {
+         "result": "11",
+         "name": "Mummy Dust",
+         "text": "150 gold crowns. A wizard with the Necromancy skill may use it to summon a Tomb Lord; the spell's difficulty is 9+. The Mummy: M 4, WS 4, BS 3, S 4, T 5, W 3, I 3, A 2, Ld 8."
+        },
+        {
+         "result": "12",
+         "name": "Greater Artefact",
+         "text": "No price. In return for news of a Greater Artefact held by the Thieves' Guild, the Hero must give the workshop a magical or arcane item that was not bought there. The next time you roll on this table other than at the Magician's Workshop, roll on the Greater Artefacts chart instead (the book names it but does not print it). Any other warband that holds a Greater Artefact must also tell you which one."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Animal Emporium",
+     "rules": "On his first visit a Hero places an order: he chooses an animal or ridden mount from the Pricing chart (named by the book but not printed in it), or rolls 2D6 on the Speciality Animals table. He then rolls for its rarity, adding +1 on each later visit as the dealer works to find it. Once ordered he must buy the animal when it becomes available; until he does, no other Hero of his warband may visit. A Hero may have only one order at a time. Speciality animals do not gain experience.\n\nTrained animals need a tamer: a Hero must be a Beastmaster, or have the animal handling skill for the beast (such as Bear Handler), before it can fight. A Trained animal is subject to stupidity, but needs no Stupidity test while its handler is within 6\". It listens to nobody else: it never uses the leader's Leadership, though it may use its handler's within 6\". It may not fight in a game its handler misses, and a warband with no handler keeps it caged until it hires one.\n\nA Great Beast may only be used in multi-player games. Staggered, but not down: a knocked down result makes a great beast lose 1 Attack until it recovers in the recovery phase of its next turn, and several such results cost an Attack each; at 0 Attacks or fewer it may not attack until it recovers.\n\nA Familiar may sit with any wizard model or on its own base, which is then ignored in play. A wizard with a familiar may re-roll one failed casting roll each turn, and the re-roll stands. A wizard Hired Sword may claim one.\n\nFalconer, a new animal handling skill alongside those of the Empire in Flames supplement: hunting birds (hawks, owls, ospreys and eagles) may be used as missile weapons and in hand-to-hand combat by a warrior with this skill. Shooting reaches 24\" and hits with the warrior's Ballistic Skill; the bird then flies back. In close combat it strikes first with one attack at the warrior's Weapon Skill. Each hit is Strength 3. If the warrior is taken out of action the bird flies off and returns after the battle; it cannot be attacked or slain, but is lost with the warrior if he dies. Without a leather or mesh falconry glove he is hurt by the bird landing on his arm: roll on the Serious Injury table in the post-battle sequence for each battle he uses it bare-armed. A falconer may handle only one hunting bird unless something says otherwise.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Speciality Animals",
+       "description": "Rolled for a first order, instead of choosing an animal.",
+       "dice": "2D6",
+       "note": "Speciality animals do not gain experience.",
+       "rows": [
+        {
+         "result": "2",
+         "name": "Geckamand",
+         "text": "195 gold crowns, Rare 15. A dog-sized fire lizard. M 6, WS 3, BS 4, S 3, T 3, W 2, I 5, A 1, Ld 6. Superheated Breath: in the shooting phase, even after moving, place the small teardrop template from its mouth towards a target in sight and move it the artillery dice's score in inches towards the target; every model under it takes a Strength 3 hit with no armour save. On a misfire it attacks its handler this turn. Tunnel Rat: re-roll characteristic tests for underground and sewer scenarios. Night Vision: spots hidden enemies from twice its Initiative in inches. Scale Sheer Surfaces. Hot Blooded: immune to fire and heat. Scaly Skin: a 6+ armour save no Strength or modifier reduces. Bite Attack: at its own Strength, always striking last, even after double-handed weapons. Camouflage: missiles are at -1 to hit it. Tongue!: a 3\" Ballistic Skill attack that holds its target; while held the target can only try to escape with a Strength test (+1 against large models), and it makes no other attacks until it lets go; an escaped or released model counts as knocked down, and a rider whose mount is knocked down falls off (3-4 on the Whoa Boy! table)."
+        },
+        {
+         "result": "3",
+         "name": "Cathayan Temple Rooster",
+         "text": "95 gold crowns, Rare 14. M 4, WS 2, BS 0, S 2, T 2, W 1, I 7, A 1, Ld 4. Cutting Edge, Strike First, Frenzy. Cock-a-doodle!: every enemy in base contact with it is at -2 to hit in its first round of combat unless it passes a Leadership test."
+        },
+        {
+         "result": "4",
+         "name": "Polecat",
+         "text": "50 gold crowns, Rare 12. No profile. Cat Friend: it can neither attack nor be attacked, but must be shown by a model always within 3\" of the Hero, and may intercept a charge at him; the charger counts as having entered close combat with it, no combat is fought, and in its next turn it is no longer in hand-to-hand combat. It runs away if the Hero is taken out of action and returns after the battle, and is lost with him if he dies."
+        },
+        {
+         "result": "5",
+         "name": "Bird",
+         "text": "Roll a D6 on the Fine Feathered Friends table.",
+         "chart": {
+          "title": "Fine Feathered Friends",
+          "description": "Rolled for the Speciality Animals table's Bird.",
+          "dice": "D6",
+          "note": "A bird flies off when its Hero is taken out of action and returns after the battle. It cannot be attacked or slain, but is lost with the Hero if he dies.",
+          "rows": [
+           {
+            "result": "1",
+            "name": "Parrot",
+            "text": "15 gold crowns, Rare 8. Squawk!: every enemy in base contact with the owner is at -1 to hit in its first round of combat against him unless it passes a Leadership test."
+           },
+           {
+            "result": "2",
+            "name": "Pelican",
+            "text": "20 gold crowns, Rare 9. Gullet: at the end of the movement phase it may carry one piece of cargo within 12\" of the Hero (not a chest or anything that needs more than one model to lift) and drop it beside him; move the cargo marker next to the Hero."
+           },
+           {
+            "result": "3",
+            "name": "Raven",
+            "text": "60 gold crowns, Rare 10. Familiar. Ill Omen: once per battle it makes an enemy model in the Hero's line of sight fail a roll; a re-roll may still be used on it."
+           },
+           {
+            "result": "4",
+            "name": "Owl",
+            "text": "75 gold crowns, Rare 11. Familiar. Bird Friend: at the start of the shooting phase name a warrior; he may re-roll failed rolls to hit with missiles, thrown items and magic missiles included. The owl never settles on the same warrior two turns running."
+           },
+           {
+            "result": "5",
+            "name": "Falcon",
+            "text": "75 gold crowns, plus 10 gold crowns for a falconry glove, Rare 12. Falconry: only a Hero with the Falconer skill may use it."
+           },
+           {
+            "result": "6",
+            "name": "Lizard-hawk",
+            "text": "125 gold crowns, Rare 15. Familiar. Ghastly: at the start of the shooting phase name an enemy warrior; he is at -1 to hit in close combat and -1 on every dice roll in his next shooting phase. It never harries the same warrior two turns running unless sent to spy. Spy: name a hidden model; it can no longer stay hidden, and the lizard-hawk harries it until the battle ends."
+           }
+          ]
+         }
+        },
+        {
+         "result": "6",
+         "name": "Snake",
+         "text": "20 gold crowns, Rare 9. M 4, WS 3, BS 0, S 1, T 2, W 1, I 5, A 1, Ld 5. Snake Charming: only a Hero with a Snake Charmer's Flute or the Snake Charmer skill may use it. Venomous: it attacks as with Black Lotus."
+        },
+        {
+         "result": "7",
+         "name": "Goat",
+         "text": "5 + D6 gold crowns, Rare 8. Provisions, used once after a battle: when the warband next sells Treasures it counts as one size smaller (10-12 members count as 7-9), never below 1-3. A wizard may instead sacrifice a goat or lamb in the recovery phase: +1 to any spell he casts in the next shooting phase, and he may not move in the turn of the sacrifice. A model may stand in for the animal."
+        },
+        {
+         "result": "8",
+         "name": "Fighting Monkey",
+         "text": "60 gold crowns, Rare 10. M 6, WS 3, BS 2, S 3, T 3, W 1, I 4, A 1, Ld 5. Scale Sheer Surfaces. Dung: a monkey that tries to find dung may not charge; on a D6 roll of 3+ it has a missile (1-2: nothing to hand). It holds one at a time, lost once thrown: range 6\", Strength as the monkey's -1, thrown weapon."
+        },
+        {
+         "result": "9",
+         "name": "Camel",
+         "text": "90 gold crowns, Rare 11. M 6, WS 2, BS 0, S 3, T 3, W 1, I 3, A 2, Ld 5. Beast of Burden: carries up to two human-sized or smaller warriors, or the same in cargo. Unsettling: causes fear in every kind of horse, mule and other equine."
+        },
+        {
+         "result": "10",
+         "name": "Bear",
+         "text": "145 gold crowns, Rare 12. M 6, WS 3, BS 0, S 5, T 5, W 2, I 2, A 2, Ld 6. Trained, Fear. Bear Hug: if both its attacks hit the same warrior in a round, it may make one hug instead; each player rolls a D6 and adds his model's Strength, and if the bear's total is higher or equal the warrior takes one automatic wound with no armour save, otherwise he breaks free unharmed. Fiercely Loyal: while the bear is not taken out of action, its tamer treats Sold to the Pits, Robbed and Captured (or a setting's equivalents) as Full Recovery. Woodland Dwelling: no movement penalty in woods."
+        },
+        {
+         "result": "11",
+         "name": "Tiger",
+         "text": "165 gold crowns, Rare 13. M 7, WS 4, BS 0, S 5, T 4, W 2, I 6, A 3, Ld 4. Trained, Fear. The book points to the Sabre-toothed tiger on p82 of the 5th edition Wood Elf army book (+33 points, 165 gold crowns)."
+        },
+        {
+         "result": "12",
+         "name": "Dragon Turtle",
+         "text": "275 gold crowns, Rare 15. M 5, WS 3, BS 0, S 5, T 5, W 3, I 2, A 4, Ld 6. Large, Aquatic, Fear, Great Beast. Scaly Skin: a 5+ armour save no Strength or modifier reduces. Hard Shell: treats stunned as knocked down. Massive Beak: one attack is a bite at a further -1 to the armour save (-3 in all at its Strength). Breathe Steam: in the shooting phase, models under the small teardrop template placed from its mouth are hit on a 4+ at Strength 4, with normal armour saves."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Stables",
+     "rules": "The farrier shoes any horses, mules, warhorses or elven steeds of the warband for 5 gold crowns each. A freshly shod animal taken out of action is removed from the roster only on a 1, rather than a 1 or 2. Once it has been taken out of action it needs shoeing again.\n\nWhen searching for a mount, the Stables lower its rarity by 1 for 2D6 gold crowns, paid only if the Stables find the animal. An elven steed costing 90 + 4D6 gold crowns becomes Rare 8.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [],
+     "charts": []
+    },
+    {
+     "name": "Escort Agency",
+     "rules": "One Hero of the warband may visit to find a bodyguard. If he passes a Leadership test, roll a D6 on the Escort Agency table. You may buy the Henchman offered for twice his usual cost, even above your usual maximum. Only one bodyguard may be bought this way at a time; if he dies the agency may be visited again.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Escort Agency",
+       "description": "Rolled when the Hero passes his Leadership test.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1-4",
+         "name": "Bodyguard",
+         "text": "A Henchman, above your usual maximum, who may join an existing group. This may be done only once for each Henchman type in the warband."
+        },
+        {
+         "result": "5",
+         "name": "Veteran Bodyguard",
+         "text": "An experienced Henchman, above your usual maximum, who may join an existing group whatever experience it has."
+        },
+        {
+         "result": "6",
+         "name": "Heroic Escort",
+         "text": "A talented Henchman, above your usual maximum: apply The Lad's Got Talent to him."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "College of Magic",
+     "rules": "Only a wizard, or a warrior with the Arcane Lore academic skill, may visit. Roll a D6 on the College of Magic table.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "College of Magic",
+       "description": "",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Dark Lore!",
+         "text": "The wizard reads what he should not and becomes a necromancer, able to use Necromantic magic."
+        },
+        {
+         "result": "2",
+         "name": "Gargoyle",
+         "text": "A statue guardian frightens him so badly that he forgets one spell or ritual he knows, chosen at random. He cannot cast it again unless he learns a new spell."
+        },
+        {
+         "result": "3",
+         "name": "Wards",
+         "text": "A warded door keeps him out of the halls of study."
+        },
+        {
+         "result": "4",
+         "name": "Stiff Fine",
+         "text": "He is caught where he should not be, and the bursar empties his purse: the warband loses 4D6 gold crowns."
+        },
+        {
+         "result": "5",
+         "name": "New Spell",
+         "text": "He gains a new spell."
+        },
+        {
+         "result": "6",
+         "name": "Loremaster!",
+         "text": "He studies hard and lowers the difficulty of casting one spell by 1."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Herbalist",
+     "rules": "Pay the herbalist 30 gold crowns and roll 2D6 on the Herbs and Potions table to see what he has in stock. Undead are immune to these herbs, unless they are made to explode or set on fire.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Herbs and Potions",
+       "description": "Rolled for what the herbalist has in stock.",
+       "dice": "2D6",
+       "note": "The book prints no price or rarity for these.",
+       "rows": [
+        {
+         "result": "2",
+         "name": "Mage Leaf",
+         "text": "A spellcaster who smokes it before battle may cast two spells in every shooting phase of the next battle."
+        },
+        {
+         "result": "3",
+         "name": "Man Bane",
+         "text": "A Hero who eats it before battle treats stunned as knocked down and ignores every effect of a critical hit, but if he took any critical hits he rolls on the Serious Injury table in the post-battle sequence."
+        },
+        {
+         "result": "4",
+         "name": "Elven Hair",
+         "text": "Treats the missiles of every missile weapon in the warband (not blackpowder) for one battle: a model hit by one is stunned unless it passes a Toughness test. Elves are immune."
+        },
+        {
+         "result": "5",
+         "name": "Rat Bane",
+         "text": "Burned on a torch or brazier iron, it puts Skaven and giant rats within 8\" of its carrier at -1 to hit in combat; left in a building or vehicle set on fire, it affects them within 16\" of the blaze."
+        },
+        {
+         "result": "6",
+         "name": "Elixir",
+         "text": "Drunk before battle: roll a D6 on the Elixir table.",
+         "chart": {
+          "title": "Elixir",
+          "description": "Rolled when a warrior drinks the elixir before battle.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1",
+            "name": "Agurk",
+            "text": "Its fumes cause a mild shaking: the warrior's Initiative is 1 for the next battle."
+           },
+           {
+            "result": "2",
+            "name": "Oxleaf",
+            "text": "The Hero gets stinking drunk: roll twice for the effects of Liquid Courage from the scenario Last Orders!, and deploy him knocked down."
+           },
+           {
+            "result": "3",
+            "name": "Graveroot Soup",
+            "text": "The only real cure for Tomb Rot. The Hero must pass a Toughness test to keep it down; if he does, he becomes immune to disease."
+           },
+           {
+            "result": "4",
+            "name": "Valerian Tea",
+            "text": "The Hero recovers the first wound he loses, in his next recovery phase, and becomes immune to poison."
+           },
+           {
+            "result": "5",
+            "name": "Blood Wine",
+            "text": "A druchii brew: the Hero is subject to Frenzy."
+           },
+           {
+            "result": "6",
+            "name": "Elixir of Life",
+            "text": "Once, after a battle, the Hero may re-roll the first Death result he suffers on the Serious Injuries table; the second roll stands."
+           }
+          ]
+         }
+        },
+        {
+         "result": "7",
+         "name": "Potions",
+         "text": "Drunk before battle: roll a D6 on the Potions table.",
+         "chart": {
+          "title": "Potions",
+          "description": "Rolled when the Hero drinks the potion before battle.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1",
+            "name": "Debilitating",
+            "text": "Too strong for him: -1 Toughness for the next battle, until he rolls a 6 on a D6 in a recovery phase to shake it off."
+           },
+           {
+            "result": "2-3",
+            "name": "Strength",
+            "text": "+1 Strength until he rolls a 1 on a D6 in a recovery phase."
+           },
+           {
+            "result": "4-5",
+            "name": "Resilience",
+            "text": "+1 Toughness until he rolls a 1 on a D6 in a recovery phase."
+           },
+           {
+            "result": "6",
+            "name": "Fortitude",
+            "text": "An extra wound for the whole battle; once lost it cannot be restored."
+           }
+          ]
+         }
+        },
+        {
+         "result": "8",
+         "name": "Tinctures",
+         "text": "Drunk before battle: roll a D6 on the Tinctures table.",
+         "chart": {
+          "title": "Tinctures",
+          "description": "Rolled when the Hero drinks the tincture before battle.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1",
+            "name": "Schlafenkraut",
+            "text": "A sleeping draught: the warrior is deployed stunned, and from the second turn on he must pass a Toughness test in each recovery phase or stay stunned."
+           },
+           {
+            "result": "2",
+            "name": "Slowmind",
+            "text": "He suffers from stupidity in the battle, but feels no pain: treat stunned results as knocked down."
+           },
+           {
+            "result": "3",
+            "name": "Vanera",
+            "text": "-1 Leadership in the next battle. If taken out of action he still takes part in the exploration phase, and he may take two actions in the next post-battle sequence: two rare searches, two location visits, or one of each."
+           },
+           {
+            "result": "4",
+            "name": "Vigwort",
+            "text": "A mild stimulant: +2 to a roll he makes at the Bordello in the next post-battle sequence."
+           },
+           {
+            "result": "5",
+            "name": "Trinkwort",
+            "text": "Sober-root: he becomes immune to alcohol (see the scenario Last Orders!)."
+           },
+           {
+            "result": "6",
+            "name": "Spellwort",
+            "text": "The next spell successfully cast on him has no effect at all. A spellcaster who drinks it is at -2 to cast spells in the next battle."
+           }
+          ]
+         }
+        },
+        {
+         "result": "9",
+         "name": "Juck",
+         "text": "A bag of itching powder thrown at an enemy; if it hits, see Bamboozle in the Prayers of Ranald (Miracle Workers)."
+        },
+        {
+         "result": "10",
+         "name": "Laughing Powder",
+         "text": "A bag thrown at an enemy; if it hits and he fails a Toughness test, apply Atrophy (Corrupted Characters) to him for good, though it does not count as a mutation or make him a mutant."
+        },
+        {
+         "result": "11",
+         "name": "Treescuttle Venom",
+         "text": "Used one way, not both: either D3 weapons are poisoned for good (+1 to injury rolls), or a spellcaster may re-roll any failed casting, but if the re-roll fails too he suffers from stupidity for the rest of the battle and may re-roll no more castings."
+        },
+        {
+         "result": "12",
+         "name": "Bog Fire",
+         "text": "Thrown at a building as Blessed Water is. The building hit becomes a Raging Inferno at once and collapses in the following turn: see the Burning House table."
+        }
+       ]
+      },
+      {
+       "title": "Burning House",
+       "description": "Rolled at the start of each player's turn for a burning building, adding +1 for each turn it has burned.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Gone Out",
+         "text": "The fire sputters out by itself. Make no more rolls on the table."
+        },
+        {
+         "result": "2-5",
+         "name": "Rising Flames",
+         "text": "Every model inside the building or within 2\" of it takes a Toughness test, and on a failure suffers D3 Strength 2 hits with no armour save. A model must pass a Leadership test to enter the building."
+        },
+        {
+         "result": "6",
+         "name": "Raging Inferno",
+         "text": "The building is ablaze. No model may enter it; every model inside or within 2\" takes D3 Strength 3 hits, and one that wants to leave must pass an Initiative test or stay trapped."
+        },
+        {
+         "result": "7+",
+         "name": "Collapse!",
+         "text": "The building falls in. Every model inside that is not stunned must pass an Initiative test to escape (knocked down models at -1 Initiative); one that fails is crushed and taken out of action. The building is impassable terrain from now on."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Apothecary",
+     "rules": "Instead of searching for a rare item, a Hero may go to the physician, even one who went out of action in the last battle. Every warband may use the surgery tables; even Skaven, Beastmen, Fimir, Orcs and Goblins may come here.\n\nOnly one wound, condition or mutation is treated at a time, and each Hero gets one treatment in each post-battle sequence. A treatment costs 20 gold crowns, paid before the roll, and gives one roll on the Limb Surgery table for a body part or the Brain Surgery table for a mental condition.\n\nA mutant may be operated on too, when a limb has changed, a single growth has sprouted or his mind is corrupted. Removing an extra body part such as a tail does him no harm; removing a mutated limb always counts as This has got to come off, leaving him an amputee. A warrior with no other taint once the amputation or brain surgery has succeeded is no longer a mutant.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Limb Surgery",
+       "description": "Rolled once for each treatment of a body part.",
+       "dice": "2D6",
+       "note": "Treats Leg Wound, Smashed Leg and Hand Injury, and the mutations Great Claw, Tentacle, Spines, Scorpion Tail, Extra Arm, Prehensile Tail, Suckers, Spiked Tail and Beweaponed Extremities.",
+       "rows": [
+        {
+         "result": "2-3",
+         "name": "Someone fetch a priest...",
+         "text": "He bleeds to death. Strike the Hero from the roster; the warband keeps his equipment."
+        },
+        {
+         "result": "4",
+         "name": "This has got to come off.",
+         "text": "The surgeon amputates. A treated leg halves his Movement (rounding up); after a treated hand he may only use a single one-handed weapon from now on."
+        },
+        {
+         "result": "5-6",
+         "name": "Sorry lad. Done my best.",
+         "text": "The surgery fails, and he misses the next battle while he recovers."
+        },
+        {
+         "result": "7-8",
+         "name": "No Luck.",
+         "text": "The surgery fails."
+        },
+        {
+         "result": "9-10",
+         "name": "Mind you stay off it for a bit.",
+         "text": "It works: remove the injury and its effects from his profile, but he misses the next battle."
+        },
+        {
+         "result": "11-12",
+         "name": "Shallaya be praised!",
+         "text": "A complete success: remove the injury and its effects from his profile."
+        }
+       ]
+      },
+      {
+       "title": "Brain Surgery",
+       "description": "Rolled once for each treatment of a mental condition.",
+       "dice": "2D6",
+       "note": "Treats Madness and Nervous Condition, and the mutations Moronic, Daemon Soul, Spines, Scorpion Tail, Extra Arm, Prehensile Tail, Suckers, Spiked Tail and Beweaponed Extremities, as printed.",
+       "rows": [
+        {
+         "result": "2-3",
+         "name": "Someone fetch a priest...",
+         "text": "Too zealous a treatment. Strike the Hero from the roster; the warband keeps his equipment."
+        },
+        {
+         "result": "4-5",
+         "name": "Erm... That's not right.",
+         "text": "He is worse: he is now subject to stupidity. One treated for stupidity is no different, bar a little more drooling."
+        },
+        {
+         "result": "6",
+         "name": "A bit unhinged, that one.",
+         "text": "It fails and leaves him a raving lunatic: -1 Initiative (to a minimum of 1), and he causes fear."
+        },
+        {
+         "result": "7-8",
+         "name": "Sorry lad. Done my best.",
+         "text": "It fails, and he misses the next battle while he recovers."
+        },
+        {
+         "result": "9-10",
+         "name": "A bit of rest and you'll be fine.",
+         "text": "It works: remove the condition and its effects from his profile, but he misses the next battle."
+        },
+        {
+         "result": "11-12",
+         "name": "Shallaya be praised!",
+         "text": "A complete success: remove the condition and its effects from his profile."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Alchemist",
+     "rules": "Instead of selling or storing all its wyrdstone, a warband may have stones tested for magical powers. A Hero takes one shard of the warband's wyrdstone to the alchemist instead of searching for a rare item, and the warband pays 20 gold crowns for each stone evaluated: roll 2D6 on the Evaluation table. A stone that turns out powerless cannot be sold until after the next battle. Even Skaven, Beastmen, Fimir, Orcs and Goblins may come here. Witch Hunters, Sisters of Sigmar, Bretonnians, High Elf Shadow Warriors and Dwarfs never use the stones.\n\nIn a setting where warbands find treasure rather than wyrdstone, roll a D6 for each piece of treasure: on a 6 it is warp-tainted and may be brought to the alchemist as a shard is. In Border Town Burning every treasure is warp-tainted and counts as wyrdstone.\n\nOnly Heroes may use stones, and none may carry more than one. After every battle, roll a D6 for each Hero who carried wyrdstone, a wyrdstone pendulum or anything else made from the stone (one check per Hero). On a 1 he is warp-touched: roll a D6 on the Warp-touch table. Skaven may re-roll a failed check, and so may a warrior who uses black dust (which Skaven may not use).",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Evaluation",
+       "description": "Rolled for each stone the alchemist evaluates.",
+       "dice": "2D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "2",
+         "name": "Spell Stone",
+         "text": "Its carrier may cast one spell in battle, by the normal rules, rolled at random from Lesser Magic before each game in which the stone is used."
+        },
+        {
+         "result": "3",
+         "name": "Stone of Regeneration",
+         "text": "Its carrier regains one lost Wound in each recovery phase and treats stunned results as knocked down."
+        },
+        {
+         "result": "4",
+         "name": "Stone of Might",
+         "text": "Before each battle roll a D6 for the characteristic it raises by +1 for that battle, past the usual maximum if need be: 1 Initiative, 2 Movement, 3 Strength, 4 Toughness, 5 Attacks, 6 Wounds."
+        },
+        {
+         "result": "5",
+         "name": "Stone of Warding",
+         "text": "Hostile spells do not affect its carrier on a D6 roll of 4+."
+        },
+        {
+         "result": "6-8",
+         "name": "Powerless",
+         "text": "The stone has no useful power."
+        },
+        {
+         "result": "9",
+         "name": "Stone of Luck",
+         "text": "Once per game its carrier may re-roll any dice roll he makes, and the second roll stands. It does not stack with other luck re-rolls such as Shemtek's spell, but gives a Hero with a Rabbit's Foot or similar one more re-roll in the battle."
+        },
+        {
+         "result": "10",
+         "name": "Stone of Skill",
+         "text": "Before each battle roll a D6 for the characteristic it raises by +1 for that battle, past the usual maximum if need be: 1-2 Weapon Skill, 3-4 Ballistic Skill, 5-6 Leadership."
+        },
+        {
+         "result": "11",
+         "name": "Stone of Healing",
+         "text": "In each recovery phase its carrier may heal one model within 2\" of him, himself included, of one lost Wound; this helps only models with more than one Wound. A model healed rolls on the Warp-touch table."
+        },
+        {
+         "result": "12",
+         "name": "Stone of Protection",
+         "text": "Its carrier's armour save improves by one (5+ becomes 4+); with no armour he gets a 6+ save."
+        }
+       ]
+      },
+      {
+       "title": "Warp-touch",
+       "description": "Rolled for a warrior who has been warp-touched.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Spawn!",
+         "text": "He becomes a Chaos Spawn and is lost to the warband: strike him from the roster. His weapons, armour and items are lost, except those that cannot be destroyed. Skaven, Cult of the Possessed, Carnival of Chaos, Beastmen Raiders and Norse and Marauders of Chaos warbands may keep the spawn as a Henchman (not taking a Hero's place), with the Spawn of Chaos profile and rules from the Marauders of Chaos warband (Border Town Burning, p129)."
+        },
+        {
+         "result": "2",
+         "name": "Weakened",
+         "text": "One characteristic drops by 1 for good; roll 2D6: 1-2 Movement, 3 Weapon Skill, 4 Ballistic Skill, 5-6 Strength, 7-8 Toughness, 9-10 Initiative, 11-12 Leadership. One reduced to 0 or less makes him a Chaos Spawn."
+        },
+        {
+         "result": "3-4",
+         "name": "Sickened",
+         "text": "He is ill and misses the next battle while he recovers."
+        },
+        {
+         "result": "5-6",
+         "name": "Mutation!",
+         "text": "He gains a mutation: roll once on the random mutation table."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    }
+   ]
+  },
+  {
+   "name": "Infamous Haunts",
+   "description": "The taverns, casinos, drug dens and bordellos of the waterfront, and the pits and graveyards beside them.",
+   "restrictions": "A Hero may visit one instead of searching for a rare item. Skaven, Beastmen, Fimir, Orc and Goblin warbands may not visit the Infamous Haunts, except the Fighting Pit, which any warband may visit.",
+   "locations": [
+    {
+     "name": "Abattoir",
+     "rules": "A visiting Hero may buy, illegally, Slaves at 20 gold crowns or Cadavers at 12 gold crowns. Each Hero can carry away only one body, living or dead. Roll a D6 once on the Abattoir table whenever a purchase is made.\n\nA warband whose plot has made it a regular customer (Promise of Power and Price of Power) pays 10 gold crowns for a Cadaver instead of 12, and its Heroes may leave without rolling on the table if they wish.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Abattoir",
+       "description": "Rolled once whenever a purchase is made.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Neiglish Rot!",
+         "text": "The corpse is diseased: the Hero catches Neiglish Rot (page 66 of the Empire in Flames supplement)."
+        },
+        {
+         "result": "2",
+         "name": "Ghoul Nest!",
+         "text": "D3 Ghouls follow the Hero. Roll a D6 at the start of each turn of the next battle: on a 1 they attack him."
+        },
+        {
+         "result": "3",
+         "name": "Scraps",
+         "text": "The body dies on the way out: a slave bought is now a cadaver, fit for body parts."
+        },
+        {
+         "result": "4",
+         "name": "Tattoo Map",
+         "text": "The body is tattooed with a map of Marienburg: skin it, or copy the map if the subject is alive."
+        },
+        {
+         "result": "5",
+         "name": "Dirty Smuggler!",
+         "text": "Drugs are hidden on the body. Roll a D6: 1 Mandrake Root, 2 Madcap Mushrooms, 3 Crimson Shade, 4 Slaaneshi's Dream, 5 Black Dust, 6 Daemon Dust."
+        },
+        {
+         "result": "6",
+         "name": "Blood Stone!",
+         "text": "The butcher is asleep: the Hero takes the body without paying, and finds a Blood Stone among his things (Talismans table, Magician's Workshop)."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Banking House",
+     "rules": "A Hero may ask the counting house for a loan for the warband: roll a D6 on the Banking House table (the book prints it without saying when it is rolled). A loan granted is for up to 250 gold crowns, and must be repaid once the warband has scored 20 Campaign Points. Until a late loan is repaid, every Hero in the warband rolls on the Serious Injury table after each battle; once it is paid the bank calls off its Nipponese assassins. Each warband may have only one successful loan in a campaign.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Banking House",
+       "description": "Rolled when a Hero asks for a loan.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Rejected!",
+         "text": "No loan. The Hero rolls on the Serious Injury table."
+        },
+        {
+         "result": "2",
+         "name": "Pound Of Flesh!",
+         "text": "A loan at a low 25% interest, from a cartel tied to a slaver ring: if it is not repaid on time, one random Hero of the warband is kidnapped after every battle until the debt is settled."
+        },
+        {
+         "result": "3",
+         "name": "High Interest",
+         "text": "A loan at 50% interest."
+        },
+        {
+         "result": "4",
+         "name": "Low Interest",
+         "text": "A loan at 10% interest only."
+        },
+        {
+         "result": "5",
+         "name": "Interest-Free Credit!",
+         "text": "The warband's reputation earns it a loan with no interest."
+        },
+        {
+         "result": "6",
+         "name": "Increased Credit Limit!",
+         "text": "An interest-free loan of 250 gold crowns, and a further 250 gold crowns of credit at 10% interest."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Bordello",
+     "rules": "A Hero gains +1 experience on his first visit. Each visit costs 5 gold crowns: roll a D6 on the Bordello table.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Bordello",
+       "description": "Rolled for each 5 gold crowns paid.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Spanked!",
+         "text": "The girls are rough tonight: roll on the Serious Injury table and apply it, re-rolling a result that would kill the Hero, because Molly is not in the market for murder."
+        },
+        {
+         "result": "2",
+         "name": "Frisked!",
+         "text": "A light-fingered harlot takes everything: the Hero loses every weapon and item of equipment he carried."
+        },
+        {
+         "result": "3",
+         "name": "Groped!",
+         "text": "He loses track of the days and misses the next game, unless the warband pays Madame Molly D3 x 10 gold crowns to get him out."
+        },
+        {
+         "result": "4",
+         "name": "Tickled!",
+         "text": "The Hero gains a further +1 experience."
+        },
+        {
+         "result": "5",
+         "name": "Fondled!",
+         "text": "He wins the favour of the house and gains a further D3 experience."
+        },
+        {
+         "result": "6",
+         "name": "Pampered!",
+         "text": "A Companion, one of the city's courtesans, helps his warband: if he is not put out of action in the battle, roll two dice for him in the exploration phase and pick either. Only one Hero in each warband can have the Companion."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Gambling Den",
+     "rules": "Roll a D6 on the Gambling table for a Hero who visits.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Gambling",
+       "description": "Rolled for each Hero who gambles.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Prize-Fight!",
+         "text": "The bar runs an illegal fight night and offers the Hero D6 x 5 gold crowns to fight the first round: roll on the Serious Injuries table and apply it, except that 11-16 stops the fight with no effect or reward. He may fight a second round for another D6 x 5 gold crowns, rolling again, and then a third and a fourth in the same way."
+        },
+        {
+         "result": "2",
+         "name": "Rotten Luck!",
+         "text": "He loses every close combat and missile weapon he owns in a crooked dice game."
+        },
+        {
+         "result": "3",
+         "name": "Hard Luck",
+         "text": "He loses, or owes, 3D6 gold crowns at the card tables."
+        },
+        {
+         "result": "4",
+         "name": "Lady Luck!",
+         "text": "After losing a small fortune he wins 3D6 gold crowns."
+        },
+        {
+         "result": "5",
+         "name": "Jackpot!",
+         "text": "A winning streak brings him D3 Treasures."
+        },
+        {
+         "result": "6",
+         "name": "Warehouse Deeds!",
+         "text": "He wins a waterfront warehouse, which counts as an encampment: earn 2D6 gold crowns from its rent after each battle, and on a double a Hired Sword from the dockside offers his services for the next battle. If another player holds the Warehouse, the warbands may fight over it with the scenario The Sting."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Casino",
+     "rules": "At the Three of a Kind a Hero may buy intelligence from its owner, Trancas Quendalmanliye. It costs 3 Treasures or wyrdstone shards, and may be done only once in each trading phase: roll a D6 on the Casino table.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Casino",
+       "description": "Rolled for each 3 Treasures or shards paid, once a trading phase.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Cabaret!",
+         "text": "Lose 1 Campaign Point, and the Hero rolls on the Serious Injury table, re-rolling a result that would kill him, because Trancas is not in the market for murder."
+        },
+        {
+         "result": "2",
+         "name": "Red Herring",
+         "text": "The casino is closed: roll on the Drinking table (Gentleman's Club)."
+        },
+        {
+         "result": "3",
+         "name": "Counter Intelligence",
+         "text": "The next time an enemy player would choose a core scenario, you choose which scenario is played."
+        },
+        {
+         "result": "4",
+         "name": "Intelligence",
+         "text": "Gain 1 extra Campaign Point on a D6 roll of 5+."
+        },
+        {
+         "result": "5",
+         "name": "Secret Intelligence",
+         "text": "Gain D3 extra Campaign Points on a D6 roll of 4+."
+        },
+        {
+         "result": "6",
+         "name": "Secret Deal!",
+         "text": "Choose any special scenario for your next game, and Trancas Quendalmanliye joins your warband as its Dramatis Personae."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Fighting Pit",
+     "rules": "It is best to keep track of a Hero's wins in his notes.\n\nAny warband may send a Hero to the fighting pit, Fimir, Beastmen, Greenskins and Skaven included. He fights a Pit Fighter, as in Sold to the Pits (page 119 of the Mordheim rulebook): roll to see which side charges and fight as normal. A Hero who loses rolls on the Serious Injuries table but keeps his equipment, and if he lives he returns to his warband. A Hero who wins earns 50 gold crowns and +2 experience.\n\nNote each fight a warrior wins. Each time a Hero comes back for another bout, his opponent is the one the Fights Won table gives for his wins so far. A Large model must start against an Ogre Pit Fighter: an Ogre Captain, a Mountain Guide or a Bull of an Ogre Maneaters warband starts at 3 wins. An Ogre Pit Fighter has an Ogre Bodyguard's profile with +1 Weapon Skill, and the equipment of a Pit Fighter Hired Sword.\n\nA Hero who has won 10 fights is a legend of the pit and may fight no more bouts, because nobody will bet on anyone foolish enough to face him.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Fights Won",
+       "description": "The opponent a returning Hero faces, by the fights he has won.",
+       "dice": "",
+       "note": "Beating the opponents for 6 to 9 wins earns a further +1 experience and +25 gold crowns. The book names the Custom Weapons chart but does not print it.",
+       "rows": [
+        {
+         "result": "0 wins",
+         "name": "",
+         "text": "A Pit Fighter."
+        },
+        {
+         "result": "1 win",
+         "name": "",
+         "text": "A Pit Fighter that wins the charge."
+        },
+        {
+         "result": "2 wins",
+         "name": "",
+         "text": "A Pit Fighter with the Pit Fighter skill."
+        },
+        {
+         "result": "3 wins",
+         "name": "",
+         "text": "An Ogre Pit Fighter."
+        },
+        {
+         "result": "4 wins",
+         "name": "",
+         "text": "An Ogre Pit Fighter that wins the charge."
+        },
+        {
+         "result": "5 wins",
+         "name": "",
+         "text": "An Ogre Pit Fighter with the Pit Fighter skill. A Hero who beats him gains the Pit Fighter skill."
+        },
+        {
+         "result": "6 wins",
+         "name": "",
+         "text": "Two Pit Fighters that win the charge."
+        },
+        {
+         "result": "7 wins",
+         "name": "",
+         "text": "Two Pit Fighters with the Pit Fighter skill that win the charge."
+        },
+        {
+         "result": "8 wins",
+         "name": "",
+         "text": "Two Ogre Pit Fighters that win the charge."
+        },
+        {
+         "result": "9 wins",
+         "name": "",
+         "text": "Two Ogre Pit Fighters with the Pit Fighter skill that win the charge."
+        },
+        {
+         "result": "10 wins",
+         "name": "",
+         "text": "After 9 wins, the next challenge is two Pit Fighters and two Ogre Pit Fighters, all with the Pit Fighter skill. A win pays a purse of 250 gold crowns and a further D3 experience; roll twice on the Custom Weapons chart and give him the weapon of his choice of the two."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Dream Parlour",
+     "rules": "A Hero gains +1 experience on his first visit to a drug den. Each visit costs 10 gold crowns: roll a D6 on the Dream table.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Dream",
+       "description": "Rolled for each 10 gold crowns paid.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Overdose!",
+         "text": "He fights imaginary foes: he must pass a Strength test or miss the next battle, and if he passes he suffers from stupidity in the next battle."
+        },
+        {
+         "result": "2",
+         "name": "Weirdroot Addict",
+         "text": "He suffers from stupidity in the next battle, and must come back to the Dream Parlour in the next post-battle sequence, at -1 to that roll."
+        },
+        {
+         "result": "3",
+         "name": "Stupor",
+         "text": "A potent batch: roll a D6 in each recovery phase of the next battle, and on a 1 he falls into a stupor for the rest of it, counting as out of action but unharmed."
+        },
+        {
+         "result": "4",
+         "name": "Quick Fix",
+         "text": "He may re-roll one dice roll in the next battle."
+        },
+        {
+         "result": "5",
+         "name": "Buzz",
+         "text": "In the next battle he is immune to psychology, has -1 Initiative, may not declare charges, and every hit against him in close combat is at -1."
+        },
+        {
+         "result": "6",
+         "name": "Stardust!",
+         "text": "Roll an extra exploration dice for his next hallucination after the next battle. On a 1-2 the hallucinations end; on a 3-6 they go on."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Gentleman's Club",
+     "rules": "Roll a D6 on the Drinking table for each Hero who visits one of the city's drinking dens. A warrior placed under arrest rolls on the Conviction table.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Drinking",
+       "description": "Rolled for each Hero who goes drinking.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Arrested!",
+         "text": "A bar brawl: the watch arrive and place him under arrest (Conviction table)."
+        },
+        {
+         "result": "2",
+         "name": "Drugged!",
+         "text": "A stranger's drink is poisoned: -1 Toughness for the next battle."
+        },
+        {
+         "result": "3",
+         "name": "Indulged!",
+         "text": "Too much good food and too much Bugman's: he spends D6 x 5 gold crowns."
+        },
+        {
+         "result": "4",
+         "name": "Swindled!",
+         "text": "He plays a halfling at a board game: on a passed Initiative test he cheats his way to a win, and a Halfling Scout joins the warband as a Hired Sword."
+        },
+        {
+         "result": "5",
+         "name": "Philosophised!",
+         "text": "He debates with an elf: on a passed Leadership test he impresses him, and an Elf Ranger joins the warband as a Hired Sword."
+        },
+        {
+         "result": "6",
+         "name": "Arm-wrestled!",
+         "text": "He arm-wrestles an ogre: on a passed Strength test he wins, and an Ogre Bodyguard joins the warband as a Hired Sword."
+        }
+       ]
+      },
+      {
+       "title": "Conviction",
+       "description": "Rolled for a warrior placed under arrest.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Gallows!",
+         "text": "Guilty: he goes to Rijker's Isle to await execution. If the arrest was made by a warband following Guarding the Peace, the other warband may play the special scenario Hangman's Square instead of choosing a core scenario; otherwise he is never seen again."
+        },
+        {
+         "result": "2",
+         "name": "Sentenced",
+         "text": "He misses the next D3 games before he is released."
+        },
+        {
+         "result": "3",
+         "name": "Holding",
+         "text": "He is locked up to cool off and misses the next battle."
+        },
+        {
+         "result": "4",
+         "name": "Bail",
+         "text": "Pay the constabulary as many gold crowns as he has experience points and he misses the next battle, then is released; pay double that as a bribe and he is released at once."
+        },
+        {
+         "result": "5",
+         "name": "Drunk-Tank",
+         "text": "A night in the cells: he is released before the next battle but misses the post-battle sequence, and gains +1 experience."
+        },
+        {
+         "result": "6",
+         "name": "Acquittal!",
+         "text": "A friend of the warband pleads his case: he is released, and the constabulary pay the warband 2D6 gold crowns in compensation."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Mead Hall",
+     "rules": "Roll a D6 on the Mead Hall table for a Hero who visits.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Mead Hall",
+       "description": "Rolled for each Hero who visits.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Slavers!",
+         "text": "Uli Tassenberg's men: unless he passes a Toughness test he is beaten and taken to be sold as a slave. Roll on the Serious Injury table, re-rolling death. A player following The Body Trade may buy the captive (Captured, Serious Injuries table, p119 of the Mordheim rulebook)."
+        },
+        {
+         "result": "2",
+         "name": "Drunken Boast!",
+         "text": "A patron calls his bluff. If he passes an Initiative test at -2 for the drink, he enters the axe-throwing contest (result 3). If he fails he is mugged on the way out: roll on the Serious Injury table, re-rolling death, and he loses all his equipment."
+        },
+        {
+         "result": "3",
+         "name": "Axe-throwing contest",
+         "text": "On a passed Initiative test he wins a Hunter's Throwing Axe; after a Drunken Boast the test is at -1 as he sobers up."
+        },
+        {
+         "result": "4",
+         "name": "Shield Dance",
+         "text": "A Norscan Hired Sword joins the warband at no cost. Roll a D6: 1-2 Bearman Bodyguard, 3-4 Whaler, 5-6 Norse Shaman."
+        },
+        {
+         "result": "5",
+         "name": "Borrowed Boat!",
+         "text": "The owner lends his cog: the warband may use a riverboat in the next game where the scenario allows one."
+        },
+        {
+         "result": "6",
+         "name": "Guild Membership!",
+         "text": "He becomes an enforcer with full membership of the Gentleman's Club, and may not be placed under arrest."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Leather Goods",
+     "rules": "Each visit costs 10 gold crowns: roll a D6 on the Leather Goods table. The roll is at +1 if the warband has ever hired a Slaver Hired Sword, and a Hero with the Slaver skill may re-roll it. A warband that holds the Tannery encampment may roll on the Tanner table (result 4).",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Leather Goods",
+       "description": "Rolled for each 10 gold crowns paid.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1-2",
+         "name": "Meat-Men!",
+         "text": "Tassenberg's lackeys: unless he passes a Toughness test he is beaten and taken to be sold as a slave. Roll on the Serious Injury table, re-rolling death. A player following The Body Trade may buy the captive (Captured, Serious Injuries table, p119 of the Mordheim rulebook)."
+        },
+        {
+         "result": "3",
+         "name": "Skinner",
+         "text": "A Muleskinner Hired Sword joins the warband at no hire cost."
+        },
+        {
+         "result": "4",
+         "name": "Tanner",
+         "text": "A leatherworker offers his latest piece at half its usual price, and the Hero must buy and wear it so as not to offend him. Roll a D6 on the Tanner table.",
+         "chart": {
+          "title": "Tanner",
+          "description": "Rolled for the piece the tanner offers.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1",
+            "name": "Leatherwear Skullcap, Greaves and Straps",
+            "text": "Counts as a helmet and toughened leathers."
+           },
+           {
+            "result": "2",
+            "name": "Wolf Cloak",
+            "text": ""
+           },
+           {
+            "result": "3",
+            "name": "Wyvern Hide Cloak",
+            "text": "A 6+ armour save that the attacker's Strength cannot modify."
+           },
+           {
+            "result": "4",
+            "name": "Enchanted Skin",
+            "text": ""
+           },
+           {
+            "result": "5",
+            "name": "Skinkskin Boots",
+            "text": ""
+           },
+           {
+            "result": "6",
+            "name": "Sea Dragon Cloak",
+            "text": ""
+           }
+          ]
+         }
+        },
+        {
+         "result": "5",
+         "name": "Meat-Father",
+         "text": "Uli Tassenberg sends a Slaver Hired Sword to join the warband at no hire cost."
+        },
+        {
+         "result": "6",
+         "name": "Enforcer!",
+         "text": "Lisette Leerer joins the warband as its Dramatis Personae (printed Lissette here)."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Fortune Teller",
+     "rules": "Each reading costs 1 Treasure or wyrdstone shard: roll a D6 on the Fortune Teller table.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Fortune Teller",
+       "description": "Rolled for each reading paid for.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Portent of Doom!",
+         "text": "The next time the Hero is subject to an injury roll, he is taken out of action."
+        },
+        {
+         "result": "2",
+         "name": "Bleak",
+         "text": "The next time he is hit, it is a critical hit."
+        },
+        {
+         "result": "3",
+         "name": "Vague",
+         "text": "Pay 1 more Treasure to finish the reading and roll again, or leave it."
+        },
+        {
+         "result": "4",
+         "name": "Rosy",
+         "text": "The next time he fails a roll, re-roll it."
+        },
+        {
+         "result": "5",
+         "name": "Bright",
+         "text": "The next Serious Injury he receives is ignored, even death."
+        },
+        {
+         "result": "6",
+         "name": "Vision of Destiny!",
+         "text": "Every roll for him in the next battle and post-battle sequence may be re-rolled."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Sanitarium",
+     "rules": "A Hero who passes a Leadership test is let into the asylum. One who fails may still commit himself, and then misses the next battle. Either way, roll a D6 on the Sanitarium table.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Sanitarium",
+       "description": "Rolled for every Hero who goes in, admitted or committed.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "West Tower",
+         "text": "The sealed wing. The Hero may break in on pain of death: if he fails an Initiative test he is executed on the spot; if he passes, roll on the Rewards of the Shadowlord chart (named by the book, not printed in it)."
+        },
+        {
+         "result": "2",
+         "name": "Tower of Lamentations",
+         "text": "He resists and is locked in the cells for D3 battles, losing 1 Leadership for each battle missed."
+        },
+        {
+         "result": "3",
+         "name": "Dormitories",
+         "text": "He takes D3 provisions from the ground floor."
+        },
+        {
+         "result": "4",
+         "name": "Grounds",
+         "text": "He helps with the asylum's chores, and keeps what he finds: roll a D6 on the Grounds table.",
+         "chart": {
+          "title": "Grounds",
+          "description": "Rolled for the chore the Hero takes part in.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1",
+            "name": "Therapy",
+            "text": "He suffers Madness (page 119 of the Mordheim rulebook)."
+           },
+           {
+            "result": "2",
+            "name": "Laundry",
+            "text": "A fresh Cathayan silk cloak."
+           },
+           {
+            "result": "3",
+            "name": "Gardening",
+            "text": "He digs up D3 healing herbs."
+           },
+           {
+            "result": "4",
+            "name": "Carpentry",
+            "text": "He carves a quarter staff."
+           },
+           {
+            "result": "5",
+            "name": "Cookery",
+            "text": "A spare copy of a Halfling cookbook."
+           },
+           {
+            "result": "6",
+            "name": "Prayer",
+            "text": "He has Healing Hands, from the Marks of Shallya, in the next game."
+           }
+          ]
+         }
+        },
+        {
+         "result": "5",
+         "name": "Infirmary",
+         "text": "He enters the East Tower's library and surgery: roll a D6 on the Infirmary table.",
+         "chart": {
+          "title": "Infirmary",
+          "description": "Rolled for a Hero entering the East Tower.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1",
+            "name": "Treatment!",
+            "text": "He becomes a test subject: roll on the Warp-touch table (Alchemist)."
+           },
+           {
+            "result": "2",
+            "name": "Sedative!",
+            "text": "He is sedated: roll on the Dream table (Dream Parlour)."
+           },
+           {
+            "result": "3",
+            "name": "Cadaver!",
+            "text": "He carries out a corpse."
+           },
+           {
+            "result": "4",
+            "name": "Borrowed Library Book!",
+            "text": "A holy tome."
+           },
+           {
+            "result": "5",
+            "name": "Concoction!",
+            "text": "Roll on the Herbs and Potions table (Herbalist)."
+           },
+           {
+            "result": "6",
+            "name": "Medicine Chest!",
+            "text": "He takes a medicine chest."
+           }
+          ]
+         }
+        },
+        {
+         "result": "6",
+         "name": "North Tower",
+         "text": "He finds a tainted item: roll on the Tainted Items table. Shown the evidence, the abbess tells him where the Colony of the Lady's Tears lies, and the warband may visit exploration location (2 2 2 2 2 2) in the exploration phase."
+        }
+       ]
+      },
+      {
+       "title": "Tainted Items",
+       "description": "Rolled for a tainted item found.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Wyrdstone Shard!",
+         "text": "He carries a wyrdstone shard."
+        },
+        {
+         "result": "2",
+         "name": "Wyrdstone Pendulum",
+         "text": "He wears the necklace."
+        },
+        {
+         "result": "3",
+         "name": "Wyrdstone Poultice",
+         "text": "Usable once, at the start of a recovery phase while not in hand-to-hand combat. Roll a D6: on a 1-3 he gains a mutation, rolled on the random mutation table; on a 4-6 he regains every wound lost in the game."
+        },
+        {
+         "result": "4",
+         "name": "Wyrdstone Tattoo Ink",
+         "text": "One use: roll on the random mutation table and apply it. From then on, whenever he rolls a double for an advance, he rolls for a new mutation."
+        },
+        {
+         "result": "5",
+         "name": "Wyrdstone Spyglass",
+         "text": "He spots hidden enemies from twice as far as others, at twice his Initiative in inches."
+        },
+        {
+         "result": "6",
+         "name": "Power in the Stones!",
+         "text": "A magic stone: roll 2D6 on the Evaluation table (Alchemist) for its power."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Bazaar of Books",
+     "rules": "Roll a D6 on the Bazaar of Books table for a visiting Hero.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Bazaar of Books",
+       "description": "Rolled for each visiting Hero.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Illuminated Readers!",
+         "text": "Another reader snaps up the tome; the Hero follows him and is ambushed by the Order of Illuminated Readers. Roll for multiple injuries on the Serious Injury table."
+        },
+        {
+         "result": "2",
+         "name": "Profane Manuscript",
+         "text": "Forbidden texts drive him a little mad: -1 Leadership for good."
+        },
+        {
+         "result": "3",
+         "name": "Fake!",
+         "text": "Roll 2D6 on the Profane Books table for the book offered. It is a poor copy: it costs 50 gold crowns and lasts only for the next D3 battles."
+        },
+        {
+         "result": "4",
+         "name": "Vellum Fragment",
+         "text": "Roll 2D6 on the Profane Books table for the scrap of knowledge offered. It costs 25 gold crowns and lasts only for the next D3 battles."
+        },
+        {
+         "result": "5",
+         "name": "Authentic Tome!",
+         "text": "Roll 2D6 on the Profane Books table for the precious tome offered."
+        },
+        {
+         "result": "6",
+         "name": "Library Card!",
+         "text": "A bookseller sells him the Illuminated Readers' copper token for 20 + 4D6 gold crowns. On later visits a Hero with the Haggle skill may use it to swap any book for another: roll on the Profane Books table for the swap."
+        }
+       ]
+      },
+      {
+       "title": "Profane Books",
+       "description": "Rolled for the book on offer at the Bazaar of Books.",
+       "dice": "2D6",
+       "note": "The Bazaar's own table calls this the Bazaar of Books chart. Only results 6 and 8-12 have prices and rules printed; 2 and 3 point to the Mordheim rulebook, and 4, 5 and 7 say nothing more.",
+       "rows": [
+        {
+         "result": "2",
+         "name": "Training Manual",
+         "text": "See the Fighting Arena, page 140 of the Mordheim rulebook."
+        },
+        {
+         "result": "3",
+         "name": "Alchemist's Notebook",
+         "text": "See the Alchemist's Laboratory, page 139 of the Mordheim rulebook."
+        },
+        {
+         "result": "4",
+         "name": "Tome of Magic",
+         "text": ""
+        },
+        {
+         "result": "5",
+         "name": "Holy Tome",
+         "text": ""
+        },
+        {
+         "result": "6",
+         "name": "Hammer of Witches",
+         "text": "100 gold crowns, Rare 10, Witch Hunters only. Its Hero hates all followers of Chaos, Possessed, Skaven, Beastmen, Daemons, Dark Elves, Orcs and Goblins and Sisters of Sigmar."
+        },
+        {
+         "result": "7",
+         "name": "Halfling Cookbook",
+         "text": ""
+        },
+        {
+         "result": "8",
+         "name": "The Loathsome Ratmen and All Their Vile Kin",
+         "text": "150 gold crowns, Rare 11, not for Skaven. The Hero carrying it, and every warrior within 6\" of him, hate every warrior of a Skaven warband."
+        },
+        {
+         "result": "9",
+         "name": "Bare Before the Gods",
+         "text": "The Dances of Darkest Ind. 175 + D6 x 10 gold crowns, Rare 12, wizards only. A wizard with the Arcane Lore skill and this tome may learn spells from the Lore of Serpents, gaining one more spell from it for good."
+        },
+        {
+         "result": "10",
+         "name": "Book of the Dead",
+         "text": "200 + D6 x 25 gold crowns, Rare 12, Vampires and Necromancers only. A Vampire with the Arcane Lore skill may learn Necromantic magic from it, and a Necromancer gains a new spell for good. It counts as a tainted item."
+        },
+        {
+         "result": "11",
+         "name": "Grimoire of Daemon Lore",
+         "text": "275 + D6 x 25 gold crowns, Rare 13, wizards only. A wizard with the Arcane Lore skill may learn the Rituals of Dhar from it and gains a new spell for good, and the Chaos Rituals and Lesser Magic spells he knows are 1 easier to cast. It counts as a tainted item."
+        },
+        {
+         "result": "12",
+         "name": "Liber Chaotica",
+         "text": "500 gold crowns, Rare 16, wizards only. It holds all the Chaos Rituals. A wizard who has it may use every spell of his own list, though he must still learn a spell twice to lower its difficulty for good. A warrior who is not a spellcaster may take one random Chaos Ritual before the battle and try to cast it as a wizard would. It is a Chaos artefact."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Bone Garden",
+     "rules": "A team of exactly two Heroes goes tomb robbing in the post-battle sequence. Roll twice on the Grave robbery chart.\n\nThe book then speaks of a 2D6 result, though the Grave robbery chart is a D6 table. On a 2 the tomb falls in on the Heroes, and each rolls on the Serious Injuries table. On a 12 the Heroes find two corpses (fit to become Zombies for an Undead warband), possessions worth 2D6 gold crowns, and two rolls on the Booty chart.\n\nIf a zombie rises from a grave, the Heroes fight it as normal, and it strikes first in the opening round. A Hero who loses rolls on the Serious Injuries table.",
+     "min_heroes": 2,
+     "max_heroes": 2,
+     "trading_action": true,
+     "tables": [],
+     "charts": [
+      "Grave robbery",
+      "Booty"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Craftsmarket",
+   "description": "Marienburg's cartyard and boatyard, where vehicles are repaired, fitted out and sold.",
+   "restrictions": "",
+   "locations": [
+    {
+     "name": "Cartwright",
+     "rules": "A visiting Hero chooses one of three services.\n\nRepairs: for 50% of the full cost the Cartwright repairs any wrecked watercraft or land vehicle, taking D3 game turns.\n\nParts: he fits one new feature to a vehicle from the Cart Parts table or the Artillery Weapons. Choose the part and roll for its rarity. If it is not found, you may take +1 to that part's rarity roll on each later visit, adding up until he gets it.\n\nOn sale: roll a D6 on the Cartwright: On Sale! table for what he has today, bought without a rarity roll. Only one such roll is made each turn, however many Heroes visit.\n\nSwivel-mounted weapons sit on a swivel on the railing with a 90 degree arc of fire, never firing into the boat. A raft or rowboat may mount one, at either end; a riverboat or larger boat as many as fit on its railings, 3\" apart. Place them before the battle; they cannot be carried off, but may be moved between battles. A model manning one is not part of the boat's active crew that round.\n\nLarge ordnance cannot go on rafts or rowboats. Each takes a space on deck, lowering the boat's capacity by 1, and its crew are not part of the active crew that round. Hard to Fire: a crew of two (one, if Large) is needed, only one of whom needs the Artillery Expert skill; normal shooting rules apply, but no Shooting skills. Cumbersome Movement: one crewman moves it at half his Movement, two at their full Movement, never running. Reload!: the crew spends a full turn loading it (mark it loaded) and may fire in a later turn. Aim!: it may not move and fire in one turn, and pivoting counts as moving, so it needs a straight line from its muzzle to the target, with 1\" of leeway. Broadside shooting: against a building, or a boat the size of a barge or larger, within 10\", the shot hits automatically.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Cartwright: On Sale!",
+       "description": "Rolled once a turn for the Cartwright's wares.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "",
+         "text": "A treasure cart at a 25% discount."
+        },
+        {
+         "result": "2-3",
+         "name": "",
+         "text": "A wagon at 70% of the price, with -1 maximum Wounds and -1\" Movement. It cannot be resold."
+        },
+        {
+         "result": "4-5",
+         "name": "",
+         "text": "A shipment of custom parts: roll twice on the Cart Parts table: both are for sale."
+        },
+        {
+         "result": "6",
+         "name": "",
+         "text": "An Opulent Coach!"
+        }
+       ]
+      },
+      {
+       "title": "Cart Parts",
+       "description": "Rolled for a shipment of parts; otherwise the part is chosen.",
+       "dice": "2D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "2-3",
+         "name": "Steam Engine",
+         "text": "A third of the cart's price, Rare 13. Adds D3+2\" to the base speed, and the cart needs no draft creature. Full Steam Ahead!: moving only straight ahead, roll a D6 and add it to the cart's speed; on a 6 roll on the Cartwright: Engine Malfunction table instead. A Draft Creature hit on the cart hits the engine, which has Toughness 6; if it is wounded, roll on the Engine Malfunction table."
+        },
+        {
+         "result": "4",
+         "name": "Spiked Wheels",
+         "text": "100 gold crowns, Rare 10. Any warrior hit by the wagon suffers an extra wound."
+        },
+        {
+         "result": "5",
+         "name": "Treaded Wheels",
+         "text": "150 gold crowns, Rare 11. No out of control tests for rough terrain; it loses speed only after losing at least 2 wheels, and turns 90 degrees rather than 45."
+        },
+        {
+         "result": "6",
+         "name": "Emergency Flotation Device",
+         "text": "80 gold crowns, Rare 12. If the wagon falls into water it inflates and keeps it from sinking, but the wagon cannot move for the rest of the game. Resetting it after the game costs 10 gold crowns."
+        },
+        {
+         "result": "7",
+         "name": "Weapon Turret",
+         "text": "40 gold crowns, Rare 9. A platform for an artillery weapon, letting it pivot in the turn it reloads. A cart takes 1 turret. The weapon is bought separately; an occupied turret lowers the cart's capacity by 1, the weapon taking no more space."
+        },
+        {
+         "result": "8",
+         "name": "Artillery Weapon",
+         "text": "Roll on the Large Ordnance Weapons table for what is available today (as printed: see the Artillery Weapons), or pick any one swivel-mounted weapon to buy."
+        },
+        {
+         "result": "9",
+         "name": "Armoured Plating",
+         "text": "80 gold crowns, Rare 10. The cart gains +1 Toughness."
+        },
+        {
+         "result": "10",
+         "name": "Hidden Compartment",
+         "text": "40 gold crowns, Rare 10. Holds up to 2 Cargo markers, or any number of items, below deck. In battle a model may stow illegal items there by moving onto the deck and doing nothing else that round (no shooting, spellcasting or close combat). If someone who does not know of it commandeers the cart, a trigger drops the cargo into the sea in a watertight container; if the cart is stolen, your warband recovers all of it unharmed after the battle."
+        },
+        {
+         "result": "11",
+         "name": "Battering Ram",
+         "text": "60 gold crowns, Rare 8. Ignores all collision hits from the front, and the object it hits takes D3 x (the distance the cart moved that turn) Strength damage instead of the usual collision damage."
+        },
+        {
+         "result": "12",
+         "name": "Grunweld's Last Resort",
+         "text": "250 gold crowns, Rare 12. A hidden charge only the warband can set off: at any time in your turn, while at least one of your warband is aboard, it blows up the cart and everyone on it, each model taking D3 Strength 10 hits, and the cart is destroyed beyond salvage. You may arm it to blow on impact, declaring so at least a turn before the collision; then any missile hit that rolls a 6 sets it off early."
+        }
+       ]
+      },
+      {
+       "title": "Cartwright: Engine Malfunction",
+       "description": "Rolled on a 6 for Full Steam Ahead!, or when the engine is wounded.",
+       "dice": "D6",
+       "note": "A warrior with the Driver skill may re-roll a result; the new one stands.",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Kaboom!",
+         "text": "The engine explodes, dealing D6 wounds to the wagon; every model within 4\" of the bow takes a Strength 5 flaming hit, and the cart is on fire."
+        },
+        {
+         "result": "2",
+         "name": "Dangerous Overpressure!",
+         "text": "The wagon suffers 1 wound."
+        },
+        {
+         "result": "3-4",
+         "name": "Emergency Vent",
+         "text": "The cart cannot move next turn, and every model within 4\" of the bow suffers D3 Strength 2 flaming hits."
+        },
+        {
+         "result": "5",
+         "name": "Minor Leak",
+         "text": "The cart cannot move next turn."
+        },
+        {
+         "result": "6",
+         "name": "Valve Locked",
+         "text": "The cart moves 2D3\" this turn, but cannot turn."
+        }
+       ]
+      },
+      {
+       "title": "Artillery Weapons",
+       "description": "The swivel-mounted and large ordnance weapons the Cartwright and Shipwright fit.",
+       "dice": "",
+       "note": "The Parts tables say to roll on a Large Ordnance Weapons table; the book prints the four large ordnance weapons as this list, with no dice.",
+       "rows": [
+        {
+         "result": "Harpoon Gun",
+         "name": "",
+         "text": "Swivel-mounted. 50 gold crowns, Rare 10. Range 36\", Strength 4. Move or Fire; Prepare Shot. Save Modifier: a further -1 to the armour save (-2 in all). Reel 'em In: a model hit and wounded must pass a Strength test or be harpooned and pulled 8\" closer; each later turn it tests again to escape or is reeled in a further 8\". While harpooned it may not move but otherwise acts as normal, and a friend may cut it free with a Weapon Skill test. Cargo markers may be harpooned too, with no test."
+        },
+        {
+         "result": "Eagle-eye Bolt Thrower",
+         "name": "",
+         "text": "Swivel-mounted. 85 gold crowns, Rare 8, Elves and Dark Elves only. Range 36\", Strength 5. Move or Fire; Prepare Shot. Save Modifier: a further -1 to the armour save (-3 in all). Multiple Wounds (D2)."
+        },
+        {
+         "result": "Swivel Gun",
+         "name": "",
+         "text": "Swivel-mounted. 75 gold crowns, Rare 8. Move or Fire; Prepare Shot; Cumbersome. Blackpowder Misfire: it always uses the Blackpowder Misfires table. Special Ammunition: each shot needs a supply of one of the ammunition below, bought for each game and used once; the gunner says which he fires."
+        },
+        {
+         "result": "Ball Shot",
+         "name": "",
+         "text": "Swivel Gun ammunition. 5 gold crowns, Common. Range 36\", Strength 5, armour save -2. Concussion: injury rolls of 2-4 count as stunned."
+        },
+        {
+         "result": "Chain Shot",
+         "name": "",
+         "text": "Swivel Gun ammunition. 2 gold crowns, Common. Range 24\", Strength 4, armour save -1. All Wrapped Up!: an enemy hit but not wounded is knocked down on a 4+, even one that can never normally be knocked down."
+        },
+        {
+         "result": "Grape Shot",
+         "name": "",
+         "text": "Swivel Gun ammunition. 2 gold crowns, Common. Range 24\", Strength 3, no save modifier. It's Everywhere!: on a hit, D6 other enemy models within 4\" of the target and in line of sight take one hit each, nearest first, hidden models included; only if the target was in cover may models in cover be hit. Pirates are never hit by friendly grape shot."
+        },
+        {
+         "result": "Bolt Thrower",
+         "name": "",
+         "text": "Large ordnance. 110 gold crowns, Rare 9. Range 36\", Strength 6. Multiple Wounds (D3), no armour save. Penetrate Ranks: a bolt that takes its target out of action flies on in a straight line and rolls to hit and wound each further model in its path at a further -1 each time, and -1 Strength (the next at -1 to hit and Strength 5, then -2 and Strength 4, and so on); vehicles and scenery in its path are hit automatically."
+        },
+        {
+         "result": "Repeater Bolt Thrower",
+         "name": "",
+         "text": "Large ordnance. 150 gold crowns, Rare 9, Elves and Dark Elves only. Range 48\", Strength 6. As a Bolt Thrower, or it may instead fire 6 smaller bolts, each Strength 4, a further -1 to armour saves, and 1 wound."
+        },
+        {
+         "result": "Carronade",
+         "name": "",
+         "text": "Large ordnance. 150 gold crowns, Rare 11. Range 8\"-36\", Strength 7, Multiple Wounds (D3). Bounce: it does not roll to hit; mark a spot in a straight line from the muzzle, move it D3\" (D6\" at long range) in the direction of a scatter dice, then the artillery dice's score away from the cannon: everything there is hit. Unless it lands on a Large model, vehicle, building or obstacle, it bounces on another artillery dice, hitting everything in its path. A misfire on the second artillery dice stops it there. Grapeshot: instead, place the flame template at the muzzle, move it forward the artillery dice's score, and every model it touches, unless fully in cover, takes a Strength 3 hit. Misfire on the first artillery dice: roll on the Blackpowder Misfires table, but BOOM! deals D3 Strength 7 hits to everything within 3\", the vehicle included."
+        },
+        {
+         "result": "Naval Cannon",
+         "name": "",
+         "text": "Large ordnance. 250 gold crowns, Rare 12. Range 8\"-60\", Strength 9 (grapeshot Strength 3), Multiple Wounds (D6). Otherwise as a Carronade."
+        }
+       ]
+      },
+      {
+       "title": "Blackpowder Misfires",
+       "description": "Rolled when a blackpowder weapon misfires.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "BOOM!",
+         "text": "The shooter takes a Strength 4 hit (no critical hits) and the weapon is destroyed."
+        },
+        {
+         "result": "2",
+         "name": "Jammed",
+         "text": "The weapon is useless for the rest of the battle, but works again in the next one."
+        },
+        {
+         "result": "3",
+         "name": "Phut",
+         "text": "It fails to fire and the shot is lost: the shooter waits an extra turn before he can fire it again."
+        },
+        {
+         "result": "4-5",
+         "name": "Click",
+         "text": "It fails to fire, with no other effect."
+        },
+        {
+         "result": "6",
+         "name": "KA-BOOM!",
+         "text": "The shot hits the target at +1 Strength."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Shipwright",
+     "rules": "A visiting Hero chooses one of three services.\n\nRepairs: for 50% of the full cost the shipwright repairs any wrecked watercraft or land vehicle, taking D3 game turns.\n\nParts: he fits one new feature to a watercraft from the Boat Parts table or the Artillery Weapons (Cartwright). Choose the part and roll for its rarity. If it is not found, you may take +1 to that part's rarity roll on each later visit, adding up until he gets it.\n\nOn sale: roll a D6 on the Shipwright: On Sale! table for what he has today, bought without a rarity roll. Only one such roll is made each turn, however many Heroes visit.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Shipwright: On Sale!",
+       "description": "Rolled once a turn for the shipwright's wares.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "",
+         "text": "A rowboat at a 25% discount."
+        },
+        {
+         "result": "2",
+         "name": "",
+         "text": "A riverboat at 70% of the price, with -1 maximum Wounds and -1\" Movement. It cannot be resold."
+        },
+        {
+         "result": "3",
+         "name": "",
+         "text": "A barge at 70% of the price, with -2 maximum Wounds and -1\" Movement. It cannot be resold."
+        },
+        {
+         "result": "4-5",
+         "name": "",
+         "text": "A shipment of custom parts: roll twice on the Boat Parts table: both are for sale."
+        },
+        {
+         "result": "6",
+         "name": "",
+         "text": "A ship of the line!"
+        }
+       ]
+      },
+      {
+       "title": "Boat Parts",
+       "description": "Rolled for a shipment of parts; otherwise the part is chosen.",
+       "dice": "2D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "2-3",
+         "name": "Steam Engine",
+         "text": "A third of the boat's price, Rare 13. Adds D3+2\" to the base speed. It cannot be combined with any other propulsion, or fitted to rafts or rowboats. A riverboat with one needs 1 crew fewer, a barge 2 fewer. Full Steam Ahead!: moving only straight ahead, roll a D6 and add it to the boat's speed; on a 6 roll on the Shipwright: Engine Malfunction table instead. When the boat would roll on the Propulsion chart, roll on the Engine Malfunction table instead."
+        },
+        {
+         "result": "4",
+         "name": "Ram",
+         "text": "60 gold crowns, Rare 8. +1 Strength to the boat's ramming hits, and a 4+ save against collision hits to its front, its own ram included."
+        },
+        {
+         "result": "5",
+         "name": "Weapon Turret",
+         "text": "40 gold crowns, Rare 9. A platform for an artillery weapon, letting it pivot in the turn it reloads. A riverboat takes one, a barge two (prow and poop deck); rowboats and rafts none. The weapon is bought separately; an occupied turret lowers capacity by 1, the weapon taking no more space."
+        },
+        {
+         "result": "6",
+         "name": "Artillery Weapon",
+         "text": "Roll on the Large Ordnance Weapons table for what is available today (as printed: see the Artillery Weapons, Cartwright), or pick any one swivel-mounted weapon to buy."
+        },
+        {
+         "result": "7",
+         "name": "Winch",
+         "text": "40 gold crowns, Rare 7. Pulls any cargo or warrior aboard automatically, and lowers capacity by 1."
+        },
+        {
+         "result": "8",
+         "name": "Hidden Compartment",
+         "text": "40 gold crowns, Rare 10. Holds up to 2 Cargo markers already aboard, or any number of items, below deck. In battle a model may stow illegal items there by moving onto the deck and doing nothing else that round. If someone who does not know of it commandeers the boat, a trigger drops the cargo into the sea in a watertight container; if the boat is stolen, your warband recovers all of it unharmed after the battle. Not for rowboats or rafts."
+        },
+        {
+         "result": "9",
+         "name": "Armoured Plating",
+         "text": "80 gold crowns, Rare 10. The boat gains +1 Toughness."
+        },
+        {
+         "result": "10",
+         "name": "Slave Deck",
+         "text": "A quarter of the boat's price, Rare 13 (Rare 8 for Chaos Dwarfs, Norse, Dark Elves, Marauders of Chaos, Beastmen and Greenskins). Only for riverboats and barges with oar banks, in Chaos Dwarf, Norse, Dark Elf, Chaos and Greenskin warbands and any following The Body Trade. The boat holds slaves up to half its capacity on top of its usual capacity, and needs only 2 of your warband to crew it, with at least 2 slaves (riverboat) or 4 (barge) at the oars; your own warriors will not row. Put yer Backs into it!: each turn roll a D6; on a 2-6 add D3\" to its speed, and on a 1 roll on the Put yer Backs into it! table.",
+         "chart": {
+          "title": "Put yer Backs into it!",
+          "description": "Rolled when the slaves are lashed and the D6 comes up 1.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1",
+            "name": "Revolt!",
+            "text": "D3 slaves take a Strength test: those who fail die, the rest break free, and as many random members of your warband take a Strength 3 hit before the slaves dive into the water."
+           },
+           {
+            "result": "2-3",
+            "name": "Out of Sync",
+            "text": "The boat turns 45 degrees in a random direction."
+           },
+           {
+            "result": "4-5",
+            "name": "All Rowed Out",
+            "text": "The slaves are spent, and the lash cannot be used next turn either."
+           },
+           {
+            "result": "6",
+            "name": "Inspired!",
+            "text": "The boat moves +4\"."
+           }
+          ]
+         }
+        },
+        {
+         "result": "11",
+         "name": "Landship Drive Train",
+         "text": "100 gold crowns, Rare 14. Turns a barge into an amphibious vehicle; it needs a steam engine, which may be fitted later, and gains Armoured Plating. It moves on water as a boat and may cross a riverbank or beach onto land and back, stopping at the shore for that turn. On land it moves as a wagon (ignoring draft animal results) and may use Full Steam Ahead!."
+        },
+        {
+         "result": "12",
+         "name": "Gyroscopic Oscillator",
+         "text": "125 gold crowns, Rare 14. Not for rowboats or rafts. -1\" speed, but after a collision or ramming it need not test for Man Overboard on a 4+, and damage makes it veer but never drift."
+        }
+       ]
+      },
+      {
+       "title": "Shipwright: Engine Malfunction",
+       "description": "Rolled on a 6 for Full Steam Ahead!, or when the boat would roll on the Propulsion chart.",
+       "dice": "D6",
+       "note": "A warrior with the Pilot skill may re-roll a result; the new one stands.",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Kaboom!",
+         "text": "The engine explodes, dealing D6 wounds to the hull; every model within 4\" of the bow takes a Strength 5 flaming hit, and the boat is on fire. Every model aboard must test for Man Overboard."
+        },
+        {
+         "result": "2",
+         "name": "Dangerous Overpressure!",
+         "text": "The hull suffers 1 wound."
+        },
+        {
+         "result": "3-4",
+         "name": "Emergency Vent",
+         "text": "The boat cannot move next turn, and every model within 4\" of the bow suffers D3 Strength 2 flaming hits."
+        },
+        {
+         "result": "5",
+         "name": "Minor Leak",
+         "text": "The boat cannot move next turn."
+        },
+        {
+         "result": "6",
+         "name": "Valve Locked",
+         "text": "The boat moves 2D3\" this turn, but cannot turn."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    }
+   ]
+  },
+  {
+   "name": "Daemon Swamp",
+   "description": "The Cursed Marshes beyond the city, where Fen Loonies, Beastmen, Goblins and Fimir lurk.",
+   "restrictions": "Instead of searching for a rare item, one or more Heroes of a Beastman, Fimir, Undead or Greenskin warband, or Heroes who carry mutations or are Possessed, may go into the swamp.",
+   "locations": [
+    {
+     "name": "Bog Expedition",
+     "rules": "One or more Heroes set out into the marsh for anything useful. Roll 2D6 on the Bog table, adding +1 for each Hero beyond the first.",
+     "min_heroes": 1,
+     "max_heroes": "all",
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Bog",
+       "description": "Rolled for each expedition, +1 for each Hero beyond the first.",
+       "dice": "2D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "2",
+         "name": "Gas Pocket",
+         "text": "A supply of bog fire: the warband gains 2D3 vials of Cathayan Candles (Spoils of War, Border Town Burning)."
+        },
+        {
+         "result": "3",
+         "name": "Spider Web",
+         "text": "Each Hero must pass an Initiative test or be caught in a web. If any is caught, a Gigantic Spider appears (M 5, WS 3, BS 0, S 4, T 4, W 3, I 4, A 2, Ld 7; causes fear, natural 5+ armour save, Poison: to hit rolls of 6 wound automatically). A Hero with the Beastmaster skill may tame it and add it to the roster; otherwise it attacks, in base contact with every Hero involved, and trapped Heroes are at -1 Weapon Skill and -1 Initiative. Heroes who defeat it share D3 experience."
+        },
+        {
+         "result": "4",
+         "name": "Tentacle Trouble",
+         "text": "One random Hero takes a Strength test. If he fails, the bogtopus takes one random weapon; if the failed roll is a 6 it drags him under for good: strike him from the roster. If he passes he lands it: slaughter it for D3+1 provisions, or keep it in a 35 gold crown aquarium and milk it for Black Lotus once before each game."
+        },
+        {
+         "result": "5",
+         "name": "Goblin-Hole",
+         "text": "One random Hero falls into a goblin trap: he must pass an Initiative test or roll on the Serious Injury table. If any of the others passes an Initiative test they spot the goblin: a Greenskin warband gains a free goblin with a boss pole and a pet squig as Henchmen; any other gets D3+1 spider spittle and D2 Madcap Mushrooms from him before he escapes."
+        },
+        {
+         "result": "6",
+         "name": "Leeches",
+         "text": "Each Hero who is not Undead takes a Strength 2 hit with no armour save. One who is wounded has -1 Toughness in the next battle; do not roll for injury."
+        },
+        {
+         "result": "7",
+         "name": "Weeds",
+         "text": "Each Hero must pass an Initiative test or take D2 Strength 1 hits from insects (Undead and daemons are immune). For each Hero who passes, roll once on the Herbs and Potions table (Herbalist)."
+        },
+        {
+         "result": "8",
+         "name": "Snotling Set",
+         "text": "Collect up to D2 bags of snotling dung. A bag may be emptied over a Hero other than the leader before a battle and lasts until its end: a model must pass a Leadership test to charge him, on top of any fear test, and is at -1 to hit him in close combat. Undead and daemons are immune."
+        },
+        {
+         "result": "9",
+         "name": "Beast Foragers",
+         "text": "Take a Leadership test on the best Leadership present; if passed, D3+1 Ungor with daggers join as a Henchmen group."
+        },
+        {
+         "result": "10",
+         "name": "Poison Feast",
+         "text": "A rotten carcass: each warrior who eats has -1 Toughness in the next battle, unless he resists with a Leadership test. Warriors immune to poison gain +1 Toughness for it instead."
+        },
+        {
+         "result": "11",
+         "name": "River Brigands",
+         "text": "Take a Leadership test on the best Leadership among the Heroes. If passed, buy slaves at 15 gold crowns and corpses at 10 gold crowns (one per Hero), and you may hire one of a Black Orc, Chaos Warrior, Chaos Centaur, Dark Elf Assassin, Highwayman, Ogre Slavemaster, Thief or Slaver at half his hire fee, even if your warband could not normally hire him. If failed, the bandits try to rob them: roll three D6, and for each 1-2 a random Hero present is taken out of action and rolls for Serious Injury (avoided on a 4+ by one with 10 or more experience). The survivors share D3 experience."
+        },
+        {
+         "result": "12",
+         "name": "Profaned Shrine",
+         "text": "The Heroes may sacrifice a captured warrior or a Henchman here. If they do, each Hero takes a Leadership test: those who pass roll on the Gifts of the Shadowlord table, those who fail on the random mutation table (the book does not print Gifts of the Shadowlord). A Hero with a Mark of Chaos may instead choose a Gift of Chaos, or a free standard mutation with the Mark of Chaos Undivided."
+        },
+        {
+         "result": "13",
+         "name": "Marsh-Watch",
+         "text": "A patrol attacks: roll four D6, and for each 1-2 a random Hero present is taken out of action and rolls for Serious Injury (avoided on a 4+ by one with 10 or more experience). If they survive, the warband gains 2D6 gold crowns, D6 spears, D6 swords, D3 suits of light armour and D3 experience shared among those Heroes, and counts two members fewer when it next sells Treasure."
+        },
+        {
+         "result": "14",
+         "name": "Bandit Camp",
+         "text": "Cathayan bandits camp in the marsh: roll a D6 on the Bandit Camp table.",
+         "chart": {
+          "title": "Bandit Camp",
+          "description": "Rolled for the meeting with the outlaw chief.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1-2",
+            "name": "Booby Trap!",
+            "text": "The lair is rigged: resolve an exploding powder keg, and every Hero present who fails an Initiative test takes D3 Strength 4 hits."
+           },
+           {
+            "result": "3-4",
+            "name": "Grateful ally!",
+            "text": "A disillusioned bandit deserts: a Pyromaniac Hired Sword (Border Town Burning) joins the warband and forms a Blood Pact at once."
+           },
+           {
+            "result": "5-6",
+            "name": "Bandits Attack!",
+            "text": "Heroes take Strength tests one at a time until three pass or one fails; a Hero who rolls a 6 rolls on the Serious Injury table. If three pass, the warband raids the stash, rolling a D6 for each find: the camp itself (it counts as an encampment), automatic; Rope, automatic; Dragon Sword, 4+; Powder Keg, 2+; Lamellar Armour, 5+; Firecrackers, 3+; Cathayan Long Sword, 6+."
+           }
+          ]
+         }
+        },
+        {
+         "result": "15",
+         "name": "Troll Hollow",
+         "text": "A Chaos Troll (Bestiary) wallowing in a pool joins the warband as a Hired Sword if baited out with a dose of provisions, or fed one of the warband's warriors. Its upkeep is 15 gold crowns, or a sacrificed Henchman or animal, whose weapons, equipment and treasure are lost."
+        },
+        {
+         "result": "16",
+         "name": "Daemon Familiar",
+         "text": "The warband's spellcaster may take a familiar of his choice. Or a warrior may eat the daemon: roll a D6, and on a 1 he becomes a Chaos Spawn; otherwise he gains the Daemon Soul mutation and a random spell from the Chaos Rituals."
+        },
+        {
+         "result": "17",
+         "name": "Merchant Ship",
+         "text": "A merchant ship bogged in the swamp. Help free it and extort D3 Campaign Points and 50 + D6 x 5 gold crowns; or slaughter everyone aboard for D6+3 experience shared among the Heroes; or take the merchants as D3+3 captives. Having slaughtered or captured them, roll a D6 for each find: Ship of the line, automatic; 5D6 x 5 gold crowns, automatic; D6 suits of heavy armour, 3+; Unholy relic, 4+; D6 Cathayan silk clothes, 4+; D3 wyrdstone shards, 4+; Elven cloak, 5+; Profane book, 6+; Greater artefact, 6+."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Plank-work",
+     "rules": "For each two Heroes sent out to gather wood, roll a D6: on a 5+ they find enough to cut into makeshift boats, and the warband adds a bundle of planks to its roster.\n\nWhile it has planks, the warband may set Heroes to building instead of searching for rare items. Roll a D6 for each Hero working: on a 1-2 he has an accident and takes a Strength 4 hit, rolling for injury as normal if wounded.\n\nTwo Heroes make a Raft from one bundle; one more bundle at the same time gives it Sails. The raft cannot be resold.\n\nFour Heroes working for two campaign turns make a Riverboat from four bundles. It has -1 Wound and cannot be resold.\n\nThree Heroes may spend two bundles improving a Riverboat or Barge the warband owns: roll a D6 on the Plank-work table. The upgrades work as on the Boat Parts table (Shipwright).",
+     "min_heroes": 2,
+     "max_heroes": "all",
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Plank-work",
+       "description": "Rolled when three Heroes improve a boat with two bundles of planks.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1-2",
+         "name": "Ram",
+         "text": ""
+        },
+        {
+         "result": "3",
+         "name": "Winch",
+         "text": ""
+        },
+        {
+         "result": "4-5",
+         "name": "Armoured Plating",
+         "text": ""
+        },
+        {
+         "result": "6",
+         "name": "Slave Deck",
+         "text": ""
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Marshborn Alliances",
+     "rules": "A Hero approaches one of the swamp's tribes and rolls a D6 on the Marshborn Alliances table for its answer. If the alliance is made, choose the tribe and add its warriors to the roster. They serve as Hired Swords would, but never roll for a Blood Pact, do not count towards your Hired Sword maximum, gain experience as Henchmen, and are replaced if killed, though their experience is lost.\n\nGoblins: 1 Goblin with a spear riding a Giant Spider, 1 Goblin with a spear riding a Squig, and 3 Goblins with spears, the ones on foot suffering from Animosity among themselves (The Mob Roolz warband). Mutants: 5 Mutants with a random mutation each, armed with a club and a dagger. Fimir: 4 Shearl armed with clubs.\n\nFor the next 20 campaign rounds the warband pays the tribe 8 Treasures (or shards and the like) every 5 turns, four deliveries in all. Then it may end the alliance, the warriors left going home, or keep them for another 10 rounds at the same price. While a payment is late the warriors leave the roster, and in each campaign turn it stays unpaid every Hero of the warband rolls for Serious Injuries from the tribe's ambushes. Once payment resumes the ambushes stop and the warriors return.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Marshborn Alliances",
+       "description": "Rolled for the tribe's answer.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Rejected!",
+         "text": "The tribe refuses and beats the Hero: he rolls for Serious Injuries."
+        },
+        {
+         "result": "2-3",
+         "name": "Demanding!",
+         "text": "The warband pays a further 25 gold crowns at each tribute."
+        },
+        {
+         "result": "4",
+         "name": "Challenging",
+         "text": "The warband pays a further 15 gold crowns at each tribute."
+        },
+        {
+         "result": "5",
+         "name": "Deal!",
+         "text": "The alliance is made with no strings attached."
+        },
+        {
+         "result": "6",
+         "name": "Alliance of Plunder!",
+         "text": "The tribe lends the warband 100 gold crowns' worth of equipment, but it pays a further 25 gold crowns at each tribute."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "The Place of Testing",
+     "rules": "Tazrak Pelko. Any number of Heroes of a Chaos warband may seek an audience with the Meargh Rakka. Each takes a Leadership test in the fog: those who pass stay together and choose the area they come in by; those who fail are lost and roll a D6 on The Place of Testing: Approach table.\n\nHeroes who get past the areas climb the monolith hill to ask Rakka's help. Each may take a Leadership test at -1 Leadership; roll a D6, adding +1 for each test passed, on The Place of Testing: The Monolith table.",
+     "min_heroes": 1,
+     "max_heroes": "all",
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "The Place of Testing: Approach",
+       "description": "Rolled by the Heroes who failed their Leadership test in the fog.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1-2",
+         "name": "Lost!",
+         "text": "The Heroes wander in circles and come out of the fog outside Tazrak Pelko. They may go home, or try once more; another 1-2 means they fail to enter, and the band must give for this campaign turn (so printed)."
+        },
+        {
+         "result": "3",
+         "name": "Plain of Glass",
+         "text": "A lone Fimir Warrior bars the way. Every Hero must pass a Leadership test or suffer from fear this battle, and they fight him or turn back: in base contact, roll off for who charges. The ground is slick, so each injury roll is made twice and the worse taken. If they win, the survivors share D3 experience."
+        },
+        {
+         "result": "4",
+         "name": "Stones of Sacrifice!",
+         "text": "The Heroes go around the stone circle or defy its Guardian Daemon, an animated suit of Chaos Armour: M 4, WS 4, BS 0, S 4, T 4, W 3, I 4, A 3, Ld 7, with a halberd and Chaos Armour, immune to psychology, poison, disease and critical hits. Fight in base contact, rolling off for who charges. If they defeat it, they take a suit of Chaos Armour and share D2 experience."
+        },
+        {
+         "result": "5",
+         "name": "Pools of Obedience",
+         "text": "Roll a D6 for each Hero who goes on: on a 1 he is sucked into a pool of blood. His companions may try a Strength test to pull him out, at +1 for each helper beyond the first; otherwise he is lost for ever."
+        },
+        {
+         "result": "6",
+         "name": "Forest of Corpses",
+         "text": "A maze of bodies that never rot. Each Hero must pass a Leadership test or be lost from the others, finding his way back in D2 campaign turns. Each may carry off a corpse."
+        }
+       ]
+      },
+      {
+       "title": "The Place of Testing: The Monolith",
+       "description": "Rolled for Rakka's answer, +1 for each Hero's passed Leadership test.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1-2",
+         "name": "Insolence!",
+         "text": "Rakka is furious and her Fimir fall on them: roll a D6 for each Hero, and on a 1 he rolls for Serious Injuries."
+        },
+        {
+         "result": "3",
+         "name": "Begone!",
+         "text": "Rakka refuses and orders them off Tazrak Pelko before she sets her warriors on them."
+        },
+        {
+         "result": "4",
+         "name": "Blessing",
+         "text": "Any curse on the warband or one of its members is lifted. Each Hero present may have one Serious Injury healed, but develops a random mutation."
+        },
+        {
+         "result": "5-7",
+         "name": "Ritual",
+         "text": "As Blessing, and the Heroes may sacrifice 2 Hostages to give one Hero a free standard mutation, or a spellcaster a new spell from the Chaos Rituals or the Rituals of Dhar."
+        },
+        {
+         "result": "8+",
+         "name": "Assistance",
+         "text": "As Blessing and Ritual, and a Fimir Warrior serves the warband free as a Hired Sword in the next battle. He may be kept for an upkeep of 30 gold crowns, or 2 Hostages and a wyrdstone shard, each turn."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    }
+   ]
+  },
+  {
+   "name": "The Undercity",
+   "description": "The Skaven warrens of Clan Scruten beneath the marshes and the city.",
+   "restrictions": "Only Skaven Heroes may visit, instead of searching for a rare item. No other race may ever come here.",
+   "locations": [
+    {
+     "name": "Altar of the Horned Rat",
+     "rules": "A wizard of the warband may pay 15 warp tokens and pray to the Rat God: +1 to his casting rolls in the next battle. Roll 2D6 as well, and on a 12 grey horns sprout from his head: he becomes a Grey Seer, his +1 to cast is permanent, and he may still come back to the altar.\n\nAny warrior may pray for 15 warp tokens and roll a D6 on the Altar of the Horned Rat table, adding +1 for each enemy he took out of action in the last battle.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Altar of the Horned Rat",
+       "description": "Rolled for a warrior who prays, +1 for each enemy he took out of action last battle.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1-2",
+         "name": "Unworthy!",
+         "text": "-1 Toughness in the next battle."
+        },
+        {
+         "result": "3",
+         "name": "Meh!",
+         "text": "No effect."
+        },
+        {
+         "result": "4",
+         "name": "Fly my Child.",
+         "text": "+1 Movement in the next battle."
+        },
+        {
+         "result": "5",
+         "name": "Worthy subject",
+         "text": "+1 Weapon Skill or +1 Ballistic Skill in the next battle."
+        },
+        {
+         "result": "6",
+         "name": "Blessed Rat",
+         "text": "+1 Strength, and +1 Weapon Skill or +1 Ballistic Skill, in the next battle."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Warpstone Foundry",
+     "rules": "The foundry's workers trade a piece of wyrdstone (warpstone) for two untainted Treasures or 35 gold crowns.\n\nClan Skryre's students make a Warpstone Fuel Cell for 100 gold crowns and D3 pieces of warpstone. It fuels for ever any equipment or creature that needs warpstone to work, such as Clan Skryre Rat Ogres, Warp Fire Throwers and Warp Engines.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [],
+     "charts": []
+    },
+    {
+     "name": "Warpforge Workshop",
+     "rules": "A Skaven visitor may take a weapon already made or order one. For what is on offer now, roll 2D6 on the Warpforge Workshop table. To order, choose any weapon from the table and roll for its rarity; if it is not found, the tinker rats start work, and each later visit adds +1 to the rarity roll. If the warband has any Technicians, engineers or Tinker Rats, one may miss the next battle to work on it, and it is ready on the next visit. A Hero may have only one order at a time; a new order stops work on the old one.\n\nSeveral of these weapons fail on the Experimental Weapon chart, which the book names but does not print.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Warpforge Workshop",
+       "description": "Rolled for what the workshop has on offer.",
+       "dice": "2D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "2",
+         "name": "Warp Fire Thrower",
+         "text": "300 gold crowns, Rare 14. Strength 5. Refuel: D3 wyrdstone shards between battles. Cumbersome: its bearer may use no other weapon or equipment. Heavy: alone, he has -2 Movement and -1 Weapon Skill and may not charge; with an Assistant only -1 Movement and -1 Weapon Skill. Move or Fire (pivoting or standing up allowed). Pick Target: it may target any enemy in sight. Save Modifier: -2 to the armour save. Special Attack: place the small flame template at the bearer's base towards the target and move it the artillery dice's score in inches towards it; the target and every model it passes over is hit automatically, for D3 wounds. Misfire: it always uses the blackpowder misfire rules (Blackpowder Misfires, Cartwright), but any result other than BOOM! is a Fireball: the weapon, its bearer and his Assistant are destroyed, and every model within 2\" takes a Strength 5 hit causing D3 wounds."
+        },
+        {
+         "result": "3",
+         "name": "Ratling Gun",
+         "text": "275 warp tokens, Rare 14 (printed Rattling Gun). Range 6\"-16\", Strength 3, save modifier -1. Move or Fire. Metal Storm!: name the target and roll 2D6 for the number of shots, split evenly between it and another model within 6\" of it, friend or foe, then roll to hit and wound each; once fired it may not be used again in the game. Unwieldy: two models carry it; it may not fire with an enemy within 6\" of the firer, nor ever move and fire, Nimble or not. Jeopardous: on a double for the shots, roll on the Ratling Gun Misfire table."
+        },
+        {
+         "result": "4",
+         "name": "Warp Grinder",
+         "text": "200 warp tokens, Rare 14. Close combat, Strength 5, save modifier -1. Unwieldy (two models carry it). Experimental Technology: on a to hit roll of 1, roll a D6 on the Experimental Weapon chart; if it malfunctions the hit is resolved on the user, hitting on a 4+, and if that takes him out of action roll D6+1 on the chart. Tunnel Borer: he may go below or come up without a manhole or sewer pipe: roll a D6, and on anything but a 1 (Experimental Technology) it works; mark the new hole and remove the model. Coming up works the same way, and he may charge as he does. Drill Killer: a 6 to hit and a 6 to wound cause 3 wounds rather than 1. Refuel: D3 wyrdstone shards between battles."
+        },
+        {
+         "result": "5",
+         "name": "Jezzail Rifle",
+         "text": "200 warp tokens, Rare 11. Counts as a Hochland Long Rifle (master equipment list)."
+        },
+        {
+         "result": "6",
+         "name": "Warpstone Bullets",
+         "text": "80 warp tokens, Rare 12. For any blackpowder weapon. A warrior wounded by one rolls on the Warp taint table after the battle (so printed; the nearest table is the Warp-touch table, Alchemist)."
+        },
+        {
+         "result": "7",
+         "name": "Poison Wind Globes",
+         "text": "20 warp tokens, Rare 6. Thrown, range 6\". Poison Wind: no cover penalty and no armour save; a globe deals D3 wounds to the target on a 3+ and 1 wound to anyone else within 2\" on a 4+, and affects Undead too. Drop: on a to hit roll of 1 the globe breaks in the thrower's hands and hits him. A model may drop one on purpose on a model in base contact."
+        },
+        {
+         "result": "8",
+         "name": "Gas Mask",
+         "text": "15 warp tokens, Rare 6. A Skaven wearing it has a 3+ save against gas or soporific attacks. A Hero who is not a Skaven is at -1 to hit in close combat, to hit with missiles and to cast spells while wearing it."
+        },
+        {
+         "result": "9",
+         "name": "Diving Bell",
+         "text": "100 warp tokens, Rare 10. Gives the Aquatic ability and counts as a helmet."
+        },
+        {
+         "result": "10",
+         "name": "Pneumatic Arm",
+         "text": "140 warp tokens, Rare 13. An Engineer Adept wearing the harness counts as having two extra arms, and may carry an Unwieldy weapon (Ratling Gun, Warp Fire Thrower and the like) without a second model."
+        },
+        {
+         "result": "11",
+         "name": "Poison Wind Mortar",
+         "text": "100 gold crowns, Rare 12. Range 24\". Launcher: it fires Poison Wind Globes, bought each round and loaded into it, to 24\". Combo: it comes with two globes when first bought. Heavy: alone, -2 Movement and -1 Weapon Skill and no charging; with an Assistant only -1 Movement and -1 Weapon Skill. Move or Fire. Prepare Shot: it fires only every other turn. Scatter: a miss lands 2D6\" away in a random direction."
+        },
+        {
+         "result": "12",
+         "name": "Doom Flayer",
+         "text": "300 warp tokens, Rare 14. Close combat, moves 2D6\". Unwieldy. Refuel: D3 wyrdstone shards between battles. Ridable: two warriors must ride in it, as in a cart, and hits on it after it moved are randomised. Whirling Death: it enters no close combat, but every model it passes over must pass an Initiative test or take a hit at a Strength equal to the distance it rolled that turn. No Brakes!: it may turn 90 degrees at the start of its move but must move the full distance; hitting anything that is not a warrior is a collision (vehicles of the Empire). Experimental Weapon. More-More Whirling Death!: before moving, the driver may overdrive it: on a D6 roll of 1-2 roll on the Experimental Weapon chart; on 3-6 it moves 3D6\" this turn and no Initiative test avoids it."
+        }
+       ]
+      },
+      {
+       "title": "Ratling Gun Misfire",
+       "description": "Rolled when a double comes up for the Ratling Gun's number of shots.",
+       "dice": "D6",
+       "note": "The book names the Experimental Weapon chart but does not print it.",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Boom!",
+         "text": "The gun explodes: the firer is taken out of action, every model within 6\" of him takes a Strength 4 hit on a 4+, and roll D6-1 on the Experimental Weapon chart."
+        },
+        {
+         "result": "2",
+         "name": "Blam!",
+         "text": "The ammunition explodes: the firer takes a Strength 4 hit on a 4+. Roll a D6 on the Experimental Weapon chart."
+        },
+        {
+         "result": "3",
+         "name": "Boing!",
+         "text": "The gun tears itself apart. Roll a D6 on the Experimental Weapon chart."
+        },
+        {
+         "result": "4",
+         "name": "Ping!",
+         "text": "Bits come loose inside: the gun is useless for the rest of the game."
+        },
+        {
+         "result": "5",
+         "name": "Clunk!",
+         "text": "The crank comes off: miss this turn's shooting phase and try again next turn."
+        },
+        {
+         "result": "6",
+         "name": "Roar!",
+         "text": "It cooks off its ammunition: every model within 16\" of the firer and in his line of sight, friend or foe, takes 2 automatic hits."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Moulder Beast Market",
+     "rules": "Master Moulder: for one piece of warpstone and 25 warp tokens, any Hero or Clan Rat Ogre may submit to warpstone experiments and rolls on the random mutation table (Corrupted Characters). A Rat Ogre must not have been taken out of action in the last game, and a Hero must take him there.\n\nBeast Market: a Skaven visitor may take a beast already on offer, rolling 2D6 on the Beast Market table, or order one: choose it and roll for its rarity; if it is not found the moulders start work, and each later visit adds +1 to the rarity roll. If the warband has a Beast Master or animal handler, he may miss the next battle to work on it, and it is ready on the next visit. A Hero may have only one order at a time. Speciality animals do not gain experience. Trained animals, great beasts and familiars follow the animal handling rules of the Animal Emporium.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Beast Market",
+       "description": "Rolled for the beasts on offer.",
+       "dice": "",
+       "note": "The rule says to roll 2D6 on this table, but the book numbers its six beasts 1 to 6. Speciality animals do not gain experience.",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Giant Rat",
+         "text": "15 warp tokens, Rare 9. M 6, WS 2, BS 0, S 3, T 3, W 1, I 4, A 1, Ld 4. Uses no weapons or armour, gains no experience, and unlike most animals can climb."
+        },
+        {
+         "result": "2",
+         "name": "Skaven Slave",
+         "text": "10 warp tokens, Rare 9. M 6, WS 2, BS 2, S 3, T 3, W 1, I 4, A 1, Ld 4. May use the weapons and armour of the warband's Henchmen. Ignored: an out of action slave does not count for Rout tests. Downtrodden: a wounded slave is taken out of action at once, with no injury roll."
+        },
+        {
+         "result": "3",
+         "name": "Wolf Rat",
+         "text": "90 warp tokens, Rare 11. M 9, WS 3, BS 0, S 3, T 3, W 1, I 3, A 1, Ld 5. Fights with claws and fangs and uses no weapons or armour. An animal: gains no experience. Frenzy."
+        },
+        {
+         "result": "4",
+         "name": "Spike Jawed Snatcher",
+         "text": "25 warp tokens, Rare 10. A weapon: close combat, Strength as user, two-handed. Capture: a model taken out of action by it becomes captured unless the warband... (the rule breaks off in the book)."
+        },
+        {
+         "result": "5",
+         "name": "Brood Horror",
+         "text": "250 + D6 x 10 gold crowns, Rare 13. M 9, WS 4, BS 0, S 5, T 5, W 3, I 3, A 3, Ld 5. Teeth and claws, unarmed without penalty. Save: an unmodifiable 5+. Causes fear. Climbs. Ravenous Monstrosity: if it caused at least 1 wound last round it regenerates 1 wound. Mount: a Skaven Hero with the right skill may ride it."
+        },
+        {
+         "result": "6",
+         "name": "Hellpit Abomination",
+         "text": "300 + D6 x 10 warp tokens, Rare 15. M 2D6, WS 3, BS 0, S 5, T 5, W 3, I 2, A 4, Ld 6. Large, fear, Great Beast, Staggered But Not Down. Save: an unmodifiable 5+. Too Many Heads!: never stunned, counting stunned as knocked down. Regeneration: when wounded, roll a D6, and on a 4+ it heals every wound it has suffered; fire and magical attacks prevent this. Warpstone Spikes: wizards within 12\" are at -2 to their magic rolls. Too Horrible to Die: the first time it is slain each game, roll a D6 on the Too Horrible to Die table.",
+         "chart": {
+          "title": "Too Horrible to Die",
+          "description": "Rolled the first time the Hellpit Abomination is slain in a game.",
+          "dice": "D6",
+          "note": "",
+          "rows": [
+           {
+            "result": "1-3",
+            "name": "Out of Action.",
+            "text": "It is taken out of action."
+           },
+           {
+            "result": "4-5",
+            "name": "The Rats Emerge!",
+            "text": "D6 Giant Rats burst out of it, and it is taken out of action as normal."
+           },
+           {
+            "result": "6",
+            "name": "It's Alive!",
+            "text": "It recovers D3 wounds."
+           }
+          ]
+         }
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Eshin Assassination Contract",
+     "rules": "Pay Clan Eshin 60 warp tokens to put out a contract. In the next round choose any one game for the Assassin to appear in, even one your warband does not play, and choose his target there: he gets +1 to hit and must always move towards it.\n\nThe Assassin is a Night Runner: M 6, WS 4, BS 4, S 4, T 3, W 1, I 6, A 2, Ld 7, with fighting claws and throwing stars coated in black lotus, and a Thief's Cloak. Art of Silent Death: he fights barehanded without penalty, counting as having two weapons (+1 Attack), and causes a critical hit on a to wound roll of 5-6; with Eshin fighting claws it gives +2 Attacks rather than +1.\n\nA Clan Eshin warband may send one of its own Heroes instead, still paying the 60 warp tokens; he misses your warband's game to appear in the chosen one. A warband with the Assassination Protocol campaign point bonus may send one of its Heroes along with the Assassin, or a Clan Eshin warband two Heroes and no Assassin.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [],
+     "charts": []
+    },
+    {
+     "name": "The Plague Cauldrons",
+     "rules": "A Skaven may choose a disease from the Plague Cauldrons table and roll for its rarity. If it is not found he may order it from the Plague Monks, adding +1 to the rarity roll for each earlier visit when he comes back to check. Or a Plague Monk of the warband may stay to finish it, missing the next battle, and it is ready for the next game.\n\nEach disease comes in a sealed vial, thrown in the shooting phase as holy water is, to twice the thrower's Strength in inches. It only takes hold on a model that has already suffered a wound in the battle. On a to hit roll of 1 the thrower drops it on himself and is infected at once, wounded or not.\n\nThe Plague Monks also sell Skalm for 30 warp tokens, a smear that heals a warrior of the wounds he has suffered in a game. Clan Pestilens sell any amount of Black Lotus, Dark Venom, Manticore Spore and Spider Spittle with no rarity roll, at 10 warp tokens a vial more than the usual price.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Plague Cauldrons",
+       "description": "The diseases on sale.",
+       "dice": "",
+       "note": "",
+       "rows": [
+        {
+         "result": "The Red Pox",
+         "name": "",
+         "text": "60 warp tokens, Rare 12. -1 Strength and -1 Toughness until cured with Man Bane (Herbs and Potions table, Herbalist). Roll a D6 after each battle: on a 1 he passes it to another random model of the warband."
+        },
+        {
+         "result": "Seeping Pox",
+         "name": "",
+         "text": "100 warp tokens, Rare 13. A Leadership test before each battle; on a failure he misses it to recover, and on a double he passes it to another random warrior of the warband."
+        },
+        {
+         "result": "The Oozing Eye",
+         "name": "",
+         "text": "120 warp tokens, Rare 13. An Initiative test after each battle; on a failure his Weapon Skill or Ballistic Skill drops by 1. With one of them at 0 he is blind in one eye; with both at 0 he is blind, and is struck from the roster or left in camp until cured. The only cure is washing the eyes with Valerian Tea (Elixir, Herbs and Potions table, Herbalist)."
+        },
+        {
+         "result": "Scalamundrax",
+         "name": "",
+         "text": "100 + D6 x 10 warp tokens, Rare 14. At once -1 Movement and +1 Toughness, and again at the end of each game unless he passes a Strength test. At Movement 0 he has turned to stone: strike him from the roster. Roll a D6 after each battle: on a 1 he passes it to another random model of the warband."
+        },
+        {
+         "result": "Nurgle's Rot",
+         "name": "",
+         "text": "150 + D6 x 10 warp tokens, Rare 15. Mark it on the roster. Before each battle he must pass a Toughness test or lose 1 Toughness for good, dying at 0. On a roll of 6 for the test he passes it to a random member of the warband: mark it on the roster too."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Ektrit Warmachine Workshop",
+     "rules": "For the right price warbands may buy smaller versions of the Skaven war machines on the Ektrit Warmachine Workshop table. The book gives each a price and rarity and no other way of buying it.\n\nSkaven carts have no draft animals: a Warp Engine moves one, or it is pushed, 1\" for each Skaven or giant rat pushing (4 pushing move it 4\"). A Skaven pushing does nothing else that turn. A Draft Animal hit on the hit location table hits a random Skaven pushing the cart.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [
+      {
+       "title": "Ektrit Warmachine Workshop",
+       "description": "The war machines on sale.",
+       "dice": "",
+       "note": "",
+       "rows": [
+        {
+         "result": "Treadmill",
+         "name": "",
+         "text": "150 warp tokens, Rare 12, ships only. The ship moves 2\" more a turn."
+        },
+        {
+         "result": "Warp Engine",
+         "name": "",
+         "text": "250 warp tokens, Rare 13. A cart needs no draft animals, and a boat moves 4\" more a turn. Hits on the mast or draft animals hit the engine instead, which has 4 wounds and Toughness 8. Refuel: D3 wyrdstone a game."
+        },
+        {
+         "result": "Warp Lightning Cannon",
+         "name": "",
+         "text": "220 warp tokens, Rare 13. Range 36\", Strength 5 (+1 Strength and injury against armoured enemies). Refuel: D3 warpstone a game. Huge: it takes 4 crew spaces on a boat or cart, leaving a cart only 2, for the driver and the operator. Charge up: it needs a turn to charge and so fires only every second turn if it moved the turn before. Jolt: roll to hit with the firer's Ballistic Skill; the first model hit takes a Strength 5 hit, then on a D6 roll of 4+ it leaps to a random warrior within 4\" at Strength 3, and so on at -1 Strength each time, until it misses or reaches 0."
+        },
+        {
+         "result": "Plague Furnace",
+         "name": "",
+         "text": "250 warp tokens, Rare 14. Range 24\", Strength D3 x 5. Great Censer: in the shooting phase the driver may loose the censer, rolling to hit with his Ballistic Skill; a miss scatters it 6\" in a random direction. Every model under the small blast template where it lands takes D3 Strength 5 hits, and from then on the fumes come from that spot rather than the cart. Poisonous Fumes: every model within 3\" of the censer ball, on the cart or loosed, must pass a Toughness test at the end of the turn or lose a wound; models immune to poison are not affected. Defend the Ball!: if its warband routs with the ball loose, the ball is lost; a new one costs 100 warp tokens. Huge: it takes 4 crew spaces, leaving a cart only 2 (the book heads this rule with the Screaming Bell's name)."
+        },
+        {
+         "result": "Screaming Bell",
+         "name": "",
+         "text": "200 warp tokens, Rare 14. Peal of Doom: no spell may be cast within 12\" of it, and a spell in effect that comes within 12\" ends; Magic of the Horned Rat is exempt. The Bell tolls 13!: if a game reaches turn 13 with no winner, the Skaven side with the bell wins the scenario. Huge: it takes 4 crew spaces, leaving a cart only 2."
+        }
+       ]
+      }
+     ],
+     "charts": []
+    },
+    {
+     "name": "Skurvy Dockyards",
+     "rules": "Skaven may buy any item of the Craftsmarket that is not limited to one race, as well as the items listed below it in the book (presumably the Ektrit Warmachine Workshop's, printed beside it; the book does not say), ordering them as the Cartwright and Shipwright describe.",
+     "min_heroes": 1,
+     "max_heroes": 1,
+     "trading_action": true,
+     "tables": [],
+     "charts": []
+    },
+    {
+     "name": "Clan Grutnick Warpstone Mine",
+     "rules": "For the price of 1 of the warpstone found, Clan Grutnick lets any number of Heroes and slaves mine. Roll a D6 for each Hero and slave, and read the total on the exploration chart for the warpstone found (presumably its income chart).\n\nA Hero who rolls a 1 must pass a Toughness test or miss the next game. A captured warrior or slave who rolls a 1 breaks free and returns to his own warband as a Hero: a Henchman counts as rolling The Lad's Got Talent, and the Hero gains D6+2 experience. One who rolls a 6 is worked to death. Either way he is struck from the Skaven player's roster.\n\nThe book says Grutnick will let anyone mine for a price, though the Undercity is closed to all but Skaven.",
+     "min_heroes": 1,
+     "max_heroes": "all",
+     "trading_action": true,
+     "tables": [],
+     "charts": []
+    }
+   ]
+  }
  ]
 }
