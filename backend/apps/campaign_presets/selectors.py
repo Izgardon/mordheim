@@ -12,7 +12,7 @@ def preset_rows() -> QuerySet[CampaignPreset]:
     """Every preset with its chart, the settings it guides towards, and how many rules and standalone charts it
     holds: two queries. The counts are what the dialog says a change would copy in, so a table belonging to a rule
     or to one result is not counted -- it rides with its owner."""
-    standalone = Q(charts__rule__isnull=True) & Q(charts__row__isnull=True)
+    standalone = Q(charts__rule__isnull=True) & Q(charts__row__isnull=True) & Q(charts__location__isnull=True)
     return (
         CampaignPreset.objects.select_related("exploration_chart")
         .prefetch_related("settings")

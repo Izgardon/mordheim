@@ -24,6 +24,7 @@ from apps.campaigns.models import (
     HERO_DEATH_ROLL_CHOICES,
     MAX_CAMPAIGN_RULE_TEXT,
     MAX_CHART_ROW_TEXT,
+    MAX_LOCATION_RULES_TEXT,
 )
 
 
@@ -90,13 +91,21 @@ class CampaignPresetRule(models.Model):
 
 class CampaignPresetChart(models.Model):
     """One of the preset's charts, in the book's order, as `CampaignChart` holds a campaign's own. One carrying a
-    `rule` or a `row` is that owner's own table rather than a chart of its own, and is copied with it."""
+    `rule`, a `row` or a `location` is that owner's own table rather than a chart of its own, and is copied with it.
+    A location's tables may share a title with another location's, so only the rest are unique by title."""
 
     preset = models.ForeignKey(CampaignPreset, related_name="charts", on_delete=models.CASCADE)
     rule = models.ForeignKey(CampaignPresetRule, related_name="charts", null=True, blank=True, on_delete=models.CASCADE)
     row = models.ForeignKey(
         "campaign_presets.CampaignPresetChartRow",
         related_name="charts",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+    location = models.ForeignKey(
+        "campaign_presets.CampaignPresetLocation",
+        related_name="tables",
         null=True,
         blank=True,
         on_delete=models.CASCADE,
@@ -111,10 +120,21 @@ class CampaignPresetChart(models.Model):
     class Meta:
         db_table = "campaign_preset_chart"
         ordering = ["order", "id"]
-        constraints = [models.UniqueConstraint(fields=["preset", "title"], name="campaign_preset_chart_unique_title")]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["preset", "title"],
+                condition=models.Q(location__isnull=True),
+                name="campaign_preset_chart_unique_title",
+            )
+        ]
 
     def __str__(self) -> str:
         return f"{self.preset_id}:{self.title}"
+
+    @property
+    def is_standalone(self) -> bool:
+        """A chart of its own, the campaign's to look up, rather than a rule's, a result's or a location's table."""
+        return self.rule_id is None and self.row_id is None and self.location_id is None
 
 
 class CampaignPresetChartRow(models.Model):
@@ -132,6 +152,62 @@ class CampaignPresetChartRow(models.Model):
 
     def __str__(self) -> str:
         return f"{self.chart_id}:{self.result}"
+
+
+class CampaignPresetLocationGroup(models.Model):
+    """One of the preset's location groups, in the book's order, as `CampaignLocationGroup` holds a campaign's own.
+    Groups of one name in two of its rules files are one group: the later file's locations join the earlier's."""
+
+    preset = models.ForeignKey(CampaignPreset, related_name="location_groups", on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+    name = models.CharField(max_length=160)
+    description = models.TextField(max_length=4000, blank=True, default="")
+    restrictions = models.TextField(max_length=4000, blank=True, default="")
+
+    class Meta:
+        db_table = "campaign_preset_location_group"
+        ordering = ["order", "id"]
+        constraints = [
+            models.UniqueConstraint(fields=["preset", "name"], name="campaign_preset_location_group_unique_name")
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.preset_id}:{self.name}"
+
+
+class CampaignPresetLocation(models.Model):
+    """One of a preset group's locations, as `CampaignLocation` holds a campaign's own (null heroes: all of them).
+    Its own tables are `CampaignPresetChart` rows carrying it; the preset charts it points to are `chart_links`."""
+
+    group = models.ForeignKey(CampaignPresetLocationGroup, related_name="locations", on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+    name = models.CharField(max_length=160)
+    rules = models.TextField(max_length=MAX_LOCATION_RULES_TEXT, blank=True, default="")
+    min_heroes = models.PositiveSmallIntegerField(null=True, blank=True, default=1)
+    max_heroes = models.PositiveSmallIntegerField(null=True, blank=True, default=1)
+    takes_trading_action = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "campaign_preset_location"
+        ordering = ["order", "id"]
+
+    def __str__(self) -> str:
+        return f"{self.group_id}:{self.name}"
+
+
+class CampaignPresetLocationChart(models.Model):
+    """A preset chart a preset location points to, in its order."""
+
+    location = models.ForeignKey(CampaignPresetLocation, related_name="chart_links", on_delete=models.CASCADE)
+    chart = models.ForeignKey(CampaignPresetChart, related_name="location_links", on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        db_table = "campaign_preset_location_chart"
+        ordering = ["order", "id"]
+
+    def __str__(self) -> str:
+        return f"{self.location_id}:{self.chart_id}"
 
 
 class Dictated:

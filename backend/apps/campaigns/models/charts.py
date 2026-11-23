@@ -20,20 +20,22 @@ CHART_DICE = ("D3", "D6", "2D6", "3D6", "D66", "D100")
 
 class CampaignChart(models.Model):
     """One of the campaign's charts, with its place in the list. Its owner and admins write and order them; every
-    member reads them. `note` carries what is true of the whole chart rather than one row: the modifiers, and what
-    to do with a result the chart sends on elsewhere.
+        member reads them. `note` carries what is true of the whole chart rather than one row: the modifiers, and what
+        to do with a result the chart sends on elsewhere.
 
-    A chart may instead **belong to something** (William, 20 Nov 2026: "charts should only really be used for clear
-    reference charts"). Then it is that owner's own table: it shows inside the owner and is left out of the Charts
-    list, so a table of any size need not pretend to be a chart a player looks up. Two owners, because a random
-    occurrence is a trigger, one big table, and sub-tables hanging off single results:
+        A chart may instead **belong to something** (William, 20 Nov 2026: "charts should only really be used for clear
+        reference charts"). Then it is that owner's own table: it shows inside the owner and is left out of the Charts
+        list, so a table of any size need not pretend to be a chart a player looks up. Two owners, because a random
+        occurrence is a trigger, one big table, and sub-tables hanging off single results, and a location has tables of its
+    own:
 
-    - `rule`: the rule's own table (Khemri's Complex trap under its Traps rule).
-    - `row`: one result's own table (Border Town Burning's Curious bloom, a result of Perilous phenomenon, and its
-      Thunder and lightning, a result of the Weather chart).
+        - `rule`: the rule's own table (Khemri's Complex trap under its Traps rule).
+        - `row`: one result's own table (Border Town Burning's Curious bloom, a result of Perilous phenomenon, and its
+          Thunder and lightning, a result of the Weather chart).
+        - `location`: one of a location's own tables (the Altar of the Horned Rat's), several to a location.
 
-    It is the same model and the same renderer whichever owns it; owning a table is all that tells them apart, and a
-    chart with neither is one the player looks up.
+        It is the same model and the same renderer whichever owns it; owning a table is all that tells them apart, and a
+        chart with neither is one the player looks up.
     """
 
     campaign = models.ForeignKey(Campaign, related_name="charts", on_delete=models.CASCADE)
@@ -42,6 +44,9 @@ class CampaignChart(models.Model):
     )
     row = models.ForeignKey(
         "campaigns.CampaignChartRow", related_name="charts", null=True, blank=True, on_delete=models.CASCADE
+    )
+    location = models.ForeignKey(
+        "campaigns.CampaignLocation", related_name="tables", null=True, blank=True, on_delete=models.CASCADE
     )
     title = models.CharField(max_length=160)
     description = models.TextField(max_length=2000, blank=True, default="")
@@ -61,8 +66,8 @@ class CampaignChart(models.Model):
 
     @property
     def is_owned(self) -> bool:
-        """A table belonging to a rule or a result, rather than a chart the player looks up."""
-        return self.rule_id is not None or self.row_id is not None
+        """A table belonging to a rule, a result or a location, rather than a chart the player looks up."""
+        return self.rule_id is not None or self.row_id is not None or self.location_id is not None
 
 
 class CampaignChartRow(models.Model):

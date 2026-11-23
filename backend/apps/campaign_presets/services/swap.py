@@ -66,11 +66,15 @@ def removable(campaign: Campaign, preset: CampaignPreset | None) -> tuple[list[i
         if (print_ := _rule_print(rule, rule.body)) in theirs and print_ not in mine
     ]
     every_chart = list(
-        CampaignPresetChart.objects.filter(rule__isnull=True, row__isnull=True).prefetch_related(*CHART_TABLES)
+        CampaignPresetChart.objects.filter(rule__isnull=True, row__isnull=True, location__isnull=True).prefetch_related(
+            *CHART_TABLES
+        )
     )
     my_charts = {_chart_print(c) for c in every_chart if preset is not None and c.preset_id == preset.pk}
     their_charts = {_chart_print(c) for c in every_chart if preset is None or c.preset_id != preset.pk}
-    looked_up = CampaignChart.objects.filter(campaign=campaign, rule__isnull=True, row__isnull=True)
+    looked_up = CampaignChart.objects.filter(
+        campaign=campaign, rule__isnull=True, row__isnull=True, location__isnull=True
+    )
     charts = [
         chart.pk
         for chart in looked_up.prefetch_related(*CHART_TABLES)

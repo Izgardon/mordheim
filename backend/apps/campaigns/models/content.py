@@ -1,5 +1,5 @@
-"""The campaign's own content: its messages, house rules, campaign and battle rules, charts, encampments,
-locations and the pivotal moments its battles left.
+"""The campaign's own content: its messages, house rules, campaign and battle rules, encampments and the pivotal
+moments its battles left. Its charts are `charts.py`, its locations `locations.py`.
 """
 
 from typing import Any
@@ -111,31 +111,6 @@ class CampaignEncampment(models.Model):
 
     class Meta:
         db_table = "campaign_encampment"
-        ordering = ["name", "id"]
-
-    def __str__(self):
-        return f"{self.campaign_id}:{self.name}"
-
-
-class CampaignLocation(models.Model):
-    campaign = models.ForeignKey(Campaign, related_name="campaign_locations", on_delete=models.CASCADE)
-    name = models.CharField(max_length=160)
-    area = models.CharField(max_length=80, blank=True, default="")  # free text: the panel filters by those in use
-    content = models.TextField(blank=True, default="")
-    d6_1 = models.TextField(blank=True, default="")
-    d6_2 = models.TextField(blank=True, default="")
-    d6_3 = models.TextField(blank=True, default="")
-    d6_4 = models.TextField(blank=True, default="")
-    d6_5 = models.TextField(blank=True, default="")
-    d6_6 = models.TextField(blank=True, default="")
-    # soft delete by a manage_locations holder: no longer listed (next step 7b)
-    removed_at = models.DateTimeField(null=True, blank=True)
-    removed_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
-    )
-
-    class Meta:
-        db_table = "campaign_location"
         ordering = ["name", "id"]
 
     def __str__(self):

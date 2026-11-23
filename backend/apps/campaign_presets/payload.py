@@ -60,5 +60,5 @@ def campaign_preset_payload(campaign: Campaign) -> dict[str, Any]:
         "departures": departures(campaign, preset, charts),
         # how many rules and charts it holds: what the dialog says a change would bring in
         "rule_count": len(preset.rules.all()),
-        "chart_count": sum(1 for chart in preset.charts.all() if chart.rule_id is None and chart.row_id is None),
+        "chart_count": sum(1 for chart in preset.charts.all() if chart.is_standalone),
     }

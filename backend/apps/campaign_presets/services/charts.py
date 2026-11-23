@@ -19,12 +19,8 @@ def missing_charts(campaign_id: int, preset: CampaignPreset | None) -> list[Camp
         title.strip().lower()
         for title in CampaignChart.objects.filter(campaign_id=campaign_id).values_list("title", flat=True)
     }
-    # a chart belonging to a rule or a result rides with its owner, never on its own (rules.py)
-    return [
-        chart
-        for chart in preset.charts.all()
-        if chart.rule_id is None and chart.row_id is None and chart.title.strip().lower() not in held
-    ]
+    # a chart belonging to a rule, a result or a location rides with its owner, never on its own (rules.py)
+    return [chart for chart in preset.charts.all() if chart.is_standalone and chart.title.strip().lower() not in held]
 
 
 def copy_charts(campaign: Campaign, preset: CampaignPreset | None) -> int:

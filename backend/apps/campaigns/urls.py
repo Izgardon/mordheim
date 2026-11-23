@@ -21,6 +21,8 @@ from .views import (
     CampaignLeaveView,
     CampaignListCreateView,
     CampaignLocationDetailView,
+    CampaignLocationGroupDetailView,
+    CampaignLocationGroupsView,
     CampaignLocationsView,
     CampaignMemberPermissionsView,
     CampaignMemberRemovalPreviewView,
@@ -100,6 +102,16 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/encampments/<int:encampment_id>/",
         CampaignEncampmentDetailView.as_view(),
         name="campaigns-encampments-detail",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/location-groups/",
+        CampaignLocationGroupsView.as_view(),
+        name="campaigns-location-groups",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/location-groups/<int:group_id>/",
+        CampaignLocationGroupDetailView.as_view(),
+        name="campaigns-location-groups-detail",
     ),
     path(
         "campaigns/<int:campaign_id>/locations/",
