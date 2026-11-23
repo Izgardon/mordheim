@@ -42,7 +42,6 @@ describe("the rail's References and Rules", () => {
 
     expect(within(references).getByRole("heading", { name: "References" })).toBeInTheDocument();
     expect(links(references)).toEqual([
-      "Warbands",
       "Wargear",
       "Skills",
       "Spells",
@@ -50,6 +49,7 @@ describe("the rail's References and Rules", () => {
       "Bestiary",
       "Hired swords",
       "Dramatis personae",
+      "Warbands",
     ]);
     expect(within(rules).getByRole("heading", { name: "Rules" })).toBeInTheDocument();
     expect(links(rules)).toEqual(["Rules", "House rules", "Campaign rules"]);

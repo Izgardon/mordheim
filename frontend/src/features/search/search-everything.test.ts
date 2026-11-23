@@ -403,11 +403,11 @@ describe("Search everything's groups", () => {
       },
     };
     expect(searchEverything("monk", sources).map((entry) => entry.label)).toEqual([
-      "Warband types",
       "Wargear",
       "Wargear rules",
       "Skills",
       "Skill groups",
+      "Warband types",
       "Warbands",
     ]);
   });

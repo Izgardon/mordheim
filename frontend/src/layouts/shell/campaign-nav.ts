@@ -14,10 +14,10 @@ export type NavLink = {
 
 /**
  * The References section (William, 7 Nov 2026: "split references section into references and
- * rules"): the catalogue's pages, in the rail's order (design E).
+ * rules"): the catalogue's pages, in the rail's order (design E), Warbands last (William, 23 Nov
+ * 2026: "move warbands reference nav item to the bottom of its section").
  */
 export const REFERENCE_LINKS: NavLink[] = [
-  { label: "Warbands", path: "warband-templates" },
   { label: "Wargear", path: "items" },
   { label: "Skills", path: "skills" },
   { label: "Spells", path: "spells" },
@@ -25,6 +25,7 @@ export const REFERENCE_LINKS: NavLink[] = [
   { label: "Bestiary", path: "bestiary" },
   { label: "Hired swords", path: "hired-swords" },
   { label: "Dramatis personae", path: "dramatis-personae" },
+  { label: "Warbands", path: "warband-templates" },
 ];
 
 /** The Rules section: the rulebook, the campaign's house rules and its own campaign rules. */
