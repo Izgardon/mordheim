@@ -2261,7 +2261,15 @@
       "Warlock Engineer": "sealed-city",
       "Whaler": "mutiny-in-marienburg",
       "White Lady": "mousillon",
-      "Witch Elf (Dark Elf Corsairs)": "mousillon"
+      "Witch Elf (Dark Elf Corsairs)": "mousillon",
+      "Ex-Blood Bowl Player": "marienburg-annual",
+      "Chaos Wanderer": "marienburg-annual",
+      "Chaos Berserker": "marienburg-annual",
+      "Gnoblar Trappa": "marienburg-annual",
+      "Orc Bully": "marienburg-annual",
+      "Nasty Skulker": "marienburg-annual",
+      "Snotling Helpa": "marienburg-annual",
+      "Hobgoblin Sneaky Git": "marienburg-annual"
     },
     "dramatis_personae": {
       "Alchec of Strigos": "karak-azgal",

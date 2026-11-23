@@ -142,7 +142,8 @@ class SeedAllTests(TestCase):
                 # the three Arabian tribes are one template with a variant each (13 Nov 2026): 4 rows fewer
                 # the Runesmith's Rune Use and Durable are his rules, not special skills (21 Nov 2026): 2 more
                 # the Alchemist's Potion Recipes rule is a lore now (21 Nov 2026): 1 fewer
-                "Special": 1957,
+                # the Marienburg Annual's eight hired swords' own rules (23 Nov 2026): 32 more
+                "Special": 1989,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -156,7 +157,8 @@ class SeedAllTests(TestCase):
                 # Marienburg's eleven Specialists and three Dramatis Personae, and broheim's hired sword section's
                 # 35 (Karak Azgal 6, Mousillon 6, Khemri 3, the Sealed City 6, Sartosa 6, the fan-made trees 8)
                 # the Cardinal of Contagion, whose stats William confirmed (13 Nov 2026), makes the fan-made trees 9
-                "HiredSword": 125,
+                # the Marienburg Annual's three and its five Workin' Boyz (William, 23 Nov 2026)
+                "HiredSword": 133,
                 # mordheimer's 30 and our own 26 (apps/hirelings/data/dramatis-personae.json: Karak Azgal 5,
                 # Sartosa 5, Albion 2, Khemri 1, the fan-made trees 13), through the catalogue import
                 "DramatisPersona": 56,
@@ -338,12 +340,18 @@ class SeedAllTests(TestCase):
                 "Fear": (
                     114,
                     0,
-                    11,
+                    13,
                     9,
                     28,
                 ),  # fighters, upgrades, hired swords, dramatis personae, beasts (13 of the East, 12 Marienburg's)
                 "Stupidity": (11, 0, 0, 0, 4),  # Marienburg's Troll and Chaos Troll
-                "Immune to Psychology": (66, 0, 2, 7, 1),  # Marienburg's Cultists of Chaos
+                "Immune to Psychology": (
+                    66,
+                    0,
+                    4,
+                    7,
+                    1,
+                ),  # Marienburg's Cultists of Chaos, the Annual's two Chaos swords
                 "Immune to Poison": (63, 0, 4, 5, 8),
                 "Hideous": (
                     0,
@@ -827,8 +835,9 @@ class SeedAllTests(TestCase):
         self.assertLessEqual({"Combat", "Shooting", "Speed"}, set(scout.available_skill_types))
         self.assertLessEqual({"Combat", "Academic", "Strength"}, set(skinner.available_skill_types))
         races = dict(HiredSword.objects.values_list("name", "race__name"))
-        # the Sealed City's Clocked crook and Reactivated archivist are clockwork constructs, of no race at all
-        raceless = {"Chaos Fury", "Clocked Crook", "Reactivated Archivist"}
+        # the Sealed City's Clocked crook and Reactivated archivist are clockwork constructs, of no race at all, and
+        # the Marienburg Annual's Ex-Blood Bowl Player takes the race of whoever hires him
+        raceless = {"Chaos Fury", "Clocked Crook", "Reactivated Archivist", "Ex-Blood Bowl Player"}
         self.assertEqual({name for name, race in races.items() if race is None}, raceless)
         mapped = {"Chameleon Skink": "Skink", "Dark Elf Assassin": "Elf", "Shadow Warrior": "Elf"}
         mapped |= {"Wood Elf Hunter": "Elf", "Ungor Trapper": "Ungor"}
@@ -942,13 +951,23 @@ class SeedAllTests(TestCase):
         # exclusions and he stays for everyone
         everyone = HiredSword.objects.filter(for_everyone=True)
         self.assertFalse(everyone.filter(warband_links__excluded=False).exists())
-        # broheim's pages read "any warband may hire him" for seven, who name no warband at all; everyone else does
+        # broheim's pages read "any warband may hire him" for seven, who name no warband at all, and the Marienburg
+        # Annual's "any race" for its Ex-Blood Bowl Player; everyone else does
         open_to_all = set(HiredSword.objects.filter(warband_links__isnull=True).values_list("name", flat=True))
         self.assertEqual(
             open_to_all,
-            {"Alchemist", "Barber Surgeon", "Dark Maiden", "Genie", "Knight Panther", "Lazar", "Reactivated Archivist"},
+            {
+                *("Alchemist", "Barber Surgeon", "Dark Maiden", "Genie", "Knight Panther", "Lazar"),
+                *("Reactivated Archivist", "Ex-Blood Bowl Player"),
+            },
         )
         self.assertFalse(HiredSword.objects.filter(for_everyone=False, warband_links__isnull=True).exists())
+        # the Marienburg Annual's eight sit in its setting; its Sneaky Git is "any warband except" five
+        annual = HiredSword.objects.filter(campaign_type__slug="marienburg-annual")
+        self.assertEqual(annual.count(), 8)
+        git = annual.get(name="Hobgoblin Sneaky Git")
+        self.assertEqual((git.for_everyone, git.warband_links.filter(excluded=True).count()), (True, 5))
+        self.assertEqual(set(annual.get(name="Chaos Berserker").skill_links.values_list("skill__name", flat=True)), {"Ambidextrous", "Pit Fighter", "Mighty Blow", "Step Aside"})  # fmt: skip
         self.assertTrue(SkillGroup.objects.get(name="Speed").for_everyone)
         skaven = SkillGroup.objects.get(name="Skaven")
         self.assertFalse(skaven.for_everyone)

@@ -3276,6 +3276,46 @@
       "name": "Tosher",
       "setting": "grade-3",
       "how": "overrides.json"
+    },
+    {
+      "name": "Ex-Blood Bowl Player",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Chaos Wanderer",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Chaos Berserker",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Gnoblar Trappa",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Orc Bully",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Nasty Skulker",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Snotling Helpa",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Hobgoblin Sneaky Git",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
     }
   ],
   "dramatis_personae": [

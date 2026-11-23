@@ -9189,5 +9189,670 @@
       "available_skill_types": [],
       "available_special_skills": []
     }
+  },
+  {
+    "name": "Ex-Blood Bowl Player",
+    "type": "Hired Sword",
+    "description": "Long past his prime, but a Blood Bowl player never stays down for long.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Any Race",
+        "description": "He counts as the race of the warband that hires him: he takes that race's Movement and its special rules."
+      },
+      {
+        "name": "Blitz",
+        "description": "He may charge without being intercepted. A model that tries to intercept him must pass a Strength test or be knocked down."
+      },
+      {
+        "name": "Going for It",
+        "description": "When he runs or charges he may move up to 2\" further. Roll a D6 for each extra inch: on a 1 he trips and is knocked down."
+      },
+      {
+        "name": "Drunken",
+        "description": "Roll a D6 at the start of each of his turns. On a 1 he must test for stupidity that turn; on a 2-5 nothing happens; on a 6 he is subject to frenzy for that turn. While subject to stupidity or frenzy he is immune to all other psychology."
+      },
+      {
+        "name": "Spiked Kit",
+        "description": "He also wears spiked shoulder pads and carries a spiked ball, which have no rules of their own."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Iron Fist",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 90,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 35,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "unique_to": "Any warband may hire him. He adds 12 to the warband's rating, plus 1 for each experience point he has.",
+      "warbands": [],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 12,
+      "race": ""
+    }
+  },
+  {
+    "name": "Chaos Wanderer",
+    "type": "Hired Sword",
+    "description": "A dark wanderer of the Wasteland, powerful, cruel and arrogant, who lends his blade to a warband only briefly.",
+    "movement": 4,
+    "weapon_skill": 6,
+    "ballistic_skill": 0,
+    "strength": 5,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 6,
+    "attacks": 3,
+    "leadership": 10,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Fear",
+        "description": ""
+      },
+      {
+        "name": "Immune to Psychology",
+        "description": ""
+      },
+      {
+        "name": "Demonic Strength",
+        "description": "He may wield his double-handed sword in one hand, but still strikes last with it."
+      },
+      {
+        "name": "Chaos Corruption",
+        "description": "Any character he takes out of action must roll on the warp taint table."
+      },
+      {
+        "name": "Bad Chaos Blood",
+        "description": "A warband may not hire him while it has the Chaos Berserker."
+      },
+      {
+        "name": "Wanderer",
+        "description": "He stays with the warband for one battle only."
+      }
+    ],
+    "skills": [
+      "Bulwark",
+      "Resilient",
+      "Web of Steel"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Chaos Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      },
+      {
+        "item": "Double-handed weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 125,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "He stays for one battle only."
+      },
+      "unique_to": "Any Chaos warband may hire him: in the exploration phase it must send D3 Heroes to convince him to join. He stays for one battle.",
+      "warbands": [
+        {
+          "group": "chaos"
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 50,
+      "race": "Human"
+    }
+  },
+  {
+    "name": "Chaos Berserker",
+    "type": "Hired Sword",
+    "description": "A fallen god of the fighting pits, corrupted by his fame, who watches the pits of the Old World for a protege to corrupt in turn.",
+    "movement": 4,
+    "weapon_skill": 6,
+    "ballistic_skill": 0,
+    "strength": 5,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 6,
+    "attacks": 2,
+    "leadership": 9,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Fear",
+        "description": ""
+      },
+      {
+        "name": "Immune to Psychology",
+        "description": ""
+      },
+      {
+        "name": "Chaos Frenzy",
+        "description": "He is subject to frenzy and loses it only when stunned. If he fought in a combat last turn that has ended, and only friendly models are within his charge range, he must pass a Leadership test or charge a friendly model picked at random."
+      },
+      {
+        "name": "Chaos Axes",
+        "description": "His paired Chaos Axes follow the rules for a morning star, and he wields one in each hand."
+      },
+      {
+        "name": "Chaos Corruption",
+        "description": "Any character he takes out of action must roll on the warp taint table."
+      },
+      {
+        "name": "Wanderer",
+        "description": "He stays with the warband for one battle only."
+      }
+    ],
+    "skills": [
+      "Ambidextrous",
+      "Pit Fighter",
+      "Mighty Blow",
+      "Step Aside"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Chaos Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      },
+      {
+        "item": "Morning Star",
+        "quantity": 2
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 125,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "He stays for one battle only."
+      },
+      "unique_to": "Any Chaos warband may hire him, once one of its warriors has won five fights in the Fighting Pit: in the exploration phase it must send D3 Heroes to convince him to join. He stays for one battle.",
+      "warbands": [
+        {
+          "group": "chaos"
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 50,
+      "race": "Human"
+    }
+  },
+  {
+    "name": "Gnoblar Trappa",
+    "type": "Hired Sword",
+    "description": "A vindictive Gnoblar who follows Ogre hunters to battle, trapping small beasts to torment, eat or offer to his masters.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 3,
+    "strength": 2,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Sharp Stuff",
+        "description": "A thrown weapon: range 8\", Strength 2, and he throws it twice each shooting phase."
+      },
+      {
+        "name": "Set Traps",
+        "description": "Straight after he is deployed, place up to six trap counters at ground level, at least 6\" apart. Any model but him that moves within 3\" of one rolls a D6: on a 1-3 nothing happens; on a 4-6 it takes one automatic hit at the Strength the dice shows. The counter is then removed, and a model sets off only one trap at a time. A non-large animal a trap takes out of action rolls no injury: the warband captures it."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "unique_to": "Greenskin and Ogre warbands may hire him. He adds 5 to the warband's rating.",
+      "warbands": [
+        {
+          "group": "orcs-and-goblins"
+        },
+        {
+          "group": "ogres"
+        }
+      ],
+      "available_skill_types": [
+        "Shooting",
+        "Speed"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 5,
+      "race": "Gnoblar"
+    }
+  },
+  {
+    "name": "Orc Bully",
+    "type": "Hired Sword",
+    "description": "A cantankerous old Orc who stands about looking menacing, making sure the war machine crews shoot the right way and don't run.",
+    "movement": 3,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Artillery Expert",
+        "description": "He knows how to work any artillery weapon."
+      },
+      {
+        "name": "I Said Shut It You Git!",
+        "description": "Goblins within 6\" of him don't suffer from animosity."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Steel Whip",
+        "quantity": 1
+      },
+      {
+        "item": "Peg Leg",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 60,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "unique_to": "Greenskin warbands may hire him. He adds 15 to the warband's rating, plus 1 for each experience point he has.",
+      "warbands": [
+        {
+          "group": "orcs-and-goblins"
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 15,
+      "race": "Orc"
+    }
+  },
+  {
+    "name": "Nasty Skulker",
+    "type": "Hired Sword",
+    "description": "A Goblin who springs from hiding to stab a foe or two and slinks away before anyone can strike back.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Skulking",
+        "description": "He may hide after running."
+      },
+      {
+        "name": "Sneaky-Stabbin'",
+        "description": "When he charges an enemy from hiding, or makes an Initiative charge at an enemy out of his line of sight, he has +1 to hit and +1 Strength."
+      },
+      {
+        "name": "Opportunist",
+        "description": "Against an opponent who has lost at least one wound he has +1 Attack."
+      },
+      {
+        "name": "Assassin",
+        "description": "For blood pacts he counts as an assassin, and never makes one."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Shortsword",
+        "quantity": 2
+      },
+      {
+        "item": "Black Lotus",
+        "quantity": 1
+      },
+      {
+        "item": "Thief's Cloak",
+        "quantity": 1
+      },
+      {
+        "item": "Rope & Hook",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "unique_to": "Greenskin warbands may hire him. He adds 10 to the warband's rating, plus 1 for each experience point he has.",
+      "warbands": [
+        {
+          "group": "orcs-and-goblins"
+        }
+      ],
+      "available_skill_types": [
+        "Speed",
+        "Combat"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 10,
+      "race": "Goblin"
+    }
+  },
+  {
+    "name": "Snotling Helpa",
+    "type": "Hired Sword",
+    "description": "The smallest and dimmest of greenskins, as eager and unruly as a puppy.",
+    "movement": 6,
+    "weapon_skill": 1,
+    "ballistic_skill": 1,
+    "strength": 1,
+    "toughness": 1,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 3,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Rock",
+        "description": "A thrown weapon: range 6\", Strength 1."
+      },
+      {
+        "name": "Stick",
+        "description": "A close combat weapon at the user's Strength; an enemy it hits has +2 to his armour save."
+      },
+      {
+        "name": "Silent Move",
+        "description": "He stays hidden, even within spotting range, until he attacks an enemy in close combat."
+      },
+      {
+        "name": "Worm",
+        "description": "In the movement phase he may try to squeeze through a wall, even when charging a target he can see or has detected. Roll a D6: on a 2-6 he gets through and may attack as normal; on a 1 he runs headlong into the wall, can't move again that turn and counts as knocked down if attacked in close combat."
+      },
+      {
+        "name": "Runt",
+        "description": "He can carry only objectives the size of an item."
+      },
+      {
+        "name": "Worthless",
+        "description": "He counts for no rout test, neither in the warband's starting size nor among those out of action. He is taken out of action as soon as he is wounded."
+      },
+      {
+        "name": "No Advances",
+        "description": "He can't level up, so he never gains skills."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 1,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "unique_to": "Greenskin warbands may hire him. He adds 1 to the warband's rating.",
+      "warbands": [
+        {
+          "group": "orcs-and-goblins"
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 1,
+      "race": "Snotling"
+    }
+  },
+  {
+    "name": "Hobgoblin Sneaky Git",
+    "type": "Hired Sword",
+    "description": "A Hobgoblin cutthroat of the Chaos Dwarf armies: a lean, sneering ambusher who would sell out his employer for a few crowns.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Man-Stikkas",
+        "description": "A pair of curved daggers, used in close combat at the user's Strength. Paired, and Vital Strike: +1 to his critical hit rolls."
+      },
+      {
+        "name": "Back-Stabba",
+        "description": "He may charge an enemy from hiding even if he can't see it, with no Initiative test, and beyond the usual 4\" for charging an unseen target. If the charge reaches, his opponent fights at half Weapon Skill and half Initiative, rounded up, for the first round of combat."
+      },
+      {
+        "name": "Bribe",
+        "description": "At the start of the game, any opposing player who wants to bribe him writes down a sum, more than his hire fee, and his employer may write down a counter bid. At the start of any of his turns, even in close combat, the bribing player may reveal his sum: if it is more than the hire fee plus the counter bid, he controls the Hobgoblin until the end of the game. Whoever ends up controlling him pays the extra he wrote down; an employer who loses him to a bribe doesn't pay the counter bid."
+      },
+      {
+        "name": "Assassin",
+        "description": "For blood pacts he counts as an assassin, and never makes one."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Throwing Knives/Stars/Axes",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "unique_to": "Any warband except Greenskins, Witch Hunters, Sisters of Sigmar, Elves and Dwarfs may hire him.",
+      "warbands": [
+        {
+          "group": "orcs-and-goblins",
+          "excluded": true
+        },
+        {
+          "type": "witch-hunters",
+          "excluded": true
+        },
+        {
+          "type": "sisters-of-sigmar",
+          "excluded": true
+        },
+        {
+          "group": "elves",
+          "excluded": true
+        },
+        {
+          "group": "dwarfs",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": null,
+      "race": "Hobgoblin"
+    }
   }
 ]

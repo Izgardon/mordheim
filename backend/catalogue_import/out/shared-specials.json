@@ -885,6 +885,11 @@
       "name": "Set Traps (Ungor Trapper)"
     },
     {
+      "owner": "Gnoblar Trappa",
+      "rule": "Set Traps",
+      "name": "Set Traps (Gnoblar Trappa)"
+    },
+    {
       "owner": "Dwarf Pathfinder",
       "rule": "Explorer",
       "name": "Explorer (Dwarf Pathfinder)"
@@ -898,6 +903,16 @@
       "owner": "Elf Mage",
       "rule": "Wanderer",
       "name": "Wanderer (Elf Mage)"
+    },
+    {
+      "owner": "Chaos Wanderer",
+      "rule": "Wanderer",
+      "name": "Wanderer (Chaos Wanderer)"
+    },
+    {
+      "owner": "Chaos Berserker",
+      "rule": "Wanderer",
+      "name": "Wanderer (Chaos Berserker)"
     },
     {
       "owner": "Aenur, the Sword of Twilight",
@@ -958,6 +973,11 @@
       "owner": "Bearman Bodyguard",
       "rule": "Drunken",
       "name": "Drunken (Bearman Bodyguard)"
+    },
+    {
+      "owner": "Ex-Blood Bowl Player",
+      "rule": "Drunken",
+      "name": "Drunken (Ex-Blood Bowl Player)"
     },
     {
       "owner": "Swordsmith",
