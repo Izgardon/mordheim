@@ -41,6 +41,12 @@ def group_of(campaign_id: int, group_id: int) -> CampaignLocationGroup | None:
     return CampaignLocationGroup.objects.filter(campaign_id=campaign_id, id=group_id, removed_at__isnull=True).first()
 
 
+def visitable(campaign_id: int, location_id: int) -> CampaignLocation | None:
+    """A listed location of a listed group, alone (a visit reads nothing else of it)."""
+    rows = CampaignLocation.objects.filter(campaign_id=campaign_id, id=location_id, removed_at__isnull=True)
+    return rows.filter(group__removed_at__isnull=True).first()
+
+
 def location_of(campaign_id: int, location_id: int) -> CampaignLocation | None:
     """A listed location of a listed group, with what the answer reads."""
     return listed_locations().filter(campaign_id=campaign_id, id=location_id, group__removed_at__isnull=True).first()
