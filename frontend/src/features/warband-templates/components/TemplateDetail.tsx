@@ -75,7 +75,7 @@ export default function TemplateDetail({
       aside={
         <>
           {onEdit && !isMobile ? editButton : null}
-          <TemplateLists template={template} variant={variant} />
+          <TemplateLists lists={template.lists} variant={variant} isMobile={isMobile} />
           <TemplateUpgrades upgrades={template.upgrades} />
         </>
       }

@@ -15,19 +15,23 @@ type ReferenceDetailProps = {
 
 /**
  * An open row (E-Web-Items): the rules on the left, the actions and who can use it on the right;
- * on a phone everything in one column under the row.
+ * on a phone everything in one column under the row, each part exactly the row's width. (A
+ * wrapping column flexbox sized its parts to their content instead, so one long unwrappable line,
+ * a template's rule pills, made the whole open row wider than the phone: William, 23 Nov 2026.)
  */
 export function ReferenceDetail({ title, kind, isMobile, aside, children }: ReferenceDetailProps) {
   return (
     <div
       className={cn(
-        "flex flex-wrap items-start gap-x-10 gap-y-5",
+        "flex break-words",
         !isMobile &&
-          "border-t border-accent-line bg-panel px-6 pb-6 pt-5 shadow-[inset_2px_0_0_var(--color-accent)]",
-        isMobile && "flex-col gap-y-3"
+          "flex-wrap items-start gap-x-10 gap-y-5 border-t border-accent-line bg-panel px-6 pb-6 pt-5 shadow-[inset_2px_0_0_var(--color-accent)]",
+        isMobile && "flex-col gap-3"
       )}
     >
-      <div className={cn("flex min-w-0 flex-col gap-3.5", !isMobile && "flex-[999_1_520px]")}>
+      <div
+        className={cn("flex min-w-0 flex-col gap-3.5", isMobile ? "w-full" : "flex-[999_1_520px]")}
+      >
         {!isMobile && title ? (
           <div className="flex flex-wrap items-baseline gap-x-3.5 gap-y-1.5">
             <h2 className="m-0 font-display text-[26px] font-semibold leading-tight text-head">

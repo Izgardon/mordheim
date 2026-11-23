@@ -18,6 +18,9 @@ import type { WarbandSheet } from "../../types/warband-sheet";
 import type { WarbandRule } from "../../types/warband-types";
 import WarbandRules from "./WarbandRules";
 
+const media = vi.hoisted(() => ({ phone: false }));
+vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => media.phone }));
+
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
@@ -44,6 +47,7 @@ function renderRules(rules: WarbandRule[], canEdit: boolean) {
 
 beforeEach(() => {
   fakeApi.reset();
+  media.phone = false;
 });
 
 describe("WarbandRules", () => {
@@ -78,6 +82,25 @@ describe("WarbandRules", () => {
     const dialog = await screen.findByRole("dialog", { name: "Warband rules" });
     expect(within(dialog).getByRole("article", { name: "Hatred" })).toBeVisible();
     expect(within(dialog).queryByRole("button", { name: "Add rule" })).toBeNull();
+  });
+
+  // William, 23 Nov 2026: a template's long line of pills made the whole open row on Reference →
+  // Warbands wider than his phone, and the line didn't scroll
+  it("keeps its pills out of its own width, and scrolls them sideways on a phone", () => {
+    media.phone = true;
+    renderRules([hatred, burn], false);
+
+    const line = screen.getByRole("button", { name: "Hatred" }).parentElement;
+    expect(line).toHaveClass("[contain:inline-size]", "overflow-x-auto");
+    expect(line).not.toHaveClass("overflow-hidden");
+  });
+
+  it("clips the line on the web, the arrow showing the rest", () => {
+    renderRules([hatred, burn], false);
+
+    const line = screen.getByRole("button", { name: "Hatred" }).parentElement;
+    expect(line).toHaveClass("[contain:inline-size]", "overflow-hidden");
+    expect(line).not.toHaveClass("overflow-x-auto");
   });
 
   it("is left out for a viewer when there are none", () => {
