@@ -244,7 +244,7 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
     },
     {
       id: "charts",
-      label: "Charts",
+      label: "Tables",
       hits: ranked(
         sources.campaignCharts.map((chart) => ({
           entry: chart,
@@ -261,7 +261,7 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
       ).map(({ entry, snippet }) => ({
         key: `chart-${entry.id}`,
         title: entry.title,
-        meta: entry.dice ? `Chart · ${entry.dice}` : "Chart",
+        meta: entry.dice ? `Table · ${entry.dice}` : "Table",
         snippet,
         to: `campaign-rules?open=${chartRowKey(entry)}`,
       })),

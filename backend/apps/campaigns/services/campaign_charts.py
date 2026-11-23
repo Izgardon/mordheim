@@ -12,7 +12,7 @@ from django.db.models import Max, QuerySet
 from ..errors import CampaignError
 from ..models import CampaignChart, CampaignChartRow
 
-ORDER_REFUSED = "Send every chart's id once, in its new order."
+ORDER_REFUSED = "Send every table's id once, in its new order."
 
 
 def campaign_charts(campaign_id: int) -> "QuerySet[CampaignChart]":

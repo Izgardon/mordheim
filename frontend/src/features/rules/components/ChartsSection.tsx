@@ -48,20 +48,20 @@ export default function ChartsSection({
   const open = all.find((row) => row.key === openKey) ?? null;
   const move = (chartId: number, by: -1 | 1) =>
     writes.reorder.mutate(movedIds(charts, chartId, by), {
-      onError: (failure) => setError(getErrorMessage(failure, "Couldn't move the chart.")),
+      onError: (failure) => setError(getErrorMessage(failure, "Couldn't move the table.")),
     });
 
   return (
     <section className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <SectionTitle>Charts</SectionTitle>
+        <SectionTitle>Tables</SectionTitle>
         {canManage ? (
           <CampaignChartDialog
             writes={writes}
             onSaved={(chart) => onOpen(chartRowKey(chart))}
             trigger={
               <Button size="sm" variant="secondary">
-                {isMobile ? "Add" : "Add chart"}
+                {isMobile ? "Add" : "Add table"}
               </Button>
             }
           />
@@ -70,7 +70,7 @@ export default function ChartsSection({
       {error ? <p className="m-0 text-sm text-danger">{error}</p> : null}
       <ReferenceList
         isEmpty={!loading && shown.length === 0}
-        empty={all.length ? "No charts match." : "No charts yet."}
+        empty={all.length ? "No tables match." : "No tables yet."}
       >
         {loading ? <ReferenceRowBones /> : null}
         {shown.map((row) => (

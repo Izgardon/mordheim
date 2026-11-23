@@ -10,11 +10,11 @@ import { useCampaignSave } from "./CampaignSection";
 import { setsLine } from "./campaign-preset";
 import { SettingRow, SettingsCard } from "./settings-ui";
 
-/** "55 rules and 14 charts", leaving out whichever the preset has none of. */
+/** "55 rules and 14 tables", leaving out whichever the preset has none of. */
 function countWords(rules: number, charts: number) {
   const parts = [
     rules ? `${rules} ${rules === 1 ? "rule" : "rules"}` : "",
-    charts ? `${charts} ${charts === 1 ? "chart" : "charts"}` : "",
+    charts ? `${charts} ${charts === 1 ? "table" : "tables"}` : "",
   ].filter(Boolean);
   return parts.join(" and ");
 }

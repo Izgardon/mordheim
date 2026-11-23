@@ -125,7 +125,7 @@ export function ruleRowSub(row: RuleRow): string {
 
 export function chartRowSub(row: ChartRow): string {
   if (row.umbrella) {
-    return `${row.charts.length} ${row.charts.length === 1 ? "chart" : "charts"}`;
+    return `${row.charts.length} ${row.charts.length === 1 ? "table" : "tables"}`;
   }
   const chart = row.charts[0];
   const results = `${chart.rows.length} ${chart.rows.length === 1 ? "result" : "results"}`;
