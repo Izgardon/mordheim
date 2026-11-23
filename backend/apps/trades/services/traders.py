@@ -9,13 +9,12 @@ offer, a failed completion, closing and expiry have nothing to give back.
 
 from typing import Any
 
-from django.utils import timezone
-
 from apps.trades.models import TradeRequest
 from apps.warbands.models import Hero, on_roster
+from apps.warbands.services.trading_action import spend_trading_action, spent_warning
 
 from .errors import TradeError
-from .offers import TradeWarning, offer_trader_id, trader_spent_warning
+from .offers import TradeWarning, offer_trader_id
 
 SIDES = ("from", "to")
 
@@ -29,7 +28,7 @@ def check_trader(trade: TradeRequest, side: str) -> list[TradeWarning]:
     hero = heroes.only("id", "name", "trading_action").first()
     if hero is None:
         raise TradeError("Trader not found.")
-    return [] if hero.trading_action else [trader_spent_warning(hero)]
+    return [] if hero.trading_action else [spent_warning(hero)]
 
 
 def spend_traders(trade: TradeRequest, offers: dict[str, dict[str, Any]]) -> None:
@@ -40,6 +39,6 @@ def spend_traders(trade: TradeRequest, offers: dict[str, dict[str, Any]]) -> Non
         spent = None
         if trader_id is not None:
             heroes = Hero.objects.filter(id=trader_id, warband_id=getattr(trade, f"{side}_warband_id"))
-            if heroes.filter(trading_action=True).update(trading_action=False, updated_at=timezone.now()):
+            if spend_trading_action(heroes):
                 spent = trader_id
         setattr(trade, f"{side}_trader_spent_id", spent)
