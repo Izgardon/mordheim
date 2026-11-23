@@ -14,11 +14,6 @@
    "title": "Supply sources",
    "text": "There is no real infrastructure in Albion, so what a warband may recruit and trade after a battle depends on what it found.\n\nRoll the exploration dice as usual: one D6 for each hero who survived the battle, one more if you won, and any the skills or equipment allow, keeping at most six of them. An Elf ranger may modify one die by +1 or -1. Doubles and triples are read on the Albion exploration chart as always.\n\nThen add the dice together and consult the Supply source chart for what the warband came across.",
    "umbrella": ""
-  },
-  {
-   "title": "Money",
-   "text": "Gold crowns only exist for game purposes. On Albion the coins are worthless as money and count only for their metal, but prices are still named in gold crowns and the treasury is kept as usual.",
-   "umbrella": ""
   }
  ],
  "battle_rules": [

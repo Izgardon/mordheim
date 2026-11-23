@@ -4,14 +4,14 @@ import { ModalSheet } from "@/components/ui/modal-sheet";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { useRuleCreate } from "../../api/rule-queries";
-import AddTemplateRules from "./AddTemplateRules";
+import AddMissingRules from "./AddMissingRules";
 import RuleForm from "./RuleForm";
 
 /**
  * Add rule, a form of its own (William, 22 Nov 2026: "The add warband rule form should be its own
  * form, not part of the warband rules modal"): a title and a description, saved as one of the
- * warband's rules. With a campaign given, Add the template's rules sits under it, so a warband
- * with no rules yet still reaches its template's.
+ * warband's rules. With a campaign given, Add missing rules sits under it, so a warband with no
+ * rules yet still reaches its template's and its preset's.
  */
 export default function AddRuleDialog({
   open,
@@ -51,7 +51,7 @@ export default function AddRuleDialog({
           onCancel={() => onOpenChange(false)}
         />
         {campaignId ? (
-          <AddTemplateRules campaignId={campaignId} warbandId={warbandId} open={open} />
+          <AddMissingRules campaignId={campaignId} warbandId={warbandId} open={open} />
         ) : null}
       </div>
     </ModalSheet>

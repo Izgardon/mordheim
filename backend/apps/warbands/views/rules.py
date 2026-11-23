@@ -43,8 +43,9 @@ class WarbandRuleDetailView(WarbandScopedView):
 
 
 class WarbandRuleFromTemplateView(WarbandScopedView):
-    """POST rules/from-template/: Add the template's rules (the templates plan, phase 2), the warband's editors only;
-    answers all its rules as they now stand."""
+    """POST rules/from-template/: Add missing rules (the templates plan, phase 2), and its campaign's preset's
+    warband rules for it (William, 23 Nov 2026), each whose title it lacks; the warband's editors only; answers all its
+    rules as they now stand."""
 
     def post(self, request: Request, warband_id: int) -> Response:
         with transaction.atomic():

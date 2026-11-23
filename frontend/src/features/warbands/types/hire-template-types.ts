@@ -55,8 +55,6 @@ export type WarbandTemplate = {
   fighters: TemplateFighter[];
   /** What a hero may have bought onto him: Mutations, Blessings, Sacred markings, Marks. */
   upgrades: TemplateUpgrade[];
-  /** How many of those rules the warband has no rule of that title for. */
-  missing_rules: number;
 };
 
 export type WarbandTemplateAnswer = {
@@ -64,6 +62,8 @@ export type WarbandTemplateAnswer = {
   variant: string;
   /** Kit at list prices in the hire screens, until the fight of the warband's first battle is over. */
   list_prices_open: boolean;
+  /** How many rules Add missing rules would copy: its template's and its preset's it has no rule of that title for. */
+  missing_rules: number;
 };
 
 /** A fighter as the raise screen outlines him. */

@@ -4,8 +4,9 @@ phase 2).
 Raising stays one step and hires nobody: the warband gets the campaign's gold plus the template's difference from 500
 (payload.raise_gold), the template's most warriors, its variant (the type's preset, else the one picked) and a copy of
 the template's rules for that variant, in the book's order. A type with no template raises as before. Later the
-variant can change in Settings, and "Add the template's rules" copies the rules whose title the warband lacks; nothing
-is ever removed for the player, and a later change to the template touches none of it.
+variant can change in Settings, and "Add missing rules" copies the rules whose title the warband lacks; nothing
+is ever removed for the player, and a later change to the template touches none of it. The campaign's preset's
+warband rules for the warband's type or race follow the template's on both (apps/campaign_presets).
 """
 
 from collections.abc import MutableMapping
@@ -13,6 +14,7 @@ from typing import Any
 
 from rest_framework import serializers
 
+from apps.campaign_presets.services.warband_rules import copy_warband_rules
 from apps.warbands.models import Warband, WarbandRule
 
 from ..models import WarbandTemplate
@@ -75,9 +77,11 @@ def copy_rules(warband: Warband, template: WarbandTemplate, variant: str, *, mis
 
 
 def add_template_rules(warband: Warband) -> int:
-    """Add the template's rules (the rules modal): the warband's template's rules for its variant whose title it
-    lacks; 0 when it has no template."""
+    """Add missing rules (the rules modal): the warband's template's rules for its variant whose title it
+    lacks, then its campaign's preset's warband rules for it whose title it still lacks (William, 23 Nov 2026). How
+    many were copied."""
     template = template_for_type(warband.campaign_id, warband.warband_type_id)
-    if template is None:
-        return 0
-    return copy_rules(warband, template, warband_variant(warband, template), missing_only=True)
+    added = 0
+    if template is not None:
+        added = copy_rules(warband, template, warband_variant(warband, template), missing_only=True)
+    return added + copy_warband_rules(warband, warband.campaign.preset_id, missing_only=True)

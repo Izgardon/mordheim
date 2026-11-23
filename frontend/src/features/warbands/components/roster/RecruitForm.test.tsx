@@ -97,6 +97,7 @@ const fighter = (key: string, name: string, cost: number, extra: Partial<Templat
 const answer = (open: boolean): WarbandTemplateAnswer => ({
   variant: "reikland",
   list_prices_open: open,
+  missing_rules: 0,
   template: {
     id: 1,
     campaign_id: null,
@@ -106,7 +107,6 @@ const answer = (open: boolean): WarbandTemplateAnswer => ({
     most_warriors: 15,
     variants: [],
     rules: [],
-    missing_rules: 0,
     lists: [
       {
         id: 1,

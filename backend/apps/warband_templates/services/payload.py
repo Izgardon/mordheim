@@ -6,6 +6,7 @@ from typing import Any
 
 from django.db.models import Prefetch, QuerySet
 
+from apps.campaign_presets.services.warband_rules import folded, missing_warband_rules
 from apps.warbands.models import Warband
 
 from ..hire_serializers import WarbandTemplateHireSerializer
@@ -50,20 +51,29 @@ def hire_details(rows: QuerySet[WarbandTemplate]) -> QuerySet[WarbandTemplate]:
     )
 
 
-def _missing_rules(warband: Warband, template: WarbandTemplate, variant: str) -> int:
-    """How many of the variant's rules the warband has no rule of that title for (one query)."""
-    have = {title.strip().lower() for title in warband.rules.values_list("title", flat=True)}
-    rules = variant_rules(template.rules.all(), variant, warband.warband_type_id)
-    return sum(1 for rule in rules if rule.title.strip().lower() not in have)
+def missing_rules(warband: Warband, template: WarbandTemplate | None, variant: str) -> int:
+    """How many rules Add missing rules would copy (raising.add_template_rules): the template's for the variant,
+    then the campaign's preset's warband rules for it, each that the warband has no rule of that title for (one
+    query, and one more with a preset)."""
+    have = {folded(title) for title in warband.rules.values_list("title", flat=True)}
+    rules = variant_rules(template.rules.all(), variant, warband.warband_type_id) if template else []
+    adding = {folded(rule.title) for rule in rules} - have
+    missing = sum(1 for rule in rules if folded(rule.title) not in have)
+    return missing + len(missing_warband_rules(warband, warband.campaign.preset_id, have | adding))
 
 
 def warband_template(warband: Warband) -> dict[str, Any]:
-    """The warband's template with its variant applied, and whether list prices are still open (fourteen queries with
-    a template, two without)."""
+    """The warband's template with its variant applied, whether list prices are still open, and how many rules Add
+    missing rules would copy (fourteen queries with a template, three without; one more with a preset)."""
     open_now = list_prices_open(warband.id)
     template = hire_details(templates_for_type(warband.campaign_id, warband.warband_type_id)).first()
     if template is None:
-        return {"template": None, "variant": warband.template_variant, "list_prices_open": open_now}
+        return {
+            "template": None,
+            "variant": warband.template_variant,
+            "list_prices_open": open_now,
+            "missing_rules": missing_rules(warband, None, ""),
+        }
     variant = warband_variant(warband, template)
     lines = {row.pk: variant_lines(row.lines.all(), variant) for row in template.lists.all()}
     limited = {line.item_id for found in lines.values() for line in found if line.warband_max and line.item_id}
@@ -75,10 +85,10 @@ def warband_template(warband: Warband) -> dict[str, Any]:
         "upgrades": list(template.upgrades.all()),
         "holdings": fighter_holdings(warband),
         "held": held_items(warband, limited),
-        "missing_rules": _missing_rules(warband, template, variant),
     }
     body = WarbandTemplateHireSerializer(template, context=context).data
-    return {"template": body, "variant": variant, "list_prices_open": open_now}
+    missing = missing_rules(warband, template, variant)
+    return {"template": body, "variant": variant, "list_prices_open": open_now, "missing_rules": missing}
 
 
 def raise_gold(campaign_gold: int, template: WarbandTemplate | None, variant: str) -> int:

@@ -122,16 +122,6 @@
    "title": "Choosing spells",
    "text": "Whenever a wizard gains a new spell he may choose from those available to him rather than rolling.",
    "umbrella": ""
-  },
-  {
-   "title": "Warbands",
-   "text": "These official warbands suit the setting and are used without modification unless noted: Mercenaries; the Cult of the Possessed, known here as the Worshippers of the Worm; Witch Hunters, replacing the Warhound entry with Riding and War Horses; Sisters of Sigmar; the Undead (see Undead warbands); Skaven; Orcs and Goblins, though they rarely face the horrors of the desert; and Dwarf Treasure Hunters.\n\nAlso fitting are the Bretonnians, as one of Sigmar's knightly orders, the Tileans, Arabyan Tomb Raiders and Tomb Guardians.\n\nThese are guidelines: if you and your friends agree another warband belongs in Araby, use it.",
-   "umbrella": ""
-  },
-  {
-   "title": "Undead warbands",
-   "text": "Vampires are creatures of the night and do not suffer the darkness special rule. During the day, though, a Vampire takes a Strength 4 hit at the beginning of each turn he spends in the open.\n\nAn Undead warband may be led by a Necromancer Master instead: a necromancer who costs 70 dinars, starts with 20 experience, has +1 Weapon Skill, Ballistic Skill and Leadership, and has the Leader special rule. A warband with a Necromancer Master cannot have a Vampire.",
-   "umbrella": ""
   }
  ],
  "battle_rules": [
@@ -731,6 +721,24 @@
    "title": "Liche Retriever",
    "text": "Liche: M 4, WS 3, BS 2, S 3, T 3, W 2, I 3, A 1, Ld 7.\n\nWeapons: a staff.\n\nUndead: Liche Retrievers are Undead and follow all the associated rules.\n\nEmbalmed: fire attacks cause 2 wounds against Liche Retrievers.\n\nNecromancer: a Liche Retriever casts Spell of Doom, Lifestealer and Summon Skeletons, adding +1 to its casting roll.",
    "umbrella": "Arabian bestiary"
+  }
+ ],
+ "warband_rules": [
+  {
+   "title": "Undead warbands",
+   "text": "Vampires are creatures of the night and do not suffer the darkness special rule. During the day, though, a Vampire takes a Strength 4 hit at the beginning of each turn he spends in the open.\n\nAn Undead warband may be led by a Necromancer Master instead: a necromancer who costs 70 dinars, starts with 20 experience, has +1 Weapon Skill, Ballistic Skill and Leadership, and has the Leader special rule. A warband with a Necromancer Master cannot have a Vampire.",
+   "groups": [
+    "Undead"
+   ],
+   "types": []
+  },
+  {
+   "title": "Riding and War Horses",
+   "text": "Witch Hunters replace the Warhound entry with Riding and War Horses.",
+   "groups": [],
+   "types": [
+    "witch-hunters"
+   ]
   }
  ],
  "charts": [

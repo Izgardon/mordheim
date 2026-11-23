@@ -146,7 +146,7 @@ class WarbandTemplateEndpointTests(CatalogueTestCase):
     def test_it_counts_the_rules_the_warband_lacks_and_closes_list_prices_after_the_first_fight(self) -> None:
         WarbandRule.objects.create(warband=self.warband, title=" hard bargains ")
         body = self.read()
-        self.assertEqual(body["template"]["missing_rules"], 1)
+        self.assertEqual(body["missing_rules"], 1)
         self.open_battle(status=Battle.STATUS_POSTBATTLE)
         self.assertFalse(self.read()["list_prices_open"])
 
@@ -154,7 +154,7 @@ class WarbandTemplateEndpointTests(CatalogueTestCase):
         body = self.get_as(self.rival, f"/api/warbands/{self.rival_warband.id}/template/").json()
         self.assertEqual(body["template"]["name"], "Mercenaries")  # Rats are Mercenaries too
         self.made.template.type_links.all().delete()
-        self.assertEqual(self.read(), {"template": None, "variant": "", "list_prices_open": True})
+        self.assertEqual(self.read(), {"template": None, "variant": "", "list_prices_open": True, "missing_rules": 0})
         self.assertEqual(self.get_as(self.outsider, self.endpoint).status_code, 404)
 
     def test_it_reads_in_the_same_queries_however_big_the_roster_and_the_template(self) -> None:
