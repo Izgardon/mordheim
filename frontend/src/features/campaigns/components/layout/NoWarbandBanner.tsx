@@ -9,9 +9,10 @@ import { isArchived } from "../../capabilities";
 import type { CampaignSummary } from "../../types/campaign-types";
 import CampaignNotice, { type NoticeLook } from "./CampaignNotice";
 
+const page = (pathname: string, campaignId: number, section: string) =>
+  pathname.replace(/\/+$/, "") === `/campaigns/${campaignId}/${section}`;
 /** The raise-a-warband page: the warband page while you have none. */
-const isRaisePage = (pathname: string, campaignId: number) =>
-  pathname.replace(/\/+$/, "") === `/campaigns/${campaignId}/warband`;
+const isRaisePage = (pathname: string, campaignId: number) => page(pathname, campaignId, "warband");
 
 /**
  * Whether the page says you have no warband: once your warband has been read and there is none,
@@ -25,8 +26,9 @@ export function useNeedsWarband(campaign: CampaignSummary, pathname: string) {
 
 /**
  * Every page of a campaign you have no warband in says so (William, 1 Nov 2026), with the way to
- * raise one. It can't be dismissed and goes once the warband stands. In the web bar (in the
- * overview's page, whose bar holds Between battles); in the page's flow on a phone.
+ * raise one and Browse warbands, the Warbands reference to choose one from (William, 23 Nov 2026),
+ * left off on that page itself. It can't be dismissed and goes once the warband stands. In the web
+ * bar (in the overview's page, whose bar holds Between battles); in the page's flow on a phone.
  */
 export default function NoWarbandBanner({
   campaign,
@@ -40,15 +42,23 @@ export default function NoWarbandBanner({
   if (!useNeedsWarband(campaign, pathname)) {
     return null;
   }
+  const size = "h-9 text-[13px] max-[960px]:h-10";
   return (
     <CampaignNotice
       look={look}
       icon={Shield}
       kicker="Your warband"
       action={
-        <Button asChild size="sm" className="h-9 text-[13px] max-[960px]:h-10">
-          <Link to={`/campaigns/${campaign.id}/warband`}>Raise your warband</Link>
-        </Button>
+        <>
+          {page(pathname, campaign.id, "warband-templates") ? null : (
+            <Button asChild size="sm" variant="secondary" className={size}>
+              <Link to={`/campaigns/${campaign.id}/warband-templates`}>Browse warbands</Link>
+            </Button>
+          )}
+          <Button asChild size="sm" className={size}>
+            <Link to={`/campaigns/${campaign.id}/warband`}>Raise your warband</Link>
+          </Button>
+        </>
       }
     >
       {look === "bar" ? "None in this campaign yet" : "You have no warband in this campaign."}

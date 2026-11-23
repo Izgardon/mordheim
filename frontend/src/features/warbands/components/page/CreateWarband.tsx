@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,8 @@ import RaiseOutline from "./RaiseOutline";
  * No warband in this campaign yet (design E): name one, pick its warband type (which fills the
  * warband link, the player's to replace, and shows its template in outline, with a variant to
  * pick where the type presets none), pick the plot it follows where the campaign plays with any
- * (changed for nothing later), then raise it.
+ * (changed for nothing later), then raise it. Browse warbands opens the Warbands reference to
+ * choose from (William, 23 Nov 2026), at the picked type's own row once its template is read.
  */
 export default function CreateWarband({
   campaignId,
@@ -48,6 +50,9 @@ export default function CreateWarband({
     (warbandType !== null && read.isPending) ||
     Boolean(outline?.variants.length && !outline.preset_variant && !variant);
   const [saving, setSaving] = useState(false);
+  const browse = `/campaigns/${campaignId}/warband-templates${
+    outline && warbandType ? `?open=${outline.id}-${warbandType.id}` : ""
+  }`;
 
   return (
     <div
@@ -56,16 +61,21 @@ export default function CreateWarband({
         isMobile ? "gap-4 pb-6" : "mx-auto w-full max-w-[640px] gap-6 pb-14"
       )}
     >
-      <header className="flex flex-col gap-1.5">
-        {/* The phone's top bar already says where this is. */}
-        {isMobile ? null : (
-          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
-            My warband
-          </span>
-        )}
-        <h1 className="m-0 font-display text-[40px] font-semibold leading-tight text-head max-[960px]:text-[30px]">
-          Raise a warband
-        </h1>
+      <header className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
+        <div className="flex flex-col gap-1.5">
+          {/* The phone's top bar already says where this is. */}
+          {isMobile ? null : (
+            <span className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
+              My warband
+            </span>
+          )}
+          <h1 className="m-0 font-display text-[40px] font-semibold leading-tight text-head max-[960px]:text-[30px]">
+            Raise a warband
+          </h1>
+        </div>
+        <Button asChild variant="secondary">
+          <Link to={browse}>Browse warbands</Link>
+        </Button>
       </header>
       <Card className="p-5 max-[960px]:p-4">
         <form

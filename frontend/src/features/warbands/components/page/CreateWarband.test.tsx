@@ -3,7 +3,9 @@
  * a 450 gc campaign"): the gold it gets, its most warriors, each fighter's cost and how many, the
  * rule pills, and a variant to pick when the type presets none. Nothing is hired here.
  */
+import type { ReactElement } from "react";
 import { screen, waitFor, within } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fakeApi } from "@/test/fake-api";
@@ -74,6 +76,8 @@ const outline = (extra: Partial<NonNullable<RaiseOutline["template"]>>): RaiseOu
 
 const OUTLINE = "GET /campaigns/4/warband-types/7/template/";
 
+const renderRaise = (ui: ReactElement) => renderWithQueryClient(<MemoryRouter>{ui}</MemoryRouter>);
+
 async function pickType() {
   const user = setupUser();
   await user.type(screen.getByLabelText("Name"), "The Gilded Wagon");
@@ -89,7 +93,7 @@ describe("Raising a warband from its type's template", () => {
     fakeApi.on(OUTLINE, outline({}));
     fakeApi.on("POST /warbands/", { id: 11, name: "The Gilded Wagon" });
     const onCreated = vi.fn().mockResolvedValue(undefined);
-    renderWithQueryClient(<CreateWarband campaignId={4} onCreated={onCreated} />);
+    renderRaise(<CreateWarband campaignId={4} onCreated={onCreated} />);
     const user = await pickType();
 
     const shown = await screen.findByRole("region", { name: "Template outline" });
@@ -122,7 +126,7 @@ describe("Raising a warband from its type's template", () => {
     caravans.link_url = "https://mordheimer.net/caravans";
     try {
       fakeApi.on(OUTLINE, outline({}));
-      renderWithQueryClient(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
+      renderRaise(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
       await pickType();
       expect(screen.getByLabelText("Warband link")).toHaveValue("https://mordheimer.net/caravans");
       expect(screen.queryByText(/Filled from/)).toBeNull();
@@ -139,7 +143,7 @@ describe("Raising a warband from its type's template", () => {
     fakeApi.on(OUTLINE, outline({ variants }));
     fakeApi.on(`${OUTLINE}?variant=hung`, outline({ variants, variant: "hung" }));
     fakeApi.on("POST /warbands/", { id: 11, name: "The Gilded Wagon" });
-    renderWithQueryClient(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
+    renderRaise(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
     const user = await pickType();
 
     const picker = await screen.findByRole("radiogroup", { name: "Variant" });
@@ -158,7 +162,7 @@ describe("Raising a warband from its type's template", () => {
 
   it("waits for the outline before Raise, which says whether a variant is needed", async () => {
     fakeApi.on("POST /warbands/", { id: 11, name: "The Gilded Wagon" });
-    renderWithQueryClient(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
+    renderRaise(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
     await pickType(); // the outline never answers
     expect(screen.getByRole("button", { name: "Raise the warband" })).toBeDisabled();
   });
@@ -170,7 +174,7 @@ describe("Raising a warband from its type's template", () => {
       { id: 8, name: "Drowning the Witch", who_text: "Witch Hunters." },
     ]);
     fakeApi.on("POST /warbands/", { id: 11, name: "The Gilded Wagon" });
-    renderWithQueryClient(<CreateWarband campaignId={4} onCreated={vi.fn()} showPlot />);
+    renderRaise(<CreateWarband campaignId={4} onCreated={vi.fn()} showPlot />);
     const user = await pickType();
 
     await user.click(await screen.findByRole("combobox", { name: "Plot" }));
@@ -184,9 +188,20 @@ describe("Raising a warband from its type's template", () => {
     await waitFor(() => expect(fakeApi.bodyOf("POST /warbands/")).toMatchObject({ plot_id: 8 }));
   });
 
+  it("opens the Warbands reference from Browse warbands, at the picked type once it is read", async () => {
+    fakeApi.on(OUTLINE, outline({}));
+    renderRaise(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
+    const browse = () => screen.getByRole("link", { name: "Browse warbands" });
+    expect(browse()).toHaveAttribute("href", "/campaigns/4/warband-templates");
+
+    await pickType();
+    await screen.findByRole("region", { name: "Template outline" });
+    expect(browse()).toHaveAttribute("href", "/campaigns/4/warband-templates?open=3-7");
+  });
+
   it("shows no outline for a type with no template", async () => {
     fakeApi.on(OUTLINE, { template: null, gold: 500, campaign_gold: 500, most_warriors: 15 });
-    renderWithQueryClient(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
+    renderRaise(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
     await pickType();
     await waitFor(() => expect(fakeApi.countOf(OUTLINE)).toBe(1));
     expect(screen.queryByRole("region", { name: "Template outline" })).not.toBeInTheDocument();
