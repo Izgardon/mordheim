@@ -21,6 +21,13 @@ export const ridden = (
       (itemId === undefined || item.id === itemId)
   ).length;
 
+/**
+ * Every mount the unit carries, ridden or not, as its item rows show them: what its ride chips
+ * offer, so a horse moved in from the stash or bought on foot can be mounted from the card.
+ */
+export const carriedMounts = <T extends Pick<Item, "beast_kind" | "row_id">>(items: T[] = []) =>
+  items.filter((item) => item.beast_kind === "mount" && item.row_id != null);
+
 type MountedUnit = UnitCompanionFields & {
   items?: Pick<Item, "id" | "companion" | "beast_kind" | "row_id" | "carriers">[];
   henchmen?: unknown[];

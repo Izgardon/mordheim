@@ -4,6 +4,7 @@
  * closed or open. A dramatis persona is a hired sword.
  */
 import { screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
@@ -21,7 +22,8 @@ const renderCard = (
   entry: RosterUnit,
   open = false,
   campaign: CampaignSummary | null = null,
-  canEdit = false
+  canEdit = false,
+  onRide: (rowId: number, on: boolean) => void = vi.fn()
 ) =>
   renderWithQueryClient(
     <UnitCard
@@ -33,7 +35,7 @@ const renderCard = (
       onToggle={vi.fn()}
       onLoadout={vi.fn()}
       onEdit={vi.fn()}
-      onRide={vi.fn()}
+      onRide={onRide}
     />
   );
 
@@ -194,19 +196,41 @@ describe("A card's top row", () => {
       kills: 3,
       missing_games: 1,
       trading_action: true,
-      mounts: [
-        {
-          item_row_id: 7,
-          item_id: 7,
-          name: "Warhorse",
-          movement: 8,
-          rating_bonus: 3,
-          has_profile: true,
-          stats: null,
-        },
+      // a hero's payload has no `mounts`: his chips come from the horse he carries
+      items: [
+        makeItem({ id: 7, row_id: 7, name: "Warhorse", beast_kind: "mount", companion: false }),
       ],
     }),
   };
+
+  // William, 23 Nov 2026: "why am I not able to mount a mount while in the warband page"
+  it("offers a hero the horse he carries on foot, and mounts it when pressed", async () => {
+    const onRide = vi.fn();
+    renderCard(mounted, false, null, true, onRide);
+
+    await userEvent.click(screen.getByRole("button", { name: "On foot" }));
+
+    expect(onRide).toHaveBeenCalledWith(7, true);
+  });
+
+  it("names the horse he rides, and a second carried mount by name", () => {
+    const riding: RosterUnit = {
+      kind: "hero",
+      unit: makeHero({
+        items: [
+          makeItem({ id: 7, row_id: 7, name: "Warhorse", beast_kind: "mount", companion: true }),
+          makeItem({ id: 8, row_id: 8, name: "Pony", beast_kind: "mount", companion: false }),
+        ],
+      }),
+    };
+    renderCard(riding);
+
+    expect(screen.getByRole("button", { name: "Warhorse" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    expect(screen.getByRole("button", { name: "Pony" })).toHaveAttribute("aria-pressed", "false");
+  });
 
   // William, 22 Nov 2026: "When not expanded we don't need to show kills at all"
   it("shows no kills while closed, and keeps the mount and Missing", () => {

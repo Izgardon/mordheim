@@ -4,6 +4,7 @@ import { ProfileStrip } from "@/features/reference/profile";
 import type { Item, ItemAvailability, RuleTable } from "../types/item-types";
 import { priceLabel, rarityLabel } from "../utils/item-prices";
 import { beastOf } from "../utils/item-listing";
+import { beastSpecials } from "../utils/item-rules";
 import ItemRuleBlock, { RuleTableView } from "./ItemRuleBlock";
 
 const PROFILE = ["profile", "m", "ws", "bs", "s", "t", "w", "i", "a", "ld"];
@@ -46,7 +47,7 @@ export default function ItemRules({ item }: { item: Item }) {
   const profile = beast?.has_profile ? beast : null;
   const table = profile ? null : statblockTable(item.statblock);
   const rules = item.rules ?? [];
-  const specials = rules.length ? [] : (beast?.specials ?? []);
+  const specials = beastSpecials(item);
   return (
     <>
       {profile ? <ProfileStrip profile={profile} /> : null}

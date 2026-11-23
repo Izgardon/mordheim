@@ -4,12 +4,14 @@ import { Chip, ChipLabel } from "@/components/ui/chip";
 import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
+import { carriedMounts } from "../../utils/companions";
 import { BADGE } from "./badge-style";
 import type { RosterUnit } from "./unit-view";
 
 /**
  * A card's top row of badges, every one the same chip (William, 12 Nov 2026: the row "is busy, with
- * different element sizes and styles crammed together"): the mount it rides, Missing and a
+ * different element sizes and styles crammed together"): a chip per mount he carries (its name
+ * while ridden, "On foot" while not; pressing it mounts or dismounts), Missing and a
  * pact-sworn hired sword's Blood pact (while the campaign has them on), in the head or, a hero's,
  * opposite his trading action (UnitCard). Advance ready sits on the card's top edge, and a hero's
  * bounties show only on the overview (William: "dont need to see the bounty on the warband sheet
@@ -27,19 +29,20 @@ export default function UnitBadges({
   onRide: (rowId: number, on: boolean) => void;
 }) {
   const { unit } = entry;
+  const mounts = carriedMounts(unit.items);
   return (
     <>
-      {(unit.mounts ?? []).map((mount) => {
-        const riding = unit.mount?.item_row_id === mount.item_row_id;
+      {mounts.map((mount) => {
+        const riding = Boolean(mount.companion);
         return (
           <Chip
-            key={mount.item_row_id}
+            key={mount.row_id}
             pressed={riding}
             disabled={!canEdit}
             className={BADGE}
-            onClick={() => onRide(mount.item_row_id, !riding)}
+            onClick={() => onRide(mount.row_id as number, !riding)}
           >
-            {riding ? mount.name : "On foot"}
+            {riding || mounts.length > 1 ? mount.name : "On foot"}
           </Chip>
         );
       })}
@@ -61,7 +64,7 @@ export default function UnitBadges({
 export function hasBadges(entry: RosterUnit, campaign: CampaignSummary | null) {
   const { unit } = entry;
   return Boolean(
-    unit.mounts?.length ||
+    carriedMounts(unit.items).length ||
       unit.missing_games ||
       (campaign?.enable_blood_pacts && entry.kind === "hireling" && entry.unit.blood_pacted)
   );

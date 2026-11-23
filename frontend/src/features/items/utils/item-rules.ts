@@ -44,12 +44,20 @@ export const plainRuleText = (rule: Pick<ItemRuleLink, "text" | "summary">) =>
     .trim();
 
 /**
+ * An Animal item's beast's specials, shown only when the item has no rules of its own: an imported
+ * mount carries the same rules twice, once as the item's and once as its beast's (William, 22 Nov
+ * 2026: "I just need the top version"). Every place that shows an item's rules reads this.
+ */
+export const beastSpecials = (item: Pick<Item, "rules" | "type" | "bestiary_entry">) =>
+  item.rules?.length ? [] : (beastOf(item)?.specials ?? []);
+
+/**
  * An item's rules as lines of plain text (a unit's card, the battle sheet): its own and shared
- * rules, then an Animal item's beast's specials, where most beasts keep their rules.
+ * rules, else an Animal item's beast's specials, where most beasts keep their rules.
  */
 export const itemRuleLines = (item: Pick<Item, "rules" | "type" | "bestiary_entry">) => [
   ...(item.rules ?? []).map((rule) => ({ name: ruleName(rule), text: plainRuleText(rule) })),
-  ...(beastOf(item)?.specials ?? []).map((special) => ({
+  ...beastSpecials(item).map((special) => ({
     name: special.name,
     text: special.description,
   })),
