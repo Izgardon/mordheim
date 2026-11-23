@@ -144,7 +144,6 @@ class SeedAllTests(TestCase):
                 # the Alchemist's Potion Recipes rule is a lore now (21 Nov 2026): 1 fewer
                 # the Marienburg Annual's ten beasts add 26 of their own to special.json (23 Nov 2026): the daemons'
                 # rules as the Annual words them, and each beast's own
-                
                 # the Marienburg Annual's eight hired swords' own rules (23 Nov 2026): 32 more, and its five
                 # dramatis personae's 26
                 "Special": 2041,
