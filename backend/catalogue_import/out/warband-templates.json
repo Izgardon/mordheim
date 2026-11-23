@@ -18822,7 +18822,7 @@
               "variant": ""
             },
             "shown_as": "",
-            "cost": 20,
+            "cost": 25,
             "cost_note": "",
             "first_free": false,
             "brace_cost": null,
@@ -19027,7 +19027,7 @@
               "variant": ""
             },
             "shown_as": "",
-            "cost": 195,
+            "cost": 125,
             "cost_note": "",
             "first_free": false,
             "brace_cost": null,
@@ -38094,7 +38094,7 @@
               "variant": ""
             },
             "shown_as": "",
-            "cost": 120,
+            "cost": 110,
             "cost_note": "",
             "first_free": false,
             "brace_cost": null,
@@ -38132,7 +38132,7 @@
               "variant": ""
             },
             "shown_as": "",
-            "cost": 250,
+            "cost": 100,
             "cost_note": "",
             "first_free": false,
             "brace_cost": null,
@@ -42886,7 +42886,7 @@
             },
             "shown_as": "",
             "cost": 45,
-            "cost_note": "",
+            "cost_note": "+3D6",
             "first_free": false,
             "brace_cost": null,
             "who": {

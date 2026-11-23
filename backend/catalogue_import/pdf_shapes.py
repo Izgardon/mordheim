@@ -43,7 +43,13 @@ VARIANT: Spec = {
 }
 LIST: Spec = {"id": (str, True), "title": (str, True), "caveat": (str, True), "items": (list, True)}
 LINE: Spec = {"name": (str, True), "alias": (str, True), "cost": (dict, True), "variant": (str, False)}
-COST: Spec = {"cost": (int, True), "costPrefix": (str, False), "costSuffix": (str, False), "braceCost": (int, False)}
+COST: Spec = {
+    "cost": (int, True),
+    "costPrefix": (str, False),
+    "costSuffix": (str, False),
+    "braceCost": (int, False),
+    "numD6": (int, False),  # the D6 a price adds, as the snapshot's lines carry them: the Cinderblast Bomb's 45+3D6
+}
 SPECIAL: Spec = {
     "title": (str, True),
     "alias": (str, False),

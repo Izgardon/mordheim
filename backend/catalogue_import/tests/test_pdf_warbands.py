@@ -1099,3 +1099,35 @@ class PdfImportTests(SimpleTestCase):
         self.assertEqual(
             {(str(row["who"]), row["max_per_fighter"]) for row in upgrades}, {("{'fighters': ['stormvermin']}", 1)}
         )
+
+    def test_a_list_price_is_the_warbands_starting_price_and_the_entry_the_stores(self) -> None:
+        # William, 23 Nov 2026: "The price in the items list are correct for our store, the other prices are
+        # generally for a specific warband starting price" (the Marienburg Annual pp. 60-61, 73 and 79-80)
+        def line(slug: str, name: str) -> tuple[int | None, str]:
+            found = next(
+                row for lst in self.templates[slug]["lists"] for row in lst["lines"] if row["item"]["name"] == name
+            )
+            return found["cost"], found["cost_note"]
+
+        def store(name: str) -> int:
+            [row] = self.items[name]["availabilities"]
+            return row["cost"]
+
+        for slug, name, listed, stored in (
+            ("fen-guard", "Horn of the Wild Hunt", 110, 120),
+            ("fen-guard", "Magic Acorn", 100, 250),
+            ("call-of-the-night-haint", "Spirit Knife", 25, 20),
+            ("call-of-the-night-haint", "Mortis Engine", 125, 195),
+        ):
+            self.assertEqual((line(slug, name)[0], store(name)), (listed, stored), name)
+        self.assertEqual(line("guild-of-disgraced-engineers", "Cinderblast Bomb"), (45, "+3D6"))
+
+    def test_the_fen_guards_special_equipment_has_the_annuals_rules(self) -> None:
+        # held with no rules until the Marienburg Annual's p. 61 (William, 23 Nov 2026)
+        scythe, bark, horn = (self.items[name] for name in ("Greenwood Scythe", "Iron Bark", "Horn of the Wild Hunt"))
+        self.assertEqual((scythe["strength"], scythe["rules"][0]), ("+1", {"rule": "two-handed"}))
+        self.assertIn("+1", scythe["rules"][1]["text"])
+        self.assertEqual((bark["save_bonus"], bark["save_slot"]), (2, "extra"))
+        [table] = horn["rules"][0]["tables"]
+        self.assertEqual([row[0] for row in table["rows"]], ["1", "2", "3", "4", "5", "6"])
+        self.assertFalse(any(item["needs_rules"] for item in (scythe, bark, horn)))

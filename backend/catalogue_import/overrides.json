@@ -726,8 +726,9 @@
       "why": "its page prints no save for it"
     },
     "Iron Bark": {
-      "subtype": "Body Armour",
-      "why": "its page prints no save for it"
+      "bonus": 2,
+      "slot": "extra",
+      "subtype": "Body Armour"
     },
     "Magic War Paint": {
       "subtype": "Body Armour",
@@ -2017,6 +2018,38 @@
         }
       ],
       "why": "Relics of the Crusades pp. 4-5 and 17, a dwelling: 60+2D6 dinars, Rare 12 at Dimashque (Rare 11 at Khalibon, in the note); its rules move here from the campaign rules' Dwellings (William, 21 Nov 2026: \"Relics yes, bring items and skills and spells in\")"
+    },
+    {
+      "name": "Howdah",
+      "type": "Miscellaneous",
+      "subtype": "Vehicles",
+      "setting": "marienburg-annual",
+      "source": "Marienburg Annual",
+      "cost": 80,
+      "rarity": 10,
+      "rules": [
+        {
+          "name": "Howdah",
+          "text": "A howdah may be fitted to any great beast. The beast then follows every special rule for a cart (Vehicles of the Empire), except as below."
+        },
+        {
+          "name": "Movement",
+          "text": "The beast moves and runs at its own Movement, at -1 for every passenger after the first. It may turn up to 90 degrees in its movement phase without penalty; if it turns further, it moves at half pace and may not charge that turn."
+        },
+        {
+          "name": "Out of Control",
+          "text": "The beast goes out of control only if it fails a Leadership test, which it may take on its driver's Leadership."
+        },
+        {
+          "name": "Combat",
+          "text": "The beast charges as normal. A passenger fights in close combat only with a thrusting weapon (a mancatcher, spear or halberd, for instance) and only from the space of the howdah nearest the enemy."
+        },
+        {
+          "name": "Shooting",
+          "text": "Passengers may shoot at enemies engaged with the beast."
+        }
+      ],
+      "why": "the Marienburg Annual p. 10 (New Vehicles): 80 gc, Rare 10, for any great beast, so for everyone; a vehicle bought as an item, as the Skeleton Chariot and the Mortis Engine are (William, 23 Nov 2026: \"Add the Howdah if it is an item a warband buys\"). The page's Chariot is not added"
     }
   ],
   "warband_items": {
