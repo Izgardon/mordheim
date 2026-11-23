@@ -32,7 +32,19 @@ RULE_SOURCES = Path(django_settings.BASE_DIR) / "catalogue_import" / "sources" /
 FLAGS = ("enable_locations", "enable_encampments", "enable_campaign_points", "enable_blood_pacts")
 DEATH_ROLLS = {key for key, _label in HERO_DEATH_ROLL_CHOICES}
 KEYS = frozenset(
-    {"slug", "name", "sort_order", "settings", "exploration_chart", "max_heroes", "hero_death_roll", "rules", *FLAGS}
+    {
+        "slug",
+        "name",
+        "sort_order",
+        "settings",
+        "exploration_chart",
+        "max_heroes",
+        "hero_death_roll",
+        "rules",
+        "main_resource",
+        "resources",
+        *FLAGS,
+    }
 )
 
 
@@ -179,6 +191,14 @@ def _flags(entry: Mapping[str, Any], label: str) -> dict[str, bool | None]:
     return values
 
 
+def _resources(entry: Mapping[str, Any], label: str) -> dict[str, Any]:
+    """Its main resource (blank: it says nothing) and the others every warband is given, each a name."""
+    others = entry.get("resources") or []
+    if not isinstance(others, list) or not all(isinstance(name, str) and name.strip() for name in others):
+        raise CommandError(f"{label}: resources should be a list of names.")
+    return {"main_resource": clean(entry.get("main_resource")), "resources": [name.strip() for name in others]}
+
+
 def _death_roll(entry: Mapping[str, Any], label: str) -> str:
     roll = clean(entry.get("hero_death_roll")).lower()
     if roll and roll not in DEATH_ROLLS:
@@ -229,6 +249,7 @@ def write_preset(
         "exploration_chart_id": _chart_id(entry, name, charts),
         "max_heroes": None if entry.get("max_heroes") is None else parse_int(entry.get("max_heroes")),
         "hero_death_roll": _death_roll(entry, name),
+        **_resources(entry, name),
         **_flags(entry, name),
     }
     preset, _created = CampaignPreset.objects.update_or_create(slug=slug, defaults=defaults)

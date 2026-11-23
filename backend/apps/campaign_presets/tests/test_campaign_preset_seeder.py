@@ -185,3 +185,15 @@ class PresetSeederTests(TestCase):
     def test_a_death_roll_outside_the_tables_stops_the_run(self) -> None:
         with self.assertRaises(CommandError):
             self.seed({"slug": "mim", "name": MARIENBURG, "hero_death_roll": "d20"})
+
+    # its resources (William, 23 Nov 2026)
+
+    def test_a_preset_seeds_its_main_resource_and_its_others(self) -> None:
+        self.seed({"slug": "m", "name": MARIENBURG, "main_resource": " Treasure ", "resources": ["Wyrdstone"]})
+        preset = CampaignPreset.objects.get(slug="m")
+        self.assertEqual((preset.main_resource, preset.resources), ("Treasure", ["Wyrdstone"]))
+
+    def test_resources_that_are_not_a_list_of_names_stop_the_run(self) -> None:
+        for bad in ("Wyrdstone", [""], [3]):
+            with self.assertRaises(CommandError):
+                self.seed({"slug": "m", "name": MARIENBURG, "resources": bad})

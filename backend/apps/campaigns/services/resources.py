@@ -8,6 +8,7 @@ player's own to pay (apps/hirelings/fees.py), so they are offered while the sett
 
 from typing import Any
 
+from apps.campaign_presets.services.resources import other_resources
 from apps.hirelings.fees import CAMPAIGN_POINTS, is_gold
 from apps.warbands.models import WarbandResource
 
@@ -20,14 +21,21 @@ def _row(name: str, *, default: bool = False, campaign_points: bool = False) -> 
 
 def campaign_resources(campaign_id: int) -> list[dict[str, Any]]:
     """The default resource first, as the settings name it (every warband has it, even before one is raised), then
-    Campaign points while they are on, then every other name a warband's counter holds, once each whatever its case,
-    by name. Two queries."""
+    the others its preset keeps for every warband, then Campaign points while they are on, then every other name a
+    warband's counter holds, once each whatever its case, by name. Two queries."""
     settings = (
         CampaignSettings.objects.filter(campaign_id=campaign_id)
-        .only("default_resource_name", "enable_campaign_points")
+        .select_related("campaign__preset")
+        .only(
+            "default_resource_name",
+            "enable_campaign_points",
+            "campaign__preset__main_resource",
+            "campaign__preset__resources",
+        )
         .first()
     )
     rows = [_row((settings.default_resource_name if settings else "") or DEFAULT_RESOURCE_NAME, default=True)]
+    rows += [_row(name) for name in other_resources(settings.campaign.preset if settings else None)]
     if settings and settings.enable_campaign_points:
         rows.append(_row(CAMPAIGN_POINTS, campaign_points=True))  # a name only: no warband holds a counter of it
     taken = {row["name"].strip().casefold() for row in rows}

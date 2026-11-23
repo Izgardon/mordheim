@@ -5,6 +5,7 @@ from typing import Any
 from django.db import transaction
 
 from apps.campaign_presets.services import apply as presets_apply
+from apps.campaign_presets.services.resources import apply_resources
 from apps.campaign_presets.services.swap import swap_rules
 from apps.core.catalogue.cache import bump
 from apps.plots.writes import give_default_plots
@@ -79,6 +80,7 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
             set_settings(campaign, picked_ids)
             bump(campaign.id)  # no catalogue.changed: the pages read the lists again on campaign.updated
         if not settings_updates:
+            _settle_resources(campaign, validated, preset)
             return []
         # locked: a warband raised meanwhile gets the default resource's name and its campaign points either way
         settings, _ = CampaignSettings.objects.select_for_update().get_or_create(campaign=campaign)
@@ -94,4 +96,13 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
         if "exploration_chart_id" in settings_updates and settings_updates["exploration_chart_id"] != old_chart:
             bump(campaign.id, "exploration_charts")  # the campaign's cached chart body is another chart now
         renamed = settings_updates.get("default_resource_name", old_resource)
-        return rename_default_resources(campaign, renamed) if renamed != old_resource else []
+        warnings = rename_default_resources(campaign, renamed) if renamed != old_resource else []
+        _settle_resources(campaign, validated, preset)
+        return warnings
+
+
+def _settle_resources(campaign: Campaign, validated: dict[str, Any], preset: Any) -> None:
+    """A preset taken up (or cleared): its other resources become every warband's fixed counters, once the default
+    resource carries its main resource's name, so a warband's old default is never taken for one of them."""
+    if "preset_id" in validated:
+        apply_resources(campaign.pk, preset)

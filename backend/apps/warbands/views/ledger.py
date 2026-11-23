@@ -35,6 +35,7 @@ NOT_EDITABLE = {
 # the campaign's default resource: its settings rename it, and every warband keeps it (William, 3 Nov 2026)
 DEFAULT_RENAMED = {"detail": "The campaign's settings rename the default resource.", "code": "default_resource"}
 DEFAULT_DELETED = {"detail": "The default resource can't be deleted.", "code": "default_resource"}
+FIXED_RESOURCE = {"detail": "The campaign keeps this resource for every warband.", "code": "fixed_resource"}
 
 
 class WarbandLogListView(WarbandScopedView):
@@ -87,6 +88,8 @@ class WarbandResourceDetailView(WarbandScopedView):
             rows = WarbandResource.objects.filter(warband=self.warband)
             if rows.filter(is_default=True, id=resource_id).exclude(name=name).exists():
                 return Response(DEFAULT_RENAMED, status=400)
+            if rows.filter(fixed=True, id=resource_id).exclude(name=name).exists():
+                return Response(FIXED_RESOURCE, status=400)
             if rows.exclude(id=resource_id).filter(name__iexact=name).exists():
                 return Response({"detail": "Resource already exists"}, status=400)
         resource = change_resource(self.warband, resource_id, **serializer.validated_data)
@@ -100,6 +103,8 @@ class WarbandResourceDetailView(WarbandScopedView):
             return Response(NOT_FOUND, status=404)
         if resource.is_default:
             return Response(DEFAULT_DELETED, status=400)
+        if resource.fixed:
+            return Response(FIXED_RESOURCE, status=400)
         resource.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

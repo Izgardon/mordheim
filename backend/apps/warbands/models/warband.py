@@ -128,6 +128,9 @@ class WarbandResource(models.Model):
     name = models.CharField(max_length=120)
     amount = models.IntegerField(default=0)
     is_default = models.BooleanField(default=False)
+    # one of the counters its campaign's preset gives every warband (Marienburg's Wyrdstone beside its Treasure):
+    # never deleted or renamed while the campaign plays that preset (apps/campaign_presets/services/resources.py)
+    fixed = models.BooleanField(default=False)
 
     class Meta:
         db_table = "warband_resources"

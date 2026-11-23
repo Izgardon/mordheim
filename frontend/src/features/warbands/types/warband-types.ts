@@ -164,6 +164,11 @@ export type WarbandResource = {
    * it, first; it is never deleted, and only the campaign's settings rename it.
    */
   is_default: boolean;
+  /**
+   * One of the counters the campaign's published campaign keeps for every warband (Marienburg's
+   * Wyrdstone beside its Treasure): never deleted or renamed.
+   */
+  fixed?: boolean;
 };
 
 /** One of the warband's own rules: its title is the pill, its description what the pill opens. */

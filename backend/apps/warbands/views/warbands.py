@@ -4,6 +4,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.campaign_presets.models import CampaignPreset
+from apps.campaign_presets.services.resources import give_fixed, other_resources
 from apps.campaigns.models import DEFAULT_RESOURCE_NAME, CampaignSettings
 from apps.campaigns.permissions import get_writable_membership, parse_campaign_id
 from apps.warband_templates.services.payload import raise_gold
@@ -64,6 +66,8 @@ class WarbandListCreateView(APIView):
             # the one everyone starts with (William, 3 Nov 2026), named as the campaign names it
             name = settings.default_resource_name if settings else DEFAULT_RESOURCE_NAME
             WarbandResource.objects.create(warband=warband, name=name, amount=0, is_default=True)
+            # and the counters its campaign's preset keeps for every warband (Marienburg's Wyrdstone)
+            give_fixed([warband], other_resources(CampaignPreset.objects.filter(campaigns__id=campaign_id).first()))
             starting_gold = raise_gold(abs(settings.starting_gold) if settings else 500, template, variant)
             ledger.record(warband, LedgerAction.STARTING_GOLD, starting_gold, "Starting Gold")
             if template is not None:

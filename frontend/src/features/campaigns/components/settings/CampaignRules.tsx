@@ -60,7 +60,8 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
   return (
     <SettingsCard title="Warband rules">
       <StartingGold campaign={campaign} />
-      <DefaultResource campaign={campaign} />
+      {/* named by the published campaign it plays (Treasure in Marienburg), so no name to type */}
+      {locks.sets.has("default_resource_name") ? null : <DefaultResource campaign={campaign} />}
       <WyrdstonePrices campaign={campaign} />
       <SettingRow
         label="Warband limits"

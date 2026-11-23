@@ -76,3 +76,34 @@ describe("Level-ups", () => {
     expect(fakeApi.calls()).not.toContain(patch);
   });
 });
+
+// William, 23 Nov 2026: "If a setting is selected other than Mordheim then the default resource
+// name input setting shouldn't appear"
+describe("Default resource", () => {
+  it("asks for a name while no published campaign names it", async () => {
+    renderWithQueryClient(<CampaignRules campaign={campaign} />);
+    expect(screen.getByRole("textbox", { name: "Default resource" })).toBeInTheDocument();
+  });
+
+  it("is left out once the published campaign names the main resource", async () => {
+    fakeApi.on(`GET /campaigns/${campaign.id}/preset/`, {
+      preset_id: 3,
+      preset_name: "Mutiny in Marienburg",
+      sets: [
+        {
+          field: "default_resource_name",
+          label: "Main resource",
+          value: "Treasure",
+          text: "Treasure",
+          departure: "",
+        },
+      ],
+      departures: [],
+    });
+    renderWithQueryClient(<CampaignRules campaign={campaign} />);
+
+    await waitFor(() =>
+      expect(screen.queryByRole("textbox", { name: "Default resource" })).not.toBeInTheDocument()
+    );
+  });
+});

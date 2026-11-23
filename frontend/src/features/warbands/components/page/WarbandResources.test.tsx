@@ -85,6 +85,23 @@ describe("WarbandResources", () => {
     expect(items.map((item) => item.textContent)).toEqual(["Sell"]);
   });
 
+  // William, 23 Nov 2026: the published campaign's other resources "can't be deleted"
+  it("offers only Sell on a counter the campaign keeps for every warband", async () => {
+    const user = setupUser();
+    renderWithQueryClient(
+      <WarbandResources
+        warbandId={9}
+        resources={[...resources, { ...resource(4, "Treasure"), fixed: true }]}
+        canEdit
+        pricing={pricing}
+      />
+    );
+
+    await user.click(screen.getByRole("button", { name: "Treasure actions" }));
+    const items = await screen.findAllByRole("menuitem");
+    expect(items.map((item) => item.textContent)).toEqual(["Sell"]);
+  });
+
   it("keeps Rename, Sell and Delete on the others", async () => {
     const user = setupUser();
     renderResources();

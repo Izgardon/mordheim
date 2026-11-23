@@ -51,6 +51,11 @@ class CampaignPreset(models.Model):
     enable_blood_pacts = models.BooleanField(null=True, blank=True)
     max_heroes = models.PositiveSmallIntegerField(null=True, blank=True)
     hero_death_roll = models.CharField(max_length=10, choices=HERO_DEATH_ROLL_CHOICES, blank=True, default="")
+    # its resources (William, 23 Nov 2026: "settings to own default resources that get added and can't be deleted"):
+    # the main one names every warband's default resource (Treasure in Marienburg), blank when it says nothing; the
+    # others are counters every warband is given and may not delete (Marienburg's Wyrdstone)
+    main_resource = models.CharField(max_length=120, blank=True, default="")
+    resources = models.JSONField(default=list, blank=True)
 
     class Meta:
         db_table = "campaign_preset"
@@ -153,5 +158,6 @@ DICTATED: tuple[Dictated, ...] = (
     Dictated("enable_blood_pacts", "Blood pacts"),
     Dictated("max_heroes", "Most heroes"),
     Dictated("hero_death_roll", "Hero death roll"),
+    Dictated("main_resource", "Main resource", "default_resource_name"),
 )
 DICTATED_BY_FIELD = {entry.field: entry for entry in DICTATED}

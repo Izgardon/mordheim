@@ -121,6 +121,7 @@ class ResourceTests(RosterTestCase):
                     "name": "Gold Crowns",
                     "amount": 7,
                     "is_default": False,
+                    "fixed": False,
                 },
                 {
                     "id": shards.id,
@@ -128,6 +129,7 @@ class ResourceTests(RosterTestCase):
                     "name": "Wyrdstone",
                     "amount": 3,
                     "is_default": False,
+                    "fixed": False,
                 },
             ],
         )
@@ -147,6 +149,7 @@ class ResourceTests(RosterTestCase):
                 "name": "Wyrdstone",
                 "amount": 0,
                 "is_default": False,
+                "fixed": False,
             },
         )
         self.assertEqual((duplicate.status_code, duplicate.json()), (400, {"detail": "Resource already exists"}))
@@ -189,6 +192,7 @@ class ResourceTests(RosterTestCase):
                 "name": "Wyrdstone",
                 "amount": 0,
                 "is_default": False,
+                "fixed": False,
             },
         )
         self.assertEqual((huge.json()["amount"], again.json()["amount"]), (2_147_483_647, 2_147_483_647))

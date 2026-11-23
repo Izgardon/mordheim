@@ -30,6 +30,8 @@ export default function ResourceRow({
   onDelete: () => void;
 }) {
   const { name, is_default: isDefault } = resource;
+  // the default and the campaign's own counters stay: no Rename, no Delete
+  const kept = isDefault || Boolean(resource.fixed);
   return (
     <div
       className={[
@@ -78,7 +80,7 @@ export default function ResourceRow({
                   align="end"
                   className="z-[70] min-w-[160px] border border-border bg-panel p-1"
                 >
-                  {isDefault ? null : (
+                  {kept ? null : (
                     <DropdownMenu.Item className={MENU_ITEM} onSelect={onRename}>
                       Rename
                     </DropdownMenu.Item>
@@ -86,7 +88,7 @@ export default function ResourceRow({
                   <DropdownMenu.Item className={MENU_ITEM} onSelect={onSell}>
                     Sell
                   </DropdownMenu.Item>
-                  {isDefault ? null : (
+                  {kept ? null : (
                     <DropdownMenu.Item className={`${MENU_ITEM} text-danger`} onSelect={onDelete}>
                       Delete
                     </DropdownMenu.Item>

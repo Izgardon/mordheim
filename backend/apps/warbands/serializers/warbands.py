@@ -233,13 +233,14 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
 
 
 class WarbandResourceSerializer(serializers.ModelSerializer):
-    """A resource; `is_default`: the campaign's default resource (first, never deleted, renamed by the campaign)."""
+    """A resource; `is_default`: the campaign's default resource (first, never deleted, renamed by the campaign);
+    `fixed`: one of the counters its preset gives every warband (never deleted or renamed)."""
 
     warband_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = WarbandResource
-        fields = ("id", "warband_id", "name", "amount", "is_default")
+        fields = ("id", "warband_id", "name", "amount", "is_default", "fixed")
 
 
 class WarbandResourceCreateSerializer(serializers.ModelSerializer):
