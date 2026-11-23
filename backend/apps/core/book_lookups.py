@@ -317,7 +317,7 @@ class BookLookups:
         links = EntryLinks(
             skills=[skill for name in data.get("skills", []) if (skill := self.skill(name, owner))],
             specials=list(dict.fromkeys(specials)),
-            spells=[spell for item in data.get("spells", []) if (spell := self.spell(item, owner, lore))],
+            spells=[spell for item in data.get("spells", []) if (spell := self.spell(item, owner, _lore(item, lore)))],
             equipment={},
         )
         for equipment in data.get("equipment", []):
@@ -366,6 +366,13 @@ class BookLookups:
             row.save(update_fields=["description"])
             return row
         return _filled(row, description)
+
+
+def _lore(item: Any, entry_lore: str) -> str:
+    """The lore a spell line is read in: its own `lore`, for an entry whose spells come from several (Slave Master
+    Haggard's Necromancy and Rituals of Hashut, which share spell names with other lores), else the entry's."""
+    own = item.get("lore") if isinstance(item, dict) else None
+    return str(own or entry_lore)
 
 
 def _filled(row: Any, description: str) -> Any:

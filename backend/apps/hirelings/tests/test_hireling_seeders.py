@@ -19,6 +19,7 @@ from apps.items.tests.test_catalogue_characterisation_seeders import data_file, 
 from apps.races.models import Race
 from apps.skills.models import Skill, SkillGroup
 from apps.special.models import Special
+from apps.spells.models import Spell
 
 OGRE = {
     "name": "Ogre Bodyguard",
@@ -245,6 +246,27 @@ class HirelingSeederTests(TestCase):
         )
         self.assertEqual((aenur.race_id, aenur.race_label), (None, "Elf"))
         self.assertFalse(HiredSword.objects.exists())
+
+    def test_a_spell_line_naming_its_lore_links_that_lores_spell_of_the_name(self):
+        # Slave Master Haggard (the Marienburg Annual p. 91) knows spells of Necromancy and the Rituals of Hashut,
+        # whose names other lores share: each line names its lore, and one no lore holds is his own
+        necromancy = Spell.objects.create(name="Lifestealer", type="Necromancy")
+        # the last lore of the name in the book's order, which a bare name would link
+        theirs = Spell.objects.create(name="Lifestealer", type="Necromancy (Restless Dead)")
+        hashut = Spell.objects.create(name="Lava Flow", type="Rituals of Hashut")
+        spells = [
+            {"name": "Lifestealer", "lore": "Necromancy"},
+            {"name": "Lava Flow", "lore": "Rituals of Hashut"},
+            {"name": "Combustion", "description": "Difficulty 8. A zombie explodes."},
+        ]
+        with data_file([{**AENUR, "spells": spells}]) as path:
+            run("seed_dramatis_personae", json_paths=[path])
+
+        linked = set(DramatisPersona.objects.get(name="Aenur").spell_links.values_list("spell", flat=True))
+        own = Spell.objects.get(name="Combustion")
+        self.assertEqual(linked, {necromancy.id, hashut.id, own.id})
+        self.assertNotIn(theirs.id, linked)
+        self.assertEqual((own.type, own.dc), ("Dramatis Persona - Aenur", "8"))
 
     def test_a_bad_stays_or_stat_stops_the_run_and_keeps_nothing(self):
         bad_stays = {**AENUR, "dramatis_persona": {"stays": "forever"}}
