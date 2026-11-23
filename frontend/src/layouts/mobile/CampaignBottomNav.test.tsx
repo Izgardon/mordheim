@@ -122,7 +122,6 @@ describe("the Reference sheet", () => {
         .getAllByRole("link")
         .map((link) => link.textContent);
     expect(names("References")).toEqual([
-      "Warbands",
       "Wargear",
       "Skills",
       "Spells",
@@ -130,6 +129,7 @@ describe("the Reference sheet", () => {
       "Bestiary",
       "Hired swords",
       "Dramatis personae",
+      "Warbands",
     ]);
     expect(names("Rules")).toEqual(["Rules", "House rules", "Campaign rules"]);
   });

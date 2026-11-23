@@ -1,6 +1,7 @@
 /**
  * "Raise your warband" (William, 1 Nov 2026): every page of a campaign you have no warband in
- * says so, with the way to raise one, until the warband stands. Not on the raise page itself,
+ * says so, with the way to raise one and Browse warbands (William, 23 Nov 2026: "natural direction
+ * to that page to help look and decide ones warband"), until the warband stands. Not on the raise page itself,
  * nor in an archived campaign. It reads the layout's query for your warband, so no request of
  * its own.
  */
@@ -44,8 +45,20 @@ describe("NoWarbandBanner", () => {
       "href",
       "/campaigns/1/warband"
     );
+    expect(screen.getByRole("link", { name: "Browse warbands" })).toHaveAttribute(
+      "href",
+      "/campaigns/1/warband-templates"
+    );
     expect(screen.queryByRole("button", { name: /dismiss|close/i })).toBeNull();
     expect(fakeApi.calls()).toEqual([MINE]);
+  });
+
+  it("leaves Browse warbands off the Warbands reference itself", async () => {
+    fakeApi.on(MINE, []);
+    renderBanner("/campaigns/1/warband-templates");
+
+    expect(await screen.findByRole("link", { name: "Raise your warband" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Browse warbands" })).toBeNull();
   });
 
   it("shows nothing while your warband loads", () => {
@@ -61,6 +74,7 @@ describe("NoWarbandBanner", () => {
 
     await waitFor(() => expect(queryClient.isFetching()).toBe(0));
     expect(screen.queryByText(/no warband/)).toBeNull();
+    expect(screen.queryByRole("link", { name: "Browse warbands" })).toBeNull();
   });
 
   it("stays off the raise page and out of an archived campaign", async () => {

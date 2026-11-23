@@ -184,7 +184,7 @@ describe("The Locations page", () => {
     openAs("owner", false);
 
     expect(
-      await screen.findByText("Locations are switched off for this campaign.")
+      await screen.findByText("Trade Locations are switched off for this campaign.")
     ).toBeInTheDocument();
     expect(fakeApi.calls()).not.toContain(`GET ${GROUPS}`);
   });

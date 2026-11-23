@@ -51,7 +51,7 @@ export default function CampaignNotice({
           <span className="truncate font-display text-xl font-semibold text-head">{children}</span>
         </div>
         {aside}
-        {action ? <div className="ml-auto flex shrink-0 items-center">{action}</div> : null}
+        {action ? <div className="ml-auto flex shrink-0 items-center gap-2">{action}</div> : null}
       </div>
     );
   }

@@ -383,7 +383,7 @@ describe("Search everything's locations", () => {
     const [found] = searchEverything("haven", { ...nothing, locationGroups });
 
     expect([found.label, found.hits.map((hit) => [hit.title, hit.meta, hit.to])]).toEqual([
-      "Locations",
+      "Trade Locations",
       [["Sigmar's Haven", "Old Town", "locations?place=Sigmar's%20Haven"]],
     ]);
   });
@@ -403,11 +403,11 @@ describe("Search everything's groups", () => {
       },
     };
     expect(searchEverything("monk", sources).map((entry) => entry.label)).toEqual([
-      "Warband types",
       "Wargear",
       "Wargear rules",
       "Skills",
       "Skill groups",
+      "Warband types",
       "Warbands",
     ]);
   });

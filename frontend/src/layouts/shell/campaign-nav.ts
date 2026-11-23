@@ -14,10 +14,10 @@ export type NavLink = {
 
 /**
  * The References section (William, 7 Nov 2026: "split references section into references and
- * rules"): the catalogue's pages, in the rail's order (design E).
+ * rules"): the catalogue's pages, in the rail's order (design E), Warbands last (William, 23 Nov
+ * 2026: "move warbands reference nav item to the bottom of its section").
  */
 export const REFERENCE_LINKS: NavLink[] = [
-  { label: "Warbands", path: "warband-templates" },
   { label: "Wargear", path: "items" },
   { label: "Skills", path: "skills" },
   { label: "Spells", path: "spells" },
@@ -25,6 +25,7 @@ export const REFERENCE_LINKS: NavLink[] = [
   { label: "Bestiary", path: "bestiary" },
   { label: "Hired swords", path: "hired-swords" },
   { label: "Dramatis personae", path: "dramatis-personae" },
+  { label: "Warbands", path: "warband-templates" },
 ];
 
 /** The Rules section: the rulebook, the campaign's house rules and its own campaign rules. */
@@ -49,9 +50,9 @@ const SEARCH_PATH = "search";
 export const BATTLES_ICON = Swords;
 
 /**
- * "My warband": the warband, the Encampment page and the campaign's Locations page (William, 7 Nov
- * 2026: "clicking locations in nav takes you there"), the last two when the campaign has them
- * switched on.
+ * "My warband": the warband, the Encampment page and the campaign's Trade Locations page (William,
+ * 7 Nov 2026: "clicking locations in nav takes you there"; named Trade Locations on 23 Nov), the
+ * last two when the campaign has them switched on.
  */
 export function warbandLinks(campaign: CampaignNavFlags): NavLink[] {
   return [
@@ -59,7 +60,9 @@ export function warbandLinks(campaign: CampaignNavFlags): NavLink[] {
     ...(campaign.enable_encampments
       ? [{ label: "Encampment", path: "encampments", icon: Tent }]
       : []),
-    ...(campaign.enable_locations ? [{ label: "Locations", path: "locations", icon: Map }] : []),
+    ...(campaign.enable_locations
+      ? [{ label: "Trade Locations", path: "locations", icon: Map }]
+      : []),
   ];
 }
 
@@ -67,7 +70,7 @@ const SECTION_TITLES: Record<string, string> = {
   warband: "Warband",
   warbands: "Warband",
   encampments: "Encampment",
-  locations: "Locations",
+  locations: "Trade Locations",
   settings: "Settings",
   account: "Account",
   battles: "Battle",

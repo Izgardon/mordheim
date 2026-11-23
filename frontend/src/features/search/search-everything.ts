@@ -49,8 +49,8 @@ export type SearchSources = {
 };
 
 /**
- * Search everything: one search over the reference (warband types, items and their shared rules,
- * skills and skill groups, spells, Boons & Banes, beasts, hired swords, dramatis personae), the
+ * Search everything: one search over the reference (items and their shared rules, skills and
+ * skill groups, spells, Boons & Banes, beasts, hired swords, dramatis personae, warband types), the
  * rulebook's text, the house rules, the campaign's rules and charts, and this campaign's warbands, units
  * and locations; grouped by kind in the reference nav's order, empty groups left out.
  */
@@ -59,12 +59,6 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
   if (!needle) return [];
   const warbandPath = (id: number) => (id === sources.myWarbandId ? "warband" : `warbands/${id}`);
   const groups: SearchGroup[] = [
-    {
-      // the Warbands reference; "Warbands" further down are the campaign's own
-      id: "warband-types",
-      label: "Warband types",
-      hits: warbandTypeHits(sources.warbandTypes, needle, sources),
-    },
     {
       id: "items",
       label: "Wargear",
@@ -192,6 +186,12 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
       })),
     })),
     {
+      // the Warbands reference; "Warbands" further down are the campaign's own
+      id: "warband-types",
+      label: "Warband types",
+      hits: warbandTypeHits(sources.warbandTypes, needle, sources),
+    },
+    {
       id: "rules",
       label: "Rules",
       hits: ranked(
@@ -290,7 +290,7 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
     },
     {
       id: "locations",
-      label: "Locations",
+      label: "Trade Locations",
       hits: ranked(
         sources.locationGroups.flatMap((group) =>
           group.locations.map((place) => ({
@@ -305,7 +305,7 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
         title: entry.name,
         meta: entry.group,
         snippet,
-        // the Locations page, searched for it
+        // the Trade Locations page, searched for it
         to: `locations?place=${encodeURIComponent(entry.name)}`,
       })),
     },

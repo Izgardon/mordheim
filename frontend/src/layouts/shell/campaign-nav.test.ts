@@ -58,9 +58,10 @@ describe("My warband's links", () => {
     expect(links.map((link) => [link.label, link.path])).toEqual([
       ["Warband", "warband"],
       ["Encampment", "encampments"],
-      ["Locations", "locations"],
+      ["Trade Locations", "locations"],
     ]);
     expect(mobileNavActiveId("/campaigns/1/locations")).toBe("warband");
+    expect(campaignSectionTitle("/campaigns/1/locations")).toBe("Trade Locations");
     expect(warbandLinks({ enable_encampments: false, enable_locations: false })).toHaveLength(1);
   });
 });
