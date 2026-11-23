@@ -69,6 +69,10 @@ const PENDING_ICON: Record<PendingList, ReactNode> = {
   spells: undefined,
 };
 
+/** A pill's type, less the "Warband - " a warband's own rule carries, which a phone cuts off (William, 23 Nov 2026). */
+export const pillType = (type: string | null | undefined) =>
+  (type ?? "").replace(/^Warband - /, "");
+
 /**
  * One list's boxes on an open card: each entry with what it is (a skill's group, a spell's lore)
  * and its panel's line (a spell's lore and his difficulty, "Difficulty 7 → 6" once he rolled it
@@ -83,7 +87,7 @@ export function entryBoxes(unit: RosterUnit, list: PendingList, entries: Entry[]
         .join(" · ");
       return {
         name: entry.name,
-        subtitle: entry.type ?? "",
+        subtitle: pillType(entry.type),
         kind: line,
         text: entry.description,
         special: list === "specials",
