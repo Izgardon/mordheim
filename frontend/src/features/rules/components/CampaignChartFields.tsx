@@ -9,13 +9,16 @@ const LABEL = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
 const AREA =
   "w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring";
 
-/** A chart's title, when it is rolled, its dice, its note and a row per result. */
-export default function CampaignChartFields({
+/** A chart's title, when it is rolled, its dice, its note and a row per result; its umbrella too,
+ * but for a table that belongs to something (a location's), which shares none. */
+export default function CampaignChartFields<T extends CampaignChartPayload>({
   value,
   onChange,
+  umbrella = true,
 }: {
-  value: CampaignChartPayload;
-  onChange: (value: CampaignChartPayload) => void;
+  value: T;
+  onChange: (value: T) => void;
+  umbrella?: boolean;
 }) {
   const id = useId();
   return (
@@ -51,18 +54,20 @@ export default function CampaignChartFields({
           </select>
         </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor={`${id}-umbrella`} className={LABEL}>
-          Umbrella
-        </label>
-        <Input
-          id={`${id}-umbrella`}
-          maxLength={120}
-          placeholder="Monster encounters"
-          value={value.umbrella ?? ""}
-          onChange={(event) => onChange({ ...value, umbrella: event.target.value })}
-        />
-      </div>
+      {umbrella ? (
+        <div className="flex flex-col gap-2">
+          <label htmlFor={`${id}-umbrella`} className={LABEL}>
+            Umbrella
+          </label>
+          <Input
+            id={`${id}-umbrella`}
+            maxLength={120}
+            placeholder="Monster encounters"
+            value={value.umbrella ?? ""}
+            onChange={(event) => onChange({ ...value, umbrella: event.target.value })}
+          />
+        </div>
+      ) : null}
       <div className="flex flex-col gap-2">
         <label htmlFor={`${id}-description`} className={LABEL}>
           When it is rolled

@@ -68,11 +68,15 @@ export default function CampaignPresetCard({ campaign }: { campaign: CampaignSum
     if (!changing) return;
     if (await save({ preset_id: changing.id })) {
       setChanging(null);
-      // what it dictates moved: this card, the chart the post-game explores by and its plots
+      // what it dictates moved: this card, the chart the post-game explores by and its plots; and
+      // the swap changed its rules, tables and locations
       for (const key of [
         queryKeys.campaign.preset(campaign.id),
         queryKeys.campaign.explorationChart(campaign.id),
         queryKeys.campaign.plots(campaign.id),
+        queryKeys.campaign.campaignRules(campaign.id),
+        queryKeys.campaign.campaignCharts(campaign.id),
+        queryKeys.campaign.locations(campaign.id),
       ]) {
         void queryClient.invalidateQueries({ queryKey: key });
       }

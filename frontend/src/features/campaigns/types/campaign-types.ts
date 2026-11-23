@@ -275,33 +275,6 @@ export type CampaignEncampmentPayload = {
   description?: string;
 };
 
-export type CampaignLocation = {
-  id: number;
-  campaign_id: number;
-  name: string;
-  /** Free text ("The Docks"); "" when none. The panel filters by the areas in use. */
-  area: string;
-  content: string;
-  d6_1: string;
-  d6_2: string;
-  d6_3: string;
-  d6_4: string;
-  d6_5: string;
-  d6_6: string;
-};
-
-export type CampaignLocationPayload = {
-  name: string;
-  area?: string;
-  content?: string;
-  d6_1?: string;
-  d6_2?: string;
-  d6_3?: string;
-  d6_4?: string;
-  d6_5?: string;
-  d6_6?: string;
-};
-
 export type CampaignMember = {
   id: number;
   name: string;

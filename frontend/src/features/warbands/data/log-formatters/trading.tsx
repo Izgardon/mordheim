@@ -58,6 +58,25 @@ const rarityRoll: LogFormatter = (log) => {
   );
 };
 
+type VisitPayload = { location?: string; heroes?: string[] };
+
+/** "Aldric and Bruno", "Aldric, Bruno and Carl". */
+const namesLine = (names: string[]) =>
+  names.length > 1
+    ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`
+    : names.join("");
+
+/** Heroes sent to one of the campaign's locations (their trading actions spent where it takes them). */
+const locationVisit: LogFormatter = (log) => {
+  const payload = payloadOf<VisitPayload>(log);
+  const heroes = Array.isArray(payload.heroes) ? payload.heroes : [];
+  return (
+    <span>
+      {namesLine(heroes) || "Nobody"} visited {payload.location || "a location"}
+    </span>
+  );
+};
+
 /** A roll of the warband's dice roller (the campaign dice log and custom trading rolls). */
 export const diceRoll: LogFormatter = (log) => {
   const payload = payloadOf<DiceRollPayload>(log);
@@ -84,9 +103,10 @@ export const diceRoll: LogFormatter = (log) => {
   );
 };
 
-/** Trading actions and dice rolls. */
+/** Trading actions, location visits and dice rolls. */
 export const TRADING_FORMATTERS: Record<string, LogFormatter> = {
   "trading_action:rarity roll": rarityRoll,
   "trading_action:custom_dice_roll": diceRoll,
   "dice_roll:dice_roll": diceRoll,
+  "location:visit": locationVisit,
 };

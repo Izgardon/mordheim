@@ -1,6 +1,6 @@
 import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
 import { beastKindLabel } from "@/features/bestiary/bestiary-kinds";
-import type { CampaignLocation } from "@/features/campaigns/types/campaign-types";
+import type { LocationGroup } from "@/features/locations/types";
 import { hirelingRace } from "@/features/hirelings/hireling-catalogue-kinds";
 import type { HirelingProfile } from "@/features/hirelings/types/hireling-catalogue-types";
 import { kindOf } from "@/features/items/store/store-items";
@@ -42,7 +42,7 @@ export type SearchSources = {
   campaignRules: CampaignRule[];
   /** Its charts: the dice tables a player looks up. */
   campaignCharts: CampaignChart[];
-  locations: CampaignLocation[];
+  locationGroups: LocationGroup[];
   campaign: CampaignSearchAnswer | undefined;
   /** Your warband: its links go to `warband` rather than `warbands/:id`. */
   myWarbandId: number | null;
@@ -292,16 +292,18 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
       id: "locations",
       label: "Locations",
       hits: ranked(
-        sources.locations.map((place) => ({
-          entry: place,
-          name: place.name,
-          text: words(`${place.area} ${place.content}`),
-        })),
+        sources.locationGroups.flatMap((group) =>
+          group.locations.map((place) => ({
+            entry: { ...place, group: group.name },
+            name: place.name,
+            text: words(place.rules),
+          }))
+        ),
         needle
       ).map(({ entry, snippet }) => ({
         key: `location-${entry.id}`,
         title: entry.name,
-        meta: entry.area || "Location",
+        meta: entry.group,
         snippet,
         // the Locations page, searched for it
         to: `locations?place=${encodeURIComponent(entry.name)}`,
