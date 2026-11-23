@@ -20,10 +20,10 @@ type WarbandHeaderProps = {
 const PANEL_BUTTONS: { panel: WarbandPanel; label: string; icon: GameIconName }[] = [
   { panel: "store", label: "Store", icon: "store" },
   { panel: "stash", label: "Stash", icon: "stash" },
-  { panel: "locations", label: "Trade Locations", icon: "locations" },
+  { panel: "locations", label: "Trade locations", icon: "locations" },
 ];
 
-/** The warband's name and kicker, the Store, Stash and Trade Locations buttons, and the ⋯ menu. */
+/** The warband's name and kicker, the Store, Stash and Trade locations buttons, and the ⋯ menu. */
 export default function WarbandHeader(props: WarbandHeaderProps) {
   const navigate = useNavigate();
   const { id } = useParams();

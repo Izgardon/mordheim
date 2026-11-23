@@ -95,7 +95,7 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
     },
     {
       key: "enable_locations" as const,
-      label: "Locations",
+      label: "Trade locations",
       on: Boolean(campaign.enable_locations),
     },
     {

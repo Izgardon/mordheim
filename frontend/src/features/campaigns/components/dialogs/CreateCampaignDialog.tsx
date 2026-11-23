@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 const PAGES = [
   { key: "enable_encampments", label: "Encampments" },
-  { key: "enable_locations", label: "Locations" },
+  { key: "enable_locations", label: "Trade locations" },
 ] as const;
 type Pages = Record<(typeof PAGES)[number]["key"], boolean>;
 const NO_PAGES: Pages = { enable_encampments: false, enable_locations: false };

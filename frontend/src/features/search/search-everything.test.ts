@@ -383,7 +383,7 @@ describe("Search everything's locations", () => {
     const [found] = searchEverything("haven", { ...nothing, locationGroups });
 
     expect([found.label, found.hits.map((hit) => [hit.title, hit.meta, hit.to])]).toEqual([
-      "Trade Locations",
+      "Trade locations",
       [["Sigmar's Haven", "Old Town", "locations?place=Sigmar's%20Haven"]],
     ]);
   });

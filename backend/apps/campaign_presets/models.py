@@ -261,7 +261,7 @@ class Dictated:
 # preset's source file says: the seeder refuses an unknown key.
 DICTATED: tuple[Dictated, ...] = (
     Dictated("exploration_chart_id", "Exploration chart"),
-    Dictated("enable_locations", "Locations"),
+    Dictated("enable_locations", "Trade locations"),
     Dictated("enable_encampments", "Encampments"),
     Dictated("enable_campaign_points", "Plots and CP"),
     Dictated("enable_blood_pacts", "Blood pacts"),

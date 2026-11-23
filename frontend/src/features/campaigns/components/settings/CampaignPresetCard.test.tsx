@@ -24,10 +24,10 @@ const PATCH = `PATCH /campaigns/${campaign.id}/`;
 const SETS = [
   {
     field: "enable_locations",
-    label: "Locations",
+    label: "Trade locations",
     value: true,
     text: "on",
-    departure: "Mutiny in Marienburg sets Locations: on.",
+    departure: "Mutiny in Marienburg sets Trade locations: on.",
   },
   {
     field: "max_heroes",
@@ -89,7 +89,7 @@ describe("the campaign preset", () => {
     await user.selectOptions(picker, "2");
 
     expect(await screen.findByText("Play Mutiny in Marienburg?")).toBeInTheDocument();
-    expect(screen.getByText("It sets Locations on · Most heroes 6.")).toBeInTheDocument();
+    expect(screen.getByText("It sets Trade locations on · Most heroes 6.")).toBeInTheDocument();
     expect(
       screen.getByText(
         /Its 18 rules and 4 charts are copied in, and the ones the campaign still holds/
@@ -115,7 +115,7 @@ describe("the campaign preset", () => {
     );
     renderWithQueryClient(<CampaignPresetCard campaign={{ ...campaign, preset_id: 2 }} />);
 
-    expect(await screen.findByText("Locations on · Most heroes 6")).toBeInTheDocument();
+    expect(await screen.findByText("Trade locations on · Most heroes 6")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Swap rules|Add its/ })).not.toBeInTheDocument();
   });
 });

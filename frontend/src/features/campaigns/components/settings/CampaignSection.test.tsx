@@ -38,10 +38,10 @@ const PRESET_STATE = {
   sets: [
     {
       field: "enable_locations",
-      label: "Locations",
+      label: "Trade locations",
       value: true,
       text: "on",
-      departure: "Mutiny in Marienburg sets Locations: on.",
+      departure: "Mutiny in Marienburg sets Trade locations: on.",
     },
   ],
   departures: [] as { field: string; label: string; message: string }[],
@@ -99,7 +99,7 @@ describe("a setting the campaign's preset sets", () => {
     show({ ...campaign, preset_id: 2 });
 
     expect(await screen.findByText("Set by Mutiny in Marienburg")).toBeInTheDocument();
-    const toggle = screen.getByRole("switch", { name: "Locations" });
+    const toggle = screen.getByRole("switch", { name: "Trade locations" });
     await user.click(toggle); // greyed, still clickable
 
     await waitFor(() =>
@@ -115,15 +115,17 @@ describe("a setting the campaign's preset sets", () => {
       departures: [
         {
           field: "enable_locations",
-          label: "Locations",
-          message: "Mutiny in Marienburg sets Locations: on.",
+          label: "Trade locations",
+          message: "Mutiny in Marienburg sets Trade locations: on.",
         },
       ],
     });
     show({ ...campaign, preset_id: 2 });
 
-    expect(await screen.findByText("Mutiny in Marienburg sets Locations: on.")).toBeInTheDocument();
-    expect(screen.getByRole("switch", { name: "Locations" })).toBeEnabled();
+    expect(
+      await screen.findByText("Mutiny in Marienburg sets Trade locations: on.")
+    ).toBeInTheDocument();
+    expect(screen.getByRole("switch", { name: "Trade locations" })).toBeEnabled();
   });
 });
 

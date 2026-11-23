@@ -8,7 +8,7 @@ export function defaultPreset(presets: CampaignPreset[] | undefined) {
   return (presets ?? []).find((preset) => preset.slug === DEFAULT_PRESET_SLUG) ?? presets?.[0];
 }
 
-/** What a preset dictates, on one line: "Locations on · Most heroes 6" ("" when it dictates nothing). */
+/** What a preset dictates, on one line: "Trade locations on · Most heroes 6" ("" when it dictates nothing). */
 export function setsLine(sets: CampaignPresetSet[]) {
   return sets.map((entry) => `${entry.label} ${entry.text}`).join(" · ");
 }
@@ -29,7 +29,7 @@ export function presetPages(preset: CampaignPreset | undefined) {
 
 /**
  * The server's warning for each page the chips now disagree with the preset about ("Mutiny in
- * Marienburg sets Locations: on."). Greyed but clickable: departing warns, it never blocks.
+ * Marienburg sets Trade locations: on."). Greyed but clickable: departing warns, it never blocks.
  */
 export function pageDepartures(
   preset: CampaignPreset | undefined,

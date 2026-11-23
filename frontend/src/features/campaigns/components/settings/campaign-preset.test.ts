@@ -13,10 +13,10 @@ const preset = (changes: Partial<CampaignPreset> = {}): CampaignPreset => ({
   sets: [
     {
       field: "enable_locations",
-      label: "Locations",
+      label: "Trade locations",
       value: true,
       text: "on",
-      departure: "Mutiny in Marienburg sets Locations: on.",
+      departure: "Mutiny in Marienburg sets Trade locations: on.",
     },
     {
       field: "max_heroes",
@@ -41,7 +41,7 @@ describe("the campaign preset helpers", () => {
   });
 
   it("says what a preset sets on one line, and nothing for one that dictates nothing", () => {
-    expect(setsLine(preset().sets)).toBe("Locations on · Most heroes 6");
+    expect(setsLine(preset().sets)).toBe("Trade locations on · Most heroes 6");
     expect(setsLine(mordheim.sets)).toBe("");
   });
 
@@ -52,7 +52,9 @@ describe("the campaign preset helpers", () => {
 
   it("warns, in the server's words, for a page the player has departed from", () => {
     const pages = { enable_encampments: false, enable_locations: false };
-    expect(pageDepartures(preset(), pages)).toEqual(["Mutiny in Marienburg sets Locations: on."]);
+    expect(pageDepartures(preset(), pages)).toEqual([
+      "Mutiny in Marienburg sets Trade locations: on.",
+    ]);
     expect(pageDepartures(preset(), { ...pages, enable_locations: true })).toEqual([]);
     expect(pageDepartures(mordheim, pages)).toEqual([]);
   });

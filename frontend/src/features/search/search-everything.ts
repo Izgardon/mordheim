@@ -290,7 +290,7 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
     },
     {
       id: "locations",
-      label: "Trade Locations",
+      label: "Trade locations",
       hits: ranked(
         sources.locationGroups.flatMap((group) =>
           group.locations.map((place) => ({
@@ -305,7 +305,7 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
         title: entry.name,
         meta: entry.group,
         snippet,
-        // the Trade Locations page, searched for it
+        // the Trade locations page, searched for it
         to: `locations?place=${encodeURIComponent(entry.name)}`,
       })),
     },

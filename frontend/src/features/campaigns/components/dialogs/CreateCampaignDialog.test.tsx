@@ -39,10 +39,10 @@ const PRESETS = [
     sets: [
       {
         field: "enable_locations",
-        label: "Locations",
+        label: "Trade locations",
         value: true,
         text: "on",
-        departure: "Mutiny in Marienburg sets Locations: on.",
+        departure: "Mutiny in Marienburg sets Trade locations: on.",
       },
     ],
     rule_count: 18,
@@ -101,12 +101,14 @@ describe("the campaign you are playing", () => {
     const user = await openDialog(onCreate);
 
     await user.selectOptions(await screen.findByRole("combobox", { name: "Campaign" }), "2");
-    expect(screen.getByText(/It sets Locations on\./)).toBeInTheDocument();
-    const locations = screen.getByRole("button", { name: "Locations" });
+    expect(screen.getByText(/It sets Trade locations on\./)).toBeInTheDocument();
+    const locations = screen.getByRole("button", { name: "Trade locations" });
     expect(locations).toHaveAttribute("aria-pressed", "true");
 
     await user.click(locations); // greyed, still clickable: departing warns, it never blocks
-    expect(await screen.findByText("Mutiny in Marienburg sets Locations: on.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Mutiny in Marienburg sets Trade locations: on.")
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Start campaign" }));
     await waitFor(() => expect(onCreate).toHaveBeenCalled());
