@@ -15,6 +15,7 @@ from apps.plots.seeding import SeedResult, seed_book_plots
 MARIENBURG = "Mutiny in Marienburg"
 BORDER_TOWN = "Border Town Burning"
 SEALED_CITY = "The Sealed City"
+ANNUAL = "Marienburg Annual"
 RUNGS = (5, 10, 15, 20, 25, 35, 40)  # every book plot's ladder: there is no 30
 FROM_THE_START = {"purge-the-intruders": (0, *RUNGS)}  # the Sealed City prints a 0 rung, held from the start
 
@@ -42,6 +43,7 @@ class PlotSeederTests(TestCase):
     setting: CampaignType
     border_town: CampaignType
     sealed_city: CampaignType
+    annual: CampaignType
     result: SeedResult
 
     @classmethod
@@ -49,6 +51,7 @@ class PlotSeederTests(TestCase):
         cls.setting = CampaignType.objects.create(slug="mutiny-in-marienburg", name=MARIENBURG, grade="2b")
         cls.border_town = CampaignType.objects.create(slug="border-town-burning", name=BORDER_TOWN, grade="1c")
         cls.sealed_city = CampaignType.objects.create(slug="sealed-city", name=SEALED_CITY, grade="2b")
+        cls.annual = CampaignType.objects.create(slug="marienburg-annual", name=ANNUAL, grade="2b")
 
     def seed(self, *plots: dict, wrapped: bool = False) -> None:
         with TemporaryDirectory() as folder:
@@ -60,14 +63,16 @@ class PlotSeederTests(TestCase):
         out = StringIO()
         call_command("seed_plots", stdout=out)
         plots = Plot.objects.filter(campaign__isnull=True)
-        self.assertEqual(plots.count(), 24)  # the Sealed City's six ambitions joined as plots (21 Nov 2026)
-        self.assertEqual(len({row.name for row in plots}), 24)  # every plot is distinctly named
+        # the Sealed City's six ambitions joined as plots (21 Nov 2026), and the Marienburg Annual's Da Waaagh (23 Nov)
+        self.assertEqual(plots.count(), 25)
+        self.assertEqual(len({row.name for row in plots}), 25)  # every plot is distinctly named
         for row in plots:
             self.assertEqual(tuple(row.achievements.values_list("points", flat=True)), FROM_THE_START.get(row.slug, RUNGS))  # fmt: skip
         self.assertEqual(plots.filter(campaign_type=self.setting).count(), 10)
         self.assertEqual(plots.filter(campaign_type=self.border_town).count(), 8)
         self.assertEqual(plots.filter(campaign_type=self.sealed_city).count(), 6)
-        self.assertIn("Plots: 24", out.getvalue())
+        self.assertEqual(plots.filter(campaign_type=self.annual).count(), 1)
+        self.assertIn("Plots: 25", out.getvalue())
         self.assertIn("skipped: 0", out.getvalue())
 
     def test_border_town_burnings_variants_name_the_plot_they_are_a_variant_of(self):
@@ -128,3 +133,15 @@ class PlotSeederTests(TestCase):
         self.seed(plot())
         self.assertIsNotNone(Plot.objects.get(slug="gaze-of-the-gods").archived_at)
         self.assertEqual(self.result.archived, 1)
+
+    def test_da_waaagh_scores_a_line_whose_text_beats_its_heading_and_carries_its_dice_signed(self):
+        # the Marienburg Annual (p43): "+D3 Three Victories in a row" reads "it gains a CP", and the text wins
+        call_command("seed_plots", stdout=StringIO())
+        waaagh = Plot.objects.get(slug="da-waaagh", campaign__isnull=True)
+        lines = list(waaagh.scoring_lines.values_list("points", "dice"))
+        self.assertEqual(len(lines), 14)
+        self.assertEqual(lines[7], (1, ""))
+        self.assertIn((None, "-D3"), lines)
+        self.assertEqual(
+            sorted(points for points, _dice in lines if points is not None and points < 0), [-5, -1, -1, -1]
+        )
