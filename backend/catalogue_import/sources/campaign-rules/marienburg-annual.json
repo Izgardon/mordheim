@@ -1,0 +1,544 @@
+{
+ "rules": [
+  {
+   "title": "Da Waaagh",
+   "text": "Da Waaagh, the Marienburg Annual's plot for Greenskins, does not run like the other plots. Its warband gains and loses Campaign Points faster, and when its total drops below a rung it loses that rung's achievement until its total rises to it again, where the other plots keep an achievement once reached. Its Waagh level, which Da Camp's items and locations read, is the number of rungs it holds, not its total of points.\n\nAt 5 Campaign Points Da Camp opens: any Greenskin Hero, and no other, may visit it instead of searching for a rare item, and Da Prophet there gives the leader his first prophecy (the Da Prophecy charts). Each prophecy completed scores D3 Campaign Points.\n\nThe 40 rung is not a win by itself. It needs all six prophecies completed and full WAAAGH, and opens the special scenario Nice Day for a Waaagh Beheadin': winning it wins the campaign, and losing it costs the warband 2D6 Campaign Points.",
+   "umbrella": "Campaign points and plots"
+  },
+  {
+   "title": "Equipment limits",
+   "text": "What one warrior may carry: one piece of headgear (a helmet, circlet, skull cap or mask); one suit of armour on his body, and an undergarment such as steel cloth or Cathayan silk beneath it; two talismans (rabbit's feet, lucky charms, evaluated wyrdstone and the like); any number of miscellaneous items (rope and hooks, telescopes, maps); one cloak (a thief's cloak, a Sea Dragon cloak, an elf cloak); two close combat weapons and two missile weapons, though a warrior with extra arms, or a tail he fights with, carries one more close combat weapon for each; one ring (a scorpion, fortune or venom ring); and one pair of boots, a second pair only with two extra legs. Artefacts count towards none of these, and a warrior may carry any number of them. Where your group disagrees about what an item counts as, put it to a vote.\n\nA large model that can take objectives, such as an ogre, or a warrior of Strength 5 or more, may carry a large objective such as a crate or barrel alone, at his normal speed but never running.",
+   "umbrella": ""
+  },
+  {
+   "title": "Taking the Slayer oath",
+   "text": "A Dwarf warband may play with these rules. A Dwarf who does one of the following takes a Leadership test after the game, and on a failure takes the Slayer oath: loses an item worth 200 gc or more; fails the rout test at the first attempt (the leader only); has his whole warband wiped from the board (every Dwarf Hero); loses to the same warband at least 3 times (the leader only); loses Campaign Points (the leader only); or is taken out of action by an Elf.\n\nHe misses the next D3 games while he travels to the shrine of Grimnir. A Slayer keeps all his skills and weapons, may no longer wear armour of any kind, and gains the skill Deathwish: he is immune to all psychology and never tests for fighting alone.",
+   "umbrella": "Dwarf Slayers"
+  },
+  {
+   "title": "Slayer titles",
+   "text": "A Slayer earns each title below with its feat, and its rule with it. The rules add up: a new title never takes an old one's away. Single combat means no other friendly warrior is in base contact when the beast falls.\n\nLarge Slayer: kill a Large creature in single combat, and take its name (Minotaur Slayer, Ogre Slayer, Troll Slayer). He may wound on a 4+ instead of using his Strength.\n\nGreater Slayer: kill a daemonic or greater undead creature in single combat, and take its name (Lich Slayer, Vampire Slayer, Pink Horror Slayer). His attacks count as magic.\n\nGigantic Slayer: kill a gigantic beast in single combat, one with the Great Beast rule or 5 or more Wounds, and take its name (Colossal Squig Slayer, Merwyrm Slayer). He gains Heart Strike on one dice, declared before rolling. The book never says what Heart Strike does.",
+   "umbrella": "Dwarf Slayers"
+  },
+  {
+   "title": "The Grail Quest",
+   "text": "A Bretonnian warband may replace any six of a kind it rolls for exploration with The Grail: a Questing Knight sees the Lady beckoning, goes to her alone and drinks from the Grail she holds. All his permanent injuries are healed, he becomes a Grail Knight, and he gains Blessed: +1 Wound and +1 Toughness, and he and his mount are +1 to hit in close combat and cause double wounds to Possessed, Daemon and Undead models.",
+   "umbrella": ""
+  },
+  {
+   "title": "Eye of the Gods",
+   "text": "Every Chaos warband in the campaign is encouraged to use the Eye of the Gods, the Marks of the Dark Gods and Gifted Servants, which the Annual reprints from Border Town Burning (p183) and Corrupted Characters.\n\nAny Chaos warband may add 15 gc to its leader's hire cost to give him the Eye of the Gods, as the Marauders of Chaos warband has it. If he becomes a Chaos Spawn the warband may keep it, and it passes to each new leader.",
+   "umbrella": "Branded by Chaos"
+  },
+  {
+   "title": "Marks of the Dark Gods",
+   "text": "For 10 gc more on the hire cost of a Chaos warband's spellcasting leader, he starts with one Seer Mark of Chaos of his choice, fitting the god he serves (a Carnival of Chaos may take only the Mark of Onogal, and so on). With the Eye of the Gods as well, he may still gain the Leader Mark, as a Marauders of Chaos Seer who became leader would.",
+   "umbrella": "Branded by Chaos"
+  },
+  {
+   "title": "Gifted Servants",
+   "text": "A Chaos Hero who rolls a double on an advance that earns a new skill may instead roll a random mutation, or buy one. A model that already bears a Mark of Chaos may buy mutations from the Gifts of the Gods list instead.",
+   "umbrella": "Branded by Chaos"
+  },
+  {
+   "title": "Mutant fugitives",
+   "text": "What happens to a warrior who is not a Chaos worshipper when he gains a mutation (Corrupted Characters' Abominations, revised for this campaign). Skaven and Chaos Dwarfs embrace it, and nothing happens. A member of a religious warband (Sisters of Sigmar, Witch Hunters, Horned Hunters and the like) is put to death at once: remove the Hero and all his equipment.\n\nAny other Hero faces his leader. Before the next battle the leader takes a Leadership test, at -1 for each mutant the warband already harbours. If it fails, the mutant stays, and no further test is needed unless he gains another mutation. If it passes, the mutant is expelled from the roster: roll a D6, and on a 5+ he seeks out his kin and may from then on be hired by Chaos warbands as a hired sword, for 20 gc plus twice his experience, with an upkeep of a third of that, rounded up.",
+   "umbrella": "Branded by Chaos"
+  },
+  {
+   "title": "The Lure of Chaos",
+   "text": "A Human warband may succumb to the Dark Gods. It must test when it has 3 or more Heroes with at least one mutation each, or 1 or more Heroes carrying 2 or more wyrdstone items (evaluated shards, tattoo ink, an eyeglass and the like) or at least 2 heretical books (a Tome of Magic, Book of the Dead, Tome of Daemonology, Grimoire of Dark Magic or Liber Chaotica).\n\nEvery Hero takes a Leadership test, those affected and those not, and the side with more successes wins; the leader's success counts as two. If the unaffected side wins, one affected Hero, picked at random, is thrown out of the warband as an example. If the affected side wins, the warband turns to Chaos: its alignment becomes Evil, and it may have to change plot, losing no Campaign Points for it. An unaffected leader is murdered: strike him from the roster and promote a new leader. An affected leader becomes a cult leader and executes one unaffected Hero, picked at random.\n\nFrom then on the warband counts as a Chaos warband for every purpose, Branded by Chaos included. Its new leader may take the Eye of the Gods instead of his next skill, and a spellcaster a Seer Mark of Chaos.",
+   "umbrella": "Branded by Chaos"
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "Dual wielding",
+   "text": "A warrior fighting with two weapons is at -1 to hit with both. A warrior with the Ambidextrous skill ignores this, and every hired sword who comes with at least two weapons counts as Ambidextrous.",
+   "umbrella": ""
+  },
+  {
+   "title": "Flying",
+   "text": "A model with the Fly special rule is either grounded or airborne; tokens help to show which.\n\nMovement: it may move up to three times its Movement in any direction, ignoring terrain, and height climbed counts towards the distance. A model that flies is airborne, and is still airborne in the turn after.\n\nHard target: a model on the ground may charge an airborne model, but hits it in close combat only on a 6 to hit, unless it attacks with a spear. Until it is hit, the airborne model stays airborne, does not count as in combat, and may fly off or charge in its own turn. A flying model that charges is grounded.\n\nEasy target: shooting at an airborne model is at +1 to hit, on top of any other modifiers, and a missile hit does not ground it.\n\nTransports: boarding and leaving an airborne transport follow the rules for a moving cart, and a grounded one a stationary cart. A transport flies at its own fixed rate and does not triple it.\n\nMounts: a flying mount follows the Whoa Boy rules, except that a result of 3-4 while airborne gives the rider D3 hits at a Strength of half the distance it moved last turn.\n\nA model flying on its own that is knocked down while airborne must pass D3 Initiative tests to land knocked down; if it fails, it takes D3 hits at a Strength of half the distance it moved last turn. A stunned flier takes these hits automatically.",
+   "umbrella": ""
+  },
+  {
+   "title": "Summoning daemons",
+   "text": "Only a wizard or spellcaster with the Chaos Rituals or a Chaos god's spell list may try to summon a daemon, and he may summon one per battle. The summoning materials cost 30 gc and are a common item for Chaos warbands. They are used up when the daemon appears, and only then: materials whose daemon never came carry over to the next battle. Holding them raises the warband's rating by 30 points, whether or not a daemon is summoned. A daemon keeps no upkeep, and must be summoned to each battle afresh.\n\nKhorne hates magic and lets none of his daemons be summoned; they come only through a Warp Tear.",
+   "umbrella": "Daemonic summoning"
+  },
+  {
+   "title": "The summoning ritual",
+   "text": "First the wizard draws the summoning circle, in his movement phase: he may not move, and may not be in close combat, knocked down, stunned or otherwise hampered. One turn draws it; place a small blast template (3\") beside him.\n\nFrom the next turn, at the end of the movement phase, roll a dice for each friendly Hero in base contact with the circle, each captured warrior, henchman or sacrificial animal inside it, and each dice other rules add. Everyone taking part does nothing else that turn. A result on the Summoning results chart takes effect at once. The dice of a Summon or Warp Tear result may not be re-rolled, but the others may, to add to it: with three 3s, a 1 and a 4, re-roll the 1 or the 4 to try for four or five of a kind. With no result, the ritual may be tried again next turn.\n\nAfter a Summon or a Warp Tear the circle is wiped, and every sacrifice inside it is killed and struck from its roster.",
+   "umbrella": "Daemonic summoning"
+  },
+  {
+   "title": "Daemons of Chaos",
+   "text": "Every daemon causes fear and has these rules.\n\nDaemonic Flesh: a base armour save of 5+, modified by the Strength of the attack as normal and negated completely by magic weapons and spells. Its attacks count as magical, and it is immune to all poison and disease.\n\nDaemon Mind: it is immune to all psychology and never takes a psychology test. If its warband routs, it dissolves back into the void.\n\nSummoned Instability: every turn after the first it loses 1 Leadership and must pass a Leadership test, or it is pulled back into the warp. A greater daemon loses 3 a turn instead, and one that rolls a double 1 for the test has stabilised and stays for the rest of the game.\n\nMounts of the Gods: a beast daemon that is ridden, or pulls a cart or chariot, suffers no instability, and the warband that summoned it needs no Ride skill to ride it.",
+   "umbrella": "Daemonic summoning"
+  },
+  {
+   "title": "Nice Day for a Waaagh Beheadin'",
+   "text": "The special scenario Da Waaagh's 40 rung opens. Terrain: set it up as the largest encampment, or encampments, of the campaign (the stronghold in Marienburg, say), walled if it has no wall, 2\" by 2\" in the middle of a board of 4\" by 4\", 6\" by 4\" or 6\" by 6\" by the number of players. The book prints these sizes in inches.\n\nSet-up: every other Greenskin warband in the campaign joins the warband that opened it, under its orders, and the Greenskins set up within 8\" of any side. For each extra Greenskin warband the defenders, who own the encampment, may take one ally; they set up inside its walls. The attackers take the first turn.\n\nI'm Da Boss!: any warband leader taken out of action by the leader of the Greenskin alliance is killed. WAAAGH: while that leader lives, the Greenskins pass every Leadership-based test automatically, rout tests included.\n\nEnding the game: when the defenders have all routed, the Greenskins win the campaign. When the Greenskins have all routed, they lose, and the leader's warband loses 2D6 Campaign Points.\n\nExperience: +1 for each Hero or Henchman group that survives; +1 for the winning leader; +1 to a Hero for each enemy he takes out of action; +6 to the warrior who kills the Warboss in close combat.",
+   "umbrella": ""
+  }
+ ],
+ "charts": [
+  {
+   "title": "Summoning results",
+   "description": "Read after rolling the summoning dice: the most dice showing the same number.",
+   "dice": "",
+   "note": "The book prints the results on 1s in a column of their own, headed Warp Tear.",
+   "umbrella": "Daemonic summoning",
+   "rows": [
+    {
+     "result": "Three of a kind",
+     "name": "Possessed",
+     "text": "A random warrior taking part gains +1 Wound, +1 Strength and +1 Attack. His attacks count as magic and he follows the rules for summoned instability, though his Leadership never drops below the one on his profile."
+    },
+    {
+     "result": "Four of a kind",
+     "name": "Half summon",
+     "text": "The summoning works, but the daemon appears away from the circle: roll a scatter dice and 2D6, and it appears that far from the board edge the scatter dice shows."
+    },
+    {
+     "result": "Five of a kind",
+     "name": "Summoned",
+     "text": "The summoning works as meant: place a lesser daemon, or daemons, of your god in the circle. They may move and act this turn."
+    },
+    {
+     "result": "Six of a kind",
+     "name": "Greater summon",
+     "text": "A perfect summoning: place any daemon, greater daemons included, in the circle. It may move and act this turn."
+    },
+    {
+     "result": "Three 1s",
+     "name": "Feedback",
+     "text": "The summoners are thrown D6\" backwards, taking a Strength 3 hit if they hit another model or a piece of terrain."
+    },
+    {
+     "result": "Four 1s",
+     "name": "Hostile summon",
+     "text": "Roll on the Warp Tear chart. The daemon rolled is summoned unbound: it appears in base contact with a random summoner and attacks him. It may be a greater daemon, or even the dramatis persona Oxyotl, which is the only way to bring him into the campaign."
+    },
+    {
+     "result": "Five 1s",
+     "name": "Punished!",
+     "text": "The angry gods turn a random Hero taking part into a daemonic steed, rolled at random from the beast daemons."
+    },
+    {
+     "result": "Six 1s",
+     "name": "Warp rift",
+     "text": "A hole is torn in reality: the circle grows 2D6\" each turn, any model it touches is taken out of action and any terrain piece it covers completely is destroyed. Roll a D6 at the start of each round: on a 1 the rift collapses and is gone."
+    },
+    {
+     "result": "Six 6s",
+     "name": "Gift of the Gods",
+     "text": "The warband leader becomes a Daemon Prince, with the profile from Border Town Burning. If he ever rolls a double 6 on a Leadership test he is called back to the Realm of Chaos: strike him from the roster."
+    }
+   ]
+  },
+  {
+   "title": "Warp Tear",
+   "description": "Rolled for a hostile summon, and for a daemon that slips into the world through a warp tear: the D6 picks its kind, then roll on that kind's table.",
+   "dice": "D6",
+   "note": "",
+   "umbrella": "Daemonic summoning",
+   "rows": [
+    {
+     "result": "1-2",
+     "name": "Beast daemon",
+     "text": "Roll a D6 on the beast daemons.",
+     "chart": {
+      "title": "Warp Tear: beast daemons",
+      "description": "",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1-2",
+        "name": "Fleshlicker",
+        "text": ""
+       },
+       {
+        "result": "3-4",
+        "name": "Disc of Tzeentch",
+        "text": "The table calls it the Flying disc."
+       },
+       {
+        "result": "5-6",
+        "name": "Rot Fly",
+        "text": ""
+       }
+      ]
+     }
+    },
+    {
+     "result": "3-4",
+     "name": "Lesser daemons",
+     "text": "Roll a D6 on the lesser daemons.",
+     "chart": {
+      "title": "Warp Tear: lesser daemons",
+      "description": "",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "3 Chaos Furies",
+        "text": ""
+       },
+       {
+        "result": "2",
+        "name": "3 Daemonettes",
+        "text": ""
+       },
+       {
+        "result": "3",
+        "name": "3 Pink Horrors",
+        "text": ""
+       },
+       {
+        "result": "4",
+        "name": "3 Bloodletters",
+        "text": ""
+       },
+       {
+        "result": "5",
+        "name": "3 Plaguebearers",
+        "text": ""
+       },
+       {
+        "result": "6",
+        "name": "6 Nurglings",
+        "text": ""
+       }
+      ]
+     }
+    },
+    {
+     "result": "5-6",
+     "name": "Greater daemon",
+     "text": "Roll 2D6 on the greater daemons.",
+     "chart": {
+      "title": "Warp Tear: greater daemons",
+      "description": "",
+      "dice": "2D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "2-4",
+        "name": "Great Unclean One",
+        "text": ""
+       },
+       {
+        "result": "5-6",
+        "name": "Lord of Change",
+        "text": ""
+       },
+       {
+        "result": "7",
+        "name": "Oxyotl",
+        "text": "The dramatis persona, freed from the warp."
+       },
+       {
+        "result": "8-9",
+        "name": "Keeper of Secrets",
+        "text": ""
+       },
+       {
+        "result": "10-12",
+        "name": "Bloodthirster",
+        "text": ""
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "title": "Da Prophecy",
+   "description": "Da Prophet's prophecies for a warband following Da Waaagh: the first at 5 Campaign Points, each completed scoring D3.",
+   "dice": "2D6",
+   "note": "Re-roll a prophecy that can't be completed because that race or item isn't in the game. A Warboss who can't complete one after 3 games may go off alone to complete it in secret: he misses D3 games, swears on his return that he did it, and Da Prophet gives him his next.",
+   "umbrella": "Da Prophecy",
+   "rows": [
+    {
+     "result": "2",
+     "name": "I see ya riding on...",
+     "text": "Roll on the Animal? table. The leader must learn to ride the animal rolled, find one, and ride it into battle."
+    },
+    {
+     "result": "3",
+     "name": "I see ya holding dat magical thing",
+     "text": "Roll on a random magical artefact table. The leader must acquire and use the artefact rolled."
+    },
+    {
+     "result": "4",
+     "name": "You'se sittin in...'s 'ouse, eatin'...",
+     "text": "Roll on the What? table, then the Who? table, then the Animal? table. The leader must take the encampment of the warrior rolled and eat the animal rolled."
+    },
+    {
+     "result": "5",
+     "name": "I seez ya snackin on a...",
+     "text": "Roll on the Animal? table. The leader must eat the animal rolled."
+    },
+    {
+     "result": "6",
+     "name": "I see da boss standin' over da broken body of...",
+     "text": "Roll on the What? table, then the Who? table, then the How? table. The leader must defeat the warrior rolled in the way rolled, and has the skill Taunt until the prophecy is done."
+    },
+    {
+     "result": "7",
+     "name": "Da greatest Green won az emerged victorias",
+     "text": "Roll on the Who? table, then on a scenario table. Defeat the enemy rolled in the scenario rolled."
+    },
+    {
+     "result": "8",
+     "name": "Da one who will be Gork (or Mork) haz grabbed da...",
+     "text": "Roll on the What? table, then the Who? table, then the With? table. Capture the enemy rolled and do with him what was rolled."
+    },
+    {
+     "result": "9",
+     "name": "Da ... was in da most troubles until da best boss saved 'im",
+     "text": "Roll on the Who? table twice. Ally with the warband first rolled against the enemy second rolled."
+    },
+    {
+     "result": "10",
+     "name": "Youse with ya 5 most trusted boyz",
+     "text": "Roll on a scenario table. Win the scenario rolled with 6 Heroes alive."
+    },
+    {
+     "result": "11",
+     "name": "Its da boss, he's on da ground, taken a beatin",
+     "text": "Roll on the Who? table, then on a scenario table. Lose the scenario rolled against the enemy rolled, with the Warboss out of action."
+    },
+    {
+     "result": "12",
+     "name": "Nah you ain't the chosen one",
+     "text": "Roll on the serious injury chart at once until a result of 16-35 comes up. The prophecy is fulfilled as soon as the injury is taken."
+    }
+   ]
+  },
+  {
+   "title": "Da Prophecy: What?",
+   "description": "",
+   "dice": "D6",
+   "note": "",
+   "umbrella": "Da Prophecy",
+   "rows": [
+    {
+     "result": "1",
+     "name": "Da Strongest",
+     "text": "The highest Strength."
+    },
+    {
+     "result": "2",
+     "name": "Da Weakest",
+     "text": "The lowest Toughness."
+    },
+    {
+     "result": "3",
+     "name": "Da Biggest",
+     "text": "The most Wounds."
+    },
+    {
+     "result": "4",
+     "name": "Da Oliest",
+     "text": "A priest, or the most serious injuries."
+    },
+    {
+     "result": "5",
+     "name": "Da Grossest",
+     "text": "The most mutations."
+    },
+    {
+     "result": "6",
+     "name": "Burstin with Magics",
+     "text": "A spellcaster or an artefact holder."
+    }
+   ]
+  },
+  {
+   "title": "Da Prophecy: Who?",
+   "description": "",
+   "dice": "D6",
+   "note": "The book heads this table D6, but its results run from 2 to 12.",
+   "umbrella": "Da Prophecy",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Da vision was blurry",
+     "text": "It could 'ave been anyone: any race."
+    },
+    {
+     "result": "3",
+     "name": "Tall and Pointy one",
+     "text": "An Elf."
+    },
+    {
+     "result": "4",
+     "name": "Stuntie",
+     "text": "A Dwarf or Halfling."
+    },
+    {
+     "result": "5",
+     "name": "Rat man",
+     "text": "Skaven."
+    },
+    {
+     "result": "6",
+     "name": "Beast thing",
+     "text": "Beastmen."
+    },
+    {
+     "result": "7",
+     "name": "A Dirty Humie",
+     "text": "Human."
+    },
+    {
+     "result": "8",
+     "name": "A Greenie",
+     "text": "Greenskin."
+    },
+    {
+     "result": "9",
+     "name": "Scaly Boyz",
+     "text": "Lizardmen."
+    },
+    {
+     "result": "10",
+     "name": "Taint'd thing",
+     "text": "Chaos."
+    },
+    {
+     "result": "11",
+     "name": "Somethin Big!",
+     "text": "Large."
+    },
+    {
+     "result": "12",
+     "name": "Somethin Weird",
+     "text": "Anything else: Fimir, Dryads, ghosts, undead and the like."
+    }
+   ]
+  },
+  {
+   "title": "Da Prophecy: How?",
+   "description": "",
+   "dice": "D6",
+   "note": "",
+   "umbrella": "Da Prophecy",
+   "rows": [
+    {
+     "result": "1",
+     "name": "One on One",
+     "text": ""
+    },
+    {
+     "result": "2",
+     "name": "With ya Bare Fistz!",
+     "text": ""
+    },
+    {
+     "result": "3",
+     "name": "Atop the tallest thing in the land",
+     "text": ""
+    },
+    {
+     "result": "4",
+     "name": "Under the Groundz",
+     "text": ""
+    },
+    {
+     "result": "5",
+     "name": "On a Burnin Boatz",
+     "text": ""
+    },
+    {
+     "result": "6",
+     "name": "In da Jungle",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "title": "Da Prophecy: With?",
+   "description": "",
+   "dice": "D6",
+   "note": "",
+   "umbrella": "Da Prophecy",
+   "rows": [
+    {
+     "result": "1",
+     "name": "Eat",
+     "text": ""
+    },
+    {
+     "result": "2",
+     "name": "Let Go",
+     "text": ""
+    },
+    {
+     "result": "3",
+     "name": "Sell to slavers",
+     "text": ""
+    },
+    {
+     "result": "4",
+     "name": "Sell to necromancers",
+     "text": ""
+    },
+    {
+     "result": "5",
+     "name": "Fight in pit fight",
+     "text": ""
+    },
+    {
+     "result": "6",
+     "name": "Sacrifice to the bitz pile",
+     "text": "For D6 bitz."
+    }
+   ]
+  },
+  {
+   "title": "Da Prophecy: Animal?",
+   "description": "",
+   "dice": "D6",
+   "note": "The book heads this table D6 but prints no 6: its results are 1 to 5 and 7.",
+   "umbrella": "Da Prophecy",
+   "rows": [
+    {
+     "result": "1",
+     "name": "A Rat thing",
+     "text": "Roll on the Moulder Market chart."
+    },
+    {
+     "result": "2",
+     "name": "A Boring thing",
+     "text": "Roll on the speciality animals chart."
+    },
+    {
+     "result": "3",
+     "name": "A Fly'n thing",
+     "text": "Roll on the feathered friends chart."
+    },
+    {
+     "result": "4",
+     "name": "A lovely green thing",
+     "text": "Roll on the Greenskins animal chart."
+    },
+    {
+     "result": "5",
+     "name": "A jungle thing",
+     "text": "Roll on the Lustrian animal chart."
+    },
+    {
+     "result": "7",
+     "name": "Somethin random",
+     "text": "Roll on a random Seaside Situations monster chart."
+    }
+   ]
+  }
+ ]
+}
