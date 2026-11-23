@@ -26,6 +26,7 @@ from apps.campaigns.models import (
     MAX_CHART_ROW_TEXT,
     MAX_LOCATION_RULES_TEXT,
 )
+from apps.warbands.models.warband import MAX_RULE_TEXT
 
 
 class CampaignPreset(models.Model):
@@ -208,6 +209,35 @@ class CampaignPresetLocationChart(models.Model):
 
     def __str__(self) -> str:
         return f"{self.location_id}:{self.chart_id}"
+
+
+class CampaignPresetWarbandRule(models.Model):
+    """One of the preset's warband rules (William, 23 Nov 2026): a rule of the published campaign that belongs to some
+    warbands rather than to the campaign, as Karak Azgal's Dwarf drunks. A warband raised in a campaign playing the
+    preset, whose own type is one of `warband_types` or a member of one of `warband_groups`, gets a copy among its own
+    rules after its template's (`WarbandRule`, the player's to edit or delete); Add missing rules brings the
+    ones it lacks by title to a warband raised before."""
+
+    preset = models.ForeignKey(CampaignPreset, related_name="warband_rules", on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+    title = models.CharField(max_length=160)
+    text = models.TextField(max_length=MAX_RULE_TEXT, blank=True, default="")
+    warband_types: models.ManyToManyField = models.ManyToManyField(
+        "warbands.WarbandType", related_name="preset_warband_rules", blank=True
+    )
+    warband_groups: models.ManyToManyField = models.ManyToManyField(
+        "warbands.WarbandGroup", related_name="preset_warband_rules", blank=True
+    )
+
+    class Meta:
+        db_table = "campaign_preset_warband_rule"
+        ordering = ["order", "id"]
+        constraints = [
+            models.UniqueConstraint(fields=["preset", "title"], name="campaign_preset_warband_rule_unique_title")
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.preset_id}:{self.title}"
 
 
 class Dictated:

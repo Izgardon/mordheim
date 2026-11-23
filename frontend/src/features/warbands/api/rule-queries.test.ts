@@ -18,7 +18,7 @@ const rule = { id: 3, title: "Mutations", description: "" };
 function setUp() {
   const queryClient = createTestQueryClient();
   const key = queryKeys.campaign.warbandHireTemplate(7, 9);
-  queryClient.setQueryData(key, { template: { missing_rules: 0 } });
+  queryClient.setQueryData(key, { template: null, missing_rules: 0 });
   const stale = () => queryClient.getQueryState(key)?.isInvalidated;
   return { wrapper: createQueryWrapper(queryClient), stale };
 }
@@ -26,7 +26,7 @@ function setUp() {
 describe("a warband rule's write", () => {
   beforeEach(() => fakeApi.reset());
 
-  it("reads the warband's template again: a delete, an edit, an add and Add the template's rules", async () => {
+  it("reads the warband's template again: a delete, an edit, an add and Add missing rules", async () => {
     fakeApi.on("DELETE /warbands/9/rules/3/", null);
     fakeApi.on("PATCH /warbands/9/rules/3/", rule);
     fakeApi.on("POST /warbands/9/rules/", rule);

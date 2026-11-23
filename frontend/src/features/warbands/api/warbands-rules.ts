@@ -26,7 +26,7 @@ export function deleteWarbandRule(warbandId: number, ruleId: number) {
   });
 }
 
-/** Add the template's rules: those of its template, for its variant and type, whose title it lacks; all its rules after. */
+/** Add missing rules: its template's for its variant and type, then its preset's for it, each whose title it lacks; all its rules after. */
 export function addTemplateRules(warbandId: number) {
   return apiRequest<WarbandRule[]>(`/warbands/${warbandId}/rules/from-template/`, {
     method: "POST",

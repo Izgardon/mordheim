@@ -5,8 +5,9 @@ upserted by), its name, the settings it guides the content choice towards, the s
 the file in `sources/campaign-rules/` holding its rules. A field left out is a field the preset says nothing about,
 so nothing is filled in from another preset or from the app's defaults: silence is data.
 
-A preset naming a setting, a chart or a rules file we do not hold is skipped with a warning naming it, and never
-seeded half-built — a campaign that picked it would otherwise be told a chart or a setting it cannot see. A preset
+A preset naming a setting, a chart, a warband group or type or a rules file we do not hold is skipped with a warning
+naming it, and never seeded half-built — a campaign that picked it would otherwise be told a chart or a setting it
+cannot see. A preset
 the folder drops is left where it is (as `seed_settings` leaves a dropped setting), because a campaign may have
 picked it.
 """
@@ -24,10 +25,18 @@ from django.core.management.base import CommandError
 from apps.campaigns.models import HERO_DEATH_ROLL_CHOICES, CampaignType
 from apps.core.seeding import clean, parse_int
 from apps.exploration.models import ExplorationChart
+from apps.warbands.models import WarbandGroup, WarbandType
 
 from .chart_sources import Skipped, one_chart, read_source, write_charts
 from .location_seeding import merged_groups, read_location_groups, write_location_groups
-from .models import CampaignPreset, CampaignPresetChart, CampaignPresetLocation, CampaignPresetRule
+from .models import (
+    CampaignPreset,
+    CampaignPresetChart,
+    CampaignPresetLocation,
+    CampaignPresetRule,
+    CampaignPresetWarbandRule,
+)
+from .warband_rule_seeding import found_warband_rules, read_warband_rules, write_warband_rules
 
 PRESET_SOURCES = Path(django_settings.BASE_DIR) / "catalogue_import" / "sources" / "campaign-presets"
 RULE_SOURCES = Path(django_settings.BASE_DIR) / "catalogue_import" / "sources" / "campaign-rules"
@@ -209,8 +218,10 @@ def write_preset(
     settings: Mapping[str, int],
     charts: Mapping[str, int],
     rule_folder: Path = RULE_SOURCES,
+    warbands: tuple[Mapping[str, int], Mapping[str, int]] = ({}, {}),
 ) -> CampaignPreset:
-    """Upsert one preset by slug, with its settings and its rules written afresh."""
+    """Upsert one preset by slug, with its settings and its rules written afresh; `warbands` are the warband groups
+    (by name, folded) and book warband types (by slug) its warband rules may name."""
     slug, name = clean(entry.get("slug")), clean(entry.get("name"))
     if not slug or not name:
         raise CommandError(f"A campaign preset needs a slug and a name: {entry.get('slug') or entry.get('name')}")
@@ -223,6 +234,8 @@ def write_preset(
     _unique([chart["title"] for chart in preset_charts], name, "charts")
     titles = {chart["title"].casefold() for chart in preset_charts}
     groups = merged_groups([read_location_groups(one, name, rule_folder) for one in named], name, titles)
+    warband_rules = [rule for one in named for rule in read_warband_rules(one, name, rule_folder)]
+    warband_rules = found_warband_rules(warband_rules, name, *warbands)
     setting_ids = _setting_ids(entry, name, settings)
     defaults: dict[str, Any] = {
         "name": name,
@@ -245,6 +258,7 @@ def write_preset(
     # a rule's own table: the same chart rows, pointed at the rule rather than standing on their own
     write_charts(preset, [t for t in tables if t], [r for r, t in zip(written, tables, strict=True) if t], keep=True)
     write_location_groups(preset, groups)  # after the charts, which its locations point to by title
+    write_warband_rules(preset, warband_rules)
     return preset
 
 
@@ -255,6 +269,7 @@ class SeedResult:
     charts: int = 0
     skipped: list[str] = dataclass_field(default_factory=list)  # a preset naming something we don't hold, and why
     locations: int = 0
+    warband_rules: int = 0
 
 
 def seed_presets(folder: Path = PRESET_SOURCES, rule_folder: Path = RULE_SOURCES) -> SeedResult:
@@ -263,15 +278,20 @@ def seed_presets(folder: Path = PRESET_SOURCES, rule_folder: Path = RULE_SOURCES
     charts = {
         row.slug: row.pk for row in ExplorationChart.objects.filter(campaign__isnull=True).exclude(slug="") if row.slug
     }
+    warbands = (
+        {row.name.casefold(): row.pk for row in WarbandGroup.objects.all()},
+        {row.slug: row.pk for row in WarbandType.objects.filter(campaign__isnull=True, archived_at__isnull=True)},
+    )
     seen: list[int] = []
     skipped: list[str] = []
     for entry in read_presets(folder):
         try:
-            seen.append(write_preset(entry, settings, charts, rule_folder).pk)
+            seen.append(write_preset(entry, settings, charts, rule_folder, warbands).pk)
         except Skipped as skip:
             skipped.append(str(skip))
     locations = CampaignPresetLocation.objects.filter(group__preset_id__in=seen).count()
-    return SeedResult(len(seen), _rule_count(seen), _chart_count(seen), skipped, locations)
+    warband_rules = CampaignPresetWarbandRule.objects.filter(preset_id__in=seen).count()
+    return SeedResult(len(seen), _rule_count(seen), _chart_count(seen), skipped, locations, warband_rules)
 
 
 def _rule_count(preset_ids: Iterable[int]) -> int:

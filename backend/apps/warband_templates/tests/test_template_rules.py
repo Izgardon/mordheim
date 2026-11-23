@@ -1,4 +1,4 @@
-"""Add the template's rules (`POST warbands/<id>/rules/from-template/`): the rules of the warband's template for its
+"""Add missing rules (`POST warbands/<id>/rules/from-template/`): the rules of the warband's template for its
 variant and type whose title it lacks are copied in order, the rest left alone, nothing removed; the warband's editors
 only; and the template endpoint then counts none missing."""
 
@@ -31,7 +31,7 @@ class AddTemplateRulesTests(CatalogueTestCase):
             [(rule["title"], rule["description"]) for rule in response.json()],
             [("hard bargains", "Ours."), ("House drill", ""), ("Marksmen", ""), ("Our drill", "")],
         )
-        self.assertEqual(self.get_as(self.player, self.route("template/")).json()["template"]["missing_rules"], 0)
+        self.assertEqual(self.get_as(self.player, self.route("template/")).json()["missing_rules"], 0)
         again = self.post_as(self.player, self.route("rules/from-template/"))
         self.assertEqual(len(again.json()), 4)
 

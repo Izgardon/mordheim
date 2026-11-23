@@ -9,8 +9,8 @@ import type { WarbandRule, WarbandRulePayload } from "../types/warband-types";
 
 /**
  * The warband's rules as each cached sheet holds them, changed by `update`: what the writes answer.
- * Its template reads again, since what it says is missing (`missing_rules`, Add the template's
- * rules) follows the warband's rules.
+ * Its template reads again, since what it says is missing (`missing_rules`, Add missing rules)
+ * follows the warband's rules.
  */
 function rulesChanged(
   queryClient: QueryClient,
@@ -53,7 +53,7 @@ export function useRuleDelete(warbandId: number) {
   });
 }
 
-/** Add the template's rules: the sheet takes the warband's rules as they now stand. */
+/** Add missing rules: the sheet takes the warband's rules as they now stand. */
 export function useRulesFromTemplate(warbandId: number) {
   const queryClient = useQueryClient();
   return useMutation({

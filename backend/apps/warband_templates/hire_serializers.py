@@ -129,8 +129,7 @@ class HireFighterSerializer(TemplateFighterSerializer):
 
 
 class WarbandTemplateHireSerializer(serializers.ModelSerializer):
-    """The template with the warband's variant applied: its rules for the variant, lists, fighters, and how many of
-    the variant's rules the warband lacks by title (`missing_rules`)."""
+    """The template with the warband's variant applied: its rules for the variant, lists and fighters."""
 
     gold = serializers.SerializerMethodField()
     most_warriors = serializers.SerializerMethodField()
@@ -138,7 +137,6 @@ class WarbandTemplateHireSerializer(serializers.ModelSerializer):
     lists = serializers.SerializerMethodField()
     upgrades = HireUpgradeSerializer(many=True, read_only=True)
     fighters = serializers.SerializerMethodField()
-    missing_rules = serializers.SerializerMethodField()
 
     class Meta:
         model = WarbandTemplate
@@ -154,7 +152,6 @@ class WarbandTemplateHireSerializer(serializers.ModelSerializer):
             "lists",
             "fighters",
             "upgrades",
-            "missing_rules",
         )
 
     def get_gold(self, template: WarbandTemplate) -> int:
@@ -175,6 +172,3 @@ class WarbandTemplateHireSerializer(serializers.ModelSerializer):
 
     def get_fighters(self, template: WarbandTemplate) -> Any:
         return HireFighterSerializer(list(self.context["fighters"].values()), many=True, context=self.context).data
-
-    def get_missing_rules(self, template: WarbandTemplate) -> int:
-        return int(self.context["missing_rules"])

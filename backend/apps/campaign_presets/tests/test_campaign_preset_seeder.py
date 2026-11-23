@@ -9,10 +9,11 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
-from apps.campaign_presets.models import CampaignPreset, CampaignPresetRule
+from apps.campaign_presets.models import CampaignPreset, CampaignPresetRule, CampaignPresetWarbandRule
 from apps.campaign_presets.seeding import SeedResult, seed_presets
 from apps.campaigns.models import CampaignType
 from apps.exploration.models import ExplorationChart
+from apps.warbands.models import WarbandGroup, WarbandType
 
 MARIENBURG = "Mutiny in Marienburg"
 
@@ -29,16 +30,21 @@ class PresetSeederTests(TestCase):
         cls.setting = CampaignType.objects.create(slug="mutiny-in-marienburg", name=MARIENBURG, grade="2b")
         cls.chart = ExplorationChart.objects.create(slug="mutiny-in-marienburg", name="Wasteland Exploration")
 
-    def seed(self, *presets: dict, rules: dict[str, list[dict]] | None = None) -> None:
+    def seed(
+        self, *presets: dict, rules: dict[str, list[dict]] | None = None, files: dict[str, dict] | None = None
+    ) -> None:
+        """Seed `presets` from a folder of their own, with `rules` as files of campaign rules and `files` whole."""
+        bodies = {name: {"rules": rows} for name, rows in (rules or {}).items()} | (files or {})
         with TemporaryDirectory() as presets_folder, TemporaryDirectory() as rules_folder:
             for entry in presets:
                 (Path(presets_folder) / f"{entry['slug']}.json").write_text(json.dumps(entry), encoding="utf-8")
-            for name, rows in (rules or {}).items():
-                (Path(rules_folder) / f"{name}.json").write_text(json.dumps({"rules": rows}), encoding="utf-8")
+            for name, body in bodies.items():
+                (Path(rules_folder) / f"{name}.json").write_text(json.dumps(body), encoding="utf-8")
             self.result = seed_presets(Path(presets_folder), Path(rules_folder))
 
     def test_the_real_sources_seed_every_published_campaign_and_marienburgs_rules(self) -> None:
         call_command("seed_settings", stdout=StringIO())
+        call_command("seed_warband_types", stdout=StringIO())  # the warband rules name their groups and types
         call_command("seed_exploration_charts", stdout=StringIO())
         out = StringIO()
         call_command("seed_campaign_presets", stdout=out)
@@ -98,15 +104,11 @@ class PresetSeederTests(TestCase):
             ["Breaking into buildings", "Setting buildings on fire", "Under arrest"],
         )
         # the sewer and booty tables hang off single results of the charts that send the player to them
-        hung = [chart for chart in charts if chart.row is not None]
+        hung = [(chart, chart.row) for chart in charts if chart.row is not None]
         on_results = {
-            chart.title: (chart.row.chart.title, chart.row.result)
-            for chart in hung
-            if chart.row.chart.location_id is None
+            chart.title: (row.chart.title, row.result) for chart, row in hung if row.chart.location_id is None
         }
-        at_locations = {
-            chart.title: (chart.row.chart.title, chart.row.result) for chart in hung if chart.row.chart.location_id
-        }
+        at_locations = {chart.title: (row.chart.title, row.result) for chart, row in hung if row.chart.location_id}
         # a location's tables hang their own off a result too, as Fine Feathered Friends does (William, 22 Nov 2026)
         self.assertEqual(at_locations["Fine Feathered Friends"], ("Speciality Animals", "5"))
         self.assertEqual(len(at_locations), 14)
@@ -123,6 +125,7 @@ class PresetSeederTests(TestCase):
 
     def test_mordheims_preset_dictates_nothing_and_names_no_settings(self) -> None:
         call_command("seed_settings", stdout=StringIO())
+        call_command("seed_warband_types", stdout=StringIO())  # the warband rules name their groups and types
         call_command("seed_exploration_charts", stdout=StringIO())
         call_command("seed_campaign_presets", stdout=StringIO())
         mordheim = CampaignPreset.objects.get(slug="mordheim")
@@ -141,6 +144,7 @@ class PresetSeederTests(TestCase):
 
     def test_the_three_newest_campaigns_dictate_only_what_their_books_state(self) -> None:
         call_command("seed_settings", stdout=StringIO())
+        call_command("seed_warband_types", stdout=StringIO())  # the warband rules name their groups and types
         call_command("seed_exploration_charts", stdout=StringIO())
         out = StringIO()
         call_command("seed_campaign_presets", stdout=out)
@@ -249,3 +253,80 @@ class PresetSeederTests(TestCase):
     def test_a_skill_wording_without_a_description_stops_the_run(self) -> None:
         with self.assertRaises(CommandError):
             self.seed({"slug": "m", "name": MARIENBURG, "skill_wordings": [{"skill": "Mighty Blow"}]})
+
+    # warband rules: a published campaign's rule for one race's warbands or one type's (William, 23 Nov 2026)
+
+    def test_the_real_sources_move_the_race_rules_to_warband_rules_and_drop_the_rest(self) -> None:
+        call_command("seed_settings", stdout=StringIO())
+        call_command("seed_warband_types", stdout=StringIO())
+        call_command("seed_exploration_charts", stdout=StringIO())
+        out = StringIO()
+        call_command("seed_campaign_presets", stdout=out)
+        self.assertIn("skipped: 0", out.getvalue())
+        held = {
+            (rule.preset.slug, rule.title): (
+                sorted(group.name for group in rule.warband_groups.all()),
+                sorted(kind.slug for kind in rule.warband_types.all()),
+            )
+            for rule in CampaignPresetWarbandRule.objects.select_related("preset").prefetch_related(
+                "warband_groups", "warband_types"
+            )
+        }
+        self.assertEqual(
+            held,
+            {
+                ("karak-azgal", "Dwarf drunks"): (["Dwarfs"], []),
+                ("karak-azgal", "Skaven tunnel team"): (["Skaven"], []),
+                ("relics-of-the-crusades", "Undead warbands"): (["Undead"], []),
+                ("relics-of-the-crusades", "Riding and War Horses"): ([], ["witch-hunters"]),
+                ("empire-in-flames", "Beastmen scenarios"): (["Beastmen"], []),
+            },
+        )
+        drunks = CampaignPresetWarbandRule.objects.get(title="Dwarf drunks")
+        self.assertIn("\n\nA Drunk warrior is immune to panic", drunks.text)  # the battle rule after the campaign's
+        gone = {
+            "karak-azgal": ["Dwarf drunks", "Drunken behaviour", "Skaven tunnel team", "Tunnelling"],
+            "relics-of-the-crusades": ["Undead warbands", "Warbands"],
+            "empire-in-flames": ["Beastmen scenarios", "Warbands"],
+            "albion": ["Money"],
+            "nemesis-crown": ["Territories", "Scenarios"],
+        }
+        for slug, titles in gone.items():
+            self.assertFalse(CampaignPresetRule.objects.filter(preset__slug=slug, title__in=titles).exists(), slug)
+
+    def test_a_preset_seeds_its_warband_rules_from_every_file_it_reads(self) -> None:
+        dwarfs = WarbandGroup.objects.create(slug="dwarfs", name="Dwarfs", kind="race")
+        hunters = WarbandType.objects.create(name="Witch Hunters", slug="witch-hunters")
+        files = {
+            "one": {"rules": [], "warband_rules": [{"title": "Drunks", "text": " Two. ", "groups": ["dwarfs"]}]},
+            "two": {
+                "rules": [],
+                "warband_rules": [{"title": "Horses", "text": "No hounds.", "types": ["witch-hunters"]}],
+            },
+        }
+        self.seed({"slug": "k", "name": "Karak Azgal", "rules": ["one", "two"]}, files=files)
+        rules = list(CampaignPreset.objects.get(slug="k").warband_rules.all())
+        self.assertEqual([(rule.title, rule.text) for rule in rules], [("Drunks", "Two."), ("Horses", "No hounds.")])
+        self.assertEqual(
+            (list(rules[0].warband_groups.all()), list(rules[1].warband_types.all())), ([dwarfs], [hunters])
+        )
+        self.assertEqual(self.result.warband_rules, 2)
+        self.seed({"slug": "k", "name": "Karak Azgal", "rules": ["one"]}, files=files)  # written afresh
+        self.assertEqual(CampaignPresetWarbandRule.objects.count(), 1)
+
+    def test_a_warband_rule_naming_a_group_or_type_we_dont_hold_skips_the_preset(self) -> None:
+        for line, named in (({"groups": ["Elves"]}, "warband group 'Elves'"), ({"types": ["kislev"]}, "type 'kislev'")):
+            files = {"r": {"rules": [], "warband_rules": [{"title": "Ours", "text": "x", **line}]}}
+            self.seed({"slug": "k", "name": "Karak Azgal", "rules": "r"}, files=files)
+            self.assertFalse(CampaignPreset.objects.exists())
+            self.assertIn(named, self.result.skipped[0])
+
+    def test_a_warband_rule_for_nobody_or_twice_stops_the_run(self) -> None:
+        WarbandGroup.objects.create(slug="dwarfs", name="Dwarfs", kind="race")
+        twice = [{"title": "Drunks", "groups": ["Dwarfs"]}, {"title": "drunks", "groups": ["Dwarfs"]}]
+        for rows in ([{"title": "Drunks", "text": "x"}], twice):
+            with self.assertRaises(CommandError):
+                self.seed(
+                    {"slug": "k", "name": "Karak Azgal", "rules": "r"},
+                    files={"r": {"rules": [], "warband_rules": rows}},
+                )

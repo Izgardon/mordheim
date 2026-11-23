@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 import { useRuleDelete, useRuleUpdate } from "../../api/rule-queries";
 import type { WarbandRule } from "../../types/warband-types";
-import AddTemplateRules from "./AddTemplateRules";
+import AddMissingRules from "./AddMissingRules";
 import RuleForm from "./RuleForm";
 
 /** Where the modal opens: at one rule (its pill), or at the top. */
@@ -22,8 +22,8 @@ const scrollTo = (node: HTMLElement | null) => node?.scrollIntoView?.({ block: "
 /**
  * The warband's rules in one modal (a bottom sheet on a phone): every rule's title and
  * description, the one its pill opened at picked out. The warband's editors edit and delete them
- * here (adding is the section's Add rule, a form of its own), and with a campaign given, Add the
- * template's rules copies the missing ones.
+ * here (adding is the section's Add rule, a form of its own), and with a campaign given, Add
+ * missing rules copies its template's and its preset's it lacks.
  */
 export default function WarbandRulesDialog({
   open,
@@ -38,7 +38,7 @@ export default function WarbandRulesDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   opening: RulesOpening;
-  /** The warband's campaign: its template is read for Add the template's rules. */
+  /** The warband's campaign: its template is read for Add missing rules. */
   campaignId?: number;
   warbandId?: number;
   warbandName: string;
@@ -108,9 +108,9 @@ export default function WarbandRulesDialog({
           )
         )}
       </div>
-      {/* Add rule is the section's own form (William, 22 Nov 2026); the template's rules stay here */}
+      {/* Add rule is the section's own form (William, 22 Nov 2026); Add missing rules stays here */}
       {canEdit && !editing && campaignId && warbandId ? (
-        <AddTemplateRules campaignId={campaignId} warbandId={warbandId} open={open} />
+        <AddMissingRules campaignId={campaignId} warbandId={warbandId} open={open} />
       ) : null}
     </ModalSheet>
   );

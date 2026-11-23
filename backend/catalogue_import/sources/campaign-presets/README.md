@@ -31,13 +31,14 @@ owner departs from one.
 
 ## A campaign's rules file
 
-One file per published campaign in `sources/campaign-rules/`, named by the preset's `rules` field. It holds four
+One file per published campaign in `sources/campaign-rules/`, named by the preset's `rules` field. It holds five
 lists, each optional; a list left out is a list the campaign has none of.
 
 ```json
 {
   "rules": [{ "title": "Campaign points", "text": "…", "umbrella": "" }],
   "battle_rules": [{ "title": "Fog", "text": "…", "umbrella": "Weather" }],
+  "warband_rules": [{ "title": "Dwarf drunks", "text": "…", "groups": ["Dwarfs"], "types": [] }],
   "charts": [
     {
       "title": "Seaside Situations",
@@ -93,3 +94,12 @@ lists, each optional; a list left out is a list the campaign has none of.
   "roll on the Herbs and Potions table (Herbalist)". Group names are unique in a file and location names in the
   preset; across a preset's rules files a group of the same name merges, the later file's locations appended and
   the earlier file's description and restrictions kept.
+- `warband_rules` are the campaign's rules for some warbands rather than all of them (William, 23 Nov 2026): Karak
+  Azgal's Dwarf drunks, Relics of the Crusades' Undead warbands. Each names whom it is for: `groups` by warband group
+  name (`Dwarfs`, `Skaven`, as `out/warband-groups.json` holds them) and `types` by book warband type slug
+  (`witch-hunters`), at least one of either. A warband raised in a campaign playing the preset whose own type is one
+  of them, or a member of one of the groups, gets a copy among its own rules after its template's, which the player
+  edits or deletes like any other; a type it only counts as brings none. Add missing rules brings them to a warband
+  raised before. A rule here is a campaign or battle rule no more: where the book splits one subject over both
+  (the Drunks and their behaviour), join them into one warband rule, the campaign part first. A group or type we
+  don't hold skips the preset, and titles are unique across the preset's files.

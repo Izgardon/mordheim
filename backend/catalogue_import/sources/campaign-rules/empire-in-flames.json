@@ -1,11 +1,6 @@
 {
  "rules": [
   {
-   "title": "Warbands",
-   "umbrella": "",
-   "text": "Any warband published in the Mordheim rulebook, the Mordheim Annual or Town Cryer is legal in this setting, though some suit the wilderness better than others. The best suited are Witch Hunters, Orcs & Goblins, Dwarf Treasure Hunters, Beastmen, The Possessed, Undead, Kislevites, Skaven Warp Hunters and Human Mercenaries (any type).\n\nNew warbands were written for this setting as well: the Carnival of Chaos and the Beastmen Raiders."
-  },
-  {
    "title": "Treasure, not wyrdstone",
    "umbrella": "",
    "text": "Games here are about collecting treasure, which can be a variety of things: wyrdstone shards, small items of art, jewellery of precious metals set with gems, or merchant goods. Whatever its form it acts exactly as a wyrdstone shard does in the basic game. It is found through Exploration, or sometimes as a scenario's objective, and is sold on the same chart on page 134 of the Mordheim rulebook.\n\nThe number of Treasures found comes from that normal chart, but this setting has Exploration charts of its own."
@@ -229,11 +224,16 @@
    "title": "Scenarios",
    "umbrella": "Scenarios",
    "text": "Use the scenario tables of this setting instead of the one on page 126 of the rulebook, rolling 2D6; there is a separate table for multi-player games. As usual, the winner of a scenario rolls one more Exploration dice than normal.\n\nTerrain should be set up to reflect the wilderness."
-  },
+  }
+ ],
+ "warband_rules": [
   {
    "title": "Beastmen scenarios",
-   "umbrella": "Scenarios",
-   "text": "If you or your opponent is using a Beastmen warband, you might like to use one of the special Beastmen scenarios instead: The Ambush, The Raid or The Beast Hunt. Roll a D6 on the Beastmen scenarios table to see which one to fight."
+   "text": "If you or your opponent is using a Beastmen warband, you might like to use one of the special Beastmen scenarios instead: The Ambush, The Raid or The Beast Hunt. Roll a D6 on the Beastmen scenarios table to see which one to fight.",
+   "groups": [
+    "Beastmen"
+   ],
+   "types": []
   }
  ],
  "charts": [

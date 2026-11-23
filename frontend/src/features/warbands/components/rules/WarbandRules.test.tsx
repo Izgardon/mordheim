@@ -136,16 +136,17 @@ describe("WarbandRules", () => {
   });
 });
 
-describe("Add the template's rules", () => {
-  function renderWithTemplate(missing: number) {
+describe("Add missing rules", () => {
+  function renderWithTemplate(missing: number, template: object | null = {}) {
     const queryClient = createTestQueryClient();
     queryClient.setQueryData(queryKeys.campaign.warbandSheet(1, 9), {
       rules: [hatred],
     } as unknown as WarbandSheet);
     fakeApi.on("GET /warbands/9/template/", {
-      template: { missing_rules: missing },
+      template,
       variant: "",
       list_prices_open: false,
+      missing_rules: missing,
     });
     const Rules = () => {
       const sheet = useQuery({ ...warbandSheetQuery(1, 9), enabled: false }).data;
@@ -168,13 +169,21 @@ describe("Add the template's rules", () => {
     renderWithTemplate(1);
     await user.click(await screen.findByRole("button", { name: "Hatred" }));
     const dialog = await screen.findByRole("dialog", { name: "Warband rules" });
-    await user.click(
-      await within(dialog).findByRole("button", { name: "Add the template's rules" })
-    );
+    await user.click(await within(dialog).findByRole("button", { name: "Add missing rules" }));
     expect(
       await within(dialog).findByRole("article", { name: "Burn the witch" })
     ).toBeInTheDocument();
     expect(fakeApi.countOf("POST /warbands/9/rules/from-template/")).toBe(1);
+  });
+
+  it("shows for a warband whose type has no template when its preset's rules are missing", async () => {
+    const user = setupUser();
+    renderWithTemplate(1, null);
+    await user.click(await screen.findByRole("button", { name: "Hatred" }));
+    const dialog = await screen.findByRole("dialog", { name: "Warband rules" });
+    expect(
+      await within(dialog).findByRole("button", { name: "Add missing rules" })
+    ).toBeInTheDocument();
   });
 
   it("is left out when none are missing", async () => {
@@ -183,6 +192,6 @@ describe("Add the template's rules", () => {
     await user.click(await screen.findByRole("button", { name: "Hatred" }));
     const dialog = await screen.findByRole("dialog", { name: "Warband rules" });
     await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/template/")).toBe(1));
-    expect(within(dialog).queryByRole("button", { name: "Add the template's rules" })).toBeNull();
+    expect(within(dialog).queryByRole("button", { name: "Add missing rules" })).toBeNull();
   });
 });

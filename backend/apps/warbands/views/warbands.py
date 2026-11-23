@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 
 from apps.campaign_presets.models import CampaignPreset
 from apps.campaign_presets.services.resources import give_fixed, other_resources
+from apps.campaign_presets.services.warband_rules import copy_warband_rules
 from apps.campaigns.models import DEFAULT_RESOURCE_NAME, CampaignSettings
 from apps.campaigns.permissions import get_writable_membership, parse_campaign_id
 from apps.warband_templates.services.payload import raise_gold
@@ -67,12 +68,15 @@ class WarbandListCreateView(APIView):
             name = settings.default_resource_name if settings else DEFAULT_RESOURCE_NAME
             WarbandResource.objects.create(warband=warband, name=name, amount=0, is_default=True)
             # and the counters its campaign's preset keeps for every warband (Marienburg's Wyrdstone)
-            give_fixed([warband], other_resources(CampaignPreset.objects.filter(campaigns__id=campaign_id).first()))
+            preset = CampaignPreset.objects.filter(campaigns__id=campaign_id).first()
+            give_fixed([warband], other_resources(preset))
             starting_gold = raise_gold(abs(settings.starting_gold) if settings else 500, template, variant)
             ledger.record(warband, LedgerAction.STARTING_GOLD, starting_gold, "Starting Gold")
             if template is not None:
                 copy_rules(warband, template, variant)
-            sync_plot_rules(warband)  # the rungs it has reached, after the template's rules (apps/plots)
+            # then its preset's rules for its type or race (William, 23 Nov 2026: Karak Azgal's Dwarf drunks)
+            copy_warband_rules(warband, preset.pk if preset else None)
+            sync_plot_rules(warband)  # the rungs it has reached, after those rules (apps/plots)
         return Response(WarbandSerializer(warband).data, status=status.HTTP_201_CREATED)
 
 

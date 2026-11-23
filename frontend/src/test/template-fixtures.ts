@@ -82,6 +82,7 @@ export const makeTemplateAnswer = (
 ): WarbandTemplateAnswer => ({
   variant: "reikland",
   list_prices_open: true,
+  missing_rules: 0,
   template: {
     id: 1,
     campaign_id: null,
@@ -91,7 +92,6 @@ export const makeTemplateAnswer = (
     most_warriors: 15,
     variants: [{ key: "reikland", name: "Reikland" }],
     rules: [],
-    missing_rules: 0,
     lists: [],
     fighters: [],
     upgrades: [],
