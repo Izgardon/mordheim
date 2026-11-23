@@ -17,7 +17,11 @@
       "Step Aside",
       "Elusive",
       "Bulwark",
-      "Lunge"
+      "Lunge",
+      "Ambidextrous",
+      "Man At Arms",
+      "Frightful Crack",
+      "Weak Spot"
     ]
   },
   {
@@ -96,7 +100,12 @@
       "Beastmaster",
       "Rough and Tumble",
       "Dirty Blow",
-      "Rigger"
+      "Rigger",
+      "Splintering Blow",
+      "Beat Down",
+      "Fortitude",
+      "Impressive Bulk",
+      "Resilience (Annual)"
     ]
   },
   {
@@ -1290,7 +1299,7 @@
     "for_everyone": true,
     "warbands": [],
     "large_only": true,
-    "note": "",
+    "note": "A Large warrior knows one Large skill at a time: learning another forgets the first.",
     "how": "skill_lists",
     "open_to_all": false,
     "skills": [

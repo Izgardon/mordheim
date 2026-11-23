@@ -97,7 +97,7 @@ class SeedAllTests(TestCase):
                 # skips them
                 "Item": 558,  # the import's 445 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey; the Cardinal of Contagion's Pox Staff is one more, with no price row, so nobody buys it (William, 13 Nov 2026); ten Mutiny in Marienburg stubs that duplicate an item of ours are merged away, their prices carried onto it, and the Border Town Burning bear and Marienburg's wild dogs join ours, two Animal items fewer (William, 15 Nov 2026); Marienburg's boar mount is our War Boar, one Animal item fewer (William, 16 Nov 2026); the Karak Azgal Map is one more (William, 21 Nov 2026); Athel Loren's seven shop items are left out again, since none has rules (William, 21 Nov 2026: "if not rules then dont import"); Relics of the Crusades brings 21 items more and its Arabian Steed one more Animal item (William, 21 Nov 2026)
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
-                "Skill": 563,  # the import's 521 (one per name, Relics of the Crusades' ten Holy skills and its Smith (Academic), Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 42 hired swords' own skills the book lacks (the Runesmith's Rune Use and Durable are his rules, William, 21 Nov 2026), 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
+                "Skill": 572,  # the import's 530 (one per name, the Marienburg Annual's nine (eight new Strength and Combat skills and Resilience (Annual)), Relics of the Crusades' ten Holy skills and its Smith (Academic), Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 42 hired swords' own skills the book lacks (the Runesmith's Rune Use and Durable are his rules, William, 21 Nov 2026), 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 142,  # the import's 111 (Athel Loren's three, Relics of the Crusades' Holy) + a group of his own for each of 27 hired swords, 9 of them broheim's hireling sections'
                 "Spell": 425,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
@@ -733,7 +733,8 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
         # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
         # the two lists are two groups sharing Cutlass Master and Swashbuckler
-        self.assertIn("Skills import complete. Created: 521, Updated: 0", self.output)
+        # the Marienburg Annual's nine among them (William, 23 Nov 2026)
+        self.assertIn("Skills import complete. Created: 530, Updated: 0", self.output)
         self.assertIn("If he Falls during a battle", Skill.objects.get(name="Sea Legs").description)
         self.assertIn("swings through rope and rigging", Skill.objects.get(name="Sea Legs (TBMF)").description)
         second = SkillGroup.objects.get(name="Pirates (TBMF)").skill_links.values_list("skill__name", flat=True)
@@ -974,6 +975,17 @@ class SeedAllTests(TestCase):
         large = group("Large Special")
         self.assertEqual((len(holds("Large Special")), large.large_only, large.for_everyone), (5, True, True))
         self.assertEqual(list(SkillGroup.objects.filter(large_only=True)), [large])
+        # the Marienburg Annual p. 9: a Large warrior knows one Large skill at a time (William, 23 Nov 2026)
+        self.assertIn("one Large skill at a time", large.learn_note)
+        # its new Strength and Combat skills sit in the group it prints them under, in its own setting, and its
+        # errata Resilience is a skill apart from Clan Pestilens' (William, 23 Nov 2026)
+        annual = {"Splintering Blow", "Beat Down", "Fortitude", "Impressive Bulk", "Resilience (Annual)"}
+        self.assertLessEqual(annual, holds("Strength"))
+        self.assertLessEqual({"Ambidextrous", "Man At Arms", "Frightful Crack", "Weak Spot"}, holds("Combat"))
+        in_annual = Skill.objects.filter(campaign_type__slug="marienburg-annual")
+        self.assertEqual(in_annual.count(), 9)
+        self.assertIn("-1 on the critical hit chart", Skill.objects.get(name="Resilience (Annual)").description)
+        self.assertIn("Toughness is increased by +1", Skill.objects.get(name="Resilience").description)
         vampires = group("Undead Vampires")
         self.assertEqual((vampires.learn_note, vampires.for_everyone, learners("Undead Vampires")), ("Vampire only", False, {"undead"}))  # fmt: skip
         self.assertIn("Mist Form", holds("Undead Vampires"))

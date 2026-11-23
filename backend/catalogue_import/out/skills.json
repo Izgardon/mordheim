@@ -908,6 +908,42 @@
     "description": "Before each game he takes part in, the warrior may work on one close combat weapon or suit of heavy armour. The wielder of a smithed weapon may re-roll the first failed to-hit roll of the battle; the bearer of smithed armour may re-roll the first failed armour save."
   },
   {
+    "name": "Ambidextrous",
+    "description": "The warrior is practised at fighting with two weapons and ignores the -1 to hit the Annual's Dual Wielding rule gives each attack made with two weapons. Under that rule a hired sword who comes with two or more weapons counts as having this skill."
+  },
+  {
+    "name": "Splintering Blow",
+    "description": "The warrior's axe blows tear through armour: every axe he fights with has an armour save modifier of -2."
+  },
+  {
+    "name": "Beat Down",
+    "description": "When the warrior fights with a morning star or flail of any kind and wounds an enemy in the first round of a combat, he keeps the weapon's Strength bonus into the next round, and goes on keeping it for every round in which he wounds an opponent."
+  },
+  {
+    "name": "Fortitude",
+    "description": "The warrior re-rolls every side effect roll for a drug he takes, even a result that would help him."
+  },
+  {
+    "name": "Impressive Bulk",
+    "description": "Whenever the Hero takes a Strength or Toughness test, that characteristic counts as 1 higher for the test."
+  },
+  {
+    "name": "Man At Arms",
+    "description": "The warrior switches between thrusting and slashing with a halberd: when he fights with one, he may roll each critical hit on either the thrusting or the bladed weapons' critical hit chart."
+  },
+  {
+    "name": "Frightful Crack",
+    "description": "When the warrior uses the Whipcrack special rule, each hit he scores leaves his opponent at -1 WS for the rest of that round of combat, even if the hit fails to wound."
+  },
+  {
+    "name": "Weak Spot",
+    "description": "When the warrior fights with a dagger of any kind in each hand and both his main-hand and off-hand attacks hit, he causes a critical hit on a 5+, whatever his Strength."
+  },
+  {
+    "name": "Resilience (Annual)",
+    "description": "The warrior shrugs off blows that would fell a lesser fighter: when he suffers a critical wound, the attacker is at -1 on the critical hit chart."
+  },
+  {
     "name": "Chaos Engineer",
     "description": "The Hero has great technical skill and can use this to craft wicked armours and weapons. Whenever a Hero with this skill searches for Chaos armour (including Mechanical Suits) or Obsidian Weapons, he gets +3 on the roll. This represents the Engineer’s ability to craft these items himself. The Hero ignores the Rarity and Gift of Chaos special rules and may never wear the Chaos Armours."
   },

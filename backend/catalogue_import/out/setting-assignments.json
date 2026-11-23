@@ -1136,6 +1136,51 @@
       "how": "overrides.json"
     },
     {
+      "name": "Ambidextrous",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Splintering Blow",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Beat Down",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Fortitude",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Impressive Bulk",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Man At Arms",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Frightful Crack",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Weak Spot",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Resilience (Annual)",
+      "setting": "marienburg-annual",
+      "how": "overrides.json"
+    },
+    {
       "name": "Chaos Engineer",
       "setting": "border-town-burning",
       "how": "overrides.json"
