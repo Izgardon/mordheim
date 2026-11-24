@@ -11,7 +11,6 @@ import BattleRulesSheet from "@/features/battles/components/battle/BattleRulesSh
 import type { BattleScenario } from "@/features/battles/components/battle/ScenarioSheet";
 import { MISFIRE_TABLE } from "@/features/battles/data/misfire";
 
-import type { CampaignTool } from "../shell/CampaignTools";
 import { BottomBar, BottomBarButton } from "../mobile/BottomBar";
 import { SheetButtonRow, SheetRows } from "../mobile/SheetRows";
 import { CriticalHitsSheet } from "./BattleSheets";
@@ -38,10 +37,8 @@ type BattleToolsBarProps = {
   rules: BattleRulesInfo | null;
   /** The page's own actions, first in the Menu. */
   actions: BattleMenuAction[];
-  /** Opens the dice roller, the chat or the notifications (`CampaignTools`). */
-  onOpenTool: (tool: CampaignTool) => void;
-  /** Back to the campaign, without leaving the battle. */
-  onExit: () => void;
+  /** Opens the dice roller (`CampaignTools`). */
+  onOpenDice: () => void;
 };
 
 type Sheet = "rules" | "melee" | "ranged" | "menu";
@@ -51,15 +48,14 @@ const crits = (ids: string[]) => CRITICAL_HIT_TABLES.filter((table) => ids.inclu
 /**
  * The phone's bottom bar on a battle route (design E): Rules, Melee, Dice, Ranged, Menu, Dice in the
  * middle as on the battle screen (William, 24 Nov 2026). Melee and
- * Ranged hold the crit tables (Ranged the Misfire chart too); the Menu holds the battle's actions, the chat and the
- * notifications (missing in battle before), and the way back to the campaign.
+ * Ranged hold the crit tables (Ranged the Misfire chart too); the Menu holds the battle's actions only, as the active
+ * battle's does (William, 24 Nov 2026: trimmed of chat and the rest; the top bar goes back).
  */
 export default function BattleToolsBar({
   campaignId,
   rules,
   actions,
-  onOpenTool,
-  onExit,
+  onOpenDice,
 }: BattleToolsBarProps) {
   const [sheet, setSheet] = useState<Sheet | null>(null);
   const sheetProps = (which: Sheet) => ({
@@ -91,7 +87,7 @@ export default function BattleToolsBar({
           icon={Dices}
           aria-haspopup="dialog"
           className="text-accent-hi"
-          onClick={() => onOpenTool("dice")}
+          onClick={onOpenDice}
         />
         <BottomBarButton
           label="Ranged"
@@ -139,21 +135,6 @@ export default function BattleToolsBar({
               onSelect={fromMenu(action.onSelect)}
             />
           ))}
-          <SheetButtonRow
-            label="Chat"
-            detail="Message the campaign's players"
-            onSelect={fromMenu(() => onOpenTool("chat"))}
-          />
-          <SheetButtonRow
-            label="Notifications"
-            detail="Invitations, claims and what the others did"
-            onSelect={fromMenu(() => onOpenTool("bell"))}
-          />
-          <SheetButtonRow
-            label="Back to the campaign"
-            detail="The battle waits for you; Rejoin brings you back"
-            onSelect={fromMenu(onExit)}
-          />
         </SheetRows>
       </BottomSheet>
     </>

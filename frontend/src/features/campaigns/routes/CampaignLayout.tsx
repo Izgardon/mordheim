@@ -155,8 +155,7 @@ export default function CampaignLayout() {
                 campaignId={campaign.id}
                 rules={battleRules}
                 actions={battleMenuActions}
-                onOpenTool={setOpenTool}
-                onExit={backToCampaign}
+                onOpenDice={() => setOpenTool("dice")}
               />
             </>
           ),

@@ -69,6 +69,8 @@ describe("the combat sheet's layout", () => {
     // a thin rule between them, and Theirs mirrored: its names on the right (William, 24 Nov 2026)
     expect(yours.nextElementSibling).toHaveClass("bg-line");
     expect(within(theirs).getByText("Theirs")).toHaveClass("text-right");
+    // each side's numbers start right under its picker, whichever side has more of them
+    expect(within(yours).getByText("Yours")).not.toHaveClass("flex-1");
     expect(within(theirs).getByLabelText("T").closest("label")).toHaveClass("text-right");
     expect(within(yours).getByLabelText("S").closest("label")).not.toHaveClass("text-right");
     expect(within(yours).getByRole("combobox", { name: "Yours" })).toBeInTheDocument();

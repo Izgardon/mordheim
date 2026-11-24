@@ -12,9 +12,8 @@ const renderBar = () =>
     <BattleToolsBar
       campaignId={1}
       rules={null}
-      actions={[]}
-      onOpenTool={vi.fn()}
-      onExit={vi.fn()}
+      actions={[{ label: "Leave", detail: "Step out of this battle", onSelect: vi.fn() }]}
+      onOpenDice={vi.fn()}
     />
   );
 
@@ -62,16 +61,16 @@ describe("BattleToolsBar", () => {
     ).toEqual(["Battle rules", "Warband rules", "Charts", "House rules", "Rules"]);
   });
 
-  it("gives every Menu row a line saying what it does", async () => {
+  it("holds the battle's own actions only, as the active battle's menu does", async () => {
     const user = setupUser();
     renderBar();
 
     await user.click(screen.getByRole("button", { name: "Menu" }));
-    for (const [label, detail] of [
-      ["Chat", "Message the campaign's players"],
-      ["Notifications", "Invitations, claims and what the others did"],
-      ["Back to the campaign", "The battle waits for you; Rejoin brings you back"],
-    ])
-      expect(screen.getByRole("button", { name: new RegExp(label) })).toHaveTextContent(detail);
+    const menu = screen.getByRole("dialog", { name: /Battle menu/ });
+    expect(within(menu).getByRole("button", { name: /Leave/ })).toHaveTextContent(
+      "Step out of this battle"
+    );
+    for (const gone of ["Chat", "Notifications", "Back to the campaign"])
+      expect(within(menu).queryByRole("button", { name: new RegExp(gone) })).toBeNull();
   });
 });
