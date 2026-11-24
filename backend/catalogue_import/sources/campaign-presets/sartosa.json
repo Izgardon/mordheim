@@ -7,6 +7,7 @@
   ],
   "exploration_chart": "sartosa",
   "enable_locations": false,
+  "enable_encampments": true,
   "hero_death_roll": "d66",
   "rules": "sartosa",
   "main_resource": "Cargo"

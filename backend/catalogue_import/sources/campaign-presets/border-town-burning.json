@@ -6,6 +6,7 @@
     "Border Town Burning"
   ],
   "exploration_chart": "border-town-burning",
+  "enable_encampments": true,
   "enable_campaign_points": true,
   "hero_death_roll": "d66",
   "rules": "border-town-burning",

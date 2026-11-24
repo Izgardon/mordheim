@@ -746,5 +746,19 @@
     }
    ]
   }
+ ],
+ "encampment_groups": [
+  {
+   "name": "The borderlands",
+   "description": "",
+   "encampments": [
+    {
+     "name": "Abandoned Trading Post",
+     "gained_by": "Exploration 11111, then restored",
+     "fortified": false,
+     "text": "Merchant Caravans, Chaos Dwarfs, Norse Explorers, Shadow Warriors, Dwarf warbands, Pirate warbands and Mercenary warbands may restore the trading post. They need not decide at once, and may return between battles until another warband restores it. The restoration costs 150+D6x25 gc and lasts four games, in which at least one Hero and two henchmen must miss battles; each additional Hero or pair of henchmen helping speeds the rebuilding by one game, to a minimum of one.\n\nA warband controlling the restored trading post rolls 3D6 to determine the experience of henchmen available for hire after a battle, and gets +3 when searching for rare items. A warband that chose The Lure of Fortune objective gets +D6 campaign points once for rebuilding it.\n\nAny warband that discovers the trading post after it has been restored may choose at any time to play the special scenario Hostile Embargo against the warband that restored it; other warbands that have discovered it may join that battle."
+    }
+   ]
+  }
  ]
 }
