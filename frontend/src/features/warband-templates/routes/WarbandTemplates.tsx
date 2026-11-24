@@ -8,6 +8,7 @@ import { ALL_SETTINGS } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import SortMenu from "@/features/reference/SortMenu";
 import { ReferenceList, ReferenceRow, type ColumnSort } from "@/features/reference/ReferenceList";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useWarbandTypes } from "@/features/warbands/api/warband-types-queries";
@@ -82,6 +83,14 @@ export default function WarbandTemplates() {
   const settingOptions = warbandSettingOptions(rows, settings);
   const shown = shownWarbandRows(rows, { query: params.query, setting, sort, settings });
   const sortBy = (key: WarbandSortKey) => params.set({ sort: sortParam(nextSort(sort, key)) });
+  // a phone's sort, at the end of the settings row; the web sorts from the column headings
+  const sortMenu = isMobile ? (
+    <SortMenu
+      options={SORT_OPTIONS}
+      value={sort.key}
+      onChange={(key) => params.set({ sort: sortParam({ key, descending: false }) })}
+    />
+  ) : null;
   const sorting = (key: WarbandSortKey): ColumnSort => ({
     direction: sort.key === key ? (sort.descending ? "desc" : "asc") : null,
     onSort: () => sortBy(key),
@@ -120,17 +129,10 @@ export default function WarbandTemplates() {
               value={setting}
               onChange={(next) => params.set({ setting: next === ALL_SETTINGS ? null : next })}
               isMobile={isMobile}
+              end={sortMenu}
             />
-          ) : null}
-          {isMobile ? (
-            // the web sorts from the column headings
-            <ReferenceChips
-              label="Sort"
-              options={SORT_OPTIONS}
-              value={sort.key}
-              onChange={(key) => params.set({ sort: sortParam({ key, descending: false }) })}
-              isMobile
-            />
+          ) : isMobile ? (
+            <div className="flex justify-end">{sortMenu}</div>
           ) : null}
         </>
       }

@@ -131,6 +131,8 @@ type ReferenceChipsProps<T extends string> = {
   value: T;
   onChange: (value: T) => void;
   isMobile: boolean;
+  /** On a phone, a control pinned at the row's end that never scrolls with the chips (a sort). */
+  end?: ReactNode;
 };
 
 /** More than this many choices read better as a picker than as rows of chips (35 spell lores). */
@@ -161,11 +163,14 @@ export function ReferenceChips<T extends string>(props: ReferenceChipsProps<T>) 
       </FilterField>
     );
   }
-  return (
+  const pinned = isMobile && props.end;
+  const chips = (
     <div
       className={cn(
         "flex items-center gap-2",
-        isMobile && "-mx-4 overflow-x-auto overscroll-x-contain px-4 pb-2"
+        isMobile && "-mx-4 overflow-x-auto overscroll-x-contain px-4 pb-2",
+        // the chips scroll in the room the pinned control leaves them
+        pinned && "mr-0 min-w-0 flex-1 pr-2"
       )}
     >
       {isMobile ? null : <span className={cn(CAPTION, "mr-2")}>{props.label}</span>}
@@ -188,6 +193,13 @@ export function ReferenceChips<T extends string>(props: ReferenceChipsProps<T>) 
           </Chip>
         ))}
       </div>
+    </div>
+  );
+  if (!pinned) return chips;
+  return (
+    <div className="flex items-start gap-2">
+      {chips}
+      <div className="shrink-0">{props.end}</div>
     </div>
   );
 }
