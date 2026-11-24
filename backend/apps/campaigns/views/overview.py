@@ -10,7 +10,6 @@ from apps.battles.services.broadcast import ALL
 from apps.battles.services.record import battle_record
 from apps.battles.views.responses import broadcast_response, response_with_snapshot
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
-from apps.users.names import display_name
 
 from ..chronicle import chronicle
 from ..constants import OWNER
@@ -28,7 +27,7 @@ from .base import CampaignScopedView
 
 
 class CampaignPlayersView(APIView):
-    """GET: every member with his warband and battle state; `?fields=basic` gives ids and names for pickers.
+    """GET: every member with his warband and battle state.
 
     Not a CampaignScopedView: the member check reads the list it returns, one query fewer (PERF-41)."""
 
@@ -38,8 +37,6 @@ class CampaignPlayersView(APIView):
         memberships = campaign_memberships(campaign_id)
         if all(member.user_id != request.user.id for member in memberships):  # the member check (PERF-41)
             return Response({"detail": "Not found"}, status=404)
-        if request.query_params.get("fields") == "basic":  # name pickers need no warbands (PERF-41)
-            return Response([{"id": member.user_id, "name": display_name(member.user)} for member in memberships])
         return Response(CampaignPlayerSerializer(players_payload(campaign_id, memberships), many=True).data)
 
 

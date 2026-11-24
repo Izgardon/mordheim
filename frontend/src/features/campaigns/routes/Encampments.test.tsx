@@ -103,6 +103,26 @@ describe("The Encampments page", () => {
     expect(screen.getByRole("button", { name: "Give it up" })).toBeInTheDocument();
   });
 
+  it("offers no Take it where the server says there is nothing to take it for", async () => {
+    const user = setupUser();
+    const mine = makeEncampment({
+      holder: { id: 3, name: "Monks", player: "Raider" },
+      capabilities: { take: false, raze: true, give_up: true },
+    });
+    fakeApi.on(
+      `GET ${GROUPS}`,
+      makeEncampmentsPage({ groups: [makeEncampmentGroup({ encampments: [mine] })] })
+    );
+    openAs("player");
+
+    await user.click(await screen.findByRole("button", { name: /Marienburg city/ }));
+    await user.click(screen.getByRole("button", { name: /Tavern/ }));
+
+    expect(screen.queryByRole("button", { name: /^Take it/ })).toBeNull();
+    expect(screen.getByRole("button", { name: "Raze it" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Give it up" })).toBeInTheDocument();
+  });
+
   it("picks which warband takes it when you may take for several", async () => {
     const user = setupUser();
     fakeApi.on(

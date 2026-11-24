@@ -37,7 +37,6 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
     "detail (owner)": ("owner", "", 3),
     "detail (player)": ("player", "", 3),  # the codes come with the membership (CampaignScopedView, design 0.29)
     "players": ("player", "players/", 6),  # the member check reads the list it returns (PERF-41)
-    "players (basic)": ("player", "players/?fields=basic", 1),  # names only, for pickers (PERF-41, target <= 2)
     "completed trades": ("player", "trade-requests/?status=completed", 2),
     "battle history": ("player", "battle-history/", 4),  # + each battle's pivotal moments and its kill counts (step 9)
     "chronicle": ("player", "chronicle/", 4),  # deaths, the log, the bounties (steps 5, 9; no kills)

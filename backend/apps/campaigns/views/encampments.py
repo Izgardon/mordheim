@@ -28,10 +28,10 @@ class EncampmentView(CampaignScopedView):
     feature_flag = FLAG
 
     def context(self) -> dict:
-        """What each encampment's capabilities read: the reader's access, and whether he may take one at all."""
+        """What each encampment's capabilities read: the reader's access, and the warbands he may take one for."""
         manages = self.access.has(WRITE)
         mine = encampments.takers(self.access.campaign_id, self.access.user_id, manages)
-        return {"access": self.access, "can_take": bool(mine), "takers": mine}
+        return {"access": self.access, "takers": mine, "taker_ids": {warband.pk for warband in mine}}
 
     def announce(self, warband_ids: list[int] | None = None) -> None:
         """After commit: the other members' Encampments pages read the list again, and the touched warbands' pages

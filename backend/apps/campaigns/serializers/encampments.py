@@ -57,8 +57,10 @@ class CampaignEncampmentSerializer(serializers.ModelSerializer):
         if access.archived:
             return {"take": False, "raze": False, "give_up": False}
         changes = CAMPAIGN_RULES["change_holding"](access, encampment)
+        # taken for a warband of his that doesn't hold it already
+        takers = self.context.get("taker_ids", set())
         return {
-            "take": bool(self.context.get("can_take")),
+            "take": bool(takers - {encampment.holder_id}),
             "raze": changes and not encampment.razed,
             "give_up": changes and encampment.holder_id is not None,
         }

@@ -56,7 +56,7 @@ def take(encampment: CampaignEncampment, warband: Warband) -> Change:
             warnings.append(
                 _warning(
                     "encampment_razed",
-                    f"{held.name} was razed. Taking it marks it rebuilt, so rebuild it first as its rules say.",
+                    f"{held.name} was razed: its rules say how it is rebuilt.",
                 )
             )
         if before is not None:

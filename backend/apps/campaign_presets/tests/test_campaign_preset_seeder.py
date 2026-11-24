@@ -9,7 +9,12 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
-from apps.campaign_presets.models import CampaignPreset, CampaignPresetRule, CampaignPresetWarbandRule
+from apps.campaign_presets.models import (
+    CampaignPreset,
+    CampaignPresetEncampment,
+    CampaignPresetRule,
+    CampaignPresetWarbandRule,
+)
 from apps.campaign_presets.seeding import SeedResult, seed_presets
 from apps.campaigns.models import CampaignType
 from apps.exploration.models import ExplorationChart
@@ -175,12 +180,25 @@ class PresetSeederTests(TestCase):
                     preset.enable_blood_pacts,
                     preset.max_heroes,
                     preset.hero_death_roll,
-                    preset.rules.count(),
+                    preset.rules.exclude(kind="encampment").count(),
                 ),
                 row,
                 slug,
             )
             self.assertEqual(preset.exploration_chart_id, ExplorationChart.objects.get(slug=slug).pk, slug)
+        # Sartosa's two Locales rules are its encampment rules, read on the Encampments page
+        self.assertEqual(presets["sartosa"].rules.filter(kind="encampment").count(), 2)
+        # the places a warband holds (William, 24 Nov 2026): Marienburg's city (12) and outside it (7), which the
+        # Annual reads through the same file, the borderlands' trading post and Sartosa's 15 locales
+        held = {
+            slug: CampaignPresetEncampment.objects.filter(group__preset__slug=slug).count()
+            for slug in ("mutiny-in-marienburg", "mutiny-in-marienburg-annual", "border-town-burning", "sartosa")
+        }
+        self.assertEqual(
+            held,
+            {"mutiny-in-marienburg": 19, "mutiny-in-marienburg-annual": 19, "border-town-burning": 1, "sartosa": 15},
+        )
+        self.assertIn("encampments: 54", out.getvalue())
 
     def test_a_field_left_out_stays_null_rather_than_taking_the_apps_default(self) -> None:
         self.seed({"slug": "sartosa", "name": "Sartosa", "settings": ["Mutiny in Marienburg"]})

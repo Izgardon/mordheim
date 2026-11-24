@@ -75,7 +75,7 @@ lists, each optional; a list left out is a list the campaign has none of.
   | `Campaign points and plots` | the six that open Marienburg and Border Town Burning alike: the points, choosing a plot, changing plot, points once lost, winning the campaign, starting over |
   | `Captives` | prisoners, stragglers, who takes a captive, a captive joining the crew |
   | `Trade` / `Cargo` / `Locales` | trade deals and charters; cargo and opening a crate; playing and trading at a locale |
-  | `Encampments` / `Water` | an encampment and rebuilding it; carrying, spending, lacking and finding water |
+  | `Water` | carrying, spending, lacking and finding water |
   | `Weather` / `Fire` / `Territories` / `Boats` / `Random events` | the battle rules already grouped this way |
 
   Group only a run the book itself keeps together and a player would read in one go, and **only where the rules are

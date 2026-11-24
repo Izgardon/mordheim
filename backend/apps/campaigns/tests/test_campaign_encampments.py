@@ -77,8 +77,9 @@ class EncampmentListTests(EncampmentTestCase):
             },
         )
         self.assertEqual(fort["capabilities"], {"take": True, "raze": False, "give_up": False})
+        # his only warband holds it already: nothing to take it for
         rival = self.listed(self.rival)["groups"][0]["encampments"][1]["capabilities"]
-        self.assertEqual(rival, {"take": True, "raze": True, "give_up": True})
+        self.assertEqual(rival, {"take": False, "raze": True, "give_up": True})
 
     def test_a_manager_may_take_one_for_every_warband_his_own_first(self):
         self.grant(self.rival, "manage_encampments")
@@ -191,7 +192,10 @@ class EncampmentHoldingTests(EncampmentTestCase):
 
         response = self.take(self.player, self.warband)
 
-        self.assertEqual([w["code"] for w in response.json()["warnings"]], ["encampment_razed"])
+        self.assertEqual(
+            response.json()["warnings"],
+            [{"code": "encampment_razed", "message": "Tavern was razed: its rules say how it is rebuilt."}],
+        )
         self.assertEqual(response.json()["encampment"]["razed"], False)
 
     def test_taking_one_he_holds_already_changes_nothing(self):
