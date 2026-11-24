@@ -40,6 +40,7 @@ const SearchEverything = lazy(() => import("../../features/search/routes/SearchE
 const CampaignSettings = lazy(() => import("../../features/campaigns/routes/CampaignSettings"));
 const Encampments = lazy(() => import("../../features/campaigns/routes/Encampments"));
 const Locations = lazy(() => import("../../features/campaigns/routes/Locations"));
+const Scenarios = lazy(() => import("../../features/scenarios/routes/Scenarios"));
 
 function RootLayout() {
   return (
@@ -131,6 +132,7 @@ export const routes: RouteObject[] = [
                   // Where the locations are edited; the warband page's panel only reads them.
                   { path: "locations", element: <Locations /> },
                   { path: "encampments", element: <Encampments /> },
+                  { path: "scenarios", element: <Scenarios /> },
                   { path: "settings", element: <CampaignSettings /> },
                   // Account inside the campaign's shell, so the rail or bottom nav stays.
                   { path: "account", element: <Account inCampaign /> },

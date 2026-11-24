@@ -47,7 +47,7 @@ export const NAMELESS: Person = {
 
 const PEOPLE = [OWNER, ADMIN, PLAYER, NAMELESS];
 
-/** `GET permissions/`: the server's seven codes with labels and descriptions, in its order. */
+/** `GET permissions/`: the server's eight codes with labels and descriptions, in its order. */
 export const PERMISSION_CATALOGUE: CampaignPermission[] = [
   [
     "edit_catalogue",
@@ -67,6 +67,7 @@ export const PERMISSION_CATALOGUE: CampaignPermission[] = [
     "Add, edit and remove the campaign's encampments, and take, raze or give up any of them for any warband.",
   ],
   ["manage_locations", "Manage locations", "Add, edit and remove the campaign's locations."],
+  ["manage_scenarios", "Manage scenarios", "Add, remove and weight the campaign's scenarios."],
   [
     "manage_battles",
     "Manage battles",
@@ -112,6 +113,7 @@ export function capabilitiesFor(
     manage_warbands: holds("manage_warbands"),
     manage_encampments: Boolean(campaign.enable_encampments) && holds("manage_encampments"),
     manage_locations: Boolean(campaign.enable_locations) && holds("manage_locations"),
+    manage_scenarios: holds("manage_scenarios"),
     manage_battles: holds("manage_battles"),
   };
   if (!campaign.archived_at) {

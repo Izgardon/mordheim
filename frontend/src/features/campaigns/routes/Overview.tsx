@@ -8,6 +8,7 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useYourOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import OpenBounties from "@/features/bounties/components/OpenBounties";
 import CampaignRulesLink from "@/features/rules/components/CampaignRulesLink";
+import ScenariosLink from "@/features/scenarios/components/ScenariosLink";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { queryKeys } from "@/lib/query-keys";
 import { useTabScroll } from "@/lib/use-tab-scroll";
@@ -166,6 +167,7 @@ export default function Overview() {
       <OverviewNotices campaignId={campaignId} managesBattles={capabilities.manage_battles} />
       {stats}
       <CampaignRulesLink campaignId={campaignId} canManage={capabilities.manage_campaign_rules} />
+      <ScenariosLink campaignId={campaignId} />
       {isMobile ? (
         <>
           <div

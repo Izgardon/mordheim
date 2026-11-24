@@ -1,8 +1,10 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+import { HeadLabel } from "./ReferenceHead";
 
 /** A sortable column's heading: which way the list sorts by it (null: not by it) and its click. */
 export type ColumnSort = { direction: "asc" | "desc" | null; onSort: () => void };
@@ -14,29 +16,6 @@ const NO_COLUMNS: ReferenceColumn[] = [];
 const ColumnsContext = createContext<ReferenceColumn[]>(NO_COLUMNS);
 
 const HEAD = "py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
-
-const SORT_ICONS = { asc: ArrowUp, desc: ArrowDown, none: ArrowUpDown };
-
-/** A heading's text, or a button sorting the list by its column when it has a sort. */
-function HeadLabel({ label, sort }: { label?: string; sort?: ColumnSort }) {
-  if (!sort) return <>{label}</>;
-  const Icon = SORT_ICONS[sort.direction ?? "none"];
-  return (
-    <button
-      type="button"
-      onClick={sort.onSort}
-      aria-label={`Sort by ${label}`}
-      aria-pressed={sort.direction !== null}
-      className={cn(
-        "inline-flex items-center gap-1 uppercase hover:text-head",
-        sort.direction && "text-text2"
-      )}
-    >
-      {label}
-      <Icon className="h-3 w-3" aria-hidden="true" />
-    </button>
-  );
-}
 
 type ReferenceListProps = {
   /** The first column's heading on the web ("Item"); with `columns`, a header row shows. */
@@ -108,6 +87,8 @@ type ReferenceRowProps = {
   cells?: ReactNode[];
   /** The right side of a row with no cells (a phone): price and rarity, a fee. */
   aside?: ReactNode;
+  /** A control beside the row's button, not in it (a weight box); on the web, the last column. */
+  trailing?: ReactNode;
   /** What the open row shows. */
   children?: ReactNode;
 };
@@ -116,70 +97,89 @@ type ReferenceRowProps = {
 export function ReferenceRow(props: ReferenceRowProps) {
   const columns = useContext(ColumnsContext);
   const { open } = props;
+  const button = (
+    <button
+      type="button"
+      aria-expanded={open}
+      onClick={props.onToggle}
+      className={cn(
+        "flex min-h-14 w-full min-w-0 flex-1 items-center gap-3 bg-transparent py-2 text-left",
+        props.cells ? "px-4" : "px-3",
+        props.trailing !== undefined && "pr-0"
+      )}
+    >
+      {props.cells ? (
+        <ChevronDown
+          aria-hidden="true"
+          className={cn(
+            "h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform",
+            open ? "rotate-0" : "-rotate-90"
+          )}
+        />
+      ) : null}
+      <span className="flex min-w-0 flex-1 flex-col gap-px">
+        <span className={cn("text-[15px] font-bold", props.dim ? "text-text2" : "text-head")}>
+          {props.name}
+        </span>
+        {props.sub ? <span className="text-xs text-muted-foreground">{props.sub}</span> : null}
+        {props.warn ? (
+          <span className="text-xs font-semibold text-danger">{props.warn}</span>
+        ) : null}
+      </span>
+      {props.cells
+        ? props.cells.map((cell, index) => (
+            <span
+              key={columns[index]?.label ?? index}
+              className={cn(
+                "flex flex-col gap-px text-[13px]",
+                props.dim ? "text-muted-foreground" : "text-text2",
+                columns[index]?.className
+              )}
+            >
+              {cell}
+            </span>
+          ))
+        : null}
+      {!props.cells && props.aside ? (
+        // half the row at most, and its lines wrap as the name's do, so a long fee
+        // ("90 gc + 5 Campaign points") never squeezes the name into a column
+        // (William, 20 Nov 2026)
+        <span className="flex min-w-0 max-w-[50%] flex-col items-end text-right">
+          {props.aside}
+        </span>
+      ) : null}
+      {props.cells ? null : (
+        <ChevronDown
+          aria-hidden="true"
+          className={cn(
+            "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
+            open && "rotate-180"
+          )}
+        />
+      )}
+    </button>
+  );
   return (
     <li
       id={rowDomId(props.id)}
       className={cn("scroll-mt-24 border-t border-line first:border-t-0", open && "bg-raised")}
     >
-      <button
-        type="button"
-        aria-expanded={open}
-        onClick={props.onToggle}
-        className={cn(
-          "flex min-h-14 w-full items-center gap-3 bg-transparent py-2 text-left",
-          props.cells ? "px-4" : "px-3"
-        )}
-      >
-        {props.cells ? (
-          <ChevronDown
-            aria-hidden="true"
+      {props.trailing !== undefined ? (
+        <div className="flex items-center">
+          {button}
+          <span
             className={cn(
-              "h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform",
-              open ? "rotate-0" : "-rotate-90"
+              "flex shrink-0 items-center justify-end",
+              props.cells ? "pl-3 pr-4" : "pl-2 pr-3",
+              columns[columns.length - 1]?.className
             )}
-          />
-        ) : null}
-        <span className="flex min-w-0 flex-1 flex-col gap-px">
-          <span className={cn("text-[15px] font-bold", props.dim ? "text-text2" : "text-head")}>
-            {props.name}
+          >
+            {props.trailing}
           </span>
-          {props.sub ? <span className="text-xs text-muted-foreground">{props.sub}</span> : null}
-          {props.warn ? (
-            <span className="text-xs font-semibold text-danger">{props.warn}</span>
-          ) : null}
-        </span>
-        {props.cells
-          ? props.cells.map((cell, index) => (
-              <span
-                key={columns[index]?.label ?? index}
-                className={cn(
-                  "flex flex-col gap-px text-[13px]",
-                  props.dim ? "text-muted-foreground" : "text-text2",
-                  columns[index]?.className
-                )}
-              >
-                {cell}
-              </span>
-            ))
-          : null}
-        {!props.cells && props.aside ? (
-          // half the row at most, and its lines wrap as the name's do, so a long fee
-          // ("90 gc + 5 Campaign points") never squeezes the name into a column
-          // (William, 20 Nov 2026)
-          <span className="flex min-w-0 max-w-[50%] flex-col items-end text-right">
-            {props.aside}
-          </span>
-        ) : null}
-        {props.cells ? null : (
-          <ChevronDown
-            aria-hidden="true"
-            className={cn(
-              "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
-              open && "rotate-180"
-            )}
-          />
-        )}
-      </button>
+        </div>
+      ) : (
+        button
+      )}
       {open && props.children ? (
         <div className={props.cells ? "" : "px-3 pb-3.5"}>{props.children}</div>
       ) : null}

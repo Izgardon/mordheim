@@ -287,6 +287,8 @@ export type BattleSummary = {
   status: BattleStatus;
   scenario: string;
   scenario_link: string | null;
+  /** The campaign scenario it is played as (`GET scenarios/:id/`), null when the name was typed. */
+  scenario_id?: number | null;
   winner_warband_ids_json: number[];
   created_at: string;
   updated_at: string;
@@ -726,13 +728,15 @@ export type BattleRosterMap = Record<string, BattleParticipantRoster>;
 
 export type BattleCreatePayload = {
   scenario: string;
-  scenario_link?: string | null;
+  /** The campaign scenario picked, when one was (the name is sent as well). */
+  scenario_id?: number | null;
   participant_user_ids?: number[];
   participant_ratings?: Record<string, number | null>;
 };
 
 export type ReportBattleResultPayload = {
   scenario: string;
+  scenario_id?: number | null;
   battle_date: string;
   participant_user_ids: number[];
   winner_warband_ids: number[];

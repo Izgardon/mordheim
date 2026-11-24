@@ -74,3 +74,16 @@ describe("the rail's References and Rules", () => {
     expect(app.location()).toEqual({ pathname: `${BASE}/search`, search: "?q=halberd" });
   });
 });
+
+describe("the rail's Campaign section", () => {
+  it("leads to the overview, the battles and the campaign's scenarios (William, 24 Nov 2026)", () => {
+    renderRail(`${BASE}/scenarios`);
+
+    const campaign = screen.getByRole("group", { name: "Campaign" });
+    expect(links(campaign)).toEqual(["Overview", "Battles", "Scenarios"]);
+    expect(within(campaign).getByRole("link", { name: "Scenarios" })).toHaveAttribute(
+      "aria-current",
+      "page"
+    );
+  });
+});

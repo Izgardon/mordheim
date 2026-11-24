@@ -4,6 +4,7 @@ import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { numberedOr } from "@/features/battles/utils/battle-number";
+import ScenarioField from "@/features/scenarios/components/ScenarioField";
 import { cn } from "@/lib/utils";
 
 import { useReadyUpBeforeStart } from "../../hooks/overview/useReadyUpBeforeStart";
@@ -78,10 +79,12 @@ export default function StartBattleDialog({
       }
     >
       <div className="flex flex-col gap-4">
-        <label className={LABEL}>
-          Scenario
-          <Input value={form.scenario} onChange={(event) => form.setScenario(event.target.value)} />
-        </label>
+        <ScenarioField
+          campaignId={campaignId}
+          value={form.scenarioPick}
+          onChange={form.setScenarioPick}
+          warbands={form.warbandCount}
+        />
         {report ? (
           <label className={LABEL}>
             Played on
@@ -91,16 +94,7 @@ export default function StartBattleDialog({
               onChange={(event) => form.setBattleDate(event.target.value)}
             />
           </label>
-        ) : (
-          <label className={LABEL}>
-            Scenario link (optional)
-            <Input
-              value={form.scenarioLink}
-              placeholder="https://…"
-              onChange={(event) => form.setScenarioLink(event.target.value)}
-            />
-          </label>
-        )}
+        ) : null}
         <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
           <legend className="pb-1.5 text-xs font-bold text-muted-foreground">Who plays</legend>
           {form.eligiblePlayers.map((player) => {

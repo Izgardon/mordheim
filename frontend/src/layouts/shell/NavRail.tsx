@@ -12,6 +12,7 @@ import {
   isAftermathPath,
   OVERVIEW_LINK,
   REFERENCE_SECTIONS,
+  SCENARIOS_LINK,
   warbandLinks,
   type NavLink,
 } from "./campaign-nav";
@@ -124,6 +125,12 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
             </button>
           ) : null}
         </div>
+        <RailLink
+          to={to(SCENARIOS_LINK)}
+          label={SCENARIOS_LINK.label}
+          icon={SCENARIOS_LINK.icon}
+          current={isCurrent(SCENARIOS_LINK.path)}
+        />
       </RailSection>
 
       <RailSection title="My warband">

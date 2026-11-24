@@ -65,3 +65,10 @@ describe("My warband's links", () => {
     expect(warbandLinks({ enable_encampments: false, enable_locations: false })).toHaveLength(1);
   });
 });
+
+describe("The Scenarios page", () => {
+  it("belongs to the campaign (William, 24 Nov 2026), its title on a phone's bar", () => {
+    expect(mobileNavActiveId("/campaigns/1/scenarios")).toBe("campaign");
+    expect(campaignSectionTitle("/campaigns/1/scenarios")).toBe("Scenarios");
+  });
+});

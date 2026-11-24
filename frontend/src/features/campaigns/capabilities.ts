@@ -35,6 +35,8 @@ export const CAMPAIGN_CAPABILITIES = [
   "manage_warbands",
   "manage_encampments",
   "manage_locations",
+  // add, remove and weight the campaign's scenarios (William, 24 Nov 2026)
+  "manage_scenarios",
   "manage_battles",
 ] as const;
 

@@ -12,6 +12,8 @@ type ReferencePageProps = {
   title: string;
   /** The page's path under the campaign ("items"): its eyebrow reads from it. */
   section: string;
+  /** The eyebrow, where it isn't the section's ("Campaign" over Scenarios). */
+  eyebrow?: string;
   /** Plain buttons beside the title (Add new); on a phone, beside the search box. */
   actions?: ReactNode;
   /** The filters: search, toggles, chips. */
@@ -54,7 +56,7 @@ export default function ReferencePage(props: ReferencePageProps) {
           <header className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
-                {eyebrowOf(props.section)}
+                {props.eyebrow ?? eyebrowOf(props.section)}
               </span>
               <h1 className="m-0 font-display text-[40px] font-semibold leading-tight text-head">
                 {props.title}

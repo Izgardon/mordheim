@@ -8,13 +8,14 @@ import { createBattle, reportBattleResult } from "@/features/battles/api/battles
 import { toastBattleWarnings } from "@/features/battles/utils/battle-warnings";
 import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
-import { normalizeWebUrl } from "@/lib/url-utils";
 
 // types
+import type { ScenarioPick } from "@/features/scenarios/components/ScenarioField";
 import type { CampaignPlayer } from "../../types/campaign-types";
 
 export type BattleDialogMode = "start_battle" | "report_result";
 type Warband = NonNullable<CampaignPlayer["warband"]>;
+const NO_SCENARIO: ScenarioPick = { name: "", scenarioId: null };
 
 function getTodayInputValue() {
   const now = new Date();
@@ -52,7 +53,7 @@ type UseStartBattleFormParams = {
 };
 
 /**
- * The Start battle dialog's form: a battle to play (scenario, link, opponents) or a result to
+ * The Start battle dialog's form: a battle to play (scenario, opponents) or a result to
  * report (date, winners or No winner, decision 8). Reset each time the dialog opens; warnings the
  * server returns (campaign_not_started, decision 3) are toasted.
  */
@@ -71,8 +72,8 @@ export function useStartBattleForm({
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [selectedWinnerWarbandIds, setSelectedWinnerWarbandIds] = useState<number[]>([]);
   const [noWinner, setNoWinner] = useState(false);
-  const [scenario, setScenario] = useState("");
-  const [scenarioLink, setScenarioLink] = useState("");
+  const [pick, setPick] = useState<ScenarioPick>(NO_SCENARIO);
+  const scenario = pick.name;
   const [battleDate, setBattleDate] = useState(getTodayInputValue);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -114,8 +115,7 @@ export function useStartBattleForm({
     setSelectedWinnerWarbandIds([]);
     setNoWinner(false);
     setError("");
-    setScenario("");
-    setScenarioLink("");
+    setPick(NO_SCENARIO);
     setBattleDate(getTodayInputValue());
   }, [open, initialMode]);
 
@@ -178,13 +178,14 @@ export function useStartBattleForm({
     mode === "report_result"
       ? reportBattleResult(campaignId, {
           scenario: scenario.trim(),
+          scenario_id: pick.scenarioId,
           battle_date: battleDate,
           participant_user_ids: participantUserIds,
           winner_warband_ids: noWinner ? [] : selectedWinnerWarbandIds,
         })
       : createBattle(campaignId, {
           scenario: scenario.trim(),
-          scenario_link: normalizeWebUrl(scenarioLink) || null,
+          scenario_id: pick.scenarioId,
           participant_user_ids: participantUserIds,
           participant_ratings: participantRatings(participantUserIds, eligiblePlayerById),
         });
@@ -234,10 +235,10 @@ export function useStartBattleForm({
   return {
     mode,
     changeMode,
-    scenario,
-    setScenario,
-    scenarioLink,
-    setScenarioLink,
+    scenarioPick: pick,
+    setScenarioPick: setPick,
+    /** How many warbands play (you and those picked): what the random scenario is drawn for. */
+    warbandCount: participantUserIds.length,
     battleDate,
     setBattleDate,
     eligiblePlayers,

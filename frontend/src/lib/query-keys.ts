@@ -134,6 +134,14 @@ export const queryKeys = {
       ["campaign", campaignId, "plots", "entry", plotId] as const,
     /** Every plot the campaign can see, for Settings → Plots to pick from. */
     plotCatalogue: (campaignId: number) => ["campaign", campaignId, "plots", "catalogue"] as const,
+    /** The campaign's list of scenarios with their weights (apps/scenarios). */
+    scenarios: (campaignId: number) => ["campaign", campaignId, "scenarios"] as const,
+    /** Every scenario the campaign can see, for Add scenario to pick from. */
+    scenarioCatalogue: (campaignId: number) =>
+      ["campaign", campaignId, "scenario-catalogue"] as const,
+    /** One scenario whole (a battle's scenario). */
+    scenarioEntry: (campaignId: number, scenarioId: number) =>
+      ["campaign", campaignId, "scenario-catalogue", scenarioId] as const,
     /** The postbattle rules, the same for every battle of the campaign (broadcasts may omit them). */
     battleRules: (campaignId: number) => ["campaign", campaignId, "battle-rules"] as const,
     /** Every participant's roster for one battle (the start snapshot once it has started). */

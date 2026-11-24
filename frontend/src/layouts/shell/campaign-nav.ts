@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { LayoutGrid, Map, Shield, Swords, Tent } from "lucide-react";
+import { BookOpenText, LayoutGrid, Map, Shield, Swords, Tent } from "lucide-react";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
@@ -45,6 +45,12 @@ export const REFERENCE_SECTIONS: { title: string; links: NavLink[] }[] = [
 ];
 
 export const OVERVIEW_LINK: NavLink = { label: "Overview", path: "", icon: LayoutGrid };
+/** The campaign's scenarios (William, 24 Nov 2026), after Battles; a phone reaches them from the overview. */
+export const SCENARIOS_LINK: NavLink = {
+  label: "Scenarios",
+  path: "scenarios",
+  icon: BookOpenText,
+};
 /** Search everything's page, the field at the head of References opens. */
 const SEARCH_PATH = "search";
 export const BATTLES_ICON = Swords;
@@ -71,6 +77,7 @@ const SECTION_TITLES: Record<string, string> = {
   warbands: "Warband",
   encampments: "Encampments",
   locations: "Trade locations",
+  scenarios: "Scenarios",
   settings: "Settings",
   account: "Account",
   battles: "Battle",

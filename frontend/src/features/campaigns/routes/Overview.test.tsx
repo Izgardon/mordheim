@@ -15,6 +15,7 @@ import { cleanupApps, renderApp } from "@/test/app-routes";
 import { CAMPAIGN_ID, campaignFor, campaignSummary } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
+import { HUNT, POOL } from "@/test/scenario-fixtures";
 import { setupUser } from "@/test/user-event";
 
 // The campaign's routes load on demand; importing them first lets each lazy() resolve at once.
@@ -187,6 +188,34 @@ describe("Start a battle's players", () => {
     expect(olga).toHaveTextContent("In battle 6");
   });
 
+  it("starts a battle as a scenario of the campaign's list, drawn for the warbands picked", async () => {
+    // William, 24 Nov 2026: a picker over the list, Random scenario, and no link box
+    fakeApi.on(`GET ${BASE}/scenarios/`, [HUNT, POOL]);
+    fakeApi.on(`POST ${BASE}/scenarios/random/`, HUNT);
+    fakeApi.on(`POST ${BASE}/battles/`, { battle: { id: 99 }, participants: [], events: [] });
+    const user = setupUser();
+    renderApp(BASE);
+    await user.click(await screen.findByRole("button", { name: "Start battle" }));
+    const dialog = await screen.findByRole("dialog", { name: "Start a battle" });
+    expect(within(dialog).queryByText(/Scenario link/)).toBeNull();
+    await user.click(within(row(dialog, "Mira · Night Razors")).getByRole("checkbox"));
+
+    await user.click(within(dialog).getByRole("button", { name: "Random scenario" }));
+    expect(
+      await within(dialog).findByRole("button", { name: /Scenario: Wyrdstone Hunt/ })
+    ).toBeInTheDocument();
+    expect(fakeApi.bodyOf(`POST ${BASE}/scenarios/random/`)).toEqual({ players: 2 });
+    await user.click(within(dialog).getByRole("button", { name: "Start battle" }));
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf(`POST ${BASE}/battles/`)).toMatchObject({
+        scenario: "Wyrdstone Hunt",
+        scenario_id: 11,
+      })
+    );
+    expect(fakeApi.bodyOf(`POST ${BASE}/battles/`)).not.toHaveProperty("scenario_link");
+  });
+
   it("shows the server's refusal when a player's fight began meanwhile", async () => {
     const detail = "Mira is already fighting in Battle 7.";
     fakeApi.fail(
@@ -197,7 +226,7 @@ describe("Start a battle's players", () => {
     renderApp(BASE);
     await user.click(await screen.findByRole("button", { name: "Start battle" }));
     const dialog = await screen.findByRole("dialog", { name: "Start a battle" });
-    await user.type(within(dialog).getByLabelText("Scenario"), "Ambush");
+    await user.type(within(dialog).getByRole("combobox", { name: "Scenario" }), "Ambush");
     await user.click(within(row(dialog, "Mira · Night Razors")).getByRole("checkbox"));
     const reads = fakeApi.countOf(`GET ${BASE}/players/`);
 
