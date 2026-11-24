@@ -3,7 +3,7 @@
  * minimised under them (William, 12 Nov 2026: "in battle crit hits minimisable"). A table he
  * opens stays open on this device, so it survives the sheet re-rendering as he types.
  */
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { setupUser } from "@/test/user-event";
@@ -51,5 +51,32 @@ describe("the combat sheet's critical hit tables", () => {
     show();
 
     expect(screen.getByText(HAMMERED)).toBeInTheDocument();
+  });
+});
+
+describe("the combat sheet's layout", () => {
+  const numbers = (side: string) =>
+    within(screen.getByRole("group", { name: side }))
+      .getAllByRole("spinbutton")
+      .map((box) => box.getAttribute("aria-label"));
+
+  it("puts Yours and Theirs side by side, each picker over its own numbers", () => {
+    render(<CombatSheet kind="melee" yours={[]} theirs={[]} onOpenChange={vi.fn()} />);
+
+    const yours = screen.getByRole("group", { name: "Yours" });
+    const theirs = screen.getByRole("group", { name: "Theirs" });
+    expect(yours.parentElement).toBe(theirs.parentElement);
+    expect(yours.parentElement).toHaveClass("grid-cols-2");
+    expect(within(yours).getByRole("combobox", { name: "Yours" })).toBeInTheDocument();
+    expect(within(theirs).getByRole("combobox", { name: "Theirs" })).toBeInTheDocument();
+    expect(numbers("Yours")).toEqual(["WS", "S"]);
+    expect(numbers("Theirs")).toEqual(["WS", "T", "Sv"]);
+  });
+
+  it("asks Ranged for your BS and their T and Sv", () => {
+    render(<CombatSheet kind="ranged" yours={[]} theirs={[]} onOpenChange={vi.fn()} />);
+
+    expect(numbers("Yours")).toEqual(["BS", "S"]);
+    expect(numbers("Theirs")).toEqual(["T", "Sv"]);
   });
 });
