@@ -6,7 +6,7 @@ removal. What removal closes, battle by battle, is in `test_campaign_removal.py`
 """
 
 from apps.battles.models import Battle, BattleParticipant
-from apps.campaigns.models import Campaign, CampaignEncampment
+from apps.campaigns.models import Campaign, CampaignEncampment, CampaignEncampmentGroup
 from apps.notifications.models import Notification
 from apps.realtime.channel_auth import authorize_private_channel
 from apps.trades.models import TradeRequest
@@ -52,7 +52,10 @@ class MemberRemovalTests(CampaignTestCase):
         self.notify(self.player, Notification.TYPE_BATTLE_INVITE, battle.id)
         sent = self.post_as(self.rival, self.url("trade-requests/"), {"target_user_id": self.player.id})
         trade = TradeRequest.objects.get(id=sent.json()["id"])
-        camp = CampaignEncampment.objects.create(campaign=self.campaign, name="Dockside", owner=self.player)
+        group = CampaignEncampmentGroup.objects.create(campaign=self.campaign, name="Ward")
+        camp = CampaignEncampment.objects.create(
+            campaign=self.campaign, group=group, name="Dockside", holder=self.warband
+        )
 
         self.assertEqual(self.remove(self.owner, self.player).status_code, 204)
 
@@ -61,9 +64,9 @@ class MemberRemovalTests(CampaignTestCase):
         self.assertEqual(statuses, {BattleParticipant.STATUS_CANCELED_PREBATTLE})
         self.assertEqual(TradeRequest.objects.get(id=trade.id).status, TradeRequest.STATUS_DECLINED)
         self.assertEqual(self.listed_notifications(self.player), [])
-        listed = self.get_as(self.owner, self.url("encampments/")).data
-        owners = [(row["id"], row["owner_id"], row["owner_name"]) for row in listed]
-        self.assertEqual(owners, [(camp.id, self.player.id, "Pia")])
+        listed = self.get_as(self.owner, self.url("encampment-groups/")).data["groups"][0]["encampments"]
+        holders = [(row["id"], row["holder"]) for row in listed]
+        self.assertEqual(holders, [(camp.id, {"id": self.warband.id, "name": "Monks", "player": "Pia"})])
         self.assertTrue(Warband.objects.filter(id=self.warband.id).exists())
 
     def test_a_removed_player_loses_the_campaign_and_battle_channels(self):

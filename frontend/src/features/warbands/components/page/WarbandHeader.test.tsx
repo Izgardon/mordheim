@@ -40,7 +40,7 @@ describe("WarbandHeader's Encampment", () => {
     const router = renderHeader(true);
 
     await user.click(screen.getByRole("button", { name: "More warband actions" }));
-    await user.click(await screen.findByRole("menuitem", { name: "Encampment" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Encampments" }));
 
     expect(await screen.findByText("Encampment page")).toBeInTheDocument();
     expect(router.state.location.pathname).toBe("/campaigns/3/encampments");
@@ -53,6 +53,6 @@ describe("WarbandHeader's Encampment", () => {
     await user.click(screen.getByRole("button", { name: "More warband actions" }));
 
     expect(await screen.findByRole("menuitem", { name: "Rating breakdown" })).toBeInTheDocument();
-    expect(screen.queryByRole("menuitem", { name: "Encampment" })).toBeNull();
+    expect(screen.queryByRole("menuitem", { name: "Encampments" })).toBeNull();
   });
 });

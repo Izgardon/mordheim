@@ -10,13 +10,20 @@ import { useCampaignSave } from "./CampaignSection";
 import { setsLine } from "./campaign-preset";
 import { SettingRow, SettingsCard } from "./settings-ui";
 
-/** "55 rules and 14 charts", leaving out whichever the preset has none of. */
-function countWords(rules: number, charts: number) {
-  const parts = [
-    rules ? `${rules} ${rules === 1 ? "rule" : "rules"}` : "",
-    charts ? `${charts} ${charts === 1 ? "chart" : "charts"}` : "",
-  ].filter(Boolean);
-  return parts.join(" and ");
+/** "55 rules, 14 charts and 9 encampments", leaving out whatever the preset has none of. */
+function countWords(preset: CampaignPreset) {
+  const counts: [number, string][] = [
+    [preset.rule_count, "rule"],
+    [preset.chart_count, "chart"],
+    [preset.location_count, "location"],
+    [preset.encampment_count, "encampment"],
+  ];
+  const parts = counts
+    .filter(([count]) => count)
+    .map(([count, word]) => `${count} ${count === 1 ? word : `${word}s`}`);
+  return parts.length > 1
+    ? `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`
+    : parts.join("");
 }
 
 /** What changing to this preset would set, and what it would swap, for the confirm dialog. */
@@ -33,9 +40,9 @@ function ChangeSummary({ preset }: { preset: CampaignPreset }) {
           {`It ticks ${preset.setting_names.join(", ")} in the content in play; nothing is unticked.`}
         </p>
       ) : null}
-      {preset.rule_count || preset.chart_count ? (
+      {countWords(preset) ? (
         <p className="m-0 text-sm text-text2">
-          {`Its ${countWords(preset.rule_count, preset.chart_count)} are copied in, and the ones the campaign still holds unchanged from another published campaign are taken out. Anything you wrote or edited stays.`}
+          {`Its ${countWords(preset)} are copied in, and the ones the campaign still holds unchanged from another published campaign are taken out. Anything you wrote or edited stays.`}
         </p>
       ) : null}
     </div>
@@ -69,7 +76,7 @@ export default function CampaignPresetCard({ campaign }: { campaign: CampaignSum
     if (await save({ preset_id: changing.id })) {
       setChanging(null);
       // what it dictates moved: this card, the chart the post-game explores by and its plots; and
-      // the swap changed its rules, tables and locations
+      // the swap changed its rules, tables, locations and encampments
       for (const key of [
         queryKeys.campaign.preset(campaign.id),
         queryKeys.campaign.explorationChart(campaign.id),
@@ -77,6 +84,7 @@ export default function CampaignPresetCard({ campaign }: { campaign: CampaignSum
         queryKeys.campaign.campaignRules(campaign.id),
         queryKeys.campaign.campaignCharts(campaign.id),
         queryKeys.campaign.locations(campaign.id),
+        queryKeys.campaign.encampments(campaign.id),
       ]) {
         void queryClient.invalidateQueries({ queryKey: key });
       }

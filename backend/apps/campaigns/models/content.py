@@ -1,5 +1,5 @@
-"""The campaign's own content: its messages, house rules, campaign and battle rules, encampments and the pivotal
-moments its battles left. Its charts are `charts.py`, its locations `locations.py`.
+"""The campaign's own content: its messages, house rules, campaign, battle and encampment rules and the pivotal
+moments its battles left. Its charts are `charts.py`, its locations `locations.py`, its encampments `encampments.py`.
 """
 
 from typing import Any
@@ -63,8 +63,12 @@ class CampaignHouseRule(models.Model):
 MAX_CAMPAIGN_RULE_TEXT = 8000  # as a warband rule's (warbands/models/warband.py MAX_RULE_TEXT)
 # What a rule is about (William, 19 Nov 2026). A battle rule only matters while a game is being set up or played
 # (the weather, the ground, an encounter being triggered); a campaign rule is about the campaign between games. Both
-# are the same thing to write, read and order, so they are one table and one set of code, told apart by this.
-CAMPAIGN_RULE_KINDS = (("campaign", "Campaign rule"), ("battle", "Battle rule"))
+# are the same thing to write, read and order, so they are one table and one set of code, told apart by this. An
+# encampment rule is how encampments are held (William, 24 Nov 2026): the Encampments page shows it, the Rules page
+# never does.
+CAMPAIGN_RULE_KINDS = (("campaign", "Campaign rule"), ("battle", "Battle rule"), ("encampment", "Encampment rule"))
+ENCAMPMENT_RULE = "encampment"
+RULE_KIND_LENGTH = 10
 
 
 class CampaignRule(models.Model):
@@ -76,7 +80,7 @@ class CampaignRule(models.Model):
     the rules naming the same umbrella show as one row and open together, and a blank umbrella stands alone."""
 
     campaign = models.ForeignKey(Campaign, related_name="campaign_rules", on_delete=models.CASCADE)
-    kind = models.CharField(max_length=8, choices=CAMPAIGN_RULE_KINDS, default="campaign")
+    kind = models.CharField(max_length=RULE_KIND_LENGTH, choices=CAMPAIGN_RULE_KINDS, default="campaign")
     title = models.CharField(max_length=160)
     body = models.TextField(blank=True, default="")
     umbrella = models.CharField(max_length=120, blank=True, default="")
@@ -90,31 +94,6 @@ class CampaignRule(models.Model):
 
     def __str__(self):
         return f"{self.campaign_id}:{self.title}"
-
-
-class CampaignEncampment(models.Model):
-    campaign = models.ForeignKey(Campaign, related_name="encampments", on_delete=models.CASCADE)
-    name = models.CharField(max_length=160)
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name="campaign_encampments",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
-    description = models.TextField(blank=True, default="")
-    # soft delete by its owner or a manage_encampments holder: no longer listed (decision 9)
-    removed_at = models.DateTimeField(null=True, blank=True)
-    removed_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
-    )
-
-    class Meta:
-        db_table = "campaign_encampment"
-        ordering = ["name", "id"]
-
-    def __str__(self):
-        return f"{self.campaign_id}:{self.name}"
 
 
 def _moment_unit(model: str) -> "models.ForeignKey[Any, Any]":

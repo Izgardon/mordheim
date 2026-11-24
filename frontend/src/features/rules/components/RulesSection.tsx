@@ -50,6 +50,7 @@ export default function RulesSection({
   isMobile: boolean;
 }) {
   const [adding, setAdding] = useState<CampaignRulePayload | null>(null);
+  const noun = title.toLowerCase().replace(/s$/, "");
   const [error, setError] = useState("");
   const all = ruleRows(rules, kind);
   const shown = all.filter(
@@ -92,7 +93,7 @@ export default function RulesSection({
       {error ? <p className="m-0 text-sm text-danger">{error}</p> : null}
       {canManage && adding ? (
         <form
-          aria-label={`Add a ${title.toLowerCase().replace(/s$/, "")}`}
+          aria-label={`Add ${/^[aeiou]/.test(noun) ? "an" : "a"} ${noun}`}
           className="space-y-3 border border-accent-line bg-surface p-4"
           onSubmit={(event) => {
             event.preventDefault();

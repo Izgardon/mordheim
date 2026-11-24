@@ -22,16 +22,18 @@ from typing import Any
 from django.conf import settings as django_settings
 from django.core.management.base import CommandError
 
-from apps.campaigns.models import HERO_DEATH_ROLL_CHOICES, CampaignType
+from apps.campaigns.models import ENCAMPMENT_RULE, HERO_DEATH_ROLL_CHOICES, CampaignType
 from apps.core.seeding import clean, parse_int
 from apps.exploration.models import ExplorationChart
 from apps.warbands.models import WarbandGroup, WarbandType
 
 from .chart_sources import Skipped, one_chart, read_source, write_charts
+from .encampment_seeding import merged_encampment_groups, read_encampment_groups, write_encampment_groups
 from .location_seeding import merged_groups, read_location_groups, write_location_groups
 from .models import (
     CampaignPreset,
     CampaignPresetChart,
+    CampaignPresetEncampment,
     CampaignPresetLocation,
     CampaignPresetRule,
     CampaignPresetWarbandRule,
@@ -82,7 +84,9 @@ def read_presets(folder: Path = PRESET_SOURCES) -> list[dict[str, Any]]:
 def _rules_of(rows: Any, kind: str, name: str, label: str) -> list[dict[str, str]]:
     """One list of rules from a source file, each given `kind`: a title, its text and its umbrella."""
     if not isinstance(rows, list):
-        raise CommandError(f"{label}: {name}.json should hold a list of rules under each of rules and battle_rules.")
+        raise CommandError(
+            f"{label}: {name}.json should hold a list of rules under each of rules, battle_rules and encampment_rules."
+        )
     rules = []
     for row in rows:
         if not isinstance(row, dict) or not clean(row.get("title")):
@@ -101,12 +105,14 @@ def _rules_of(rows: Any, kind: str, name: str, label: str) -> list[dict[str, str
 
 def read_rules(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict[str, Any]]:
     """The rules of `name.json` in `folder`, in its order: the campaign rules under `rules`, then the battle rules
-    under `battle_rules` (William, 19 Nov 2026). A plain list is read as campaign rules, as the first files held."""
+    under `battle_rules` (William, 19 Nov 2026), then how its encampments are held under `encampment_rules` (William,
+    24 Nov 2026). A plain list is read as campaign rules, as the first files held."""
     data = read_source(name, label, folder)
     rows = data.get("rules") if isinstance(data, dict) else data
     rules = _rules_of(rows, "campaign", name, label)
-    if isinstance(data, dict) and data.get("battle_rules") is not None:
-        rules += _rules_of(data["battle_rules"], "battle", name, label)
+    for key, kind in (("battle_rules", "battle"), ("encampment_rules", ENCAMPMENT_RULE)):
+        if isinstance(data, dict) and data.get(key) is not None:
+            rules += _rules_of(data[key], kind, name, label)
     titles = [rule["title"].lower() for rule in rules]
     if len(set(titles)) != len(titles):
         raise CommandError(f"{label}: {name}.json holds two rules of the same title.")
@@ -234,6 +240,7 @@ def write_preset(
     _unique([chart["title"] for chart in preset_charts], name, "charts")
     titles = {chart["title"].casefold() for chart in preset_charts}
     groups = merged_groups([read_location_groups(one, name, rule_folder) for one in named], name, titles)
+    camps = merged_encampment_groups([read_encampment_groups(one, name, rule_folder) for one in named], name)
     warband_rules = [rule for one in named for rule in read_warband_rules(one, name, rule_folder)]
     warband_rules = found_warband_rules(warband_rules, name, *warbands)
     setting_ids = _setting_ids(entry, name, settings)
@@ -258,6 +265,7 @@ def write_preset(
     # a rule's own table: the same chart rows, pointed at the rule rather than standing on their own
     write_charts(preset, [t for t in tables if t], [r for r, t in zip(written, tables, strict=True) if t], keep=True)
     write_location_groups(preset, groups)  # after the charts, which its locations point to by title
+    write_encampment_groups(preset, camps)
     write_warband_rules(preset, warband_rules)
     return preset
 
@@ -270,6 +278,7 @@ class SeedResult:
     skipped: list[str] = dataclass_field(default_factory=list)  # a preset naming something we don't hold, and why
     locations: int = 0
     warband_rules: int = 0
+    encampments: int = 0
 
 
 def seed_presets(folder: Path = PRESET_SOURCES, rule_folder: Path = RULE_SOURCES) -> SeedResult:
@@ -291,7 +300,8 @@ def seed_presets(folder: Path = PRESET_SOURCES, rule_folder: Path = RULE_SOURCES
             skipped.append(str(skip))
     locations = CampaignPresetLocation.objects.filter(group__preset_id__in=seen).count()
     warband_rules = CampaignPresetWarbandRule.objects.filter(preset_id__in=seen).count()
-    return SeedResult(len(seen), _rule_count(seen), _chart_count(seen), skipped, locations, warband_rules)
+    encampments = CampaignPresetEncampment.objects.filter(group__preset_id__in=seen).count()
+    return SeedResult(len(seen), _rule_count(seen), _chart_count(seen), skipped, locations, warband_rules, encampments)
 
 
 def _rule_count(preset_ids: Iterable[int]) -> int:

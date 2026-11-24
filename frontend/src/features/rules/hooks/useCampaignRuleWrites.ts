@@ -20,15 +20,26 @@ export function movedIds(rows: { id: number }[], id: number, by: -1 | 1): number
   return ids;
 }
 
+/** The cached list a rule's answer goes into: the Rules page's, or the Encampments page's rules. */
+export type RuleStore = {
+  write: (update: (rules: CampaignRule[]) => CampaignRule[]) => void;
+  /** The list a reorder orders (the encampment rules order on their own). */
+  kind?: "encampment";
+};
+
 /**
  * The campaign rules' writes (`manage_campaign_rules`): add, edit, delete and reorder, each answer
- * written into the cached list.
+ * written into the cached list (`store`: the Rules page's unless another is given).
  */
-export function useCampaignRuleWrites(campaignId: number) {
+export function useCampaignRuleWrites(campaignId: number, store?: RuleStore) {
   const queryClient = useQueryClient();
   const key = queryKeys.campaign.campaignRules(campaignId);
-  const write = (update: (rules: CampaignRule[]) => CampaignRule[]) =>
-    queryClient.setQueryData<CampaignRule[]>(key, (rules?: CampaignRule[]) => update(rules ?? []));
+  const write =
+    store?.write ??
+    ((update: (rules: CampaignRule[]) => CampaignRule[]) =>
+      queryClient.setQueryData<CampaignRule[]>(key, (rules?: CampaignRule[]) =>
+        update(rules ?? [])
+      ));
 
   const create = useMutation({
     mutationFn: (payload: CampaignRulePayload) => createCampaignRule(campaignId, payload),
@@ -45,8 +56,8 @@ export function useCampaignRuleWrites(campaignId: number) {
     onSuccess: (_answer, id) => write((rules) => rules.filter((entry) => entry.id !== id)),
   });
   const reorder = useMutation({
-    mutationFn: (ids: number[]) => orderCampaignRules(campaignId, ids),
-    onSuccess: (rules) => queryClient.setQueryData(key, rules),
+    mutationFn: (ids: number[]) => orderCampaignRules(campaignId, ids, store?.kind),
+    onSuccess: (rules) => write(() => rules),
   });
   return { create, update, remove, reorder };
 }

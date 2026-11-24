@@ -8,6 +8,7 @@ import { WHO_CAN_KINDS, invalidateHeldCopies } from "@/lib/catalogue-queries";
 import { queryKeys, type CatalogueKind } from "@/lib/query-keys";
 import {
   useCampaignBountyChanges,
+  useCampaignEncampmentChanges,
   useCampaignCatalogueChanges,
   useCampaignUpdates,
   useCampaignWarbandChanges,
@@ -46,6 +47,8 @@ export const catalogueKindOf = (serverKind: string): CatalogueKind | null =>
  * member switched a companion, recruited creatures or sent some back to their item) marks that
  * warband's entries stale: its sheet on screen reads again, its stash, logs and the rest on view.
  * `bounty.changed` writes the bounty into the open bounties (and its chronicle entries go stale).
+ * `encampments.changed` (an encampment taken, razed or given up, or one written) reads the
+ * Encampments page again when it is on screen, and marks it stale otherwise.
  */
 export function useCampaignEvents(campaignId: number | null) {
   const queryClient = useQueryClient();
@@ -83,6 +86,11 @@ export function useCampaignEvents(campaignId: number | null) {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.campaign.warband(campaignId, warband_id),
       });
+    }
+  });
+  useCampaignEncampmentChanges(campaignId, () => {
+    if (campaignId) {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.encampments(campaignId) });
     }
   });
   // Another member posted, claimed, answered or withdrew a bounty: its row as it now stands.

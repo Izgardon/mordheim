@@ -48,6 +48,8 @@ const PRESETS = [
     sets: [],
     rule_count: 0,
     chart_count: 0,
+    location_count: 0,
+    encampment_count: 0,
   },
   {
     id: 2,
@@ -59,6 +61,8 @@ const PRESETS = [
     sets: SETS,
     rule_count: 18,
     chart_count: 4,
+    location_count: 0,
+    encampment_count: 9,
   },
 ];
 
@@ -92,7 +96,7 @@ describe("the campaign preset", () => {
     expect(screen.getByText("It sets Trade locations on · Most heroes 6.")).toBeInTheDocument();
     expect(
       screen.getByText(
-        /Its 18 rules and 4 charts are copied in, and the ones the campaign still holds/
+        /Its 18 rules, 4 charts and 9 encampments are copied in, and the ones the campaign still holds/
       )
     ).toBeInTheDocument();
     expect(screen.getByText(/Anything you wrote or edited stays/)).toBeInTheDocument();

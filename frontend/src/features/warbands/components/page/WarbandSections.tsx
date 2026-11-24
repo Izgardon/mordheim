@@ -6,6 +6,7 @@ import type { Warband } from "../../types/warband-types";
 import EditUnitForm from "../roster/EditUnitForm";
 import RosterSections from "../roster/RosterSections";
 import type { RosterUnit } from "../roster/unit-view";
+import WarbandEncampments from "../encampments/WarbandEncampments";
 import WarbandRules from "../rules/WarbandRules";
 import WarbandInfo from "./WarbandInfo";
 import WarbandTabs from "./WarbandTabs";
@@ -61,6 +62,7 @@ export default function WarbandSections(props: WarbandSectionsProps) {
                 rules={sheet.rules}
                 canEdit={canEdit}
               />
+              <WarbandEncampments campaignId={campaignId} encampments={sheet.encampments} />
             </WarbandInfo>
             <RosterSections
               warbandId={warbandId}

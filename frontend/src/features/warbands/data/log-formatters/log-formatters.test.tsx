@@ -125,6 +125,10 @@ describe("log formatters, by feature", () => {
         "trading_action:custom_dice_roll",
         "dice_roll:dice_roll",
         "location:visit",
+        "encampment:taken",
+        "encampment:lost",
+        "encampment:razed",
+        "encampment:given_up",
         "personnel:serious_injury",
         "personnel:stats_kept",
         "personnel:new_hireling",
@@ -168,6 +172,12 @@ describe("log formatters, by feature", () => {
     const expected = "Wolves rolled 3, 4 (D6) = 7 (Wyrdstone)";
     expect(textOf(log("dice_roll", "dice_roll", roll))).toBe(expected);
     expect(textOf(log("trading_action", "custom_dice_roll", roll))).toBe(expected);
+  });
+
+  it("say who took, lost, razed or gave up an encampment, in the server's words", () => {
+    const line = { encampment: "Tavern", message: "Took Tavern from Rats" };
+    expect(textOf(log("encampment", "taken", line))).toBe("Took Tavern from Rats");
+    expect(textOf(log("encampment", "razed", { encampment: "Tavern" }))).toBe("Tavern");
   });
 
   it("say which heroes visited a location", () => {

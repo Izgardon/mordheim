@@ -6,9 +6,7 @@ import {
   listCampaignActiveBattles,
   listCampaignBattleHistory,
   listCampaignChronicle,
-  listCampaignEncampments,
   listCampaignMembers,
-  listCampaignPlayerNames,
   listCampaignPlayers,
 } from "./campaigns-api";
 
@@ -37,15 +35,6 @@ export function useCampaignPlayers(campaignId: number, { enabled = true }: Toggl
   return useQuery({
     queryKey: queryKeys.campaign.players(campaignId),
     queryFn: () => listCampaignPlayers(campaignId),
-    ...listOptions(campaignId, enabled),
-  });
-}
-
-/** Ids and names only, for name pickers (PERF-41). */
-export function useCampaignPlayerNames(campaignId: number, { enabled = true }: Toggle = {}) {
-  return useQuery({
-    queryKey: queryKeys.campaign.playerNames(campaignId),
-    queryFn: () => listCampaignPlayerNames(campaignId),
     ...listOptions(campaignId, enabled),
   });
 }
@@ -93,15 +82,6 @@ export function useCampaignActiveBattles(campaignId: number, { enabled = true }:
   return useQuery({
     queryKey: queryKeys.campaign.activeBattles(campaignId),
     queryFn: () => listCampaignActiveBattles(campaignId),
-    ...listOptions(campaignId, enabled),
-  });
-}
-
-/** The encampments, read only while the page is switched on. */
-export function useCampaignEncampments(campaignId: number, { enabled = true }: Toggle = {}) {
-  return useQuery({
-    queryKey: queryKeys.campaign.encampments(campaignId),
-    queryFn: () => listCampaignEncampments(campaignId),
     ...listOptions(campaignId, enabled),
   });
 }

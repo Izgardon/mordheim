@@ -14,10 +14,17 @@ from .campaigns import (
 from .chat import CampaignChatReadView, CampaignMessageDetailView, CampaignMessagesView
 from .content import (
     CampaignCommonRulesView,
-    CampaignEncampmentDetailView,
-    CampaignEncampmentsView,
     CampaignHouseRuleDetailView,
     CampaignHouseRulesView,
+)
+from .encampments import (
+    CampaignEncampmentDetailView,
+    CampaignEncampmentGroupDetailView,
+    CampaignEncampmentGroupsView,
+    CampaignEncampmentsView,
+    EncampmentGiveUpView,
+    EncampmentRazeView,
+    EncampmentTakeView,
 )
 from .locations import (
     CampaignLocationDetailView,
@@ -58,7 +65,12 @@ __all__ = [
     "CampaignCommonRulesView",
     "CampaignDetailView",
     "CampaignEncampmentDetailView",
+    "CampaignEncampmentGroupDetailView",
+    "CampaignEncampmentGroupsView",
     "CampaignEncampmentsView",
+    "EncampmentGiveUpView",
+    "EncampmentRazeView",
+    "EncampmentTakeView",
     "CampaignHouseRuleDetailView",
     "CampaignHouseRulesView",
     "CampaignJoinCodeView",

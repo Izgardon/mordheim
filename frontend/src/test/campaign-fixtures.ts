@@ -1,6 +1,5 @@
 import type { CampaignCapability } from "@/features/campaigns/capabilities";
 import type {
-  CampaignEncampment,
   CampaignPermission,
   CampaignRole,
   CampaignSummary,
@@ -65,7 +64,7 @@ export const PERMISSION_CATALOGUE: CampaignPermission[] = [
   [
     "manage_encampments",
     "Manage encampments",
-    "Edit, reassign and remove every encampment, not just their own.",
+    "Add, edit and remove the campaign's encampments, and take, raze or give up any of them for any warband.",
   ],
   ["manage_locations", "Manage locations", "Add, edit and remove the campaign's locations."],
   [
@@ -163,15 +162,3 @@ export function campaignFor(role: CampaignRole, overrides: Partial<CampaignSumma
   const permissions = role === "player" ? ["edit_catalogue"] : ALL_PERMISSION_CODES;
   return campaignSummary({ role, permissions, ...overrides });
 }
-
-export const encampment = (overrides: Partial<CampaignEncampment> = {}): CampaignEncampment => ({
-  id: 4,
-  campaign_id: CAMPAIGN_ID,
-  name: "Sailmakers' Row",
-  owner_id: PLAYER.id,
-  owner_name: PLAYER.name,
-  owner_left: false,
-  description: "Rope, canvas and a dry place to sleep.",
-  capabilities: { edit: true },
-  ...overrides,
-});

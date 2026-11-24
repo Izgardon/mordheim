@@ -44,8 +44,11 @@ export type CampaignChartRow = {
   chart?: RuleTable | null;
 };
 
-/** What a rule is about: the campaign between games, or a game being set up and played. */
-export type CampaignRuleKind = "campaign" | "battle";
+/**
+ * What a rule is about: the campaign between games, a game being set up and played, or how its
+ * encampments are held (the Encampments page's, never the Rules page's).
+ */
+export type CampaignRuleKind = "campaign" | "battle" | "encampment";
 
 /**
  * One of the campaign's own rules, not a house rule (William, 7 Nov 2026: "more flavourful rulings

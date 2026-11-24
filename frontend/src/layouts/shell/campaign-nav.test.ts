@@ -57,7 +57,7 @@ describe("My warband's links", () => {
     const links = warbandLinks({ enable_encampments: true, enable_locations: true });
     expect(links.map((link) => [link.label, link.path])).toEqual([
       ["Warband", "warband"],
-      ["Encampment", "encampments"],
+      ["Encampments", "encampments"],
       ["Trade locations", "locations"],
     ]);
     expect(mobileNavActiveId("/campaigns/1/locations")).toBe("warband");

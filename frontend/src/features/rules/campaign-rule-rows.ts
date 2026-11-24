@@ -1,7 +1,7 @@
 import type { CampaignChart, CampaignRule, CampaignRuleKind } from "./types/rule-types";
 
 /** The prefix a kind's row keys carry, so one `?open=` can name a row on any of the three lists. */
-const PREFIX: Record<CampaignRuleKind, string> = { campaign: "r", battle: "b" };
+const PREFIX: Record<CampaignRuleKind, string> = { campaign: "r", battle: "b", encampment: "e" };
 
 const keyOf = (prefix: string, id: number, umbrella: string) =>
   umbrella.trim() ? `${prefix}u:${umbrella.trim().toLowerCase()}` : `${prefix}${id}`;

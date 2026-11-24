@@ -11,7 +11,7 @@ type WarbandHeaderProps = {
   name: string;
   stashCount: number;
   showLocations: boolean;
-  /** The ⋯ menu's Encampment: the phone's way to that page (the rail has it on the web). */
+  /** The ⋯ menu's Encampments: the phone's way to that page (the rail has it on the web). */
   showEncampment: boolean;
   onOpen: (panel: WarbandPanel) => void;
   menu: MoreMenuEntry[];
@@ -30,7 +30,7 @@ export default function WarbandHeader(props: WarbandHeaderProps) {
   const menu = props.showEncampment
     ? [
         ...props.menu,
-        { label: "Encampment", onSelect: () => navigate(`/campaigns/${id}/encampments`) },
+        { label: "Encampments", onSelect: () => navigate(`/campaigns/${id}/encampments`) },
       ]
     : props.menu;
 

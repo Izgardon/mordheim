@@ -15,33 +15,39 @@ from .campaign import (
 from .charts import CHART_DICE, MAX_CHART_ROW_TEXT, CampaignChart, CampaignChartRow
 from .content import (
     CAMPAIGN_RULE_KINDS,
+    ENCAMPMENT_RULE,
     MAX_CAMPAIGN_RULE_TEXT,
     MOMENT_UNIT_KINDS,
-    CampaignEncampment,
+    RULE_KIND_LENGTH,
     CampaignHouseRule,
     CampaignMessage,
     CampaignRule,
     PivotalMoment,
 )
+from .encampments import MAX_ENCAMPMENT_TEXT, CampaignEncampment, CampaignEncampmentGroup
 from .locations import MAX_LOCATION_RULES_TEXT, CampaignLocation, CampaignLocationChart, CampaignLocationGroup
 
 __all__ = [
     "CAMPAIGN_RULE_KINDS",
     "CHART_DICE",
     "DEFAULT_RESOURCE_NAME",
+    "ENCAMPMENT_RULE",
     "MAX_CHART_ROW_TEXT",
     "GRADES",
     "GRADE_LABELS",
     "HERO_DEATH_ROLL_CHOICES",
     "MAX_CAMPAIGN_RULE_TEXT",
+    "MAX_ENCAMPMENT_TEXT",
     "MAX_LOCATION_RULES_TEXT",
     "MOMENT_UNIT_KINDS",
     "ROLE_SLUGS",
+    "RULE_KIND_LENGTH",
     "Campaign",
     "CampaignCampaignType",
     "CampaignChart",
     "CampaignChartRow",
     "CampaignEncampment",
+    "CampaignEncampmentGroup",
     "CampaignHouseRule",
     "CampaignLocation",
     "CampaignLocationChart",

@@ -28,10 +28,13 @@ export function deleteCampaignRule(campaignId: number, ruleId: number) {
   return apiRequest<void>(`${base(campaignId)}${ruleId}/`, { method: "DELETE" });
 }
 
-/** Every rule's id in its new order; the answer is the list as it now stands. */
-export function orderCampaignRules(campaignId: number, ids: number[]) {
+/**
+ * Every rule's id on one list in its new order: the Rules page's, or with `kind` encampment the
+ * encampment rules. The answer is that list as it now stands.
+ */
+export function orderCampaignRules(campaignId: number, ids: number[], kind?: "encampment") {
   return apiRequest<CampaignRule[]>(`${base(campaignId)}order/`, {
     method: "PUT",
-    body: { ids },
+    body: kind ? { ids, kind } : { ids },
   });
 }

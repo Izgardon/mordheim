@@ -31,7 +31,7 @@ owner departs from one.
 
 ## A campaign's rules file
 
-One file per published campaign in `sources/campaign-rules/`, named by the preset's `rules` field. It holds five
+One file per published campaign in `sources/campaign-rules/`, named by the preset's `rules` field. It holds seven
 lists, each optional; a list left out is a list the campaign has none of.
 
 ```json
@@ -39,6 +39,14 @@ lists, each optional; a list left out is a list the campaign has none of.
   "rules": [{ "title": "Campaign points", "text": "…", "umbrella": "" }],
   "battle_rules": [{ "title": "Fog", "text": "…", "umbrella": "Weather" }],
   "warband_rules": [{ "title": "Dwarf drunks", "text": "…", "groups": ["Dwarfs"], "types": [] }],
+  "encampment_rules": [{ "title": "Encampments", "text": "…" }],
+  "encampment_groups": [
+    {
+      "name": "Marienburg city",
+      "description": "",
+      "encampments": [{ "name": "Tavern", "gained_by": "Seaside Situations 53", "fortified": false, "text": "…" }]
+    }
+  ],
   "charts": [
     {
       "title": "Seaside Situations",
@@ -103,3 +111,13 @@ lists, each optional; a list left out is a list the campaign has none of.
   raised before. A rule here is a campaign or battle rule no more: where the book splits one subject over both
   (the Drunks and their behaviour), join them into one warband rule, the campaign part first. A group or type we
   don't hold skips the preset, and titles are unique across the preset's files.
+- `encampment_rules` and `encampment_groups` are the places a warband holds (William, 24 Nov 2026), for a preset
+  with `enable_encampments`. `encampment_rules` are how they are held, taken, razed and rebuilt: rules of the kind
+  `encampment`, shown at the top of the Encampments page and never on the Rules page, their titles unique with the
+  other rules' across the preset's files. A group is `{name, description, encampments}`; an encampment is `{name,
+  gained_by, fortified, text}`, all but `fortified` (true or false, default false) required: `gained_by` is one
+  short line ("Exploration 11111", "Seaside Situations 53", "12 Battle Points, and the most") and `text` what
+  holding it gives, plain prose with `\n\n` between paragraphs. Nothing is applied: the app records who holds each and
+  whether it is razed. Group names are unique in a file and encampment names in the preset; a group of the same name
+  in a later file merges, its encampments appended and the earlier file's description kept. A bad shape stops the
+  seed, naming the preset and the place.

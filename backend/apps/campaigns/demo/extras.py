@@ -46,9 +46,18 @@ LOCATION_GROUPS: tuple[tuple[str, str, str, tuple[Place, ...]], ...] = (
     ),
 )
 ENCAMPMENTS = (
-    ("cap", "The Eagle's Roost", "A watchtower on the city wall, its stair barricaded."),
-    ("snikch", "The Gnawing Hole", "Tunnels under the Pit. Smells of warpstone and wet fur."),
+    "The city wall",
+    (
+        ("The Eagle's Roost", "Exploration 66", True, "A watchtower on the wall. +1 to one exploration dice."),
+        (
+            "The Gnawing Hole",
+            "Exploration 1111",
+            False,
+            "Tunnels under the Pit. Roll a D6 after each battle: 6, +1 shard.",
+        ),
+    ),
 )
+TAKEN = (("cap", "The Eagle's Roost"), ("snikch", "The Gnawing Hole"))
 CHAT = (
     ("cap", "Muster at the Merchants' Quarter at dusk. Bring rope."),
     ("snikch", "Yes-yes. Bring gold too. Skritt likes gold."),
@@ -67,12 +76,21 @@ def setting_the_scene(api: Api, demo: Demo) -> None:
         for name, rules, least, most, trading, tables in places:
             body = {"group_id": group_id, "name": name, "rules": rules, "min_heroes": least, "max_heroes": most}
             api.post(owner, f"{base}locations/", body | {"takes_trading_action": trading, "tables": tables})
-    for player, name, description in ENCAMPMENTS:
-        body = {"name": name, "owner_id": demo.users[player].id, "description": description}
-        api.post(owner, f"{base}encampments/", body)
+    group_name, camps = ENCAMPMENTS
+    group_id = api.post(owner, f"{base}encampment-groups/", {"name": group_name})["id"]
+    for name, gained_by, fortified, text in camps:
+        body = {"group_id": group_id, "name": name, "gained_by": gained_by, "fortified": fortified, "text": text}
+        demo.encampments[name] = api.post(owner, f"{base}encampments/", body)["id"]
     rule = {"title": "Wyrdstone fever", "description": "A double 1 on the exploration dice: one hero misses a game."}
     api.post(owner, f"{base}rules/", rule)
     chat(api, demo, CHAT[:2])
+
+
+def take_encampments(api: Api, demo: Demo) -> None:
+    """The players' warbands take the encampments they found on the first night."""
+    for player, name in TAKEN:
+        body = {"warband_id": demo.warbands[player]}
+        api.post(demo.users[player], f"campaigns/{demo.campaign_id}/encampments/{demo.encampments[name]}/take/", body)
 
 
 def chat(api: Api, demo: Demo, lines: tuple[tuple[str, str], ...]) -> None:

@@ -28,6 +28,8 @@ const preset = (changes: Partial<CampaignPreset> = {}): CampaignPreset => ({
   ],
   rule_count: 18,
   chart_count: 0,
+  location_count: 0,
+  encampment_count: 0,
   ...changes,
 });
 

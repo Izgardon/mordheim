@@ -4,7 +4,7 @@
  * warband rules used to sit above the tab bar, so every tab opened under them; they are now the
  * top of the Roster tab, and Treasury, Backstory and Log open with nothing above them.
  */
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -39,6 +39,7 @@ const sheet = {
   henchmenGroups: [],
   hirelings: [],
   rules: [{ id: 2, title: "5 CP: Rung 5", description: "What 5 gives." }],
+  encampments: [{ id: 8, name: "Old Fort", fortified: true }],
   plot: {
     id: 4,
     name: "Drowning the Witch",
@@ -92,6 +93,12 @@ describe("the warband page's sections", () => {
     expect(screen.getByRole("region", { name: "Resources" })).toBeVisible();
     expect(screen.getByRole("region", { name: "Campaign points" })).toBeVisible();
     expect(screen.getByRole("region", { name: "Warband rules" })).toBeVisible();
+    // what it holds, each opening the encampment on the Encampments page
+    expect(
+      within(screen.getByRole("region", { name: "Encampments" })).getByRole("button", {
+        name: /Old Fort/,
+      })
+    ).toHaveTextContent("Fortified");
     // the tab bar comes first: nothing of the Roster tab's is above it
     expect(bar.compareDocumentPosition(screen.getByRole("region", { name: "Resources" }))).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING

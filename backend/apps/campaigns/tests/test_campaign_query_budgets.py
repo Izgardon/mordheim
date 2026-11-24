@@ -14,7 +14,10 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.battles.models import Battle, BattleParticipant
 from apps.campaigns.models import (
+    CampaignChart,
+    CampaignChartRow,
     CampaignEncampment,
+    CampaignEncampmentGroup,
     CampaignHouseRule,
     CampaignLocation,
     CampaignLocationGroup,
@@ -43,7 +46,9 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
     "members": ("admin", "members/", 4),
     "permissions": ("player", "permissions/", 1),  # served from the constants (BUG-15)
     "messages": ("player", "messages/", 2),
-    "encampments": ("player", "encampments/", 2),  # the feature flag comes with the membership
+    # the warbands he may take one for, the groups, their encampments with their holders, and the encampment rules
+    # with their own tables and those's results (the feature flag comes with the membership)
+    "encampments": ("player", "encampment-groups/", 7),
     # the groups, their locations, those's own tables, the tables' results and their tables, and the links
     "location groups": ("player", "location-groups/", 8),
     "house rules": ("player", "rules/", 2),
@@ -60,6 +65,8 @@ JOIN_BUDGET = 9  # 7 queries + its transaction (BUG-49: checks and insert under 
 class CampaignQueryBudgetTests(CampaignTestCase):
     """The shared campaign with a little of everything each page lists."""
 
+    camps: CampaignEncampmentGroup
+
     @classmethod
     def setUpTestData(cls) -> None:
         super().setUpTestData()
@@ -67,9 +74,15 @@ class CampaignQueryBudgetTests(CampaignTestCase):
         campaign.settings.enable_encampments = campaign.settings.enable_locations = True
         campaign.settings.save()
         group = CampaignLocationGroup.objects.create(campaign=campaign, name="Old Town")
-        for user in (cls.player, cls.rival):
+        cls.camps = CampaignEncampmentGroup.objects.create(campaign=campaign, name="The wall")
+        rule = CampaignRule.objects.create(campaign=campaign, kind="encampment", title="Holding")
+        table = CampaignChart.objects.create(campaign=campaign, rule=rule, title="Holding", dice="D6")
+        CampaignChartRow.objects.create(chart=table, result="1", text="Lost.")
+        for user, band in ((cls.player, cls.warband), (cls.rival, cls.rival_warband)):
             CampaignMessage.objects.create(campaign=campaign, user=user, username=user.first_name, body="Hi")
-            CampaignEncampment.objects.create(campaign=campaign, name=f"Camp {user.first_name}", owner=user)
+            CampaignEncampment.objects.create(
+                campaign=campaign, group=cls.camps, name=f"Camp {user.first_name}", holder=band
+            )
             CampaignLocation.objects.create(campaign=campaign, group=group, name=f"Ruin {user.first_name}")
         CampaignHouseRule.objects.create(campaign=campaign, title="No running")
         CampaignRule.objects.create(campaign=campaign, title="Curfew")
@@ -121,9 +134,13 @@ class CampaignQueryBudgetTests(CampaignTestCase):
         for index in range(6):
             user = make_user(f"extra{index}@example.com", f"Extra {index}")
             CampaignMembership.objects.create(campaign=self.campaign, user=user, role=player_role)
-            Warband.objects.create(campaign=self.campaign, user=user, name=f"Band {index}")
+            band = Warband.objects.create(campaign=self.campaign, user=user, name=f"Band {index}")
             CampaignMessage.objects.create(campaign=self.campaign, user=user, username=user.first_name, body="Hi")
-            CampaignEncampment.objects.create(campaign=self.campaign, name=f"Camp {index}", owner=user)
+            CampaignEncampment.objects.create(
+                campaign=self.campaign, group=self.camps, name=f"Camp {index}", holder=band
+            )
+            camps = CampaignEncampmentGroup.objects.create(campaign=self.campaign, name=f"Ward {index}")
+            CampaignEncampment.objects.create(campaign=self.campaign, group=camps, name=f"Tower {index}")
         self._battle(Battle.STATUS_ENDED)
         self._battle(Battle.STATUS_INVITING)
         self.assertEqual(Warband.objects.filter(campaign=self.campaign).count(), 8)
@@ -162,15 +179,6 @@ class CampaignQueryBudgetTests(CampaignTestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(len(captured), 1)
-
-    def test_a_player_adds_an_encampment_in_two_queries(self):
-        # decision 9: any member adds one, owned by himself by default; the answer names him without reading him
-        self.client.force_authenticate(user=self.player)
-        with CaptureQueriesContext(connection) as captured:
-            response = self.client.post(self.url("encampments/"), {"name": "Tent"}, format="json")
-
-        self.assertEqual((response.status_code, response.json()["owner_name"]), (201, "Pia"))
-        self.assertEqual(len(captured), 2)  # the access read and the INSERT
 
     def test_history_reads_only_the_participant_columns_it_shows(self):
         # PERF-45: the participants prefetch read every JSON column of every participant

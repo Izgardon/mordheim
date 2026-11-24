@@ -14,6 +14,8 @@ from .views import (
     CampaignCommonRulesView,
     CampaignDetailView,
     CampaignEncampmentDetailView,
+    CampaignEncampmentGroupDetailView,
+    CampaignEncampmentGroupsView,
     CampaignEncampmentsView,
     CampaignHouseRuleDetailView,
     CampaignHouseRulesView,
@@ -41,6 +43,9 @@ from .views import (
     CampaignRulesView,
     CampaignSearchView,
     CampaignTopKillersView,
+    EncampmentGiveUpView,
+    EncampmentRazeView,
+    EncampmentTakeView,
     JoinCampaignView,
 )
 
@@ -102,6 +107,31 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/encampments/<int:encampment_id>/",
         CampaignEncampmentDetailView.as_view(),
         name="campaigns-encampments-detail",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/encampments/<int:encampment_id>/take/",
+        EncampmentTakeView.as_view(),
+        name="campaigns-encampments-take",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/encampments/<int:encampment_id>/raze/",
+        EncampmentRazeView.as_view(),
+        name="campaigns-encampments-raze",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/encampments/<int:encampment_id>/give-up/",
+        EncampmentGiveUpView.as_view(),
+        name="campaigns-encampments-give-up",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/encampment-groups/",
+        CampaignEncampmentGroupsView.as_view(),
+        name="campaigns-encampment-groups",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/encampment-groups/<int:group_id>/",
+        CampaignEncampmentGroupDetailView.as_view(),
+        name="campaigns-encampment-groups-detail",
     ),
     path(
         "campaigns/<int:campaign_id>/location-groups/",

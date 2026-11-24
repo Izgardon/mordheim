@@ -120,9 +120,19 @@ def with_feature(flag: str, code: str) -> Rule:
     return switched_on_and_holds
 
 
-def encampment_owner_or_manager(access: CampaignAccess, obj: Any = None) -> bool:
-    """The encampment is his, or he holds manage_encampments (decision 9; the view has checked its page is on)."""
-    return access.has("manage_encampments") or (obj is not None and obj.owner_id == access.user_id)
+def takes_for(access: CampaignAccess, obj: Any = None) -> bool:
+    """The warband (`obj`) taking an encampment is his, or he holds manage_encampments (William, 24 Nov 2026: anyone
+    takes one, whoever holds it now; the view has checked the Encampments page is on)."""
+    return access.has("manage_encampments") or (obj is not None and obj.user_id == access.user_id)
+
+
+def holds_or_manages(access: CampaignAccess, obj: Any = None) -> bool:
+    """The encampment (`obj`) is held by a warband of his, or he holds manage_encampments: who razes it or gives it
+    up."""
+    if access.has("manage_encampments"):
+        return True
+    holder = getattr(obj, "holder", None) if obj is not None else None
+    return holder is not None and holder.user_id == access.user_id
 
 
 ROLE_RULES: Mapping[str, Rule] = {
@@ -150,7 +160,8 @@ CAMPAIGN_RULES: Mapping[str, Rule] = {
     "view": member,
     **ROLE_RULES,
     **CODE_RULES,
-    "edit_encampment": encampment_owner_or_manager,  # edit, reassign, remove (object rule)
+    "take_encampment": takes_for,  # for a warband (object rule)
+    "change_holding": holds_or_manages,  # raze it or give it up (object rule)
 }
 CAPABILITIES: tuple[str, ...] = (*ROLE_RULES, *CODE_RULES)  # the flags: every rule but view and object rules
 # what an archived campaign still lets its members do (everything else answers 403 campaign_archived)

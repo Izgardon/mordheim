@@ -154,6 +154,14 @@ def send_catalogue_changed(campaign_id: int, kind: str, socket_id: str | None = 
     return _trigger(get_campaign_events_channel_name(campaign_id), "catalogue.changed", {"kind": kind}, socket_id)
 
 
+def send_encampments_changed(campaign_id: int, socket_id: str | None = None) -> bool:
+    """`encampments.changed` on the campaign's events channel, after commit: an encampment taken, razed or given up,
+    or a group or encampment written, so every member's open Encampments page reads the list again. It names
+    nothing, because the list is read whole and each row's capabilities are its reader's own. The writer's own
+    socket is skipped: it has the answer."""
+    return _trigger(get_campaign_events_channel_name(campaign_id), "encampments.changed", {}, socket_id)
+
+
 def send_bounty_changed(campaign_id: int, bounty: dict, socket_id: str | None = None) -> bool:
     """`bounty.changed` on the campaign's events channel, after commit: a bounty posted, claimed, answered, paid or
     withdrawn, as its payload (it has nothing of any reader's own), so every member's list updates in place. The

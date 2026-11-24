@@ -4,6 +4,7 @@ member reads them; its owner and admins (`manage_campaign_rules`) add, edit, reo
 from rest_framework import status
 from rest_framework.response import Response
 
+from ..models import ENCAMPMENT_RULE
 from ..serializers.content import CampaignRuleOrderSerializer, CampaignRuleSerializer
 from ..services import campaign_rules
 from .base import CampaignScopedView
@@ -12,12 +13,13 @@ WRITE = "manage_campaign_rules"
 
 
 class CampaignRulesView(CampaignScopedView):
-    """GET: the rules in their order. POST: add one, last."""
+    """GET: the Rules page's rules (every kind but the encampment rules, which the Encampments page reads) in their
+    order. POST: add one of any kind, last."""
 
     rules = {"GET": "view", "POST": WRITE}
 
     def get(self, request, campaign_id):
-        return Response(CampaignRuleSerializer(campaign_rules.campaign_rules(campaign_id), many=True).data)
+        return Response(CampaignRuleSerializer(campaign_rules.rules_page(campaign_id), many=True).data)
 
     def post(self, request, campaign_id):
         serializer = CampaignRuleSerializer(data=request.data)
@@ -47,12 +49,14 @@ class CampaignRuleDetailView(CampaignScopedView):
 
 
 class CampaignRuleOrderView(CampaignScopedView):
-    """PUT {ids}: every rule's id in its new order; the answer is the list as it now stands."""
+    """PUT {ids, kind}: every rule's id on one list in its new order, the Rules page's, or with `kind` encampment the
+    encampment rules; the answer is that list as it now stands."""
 
     rules = {"PUT": WRITE}
 
     def put(self, request, campaign_id):
         serializer = CampaignRuleOrderSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        rules = campaign_rules.reorder(campaign_id, serializer.validated_data["ids"])
+        encampments = serializer.validated_data.get("kind") == ENCAMPMENT_RULE
+        rules = campaign_rules.reorder(campaign_id, serializer.validated_data["ids"], encampments)
         return Response(CampaignRuleSerializer(rules, many=True).data)

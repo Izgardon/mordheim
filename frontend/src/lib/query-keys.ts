@@ -42,8 +42,6 @@ export const queryKeys = {
     permissionCatalogue: (campaignId: number) => ["campaign", campaignId, "permissions"] as const,
     /** Every member with their warband, rating and battle-busy fields (the overview's roster). */
     players: (campaignId: number) => ["campaign", campaignId, "players"] as const,
-    /** Members' ids and names only (`players/?fields=basic`), for name pickers (PERF-41). */
-    playerNames: (campaignId: number) => ["campaign", campaignId, "players", "basic"] as const,
     battleHistory: (campaignId: number) => ["campaign", campaignId, "battle-history"] as const,
     /** One ended battle round by round and its aftermath (the Battles page's open row). */
     battleRecord: (campaignId: number, battleId: number) =>
@@ -61,6 +59,7 @@ export const queryKeys = {
     members: (campaignId: number) => ["campaign", campaignId, "members"] as const,
     /** Open battles a battle manager can act on (Settings → Active Battles, manage_battles). */
     activeBattles: (campaignId: number) => ["campaign", campaignId, "battles", "active"] as const,
+    /** Its encampment rules, groups and encampments, and the warbands you may take one for. */
     encampments: (campaignId: number) => ["campaign", campaignId, "encampments"] as const,
     /** The campaign's location groups with their locations (the page, the warband's panel, Search everything). */
     locations: (campaignId: number) => ["campaign", campaignId, "locations"] as const,

@@ -10,7 +10,11 @@ import {
 } from "../../api/warband-queries";
 
 import type { Unit, UnitKindKey } from "../../types/units";
-import { readCapabilities, type WarbandSheet } from "../../types/warband-sheet";
+import {
+  readCapabilities,
+  type HeldEncampment,
+  type WarbandSheet,
+} from "../../types/warband-sheet";
 import type { Warband, WarbandPlot, WarbandRule } from "../../types/warband-types";
 
 type UseWarbandSheetOptions = {
@@ -33,6 +37,7 @@ const NO_HEROES: Unit<"hero">[] = [];
 const NO_GROUPS: Unit<"henchmen_group">[] = [];
 const NO_HIRELINGS: Unit<"hireling">[] = [];
 const NO_RULES: WarbandRule[] = [];
+const NO_ENCAMPMENTS: HeldEncampment[] = [];
 
 const LOAD_ERROR = "Unable to load warband";
 const messageOf = (error: unknown) =>
@@ -113,6 +118,8 @@ export function useWarbandSheet({ campaignId, hasCampaignId, warbandId }: UseWar
     henchmenGroups: data?.henchmen_groups ?? NO_GROUPS,
     hirelings: data?.hirelings ?? NO_HIRELINGS,
     rules: data?.rules ?? NO_RULES,
+    /** The encampments it holds (none while the campaign has Encampments off). */
+    encampments: data?.encampments ?? NO_ENCAMPMENTS,
     /** The plot it follows, with its ladder for the track (apps/plots); null: none. */
     plot: (data?.plot ?? null) as WarbandPlot | null,
     isLoading,
