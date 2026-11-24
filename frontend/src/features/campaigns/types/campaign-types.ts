@@ -147,9 +147,6 @@ export type CampaignPlayer = {
   } | null;
 };
 
-/** `GET players/?fields=basic`: just who is in the campaign, for name pickers (PERF-41). */
-export type CampaignPlayerName = Pick<CampaignPlayer, "id" | "name">;
-
 export type CampaignBattleHistoryParticipant = {
   warband_id: number;
   warband_name: string;
@@ -256,25 +253,6 @@ export type CampaignActiveBattle = {
 /** Who removed a post: an owner or admin, or its author (decision 8). */
 export type PostRemovedBy = "admin" | "author";
 
-export type CampaignEncampment = {
-  id: number;
-  campaign_id: number;
-  name: string;
-  owner_id: number | null;
-  owner_name: string | null;
-  /** The owner has left the campaign (shown as "(left)"). */
-  owner_left?: boolean;
-  description: string;
-  /** Whether you may edit, reassign and remove it: its owner, or manage_encampments. */
-  capabilities?: { edit?: boolean };
-};
-
-export type CampaignEncampmentPayload = {
-  name: string;
-  owner_id?: number | null;
-  description?: string;
-};
-
 export type CampaignMember = {
   id: number;
   name: string;
@@ -372,6 +350,8 @@ export type CampaignPreset = {
   rule_count: number;
   /** How many standalone charts it holds: a table belonging to a rule or a result rides with its owner. */
   chart_count: number;
+  location_count: number;
+  encampment_count: number;
 };
 
 /**

@@ -9,7 +9,12 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
-from apps.campaign_presets.models import CampaignPreset, CampaignPresetRule, CampaignPresetWarbandRule
+from apps.campaign_presets.models import (
+    CampaignPreset,
+    CampaignPresetEncampment,
+    CampaignPresetRule,
+    CampaignPresetWarbandRule,
+)
 from apps.campaign_presets.seeding import SeedResult, seed_presets
 from apps.campaigns.models import CampaignType
 from apps.exploration.models import ExplorationChart
@@ -81,8 +86,9 @@ class PresetSeederTests(TestCase):
         self.assertEqual(
             (sum(1 for rule in rules if rule.kind == "campaign"), sum(1 for rule in rules if rule.kind == "battle")),
             # one battle rule more than the book's chapters: the Weather umbrella opens with the roll itself, which
-            # nothing told you to make (William, 20 Nov 2026)
-            (17, 39),
+            # nothing told you to make (William, 20 Nov 2026); its two Encampments rules are the Encampments page's
+            # holding rules now, not campaign rules (William, 24 Nov 2026)
+            (15, 39),
         )
         self.assertEqual(rules[0].title, "Campaign points")
         charts = list(marienburg.charts.prefetch_related("rows").select_related("row__chart"))
@@ -154,13 +160,15 @@ class PresetSeederTests(TestCase):
             # Border Town Burning: its objectives chapter is campaign points, and its injury chart names a D66 result
             # one battle rule fewer than the book's chapters: its Perilous phenomenon rule only repeated the
             # chart's own trigger, so the chart says it (William, 20 Nov 2026); and one more for the Weather
-            # umbrella's opening roll, which nothing told you to make
-            "border-town-burning": (None, None, True, None, None, "d66", 23),
+            # umbrella's opening roll, which nothing told you to make; its Abandoned Trading Post is an encampment
+            # (William, 24 Nov 2026)
+            "border-town-burning": (None, True, True, None, None, "d66", 23),
             # Khemri dictates its chart and nothing else: it points at the rulebook for everything structural
             "khemri": (None, None, None, None, None, "", 20),
             # Sartosa: its Locales are the campaign's places, and pressganging names a D66 result
-            # Locations off (William, 20 Nov 2026): its locales are a document of their own, not the campaign's places
-            "sartosa": (False, None, None, None, None, "d66", 35),
+            # Locations off (William, 20 Nov 2026): its locales are a document of their own, not the campaign's places;
+            # they are its encampments, and its two Locales rules the Encampments page's (William, 24 Nov 2026)
+            "sartosa": (False, True, None, None, None, "d66", 33),
         }
         for slug, row in expected.items():
             preset = presets[slug]
@@ -172,12 +180,25 @@ class PresetSeederTests(TestCase):
                     preset.enable_blood_pacts,
                     preset.max_heroes,
                     preset.hero_death_roll,
-                    preset.rules.count(),
+                    preset.rules.exclude(kind="encampment").count(),
                 ),
                 row,
                 slug,
             )
             self.assertEqual(preset.exploration_chart_id, ExplorationChart.objects.get(slug=slug).pk, slug)
+        # Sartosa's two Locales rules are its encampment rules, read on the Encampments page
+        self.assertEqual(presets["sartosa"].rules.filter(kind="encampment").count(), 2)
+        # the places a warband holds (William, 24 Nov 2026): Marienburg's city (12) and outside it (7), which the
+        # Annual reads through the same file, the borderlands' trading post and Sartosa's 15 locales
+        held = {
+            slug: CampaignPresetEncampment.objects.filter(group__preset__slug=slug).count()
+            for slug in ("mutiny-in-marienburg", "mutiny-in-marienburg-annual", "border-town-burning", "sartosa")
+        }
+        self.assertEqual(
+            held,
+            {"mutiny-in-marienburg": 19, "mutiny-in-marienburg-annual": 19, "border-town-burning": 1, "sartosa": 15},
+        )
+        self.assertIn("encampments: 54", out.getvalue())
 
     def test_a_field_left_out_stays_null_rather_than_taking_the_apps_default(self) -> None:
         self.seed({"slug": "sartosa", "name": "Sartosa", "settings": ["Mutiny in Marienburg"]})

@@ -1,71 +1,20 @@
-"""Campaign content: encampments and house rules."""
+"""Campaign content: house rules."""
 
 from rest_framework import status
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from ..effects import common_rules
 from ..models import CampaignHouseRule
 from ..serializers.content import (
-    CampaignEncampmentSerializer,
-    CampaignEncampmentWriteSerializer,
     CampaignHouseRuleCreateSerializer,
     CampaignHouseRuleSerializer,
 )
-from ..services import encampments, house_rules
+from ..services import house_rules
 from .base import CampaignScopedView
 
 
 def not_found() -> Response:
     return Response({"detail": "Not found"}, status=404)
-
-
-class CampaignEncampmentsView(CampaignScopedView):
-    """GET: the encampments. POST: any member adds one, owned by the member he picks (by default himself). Both need
-    the Encampments page switched on (decision 9, CAMP-TWEAK-08)."""
-
-    feature_flag = "enable_encampments"
-    rules = {"GET": "view", "POST": "view"}
-
-    def get(self, request, campaign_id):
-        rows = encampments.encampments(campaign_id)
-        return Response(CampaignEncampmentSerializer(rows, many=True, context={"access": self.access}).data)
-
-    def post(self, request, campaign_id):
-        serializer = CampaignEncampmentWriteSerializer(data=request.data, context={"campaign_id": campaign_id})
-        serializer.is_valid(raise_exception=True)
-        entry = encampments.create(campaign_id, request.user, serializer.validated_data)
-        answer = CampaignEncampmentSerializer(entry, context={"access": self.access}).data
-        return Response(answer, status=status.HTTP_201_CREATED)
-
-
-class CampaignEncampmentDetailView(CampaignScopedView):
-    """PATCH: edit or reassign an encampment. DELETE: remove it (a soft delete). Its owner, or manage_encampments,
-    with the page switched on (decision 9)."""
-
-    feature_flag = "enable_encampments"
-    rules = {"PATCH": "view", "DELETE": "view"}  # then its owner or manage_encampments, once it is found
-
-    def patch(self, request, campaign_id, encampment_id):
-        entry = self.encampment(campaign_id, encampment_id)
-        serializer = CampaignEncampmentWriteSerializer(
-            entry, data=request.data, partial=True, context={"campaign_id": campaign_id}
-        )
-        serializer.is_valid(raise_exception=True)
-        entry = encampments.update(entry, serializer.validated_data)
-        return Response(CampaignEncampmentSerializer(entry, context={"access": self.access}).data)
-
-    def delete(self, request, campaign_id, encampment_id):
-        encampments.remove(self.encampment(campaign_id, encampment_id), request.user)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def encampment(self, campaign_id, encampment_id):
-        """The listed encampment, 404 otherwise; 403 unless the caller may change it."""
-        entry = encampments.encampments(campaign_id).filter(id=encampment_id).first()
-        if not entry:
-            raise NotFound("Not found")
-        self.check_rule("edit_encampment", entry)
-        return entry
 
 
 class CampaignHouseRulesView(CampaignScopedView):

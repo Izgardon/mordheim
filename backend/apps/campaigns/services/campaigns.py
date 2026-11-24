@@ -9,6 +9,7 @@ from django.db import transaction
 
 from apps.campaign_presets.services import apply as presets_apply
 from apps.campaign_presets.services import charts as preset_charts
+from apps.campaign_presets.services import encampments as preset_encampments
 from apps.campaign_presets.services import locations as preset_locations
 from apps.campaign_presets.services import rules as preset_rules
 from apps.campaign_presets.services.skill_wordings import apply_skill_wordings
@@ -83,6 +84,7 @@ def create_campaign(owner: Any, validated: dict[str, Any]) -> Campaign:
         preset_rules.copy_rules(campaign, preset)
         preset_charts.copy_charts(campaign, preset)
         preset_locations.copy_locations(campaign, preset)  # after the charts, which its locations point to
+        preset_encampments.copy_encampments(campaign, preset)
         apply_skill_wordings(campaign.pk, preset)  # its own wording of book skills (the Annual's Mighty Blow)
         CampaignMembership.objects.create(campaign=campaign, user=owner, role_id=codes.role_ref(OWNER))
     return campaign

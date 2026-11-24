@@ -42,6 +42,7 @@ class Demo:
     wyrdstone: dict[str, int] = field(default_factory=dict)  # player handle -> its default resource (Wyrdstone)
     units: dict[str, Unit] = field(default_factory=dict)
     groups: dict[str, int] = field(default_factory=dict)  # group handle -> group id
+    encampments: dict[str, int] = field(default_factory=dict)  # encampment name -> id
     book: Book = field(default_factory=Book)
     notes: list[str] = field(default_factory=list)  # advances the post-game skipped
 

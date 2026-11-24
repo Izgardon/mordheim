@@ -28,6 +28,6 @@ class Command(BaseCommand):
             self.style.SUCCESS(
                 f"Campaign presets import complete. Presets: {result.presets}, rules: {result.rules}, "
                 f"charts: {result.charts}, locations: {result.locations}, warband rules: {result.warband_rules}, "
-                f"skipped: {len(result.skipped)}"
+                f"encampments: {result.encampments}, skipped: {len(result.skipped)}"
             )
         )

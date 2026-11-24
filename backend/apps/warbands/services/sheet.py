@@ -10,6 +10,7 @@ from typing import Any
 
 from django.db.models import prefetch_related_objects
 
+from apps.campaigns.services.encampments import held_by
 from apps.plots.selectors import warband_plot
 from apps.warband_templates.services.item_names import template_item_names
 from apps.warbands.models import Warband
@@ -75,6 +76,11 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
     )
 
 
+def _encampments(warband: Warband) -> list[dict[str, Any]]:
+    settings = getattr(warband.campaign, "settings", None)
+    return held_by(warband) if settings is not None and settings.enable_encampments else []
+
+
 def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, Any]:
     # Each kind's roster with its loadout (summary prefetch), then the item details once for all of them.
     rosters: dict[str, list[Any]] = {key: list(kind.roster(warband, detail=False)) for key, kind in KINDS.items()}
@@ -96,6 +102,8 @@ def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, 
         "plot": warband_plot(warband.plot_id),
         # the list's own name for an item, by fighter key, from its template (the templates plan, question 12)
         "item_names": template_item_names(warband),
+        # what it holds while the campaign has Encampments on (one query); [] while they are off
+        "encampments": _encampments(warband),
         **{kind.collection: UNIT_SERIALIZERS[key].detail(rosters[key], many=True).data for key, kind in KINDS.items()},
     }
 

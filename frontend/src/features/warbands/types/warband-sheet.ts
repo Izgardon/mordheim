@@ -36,6 +36,9 @@ export function readCapabilities(raw: unknown): WarbandCapabilities {
  * `GET /warbands/<id>/sheet/` (PERF-24): the whole warband page in one request. `warband` and
  * `summary` are the detail and summary bodies, and the unit lists are in the detail shape.
  */
+/** One encampment a warband holds, as its sheet lists it. */
+export type HeldEncampment = { id: number; name: string; fortified: boolean };
+
 export type WarbandSheet = {
   warband: Warband;
   summary: WarbandUnitsSummary;
@@ -46,6 +49,8 @@ export type WarbandSheet = {
   plot?: WarbandPlot | null;
   /** The list's own name for an item, by fighter key and item id, from its template ("Jambiya"). */
   item_names?: Record<string, Record<string, string>>;
+  /** The encampments it holds while the campaign has Encampments on; [] while they are off. */
+  encampments?: HeldEncampment[];
   heroes: WarbandHero[];
   henchmen_groups: HenchmenGroup[];
   hirelings: WarbandHireling[];

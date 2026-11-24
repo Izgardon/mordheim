@@ -24,7 +24,9 @@ from apps.campaigns.models import (
     HERO_DEATH_ROLL_CHOICES,
     MAX_CAMPAIGN_RULE_TEXT,
     MAX_CHART_ROW_TEXT,
+    MAX_ENCAMPMENT_TEXT,
     MAX_LOCATION_RULES_TEXT,
+    RULE_KIND_LENGTH,
 )
 from apps.warbands.models.warband import MAX_RULE_TEXT
 
@@ -76,7 +78,7 @@ class CampaignPresetRule(models.Model):
 
     preset = models.ForeignKey(CampaignPreset, related_name="rules", on_delete=models.CASCADE)
     order = models.PositiveIntegerField(default=0)
-    kind = models.CharField(max_length=8, choices=CAMPAIGN_RULE_KINDS, default="campaign")
+    kind = models.CharField(max_length=RULE_KIND_LENGTH, choices=CAMPAIGN_RULE_KINDS, default="campaign")
     title = models.CharField(max_length=160)
     text = models.TextField(max_length=MAX_CAMPAIGN_RULE_TEXT, blank=True, default="")
     umbrella = models.CharField(max_length=120, blank=True, default="")
@@ -209,6 +211,44 @@ class CampaignPresetLocationChart(models.Model):
 
     def __str__(self) -> str:
         return f"{self.location_id}:{self.chart_id}"
+
+
+class CampaignPresetEncampmentGroup(models.Model):
+    """One of the preset's encampment groups, in the book's order, as `CampaignEncampmentGroup` holds a campaign's
+    own. Groups of one name in two of its rules files are one group: the later file's encampments join the earlier's."""
+
+    preset = models.ForeignKey(CampaignPreset, related_name="encampment_groups", on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+    name = models.CharField(max_length=160)
+    description = models.TextField(max_length=4000, blank=True, default="")
+
+    class Meta:
+        db_table = "campaign_preset_encampment_group"
+        ordering = ["order", "id"]
+        constraints = [
+            models.UniqueConstraint(fields=["preset", "name"], name="campaign_preset_encampment_group_unique_name")
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.preset_id}:{self.name}"
+
+
+class CampaignPresetEncampment(models.Model):
+    """One of a preset group's encampments, as `CampaignEncampment` holds a campaign's own, held by nobody."""
+
+    group = models.ForeignKey(CampaignPresetEncampmentGroup, related_name="encampments", on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+    name = models.CharField(max_length=160)
+    gained_by = models.CharField(max_length=200, blank=True, default="")
+    fortified = models.BooleanField(default=False)
+    text = models.TextField(max_length=MAX_ENCAMPMENT_TEXT, blank=True, default="")
+
+    class Meta:
+        db_table = "campaign_preset_encampment"
+        ordering = ["order", "id"]
+
+    def __str__(self) -> str:
+        return f"{self.group_id}:{self.name}"
 
 
 class CampaignPresetWarbandRule(models.Model):

@@ -15,9 +15,15 @@ import { useDirtySince, useDiscardChanges } from "@/components/ui/discard-change
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import type { useCampaignRuleWrites } from "../hooks/useCampaignRuleWrites";
-import type { CampaignRule, CampaignRulePayload } from "../types/rule-types";
+import type { CampaignRule, CampaignRuleKind, CampaignRulePayload } from "../types/rule-types";
 import CampaignRuleFields from "./CampaignRuleFields";
 import RuleTableField from "./RuleTableField";
+
+const KICKERS: Record<CampaignRuleKind, string> = {
+  campaign: "Campaign rules",
+  battle: "Battle rules",
+  encampment: "Encampment rules",
+};
 
 /** Edit a campaign rule's title and body, or delete it (after a confirm). */
 export default function EditCampaignRuleDialog({
@@ -87,7 +93,7 @@ export default function EditCampaignRuleDialog({
       </DialogTrigger>
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogKicker>{rule.kind === "battle" ? "Battle rules" : "Campaign rules"}</DialogKicker>
+          <DialogKicker>{KICKERS[rule.kind]}</DialogKicker>
           <DialogTitle>Edit the rule</DialogTitle>
         </DialogHeader>
         <CampaignRuleFields value={form} onChange={setForm} />

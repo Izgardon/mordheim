@@ -13,16 +13,26 @@ copied rule and it is his from then on.
 A rule taken out takes its own table with it (the FK cascades), and a chart takes its results and the tables
 hanging off them. Locations are matched the same way (`location_removable`): its group's name, its name, rules, hero
 counts, trading action, own tables and the titles of the tables it points to; a group goes once it matches another
-published campaign's group word for word and every location it lists goes too.
+published campaign's group word for word and every location it lists goes too. Encampments the same way
+(`encampments.encampment_removable`), but never one a warband holds or one razed.
 """
 
 from typing import Any
 
-from apps.campaigns.models import Campaign, CampaignChart, CampaignLocation, CampaignLocationGroup, CampaignRule
+from apps.campaigns.models import (
+    Campaign,
+    CampaignChart,
+    CampaignEncampment,
+    CampaignEncampmentGroup,
+    CampaignLocation,
+    CampaignLocationGroup,
+    CampaignRule,
+)
 from apps.campaigns.services.locations import listed_locations
 
 from ..models import CampaignPreset, CampaignPresetChart, CampaignPresetLocationGroup, CampaignPresetRule
 from .charts import copy_charts
+from .encampments import copy_encampments, encampment_removable, missing_encampments
 from .locations import copy_locations, preset_locations
 from .rules import copy_rules
 
@@ -123,8 +133,8 @@ def location_removable(campaign: Campaign, preset: CampaignPreset | None) -> tup
 
 
 def swap_counts(campaign: Campaign, preset: CampaignPreset | None) -> dict[str, int]:
-    """What pressing the button would do: how many of another campaign's rules, charts and locations go, and how
-    many of this one's arrive. The page names the button from `out` (William: "can the button be named swap
+    """What pressing the button would do: how many of another campaign's rules, charts, locations and encampments
+    go, and how many of this one's arrive. The page names the button from `out` (William: "can the button be named swap
     rules")."""
     from .charts import missing_charts
     from .locations import missing_locations
@@ -132,19 +142,25 @@ def swap_counts(campaign: Campaign, preset: CampaignPreset | None) -> dict[str, 
 
     out_rules, out_charts = removable(campaign, preset)
     out_places, _groups = location_removable(campaign, preset)
-    arriving = (missing_rules, missing_charts, missing_locations)
+    out_camps, _camp_groups = encampment_removable(campaign, preset)
+    arriving = (missing_rules, missing_charts, missing_locations, missing_encampments)
     return {
-        "out": len(out_rules) + len(out_charts) + len(out_places),
+        "out": len(out_rules) + len(out_charts) + len(out_places) + len(out_camps),
         "in": sum(len(missing(campaign.pk, preset)) for missing in arriving),
     }
 
 
 def swap_rules(campaign: Campaign, preset: CampaignPreset | None) -> dict[str, int]:
-    """Take out the rules, charts and locations that are still another published campaign's, then copy this one's
-    missing ones, the locations last (they point to the charts). Call it inside a transaction: a swap is one change,
+    """Take out the rules, charts, locations and encampments that are still another published campaign's, then copy
+    this one's missing ones, the locations last (they point to the charts). Call it inside a transaction: a swap is one change,
     not a delete the player can be left in the middle of."""
     out_rules, out_charts = removable(campaign, preset)
     out_places, out_groups = location_removable(campaign, preset)
+    out_camps, out_camp_groups = encampment_removable(campaign, preset)
+    if out_camps:
+        CampaignEncampment.objects.filter(pk__in=out_camps).delete()
+    if out_camp_groups:
+        CampaignEncampmentGroup.objects.filter(pk__in=out_camp_groups).delete()
     if out_places:
         CampaignLocation.objects.filter(pk__in=out_places).delete()
     if out_groups:
@@ -154,4 +170,6 @@ def swap_rules(campaign: Campaign, preset: CampaignPreset | None) -> dict[str, i
     if out_charts:
         CampaignChart.objects.filter(pk__in=out_charts).delete()
     copied = copy_rules(campaign, preset) + copy_charts(campaign, preset) + copy_locations(campaign, preset)
-    return {"out": len(out_rules) + len(out_charts) + len(out_places), "in": copied}
+    copied += copy_encampments(campaign, preset)
+    gone = len(out_rules) + len(out_charts) + len(out_places) + len(out_camps)
+    return {"out": gone, "in": copied}

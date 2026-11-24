@@ -82,6 +82,7 @@ def found_campaign(api: Api, demo: Demo) -> None:
 def play_season(api: Api, demo: Demo) -> None:
     """The battles in order, with what happens between them."""
     Battle(api, demo, FIRST_LIGHT).play()
+    extras.take_encampments(api, demo)
     extras.post_bounty(api, demo, "snikch", "cap.konrad", 30, "For the Captain's head. Skritt wants his sword too.")
     Battle(api, demo, GRAVE_HUNT).play()
     mortis = extras.post_bounty(api, demo, "ulric", "ilsabet.mortis", 40, "The necromancer burns. Bring proof.")

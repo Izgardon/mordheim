@@ -1,5 +1,6 @@
 import { ADVANCE_FORMATTERS } from "./advance";
 import { BATTLE_FORMATTERS } from "./battle";
+import { ENCAMPMENT_FORMATTERS } from "./encampments";
 import { ITEM_FORMATTERS } from "./items";
 import { LOADOUT_FORMATTERS } from "./loadout";
 import { PERSONNEL_FORMATTERS } from "./personnel";
@@ -18,4 +19,5 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
   ...BATTLE_FORMATTERS,
   ...LOADOUT_FORMATTERS,
   ...ITEM_FORMATTERS,
+  ...ENCAMPMENT_FORMATTERS,
 };

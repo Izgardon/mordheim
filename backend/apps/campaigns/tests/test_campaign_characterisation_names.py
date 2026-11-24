@@ -10,7 +10,7 @@ from typing import Any
 from rest_framework.test import APIClient
 
 from apps.battles.models import Battle
-from apps.campaigns.models import CampaignEncampment, CampaignMessage
+from apps.campaigns.models import CampaignEncampment, CampaignEncampmentGroup, CampaignMessage
 from apps.realtime.channel_auth import authorize_private_channel
 from apps.warbands.models import Warband
 
@@ -52,13 +52,16 @@ class DisplayNameTests(CampaignTestCase):
         self.assertEqual(CampaignMessage.objects.get(id=message.json()["id"]).username, self.shown)
         self.assertEqual(self.get_as(self.rival, self.url("messages/")).json()[0]["username"], self.shown)
 
-    def test_an_encampment_owner_is_named_player_and_id(self):
+    def test_an_encampment_holders_player_is_named_player_and_id(self):
         self.enable_features()
-        CampaignEncampment.objects.create(campaign=self.campaign, name="Crypt", owner=self.nameless)
+        group = CampaignEncampmentGroup.objects.create(campaign=self.campaign, name="Ward")
+        CampaignEncampment.objects.create(
+            campaign=self.campaign, group=group, name="Crypt", holder=self.nameless_warband
+        )
 
-        listed = self.get_as(self.rival, self.url("encampments/")).data
+        listed = self.get_as(self.rival, self.url("encampment-groups/")).data["groups"][0]["encampments"]
 
-        self.assertEqual([row["owner_name"] for row in listed], [self.shown])
+        self.assertEqual([row["holder"]["player"] for row in listed], [self.shown])
 
     def test_battle_participants_are_labelled_player_and_id(self):
         battle = self.open_battle(Battle.STATUS_PREBATTLE, users=(self.nameless, self.player))

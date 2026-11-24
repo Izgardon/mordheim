@@ -6,7 +6,6 @@ from rest_framework.test import APIClient, APITestCase
 
 from apps.battles.models import Battle, BattleEvent, BattleKill, BattleParticipant
 from apps.campaigns.models import (
-    CampaignEncampment,
     CampaignMembership,
     CampaignMembershipPermission,
     CampaignPermission,
@@ -878,106 +877,6 @@ class CampaignApiTests(APITestCase):
         self.client.force_authenticate(user=outsider)
         response = self.client.get(f"/api/campaigns/{campaign['id']}/top-killers/")
         self.assertEqual(response.status_code, 404)
-
-    def test_encampment_create_list_and_patch_flow(self):
-        owner = self._create_user("owner@example.com", "Owner")
-        campaign = self._create_campaign(owner, pages=True)
-        player = self._create_user("player@example.com", "Player")
-
-        self.client.force_authenticate(user=player)
-        join_response = self.client.post(
-            "/api/campaigns/join/",
-            {"join_code": campaign["join_code"]},
-            format="json",
-        )
-        self.assertEqual(join_response.status_code, 201)
-
-        self.client.force_authenticate(user=owner)
-        create_response = self.client.post(
-            f"/api/campaigns/{campaign['id']}/encampments/",
-            {
-                "name": "Dockside Camp",
-                "owner_id": player.id,
-                "description": "Trade route staging point.",
-            },
-            format="json",
-        )
-        self.assertEqual(create_response.status_code, 201)
-        self.assertEqual(create_response.data["owner_id"], player.id)
-        self.assertEqual(create_response.data["owner_name"], "Player")
-
-        list_response = self.client.get(f"/api/campaigns/{campaign['id']}/encampments/")
-        self.assertEqual(list_response.status_code, 200)
-        self.assertEqual(len(list_response.data), 1)
-        self.assertEqual(list_response.data[0]["id"], create_response.data["id"])
-
-        patch_response = self.client.patch(
-            f"/api/campaigns/{campaign['id']}/encampments/{create_response.data['id']}/",
-            {"description": "Updated camp notes.", "owner_id": owner.id},
-            format="json",
-        )
-        self.assertEqual(patch_response.status_code, 200)
-        self.assertEqual(patch_response.data["owner_id"], owner.id)
-        self.assertEqual(patch_response.data["owner_name"], "Owner")
-        self.assertEqual(patch_response.data["description"], "Updated camp notes.")
-
-        encampment = CampaignEncampment.objects.get(id=create_response.data["id"])
-        self.assertEqual(encampment.owner_id, owner.id)
-        self.assertEqual(encampment.description, "Updated camp notes.")
-
-        other_campaign = self._create_campaign(owner, name="Other Marienburg", pages=True)
-        other_encampment = CampaignEncampment.objects.create(
-            campaign_id=other_campaign["id"],
-            name="Foreign Camp",
-            description="Should stay isolated.",
-        )
-        wrong_patch_response = self.client.patch(
-            f"/api/campaigns/{campaign['id']}/encampments/{other_encampment.id}/",
-            {"description": "Nope"},
-            format="json",
-        )
-        self.assertEqual(wrong_patch_response.status_code, 404)
-
-    def test_encampment_endpoints_require_feature_and_write_permission(self):
-        owner = self._create_user("owner@example.com", "Owner")
-        standard_campaign = self._create_campaign(owner)
-
-        self.client.force_authenticate(user=owner)
-        disabled_list_response = self.client.get(f"/api/campaigns/{standard_campaign['id']}/encampments/")
-        self.assertEqual(disabled_list_response.status_code, 404)
-        disabled_create_response = self.client.post(
-            f"/api/campaigns/{standard_campaign['id']}/encampments/",
-            {"name": "Not Yet"},
-            format="json",
-        )
-        self.assertEqual(disabled_create_response.status_code, 404)
-
-        campaign = self._create_campaign(owner, name="Enabled Encampments", pages=True)
-        player = self._create_user("player@example.com", "Player")
-        self.client.force_authenticate(user=player)
-        join_response = self.client.post(
-            "/api/campaigns/join/",
-            {"join_code": campaign["join_code"]},
-            format="json",
-        )
-        self.assertEqual(join_response.status_code, 201)
-
-        list_response = self.client.get(f"/api/campaigns/{campaign['id']}/encampments/")
-        self.assertEqual(list_response.status_code, 200)
-
-        # decision 9: any member adds one (his own); someone else's needs manage_encampments
-        own_create_response = self.client.post(
-            f"/api/campaigns/{campaign['id']}/encampments/",
-            {"name": "Player Camp"},
-            format="json",
-        )
-        self.assertEqual((own_create_response.status_code, own_create_response.data["owner_id"]), (201, player.id))
-        nobodys = CampaignEncampment.objects.create(campaign_id=campaign["id"], name="Nobody's Camp")
-        nobodys_url = f"/api/campaigns/{campaign['id']}/encampments/{nobodys.id}/"
-        self.assertEqual(self.client.patch(nobodys_url, {"name": "Mine"}, format="json").status_code, 403)
-
-        self._grant_campaign_permission(campaign["id"], player, "manage_encampments")
-        self.assertEqual(self.client.patch(nobodys_url, {"name": "Mine"}, format="json").status_code, 200)
 
     def test_member_permissions_require_admin_or_owner(self):
         owner = self._create_user("owner@example.com", "Owner")

@@ -9,7 +9,7 @@ import WarbandSkeleton from "@/features/warbands/components/page/WarbandSkeleton
 /**
  * The skeleton of the campaign page at `pathname` (`/campaigns/:id/...`): what the shell shows
  * while that page's code loads, or while the campaign itself does. The reference pages, Search
- * everything and the Encampment share the reference page's list layout.
+ * everything and the Encampments page share the reference page's list layout.
  */
 export default function CampaignPageSkeleton({ pathname }: { pathname: string }) {
   const [, , , section, battleId, stage] = pathname.split("/");

@@ -9,8 +9,6 @@ import type {
   CampaignChronicleEntry,
   CampaignChronicleFilter,
   CampaignCreatePayload,
-  CampaignEncampment,
-  CampaignEncampmentPayload,
   CampaignActiveBattle,
   CampaignJoinPayload,
   CampaignMember,
@@ -18,7 +16,6 @@ import type {
   CampaignPermission,
   MemberRemovalPreview,
   CampaignPlayer,
-  CampaignPlayerName,
   CampaignSummary,
   CampaignUpdateAnswer,
   CampaignUpdatePayload,
@@ -67,11 +64,6 @@ export function listCampaignPlayers(campaignId: number) {
   return apiRequest<CampaignPlayer[]>(`/campaigns/${campaignId}/players/`, {});
 }
 
-/** Ids and names only (at most 2 queries), for the encampment owner picker (PERF-41). */
-export function listCampaignPlayerNames(campaignId: number) {
-  return apiRequest<CampaignPlayerName[]>(`/campaigns/${campaignId}/players/?fields=basic`);
-}
-
 export function listCampaignBattleHistory(campaignId: number) {
   return apiRequest<CampaignBattleHistoryEntry[]>(`/campaigns/${campaignId}/battle-history/`, {});
 }
@@ -100,37 +92,6 @@ export function cancelCampaignActiveBattle(campaignId: number, battleId: number)
       method: "POST",
     }
   );
-}
-
-/** Soft-deletes an encampment (its owner, or manage_encampments); it leaves the list. */
-export function deleteCampaignEncampment(campaignId: number, encampmentId: number) {
-  return apiRequest<void>(`/campaigns/${campaignId}/encampments/${encampmentId}/`, {
-    method: "DELETE",
-  });
-}
-
-export function listCampaignEncampments(campaignId: number) {
-  return apiRequest<CampaignEncampment[]>(`/campaigns/${campaignId}/encampments/`, {
-    method: "GET",
-  });
-}
-
-export function createCampaignEncampment(campaignId: number, payload: CampaignEncampmentPayload) {
-  return apiRequest<CampaignEncampment>(`/campaigns/${campaignId}/encampments/`, {
-    method: "POST",
-    body: payload,
-  });
-}
-
-export function updateCampaignEncampment(
-  campaignId: number,
-  encampmentId: number,
-  payload: Partial<CampaignEncampmentPayload>
-) {
-  return apiRequest<CampaignEncampment>(`/campaigns/${campaignId}/encampments/${encampmentId}/`, {
-    method: "PATCH",
-    body: payload,
-  });
 }
 
 export function listCampaignMembers(campaignId: number) {

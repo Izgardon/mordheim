@@ -31,16 +31,6 @@
    "umbrella": "Campaign points and plots"
   },
   {
-   "title": "Encampments",
-   "text": "Important buildings around the city are encampments, and a warband that discovers one records it on its roster. There is only ever one encampment of each type. If a second warband discovers an encampment another player already holds, it may contest it in the next game: an unprotected business is contested with the scenario The Sting, and a tower or other fortified encampment with the scenario Stockade. If the challenger wins without the building collapsing he takes possession; if the burning building collapses the encampment is razed.",
-   "umbrella": "Encampments"
-  },
-  {
-   "title": "Rebuilding a razed encampment",
-   "text": "A razed encampment can be rebuilt for 150 + D6 x 25 gold crowns. The work takes four games, during which at least one Hero and two Henchmen must miss battles. Each further Hero, or each further two Henchmen, who help with the work shorten it by one game, down to a minimum of one game.",
-   "umbrella": "Encampments"
-  },
-  {
    "title": "Warband categories",
    "text": "These terms are used throughout the campaign. Mercenaries are the retinues of Marienburg, Middenheim, Reikland, Ostland, Averland and the other Imperial provinces, and also Kislevites, Estalians, Tileans, Arabyans, Norse, Pirates and Pit Fighters. Human warbands include any warp-touched gang or renegade warband made up mostly of humans, such as Cults of Chaos, Marauders of Chaos, Outlaws and Bandits. Followers of Chaos are the Cult of the Possessed, the Carnival of Chaos and any other Cult of Chaos, plus Beastmen, Marauders of Chaos, Norse and Chaos Dwarfs; Skaven and Dark Elves are not counted as Chaos warbands. Elf warbands do not include Dark Elves, and Dwarf warbands do not include Chaos Dwarfs. Any warband that includes a Vampire, a Necromancer or a Liche is an Undead warband.",
    "umbrella": ""
@@ -4039,6 +4029,144 @@
      "trading_action": true,
      "tables": [],
      "charts": []
+    }
+   ]
+  }
+ ],
+ "encampment_rules": [
+  {
+   "title": "Encampments",
+   "text": "Important buildings around the city are encampments, and a warband that discovers one records it on its roster. There is only ever one encampment of each type. If a second warband discovers an encampment another player already holds, it may contest it in the next game: an unprotected business is contested with the scenario The Sting, and a tower or other fortified encampment with the scenario Stockade. If the challenger wins without the building collapsing he takes possession; if the burning building collapses the encampment is razed."
+  },
+  {
+   "title": "Rebuilding a razed encampment",
+   "text": "A razed encampment can be rebuilt for 150 + D6 x 25 gold crowns. The work takes four games, during which at least one Hero and two Henchmen must miss battles. Each further Hero, or each further two Henchmen, who help with the work shorten it by one game, down to a minimum of one game."
+  }
+ ],
+ "encampment_groups": [
+  {
+   "name": "Marienburg city",
+   "description": "The city-based encampments, as The Ten Great Families' Monopoly counts them.",
+   "encampments": [
+    {
+     "name": "Tannery",
+     "gained_by": "Exploration 11111",
+     "fortified": false,
+     "text": "The warband that holds it may roll on the Tanner table (Leather Goods result 4, in the Infamous Haunts)."
+    },
+    {
+     "name": "Auction Hall",
+     "gained_by": "Exploration 22222",
+     "fortified": false,
+     "text": "The warband may sell any number of rare items here, but an item once auctioned must be sold whatever the roll. Roll a D6 for each rare item sold:\n\n1-2 Half the item's base price.\n3-4 The item's full base price.\n5-6 The item's full price plus half."
+    },
+    {
+     "name": "Laundrette",
+     "gained_by": "Exploration 55555",
+     "fortified": false,
+     "text": "A front for a drug lab. After every battle roll a D6 for a drug as the Grave robbery chart's Drugs result does: one dose of it is free. The warband may also exchange Cathayan Silks for the same drug, D3 doses for each Silk."
+    },
+    {
+     "name": "Cellars",
+     "gained_by": "Seaside Situations 51",
+     "fortified": false,
+     "text": "The cellars adjoin the sewers: up to three warriors may set up each battle using the Infiltration rules. Roll a D6 when they do: on a 1 a swarm of giant rats attacks and D3 of the infiltrating warriors fall ill from the bites and miss the next game. Skaven are immune: they tame the rats instead and gain D3 giant rats for the game."
+    },
+    {
+     "name": "Hostelry",
+     "gained_by": "Seaside Situations 52",
+     "fortified": false,
+     "text": "Adds +1 to the maximum size of the warband."
+    },
+    {
+     "name": "Tavern",
+     "gained_by": "Seaside Situations 53",
+     "fortified": false,
+     "text": "After each battle you may roll a D6.\n\n1 Bar room brawl. Pay D6x20 gold crowns for the damage.\n2 Profits down. Lose D6x10 gold crowns.\n3 Profits up. Gain D6 gold crowns.\n4 Sell-sword. A Hired Sword cannot pay his bar bill and serves you free next battle.\n5 Father. A Priest cannot pay his bar bill and joins the warband free. This cannot take the warband over its maximum Heroes or warriors; you may retire a Hero to make room.\n6 Business booming. Gain D6x20 gold crowns."
+    },
+    {
+     "name": "Tilean Ludus",
+     "gained_by": "Seaside Situations 54",
+     "fortified": false,
+     "text": "Every new Hero, Hired Sword or Henchmen group that joins the warband learns the Pit Fighter skill."
+    },
+    {
+     "name": "Old Merchant Villa",
+     "gained_by": "Seaside Situations 56",
+     "fortified": false,
+     "text": "Adds +2 to one of the warband's rolls when searching for rare items in the post-battle sequence."
+    },
+    {
+     "name": "Warehouse",
+     "gained_by": "Gambling 6, Warehouse Deeds!",
+     "fortified": false,
+     "text": "A waterfront warehouse: earn 2D6 gold crowns from its rent after each battle, and on a double a Hired Sword from the dockside offers his services for the next battle."
+    },
+    {
+     "name": "Torture Chamber",
+     "gained_by": "Drowning the Witch, 15 points",
+     "fortified": true,
+     "text": "Instead of searching for a rare item the leader may interrogate a captured Mutant, Witch, Warlock, Necromancer, Undead creature or follower of Chaos. On a successful Strength test the warband gains 1 Campaign Point and the captive's warband loses 1; the captive then escapes back to his own warband."
+    },
+    {
+     "name": "Armoury",
+     "gained_by": "Guarding the Peace, 25 points",
+     "fortified": false,
+     "text": "Heroes and Henchmen may take unlimited free black powder weapons of any kind, bows of any kind, superior black powder, crossbows, crossbow pistols, shields and heavy armour."
+    },
+    {
+     "name": "Mortuary",
+     "gained_by": "Promise of Power or Price of Power, 10 points",
+     "fortified": true,
+     "text": "A Hero may carry a corpse to the lab in the post-battle sequence. Roll 2D6 for each corpse: 2-4 it is too old; 5-7 it sells for 12 gold crowns; 8-10 it sells for 24 gold crowns; 11-12 it is reanimated, adding a Flesh Golem that uses the Wicker Man's rules and profile."
+    }
+   ]
+  },
+  {
+   "name": "Outside the city",
+   "description": "",
+   "encampments": [
+    {
+     "name": "Trading Post",
+     "gained_by": "Exploration 33333, then restored",
+     "fortified": false,
+     "text": "Any warband that finds the ruined trading post may restore it. It need not decide at once, and may return between battles until another warband finds and restores it. The restoration costs D6x25+150 gold crowns and lasts four games, in which at least one Hero and two henchmen must miss battles; each additional Hero or pair of henchmen helping speeds the rebuilding by one game, to a minimum of one.\n\nA warband controlling the restored trading post rolls 3D6 to determine the experience of the henchmen available for hire after the battle, and gets +3 when searching for rare items. A warband following The Ten Great Families gets +D6 Campaign Points once for rebuilding it."
+    },
+    {
+     "name": "Lighthouse",
+     "gained_by": "Exploration 44444",
+     "fortified": true,
+     "text": "Used only by a warband with a boat. During the Trading phase of the post-battle sequence three Heroes may scavenge on the rock instead of searching for a rare item: make D3 rolls on the Cargo chart to see what freight crashes onto the rocks.\n\nA dispute over it is fought with Scenario 5: Stockade if the warbands can reach its island by boat; each deploys at most as many models as its boats can carry."
+    },
+    {
+     "name": "Ship-of-the-Line",
+     "gained_by": "Exploration 66666",
+     "fortified": false,
+     "text": "A small ship to be used in battles, which can carry every model in the warband with any cargo and objective markers.\n\nA second warband rolling the same result charters a ship from a pirate captain to contest it: the dispute is settled in the next round with the special scenario All Hands On Deck!"
+    },
+    {
+     "name": "Rat Rock",
+     "gained_by": "Exploration 555",
+     "fortified": true,
+     "text": "The warband that holds it may play the special scenario False Beacons."
+    },
+    {
+     "name": "Mist-wreathed Stronghold",
+     "gained_by": "Exploration 444444",
+     "fortified": false,
+     "text": "Only a Skaven, Beastmen or Chaos warband whose leader comes through the Fimir attack unscathed may claim it, or a Fimir warband.\n\nWhen a Chaos warband holding at least one Mutant Child takes the stronghold, one child now counts as a Hero with the profile of the warband's cheapest Hero, gains 10 Experience at once with every level-up it brings, and gains 2 random mutations. When the warband receives a mark of Chaos the child receives the other mark (if the leader gains a mark of Arkhar the child receives the wizard's mark; if the leader is a wizard the child receives the warrior's mark).\n\nA Fimir warband's Young Noble may claim it as his lair: he must become the warband's leader, ascending to Noble, gains 10 Experience and counts as a Large Target."
+    },
+    {
+     "name": "Bandit camp",
+     "gained_by": "Bandit Camp 5-6, Bandits Attack!",
+     "fortified": false,
+     "text": "The book gives the camp no rule beyond counting as an encampment."
+    },
+    {
+     "name": "Spawning Pools",
+     "gained_by": "New World, Old Grudges, 25 points",
+     "fortified": false,
+     "text": "Whenever a Henchman dies after a match he may be replaced free from the spawning pool, rolling for veteran experience as usual."
     }
    ]
   }

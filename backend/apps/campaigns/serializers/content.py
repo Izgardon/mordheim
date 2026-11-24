@@ -1,18 +1,13 @@
-"""House rules, campaign rules, encampments and chat messages."""
+"""House rules, campaign rules and chat messages."""
 
 from rest_framework import serializers
 
-from apps.users.names import display_name
-
-from ..access import CAMPAIGN_RULES
 from ..effects import EFFECT_KEYS
 from ..models import (
     CAMPAIGN_RULE_KINDS,
     CHART_DICE,
     MAX_CAMPAIGN_RULE_TEXT,
-    CampaignEncampment,
     CampaignHouseRule,
-    CampaignMembership,
     CampaignMessage,
     CampaignRule,
 )
@@ -95,62 +90,11 @@ class CampaignRuleSerializer(serializers.ModelSerializer):
 
 
 class CampaignRuleOrderSerializer(serializers.Serializer):
-    """PUT campaign-rules/order/: every rule's id, in its new order."""
+    """PUT campaign-rules/order/: every rule's id on one list, in its new order; `kind` encampment names the
+    encampment rules' list, else the Rules page's."""
 
     ids = serializers.ListField(child=serializers.IntegerField(), max_length=500)
-
-
-class CampaignEncampmentSerializer(serializers.ModelSerializer):
-    """An encampment, with `owner_left` (its owner has left the campaign: shown "(left)") and what the reader may do
-    with it (`capabilities.edit`: edit, reassign, remove); `context["access"]` is the reader's CampaignAccess."""
-
-    campaign_id = serializers.IntegerField(read_only=True)
-    owner_id = serializers.IntegerField(source="owner.id", read_only=True, allow_null=True)
-    owner_name = serializers.SerializerMethodField()
-    owner_left = serializers.SerializerMethodField()
-    capabilities = serializers.SerializerMethodField()
-
-    class Meta:
-        model = CampaignEncampment
-        fields = ("id", "campaign_id", "name", "owner_id", "owner_name", "owner_left", "description", "capabilities")
-
-    def get_owner_name(self, obj):
-        if not obj.owner_id:
-            return None
-        return display_name(obj.owner)
-
-    def get_owner_left(self, obj):
-        return bool(obj.owner_id) and not getattr(obj, "owner_is_member", True)  # annotated (services/encampments)
-
-    def get_capabilities(self, obj):
-        access = self.context["access"]
-        return {"edit": not access.archived and CAMPAIGN_RULES["edit_encampment"](access, obj)}
-
-
-class CampaignEncampmentWriteSerializer(serializers.ModelSerializer):
-    owner_id = serializers.IntegerField(required=False, allow_null=True)
-    description = serializers.CharField(required=False, allow_blank=True)
-
-    class Meta:
-        model = CampaignEncampment
-        fields = ("name", "owner_id", "description")
-
-    def validate_name(self, value):
-        cleaned = str(value or "").strip()
-        if not cleaned:
-            raise serializers.ValidationError("Name is required.")
-        return cleaned
-
-    def validate_owner_id(self, value):
-        if value is None:
-            return None
-        campaign_id = self.context.get("campaign_id")
-        if (
-            campaign_id is None
-            or not CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=value).exists()
-        ):
-            raise serializers.ValidationError("Owner must be a member of the campaign.")
-        return value
+    kind = serializers.ChoiceField(choices=CAMPAIGN_RULE_KINDS, required=False)
 
 
 class RemovablePostSerializer(serializers.ModelSerializer):

@@ -23,6 +23,7 @@ from apps.campaigns.constants import PERMISSION_CODES
 from apps.campaigns.models import (
     Campaign,
     CampaignEncampment,
+    CampaignEncampmentGroup,
     CampaignHouseRule,
     CampaignLocation,
     CampaignLocationGroup,
@@ -52,10 +53,18 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("GET", "top-killers/", None, OK_ALL),
     ("GET", "active-battles/", None, (403, 200, 200, 200)),
     ("POST", "active-battles/{battle}/cancel/", {}, (403, 200, 200, 200)),
-    ("GET", "encampments/", None, OK_ALL),
-    ("POST", "encampments/", {"name": "Camp"}, (201, 201, 201, 201)),  # any member (decision 9)
-    ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}, (403, 200, 200, 200)),  # nobody's: manage_encampments
+    ("GET", "encampment-groups/", None, OK_ALL),
+    ("POST", "encampment-groups/", {"name": "Ward"}, (403, 201, 201, 201)),
+    ("PATCH", "encampment-groups/{camp_group}/", {"name": "Ward 2"}, (403, 200, 200, 200)),
+    ("DELETE", "encampment-groups/{camp_group}/", None, (403, 204, 204, 204)),
+    ("POST", "encampments/", {"group_id": "{camp_group}", "name": "Camp"}, (403, 201, 201, 201)),
+    ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}, (403, 200, 200, 200)),
     ("DELETE", "encampments/{camp}/", None, (403, 204, 204, 204)),
+    # anyone takes one for his own warband, whoever holds it; for another's, manage_encampments (William, 24 Nov)
+    ("POST", "encampments/{camp}/take/", {"warband_id": "{warband}"}, (200, 200, 200, 200)),
+    ("POST", "encampments/{camp}/take/", {"warband_id": "{rival_warband}"}, (403, 200, 200, 200)),
+    ("POST", "encampments/{camp}/raze/", {}, (403, 200, 200, 200)),  # the rival's: his player or a manager
+    ("POST", "encampments/{camp}/give-up/", {}, (403, 200, 200, 200)),
     ("GET", "location-groups/", None, OK_ALL),
     ("POST", "location-groups/", {"name": "Docks"}, (403, 201, 201, 201)),
     ("PATCH", "location-groups/{place_group}/", {"name": "Docks 2"}, (403, 200, 200, 200)),
@@ -110,7 +119,7 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "delete_catalogue": ("DELETE", "/api/items/{item}/", None),  # an item nothing holds
     "manage_rules": ("POST", "rules/", {"title": "No running"}),
     "manage_warbands": ("PATCH", "/api/warbands/{rival_warband}/", {"name": "Rats"}),
-    "manage_encampments": ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}),  # an encampment nobody owns
+    "manage_encampments": ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}),
     "manage_locations": ("POST", "location-groups/", {"name": "Docks"}),
     "manage_battles": ("POST", "active-battles/{battle}/cancel/", {}),
 }
@@ -142,6 +151,7 @@ class CampaignAccessFixture(CampaignTestCase):
             campaign=campaign, created_by_user=cls.player, scenario="Ford", status=Battle.STATUS_INVITING
         )
         place_group = CampaignLocationGroup.objects.create(campaign=campaign, name="Old Town")
+        camp_group = CampaignEncampmentGroup.objects.create(campaign=campaign, name="The wall")
         cls.refs = {
             "campaign": campaign.id,
             "rival": cls.rival.id,
@@ -149,7 +159,11 @@ class CampaignAccessFixture(CampaignTestCase):
             "rival_warband": cls.rival_warband.id,
             "battle": battle.id,
             "message": CampaignMessage.objects.create(campaign=campaign, user=cls.rival, username="Rex", body="Hi").id,
-            "camp": CampaignEncampment.objects.create(campaign=campaign, name="Old Camp").id,
+            "warband": cls.warband.id,
+            "camp_group": camp_group.id,
+            "camp": CampaignEncampment.objects.create(
+                campaign=campaign, group=camp_group, name="Old Camp", holder=cls.rival_warband
+            ).id,
             "place_group": place_group.id,
             "place": CampaignLocation.objects.create(campaign=campaign, group=place_group, name="Old Ruin").id,
             "rule": CampaignHouseRule.objects.create(campaign=campaign, title="Old rule").id,
@@ -202,7 +216,8 @@ class AccessMatrixTests(CampaignAccessFixture):
 
     def test_switched_off_pages_are_404_for_every_member(self):
         self.enable_features(encampments=False, locations=False)
-        rows = [row for row in MATRIX if row[1].startswith(("encampments/", "locations/", "location-groups/"))]
+        pages = ("encampments/", "encampment-groups/", "locations/", "location-groups/")
+        rows = [row for row in MATRIX if row[1].startswith(pages)]
         for method, template, body, _expected in rows:
             for actor in MEMBERS:
                 with self.subTest(route=f"{method} {template}", actor=actor):

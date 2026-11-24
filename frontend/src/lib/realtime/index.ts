@@ -4,6 +4,7 @@ export {
   useBattleEvents,
   useCampaignChatMessages,
   useCampaignBountyChanges,
+  useCampaignEncampmentChanges,
   useCampaignCatalogueChanges,
   useCampaignChatRemovals,
   useCampaignUpdates,

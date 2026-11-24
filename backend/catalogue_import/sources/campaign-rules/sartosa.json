@@ -39,16 +39,6 @@
    "title": "Recruiting non-player models",
    "text": "Any model opposing the warband that is not an animal, not Large and not a daemon is a possible recruit. Roll a D6 for each one the warband takes out of action, in the post-game phase: on a 1-2 he escapes with his equipment, and on a 3+ he becomes a Swabbie, losing everything but a dagger unless his own rules say otherwise. A non-player model never joins the Crew.",
    "umbrella": ""
-  },
-  {
-   "title": "A locale campaign",
-   "text": "A locale campaign moves from place to place, each locale with its own rules and scenarios, and the warbands play for Battle Points. A win is worth 3 Battle Points, a draw 2 and a loss 1. A warband must hold 12 Battle Points at a locale to control it; if two warbands each hold 12 then nobody controls it, and if one holds 13 and another 12 the locale is controlled by the warband with the most Battle Points. A warband may control more than one locale. Pair the players at random at the start of a night's gaming and let both choose the locale they want to play at, picking between the two at random if they cannot agree; where more than one game is played in a day, the winners of two games play each other while the losers play each other, and the pairings are drawn again at the start of the next night. The campaign ends after an agreed number of games or weeks, and the player who controls the most locales wins; on a tie the tied player with the most Battle Points wins.",
-   "umbrella": "Locales"
-  },
-  {
-   "title": "Trading at a locale",
-   "text": "After a game at a locale, trading follows that locale's own rules, which may raise or lower what the warband can buy. A warband that controls a locale also gets whatever bonus that locale grants.",
-   "umbrella": "Locales"
   }
  ],
  "battle_rules": [
@@ -701,6 +691,126 @@
      "result": "6",
      "name": "A wanderer",
      "text": "Roll a D6. On 1-3 you are visited by the immortal wanderer Aenur, who attacks any evil warband. On 4-6 you meet Giovanni the Knife, Johan's Tilean descendant, treated as Johan, who attacks the first non-human he meets."
+    }
+   ]
+  }
+ ],
+ "encampment_rules": [
+  {
+   "title": "A locale campaign",
+   "text": "A locale campaign moves from place to place, each locale with its own rules and scenarios, and the warbands play for Battle Points. A win is worth 3 Battle Points, a draw 2 and a loss 1. A warband must hold 12 Battle Points at a locale to control it; if two warbands each hold 12 then nobody controls it, and if one holds 13 and another 12 the locale is controlled by the warband with the most Battle Points. A warband may control more than one locale. Pair the players at random at the start of a night's gaming and let both choose the locale they want to play at, picking between the two at random if they cannot agree; where more than one game is played in a day, the winners of two games play each other while the losers play each other, and the pairings are drawn again at the start of the next night. The campaign ends after an agreed number of games or weeks, and the player who controls the most locales wins; on a tie the tied player with the most Battle Points wins."
+  },
+  {
+   "title": "Trading at a locale",
+   "text": "After a game at a locale, trading follows that locale's own rules, which may raise or lower what the warband can buy. A warband that controls a locale also gets whatever bonus that locale grants."
+  }
+ ],
+ "encampment_groups": [
+  {
+   "name": "Port towns",
+   "description": "After a game here every item on the campaign list is available, and Heroes, Henchmen, Hired Swords and Dramatis Personae are recruited as normal, unless the locale says otherwise.",
+   "encampments": [
+    {
+     "name": "Port of Sartosa",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: Any non-human warband except Undead adds +1 to find its race's own rare items and takes 2D6 gc off the cost of any equipment or Hired Sword of its race.\n\nControlling it: The warband adds +2 to find rare items and takes 2D6 gc off the cost or hire fee of any equipment, Hired Sword or Dramatis Personae."
+    },
+    {
+     "name": "Port of Roba",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: Sartosan Pirates add +2 to find rare items and take 2D6 gc off the cost of any equipment or human Hired Sword bought or hired here.\n\nControlling it: The warband adds +1 to find rare items and takes 2D6 gc off the cost or hire fee of any equipment, Hired Sword or Dramatis Personae."
+    },
+    {
+     "name": "Port of Vercuso",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: Bretonnian pirates add +1 to find rare items and take 2D6 gc off the cost of any equipment or human Hired Sword bought or hired here.\n\nControlling it: The warband adds +1 to find rare items and takes 2D6 gc off the cost or hire fee of any equipment, Hired Sword or Dramatis Personae."
+    },
+    {
+     "name": "Port of Beffardo",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: Estalian pirates add +1 to find rare items and take 2D6 gc off the cost of any equipment or human Hired Sword bought or hired here.\n\nControlling it: The warband adds +1 to find rare items and takes 2D6 gc off the cost or hire fee of any equipment, Hired Sword or Dramatis Personae."
+    },
+    {
+     "name": "Port of Senelite",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: Wasteland Privateers add +1 to find rare items and take 2D6 gc off the cost of any equipment or human Hired Sword bought or hired here.\n\nControlling it: The warband gains 3D6 gc in each Exploration phase from the port's docking fees."
+    },
+    {
+     "name": "Haunted Harbor of Vermunte",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: Of the Dramatis Personae only Jeremiah Bane and the Brothers Razig call at this port. Undead warbands of any type add +2 to find their race's own rare items and take 2D6 gc off the cost of any such equipment and off the hire fee of any Hired Sword or Dramatis Personae.\n\nControlling it: Every Hero becomes Immune to Fear, and the warband gets +2 to find any rare item and pays 2D6 gc less for it."
+    },
+    {
+     "name": "Slayer Hold",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: Any Dwarf warband adds +2 to find its race's own rare items and takes 2D6 gc off the cost of any such equipment or Hired Sword of its race. Greenskin and Elven warbands can find none of these items or Hired Swords.\n\nControlling it: The warband receives D6 Grog in every Exploration phase, or D3 Bugman's Ale instead if the D6 rolls a 1. It may also hire a Dwarf Trollslayer or a Slayer Pirate Hired Sword for his upkeep fee rather than his hire fee, paying the usual upkeep after that."
+    },
+    {
+     "name": "Caragio",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: Any Human or Dwarf warband may buy Rafts as though they were common, and gets +2 to rarity rolls for boats and Whalebone Charms.\n\nControlling it: The warband may buy rafts or rowboats with +1 Toughness at no extra cost, and may hire a Leviathan Hunter for his upkeep fee rather than his hire fee, paying the usual upkeep after that."
+    }
+   ]
+  },
+  {
+   "name": "Inland towns",
+   "description": "After a game here no rare item with a finding value above 10 can be found; Heroes, Henchmen, Hired Swords and Dramatis Personae are recruited as normal, unless the locale says otherwise.",
+   "encampments": [
+    {
+     "name": "Caprio",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Controlling it: The warband adds +1 to any roll for who sets up first in a scenario and who has the first turn (where the scenario allows it)."
+    },
+    {
+     "name": "Ragil",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Controlling it: Well supplied with food, the warband always counts as one size smaller when selling cargo."
+    },
+    {
+     "name": "Ossonmunte",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: Trade does not flourish here: no rare item with a finding value above 8 can be found. Khorne and Greenskin warbands add +1 to find rare items and take 2D6 gc off the cost of any equipment, Henchman, Hero or human Hired Sword bought or hired here. Of the Dramatis Personae only Kromwell the Blackhearted comes here.\n\nControlling it: The warband may hire an Imperial Assassin, Dark Elf Assassin or Crimashin for his upkeep fee rather than his hire fee, paying the usual upkeep after that."
+    }
+   ]
+  },
+  {
+   "name": "Wilderness",
+   "description": "After a game here no rare items can be bought and no Hired Swords or Dramatis Personae found, unless the locale says otherwise.",
+   "encampments": [
+    {
+     "name": "Osso Hills",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: A Hero or Henchman who isn't a Greenskin is recruited only after a Hero passes a rarity roll, as Rare 5. Orc and Goblin warbands take 2D6 gc off the cost of any Hero or Henchman recruited here. The only Hired Sword here is the Orc Captain/Goblin Swabbie, and the only Dramatis Personae Ghuzza the Head-shrinker.\n\nControlling it: After every game the warband steals D6 gc from each player it fought. Greenskin warbands may also hire Ghuzza without searching for him."
+    },
+    {
+     "name": "The Cave of the Damned",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: A Hero or Henchman is recruited only after a Hero passes a rarity roll, as Rare 7, and every common item counts as Rare 6.\n\nControlling it: At the start of each game the warband may place 3 fighters anywhere on the battlefield at ground level, unless that game is a sea battle (in the Pirate Current or the Skull Sands)."
+    },
+    {
+     "name": "The Skull Sands",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: A Hero or Henchman is recruited only after a Hero passes a rarity roll, as Rare 6, and every common item counts as Rare 5. With so much salvage, any common item found is half price.\n\nControlling it: The warband's Heroes may search for common or rare items in the Skull Sands: every common item counts as Rare 4, and every rare item adds +2 to its rarity (a Dueling Pistol at Rare 8 becomes Rare 10). Any item found here is half price."
+    },
+    {
+     "name": "Pirate Current",
+     "gained_by": "12 Battle Points, and the most",
+     "fortified": false,
+     "text": "Trading: A Hero or Henchman is recruited only after a Hero passes a rarity roll, as Rare 6.\n\nControlling it: Whenever the warband sells Treasure it gains gold as though it had sold one more (selling 3 pays as 4)."
     }
    ]
   }

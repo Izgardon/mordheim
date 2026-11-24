@@ -1,5 +1,7 @@
 """The campaign's own rules (William, 7 Nov 2026: "campaign wide rules that are not house rules, kind of like warband
-rules"), in their order: a new one goes last, and a reorder sends every rule's id in its new order."""
+rules"), in their order: a new one goes last, and a reorder sends every rule's id in its new order. The Rules page
+lists the campaign and battle rules; the encampment rules are the Encampments page's (services/encampments.py) and
+are reordered on their own."""
 
 from typing import Any
 
@@ -7,14 +9,26 @@ from django.db import transaction
 from django.db.models import Max, QuerySet
 
 from ..errors import CampaignError
-from ..models import CampaignChart, CampaignChartRow, CampaignRule
+from ..models import ENCAMPMENT_RULE, CampaignChart, CampaignChartRow, CampaignRule
 
-ORDER_REFUSED = "Send every campaign rule's id once, in its new order."
+ORDER_REFUSED = "Send every rule's id on the list once, in its new order."
 
 
 def campaign_rules(campaign_id: int) -> "QuerySet[CampaignRule]":
     """The campaign's rules with each one's own table, in their order (three queries)."""
     return CampaignRule.objects.filter(campaign_id=campaign_id).prefetch_related("charts__rows").order_by("order", "id")
+
+
+def rules_page(campaign_id: int) -> "QuerySet[CampaignRule]":
+    """The rules the campaign's Rules page lists: every kind but the encampment rules."""
+    return campaign_rules(campaign_id).exclude(kind=ENCAMPMENT_RULE)
+
+
+def rule_list(campaign_id: int, encampments: bool) -> "QuerySet[CampaignRule]":
+    """One list a reorder orders: the encampment rules, or the Rules page's."""
+    if encampments:
+        return campaign_rules(campaign_id).filter(kind=ENCAMPMENT_RULE)
+    return rules_page(campaign_id)
 
 
 def create_rule(campaign_id: int, validated: dict[str, Any]) -> CampaignRule:
@@ -58,10 +72,11 @@ def write_table(rule: CampaignRule, table: dict[str, Any] | None) -> None:
     )
 
 
-def reorder(campaign_id: int, ids: list[int]) -> list[CampaignRule]:
-    """Give each rule its place in `ids`, which names each of the campaign's rules once; the rules in that order."""
+def reorder(campaign_id: int, ids: list[int], encampments: bool = False) -> list[CampaignRule]:
+    """Give each rule of one list (`rule_list`) its place in `ids`, which names each of them once; the list in that
+    order."""
     with transaction.atomic():
-        rules = list(campaign_rules(campaign_id).select_for_update())
+        rules = list(rule_list(campaign_id, encampments).select_for_update())
         if len(set(ids)) != len(ids) or set(ids) != {rule.id for rule in rules}:
             raise CampaignError(ORDER_REFUSED, code="campaign_rules_order", fields={"ids": [ORDER_REFUSED]})
         place = {rule_id: index for index, rule_id in enumerate(ids)}

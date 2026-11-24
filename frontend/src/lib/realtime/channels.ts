@@ -150,6 +150,19 @@ export function useCampaignWarbandChanges(
 }
 
 /**
+ * `encampments.changed` on the campaign's events channel: an encampment taken, razed or given up,
+ * or a group or encampment written. It names nothing: the list is read whole, and each row's
+ * capabilities are its reader's own.
+ */
+export function useCampaignEncampmentChanges(campaignId: number | null, handler: () => void) {
+  useChannel<unknown>(
+    campaignId ? `private-campaign-${campaignId}-events` : null,
+    "encampments.changed",
+    () => handler()
+  );
+}
+
+/**
  * `bounty.changed` on the campaign's events channel: a bounty posted, claimed, answered, paid or
  * withdrawn, as the bounty now stands (nothing of any reader's own in it).
  */
