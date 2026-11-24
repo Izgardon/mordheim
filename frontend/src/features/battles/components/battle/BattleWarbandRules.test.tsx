@@ -1,8 +1,9 @@
 /**
- * The battle Rules sheet's Warband rules (the templates plan): each warband in the battle with its
- * rules as pills, a pill opening its text in the sheet itself and never a modal on top of it
- * (William, 12 Nov 2026); a warband with none is left out.
+ * The battle Rules sheet's Warband rules (William, 24 Nov 2026): a row per warband in the battle,
+ * grouped as its rules modal groups them, opening in place to its rules, never a modal on top of
+ * the sheet (William, 12 Nov 2026); a warband with none is left out.
  */
+import { useState } from "react";
 import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -17,49 +18,51 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
 
-const render = () =>
-  renderWithQueryClient(
+function Harness() {
+  const [openKey, setOpenKey] = useState<string | null>(null);
+  return (
     <BattleWarbandRules
       campaignId={3}
       warbands={[
         { id: 1, name: "Grudgebearers" },
         { id: 2, name: "Rats" },
       ]}
+      openKey={openKey}
+      onToggle={(key) => setOpenKey(openKey === key ? null : key)}
     />
   );
+}
 
 describe("BattleWarbandRules", () => {
   beforeEach(() => fakeApi.reset());
 
-  it("opens a rule in the sheet, not in a modal over it", async () => {
+  it("opens a warband's row in place to every rule of it", async () => {
     fakeApi.on("GET /warbands/1/rules/", [
       { id: 5, title: "Hard Head", description: "Maces." },
       { id: 6, title: "Stubborn", description: "No rout." },
     ]);
     fakeApi.on("GET /warbands/2/rules/", []);
-    render();
+    renderWithQueryClient(<Harness />);
     const user = setupUser();
 
-    expect(await screen.findByText("Grudgebearers")).toBeInTheDocument();
-    expect(screen.queryByText("Rats")).toBeNull();
+    const row = await screen.findByRole("button", { name: /Grudgebearers/ });
+    expect(row).toHaveTextContent("2 rules");
+    expect(row).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("button", { name: /Rats/ })).toBeNull();
 
-    await user.click(screen.getByRole("button", { name: "Hard Head" }));
+    await user.click(row);
     expect(screen.getByRole("article", { name: "Hard Head" })).toHaveTextContent("Maces.");
+    expect(screen.getByRole("article", { name: "Stubborn" })).toHaveTextContent("No rout.");
     expect(screen.queryByRole("dialog")).toBeNull();
 
-    // another pill swaps the text, and the same pill again closes it
-    await user.click(screen.getByRole("button", { name: "Stubborn" }));
+    await user.click(row);
     expect(screen.queryByRole("article", { name: "Hard Head" })).toBeNull();
-    expect(screen.getByRole("article", { name: "Stubborn" })).toHaveTextContent("No rout.");
-
-    await user.click(screen.getByRole("button", { name: "Stubborn" }));
-    expect(screen.queryByRole("article", { name: "Stubborn" })).toBeNull();
   });
 
   it("says so while nobody has a rule", async () => {
     fakeApi.on("GET /warbands/1/rules/", []);
     fakeApi.on("GET /warbands/2/rules/", []);
-    render();
+    renderWithQueryClient(<Harness />);
 
     expect(await screen.findByText("No warband rules.")).toBeInTheDocument();
   });

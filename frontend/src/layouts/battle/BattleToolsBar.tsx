@@ -3,9 +3,11 @@ import { BookOpen, Crosshair, Dices, Ellipsis, Swords } from "lucide-react";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import {
+  CRITICAL_HIT_TABLES,
   MELEE_CRITICAL_TABLES,
   RANGED_CRITICAL_TABLES,
 } from "@/features/battles/data/critical-hits";
+import { MISFIRE_TABLE } from "@/features/battles/data/misfire";
 
 import type { CampaignTool } from "../shell/CampaignTools";
 import { BottomBar, BottomBarButton } from "../mobile/BottomBar";
@@ -33,9 +35,12 @@ type BattleToolsBarProps = {
 
 type Sheet = "rules" | "melee" | "ranged" | "menu";
 
+const crits = (ids: string[]) => CRITICAL_HIT_TABLES.filter((table) => ids.includes(table.id));
+
 /**
- * The phone's bottom bar on a battle route (design E): Rules, Melee, Ranged, Dice, Menu. Melee and
- * Ranged hold the crit tables; the Menu holds the battle's actions, the chat and the
+ * The phone's bottom bar on a battle route (design E): Rules, Melee, Dice, Ranged, Menu, Dice in the
+ * middle as on the battle screen (William, 24 Nov 2026). Melee and
+ * Ranged hold the crit tables (Ranged the Misfire chart too); the Menu holds the battle's actions, the chat and the
  * notifications (missing in battle before), and the way back to the campaign.
  */
 export default function BattleToolsBar({ actions, onOpenTool, onExit }: BattleToolsBarProps) {
@@ -65,17 +70,17 @@ export default function BattleToolsBar({ actions, onOpenTool, onExit }: BattleTo
           onClick={() => setSheet("melee")}
         />
         <BottomBarButton
-          label="Ranged"
-          icon={Crosshair}
-          aria-haspopup="dialog"
-          onClick={() => setSheet("ranged")}
-        />
-        <BottomBarButton
           label="Dice"
           icon={Dices}
           aria-haspopup="dialog"
           className="text-accent-hi"
           onClick={() => onOpenTool("dice")}
+        />
+        <BottomBarButton
+          label="Ranged"
+          icon={Crosshair}
+          aria-haspopup="dialog"
+          onClick={() => setSheet("ranged")}
         />
         <BottomBarButton
           label="Menu"
@@ -86,11 +91,17 @@ export default function BattleToolsBar({ actions, onOpenTool, onExit }: BattleTo
       </BottomBar>
 
       <RulesSheet {...sheetProps("rules")} />
-      <CriticalHitsSheet {...sheetProps("melee")} title="Melee" tableIds={MELEE_CRITICAL_TABLES} />
+      <CriticalHitsSheet
+        {...sheetProps("melee")}
+        kicker="Critical hits"
+        title="Melee"
+        tables={crits(MELEE_CRITICAL_TABLES)}
+      />
       <CriticalHitsSheet
         {...sheetProps("ranged")}
+        kicker="Critical hits and misfires"
         title="Ranged"
-        tableIds={RANGED_CRITICAL_TABLES}
+        tables={[...crits(RANGED_CRITICAL_TABLES), MISFIRE_TABLE]}
       />
 
       <BottomSheet {...sheetProps("menu")} kicker="Battle" title="Battle menu">

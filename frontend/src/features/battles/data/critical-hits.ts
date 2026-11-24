@@ -7,6 +7,8 @@ export type CriticalHitEntry = {
 export type CriticalHitTable = {
   id: string;
   label: string;
+  /** Its bar's heading, for a table that is not a critical hit one (the Misfire chart). */
+  heading?: string;
   entries: CriticalHitEntry[];
 };
 

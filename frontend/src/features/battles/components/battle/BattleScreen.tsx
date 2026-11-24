@@ -1,17 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import {
-  ArrowRight,
-  BookOpen,
-  ChevronLeft,
-  Crosshair,
-  Dices,
-  Ellipsis,
-  Swords,
-} from "lucide-react";
+import { ArrowRight, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { IconButton } from "@/components/ui/icon-button";
 import BattleNotesSheet from "@/features/battles/components/shared/BattleNotesSheet";
@@ -20,17 +11,16 @@ import type { BattleScreen as Screen } from "@/features/battles/hooks/useBattleS
 import { battleNumberLabel } from "@/features/battles/utils/battle-number";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
-import { BottomBar, BottomBarButton } from "@/layouts/mobile/BottomBar";
 import { useTabScroll } from "@/lib/use-tab-scroll";
 import { cn } from "@/lib/utils";
 
-import BattleDiceSheet from "./BattleDiceSheet";
 import BattleFeed from "./BattleFeed";
 import BattleMenuSheet, { type BattleMenuRow } from "./BattleMenuSheet";
 import { battleMenu } from "./battle-menu";
 import BattleRulesSheet from "./BattleRulesSheet";
-import type { CombatOption } from "./CombatPicker";
+import BattleTools, { type BattleTool } from "./BattleTools";
 import CombatSheet from "./CombatSheet";
+import { combatOptions } from "./combat-options";
 import { EndFightSheet, FinishSheet } from "./FinishSheets";
 import GearSheet from "./GearSheet";
 import KillSheet, { type Killer } from "./KillSheet";
@@ -46,32 +36,15 @@ import {
   EditStatsSheet,
   type EditableUnit,
 } from "./UnitSheets";
-import {
-  allViews,
-  battleSectionLabel,
-  battleSections,
-  nextStatus,
-  sideId,
-  type BattleUnitView,
-} from "./battle-units";
+import { nextStatus, sideId, type BattleUnitView } from "./battle-units";
 
-type Panel =
-  | "menu"
-  | "dice"
-  | "rules"
-  | "notes"
-  | "edit"
-  | "add"
-  | "neutral"
-  | "leave"
-  | "cancel"
-  | "end";
+type Panel = "menu" | "rules" | "notes" | "edit" | "add" | "neutral" | "leave" | "cancel" | "end";
 
 /**
  * The battle screen (design E's E-Mobile-Battle). On a phone it fills the screen: the
  * top bar (back, the battle and "Round N · live", Next round), the strip of warbands and neutral
  * groups, the feed in its own box, the selected side's units and the bottom bar (Rules, Melee,
- * Ranged, Dice, Menu). On the web the same pieces sit wider: the tools in the header, the strip
+ * Dice, Ranged, Menu: `BattleTools`). On the web the same pieces sit wider: the tools in the header, the strip
  * and the cards in the main column, the feed as a side column.
  */
 export default function BattleScreen({ screen, isMobile }: { screen: Screen; isMobile: boolean }) {
@@ -99,6 +72,10 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
   const [noteTarget, setNoteTarget] = useState<NoteTarget | null>(null);
   const openNote = (view: BattleUnitView, name = view.unit.displayName) =>
     setNoteTarget({ key: view.unit.key, name, notes: view.info?.notes ?? "" });
+  const openTool = (tool: BattleTool) => {
+    if (tool === "melee" || tool === "ranged") setCombat(tool);
+    else setPanel(tool);
+  };
   const panelProps = (which: Panel) => ({
     open: panel === which,
     onOpenChange: (open: boolean) => setPanel(open ? which : null),
@@ -142,37 +119,10 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
   };
 
   const otherSides = sides.filter((entry) => entry.id !== mySide);
-  const combatOptions = useMemo(() => {
-    const option = (view: BattleUnitView, side?: string): CombatOption => {
-      const heading = battleSectionLabel(view.unit);
-      return {
-        key: view.unit.key,
-        name: view.unit.displayName,
-        stats: view.stats,
-        section: side ? `${side} · ${heading}` : heading,
-      };
-    };
-    const yours: CombatOption[] = sections
-      ? allViews(sections)
-          .filter((view) => view.status !== "out_of_action")
-          .map((view) => option(view))
-      : [];
-    // with more than one other side, each heading names whose models they are
-    const several = otherSides.length > 1;
-    const theirs: CombatOption[] = otherSides.flatMap((entry): CombatOption[] =>
-      entry.kind === "neutral"
-        ? entry.group.creatures.map((creature) => ({
-            key: creature.key,
-            name: creature.name,
-            stats: entry.group.stats ?? {},
-            section: `${entry.name} (neutral)`,
-          }))
-        : allViews(battleSections(entry.participant, rosters[entry.participant.user.id])).map(
-            (view) => option(view, several ? entry.name : undefined)
-          )
-    );
-    return { yours, theirs };
-  }, [otherSides, rosters, sections]);
+  const pickable = useMemo(
+    () => combatOptions(sections, otherSides, rosters),
+    [otherSides, rosters, sections]
+  );
 
   const editable: EditableUnit[] = sections
     ? [
@@ -362,8 +312,8 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       />
       <CombatSheet
         kind={combat}
-        yours={combatOptions.yours}
-        theirs={combatOptions.theirs}
+        yours={pickable.yours}
+        theirs={pickable.theirs}
         onOpenChange={(open) => (open ? null : setCombat(null))}
       />
       <UnitNoteSheet
@@ -372,12 +322,10 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
         onOpenChange={(open) => (open ? null : setNoteTarget(null))}
         onSave={config.saveUnitNotes}
       />
-      <BattleDiceSheet {...panelProps("dice")} />
       <BattleRulesSheet
         {...panelProps("rules")}
         campaignId={campaignId}
-        scenario={scenario}
-        scenarioLink={battleState.battle.scenario_link}
+        scenario={{ name: scenario, link: battleState.battle.scenario_link }}
         warbands={participants.map((participant) => participant.warband)}
       />
       <BattleMenuSheet {...panelProps("menu")} kicker={scenario} rows={menuRows} />
@@ -459,39 +407,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
           {shown}
         </div>
         <div className="shrink-0 pb-[env(safe-area-inset-bottom,0px)]">
-          <BottomBar label="Battle tools">
-            <BottomBarButton
-              label="Rules"
-              icon={BookOpen}
-              aria-haspopup="dialog"
-              onClick={() => setPanel("rules")}
-            />
-            <BottomBarButton
-              label="Melee"
-              icon={Swords}
-              aria-haspopup="dialog"
-              onClick={() => setCombat("melee")}
-            />
-            <BottomBarButton
-              label="Ranged"
-              icon={Crosshair}
-              aria-haspopup="dialog"
-              onClick={() => setCombat("ranged")}
-            />
-            <BottomBarButton
-              label="Dice"
-              icon={Dices}
-              aria-haspopup="dialog"
-              className="font-bold text-accent-hi"
-              onClick={() => setPanel("dice")}
-            />
-            <BottomBarButton
-              label="Menu"
-              icon={Ellipsis}
-              aria-haspopup="dialog"
-              onClick={() => setPanel("menu")}
-            />
-          </BottomBar>
+          <BattleTools isMobile onOpen={openTool} />
         </div>
         {sheets}
       </div>
@@ -508,28 +424,9 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
           <h1 className="m-0 font-display text-[28px] font-semibold text-head">{scenario}</h1>
           {roundLine}
         </div>
-        <div
-          className="flex flex-wrap items-center gap-1.5"
-          role="toolbar"
-          aria-label="Battle tools"
-        >
-          <Button variant="secondary" onClick={() => setPanel("rules")}>
-            <BookOpen aria-hidden="true" /> Rules
-          </Button>
-          <Button variant="secondary" onClick={() => setCombat("melee")}>
-            <Swords aria-hidden="true" /> Melee
-          </Button>
-          <Button variant="secondary" onClick={() => setCombat("ranged")}>
-            <Crosshair aria-hidden="true" /> Ranged
-          </Button>
-          <Button variant="secondary" onClick={() => setPanel("dice")}>
-            <Dices aria-hidden="true" /> Dice
-          </Button>
-          <Button variant="secondary" onClick={() => setPanel("menu")}>
-            <Ellipsis aria-hidden="true" /> Menu
-          </Button>
+        <BattleTools isMobile={false} onOpen={openTool}>
           {nextRoundButton}
-        </div>
+        </BattleTools>
       </header>
       {strip}
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(300px,360px)] items-start gap-6">

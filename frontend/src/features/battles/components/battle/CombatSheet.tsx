@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentProps, type ReactNode } from "react";
 
 import { NumberInput } from "@/components/ui/number-input";
 import { Chip } from "@/components/ui/chip";
@@ -9,6 +9,7 @@ import {
   MELEE_CRITICAL_TABLES,
   RANGED_CRITICAL_TABLES,
 } from "@/features/battles/data/critical-hits";
+import { MISFIRE_TABLE } from "@/features/battles/data/misfire";
 
 import {
   formatToHit,
@@ -34,6 +35,7 @@ type Numbers = { skill: string; strength: string; toughness: string; save: strin
 const num = (value: string) => Number.parseInt(value, 10) || 0;
 const text = (value: number | null | undefined) => (typeof value === "number" ? String(value) : "");
 
+/** One number, its name beside a box that fills the rest of its column. */
 function Field({
   label,
   value,
@@ -44,17 +46,29 @@ function Field({
   onChange: (v: string) => void;
 }) {
   return (
-    <label className="flex flex-col items-center gap-1 text-[10px] font-bold text-faint">
+    <label className="grid grid-cols-[1.75rem_minmax(0,1fr)] items-center gap-2 text-xs font-bold text-faint">
       {label}
       <NumberInput
-        compact
         inputSize="sm"
         aria-label={label}
         value={value}
         onChange={(event) => onChange(event.target.value.replace(/[^\d]/g, "").slice(0, 2))}
-        className="w-14 px-1 text-center font-mono"
+        className="min-w-0 px-1 text-center font-mono"
       />
     </label>
+  );
+}
+
+/** Yours or Theirs: the model picked, then its numbers stacked under it, the column's width. */
+function Side({
+  children,
+  ...picker
+}: ComponentProps<typeof CombatPicker> & { children: ReactNode }) {
+  return (
+    <div role="group" aria-label={picker.label} className="flex min-w-0 flex-col gap-2">
+      <CombatPicker {...picker} />
+      {children}
+    </div>
   );
 }
 
@@ -69,7 +83,10 @@ function Result({ label, value }: { label: string; value: string }) {
 
 /**
  * Melee and Ranged (design E): pick your model and theirs (or type the numbers) for the roll to
- * hit, to wound and the save left; the critical hit tables sit underneath, minimised.
+ * hit, to wound and the save left; the critical hit tables sit underneath, minimised. Yours and
+ * Theirs are two columns, each picker over its numbers at the column's width, so nothing is cut
+ * off on a phone (William, 24 Nov 2026: "2 columns of yours and theirs with all inputs taking up
+ * full width").
  */
 export default function CombatSheet({ kind, yours, theirs, onOpenChange }: CombatSheetProps) {
   const [mineKey, setMineKey] = useState("");
@@ -120,9 +137,10 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
       : formatToHit(meleeToHit(num(mine.skill), num(their.skill)));
   const wound = toWound(num(mine.strength), num(their.toughness));
   const save = saveAfter(their.save ? num(their.save) : null, num(mine.strength));
-  const tables = CRITICAL_HIT_TABLES.filter((table) =>
+  const crits = CRITICAL_HIT_TABLES.filter((table) =>
     (kind === "ranged" ? RANGED_CRITICAL_TABLES : MELEE_CRITICAL_TABLES).includes(table.id)
   );
+  const tables = kind === "ranged" ? [...crits, MISFIRE_TABLE] : crits;
 
   return (
     <ModalSheet
@@ -131,9 +149,8 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
       kicker="To hit, to wound, crits"
       title={kind === "ranged" ? "Ranged" : "Melee"}
     >
-      <div className="flex flex-wrap items-end gap-3">
-        <CombatPicker label="Yours" options={yours} value={mineKey} onChange={pickMine} />
-        <div className="flex gap-1.5">
+      <div className="grid grid-cols-2 items-start gap-3">
+        <Side label="Yours" options={yours} value={mineKey} onChange={pickMine}>
           <Field
             label={kind === "ranged" ? "BS" : "WS"}
             value={mine.skill}
@@ -144,11 +161,8 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
             value={mine.strength}
             onChange={(strength) => setMine({ ...mine, strength })}
           />
-        </div>
-      </div>
-      <div className="flex flex-wrap items-end gap-3">
-        <CombatPicker label="Theirs" options={theirs} value={theirKey} onChange={pickTheirs} />
-        <div className="flex gap-1.5">
+        </Side>
+        <Side label="Theirs" options={theirs} value={theirKey} onChange={pickTheirs}>
           {kind === "melee" ? (
             <Field
               label="WS"
@@ -166,7 +180,7 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
             value={their.save}
             onChange={(value) => setTheir({ ...their, save: value })}
           />
-        </div>
+        </Side>
       </div>
       {kind === "ranged" ? (
         <div role="group" aria-label="Modifiers" className="flex flex-wrap gap-1.5">
