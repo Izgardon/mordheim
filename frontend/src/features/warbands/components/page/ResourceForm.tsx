@@ -13,8 +13,8 @@ export type Editing =
   | null;
 
 /**
- * The resources section's one form: a name (Add resource, Rename) or a sale (how many, the size
- * band for the default resource, and the gold). It opens under the section's title and closes on
+ * The resources section's one form: a name (Add resource, Rename) or a sale (the resource's name,
+ * how many, the size band for the default resource, and the gold). It opens under the section's title and closes on
  * its own Cancel.
  */
 export default function ResourceForm({
@@ -39,13 +39,25 @@ export default function ResourceForm({
   const selling = editing.kind === "sell";
   return (
     <form
-      aria-label={editing.kind === "add" ? "Add resource" : undefined}
+      aria-label={
+        editing.kind === "add"
+          ? "Add resource"
+          : selling
+            ? `Sell ${editing.resource.name}`
+            : undefined
+      }
       className="flex flex-wrap items-center gap-2"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit();
       }}
     >
+      {selling ? (
+        // which resource is being sold (William, 24 Nov 2026): the form opens under the title
+        <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink">
+          Sell {editing.resource.name}
+        </span>
+      ) : null}
       {selling ? (
         <NumberInput
           compact

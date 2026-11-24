@@ -122,6 +122,17 @@ describe("Sell", () => {
   };
   const field = (name: string) => screen.getByRole("spinbutton", { name });
 
+  // William, 24 Nov 2026: "the top sell line should say which one you are selling"
+  it("names the resource being sold", async () => {
+    const user = setupUser();
+    renderResources();
+
+    await openSell(user, "Amber");
+
+    const form = screen.getByRole("form", { name: "Sell Amber" });
+    expect(form).toHaveTextContent("Sell Amber");
+  });
+
   // William, 7 Nov 2026: "a table of sell prices for number of shards depending on size of warband"
   it("prices the default resource from the table at the warband's band, which can be changed", async () => {
     const user = setupUser();
