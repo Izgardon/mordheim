@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
 
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -15,7 +15,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
  * creator's Cancel.
  */
 export default function BattlePrebattle() {
-  const { setBattleMenuActions } = useOutletContext<CampaignLayoutContext>();
+  const { setBattleMenuActions, setBattleRules } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const page = usePrebattlePage();
   const { flags, creatorCancel, start, notesDialog, ready, leave, selection } = page;
@@ -29,22 +29,47 @@ export default function BattlePrebattle() {
   useEffect(() => {
     setBattleMenuActions([
       ...(hasMe
-        ? [{ label: "Battle notes", detail: "Only you see them", onSelect: () => openNotes(true) }]
+        ? [
+            {
+              label: "Battle notes",
+              detail: "Your own notes for this fight; only you see them",
+              onSelect: () => openNotes(true),
+            },
+          ]
         : []),
       ...(canCancel
         ? [
             {
               label: "Cancel battle",
-              detail: "For everyone",
+              detail: "For everyone; nothing is kept",
               onSelect: () => openCancel(true),
               danger: true,
             },
           ]
         : []),
-      { label: "Leave", detail: "Your Ready is taken back", onSelect: confirmLeave, danger: true },
+      {
+        label: "Leave",
+        detail: "Step out of this battle; your Ready is taken back",
+        onSelect: confirmLeave,
+        danger: true,
+      },
     ]);
     return () => setBattleMenuActions([]);
   }, [canCancel, confirmLeave, hasMe, openCancel, openNotes, setBattleMenuActions]);
+
+  // the phone bar's Rules sheet, as the active battle's: its scenario and its warbands' rules
+  const { battle: info, participants } = page.battle.battleState;
+  const rules = useMemo(
+    () => ({
+      scenario: { name: info.scenario, link: info.scenario_link },
+      warbands: participants.map((participant) => participant.warband),
+    }),
+    [info.scenario, info.scenario_link, participants]
+  );
+  useEffect(() => {
+    setBattleRules(rules);
+    return () => setBattleRules(null);
+  }, [rules, setBattleRules]);
 
   return (
     <>

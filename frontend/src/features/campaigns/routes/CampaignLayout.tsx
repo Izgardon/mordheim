@@ -4,7 +4,10 @@ import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useSearchShortcut } from "@/features/search/useSearchShortcut";
 import { useMyWarbandStore } from "@/features/warbands/hooks/warband/useMyWarbandStore";
-import BattleToolsBar, { type BattleMenuAction } from "@/layouts/battle/BattleToolsBar";
+import BattleToolsBar, {
+  type BattleMenuAction,
+  type BattleRulesInfo,
+} from "@/layouts/battle/BattleToolsBar";
 import BattleTopBar from "@/layouts/battle/BattleTopBar";
 import CampaignBottomNav from "@/layouts/mobile/CampaignBottomNav";
 import MobileTopBar from "@/layouts/mobile/MobileTopBar";
@@ -39,6 +42,8 @@ import { useCampaignRulesTitle } from "@/features/rules/hooks/useCampaignRulesTi
 export type CampaignLayoutContext = {
   campaign: CampaignSummary | null;
   setBattleMenuActions: (actions: BattleMenuAction[]) => void;
+  /** The battle's scenario and warbands for the phone bar's Rules sheet (null off a battle page). */
+  setBattleRules: (rules: BattleRulesInfo | null) => void;
   openTool: (tool: CampaignTool) => void;
   /** Opens Start battle or Report a result (the layout holds the one dialog). */
   openBattleDialog: (mode: BattleDialogMode) => void;
@@ -74,6 +79,7 @@ export default function CampaignLayout() {
   });
   const [openTool, setOpenTool] = useState<CampaignTool | null>(null);
   const [battleMenuActions, setBattleMenuActions] = useState<BattleMenuAction[]>([]);
+  const [battleRules, setBattleRules] = useState<BattleRulesInfo | null>(null);
   const [battleDialog, setBattleDialog] = useState<BattleDialogMode | null>(null);
   useSearchShortcut(campaignId, !isMobile && isCampaignId(campaignId));
 
@@ -88,6 +94,7 @@ export default function CampaignLayout() {
     () => ({
       campaign,
       setBattleMenuActions,
+      setBattleRules,
       openTool: setOpenTool,
       openBattleDialog: setBattleDialog,
     }),
@@ -145,6 +152,8 @@ export default function CampaignLayout() {
             <>
               {tools}
               <BattleToolsBar
+                campaignId={campaign.id}
+                rules={battleRules}
                 actions={battleMenuActions}
                 onOpenTool={setOpenTool}
                 onExit={backToCampaign}

@@ -1,5 +1,6 @@
 import { SectionedSelect, type SelectSection } from "@/components/ui/sectioned-select";
 import type { UnitStats } from "@/features/battles/components/prebattle/prebattle-types";
+import { cn } from "@/lib/utils";
 
 /** A model the helpers can read a profile from, under its picker heading ("Heroes"). */
 export type CombatOption = {
@@ -33,14 +34,22 @@ export default function CombatPicker({
   options,
   value,
   onChange,
+  end = false,
 }: {
   label: string;
   options: CombatOption[];
   value: string;
   onChange: (key: string) => void;
+  /** Theirs: its label on the right, mirroring Yours (William, 24 Nov 2026). */
+  end?: boolean;
 }) {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-1 text-xs font-bold text-text2">
+    <div
+      className={cn(
+        "flex min-w-0 flex-1 flex-col gap-1 text-xs font-bold text-text2",
+        end && "text-right"
+      )}
+    >
       {label}
       <SectionedSelect
         aria-label={label}

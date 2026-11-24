@@ -9,6 +9,7 @@ import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fakeApi } from "@/test/fake-api";
+import { setupUser } from "@/test/user-event";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 
 import DicePanel from "./DicePanel";
@@ -56,5 +57,16 @@ describe("DicePanel", () => {
     expect(captions).toContain("Die");
     expect(captions).toContain("Dice");
     expect(captions).toContain("Modifier");
+  });
+
+  // William, 24 Nov 2026: every roll can be typed in, on the main roller too
+  it("takes the table's roll typed into a box per die, and shows its total", async () => {
+    const user = setupUser();
+    renderPanel();
+
+    await user.type(screen.getByRole("textbox", { name: "First D6 rolled" }), "4");
+    await user.type(screen.getByRole("textbox", { name: "Second D6 rolled" }), "5");
+
+    expect(await screen.findByText("9")).toBeInTheDocument();
   });
 });

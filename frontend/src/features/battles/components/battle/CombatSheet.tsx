@@ -1,4 +1,5 @@
 import { useEffect, useState, type ComponentProps, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 import { NumberInput } from "@/components/ui/number-input";
 import { Chip } from "@/components/ui/chip";
@@ -35,26 +36,36 @@ type Numbers = { skill: string; strength: string; toughness: string; save: strin
 const num = (value: string) => Number.parseInt(value, 10) || 0;
 const text = (value: number | null | undefined) => (typeof value === "number" ? String(value) : "");
 
-/** One number, its name beside a box that fills the rest of its column. */
+/** One number, its name beside a box that fills the rest of its column; Theirs' name on the right. */
 function Field({
   label,
   value,
   onChange,
+  end = false,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  end?: boolean;
 }) {
+  const input = (
+    <NumberInput
+      inputSize="sm"
+      aria-label={label}
+      value={value}
+      onChange={(event) => onChange(event.target.value.replace(/[^\d]/g, "").slice(0, 2))}
+      className="min-w-0 px-1 text-center font-mono"
+    />
+  );
   return (
-    <label className="grid grid-cols-[1.75rem_minmax(0,1fr)] items-center gap-2 text-xs font-bold text-faint">
-      {label}
-      <NumberInput
-        inputSize="sm"
-        aria-label={label}
-        value={value}
-        onChange={(event) => onChange(event.target.value.replace(/[^\d]/g, "").slice(0, 2))}
-        className="min-w-0 px-1 text-center font-mono"
-      />
+    <label
+      className={cn(
+        "grid items-center gap-2 text-xs font-bold text-faint",
+        end ? "grid-cols-[minmax(0,1fr)_1.75rem] text-right" : "grid-cols-[1.75rem_minmax(0,1fr)]"
+      )}
+    >
+      {end ? input : label}
+      {end ? label : input}
     </label>
   );
 }
@@ -149,7 +160,8 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
       kicker="To hit, to wound, crits"
       title={kind === "ranged" ? "Ranged" : "Melee"}
     >
-      <div className="grid grid-cols-2 items-start gap-3">
+      {/* a thin rule between Yours and Theirs (William, 24 Nov 2026) */}
+      <div className="grid grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)] items-stretch gap-3">
         <Side label="Yours" options={yours} value={mineKey} onChange={pickMine}>
           <Field
             label={kind === "ranged" ? "BS" : "WS"}
@@ -162,20 +174,24 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
             onChange={(strength) => setMine({ ...mine, strength })}
           />
         </Side>
-        <Side label="Theirs" options={theirs} value={theirKey} onChange={pickTheirs}>
+        <div aria-hidden="true" className="bg-line" />
+        <Side label="Theirs" options={theirs} value={theirKey} onChange={pickTheirs} end>
           {kind === "melee" ? (
             <Field
+              end
               label="WS"
               value={their.skill}
               onChange={(skill) => setTheir({ ...their, skill })}
             />
           ) : null}
           <Field
+            end
             label="T"
             value={their.toughness}
             onChange={(toughness) => setTheir({ ...their, toughness })}
           />
           <Field
+            end
             label="Sv"
             value={their.save}
             onChange={(value) => setTheir({ ...their, save: value })}

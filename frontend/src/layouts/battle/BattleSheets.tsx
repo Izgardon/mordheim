@@ -1,30 +1,7 @@
-import { useState } from "react";
-
 import { BottomSheet } from "@/components/ui/bottom-sheet";
-import { Chip } from "@/components/ui/chip";
 import type { CriticalHitTable } from "@/features/battles/data/critical-hits";
-import { rulesTabs } from "@/features/rules/data/rules-content";
 
 type SheetProps = { open: boolean; onOpenChange: (open: boolean) => void };
-
-/** The rulebook during a battle: one section at a time. */
-export function RulesSheet({ open, onOpenChange }: SheetProps) {
-  const [tabId, setTabId] = useState<string>(rulesTabs[0].id);
-  const tab = rulesTabs.find((entry) => entry.id === tabId) ?? rulesTabs[0];
-  return (
-    <BottomSheet open={open} onOpenChange={onOpenChange} kicker="Quick reference" title="Rules">
-      <div role="group" aria-label="Rules section" className="flex flex-wrap gap-1.5">
-        {rulesTabs.map((entry) => (
-          <Chip key={entry.id} pressed={entry.id === tab.id} onClick={() => setTabId(entry.id)}>
-            {entry.label}
-          </Chip>
-        ))}
-      </div>
-      {/* Static, bundled rules text (features/rules/data), not user content. */}
-      <div className="rules-content" dangerouslySetInnerHTML={{ __html: tab.content }} />
-    </BottomSheet>
-  );
-}
 
 /**
  * The tables for one kind of attack: Melee's four critical hit tables, or Ranged's missile table

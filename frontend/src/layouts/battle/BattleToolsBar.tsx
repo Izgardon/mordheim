@@ -7,12 +7,14 @@ import {
   MELEE_CRITICAL_TABLES,
   RANGED_CRITICAL_TABLES,
 } from "@/features/battles/data/critical-hits";
+import BattleRulesSheet from "@/features/battles/components/battle/BattleRulesSheet";
+import type { BattleScenario } from "@/features/battles/components/battle/ScenarioSheet";
 import { MISFIRE_TABLE } from "@/features/battles/data/misfire";
 
 import type { CampaignTool } from "../shell/CampaignTools";
 import { BottomBar, BottomBarButton } from "../mobile/BottomBar";
 import { SheetButtonRow, SheetRows } from "../mobile/SheetRows";
-import { CriticalHitsSheet, RulesSheet } from "./BattleSheets";
+import { CriticalHitsSheet } from "./BattleSheets";
 
 /** An action the battle page puts in the Menu (finish my battle, notes, leave the battle). */
 export type BattleMenuAction = {
@@ -24,7 +26,16 @@ export type BattleMenuAction = {
   danger?: boolean;
 };
 
+/** What the Rules sheet shows of the battle: its scenario and its warbands' own rules. */
+export type BattleRulesInfo = {
+  scenario: BattleScenario;
+  warbands: { id: number; name: string }[];
+};
+
 type BattleToolsBarProps = {
+  campaignId: number;
+  /** The page's battle, for the Rules sheet; null before the page has read it. */
+  rules: BattleRulesInfo | null;
   /** The page's own actions, first in the Menu. */
   actions: BattleMenuAction[];
   /** Opens the dice roller, the chat or the notifications (`CampaignTools`). */
@@ -43,7 +54,13 @@ const crits = (ids: string[]) => CRITICAL_HIT_TABLES.filter((table) => ids.inclu
  * Ranged hold the crit tables (Ranged the Misfire chart too); the Menu holds the battle's actions, the chat and the
  * notifications (missing in battle before), and the way back to the campaign.
  */
-export default function BattleToolsBar({ actions, onOpenTool, onExit }: BattleToolsBarProps) {
+export default function BattleToolsBar({
+  campaignId,
+  rules,
+  actions,
+  onOpenTool,
+  onExit,
+}: BattleToolsBarProps) {
   const [sheet, setSheet] = useState<Sheet | null>(null);
   const sheetProps = (which: Sheet) => ({
     open: sheet === which,
@@ -90,7 +107,13 @@ export default function BattleToolsBar({ actions, onOpenTool, onExit }: BattleTo
         />
       </BottomBar>
 
-      <RulesSheet {...sheetProps("rules")} />
+      {/* the active battle's Rules sheet, the same five pills (William, 24 Nov 2026) */}
+      <BattleRulesSheet
+        {...sheetProps("rules")}
+        campaignId={campaignId}
+        scenario={rules?.scenario ?? null}
+        warbands={rules?.warbands ?? []}
+      />
       <CriticalHitsSheet
         {...sheetProps("melee")}
         kicker="Critical hits"
@@ -116,9 +139,21 @@ export default function BattleToolsBar({ actions, onOpenTool, onExit }: BattleTo
               onSelect={fromMenu(action.onSelect)}
             />
           ))}
-          <SheetButtonRow label="Chat" onSelect={fromMenu(() => onOpenTool("chat"))} />
-          <SheetButtonRow label="Notifications" onSelect={fromMenu(() => onOpenTool("bell"))} />
-          <SheetButtonRow label="Back to the campaign" onSelect={fromMenu(onExit)} />
+          <SheetButtonRow
+            label="Chat"
+            detail="Message the campaign's players"
+            onSelect={fromMenu(() => onOpenTool("chat"))}
+          />
+          <SheetButtonRow
+            label="Notifications"
+            detail="Invitations, claims and what the others did"
+            onSelect={fromMenu(() => onOpenTool("bell"))}
+          />
+          <SheetButtonRow
+            label="Back to the campaign"
+            detail="The battle waits for you; Rejoin brings you back"
+            onSelect={fromMenu(onExit)}
+          />
         </SheetRows>
       </BottomSheet>
     </>

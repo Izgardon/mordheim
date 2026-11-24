@@ -42,7 +42,8 @@ export default function BattleRulesSheet({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   campaignId: number;
-  scenario: BattleScenario;
+  /** Null before the battle is read (the pre-battle bar): no scenario button. */
+  scenario: BattleScenario | null;
   /** The battle's warbands, whose own rules the Warband rules section shows. */
   warbands?: { id: number; name: string }[];
 }) {
@@ -70,17 +71,19 @@ export default function BattleRulesSheet({
         title="Rules"
         className="max-w-[720px]"
       >
-        <button
-          type="button"
-          aria-haspopup="dialog"
-          onClick={() => setDetails(true)}
-          className="flex min-h-11 items-center justify-between gap-2.5 border border-border bg-surface px-3 text-left text-sm text-text2 hover:bg-raised"
-        >
-          <span className="min-w-0">
-            Scenario: <span className="font-bold text-ink">{scenario.name}</span>
-          </span>
-          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-        </button>
+        {scenario ? (
+          <button
+            type="button"
+            aria-haspopup="dialog"
+            onClick={() => setDetails(true)}
+            className="flex min-h-11 items-center justify-between gap-2.5 border border-border bg-surface px-3 text-left text-sm text-text2 hover:bg-raised"
+          >
+            <span className="min-w-0">
+              Scenario: <span className="font-bold text-ink">{scenario.name}</span>
+            </span>
+            <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+          </button>
+        ) : null}
         <div
           role="group"
           aria-label="Rules section"
@@ -105,11 +108,13 @@ export default function BattleRulesSheet({
         {section === "house" ? <HouseRuleRows campaignId={campaignId} {...rows} /> : null}
         {section === "rules" ? <RuleBookRows {...rows} /> : null}
       </ModalSheet>
-      <ScenarioSheet
-        scenario={scenario}
-        open={open && details}
-        onOpenChange={(next) => setDetails(next)}
-      />
+      {scenario ? (
+        <ScenarioSheet
+          scenario={scenario}
+          open={open && details}
+          onOpenChange={(next) => setDetails(next)}
+        />
+      ) : null}
     </>
   );
 }

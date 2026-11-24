@@ -66,7 +66,11 @@ describe("the combat sheet's layout", () => {
     const yours = screen.getByRole("group", { name: "Yours" });
     const theirs = screen.getByRole("group", { name: "Theirs" });
     expect(yours.parentElement).toBe(theirs.parentElement);
-    expect(yours.parentElement).toHaveClass("grid-cols-2");
+    // a thin rule between them, and Theirs mirrored: its names on the right (William, 24 Nov 2026)
+    expect(yours.nextElementSibling).toHaveClass("bg-line");
+    expect(within(theirs).getByText("Theirs")).toHaveClass("text-right");
+    expect(within(theirs).getByLabelText("T").closest("label")).toHaveClass("text-right");
+    expect(within(yours).getByLabelText("S").closest("label")).not.toHaveClass("text-right");
     expect(within(yours).getByRole("combobox", { name: "Yours" })).toBeInTheDocument();
     expect(within(theirs).getByRole("combobox", { name: "Theirs" })).toBeInTheDocument();
     expect(numbers("Yours")).toEqual(["WS", "S"]);

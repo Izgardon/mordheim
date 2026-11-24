@@ -4,6 +4,7 @@ import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { Minus, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import DiceEntry from "@/components/ui/dice-entry";
 import { Chip } from "@/components/ui/chip";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +13,7 @@ import { warbandLogsQuery } from "@/features/warbands/api/economy-queries";
 import { markLedgerStale } from "@/features/warbands/api/warband-cache";
 import { createWarbandLog } from "@/features/warbands/api/warbands-api";
 import { useAppStore } from "@/stores/app-store";
-import { capitalDice, rollDie as rollDieOf } from "@/lib/dice";
+import { capitalDice, rollDie as rollDieOf, type Dice } from "@/lib/dice";
 
 const DICE = ["D3", "D6", "D8", "D10", "D12", "D20", "D66", "D100"] as const;
 type Die = (typeof DICE)[number];
@@ -31,8 +32,9 @@ type DicePanelProps = {
 };
 
 /**
- * Quick rolls (design E): any number of D3 to D100 or D66, a modifier and a reason. Each roll goes
- * into your warband's log as a dice roll, and your recent rolls are listed underneath.
+ * Quick rolls (design E): any number of D3 to D100 or D66, a modifier and a reason, rolled here or
+ * typed into a box per die from the table's dice. Each roll goes into your warband's log as a dice
+ * roll, and your recent rolls are listed underneath.
  */
 export default function DicePanel({ campaignId, open, onOpenChange, trigger }: DicePanelProps) {
   const { warband } = useAppStore();
@@ -50,8 +52,8 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
   const recent = (logs.data?.pages[0]?.results ?? []).slice(0, 8);
   const notation = `${count > 1 ? count : ""}${die}${modifier ? (modifier > 0 ? `+${modifier}` : modifier) : ""}`;
 
-  const roll = () => {
-    const faces = Array.from({ length: count }, () => rollDie(die));
+  /** A roll's faces, rolled here or typed in from the table, logged the same way. */
+  const record = (faces: number[]) => {
     const total = faces.reduce((sum, face) => sum + face, 0) + modifier;
     setLast({ faces, total });
     setError("");
@@ -74,6 +76,14 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
       })
       .catch(() => setError("Rolled, but the roll couldn't be logged."));
   };
+
+  const roll = () => record(Array.from({ length: count }, () => rollDie(die)));
+  // every roll can be typed in (William, 24 Nov 2026: yes, on the main roller too): a box per die;
+  // a D66's two boxes make one result, so several D66 roll only
+  const typeable: Dice | null =
+    die === "D66" ? (count === 1 ? "D66" : null) : (`${count > 1 ? count : ""}${die}` as Dice);
+  const fromBoxes = (faces: number[]) =>
+    record(die === "D66" ? [(faces[0] ?? 0) * 10 + (faces[1] ?? 0)] : faces);
 
   const stepper = (label: string, value: string, onDown: () => void, onUp: () => void) => (
     <div className="flex flex-col gap-1.5">
@@ -129,9 +139,24 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
           What for
           <Input value={reason} onChange={(event) => setReason(event.target.value)} />
         </label>
-        <Button size="lg" onClick={roll}>
-          Roll {notation}
-        </Button>
+        {typeable ? (
+          <DiceEntry
+            key={typeable}
+            dice={typeable}
+            onFaces={fromBoxes}
+            size="lg"
+            className="[&>button]:w-full"
+            button={(rollBoxes) => (
+              <Button size="lg" onClick={rollBoxes}>
+                Roll {notation}
+              </Button>
+            )}
+          />
+        ) : (
+          <Button size="lg" onClick={roll}>
+            Roll {notation}
+          </Button>
+        )}
         {last ? (
           <div
             aria-live="polite"
