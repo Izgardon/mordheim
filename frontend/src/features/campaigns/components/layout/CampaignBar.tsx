@@ -50,9 +50,7 @@ export default function CampaignBar({
           <ReadinessBones />
         )
       ) : null}
-      {content === "battle" ? (
-        <RejoinBanner campaignId={campaign.id} battles={battles} look="bar" />
-      ) : null}
+      {content === "battle" ? <RejoinBanner campaignId={campaign.id} battles={battles} /> : null}
       {content === "raise" ? (
         <NoWarbandBanner campaign={campaign} pathname={pathname} look="bar" />
       ) : null}

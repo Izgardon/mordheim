@@ -200,10 +200,8 @@ export default function CampaignLayout() {
       <CampaignPageNotices
         campaign={campaign}
         pathname={pathname}
-        battles={yourBattles}
         isMobile={isMobile}
         isOverview={isOverview}
-        isBattleRoute={isBattleRoute}
       />
       <Suspense fallback={<CampaignPageSkeleton pathname={pathname} />}>
         <Outlet context={outletContext} />

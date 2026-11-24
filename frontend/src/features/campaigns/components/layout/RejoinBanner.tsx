@@ -8,7 +8,7 @@ import {
   type YourOpenBattle,
 } from "@/features/battles/utils/open-battles";
 
-import CampaignNotice, { type NoticeLook } from "./CampaignNotice";
+import CampaignNotice from "./CampaignNotice";
 
 /** The bar's kicker over the battle's name: where you stand in it. */
 const BAR_KICKER: Record<OpenBattlePhase, string> = {
@@ -23,18 +23,16 @@ const BAR_KICKER: Record<OpenBattlePhase, string> = {
  * Rejoin) and the battle's own (William: "a permanent banner at the top prompting to rejoin"):
  * where you are, and one button there that says what waits (Rejoin, Open pre-battle, Answer
  * the invitation, To the Aftermath). With several, the one that needs you most, and "+N more" to
- * the Battles page, which lists them. It goes once the battle is done for you. In the web bar;
- * in the page's flow on a phone.
+ * the Battles page, which lists them. It goes once the battle is done for you. In the web bar
+ * only: on a phone the bottom nav's Battle glows instead (William, 24 Nov 2026).
  */
 export default function RejoinBanner({
   campaignId,
   battles,
-  look = "page",
 }: {
   campaignId: number;
   /** Your unfinished battles, the one that needs you most first (`yourOpenBattles`). */
   battles: YourOpenBattle[];
-  look?: NoticeLook;
 }) {
   const [lead, ...others] = battles;
   if (!lead) {
@@ -50,7 +48,7 @@ export default function RejoinBanner({
   ) : null;
   return (
     <CampaignNotice
-      look={look}
+      look="bar"
       label="Your battle"
       icon={Swords}
       kicker={BAR_KICKER[lead.phase]}
@@ -61,15 +59,7 @@ export default function RejoinBanner({
         </Button>
       }
     >
-      {look === "bar" ? (
-        lead.title
-      ) : (
-        <>
-          {lead.phase === "invitation" ? "You're invited to a battle" : "You're in a battle"}:{" "}
-          <span className="font-semibold text-head">{lead.title}</span>
-          {more ? <> {more}</> : null}
-        </>
-      )}
+      {lead.title}
     </CampaignNotice>
   );
 }

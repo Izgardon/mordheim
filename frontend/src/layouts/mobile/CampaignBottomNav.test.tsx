@@ -193,7 +193,9 @@ describe("Battle", () => {
     expect(screen.queryByRole("dialog", { name: "Start a battle" })).toBeNull();
   });
 
-  it("goes to the battle the banner picks when you have several: your fight before a pre-battle", async () => {
+  // William, 24 Nov 2026: "instead of banner up top prompting you to rejoin battle can the battle
+  // nav icon be glowing and highlighted and we drop that on mobile"
+  it("lights Battle instead of a banner, and goes to the fight before a newer pre-battle", async () => {
     // the list comes newest first: the pre-battle is newer than the fight
     fakeApi.on(`GET ${BASE}/battles/?open=1`, [
       openBattle(32, "prebattle", "Ambush"),
@@ -202,18 +204,12 @@ describe("Battle", () => {
     const user = setupUser();
     const app = renderApp(`${BASE}/house-rules`);
 
-    const banner = await screen.findByRole("status", { name: "Your battle" });
-    expect(banner).toHaveTextContent("You're in a battle: Street Fight");
-    expect(within(banner).getByRole("link", { name: "+1 more" })).toHaveAttribute(
-      "href",
-      `${BASE}/battles`
-    );
-    expect(within(banner).getByRole("link", { name: "Rejoin" })).toHaveAttribute(
-      "href",
-      `${BASE}/battles/31/active`
-    );
+    const battle = await battleButton();
+    await waitFor(() => expect(battle).toHaveAccessibleDescription("Your battle is waiting"));
+    expect(battle).toHaveClass("text-accent-hi", "[&_svg]:animate-pulse");
+    expect(screen.queryByRole("status", { name: "Your battle" })).toBeNull();
 
-    await user.click(await battleButton());
+    await user.click(battle);
 
     expect(app.location().pathname).toBe(`${BASE}/battles/31/active`);
   });

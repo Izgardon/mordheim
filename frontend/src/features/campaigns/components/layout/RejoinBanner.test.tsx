@@ -1,7 +1,8 @@
 /**
- * The rejoin banner (William: "a permanent banner at the top prompting to rejoin"): where you are
- * and one button there, its label following where you stand; with several battles, the one that
- * needs you most and "+N more" to the Battles page. Nothing to dismiss.
+ * The web bar's rejoin banner (William: "a permanent banner at the top prompting to rejoin"; on a
+ * phone the bottom nav's Battle glows instead): where you stand and the battle, one button there,
+ * its label following where you stand; with several battles, the one that needs you most and "+N
+ * more" to the Battles page. Nothing to dismiss.
  */
 import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
@@ -32,7 +33,8 @@ describe("RejoinBanner", () => {
     renderBanner([open(40, { participant_status: "in_battle", unfinished: true, page: "active" })]);
 
     const banner = screen.getByRole("status", { name: "Your battle" });
-    expect(banner).toHaveTextContent("You're in a battle: Street Fight, Battle 6");
+    expect(banner).toHaveTextContent("In battle");
+    expect(banner).toHaveTextContent("Street Fight, Battle 6");
     expect(within(banner).getAllByRole("link")).toHaveLength(1);
     expect(within(banner).getByRole("link", { name: "Rejoin" })).toHaveAttribute(
       "href",
@@ -42,9 +44,9 @@ describe("RejoinBanner", () => {
   });
 
   it.each([
-    ["finished_battle", "postbattle", "To the Aftermath", "You're in a battle"],
-    ["ready", "prebattle", "Open pre-battle", "You're in a battle"],
-    ["invited", "prebattle", "Answer the invitation", "You're invited to a battle"],
+    ["finished_battle", "postbattle", "To the Aftermath", "Aftermath"],
+    ["ready", "prebattle", "Open pre-battle", "Before the battle"],
+    ["invited", "prebattle", "Answer the invitation", "Invited to a battle"],
   ] as const)("a %s player on %s reads %s", (status, page, action, lead) => {
     renderBanner([open(40, { participant_status: status, unfinished: true, page })]);
 
@@ -63,7 +65,7 @@ describe("RejoinBanner", () => {
     ]);
 
     const banner = screen.getByRole("status", { name: "Your battle" });
-    expect(banner).toHaveTextContent("You're in a battle: Street Fight, Battle 6");
+    expect(banner).toHaveTextContent("Street Fight, Battle 6");
     expect(within(banner).getByRole("link", { name: "To the Aftermath" })).toBeInTheDocument();
     expect(within(banner).getByRole("link", { name: "+2 more" })).toHaveAttribute(
       "href",

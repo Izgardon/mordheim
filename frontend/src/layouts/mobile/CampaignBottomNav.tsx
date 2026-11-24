@@ -25,6 +25,10 @@ type CampaignBottomNavProps = {
   onStartBattle?: () => void;
 };
 
+/** Battle while your battle waits: lit in the accent, its icon glowing and slowly pulsing. */
+const REJOIN =
+  "font-bold text-accent-hi [&_svg]:animate-pulse [&_svg]:drop-shadow-[0_0_6px_var(--color-accent)] motion-reduce:[&_svg]:animate-none";
+
 /**
  * The phone's bottom nav (design E): Campaign, Warband, Battle, Reference, Settings. Flat; the
  * current item takes the accent and an inset top line. Reference and Settings open sheets: the
@@ -61,7 +65,14 @@ export default function CampaignBottomNav({
           current={active === "warband"}
         />
         {onRejoinBattle ? (
-          <BottomBarButton label="Battle" icon={Swords} onClick={onRejoinBattle} />
+          // your battle waits: Battle glows instead of a banner up top (William, 24 Nov 2026)
+          <BottomBarButton
+            label="Battle"
+            icon={Swords}
+            onClick={onRejoinBattle}
+            aria-description="Your battle is waiting"
+            className={REJOIN}
+          />
         ) : onStartBattle ? (
           <BottomBarButton
             label="Battle"
