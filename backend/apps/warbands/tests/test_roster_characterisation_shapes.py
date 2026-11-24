@@ -208,6 +208,7 @@ HENCHMEN_SUMMARY = {
     "dead": "bool",
     "source_beast_id": None,  # recruited from a creature: its beast and kind
     "beast_kind": None,
+    "is_animal": "bool",  # an animal group's paw on its card (William, 24 Nov 2026)
     **MISSING,
     **STATS,
     **COMPANIONS,

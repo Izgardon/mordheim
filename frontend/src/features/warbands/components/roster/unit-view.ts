@@ -60,6 +60,7 @@ export const KIND_TRIM: Record<RosterUnit["kind"], ReturnType<typeof trim>> = {
 /** The game icon before a card's name: the leader's crown, a hero's helmet, a group, a hired sword. */
 export function unitMarker(entry: RosterUnit): UnitMarker {
   if (entry.kind === "henchmen_group") {
+    if (entry.unit.is_animal) return "animal";
     const ranged = entry.unit.items.some((item) =>
       ["missile", "blackpowder"].includes(itemKind(item))
     );

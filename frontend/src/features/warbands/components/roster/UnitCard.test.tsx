@@ -119,6 +119,20 @@ describe("A roster card's trim", () => {
     expect(title.querySelector("[data-marker]")).toHaveAttribute("data-marker", marker);
   });
 
+  // William, 24 Nov 2026: "If a henchman is an animal can we give them an animal icon" (option A)
+  it("marks an animal group with a paw print, whatever it carries", () => {
+    renderCard({
+      kind: "henchmen_group",
+      unit: {
+        ...makeVeteranHenchmenGroup({ name: "Wolfhounds" }),
+        is_animal: true,
+        items: [makeItem({ id: 7, name: "Bow", type: "Weapon", subtype: "Missile" })],
+      },
+    });
+    const title = screen.getByRole("button", { name: /^Wolfhounds/ });
+    expect(title.querySelector("[data-marker]")).toHaveAttribute("data-marker", "animal");
+  });
+
   // William, 22 Nov 2026: "henchmen group, if they have ranged weapon make them bowman if not swordman"
   it.each([
     [

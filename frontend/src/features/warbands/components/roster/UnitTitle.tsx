@@ -1,5 +1,3 @@
-import { PawPrint } from "lucide-react";
-
 import { ChipLabel } from "@/components/ui/chip";
 import { UNIT_MARKER_ICONS } from "@/components/ui/game-icons";
 import { cn } from "@/lib/utils";
@@ -51,10 +49,8 @@ export default function UnitTitle({
         <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-display text-[19px] font-semibold leading-tight text-head">
           {unitName(entry.unit)}
           {isCreature(entry) ? (
-            <ChipLabel className="min-h-0 gap-1 px-1.5 py-px text-[11px]">
-              <PawPrint className="h-3 w-3" aria-hidden="true" />
-              Creature
-            </ChipLabel>
+            // its paw is the marker already
+            <ChipLabel className="min-h-0 px-1.5 py-px text-[11px]">Creature</ChipLabel>
           ) : null}
         </span>
         <span className={cn("text-[13px] leading-tight", trim.text)}>

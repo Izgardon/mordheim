@@ -111,6 +111,7 @@ class HenchmenMembersMixin(serializers.Serializer):
     loadout_total = serializers.SerializerMethodField()
     source_beast_id = serializers.IntegerField(read_only=True)  # the creature it was recruited from, or None
     beast_kind = serializers.SerializerMethodField()
+    is_animal = serializers.SerializerMethodField()
     mounts = serializers.SerializerMethodField()
     mount_warnings = serializers.SerializerMethodField()
 
@@ -152,6 +153,15 @@ class HenchmenMembersMixin(serializers.Serializer):
             return cast(str | None, group.beast_kind)
         beast = group.source_beast
         return beast.kind if beast is not None else None
+
+    def get_is_animal(self, group: HenchmenGroup) -> bool:
+        """An animal, for the paw on its card (William, 24 Nov 2026): recruited from a creature, or carrying the
+        Animal rule (the general special, or a warband's own of that name). Reads the specials the payload lists
+        anyway: no query of its own."""
+        if group.source_beast_id is not None:
+            return True
+        specials: list[dict[str, Any]] = cast(Any, self).get_specials(group)
+        return any(str(special.get("name", "")).strip().casefold() == "animal" for special in specials)
 
     def get_henchmen(self, group: HenchmenGroup) -> Any:
         return HenchmanSerializer(self._members(group), many=True).data
@@ -197,6 +207,7 @@ class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer
             "dead",
             "source_beast_id",
             "beast_kind",
+            "is_animal",
             *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,
@@ -239,6 +250,7 @@ class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
             "dead",
             "source_beast_id",
             "beast_kind",
+            "is_animal",
             *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,

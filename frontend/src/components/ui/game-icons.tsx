@@ -21,6 +21,7 @@ import {
   GiLightHelm,
   GiMuscleUp,
   GiPocketBow,
+  GiPawPrint,
   GiPointyHat,
   GiPotionBall,
   GiRoundShield,
@@ -134,7 +135,7 @@ export const SPECIAL_KIND_COLOURS: Record<SpecialKind, string> = {
 /**
  * What a roster unit is, the mark before its name (William, 22 Nov 2026: "the leader's crown can
  * move into that space and the rest have helmets"): a Priest's templar shield, a Wizard's pointy
- * hat, a henchmen group's bowman or swordsman, a hired sword's crown coin.
+ * hat, a henchmen group's bowman or swordsman (an animal group's paw print), a hired sword's crown coin.
  */
 export type UnitMarker =
   | "leader"
@@ -143,6 +144,7 @@ export type UnitMarker =
   | "hero"
   | "henchmen_ranged"
   | "henchmen"
+  | "animal"
   | "hired";
 
 export const UNIT_MARKER_ICONS: Record<UnitMarker, IconType> = {
@@ -155,6 +157,8 @@ export const UNIT_MARKER_ICONS: Record<UnitMarker, IconType> = {
   // crown coin (William, 22 Nov 2026)
   henchmen_ranged: GiBowman,
   henchmen: GiSwordman,
+  // an animal group (William, 24 Nov 2026: option A of six)
+  animal: GiPawPrint,
   hired: GiCrownCoin,
 };
 

@@ -87,6 +87,8 @@ export type GroupMountFields = { mount_warnings?: ServerWarning[] };
 export type CreatureGroupFields = {
   source_beast_id?: number | null;
   beast_kind?: BeastKind | null;
+  /** Recruited from a creature or carrying the Animal rule (the server's call): a paw on its card. */
+  is_animal?: boolean;
 };
 
 /** A warning the server answered with while the change went ahead (warn, never block). */
