@@ -46,7 +46,7 @@ export default function CombatPicker({
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-1 flex-col gap-1 text-xs font-bold text-text2",
+        "flex min-w-0 flex-col gap-1 text-xs font-bold text-text2",
         end && "text-right"
       )}
     >
