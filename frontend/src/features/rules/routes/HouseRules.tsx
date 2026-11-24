@@ -5,22 +5,16 @@ import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
-import { ReferenceList, ReferenceRow } from "@/features/reference/ReferenceList";
+import { ReferenceList } from "@/features/reference/ReferenceList";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
-import RulesPanel from "@/features/warbands/components/roster/RulesPanel";
-import { ruleLabel } from "@/features/catalogue/utils/entry-status";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import EditHouseRuleDialog from "../components/EditHouseRuleDialog";
 import HouseRuleForm from "../components/HouseRuleForm";
+import HouseRuleRow from "../components/HouseRuleRow";
 import { useHouseRulesPage } from "../hooks/useHouseRulesPage";
-import type { HouseRule } from "../types/rule-types";
-
-/** "Changes the game" for a rule with an effect, else plain "House rule". */
-const kindOf = (rule: HouseRule) =>
-  rule.effect_key ? `House rule · ${ruleLabel(rule.effect_key)}` : "House rule";
 
 /**
  * House rules (design E's reference layout): the campaign's rulings, searched by title or text,
@@ -97,37 +91,31 @@ export default function HouseRules() {
           {rows.map((rule) => {
             const key = String(rule.id);
             return (
-              <ReferenceRow
+              <HouseRuleRow
                 key={key}
-                id={key}
+                rule={rule}
                 open={params.isOpen(key)}
                 onToggle={() => params.toggle(key)}
-                name={rule.title}
-                sub={kindOf(rule)}
+                onClose={params.close}
+                isMobile={isMobile}
               >
-                <div className={isMobile ? "flex flex-col gap-2" : "flex flex-col gap-2 px-3 pb-4"}>
-                  <RulesPanel
-                    detail={{ name: rule.title, kind: kindOf(rule), text: rule.description }}
-                    onClose={params.close}
+                {canManage ? (
+                  <EditHouseRuleDialog
+                    campaignId={campaignId}
+                    rule={rule}
+                    onUpdated={page.onUpdated}
+                    onDeleted={(ruleId) => {
+                      page.onDeleted(ruleId);
+                      params.close();
+                    }}
+                    trigger={
+                      <Button variant="secondary" className="min-h-10 self-start">
+                        Edit house rule
+                      </Button>
+                    }
                   />
-                  {canManage ? (
-                    <EditHouseRuleDialog
-                      campaignId={campaignId}
-                      rule={rule}
-                      onUpdated={page.onUpdated}
-                      onDeleted={(ruleId) => {
-                        page.onDeleted(ruleId);
-                        params.close();
-                      }}
-                      trigger={
-                        <Button variant="secondary" className="min-h-10 self-start">
-                          Edit house rule
-                        </Button>
-                      }
-                    />
-                  ) : null}
-                </div>
-              </ReferenceRow>
+                ) : null}
+              </HouseRuleRow>
             );
           })}
         </ReferenceList>

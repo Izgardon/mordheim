@@ -1,25 +1,15 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 import { Disclaimer } from "@/components/ui/disclaimer";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
-import { ReferenceList, ReferenceRow } from "@/features/reference/ReferenceList";
+import { ReferenceList } from "@/features/reference/ReferenceList";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { rulesTabs } from "../data/rules-content";
-import { highlightRuleHtml, ruleEntries, ruleMatches, ruleSnippet } from "../rules-index";
-
-/** An open block of the rulebook, its matches marked; the first one is scrolled to. */
-function RuleBody({ html, query }: { html: string; query: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const marked = useMemo(() => highlightRuleHtml(html, query), [html, query]);
-  useEffect(() => {
-    if (!query.trim()) return;
-    ref.current?.querySelector("mark")?.scrollIntoView({ block: "center" });
-  }, [marked, query]);
-  return <div ref={ref} className="rules-content" dangerouslySetInnerHTML={{ __html: marked }} />;
-}
+import RuleBookRow from "../components/RuleBookRow";
+import { ruleEntries, ruleMatches } from "../rules-index";
 
 /**
  * Rules (design E's reference layout): the bundled rulebook's sections as chips and each headed
@@ -85,34 +75,16 @@ export default function Rules() {
         isEmpty={rows.length === 0}
         empty="Nothing in the rules says that."
       >
-        {rows.map((entry) => {
-          const snippet = searching ? ruleSnippet(entry.text, params.query) : null;
-          return (
-            <ReferenceRow
-              key={entry.id}
-              id={entry.id}
-              open={params.isOpen(entry.id)}
-              onToggle={() => params.toggle(entry.id)}
-              name={entry.title}
-              sub={
-                snippet ? (
-                  <span className="text-text2">
-                    {snippet.before}
-                    <mark className="bg-accent-soft text-accent-hi">{snippet.match}</mark>
-                    {snippet.after}
-                  </span>
-                ) : isMobile ? (
-                  entry.section
-                ) : undefined
-              }
-              cells={isMobile ? undefined : [entry.section]}
-            >
-              <div className={isMobile ? "pt-1" : "border-t border-accent-line bg-panel px-6 py-5"}>
-                <RuleBody html={entry.html} query={params.query} />
-              </div>
-            </ReferenceRow>
-          );
-        })}
+        {rows.map((entry) => (
+          <RuleBookRow
+            key={entry.id}
+            entry={entry}
+            open={params.isOpen(entry.id)}
+            onToggle={() => params.toggle(entry.id)}
+            query={params.query}
+            isMobile={isMobile}
+          />
+        ))}
       </ReferenceList>
       <p className="m-0 text-xs text-muted-foreground">
         The rules are curated with help from{" "}

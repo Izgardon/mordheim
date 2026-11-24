@@ -5,19 +5,17 @@ import { toast } from "sonner";
 import { IconButton } from "@/components/ui/icon-button";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { cn } from "@/lib/utils";
 
 import { useRuleDelete, useRuleUpdate } from "../../api/rule-queries";
 import type { WarbandRule } from "../../types/warband-types";
 import AddMissingRules from "./AddMissingRules";
 import RuleForm from "./RuleForm";
+import WarbandRuleArticle from "./WarbandRuleArticle";
 
 /** Where the modal opens: at one rule (its pill), or at the top. */
 export type RulesOpening = { ruleId?: number };
 
 type Editing = { kind: "edit"; rule: WarbandRule } | null;
-
-const scrollTo = (node: HTMLElement | null) => node?.scrollIntoView?.({ block: "nearest" });
 
 /**
  * The warband's rules in one modal (a bottom sheet on a phone): every rule's title and
@@ -78,19 +76,12 @@ export default function WarbandRulesDialog({
               onDelete={() => remove.mutate(rule.id, done)}
             />
           ) : (
-            <article
+            <WarbandRuleArticle
               key={rule.id}
-              ref={rule.id === opening.ruleId ? scrollTo : undefined}
-              aria-label={rule.title}
-              data-opened={rule.id === opening.ruleId || undefined}
-              className={cn(
-                "flex flex-col gap-1 border-t border-line px-3 py-3 first:border-t-0",
-                rule.id === opening.ruleId && "bg-accent-soft"
-              )}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="m-0 font-bold text-head">{rule.title}</h3>
-                {canEdit && !editing ? (
+              rule={rule}
+              opened={rule.id === opening.ruleId}
+              action={
+                canEdit && !editing ? (
                   <IconButton
                     aria-label={`Edit ${rule.title}`}
                     look="plain"
@@ -99,12 +90,9 @@ export default function WarbandRulesDialog({
                   >
                     <Pencil aria-hidden="true" />
                   </IconButton>
-                ) : null}
-              </div>
-              {rule.description ? (
-                <p className="m-0 whitespace-pre-line text-sm text-text2">{rule.description}</p>
-              ) : null}
-            </article>
+                ) : null
+              }
+            />
           )
         )}
       </div>
