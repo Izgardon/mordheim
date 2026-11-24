@@ -3192,39 +3192,6 @@
          "text": "Large ordnance. 250 gold crowns, Rare 12. Range 8\"-60\", Strength 9 (grapeshot Strength 3), Multiple Wounds (D6). Otherwise as a Carronade."
         }
        ]
-      },
-      {
-       "title": "Blackpowder Misfires",
-       "description": "Rolled when a blackpowder weapon misfires.",
-       "dice": "D6",
-       "note": "",
-       "rows": [
-        {
-         "result": "1",
-         "name": "BOOM!",
-         "text": "The shooter takes a Strength 4 hit (no critical hits) and the weapon is destroyed."
-        },
-        {
-         "result": "2",
-         "name": "Jammed",
-         "text": "The weapon is useless for the rest of the battle, but works again in the next one."
-        },
-        {
-         "result": "3",
-         "name": "Phut",
-         "text": "It fails to fire and the shot is lost: the shooter waits an extra turn before he can fire it again."
-        },
-        {
-         "result": "4-5",
-         "name": "Click",
-         "text": "It fails to fire, with no other effect."
-        },
-        {
-         "result": "6",
-         "name": "KA-BOOM!",
-         "text": "The shot hits the target at +1 Strength."
-        }
-       ]
       }
      ],
      "charts": []

@@ -80,3 +80,27 @@ describe("the combat sheet's layout", () => {
     expect(numbers("Theirs")).toEqual(["T", "Sv"]);
   });
 });
+
+describe("the Misfire chart (William, 24 Nov 2026)", () => {
+  const MISFIRE = "Misfire chart · Blackpowder Weapons";
+
+  it("sits in Ranged under the missile critical hits, minimised like them", async () => {
+    const user = setupUser();
+    render(<CombatSheet kind="ranged" yours={[]} theirs={[]} onOpenChange={vi.fn()} />);
+
+    const bars = screen
+      .getAllByRole("button", { expanded: false })
+      .map((button) => button.textContent);
+    expect(bars).toEqual(["Critical hits · Missile Weapons", MISFIRE]);
+
+    await user.click(screen.getByRole("button", { name: MISFIRE }));
+    expect(
+      screen.getByText(/KA-BOOM! The shot hits the target at \+1 Strength/)
+    ).toBeInTheDocument();
+  });
+
+  it("is not in Melee", () => {
+    show();
+    expect(screen.queryByRole("button", { name: MISFIRE })).toBeNull();
+  });
+});

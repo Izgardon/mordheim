@@ -9,6 +9,7 @@ import {
   MELEE_CRITICAL_TABLES,
   RANGED_CRITICAL_TABLES,
 } from "@/features/battles/data/critical-hits";
+import { MISFIRE_TABLE } from "@/features/battles/data/misfire";
 
 import {
   formatToHit,
@@ -136,9 +137,10 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
       : formatToHit(meleeToHit(num(mine.skill), num(their.skill)));
   const wound = toWound(num(mine.strength), num(their.toughness));
   const save = saveAfter(their.save ? num(their.save) : null, num(mine.strength));
-  const tables = CRITICAL_HIT_TABLES.filter((table) =>
+  const crits = CRITICAL_HIT_TABLES.filter((table) =>
     (kind === "ranged" ? RANGED_CRITICAL_TABLES : MELEE_CRITICAL_TABLES).includes(table.id)
   );
+  const tables = kind === "ranged" ? [...crits, MISFIRE_TABLE] : crits;
 
   return (
     <ModalSheet

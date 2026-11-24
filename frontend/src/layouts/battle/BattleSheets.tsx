@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Chip } from "@/components/ui/chip";
-import { CRITICAL_HIT_TABLES } from "@/features/battles/data/critical-hits";
+import type { CriticalHitTable } from "@/features/battles/data/critical-hits";
 import { rulesTabs } from "@/features/rules/data/rules-content";
 
 type SheetProps = { open: boolean; onOpenChange: (open: boolean) => void };
@@ -26,20 +26,23 @@ export function RulesSheet({ open, onOpenChange }: SheetProps) {
   );
 }
 
-/** The critical hit tables for one kind of attack: Melee's four, or Ranged's missile table. */
+/**
+ * The tables for one kind of attack: Melee's four critical hit tables, or Ranged's missile table
+ * and the Misfire chart.
+ */
 export function CriticalHitsSheet({
   open,
   onOpenChange,
+  kicker,
   title,
-  tableIds,
-}: SheetProps & { title: string; tableIds: string[] }) {
-  const tables = CRITICAL_HIT_TABLES.filter((table) => tableIds.includes(table.id));
+  tables,
+}: SheetProps & { kicker: string; title: string; tables: CriticalHitTable[] }) {
   return (
-    <BottomSheet open={open} onOpenChange={onOpenChange} kicker="Critical hits" title={title}>
+    <BottomSheet open={open} onOpenChange={onOpenChange} kicker={kicker} title={title}>
       {tables.map((table) => (
         <section key={table.id} aria-label={table.label} className="flex flex-col">
           <h3 className="pb-1.5 font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-faint">
-            {table.label}
+            {table.heading ?? table.label}
           </h3>
           <dl className="flex flex-col">
             {table.entries.map((entry) => (

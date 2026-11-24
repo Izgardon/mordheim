@@ -28,7 +28,7 @@ function storeOpen(ids: string[]) {
 /**
  * The critical hit tables under Melee and Ranged, each minimised (William, 12 Nov 2026), so the
  * to-hit, to-wound and save numbers sit at the top of the sheet. A table opened stays open on
- * this device, for the weapon in hand all fight.
+ * this device, for the weapon in hand all fight. Ranged's Misfire chart is one more of them.
  */
 export default function CriticalTables({ tables }: { tables: CriticalHitTable[] }) {
   const [open, setOpen] = useState(readOpen);
@@ -58,7 +58,7 @@ export default function CriticalTables({ tables }: { tables: CriticalHitTable[] 
               className="flex min-h-11 items-center justify-between gap-2.5 px-3 text-left"
             >
               <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-faint">
-                Critical hits · {table.label}
+                {table.heading ?? `Critical hits · ${table.label}`}
               </span>
               <ChevronDown
                 className={cn(
