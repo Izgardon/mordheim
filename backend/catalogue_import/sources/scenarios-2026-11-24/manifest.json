@@ -1,0 +1,895 @@
+[
+  {
+    "folder": "archive-pestilen",
+    "slug": "ambush-2-archive-pestilen",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/ambush-2-archive-pestilen",
+    "tags": [
+      "Set in Mordheim",
+      "Attacker/Defender",
+      "Wyrdstone Tokens",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "ambush-archive-pestilen",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/ambush-archive-pestilen",
+    "tags": [
+      "Set in Mordheim",
+      "Attacker/Defender",
+      "Brawl",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "breakthrough-archive-pestilen",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/breakthrough-archive-pestilen",
+    "tags": [
+      "Set in Mordheim",
+      "Brawl",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "dont-wake-the-giant",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/dont-wake-the-giant",
+    "tags": [
+      "Set in Mordheim",
+      "1v1",
+      "Multiplayer",
+      "Hostile NPC",
+      "Treasure"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "grudge-match",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/grudge-match",
+    "tags": [
+      "Set in Mordheim",
+      "Brawl",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "haunted-treasure-archive-pestilen",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/haunted-treasure-archive-pestilen",
+    "tags": [
+      "Set in Mordheim",
+      "1v1",
+      "Hostile NPC",
+      "Treasure",
+      "Objective Building"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "its-all-mine",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/its-all-mine",
+    "tags": [
+      "Set in Mordheim",
+      "Warband - Skaven",
+      "Warband - Cult of the Possessed",
+      "Warband - Chaos",
+      "Official Scenario",
+      "Attacker/Defender",
+      "Objective",
+      "Hostile NPC",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "raid",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/raid",
+    "tags": [
+      "Set in Mordheim",
+      "Attacker/Defender",
+      "Brawl",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "rescue",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/rescue",
+    "tags": [
+      "Set in Mordheim",
+      "Brawl",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "romeros-pride",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/romeros-pride",
+    "tags": [
+      "Set in Mordheim",
+      "Brawl",
+      "1v1",
+      "Hostile NPC"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "scourge-and-purge-archive-pestilen",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/scourge-and-purge-archive-pestilen",
+    "tags": [
+      "Set in Mordheim",
+      "Brawl",
+      "Hostile NPC",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "scripts-of-sigmar",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/scripts-of-sigmar",
+    "tags": [
+      "Set in Mordheim",
+      "Warband - Witch Hunters",
+      "Warband - Sisters of Sigmar",
+      "Official Scenario",
+      "Attacker/Defender",
+      "Traverse the Board",
+      "Low Visibility",
+      "Boats",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "the-caravan-archive-pestilen",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/the-caravan-archive-pestilen",
+    "tags": [
+      "Set in Mordheim",
+      "Attacker/Defender",
+      "Escort NPC",
+      "Treasure",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "the-forbidden-square",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/the-forbidden-square",
+    "tags": [
+      "Set in Mordheim",
+      "Wyrdstone Tokens",
+      "Traverse the Board",
+      "Warband - Cult of the Possessed",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "the-restless-dead",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/the-restless-dead",
+    "tags": [
+      "Set in Mordheim",
+      "Brawl",
+      "Hostile NPC",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "the-square-of-the-snake",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/the-square-of-the-snake",
+    "tags": [
+      "Set in Mordheim",
+      "Multiplayer",
+      "Objective"
+    ]
+  },
+  {
+    "folder": "archive-pestilen",
+    "slug": "the-wizards-tower",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/the-wizards-tower",
+    "tags": [
+      "Set in Mordheim",
+      "Attacker/Defender",
+      "Treasure",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "fanatic-magazine",
+    "slug": "upon-the-eerie-downs",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/fanatic-magazine/upon-the-eerie-downs",
+    "tags": [
+      "Set in The Empire",
+      "Low Visibility",
+      "Traverse the Board",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "fanatic-online",
+    "slug": "the-great-library",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/fanatic-online/The%20Great%20Library",
+    "tags": [
+      "Set in The Empire",
+      "Hostile NPC",
+      "Objective",
+      "Treasure",
+      "Brawl",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "fanatic-online",
+    "slug": "happy-harpy-hunting-grounds",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/fanatic-online/happy-harpy-hunting-grounds",
+    "tags": [
+      "Set in Mordheim",
+      "Multiplayer",
+      "Hostile NPC",
+      "Wyrdstone Tokens",
+      "Treasure",
+      "Brawl"
+    ]
+  },
+  {
+    "folder": "fanatic-online",
+    "slug": "night-of-the-dead",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/fanatic-online/night-of-the-dead",
+    "tags": [
+      "Set in Mordheim",
+      "Reserves",
+      "Low Visibility",
+      "Wyrdstone Tokens",
+      "Hostile NPC",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "fanatic-online",
+    "slug": "roundup-at-the-mordheim-corral",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/fanatic-online/roundup-at-the-mordheim-corral",
+    "tags": [
+      "Set in Mordheim",
+      "Hostile NPC",
+      "Wyrdstone Tokens",
+      "Brawl",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "fanatic-online",
+    "slug": "the-recipe",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/fanatic-online/the-recipe",
+    "tags": [
+      "Set in The Empire",
+      "Hostile NPC",
+      "Objective",
+      "Treasure",
+      "Brawl",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "mordheim-rulebook",
+    "slug": "breakthrough",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/mordheim-rulebook/breakthrough",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Traverse the Board",
+      "Attacker/Defender",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "mordheim-rulebook",
+    "slug": "chance-encounter",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/mordheim-rulebook/chance-encounter",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Wyrdstone Tokens",
+      "Brawl",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "mordheim-rulebook",
+    "slug": "defend-the-find",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/mordheim-rulebook/defend-the-find",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Attacker/Defender",
+      "Objective Building",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "mordheim-rulebook",
+    "slug": "hidden-treasure",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/mordheim-rulebook/hidden-treasure",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Treasure",
+      "Objective",
+      "Search",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "mordheim-rulebook",
+    "slug": "occupy",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/mordheim-rulebook/occupy",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Turn Limit",
+      "Objective Building",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "mordheim-rulebook",
+    "slug": "skirmish",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/mordheim-rulebook/skirmish",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Brawl",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "mordheim-rulebook",
+    "slug": "street-fight",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/mordheim-rulebook/street-fight",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Traverse the Board",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "mordheim-rulebook",
+    "slug": "surprise-attack",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/mordheim-rulebook/surprise-attack",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Attacker/Defender",
+      "Brawl",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "mordheim-rulebook",
+    "slug": "wyrdstone-hunt",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/mordheim-rulebook/wyrdstone-hunt",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Wyrdstone Tokens",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "other",
+    "slug": "mordheims-burning",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/other/mordheims-burning",
+    "tags": [
+      "Set in Mordheim",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "a-night-in-the-graveyard",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/a-night-in-the-graveyard",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Hostile NPC",
+      "Brawl",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "a-stroll-in-the-garden",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/a-stroll-in-the-garden",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Hazards",
+      "Brawl",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "ambush-tc5",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/ambush-tc5",
+    "tags": [
+      "Multiplayer",
+      "Set in Mordheim",
+      "Official Scenario",
+      "Wyrdstone Tokens",
+      "Attacker/Defender",
+      "Turn Limit",
+      "Chaos on the Streets"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "assault-on-the-rock",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/assault-on-the-rock",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Multiplayer",
+      "Hostile NPC",
+      "Objective Building",
+      "Search",
+      "Treasure",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "bar-room-brawl",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/bar-room-brawl",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Low Visibility",
+      "Reserves",
+      "Hostile NPC",
+      "Interior",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "blood-hunt",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/blood-hunt",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Friendly NPC",
+      "Brawl",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "burn-the-witches",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/burn-the-witches",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Wyrdstone Tokens",
+      "Hazards",
+      "Attacker/Defender",
+      "Traverse the Board",
+      "Treasure",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "down-at-the-docks",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/down-at-the-docks",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Multiplayer",
+      "Friendly NPC",
+      "Treasure",
+      "Traverse the Board",
+      "Boats",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "finders-keepers",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/finders-keepers",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Wyrdstone Tokens",
+      "Traverse the Board",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "forbidden-square",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/forbidden-square",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Warband - Witch Hunters",
+      "Warband - Cult of the Possessed",
+      "Wyrdstone Tokens",
+      "Traverse the Board",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "gathering-of-the-horde",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/gathering-of-the-horde",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Multiplayer",
+      "Hazards",
+      "Brawl",
+      "Friendly NPC"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "haunted-treasure",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/haunted-treasure",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Treasure",
+      "Traverse the Board",
+      "Hostile NPC",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "in-the-dead-of-the-night",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/in-the-dead-of-the-night",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Attacker/Defender",
+      "Warband - Undead",
+      "Objective",
+      "Turn Limit",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "kidnapped",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/kidnapped",
+    "tags": [
+      "Warband - Cult of the Possessed",
+      "Set in Mordheim",
+      "Official Scenario",
+      "Escort NPC",
+      "Attacker/Defender",
+      "Turn Limit",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "lost-prince-tc5",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/lost-prince-tc5",
+    "tags": [
+      "Multiplayer",
+      "Set in Mordheim",
+      "Official Scenario",
+      "Escort NPC",
+      "Chaos on the Streets"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "monster-hunt-tc5",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/monster-hunt-tc5",
+    "tags": [
+      "Multiplayer",
+      "Set in Mordheim",
+      "Official Scenario",
+      "Hostile NPC",
+      "Treasure",
+      "Chaos on the Streets"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "mule-train",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/mule-train",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Attacker/Defender",
+      "Escort NPC",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "pool-tc5",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/pool-tc5",
+    "tags": [
+      "Multiplayer",
+      "Set in Mordheim",
+      "Official Scenario",
+      "Wyrdstone Tokens",
+      "Chaos on the Streets"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "rat-attack",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/rat-attack",
+    "tags": [
+      "Warband - Skaven",
+      "Underground",
+      "Set in Mordheim",
+      "Official Scenario",
+      "Brawl",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "scourge-and-purge",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/scourge-and-purge",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Warband - Witch Hunters",
+      "Brawl",
+      "Hostile NPC",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "stake-out",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/stake-out",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Attacker/Defender",
+      "Traverse the Board",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "street-brawl-tc5",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/street-brawl-tc5",
+    "tags": [
+      "Multiplayer",
+      "Set in Mordheim",
+      "Official Scenario",
+      "Brawl",
+      "Chaos on the Streets"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "surrounded",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/surrounded",
+    "tags": [
+      "Underground",
+      "Set in Mordheim",
+      "Official Scenario",
+      "Traverse the Board",
+      "Attacker/Defender",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "thats-all-mine",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/thats-all-mine",
+    "tags": [
+      "Set in Mordheim",
+      "Warband - Skaven",
+      "Warband - Cult of the Possessed",
+      "Warband - Chaos",
+      "Official Scenario",
+      "Attacker/Defender",
+      "Objective",
+      "Hostile NPC",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "the-bodyguards",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/the-bodyguards",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Multiplayer",
+      "Attacker/Defender",
+      "Escort NPC",
+      "Traverse the Board",
+      "Treasure"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "the-caravan",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/the-caravan",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Attacker/Defender",
+      "Escort NPC",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "the-gauntlet",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/the-gauntlet",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Multiplayer",
+      "Hazards",
+      "Treasure",
+      "Traverse the Board",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "the-item-lost",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/the-item-lost",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Multiplayer",
+      "Friendly NPC",
+      "Treasure",
+      "Traverse the Board",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "the-lair-of-the-snake",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/the-lair-of-the-snake",
+    "tags": [
+      "Set in Mordheim",
+      "Multiplayer",
+      "Official Scenario",
+      "Objective"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "the-mummy",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/the-mummy",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Search",
+      "Treasure",
+      "Hostile NPC",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "the-night-of-the-headless-one",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/the-night-of-the-headless-one",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Hostile NPC",
+      "Objective",
+      "Traverse the Board",
+      "1v1",
+      "Multiplayer"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "the-rats-lair",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/the-rats-lair",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Multiplayer",
+      "Low Visibility",
+      "Hostile NPC",
+      "Brawl",
+      "Underground"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "the-script-of-sigmar",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/the-script-of-sigmar",
+    "tags": [
+      "Set in Mordheim",
+      "Warband - Witch Hunters",
+      "Warband - Sisters of Sigmar",
+      "Official Scenario",
+      "Attacker/Defender",
+      "Traverse the Board",
+      "Low Visibility",
+      "Boats",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "the-sword-of-the-herald",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/the-sword-of-the-herald",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Multiplayer",
+      "Hostile NPC",
+      "Wyrdstone Tokens",
+      "Treasure",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "the-watchers",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/the-watchers",
+    "tags": [
+      "Set in Mordheim",
+      "Official Scenario",
+      "Multiplayer",
+      "Hazards",
+      "Wyrdstone Tokens",
+      "Brawl",
+      "Treasure",
+      "1v1"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "treasure-hunt-tc5",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/treasure-hunt-tc5",
+    "tags": [
+      "Multiplayer",
+      "Set in Mordheim",
+      "Official Scenario",
+      "Wyrdstone Tokens",
+      "Chaos on the Streets"
+    ]
+  },
+  {
+    "folder": "town-cryer",
+    "slug": "wizards-mansion-tc5",
+    "url": "https://mordheimer.net/docs/campaigns/scenarios/town-cryer/wizards-mansion-tc5",
+    "tags": [
+      "Multiplayer",
+      "Set in Mordheim",
+      "Official Scenario",
+      "Attacker/Defender",
+      "Treasure",
+      "Chaos on the Streets"
+    ]
+  }
+]

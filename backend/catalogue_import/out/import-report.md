@@ -33,6 +33,7 @@ Answers go into `overrides.json`; the next build applies them.
 | serious injuries (D66) | 20 |
 | shared specials | 82 |
 | random mutation results (D66) | 36 |
+| scenarios | 70 |
 
 ## mordheimer's contradictions
 
@@ -3473,3 +3474,85 @@ A rule pointing to another fighter's entry takes that rule:
 Left pointing (nothing to take the rule from):
 
 - none
+
+## Scenarios
+
+`sources/scenarios-2026-11-24/` (mordheimer's 70 scenario pages) as `out/scenarios.json`.
+
+| Scenario | No. | Source | Players | Sections |
+| --- | --- | --- | --- | --- |
+| Breakthrough | 4 | Mordheim Rulebook | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience |
+| Chance Encounter | 6 | Mordheim Rulebook | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Wyrdstone |
+| Defend the Find | 1 | Mordheim Rulebook | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience, Wyrdstone |
+| Hidden Treasure | 7 | Mordheim Rulebook | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Occupy | 8 | Mordheim Rulebook | 1v1 | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience |
+| Skirmish | 2 | Mordheim Rulebook | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience |
+| Street Fight | 5 | Mordheim Rulebook | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Surprise Attack | 9 | Mordheim Rulebook | 1v1 | Terrain, Set-up, Special rules, Ending the game, Experience |
+| Wyrdstone Hunt | 3 | Mordheim Rulebook | 1v1 | Terrain, Special rules, Warbands, Starting the game, Ending the game, Experience, Wyrdstone |
+| A Night In The Graveyard |  | Town Cryer #19 | multiplayer | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience |
+| A Stroll In The Garden |  | Town Cryer #23 | multiplayer | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Ambush! | 6 | Town Cryer #5 | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Assault on the Rock |  | Town Cryer #22 | multiplayer | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Rewards |
+| Bar Room Brawl |  | Town Cryer #19 | multiplayer | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Blood Hunt |  | Town Cryer #25 | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Burn the Witches |  | Town Cryer #20 | 1v1 | Terrain, Special rules, Warbands, Starting the game, Ending the game, Experience, Rewards |
+| Down At The Docks |  | Town Cryer #25 | multiplayer | Terrain, Special rules, Messin' about on the river..., Ship's crew, Swivel guns, Ending the game, Experience, Cargo |
+| Finders Keepers |  | Town Cryer #14 | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Wyrdstone |
+| Forbidden Square |  | Town Cryer #7 | multiplayer | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Gathering of the Horde |  | Town Cryer #26 | multiplayer | Battle On The Blood Soaked Streets..., Fighter horde battles in Mordheim, Terrain, Special rules, Warbands, Dramatis personae, Dirk 'Cleaver' Halstadt, Priest Valnor, Starting the game, Ending the game, Experience, Campaigns, Storn the bastion, Crossing the bridge |
+| Haunted Treasure |  | Town Cryer #14 | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| In The Dead Of The Night |  | Town Cryer #22 | 1v1 | Terrain, Warbands, Set-up, Starting the game, Special rules, Ending the game, Experience, Warpstone, Zombies |
+| Kidnapped |  | Town Cryer #6 | 1v1 | Terrain, Warbands, Starting the game, Special rules, Freeing the sacrificial victim, Recapturing the sacrificial victim, Sacrificial victim, Ending the game, Experience |
+| Monster Hunt | 7 | Town Cryer #5 | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Treasure hoard, Great beasts in Mordheim, Young hydra, Young dragon, Young Wyvern, Young griffon, Young hippogriff, Young chimera |
+| Mule Train |  | Town Cryer #14 | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience, Special rules |
+| Rat Attack |  | Town Cryer #7 | 1v1 | Terrain, Warbands, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Scourge & Purge |  | Town Cryer #7 | 1v1 | Terrain, Set-up, Special rules, Insane wizard, Daemonic Possession, Starting the game, Ending the game, Experience, Additional experience, Brother Captain Eponious Krieger |
+| Stake-Out |  | Town Cryer #8 | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Income |
+| Street Brawl | 2 | Town Cryer #5 | multiplayer | Terrain, Set-up, Starting the game, Ending the game, Experience |
+| Surrounded |  | Town Cryer #7 | 1v1 | Terrain, Warbands, Set-up, Starting the game, Ending the game, Experience |
+| That's All Mine |  | Town Cryer #10 | 1v1 | Warbands, Terrain and set-up, Special rules, Defenders, Attackers, Ending the game, Experience, Attackers, Defenders, Suggestions |
+| The Bodyguards |  | Town Cryer #23 | multiplayer | Terrain, Set-up, Warband roles, Special rules, Ending the game, Experience, Rewards |
+| The Caravan |  | Town Cryer #11 | 1v1 | Terrain, Set-up, Special rules, Wagons, Rout tests, Payment and looting, Banditry, Starting the game, Ending the game, Experience |
+| The Gauntlet |  | Town Cryer #21 | multiplayer | Terrain, Special rules, Warbands, Starting the game, Ending the game, Experience, The treasure |
+| The Item Lost |  | Town Cryer #25 | multiplayer | Terrain, Special rules, The Wand of Phyrros, Set-up, Starting the game, Ending the game, Experience |
+| The Lair of the Snake |  | Town Cryer #9 | multiplayer | Warbands, Terrain, Set-up, Starting the game, Special rules, The Tail-Biting effect, Snakes!, Lair of the Snake, Ending the game, Experience, Tactics |
+| The Lost Prince | 3 | Town Cryer #5 | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, The reward |
+| The Mummy |  | Town Cryer #15 | multiplayer | Warbands, Terrain, Special rules, KaHotep the Mummy, Two Tomb Guardians per Warband, The Mummy Phase, Starting the game, Ending the game, Experience, Treasure Board |
+| The Night Of The Headless One |  | Town Cryer #12 | multiplayer | Terrain, Special rules, The Headless One, Set-up, Starting the game, Ending the game, Campaign, Experience |
+| The Pool | 5 | Town Cryer #5 | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| The Rat's Lair |  | Town Cryer #28 | multiplayer | Terrain, Special rules, Starting the game, Ending the game, Experience, Rewards |
+| The Script of Sigmar |  | Town Cryer #9 | 1v1 | Special rules, River, Boats, Night time, Mission 1 : The Bridge; not too far, Terrain, Special rules, Sides, Objectives, Experience, Mission 2 : Into the temple my Brothers, Sides, Terrain, Objectives, Experience |
+| The Sword of the Herald |  | Town Cryer #13 | multiplayer | Special note, Terrain, Set-up, Special rules, Multi-player rules, The green glowing fog, Zombie reinforcements, Star stone splinters, The sword of the herald, Starting the game, Ending the game, Experience, Acting fairly as the referee in an adjudicated scenario, What does the big green sword do?, After the game what can I do with it?, If you want to equip it., If you want to pass it to your betters... |
+| The Watchers |  | Town Cryer #25 | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Ill gotten gains |
+| The Wizard's Mansion | 4 | Town Cryer #5 | multiplayer | Terrain, Set-up, Starting the game, Ending the game, Experience, Wizard's treasure, New items |
+| Treasure Hunt | 1 | Town Cryer #5 | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Wyrdstone |
+| Upon the Eerie Downs |  | Fanatic Magazine #1 | multiplayer | Terrain, Special rules, Ending the game, Experience |
+| Happy Harpy Hunting Grounds |  | Fanatic Online | multiplayer | Terrain, Set-up, Special rules, Harpies, Ending the game, Experience, Harpy nest contents |
+| Night Of The Dead |  | Fanatic Online #30 | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Round-up at the Mordheim Corral |  | Fanatic Online | multiplayer | Terrain, Set-up, Special rules, War boar, Starting the game, Ending the game, Experience |
+| The Great Library |  | Fanatic Online #46 | multiplayer | Terrain, Special rules, Warbands, Starting the game, Ending the game, Experience, Ill gotten gains… |
+| The Recipe |  | Fanatic Online | multiplayer | Terrain, Set-up, Special rules, Looting the cart, Geefer & the guards, Starting the game, Ending the game, Experience |
+| Mordheim's Burning |  | Rynn Tyrr | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, After the battle |
+| Ambush (Archive Pestilen) |  | Archive Pestilen | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Ambush 2 (Archive Pestilen) |  | Archive Pestilen | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Wyrdstone |
+| Breakthrough (Archive Pestilen) |  | Archive Pestilen | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Don't Wake the Giant |  | Archive Pestilen | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Grudge Match |  | Archive Pestilen | 1v1 | Terrain, Set-up, Starting the game, Ending the game, Experience |
+| Haunted Treasure (Archive Pestilen) |  | Archive Pestilen | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| It's all MINE!! |  | Archive Pestilen | 1v1 | Set-up, Warbands, Mission, Special rules, Ending the game, Experience, Suggestions |
+| Raid |  | Archive Pestilen | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience |
+| Rescue |  | Archive Pestilen | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience |
+| Romero's Pride |  | Archive Pestilen | 1v1 | Special rules, Zombies!!, Terrain |
+| Scourge and Purge |  | Archive Pestilen | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience, General Experience, Inquisition Experience, Special: Insane Wizard, Modifiers, Perils of the Warp Table, Daemonic Possession, Profile |
+| Scripts of Sigmar |  | Archive Pestilen | 1v1 | Witch Hunters Vs Sisters of Sigmar, Mission One - The Bridge; Not Too Far, Set-up, River, Night Time, Sides, Objectives, Experience, Mission 2 - Unto the Temple, My Brothers, Sides, Layout, Objectives, Experience |
+| The Caravan (Archive Pestilen) |  | Archive Pestilen | 1v1 | Terrain, Warbands, The Merchant, The Cargo, Starting the game, Ending the game, Wyrdstone, Experience, "Lucky Fool" Variant, "Two's a Crowd" Variant, "Greedy Bastard" Variant, "A Friend in the Business" Variant, Suggestions for the Guarding Warband |
+| The Forbidden Square |  | Archive Pestilen | multiplayer | The Scenario, Set-up, The Gate, The Totem, Buildings, Terrain, Wyrdstone Counters, Special Set-up Rules, Starting the game, The Counters, Ending the game |
+| The Restless Dead |  | Archive Pestilen | multiplayer | Rules |
+| The Square Of The Snake |  | Archive Pestilen | multiplayer | The Scenario, Warbands, Objectives, Setting Up and Deploying, Special rules, The Tail-Biting Effect, Snakes!, Ending the game, Who Has Won?, Tactics |
+| The Wizard's Tower |  | Archive Pestilen | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Treasures |
+
+Tagged both 1v1 and Multiplayer (imported as multiplayer): A Night In The Graveyard, A Stroll In The Garden, Assault on the Rock, Bar Room Brawl, Blood Hunt, Down At The Docks, Forbidden Square, The Gauntlet, The Item Lost, The Mummy, The Night Of The Headless One, The Sword of the Herald, The Watchers, Upon the Eerie Downs, Night Of The Dead, Round-up at the Mordheim Corral, The Great Library, The Recipe, Don't Wake the Giant, The Forbidden Square, The Restless Dead.
+
+- Mordheim 1a (scenario-table): street-fight 2 (3), hidden-treasure 3 (4), wyrdstone-hunt 4 (5), occupy 5 (6), skirmish 6 (7), breakthrough 5 (8), surprise-attack 4 (9), chance-encounter 3 (10), defend-the-find 2 (11)
+- Mordheim 1a (cots-table): monster-hunt-tc5 2 (3), wizards-mansion-tc5 3 (4), treasure-hunt-tc5 9 (5-6), street-brawl-tc5 6 (7), ambush-tc5 9 (8-9), pool-tc5 3 (10), lost-prince-tc5 2 (11)

@@ -35,6 +35,7 @@ from catalogue_import.pointer_rules import check_answers, render_pointers, resol
 from catalogue_import.random_mutations import build_random_mutations, render_random
 from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules, reword_shared, word_item_rules
+from catalogue_import.scenarios import build_scenarios, render_scenarios
 from catalogue_import.shared_specials import build_shared, load_shared, render_shared
 from catalogue_import.skill_lists import SkillLists
 from catalogue_import.snapshot import SNAPSHOT, load_snapshot
@@ -314,6 +315,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     shared_specials["own_names"] = own.names()
     random_mutations = build_random_mutations(one_rule)  # the random mutation table (William, 5 Nov 2026)
     injuries = build_serious_injuries(snapshot.injuries)
+    scenarios = build_scenarios()  # mordheimer's scenario pages (William, 24 Nov 2026)
     counts = {
         "settings": len(settings),
         "warband types": len(types),
@@ -329,6 +331,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "serious injuries (D66)": len(injuries),
         "shared specials": len(shared_specials["specials"]),
         "random mutation results (D66)": len(random_mutations),
+        "scenarios": len(scenarios["scenarios"]),
     }
     report = ReportData(
         counts,
@@ -373,6 +376,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "serious-injuries.json": dump_json(injuries),
         "shared-specials.json": dump_json(shared_specials),
         "random-mutations.json": dump_json(random_mutations),
+        "scenarios.json": dump_json(scenarios),
         "import-report.md": render_report(report)
         + "\n"
         + render_templates(templates, template_log, grouped.groups, groups)
@@ -384,5 +388,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         + "\n"
         + render_pdf(pdf_pages, stubs, folded)
         + "\n"
-        + render_pointers(pointers),
+        + render_pointers(pointers)
+        + "\n"
+        + render_scenarios(scenarios),
     }
