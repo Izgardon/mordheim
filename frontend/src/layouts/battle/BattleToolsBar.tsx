@@ -34,7 +34,8 @@ type BattleToolsBarProps = {
 type Sheet = "rules" | "melee" | "ranged" | "menu";
 
 /**
- * The phone's bottom bar on a battle route (design E): Rules, Melee, Ranged, Dice, Menu. Melee and
+ * The phone's bottom bar on a battle route (design E): Rules, Melee, Dice, Ranged, Menu, Dice in the
+ * middle as on the battle screen (William, 24 Nov 2026). Melee and
  * Ranged hold the crit tables; the Menu holds the battle's actions, the chat and the
  * notifications (missing in battle before), and the way back to the campaign.
  */
@@ -65,17 +66,17 @@ export default function BattleToolsBar({ actions, onOpenTool, onExit }: BattleTo
           onClick={() => setSheet("melee")}
         />
         <BottomBarButton
-          label="Ranged"
-          icon={Crosshair}
-          aria-haspopup="dialog"
-          onClick={() => setSheet("ranged")}
-        />
-        <BottomBarButton
           label="Dice"
           icon={Dices}
           aria-haspopup="dialog"
           className="text-accent-hi"
           onClick={() => onOpenTool("dice")}
+        />
+        <BottomBarButton
+          label="Ranged"
+          icon={Crosshair}
+          aria-haspopup="dialog"
+          onClick={() => setSheet("ranged")}
         />
         <BottomBarButton
           label="Menu"
