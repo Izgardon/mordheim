@@ -5,15 +5,15 @@ import { cn } from "@/lib/utils";
 
 export type BattleMenuRow = {
   label: string;
-  detail?: string;
+  detail: string;
   danger?: boolean;
   onSelect: () => void;
 };
 
 /**
  * The battle menu (design E): End my battle, Edit stats, Add a unit, Add a neutral group, Battle
- * notes, Leave battle, and the manager's actions when you have them. `battle-menu.ts` holds the
- * rows and their order.
+ * notes, Leave battle, and the manager's actions when you have them, each with its line saying
+ * what it does. `battle-menu.ts` holds the rows, their lines and their order.
  */
 export default function BattleMenuSheet({
   open,
@@ -51,9 +51,7 @@ export default function BattleMenuSheet({
               >
                 {row.label}
               </span>
-              {row.detail ? (
-                <span className="text-xs text-muted-foreground">{row.detail}</span>
-              ) : null}
+              <span className="text-xs text-muted-foreground">{row.detail}</span>
             </span>
             <ChevronRight className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           </button>

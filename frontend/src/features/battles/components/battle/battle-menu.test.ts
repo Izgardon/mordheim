@@ -51,6 +51,25 @@ describe("battleMenu", () => {
     ]);
   });
 
+  it("gives every row a line saying what it does (William, 24 Nov 2026)", () => {
+    const rows = battleMenu(
+      flags({ canFinishMine: true, canEndForEveryone: true, canCancel: true })
+    );
+    expect(rows.map((row) => [row.label, row.detail])).toEqual([
+      ["End my battle", "Say how it went and go to your Aftermath; the others play on"],
+      ["Edit stats", "Temporary stat changes to one of your units or groups"],
+      ["Add a unit", "A temporary unit for your warband, or a creature for a neutral group"],
+      ["Add a neutral group", "Monsters or bystanders nobody plays, from the bestiary or typed in"],
+      ["Battle notes", "Your own notes for this fight; only you see them"],
+      ["Leave battle", "Back to the campaign; Rejoin brings you back"],
+      ["Cancel the battle", "For everyone; nothing is kept"],
+      [
+        "End the fight for everyone",
+        "Pick the winners and send everyone still fighting to the Aftermath",
+      ],
+    ]);
+  });
+
   it("drops what the player can't do and still offers Leave battle", () => {
     expect(battleMenu(flags({ canAct: false, fighting: false })).map((row) => row.action)).toEqual([
       "leave",
