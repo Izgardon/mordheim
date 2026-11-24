@@ -84,7 +84,7 @@ export default function BattleRulesSheet({
         <div
           role="group"
           aria-label="Rules section"
-          className="-mx-4 flex gap-1.5 overflow-x-auto overscroll-x-contain px-4 pb-1 min-[961px]:mx-0 min-[961px]:px-0"
+          className="-mx-4 flex shrink-0 gap-1.5 overflow-x-auto overscroll-x-contain px-4 pb-1 min-[961px]:mx-0 min-[961px]:px-0"
         >
           {BATTLE_RULES_SECTIONS.map((entry) => (
             <Chip

@@ -99,7 +99,8 @@ describe("BattleRulesSheet", () => {
         .getAllByRole("button")
         .map((pill) => pill.textContent)
     ).toEqual(["Battle rules", "Warband rules", "Charts", "House rules", "Rules"]);
-    expect(pills).toHaveClass("overflow-x-auto");
+    // it scrolls sideways, and never shrinks in the sheet's column when the list below is long
+    expect(pills).toHaveClass("overflow-x-auto", "shrink-0");
     expect(pills).not.toHaveClass("flex-wrap");
     expect(within(pills).getByRole("button", { name: "Battle rules" })).toHaveAttribute(
       "aria-pressed",
