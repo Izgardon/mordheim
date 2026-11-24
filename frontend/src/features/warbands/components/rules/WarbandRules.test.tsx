@@ -85,22 +85,17 @@ describe("WarbandRules", () => {
   });
 
   // William, 23 Nov 2026: a template's long line of pills made the whole open row on Reference →
-  // Warbands wider than his phone, and the line didn't scroll
-  it("keeps its pills out of its own width, and scrolls them sideways on a phone", () => {
-    media.phone = true;
-    renderRules([hatred, burn], false);
+  // Warbands wider than his phone; 24 Nov 2026: no sideways scroll, "it has the dropdown"
+  it("keeps its pills out of its own width and clips them on a phone too, the arrow showing the rest", () => {
+    for (const phone of [true, false]) {
+      media.phone = phone;
+      const { unmount } = renderRules([hatred, burn], false);
 
-    const line = screen.getByRole("button", { name: "Hatred" }).parentElement;
-    expect(line).toHaveClass("[contain:inline-size]", "overflow-x-auto");
-    expect(line).not.toHaveClass("overflow-hidden");
-  });
-
-  it("clips the line on the web, the arrow showing the rest", () => {
-    renderRules([hatred, burn], false);
-
-    const line = screen.getByRole("button", { name: "Hatred" }).parentElement;
-    expect(line).toHaveClass("[contain:inline-size]", "overflow-hidden");
-    expect(line).not.toHaveClass("overflow-x-auto");
+      const line = screen.getByRole("button", { name: "Hatred" }).parentElement;
+      expect(line).toHaveClass("[contain:inline-size]", "overflow-hidden");
+      expect(line).not.toHaveClass("overflow-x-auto");
+      unmount();
+    }
   });
 
   it("is left out for a viewer when there are none", () => {

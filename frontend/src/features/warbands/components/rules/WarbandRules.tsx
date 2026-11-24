@@ -3,7 +3,6 @@ import { ChevronDown } from "lucide-react";
 
 import { Chip } from "@/components/ui/chip";
 import { IconButton } from "@/components/ui/icon-button";
-import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 
 import type { WarbandRule } from "../../types/warband-types";
@@ -31,8 +30,8 @@ function useOverflows(rules: WarbandRule[]) {
 /**
  * The warband's own rules on its sheet, laid out as Resources is (William, 22 Nov 2026): the
  * section's title with Add rule across from it, then one line of the rules' pills, an arrow
- * showing the rest when they don't all fit; on a phone the line also scrolls sideways (William,
- * 23 Nov 2026). The line never widens what holds it: its pills are measured out of its size. A
+ * showing the rest when they don't all fit (William, 24 Nov 2026: no sideways scroll, "it has the
+ * dropdown"). The line never widens what holds it: its pills are measured out of its size. A
  * pill opens the modal at its rule; Add rule opens a form of its own (AddRuleDialog). Left out for
  * a viewer when there are none.
  */
@@ -51,7 +50,6 @@ export default function WarbandRules({
   rules: WarbandRule[];
   canEdit: boolean;
 }) {
-  const isMobile = useMediaQuery("(max-width: 960px)");
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [adding, setAdding] = useState(false);
@@ -85,11 +83,7 @@ export default function WarbandRules({
             ref={line}
             className={cn(
               "flex min-w-0 flex-1 gap-2 [contain:inline-size]",
-              expanded
-                ? "flex-wrap"
-                : isMobile
-                  ? "overflow-x-auto overscroll-x-contain"
-                  : "overflow-hidden"
+              expanded ? "flex-wrap" : "overflow-hidden"
             )}
           >
             {rules.map((rule) => (
