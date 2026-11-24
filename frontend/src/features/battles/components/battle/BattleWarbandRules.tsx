@@ -1,66 +1,60 @@
-import { useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 
-import { Chip } from "@/components/ui/chip";
+import { ReferenceList, ReferenceRow } from "@/features/reference/ReferenceList";
+import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
+import WarbandRuleArticle from "@/features/warbands/components/rules/WarbandRuleArticle";
 import { listWarbandRules } from "@/features/warbands/api/warbands-rules";
 import { queryKeys } from "@/lib/query-keys";
 
+import type { OpenRow } from "./BattleRulesLists";
+
 /**
- * The battle Rules sheet's Warband rules (the templates plan, "Warband rules"): each warband in the
- * battle with its rules as pills, and the one picked opens its text right here in the sheet
- * (William, 12 Nov 2026, on the sheet's rule opening a modal on top of it). Nothing stacks: the
- * sheet's own close is the only way out, one gesture on a phone. Each warband's rules are read when
- * the section opens.
+ * The battle Rules sheet's Warband rules: a row per warband in the battle, as its rules modal
+ * groups them, opening in place to every rule of it one after another (William, 24 Nov 2026: "a
+ * dropdown expand system just as they are displayed on their rules pages"). Nothing stacks on
+ * the sheet (William, 12 Nov 2026). A warband with no rules is left out; each warband's rules are
+ * read when the section opens.
  */
 export default function BattleWarbandRules({
   campaignId,
   warbands,
-}: {
-  campaignId: number;
-  warbands: { id: number; name: string }[];
-}) {
-  const [openId, setOpenId] = useState<number | null>(null);
+  openKey,
+  onToggle,
+}: OpenRow & { campaignId: number; warbands: { id: number; name: string }[] }) {
   const rules = useQueries({
     queries: warbands.map((warband) => ({
       queryKey: queryKeys.campaign.warbandRules(campaignId, warband.id),
       queryFn: () => listWarbandRules(warband.id),
     })),
   });
-  const shown = warbands.filter((_, index) => rules[index].data?.length);
-  if (rules.some((query) => query.isPending)) {
-    return <p className="m-0 text-sm text-muted-foreground">Reading the warbands&apos; rules…</p>;
-  }
-  if (!shown.length) return <p className="m-0 text-sm text-text2">No warband rules.</p>;
+  const pending = rules.some((query) => query.isPending);
+  const shown = warbands
+    .map((warband, index) => ({ warband, own: rules[index].data ?? [] }))
+    .filter((entry) => entry.own.length > 0);
   return (
-    <div className="flex flex-col gap-3">
-      {warbands.map((warband, index) => {
-        const own = rules[index].data ?? [];
-        if (!own.length) return null;
-        const open = own.find((rule) => rule.id === openId);
-        return (
-          <div key={warband.id} className="flex flex-col gap-2 border-t border-line pt-2.5">
-            <span className="text-sm font-bold text-head">{warband.name}</span>
-            <div className="flex flex-wrap gap-1.5">
-              {own.map((rule) => (
-                <Chip
-                  key={rule.id}
-                  pressed={rule.id === openId}
-                  aria-expanded={rule.id === openId}
-                  onClick={() => setOpenId(rule.id === openId ? null : rule.id)}
-                >
-                  {rule.title}
-                </Chip>
-              ))}
-            </div>
-            {open ? (
-              <article aria-label={open.title} className="flex flex-col gap-1">
-                <h3 className="m-0 text-sm font-bold text-head">{open.title}</h3>
-                <p className="m-0 whitespace-pre-line text-sm text-text2">{open.description}</p>
-              </article>
-            ) : null}
-          </div>
-        );
-      })}
-    </div>
+    <ReferenceList isEmpty={!pending && shown.length === 0} empty="No warband rules.">
+      {pending ? <ReferenceRowBones rows={warbands.length || 1} /> : null}
+      {pending
+        ? null
+        : shown.map(({ warband, own }) => {
+            const key = `w${warband.id}`;
+            return (
+              <ReferenceRow
+                key={key}
+                id={key}
+                open={openKey === key}
+                onToggle={() => onToggle(key)}
+                name={warband.name}
+                sub={`${own.length} ${own.length === 1 ? "rule" : "rules"}`}
+              >
+                <div className="flex flex-col">
+                  {own.map((rule) => (
+                    <WarbandRuleArticle key={rule.id} rule={rule} />
+                  ))}
+                </div>
+              </ReferenceRow>
+            );
+          })}
+    </ReferenceList>
   );
 }
