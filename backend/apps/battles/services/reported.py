@@ -23,6 +23,7 @@ from .events import append_event, notify_result_updated, notify_user
 from .lifecycle import battle_result_log, record_wins_and_losses, reset_trading_actions
 from .numbering import battle_number
 from .postbattle.missing import count_down
+from .scenario_pick import picked_scenario
 from .setup import players_warbands, scenario_name
 
 
@@ -34,6 +35,7 @@ class ReportedResult:
     battle_date: date
     raw_battle_date: str
     winner_ids: list[int]
+    scenario_ref_id: int | None = None  # the campaign scenario picked (apps/scenarios), when one was
 
 
 def _user_ids(raw_ids, creator_id: int) -> list[int]:
@@ -87,11 +89,13 @@ def reported_result(data, campaign_id: int, creator) -> ReportedResult:
     """What `report-result/` asks for, checked in the order its refusals have always come in ([] is "No winner")."""
     user_ids = _user_ids(data.get("participant_user_ids"), creator.id)
     warbands = players_warbands(campaign_id, user_ids)
-    scenario = scenario_name(data.get("scenario"))
+    picked = picked_scenario(data.get("scenario_id"), campaign_id)
+    scenario = scenario_name(data.get("scenario") or (picked.name if picked else None))
     battle_date = parse_battle_date(data.get("battle_date"))
     winner_ids = _winner_ids(data.get("winner_warband_ids"), warbands)
     raw_battle_date = data.get("battle_date").strip()
-    return ReportedResult(user_ids, warbands, scenario, battle_date, raw_battle_date, winner_ids)
+    picked_id = picked.pk if picked else None
+    return ReportedResult(user_ids, warbands, scenario, battle_date, raw_battle_date, winner_ids, picked_id)
 
 
 def _request_approval(battle: Battle, creator, result: ReportedResult, user_id: int) -> None:
@@ -125,6 +129,7 @@ def create_reported_result(campaign_id: int, creator, result: ReportedResult) ->
         flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
         status=Battle.STATUS_REPORTED_RESULT_PENDING,
         scenario=result.scenario,
+        scenario_ref_id=result.scenario_ref_id,
         ended_at=ended_at,
         winner_warband_ids_json=result.winner_ids,
         state_version=1,

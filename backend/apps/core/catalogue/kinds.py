@@ -13,6 +13,7 @@ from collections.abc import Mapping
 
 from django.db.models import Model, Q
 
+from apps.battles.models import Battle
 from apps.bestiary.models import (
     BestiaryEntry,
     BestiaryEntryItem,
@@ -32,6 +33,8 @@ from apps.plots.models import Plot
 from apps.plots.serializers import PlotWriteSerializer
 from apps.races.models import Race
 from apps.races.serializers import RaceCreateSerializer
+from apps.scenarios.models import CampaignScenario, Scenario
+from apps.scenarios.serializers import ScenarioWriteSerializer
 from apps.skills.models import Skill, SkillGroup, SkillGroupSkill
 from apps.skills.serializers import SkillCreateSerializer, SkillGroupWriteSerializer
 from apps.special.models import Special
@@ -74,6 +77,7 @@ from .rows import (
     PlotDetailRowSerializer,
     PlotRowSerializer,
     RaceRowSerializer,
+    ScenarioRowSerializer,
     SkillGroupRowSerializer,
     SkillRowSerializer,
     SpecialRowSerializer,
@@ -403,6 +407,23 @@ PLOTS = CatalogueKindSpec(  # a warband's path through a campaign, scoring campa
     holders=(Holder(model=Warband, field="plot", campaign="campaign_id", counts_as="warbands", warband="id"),),
     hooks=PlotHooks(),
 )
+SCENARIOS = CatalogueKindSpec(  # what a battle is played as (William, 24 Nov 2026): read, never applied
+    key="scenarios",
+    noun="scenario",
+    model=Scenario,
+    url_kwarg="scenario_id",
+    row_serializer=ScenarioRowSerializer,
+    entry_serializer=ScenarioRowSerializer,
+    write_serializer=ScenarioWriteSerializer,
+    named=True,
+    versioned=True,
+    filters={"search": NAME_AND_TYPE["search"]},
+    # the campaign's list and its battles follow a version's first edit onto it and a Revert back (remap.py)
+    followers=(
+        Move(CampaignScenario, "scenario", "campaign_id", ("campaign_id",)),
+        Move(Battle, "scenario_ref", "campaign_id"),
+    ),
+)
 ITEM_RULES = CatalogueKindSpec(  # the shared rules: added, never edited or deleted
     key="item_rules",
     noun="item rule",
@@ -431,6 +452,7 @@ CATALOGUE_KINDS: Mapping[str, CatalogueKindSpec] = {
         WARBAND_TEMPLATES,
         EXPLORATION_CHARTS,
         PLOTS,
+        SCENARIOS,
     )
 }
 LIST_KINDS: Mapping[str, CatalogueKindSpec] = {

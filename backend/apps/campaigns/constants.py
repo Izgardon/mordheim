@@ -49,6 +49,11 @@ PERMISSIONS: tuple[PermissionCode, ...] = (
     ),
     PermissionCode("manage_locations", "Manage locations", "Add, edit and remove the campaign's locations."),
     PermissionCode(
+        "manage_scenarios",
+        "Manage scenarios",
+        "Add, remove and weight the campaign's scenarios.",
+    ),
+    PermissionCode(
         "manage_battles",
         "Manage battles",
         "See Settings > Active Battles, end, close or cancel stuck battles and edit past battle records.",

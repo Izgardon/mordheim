@@ -25,6 +25,7 @@ ENTRY_TABLES = (
     ("warband_templates", "Warband template"),
     ("exploration_charts", "Exploration chart"),
     ("plots", "Plot"),
+    ("scenarios", "Scenario"),
 )
 
 

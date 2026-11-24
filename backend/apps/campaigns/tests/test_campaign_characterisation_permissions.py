@@ -72,9 +72,9 @@ class FreshDatabaseTests(APITestCase):
 
 
 class PermissionCatalogueTests(CampaignTestCase):
-    def test_the_constants_list_seven_codes(self):
+    def test_the_constants_list_eight_codes(self):
         # pass 5 decisions 4 and 5: edit_catalogue and delete_catalogue replaced add_custom, manage_items,
-        # manage_skills, manage_spells, manage_specials and manage_bestiary
+        # manage_skills, manage_spells, manage_specials and manage_bestiary; manage_scenarios (24 Nov 2026)
         self.assertEqual(
             list(PERMISSION_CODES),
             [
@@ -84,6 +84,7 @@ class PermissionCatalogueTests(CampaignTestCase):
                 "manage_warbands",
                 "manage_encampments",
                 "manage_locations",
+                "manage_scenarios",
                 "manage_battles",
             ],
         )

@@ -32,6 +32,7 @@ from apps.campaigns.models import (
 )
 from apps.campaigns.views.base import CampaignScopedView
 from apps.items.models import Item
+from apps.scenarios.models import CampaignScenario, Scenario
 
 from .campaign_support import CampaignTestCase, make_user
 
@@ -65,6 +66,11 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("POST", "encampments/{camp}/take/", {"warband_id": "{rival_warband}"}, (403, 200, 200, 200)),
     ("POST", "encampments/{camp}/raze/", {}, (403, 200, 200, 200)),  # the rival's: his player or a manager
     ("POST", "encampments/{camp}/give-up/", {}, (403, 200, 200, 200)),
+    ("GET", "scenarios/", None, OK_ALL),
+    ("POST", "scenarios/", {"scenario_id": "{scenario}"}, (403, 201, 201, 201)),
+    ("PATCH", "scenarios/{scenario_row}/", {"weight": "1.5"}, (403, 200, 200, 200)),
+    ("DELETE", "scenarios/{scenario_row}/", None, (403, 204, 204, 204)),
+    ("POST", "scenarios/random/", {"players": 2}, OK_ALL),  # drawing is starting a battle's: every member's
     ("GET", "location-groups/", None, OK_ALL),
     ("POST", "location-groups/", {"name": "Docks"}, (403, 201, 201, 201)),
     ("PATCH", "location-groups/{place_group}/", {"name": "Docks 2"}, (403, 200, 200, 200)),
@@ -121,6 +127,7 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "manage_warbands": ("PATCH", "/api/warbands/{rival_warband}/", {"name": "Rats"}),
     "manage_encampments": ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}),
     "manage_locations": ("POST", "location-groups/", {"name": "Docks"}),
+    "manage_scenarios": ("PATCH", "scenarios/{scenario_row}/", {"weight": 2}),
     "manage_battles": ("POST", "active-battles/{battle}/cancel/", {}),
 }
 
@@ -152,6 +159,8 @@ class CampaignAccessFixture(CampaignTestCase):
         )
         place_group = CampaignLocationGroup.objects.create(campaign=campaign, name="Old Town")
         camp_group = CampaignEncampmentGroup.objects.create(campaign=campaign, name="The wall")
+        scenario = Scenario.objects.create(name="Skirmish")
+        other = Scenario.objects.create(name="Occupy")
         cls.refs = {
             "campaign": campaign.id,
             "rival": cls.rival.id,
@@ -169,6 +178,8 @@ class CampaignAccessFixture(CampaignTestCase):
             "rule": CampaignHouseRule.objects.create(campaign=campaign, title="Old rule").id,
             "campaign_rule": CampaignRule.objects.create(campaign=campaign, title="Old ruling").id,
             "item": Item.objects.create(campaign=campaign, name="Lucky Charm", type="Miscellaneous").id,
+            "scenario": other.id,
+            "scenario_row": CampaignScenario.objects.create(campaign=campaign, scenario=scenario).id,
         }
 
     def setUp(self) -> None:

@@ -15,6 +15,7 @@ from apps.campaign_presets.services import rules as preset_rules
 from apps.campaign_presets.services.skill_wordings import apply_skill_wordings
 from apps.exploration.selectors import book_chart_id
 from apps.plots.writes import give_default_plots
+from apps.scenarios.services.campaign_list import add_setting_scenarios
 
 from ..constants import OWNER
 from ..in_play import DEFAULT_PRESET, preset_ids, set_settings
@@ -78,7 +79,8 @@ def create_campaign(owner: Any, validated: dict[str, Any]) -> Campaign:
         campaign = Campaign.objects.create(name=validated["name"], join_code=unique_join_code(), preset=preset)
         CampaignSettings.objects.create(campaign=campaign, **values)
         ticked = presets_apply.ticked_with(campaign.pk, preset, setting_ids)
-        set_settings(campaign, ticked if ticked is not None else setting_ids)
+        # its settings' scenarios, at their weights (Mordheim 1a's sixteen in every campaign)
+        add_setting_scenarios(campaign.pk, set_settings(campaign, ticked if ticked is not None else setting_ids))
         if values.get("enable_campaign_points"):  # on from the start: it is given the plots of its settings in play
             give_default_plots(campaign.pk)
         preset_rules.copy_rules(campaign, preset)

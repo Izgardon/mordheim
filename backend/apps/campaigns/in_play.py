@@ -76,8 +76,9 @@ def in_play_rows[RowsT: QuerySet[Any]](model: type[Any], rows: RowsT, campaign_i
     return annotated
 
 
-def set_settings(campaign: Campaign, ids: Iterable[int]) -> None:
-    """The campaign's settings in play become `ids` (known setting ids), with the always-on ones added."""
+def set_settings(campaign: Campaign, ids: Iterable[int]) -> list[int]:
+    """The campaign's settings in play become `ids` (known setting ids), with the always-on ones added; the ids
+    ticked just now (what adds a setting's scenarios: apps/scenarios)."""
     always = CampaignType.objects.filter(always_on=True).values_list("id", flat=True)
     wanted = set(ids) | set(always)
     CampaignCampaignType.objects.filter(campaign=campaign).exclude(campaign_type_id__in=wanted).delete()
@@ -86,9 +87,11 @@ def set_settings(campaign: Campaign, ids: Iterable[int]) -> None:
             "campaign_type_id", flat=True
         )
     )
+    ticked = sorted(wanted - held)
     CampaignCampaignType.objects.bulk_create(
-        [CampaignCampaignType(campaign=campaign, campaign_type_id=pk) for pk in sorted(wanted - held)]
+        [CampaignCampaignType(campaign=campaign, campaign_type_id=pk) for pk in ticked]
     )
+    return ticked
 
 
 # The grade a part of a split setting carries at the end of its slug and of its name ("khemri-3", "Khemri 1b").

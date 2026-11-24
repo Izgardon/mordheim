@@ -52,6 +52,10 @@ class Battle(models.Model):
     )
     scenario = models.CharField(max_length=120)
     scenario_link = models.URLField(max_length=500, null=True, blank=True)
+    # the campaign's scenario it is played as, when one was picked (apps/scenarios); `scenario` keeps its name
+    scenario_ref = models.ForeignKey(
+        "scenarios.Scenario", related_name="battles", null=True, blank=True, on_delete=models.SET_NULL
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     started_at = models.DateTimeField(null=True, blank=True)

@@ -10,6 +10,7 @@ from apps.campaign_presets.services.skill_wordings import apply_skill_wordings
 from apps.campaign_presets.services.swap import swap_rules
 from apps.core.catalogue.cache import bump
 from apps.plots.writes import give_default_plots
+from apps.scenarios.services.campaign_list import add_setting_scenarios
 
 from ..errors import Refused
 from ..in_play import set_settings
@@ -78,7 +79,8 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
             campaign.name = validated["name"]
             campaign.save(update_fields=["name"])
         if picked_ids is not None:  # the settings in play (grading phase 1): every list's in_play changes
-            set_settings(campaign, picked_ids)
+            # a setting ticked adds its scenarios; one unticked takes none away (William, 24 Nov 2026)
+            add_setting_scenarios(campaign.id, set_settings(campaign, picked_ids))
             bump(campaign.id)  # no catalogue.changed: the pages read the lists again on campaign.updated
         if not settings_updates:
             _settle_preset(campaign, validated, preset)

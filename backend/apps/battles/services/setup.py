@@ -21,6 +21,7 @@ from .errors import Refused
 from .events import append_event, notify_user
 from .numbering import battle_number
 from .one_battle import fighting_refusal
+from .scenario_pick import picked_scenario
 from .timing import invite_deadline
 from .unfinished import BUSY_BATTLE_STATUSES, BUSY_PARTICIPANT_STATUSES, FIGHTING, page_for
 
@@ -149,11 +150,13 @@ class NewBattle:
     warbands: dict[int, Warband]
     ratings: dict[int, int | None]
     warnings: list[dict]
+    scenario_ref_id: int | None = None  # the campaign scenario picked (apps/scenarios), when one was
 
 
 def new_battle(data, campaign_id: int, creator) -> NewBattle:
     """What `POST battles/` asks for, checked in the order its refusals have always come in."""
-    scenario = scenario_name(data.get("scenario"))
+    picked = picked_scenario(data.get("scenario_id"), campaign_id)
+    scenario = scenario_name(data.get("scenario") or (picked.name if picked else None))
     user_ids = participant_user_ids(data.get("participant_user_ids"), campaign_id, creator.id)
     warbands = players_warbands(campaign_id, user_ids)
     if refusal := fighting_refusal(campaign_id, user_ids, you=creator.id):  # one battle at a time (one_battle.py)
@@ -162,7 +165,7 @@ def new_battle(data, campaign_id: int, creator) -> NewBattle:
     raw_link = data.get("scenario_link")
     scenario_link = (raw_link.strip() if isinstance(raw_link, str) else None) or None
     ratings = participant_ratings(data.get("participant_ratings", {}), user_ids)
-    return NewBattle(scenario, scenario_link, user_ids, warbands, ratings, warnings)
+    return NewBattle(scenario, scenario_link, user_ids, warbands, ratings, warnings, picked.pk if picked else None)
 
 
 def _invite(battle: Battle, creator, user_id: int) -> None:
@@ -206,6 +209,7 @@ def create_battle(campaign_id: int, creator, request: NewBattle) -> tuple[Battle
         status=Battle.STATUS_INVITING,
         scenario=request.scenario,
         scenario_link=request.scenario_link,
+        scenario_ref_id=request.scenario_ref_id,
         state_version=1,
         closes_at=invite_deadline(),  # 72 hours to answer (decision 2)
         number=battle_number(warband.id for warband in request.warbands.values()),  # until the start (numbering.py)

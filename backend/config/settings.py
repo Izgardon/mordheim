@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "apps.warband_templates.apps.WarbandTemplatesConfig",
     "apps.exploration.apps.ExplorationConfig",
     "apps.plots.apps.PlotsConfig",
+    "apps.scenarios.apps.ScenariosConfig",
     "apps.campaign_presets.apps.CampaignPresetsConfig",
 ]
 

@@ -18,6 +18,8 @@ from apps.hirelings.serializers import (
 from apps.items.serializers import ItemSerializer
 from apps.plots.serializers import PlotDetailSerializer, PlotSerializer
 from apps.races.serializers import RaceSerializer
+from apps.scenarios.serializers import BOOK_FIELDS as SCENARIO_BOOK_FIELDS
+from apps.scenarios.serializers import ScenarioSerializer
 from apps.skills.serializers import SkillGroupSerializer, SkillSerializer
 from apps.special.serializers import SpecialSerializer
 from apps.spells.serializers import SpellSerializer
@@ -104,3 +106,5 @@ PlotDetailRowSerializer = with_badges(PlotDetailSerializer, book_fields=PLOT_BOO
 EXPLORATION_BOOK_FIELDS = ("name", "summary", "income", "income_note", "max_dice", "max_chosen")
 ExplorationChartRowSerializer = with_badges(ExplorationChartSerializer, book_fields=EXPLORATION_BOOK_FIELDS)
 ExplorationChartDetailRowSerializer = with_badges(ExplorationChartDetailSerializer, book_fields=EXPLORATION_BOOK_FIELDS)
+
+ScenarioRowSerializer = with_badges(ScenarioSerializer, book_fields=SCENARIO_BOOK_FIELDS)

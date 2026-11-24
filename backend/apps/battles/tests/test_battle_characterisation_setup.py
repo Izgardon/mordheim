@@ -22,6 +22,7 @@ BATTLE_KEYS = [
     "status",
     "scenario",
     "scenario_link",
+    "scenario_id",
     "winner_warband_ids_json",
     "created_at",
     "updated_at",

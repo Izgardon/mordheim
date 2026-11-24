@@ -34,6 +34,7 @@ def serialize_battle(battle: Battle) -> dict:
         "status": battle.status,
         "scenario": battle.scenario,
         "scenario_link": battle.scenario_link,
+        "scenario_id": battle.scenario_ref_id,  # the campaign scenario it is played as (apps/scenarios), or null
         "winner_warband_ids_json": battle.winner_warband_ids_json or [],
         "created_at": battle.created_at.isoformat(),
         "updated_at": battle.updated_at.isoformat(),
