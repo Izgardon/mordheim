@@ -69,4 +69,24 @@ describe("DicePanel", () => {
 
     expect(await screen.findByText("9")).toBeInTheDocument();
   });
+
+  it("shows a roll's faces once, in the boxes, with the total beside them", async () => {
+    const user = setupUser();
+    // every die comes up 4
+    vi.spyOn(crypto, "getRandomValues").mockImplementation(
+      <T extends ArrayBufferView | null>(array: T) => {
+        if (array instanceof Uint32Array) array[0] = 3;
+        return array;
+      }
+    );
+    renderPanel();
+
+    await user.click(screen.getByRole("button", { name: "Roll 2D6" }));
+
+    expect(screen.getByRole("textbox", { name: "First D6 rolled" })).toHaveValue("4");
+    expect(screen.getByRole("textbox", { name: "Second D6 rolled" })).toHaveValue("4");
+    expect(await screen.findByText("8")).toBeInTheDocument();
+    expect(screen.queryByText("4")).toBeNull();
+    vi.restoreAllMocks();
+  });
 });

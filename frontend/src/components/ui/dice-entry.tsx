@@ -99,6 +99,9 @@ type DiceEntryProps = {
   disabled?: boolean;
   size?: keyof typeof BOX;
   className?: string;
+  /** Shown in the boxes' row after the last box (the dice roller's total), and that row's class. */
+  beside?: ReactNode;
+  boxesClassName?: string;
 };
 
 /**
@@ -116,6 +119,8 @@ export default function DiceEntry({
   disabled = false,
   size = "md",
   className,
+  beside,
+  boxesClassName,
 }: DiceEntryProps) {
   const sides = diceSides(dice);
   const boxes = useRef<(HTMLInputElement | null)[]>([]);
@@ -177,7 +182,7 @@ export default function DiceEntry({
         button?.(roll)
       )}
       {sides.length ? (
-        <span className="flex flex-wrap gap-1.5">
+        <span className={cn("flex flex-wrap items-center gap-1.5", boxesClassName)}>
           {sides.map((die, index) => (
             <input
               key={index}
@@ -204,6 +209,7 @@ export default function DiceEntry({
               )}
             />
           ))}
+          {beside}
         </span>
       ) : null}
     </div>

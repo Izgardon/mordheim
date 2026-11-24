@@ -43,7 +43,7 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
   const [die, setDie] = useState<Die>("D6");
   const [modifier, setModifier] = useState(0);
   const [reason, setReason] = useState("");
-  const [last, setLast] = useState<{ faces: number[]; total: number } | null>(null);
+  const [last, setLast] = useState<{ faces: number[]; total: number; dice: string } | null>(null);
   const [error, setError] = useState("");
   const logs = useInfiniteQuery({
     ...warbandLogsQuery(campaignId, warband?.id ?? 0, "dice_roll"),
@@ -55,7 +55,7 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
   /** A roll's faces, rolled here or typed in from the table, logged the same way. */
   const record = (faces: number[]) => {
     const total = faces.reduce((sum, face) => sum + face, 0) + modifier;
-    setLast({ faces, total });
+    setLast({ faces, total, dice: `${count}${die}` });
     setError("");
     if (!warband) return;
     const why = reason.trim();
@@ -140,12 +140,25 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
           <Input value={reason} onChange={(event) => setReason(event.target.value)} />
         </label>
         {typeable ? (
+          // the boxes are the result (William, 24 Nov 2026: "doesn't need both the boxes and the
+          // result boxes"): rolled or typed, the faces sit in them and the total beside them
           <DiceEntry
             key={typeable}
             dice={typeable}
             onFaces={fromBoxes}
             size="lg"
             className="[&>button]:w-full"
+            boxesClassName="w-full border border-accent-line bg-surface p-3.5"
+            beside={
+              last && last.dice === `${count}${die}` ? (
+                <span
+                  aria-live="polite"
+                  className="ml-auto font-display text-[28px] font-semibold text-accent-hi"
+                >
+                  {last.total}
+                </span>
+              ) : null
+            }
             button={(rollBoxes) => (
               <Button size="lg" onClick={rollBoxes}>
                 Roll {notation}
@@ -157,7 +170,7 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
             Roll {notation}
           </Button>
         )}
-        {last ? (
+        {!typeable && last ? (
           <div
             aria-live="polite"
             className="flex flex-wrap items-center gap-2 border border-accent-line bg-surface p-3.5"
