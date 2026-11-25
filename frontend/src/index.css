@@ -83,6 +83,15 @@ select:not([multiple]):not([size]) {
 }
 
 /* Utility classes */
+
+/* A row of chips that scrolls sideways: a small gap between the chips and the scrollbar under them, so the bar never
+   touches them (William, 25 Nov 2026: "a saved styling choice where we have a small gap"). Every such row uses it. */
+.scroll-row {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-bottom: 0.5rem;
+}
+
 .scrollbar-hidden {
   scrollbar-width: none;
   -ms-overflow-style: none;

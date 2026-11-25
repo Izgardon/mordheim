@@ -63,11 +63,7 @@ export default function StoreFilters(props: StoreFiltersProps) {
       <div
         role="group"
         aria-label="Category"
-        className={cn(
-          "flex gap-1.5",
-          // pb-2: room between the chips and the scrollbar under them (William, 20 Nov 2026)
-          props.isMobile ? "-mx-4 overflow-x-auto overscroll-x-contain px-4 pb-2" : "flex-wrap"
-        )}
+        className={cn("flex gap-1.5", props.isMobile ? "scroll-row -mx-4 px-4" : "flex-wrap")}
       >
         {STORE_CATEGORIES.map((entry) => (
           <Chip

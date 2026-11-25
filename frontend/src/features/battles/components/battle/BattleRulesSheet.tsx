@@ -87,7 +87,7 @@ export default function BattleRulesSheet({
         <div
           role="group"
           aria-label="Rules section"
-          className="-mx-4 flex shrink-0 gap-1.5 overflow-x-auto overscroll-x-contain px-4 pb-1 min-[961px]:mx-0 min-[961px]:px-0"
+          className="scroll-row -mx-4 flex shrink-0 gap-1.5 px-4 min-[961px]:mx-0 min-[961px]:px-0"
         >
           {BATTLE_RULES_SECTIONS.map((entry) => (
             <Chip
@@ -100,13 +100,17 @@ export default function BattleRulesSheet({
             </Chip>
           ))}
         </div>
-        {section === "battle" ? <BattleRuleRows campaignId={campaignId} {...rows} /> : null}
-        {section === "warbands" ? (
-          <BattleWarbandRules campaignId={campaignId} warbands={warbands} {...rows} />
-        ) : null}
-        {section === "charts" ? <ChartRows campaignId={campaignId} {...rows} /> : null}
-        {section === "house" ? <HouseRuleRows campaignId={campaignId} {...rows} /> : null}
-        {section === "rules" ? <RuleBookRows {...rows} /> : null}
+        {/* a phone keeps the sheet one height whichever pill is picked (William, 25 Nov 2026: "it jumps
+            around a lot") */}
+        <div data-testid="rules-section" className="flex flex-col gap-4 max-[960px]:min-h-[55dvh]">
+          {section === "battle" ? <BattleRuleRows campaignId={campaignId} {...rows} /> : null}
+          {section === "warbands" ? (
+            <BattleWarbandRules campaignId={campaignId} warbands={warbands} {...rows} />
+          ) : null}
+          {section === "charts" ? <ChartRows campaignId={campaignId} {...rows} /> : null}
+          {section === "house" ? <HouseRuleRows campaignId={campaignId} {...rows} /> : null}
+          {section === "rules" ? <RuleBookRows {...rows} /> : null}
+        </div>
       </ModalSheet>
       {scenario ? (
         <ScenarioSheet

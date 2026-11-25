@@ -100,7 +100,10 @@ describe("BattleRulesSheet", () => {
         .map((pill) => pill.textContent)
     ).toEqual(["Battle rules", "Warband rules", "Charts", "House rules", "Rules"]);
     // it scrolls sideways, and never shrinks in the sheet's column when the list below is long
-    expect(pills).toHaveClass("overflow-x-auto", "shrink-0");
+    // scroll-row: a small gap between the pills and the scrollbar (William, 25 Nov 2026)
+    expect(pills).toHaveClass("scroll-row", "shrink-0");
+    // the list below keeps one height on a phone, whichever pill is picked
+    expect(screen.getByTestId("rules-section")).toHaveClass("max-[960px]:min-h-[55dvh]");
     expect(pills).not.toHaveClass("flex-wrap");
     expect(within(pills).getByRole("button", { name: "Battle rules" })).toHaveAttribute(
       "aria-pressed",

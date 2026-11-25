@@ -61,10 +61,7 @@ export default function Chronicle({
       <div
         role="group"
         aria-label="Show"
-        className={cn(
-          "flex gap-1.5",
-          isMobile ? "-mx-3 overflow-x-auto overscroll-x-contain px-3 pb-2" : "flex-wrap"
-        )}
+        className={cn("flex gap-1.5", isMobile ? "scroll-row -mx-3 px-3" : "flex-wrap")}
       >
         {FILTERS.map((entry) => (
           <Chip

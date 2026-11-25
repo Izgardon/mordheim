@@ -168,7 +168,7 @@ export function ReferenceChips<T extends string>(props: ReferenceChipsProps<T>) 
     <div
       className={cn(
         "flex items-center gap-2",
-        isMobile && "-mx-4 overflow-x-auto overscroll-x-contain px-4 pb-2",
+        isMobile && "scroll-row -mx-4 px-4",
         // the chips scroll in the room the pinned control leaves them
         pinned && "mr-0 min-w-0 flex-1 pr-2"
       )}
