@@ -10666,9 +10666,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Beastmen Raiders",
-            "description": "Chaos Hounds are animals and never gain Experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -10719,7 +10718,7 @@
             "description": "If a Minotaur puts all of its enemies out of action in hand-to-hand combat, it becomes frenzied on a D6 roll of 4+."
           },
           {
-            "name": "Animal",
+            "name": "Animal (Minotaur)",
             "type": "Warband - Beastmen Raiders",
             "description": "A Minotaur is far more bestial than its Beastmen brethren and, although it may gain Experience, it may never become a Hero."
           },
@@ -13401,8 +13400,7 @@
           },
           {
             "name": "Animal",
-            "type": "Warband - Blood Dragons",
-            "description": "Hell Hounds are animals and gain no experience."
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -22274,8 +22272,7 @@
         "specials": [
           {
             "name": "Animal",
-            "type": "Warband - Circus Extraordinaire",
-            "description": "A Trained Animal is an animal and gains no experience."
+            "type": "Animal"
           },
           {
             "name": "Ferocity",
@@ -23949,8 +23946,7 @@
         "specials": [
           {
             "name": "Animal",
-            "type": "Warband - Court of the Profane Pleasures",
-            "description": "Chaos Hounds are animals and never gain any experience."
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -26910,9 +26906,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Dark Elves",
-            "description": "Cold One Beasthounds are animals and all animal rules apply to them, they never gain experience."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Beastmaster",
@@ -30745,7 +30740,7 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
+            "name": "Animals (Slavehound)",
             "type": "Warband - Druchii",
             "description": "Slavehounds are animals and never gain experience. The warband may have them only if it has a Beastmaster."
           },
@@ -39259,6 +39254,10 @@
             "name": "May Ride",
             "type": "Warband - Forest Goblins",
             "description": "The Forest Goblin Chieftain, may ride the Gigantic Spider. He gains +1 armour save, and shall move at the Gigantic Spider’s rate of 6. Shooting attacks hit the Chieftain on a die roll of 1-2, and the Gigantic Spider on a 3-6. In close combat, the opponent may choose which to hit. The Gigantic Spider no longer has to check for stupidity if it is being ridden, as the Chieftain is directing its actions."
+          },
+          {
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -40033,6 +40032,10 @@
             "name": "Nonsentient",
             "type": "Warband - Forest Goblins (Lustria)",
             "description": "A Gigantic Spider is subject to stupidity and never gains experience. It may climb as normal."
+          },
+          {
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -41650,9 +41653,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Goblin Raiders",
-            "description": "Bonecruncha Wolves are animals and gain no experience."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Charge",
@@ -45202,9 +45204,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Halflings",
-            "description": "Piggies are animals and never gain experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -46622,9 +46623,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Hobgoblin Horde",
-            "description": "A Bonecruncha Wolf gains no experience, and uses neither weapons nor armour."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Charge",
@@ -47276,9 +47276,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Hobgoblins",
-            "description": "A Giant Wolf gains no experience and may be given no weapons or equipment."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -48927,9 +48926,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Horned Hunters",
-            "description": "Warhounds are animals and thus do not gain experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -49722,9 +49720,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - House Guard",
-            "description": "A Warhound is an animal and gains no experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -52075,8 +52072,7 @@
           },
           {
             "name": "Animal",
-            "type": "Warband - Kislevites",
-            "description": "Trained Bears are animals and do not gain experience."
+            "type": "Animal"
           },
           {
             "name": "Large",
@@ -53822,9 +53818,8 @@
             "type": "Psychology"
           },
           {
-            "name": "Animals",
-            "type": "Warband - Lahmian",
-            "description": "A Black Hound gains no experience and carries no weapons or armour."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -54645,8 +54640,7 @@
           },
           {
             "name": "Animal",
-            "type": "Warband - Lizardmen",
-            "description": "Kroxigor are slow-witted creatures that never learn from their mistakes. The Kroxigor doesn’t gain experience."
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -55531,8 +55525,7 @@
           },
           {
             "name": "Animal",
-            "type": "Warband - Lizardmen (Lustria)",
-            "description": "A Kroxigor never gains experience."
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -59293,7 +59286,7 @@
             "description": "Beastmasters raise savage Estalian warhounds: giant beasts trained to bring down any prey or enemy, and protected by padded armour to ward off arrows and iron collars against blades."
           },
           {
-            "name": "Animal",
+            "name": "Animal (War Beasts)",
             "type": "Warband - Lustrian Reavers",
             "description": "All the War Beasts are subject to the rules of Animals and may not gain experience. They suffer injuries exactly as Henchmen (if taken out of action they are dead on a roll of 1-2 on D6)."
           }
@@ -59340,7 +59333,7 @@
             "description": "Can climb any sheer surfaces without taking Initiative tests. Can re-roll all failed Diving Charge tests. The Monkey can enter buildings unlike other animals. Due to its agility, the Monkey also has a 5+ Ward save which it can take against any and all wounds it suffers in Melee combat or from shooting/magic or even falling damage."
           },
           {
-            "name": "Animal",
+            "name": "Animal (War Beasts)",
             "type": "Warband - Lustrian Reavers",
             "description": "All the War Beasts are subject to the rules of Animals and may not gain experience. They suffer injuries exactly as Henchmen (if taken out of action they are dead on a roll of 1-2 on D6)."
           }
@@ -59387,7 +59380,7 @@
             "description": "Acts at the same time as the Beastmaster. Can attack any enemy within 12” as a melee attack, even those out of line of sight (unless Hidden), and return to the Beastmaster immediately. The hawk cannot be targeted separately by any attack or spell. The Hawk does not attack if the Beastmaster is engaged in hand-to-hand combat, being too busy to command the hawk!"
           },
           {
-            "name": "Animal",
+            "name": "Animal (War Beasts)",
             "type": "Warband - Lustrian Reavers",
             "description": "All the War Beasts are subject to the rules of Animals and may not gain experience. They suffer injuries exactly as Henchmen (if taken out of action they are dead on a roll of 1-2 on D6)."
           }
@@ -60613,9 +60606,8 @@
             "type": "Psychology"
           },
           {
-            "name": "Animals",
-            "type": "Warband - Maneaters",
-            "description": "Sabretusks are animals and thus do not gain experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -61466,9 +61458,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Marauders of Chaos",
-            "description": "Warhounds are animals and thus do not gain experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -63877,9 +63868,8 @@
             "description": "A Black sheep is subject to stupidity unless a Sheepherder is within 6\" of it."
           },
           {
-            "name": "Animals",
-            "type": "Warband - Mazzalupo",
-            "description": "A Black sheep is an animal and never gains experience."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Butcher's meat",
@@ -71710,9 +71700,8 @@
             "description": "The Scorpions are living beings and may run and are affected by Psychology."
           },
           {
-            "name": "Animals",
-            "type": "Warband - Nehekhara Tomb Guards",
-            "description": "The Scorpions are animals and doesn't get experience points."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Scorpions sting",
@@ -72311,9 +72300,8 @@
             "description": "Each Cave Squig must always remain within 6\" of a Goblin Warrior, who keeps the creature in line. If a Cave Squig finds itself without a Goblin within 6\" at the start of its Movement phase, it will go wild. From that point on, move the Squig 2D6\" in a random direction during each of its Movement phases. If its movement takes it into contact with another model (friend or foe), it will engage the model in hand-to-hand combat as normal. The Cave Squig is out of the Orc & Goblin player’s control until the end of the game."
           },
           {
-            "name": "Animals",
-            "type": "Warband - Night Goblins",
-            "description": "Cave Squigs are animals of a sort and so do not gain experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -72962,9 +72950,8 @@
             "description": "A Cave Squig must stay within 6\" of a Night Goblin. If it has none within 6\" at the start of its Movement phase it goes wild: from then on move it 2D6\" in a random direction each of its Movement phases, and if that takes it into contact with any model, friend or foe, it fights that model as normal. It is out of the Night Goblin player's control for the rest of the game."
           },
           {
-            "name": "Animals",
-            "type": "Warband - Night Goblins (Karak Azgal)",
-            "description": "Cave Squigs are animals of a sort and gain no experience."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Cave Squigs",
@@ -73981,7 +73968,7 @@
             "description": "Night Goblins don't care much whether Squigs die because there will always be more mysteriously popping up where ever the Goblins go. Squigs only count as a half a model for Rout test purposes."
           },
           {
-            "name": "Animals",
+            "name": "Animals (Cave Squig)",
             "type": "Warband - Night Goblins (web)",
             "description": "Cave Squigs are animals of a sort and so do not gain experience, or climb ladders. They can move to higher levels or over obstacles using the normal climb rules, just imagine it as a particularly high bounce."
           }
@@ -74098,7 +74085,7 @@
             "type": "Trait"
           },
           {
-            "name": "Animal",
+            "name": "Animal (Great Squig)",
             "type": "Warband - Night Goblins (web)",
             "description": "Great Squigs are animals of a sort and so do not gain experience, or climb ladders. They can move up to higher levels or over obstacles using the normal climb rules, just imagine it as a particularly high bounce."
           }
@@ -76320,9 +76307,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Norse Explorers",
-            "description": "Wolves are animals and thus do not gain experience."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Pack Leader",
@@ -77042,9 +77028,8 @@
             "type": "Psychology"
           },
           {
-            "name": "Animals",
-            "type": "Warband - Ogre Hunting Party",
-            "description": "Sabretusks are animals and never gain experience."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Untamed",
@@ -78573,9 +78558,8 @@
             "description": "Orcs don’t expect much from non-Orcs, and are therefore not unsettled if Goblins or Cave Squigs break or get cut down in battle. In fact, they expect as much from these weaklings! Therefore, when testing to see if an Orc Warband needs to take a Rout test, each Goblin Warrior or Cave Squig taken out of action only counts as half a model. Therefore, a band of 5 Orcs and 10 Goblins (15 models) would only have to take a test if 4 models fell (4 Orcs or 8 Goblins, or some combination thereof )."
           },
           {
-            "name": "Animals",
-            "type": "Warband - Orc Mob",
-            "description": "Cave Squigs are animals of a sort and so do not gain experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -78852,9 +78836,8 @@
             "description": "A Goblin or a Sea Squig taken out of action counts as half a model when working out whether the warband must take a rout test."
           },
           {
-            "name": "Animals (Sea Squig)",
-            "type": "Warband - Orc Mob",
-            "description": "A Sea Squig never gains experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -85006,6 +84989,10 @@
             "name": "Don't mind them Lao Xiong, they ain't true pirates",
             "type": "Warband - Pirates of the Cathayan Sea",
             "description": "A Floordog who is running away or has been taken out of action does not count towards the warband's rout test."
+          },
+          {
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -87558,9 +87545,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Protectorate Of Sigmar",
-            "description": "Hounds are animals and gain no experience."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Devoted",
@@ -94310,6 +94296,10 @@
             "name": "Experience",
             "type": "Warband - Skaven",
             "description": "Giant Rats are animals and do not gain experience."
+          },
+          {
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -95111,9 +95101,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Skaven of Clan Mors",
-            "description": "Wolf Rats are animals and gain no experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -95783,6 +95772,10 @@
             "name": "Experience",
             "type": "Warband - Skaven of Clan Moulder",
             "description": "Giant Rats are animals and gain no experience."
+          },
+          {
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -95830,6 +95823,10 @@
             "name": "Experience",
             "type": "Warband - Skaven of Clan Moulder",
             "description": "Giant Rats are animals and gain no experience."
+          },
+          {
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -96674,6 +96671,10 @@
             "name": "Experience",
             "type": "Warband - Skaven of Clan Pestilens",
             "description": "Giant Rats are animals and do not gain experience."
+          },
+          {
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -97987,8 +97988,7 @@
           },
           {
             "name": "Animal",
-            "type": "Warband - Skaven of Clan Pestilens (Mousillon)",
-            "description": "Plague Rats are animals and gain no experience."
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -98623,9 +98623,8 @@
             "description": "Giant rats may raise the warband's numbers to 20 models."
           },
           {
-            "name": "Animals",
-            "type": "Warband - Skaven of Clan Pristekk",
-            "description": "A Giant rat is an animal and gains no experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -100915,7 +100914,12 @@
         "variant_changes": {},
         "fixed_kit": "None. Giant Rats never carry weapons or armour.",
         "lists": [],
-        "specials": [],
+        "specials": [
+          {
+            "name": "Animal",
+            "type": "Animal"
+          }
+        ],
         "skills": []
       }
     ],
@@ -101559,6 +101563,10 @@
             "name": "Keen Scent",
             "type": "Warband - Slavers",
             "description": "While the warband holds a Hound, its slaves ignore the I'm outta here rule."
+          },
+          {
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -104740,9 +104748,8 @@
             "description": "Bats are living beings, and none of the Undead rules apply to them."
           },
           {
-            "name": "Animals",
-            "type": "Warband - Strigoi",
-            "description": "The model is an animal and gains no experience."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Flyers",
@@ -104792,9 +104799,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Strigoi",
-            "description": "The model is an animal and gains no experience."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Flyers",
@@ -105819,9 +105825,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Survivors of Strigos",
-            "description": "Giant Bats are animals and gain no experience."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Flying",
@@ -106279,7 +106284,7 @@
             "description": "A Baneworm that was hidden in the previous turn may make a diving charge even when he does not charge from above."
           },
           {
-            "name": "Animal",
+            "name": "Animal (Baneworm)",
             "type": "Warband - The Brood of Ghurash",
             "description": "A Baneworm gains no experience and may not climb."
           }
@@ -107394,8 +107399,7 @@
           },
           {
             "name": "Animal",
-            "type": "Warband - The Cursed Cavalcade",
-            "description": "Great Bears are animals and thus do not gain experience."
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -107441,8 +107445,7 @@
           },
           {
             "name": "Animal",
-            "type": "Warband - The Cursed Cavalcade",
-            "description": "Great Bears are animals and thus do not gain experience."
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -108015,7 +108018,12 @@
         "variant_changes": {},
         "fixed_kit": "None. Wild Dogs never carry weapons or armour.",
         "lists": [],
-        "specials": [],
+        "specials": [
+          {
+            "name": "Animal",
+            "type": "Animal"
+          }
+        ],
         "skills": []
       }
     ],
@@ -108734,9 +108742,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - The Innocents",
-            "description": "The model gains no experience and uses no equipment."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -108776,9 +108783,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - The Innocents",
-            "description": "The model gains no experience and uses no equipment."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -113908,9 +113914,8 @@
             "description": "Scorpions are living beings and are affected by Psychology as normal. However as they are small desert creatures they do not need water."
           },
           {
-            "name": "Animals",
-            "type": "Warband - Tomb Guardians",
-            "description": "Scorpions are animals and do not gain experience points."
+            "name": "Animal",
+            "type": "Animal"
           },
           {
             "name": "Scorpions sting*",
@@ -114420,6 +114425,10 @@
           {
             "name": "No Pain",
             "type": "Trait"
+          },
+          {
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -115369,6 +115378,10 @@
             "name": "Movement",
             "type": "Warband - Underworld Alliance",
             "description": "A Sewer Squig moves 2D6-1\" each turn on land. In water it swims 2D6\" each movement phase, which water's penalties don't reduce; it isn't aquatic."
+          },
+          {
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -115408,9 +115421,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Underworld Alliance",
-            "description": "Giant Rats are animals and gain no experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -116314,9 +116326,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Vampire Hunters of Sylvania",
-            "description": "Wolfhounds are animals and gain no experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -118798,7 +118809,7 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animal",
+            "name": "Animal (Wulfmaeg)",
             "type": "Warband - Werewolf Hunting Pack",
             "description": "A Wulfmaeg is in wolf shape and counts as an animal, a wolf, but still earns experience and advances as normal. He fights with claws and teeth and may never carry a weapon, nor armour that needs a hand such as a shield; his armour costs twice as much. A Wulfmaeg hero may carry only equipment with no active use, a lucky charm or a holy relic and the like, where no decision is needed about when to use it."
           }
@@ -119555,9 +119566,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Animals",
-            "type": "Warband - Witch Hunters",
-            "description": "War hounds are animals and thus do not gain experience."
+            "name": "Animal",
+            "type": "Animal"
           }
         ],
         "skills": []
@@ -122467,8 +122477,7 @@
         "specials": [
           {
             "name": "Animal",
-            "type": "Warband - Wood Elves, The Asrai Way-farers",
-            "description": "The model is an animal and gains no experience."
+            "type": "Animal"
           },
           {
             "name": "Beast Companion",
@@ -122519,8 +122528,7 @@
         "specials": [
           {
             "name": "Animal",
-            "type": "Warband - Wood Elves, The Asrai Way-farers",
-            "description": "The model is an animal and gains no experience."
+            "type": "Animal"
           },
           {
             "name": "Beast Companion",
@@ -123235,8 +123243,7 @@
         "specials": [
           {
             "name": "Animal",
-            "type": "Warband - Woodsmen de Artois",
-            "description": "Hunting Hounds are animals and gain no experience."
+            "type": "Animal"
           },
           {
             "name": "Dog Handler",

@@ -10,12 +10,22 @@ or alias to it, or keep his own (core/book_lookups.py).
 """
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 from django.conf import settings
 
 SHARED_OUT = Path(settings.BASE_DIR) / "catalogue_import" / "out" / "shared-specials.json"
+
+# The one Animal rule (William, 25 Nov 2026): the shared special, "Animals" its alias; an owner's own copy kept apart
+# for what it adds is named for him, "Animal (Baneworm)", "Animals (Slavehound)".
+_ANIMAL_RULE = re.compile(r"animals?(\s*\(.*\))?", re.IGNORECASE)
+
+
+def is_animal_rule(name: str) -> bool:
+    """Whether a rule of this name is the Animal rule: the shared one, its alias, or an owner's own copy of it."""
+    return _ANIMAL_RULE.fullmatch(name.strip()) is not None
 
 
 def read_shared(path: Path = SHARED_OUT) -> dict[str, list[dict[str, Any]]]:

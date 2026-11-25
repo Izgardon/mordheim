@@ -59,6 +59,15 @@
       ]
     },
     {
+      "name": "Animal",
+      "type": "Animal",
+      "text": "Animals never gain experience",
+      "aliases": [
+        "Animals",
+        "Animal (Mutiny in Marienburg)"
+      ]
+    },
+    {
       "name": "Daemonic Flesh",
       "type": "Trait",
       "text": "The model has a base armour save of 5+. This save is never modified, but blessed or magic weapons and spells negate it completely. The model's attacks count as magical.",
@@ -1100,6 +1109,102 @@
         }
       ],
       "why": "Immune to fear and never tests for being all alone: her rule says more than fear."
+    },
+    {
+      "name": "Animal (Fighting Ape)",
+      "rule": "Animal",
+      "owners": [
+        {
+          "warband": "The Cursed Cavalcade",
+          "fighter": "Fighting Ape"
+        }
+      ],
+      "why": "They still climb and enter buildings as normal."
+    },
+    {
+      "name": "Animal (Minotaur)",
+      "rule": "Animal",
+      "owners": [
+        {
+          "warband": "Beastmen Raiders",
+          "fighter": "Minotaur"
+        }
+      ],
+      "why": "He gains experience, but may never become a Hero."
+    },
+    {
+      "name": "Animal (Wulfmaeg)",
+      "rule": "Animal",
+      "owners": [
+        {
+          "warband": "Werewolf Hunting Pack",
+          "fighter": "Wulfmaeg"
+        }
+      ],
+      "why": "He earns experience and advances as normal, and carries no weapon or hand-held armour."
+    },
+    {
+      "name": "Animal (War Beasts)",
+      "rule": "Animal",
+      "owners": [
+        {
+          "warband": "Lustrian Reavers",
+          "fighter": "Estalian Warhound"
+        },
+        {
+          "warband": "Lustrian Reavers",
+          "fighter": "Barbary Monkey"
+        },
+        {
+          "warband": "Lustrian Reavers",
+          "fighter": "Tilean Hunting Hawk"
+        }
+      ],
+      "why": "They suffer injuries exactly as Henchmen: dead on a 1-2."
+    },
+    {
+      "name": "Animals (Slavehound)",
+      "rule": "Animals",
+      "owners": [
+        {
+          "warband": "Druchii",
+          "fighter": "Slavehound"
+        }
+      ],
+      "why": "The warband may have them only if it has a Beastmaster."
+    },
+    {
+      "name": "Animals (Cave Squig)",
+      "rule": "Animals",
+      "owners": [
+        {
+          "warband": "Night Goblins (web)",
+          "fighter": "Cave Squig"
+        }
+      ],
+      "why": "They don't climb ladders, but bounce over obstacles and to higher levels with the climb rules."
+    },
+    {
+      "name": "Animal (Great Squig)",
+      "rule": "Animal",
+      "owners": [
+        {
+          "warband": "Night Goblins (web)",
+          "fighter": "Great Squig"
+        }
+      ],
+      "why": "They don't climb ladders, but bounce over obstacles and to higher levels with the climb rules."
+    },
+    {
+      "name": "Animal (Baneworm)",
+      "rule": "Animal",
+      "owners": [
+        {
+          "warband": "The Brood of Ghurash",
+          "fighter": "Baneworm"
+        }
+      ],
+      "why": "A Baneworm may not climb."
     }
   ]
 }

@@ -130,6 +130,7 @@
     "large": false,
     "caster": "No",
     "specials": [
+      "Animal",
       "Cutting Edge (Cathayan Temple Rooster)",
       "Strike First (Cathayan Temple Rooster)",
       "Frenzy",
@@ -330,6 +331,7 @@
     "large": true,
     "caster": "No",
     "specials": [
+      "Animal",
       "Large",
       "Aquatic (Mutiny in Marienburg)",
       "Fear",
@@ -408,6 +410,7 @@
     "large": false,
     "caster": "No",
     "specials": [
+      "Animal",
       "Dung (Fighting Monkey)"
     ],
     "skills": [
@@ -445,6 +448,7 @@
     "large": false,
     "caster": "No",
     "specials": [
+      "Animal",
       "Superheated Breath (Geckamand)",
       "Tunnel Rat (Geckamand)",
       "Night Vision (Geckamand)",
@@ -1055,6 +1059,7 @@
     "large": false,
     "caster": "No",
     "specials": [
+      "Animal",
       "Trained (Mutiny in Marienburg)",
       "Fear"
     ],

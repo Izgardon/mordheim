@@ -19,6 +19,7 @@
     "large": false,
     "caster": "No",
     "specials": [
+      "Animal",
       "Weapons/Armour (Gnoblar)",
       "Largely Insignificant (Gnoblar)",
       "Bicker (Gnoblar)"

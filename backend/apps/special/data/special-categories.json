@@ -75,5 +75,12 @@
   "Mark of Chaos (Daemon Prince)": "aura",
   "Aura of Slaanesh (Daemonette)": "aura",
   "Storm Rage (Dragon Ogre)": "aura",
-  "Fire of Tzeentch (Horror)": "aura"
+  "Fire of Tzeentch (Horror)": "aura",
+  "Animal (Minotaur)": "body",
+  "Animal (Wulfmaeg)": "body",
+  "Animal (War Beasts)": "body",
+  "Animals (Slavehound)": "body",
+  "Animals (Cave Squig)": "body",
+  "Animal (Great Squig)": "body",
+  "Animal (Baneworm)": "body"
 }

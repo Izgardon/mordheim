@@ -5,6 +5,7 @@ from typing import Any, cast
 
 from rest_framework import serializers
 
+from apps.special.shared import is_animal_rule
 from apps.warbands.models import Henchman, HenchmenGroup, RosterUnit, on_roster
 from apps.warbands.prefetches import gap_entries, members_with_gaps
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
@@ -156,12 +157,12 @@ class HenchmenMembersMixin(serializers.Serializer):
 
     def get_is_animal(self, group: HenchmenGroup) -> bool:
         """An animal, for the paw on its card (William, 24 Nov 2026): recruited from a creature, or carrying the
-        Animal rule (the general special, or a warband's own of that name). Reads the specials the payload lists
-        anyway: no query of its own."""
+        Animal rule (the shared special a template's animals hold, or an owner's own copy of it: special/shared.py). Reads
+        the specials the payload lists anyway: no query of its own."""
         if group.source_beast_id is not None:
             return True
         specials: list[dict[str, Any]] = cast(Any, self).get_specials(group)
-        return any(str(special.get("name", "")).strip().casefold() == "animal" for special in specials)
+        return any(is_animal_rule(str(special.get("name", ""))) for special in specials)
 
     def get_henchmen(self, group: HenchmenGroup) -> Any:
         return HenchmanSerializer(self._members(group), many=True).data

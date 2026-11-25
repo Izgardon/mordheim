@@ -146,7 +146,9 @@ class SeedAllTests(TestCase):
                 # rules as the Annual words them, and each beast's own
                 # the Marienburg Annual's eight hired swords' own rules (23 Nov 2026): 32 more, and its five
                 # dramatis personae's 26
-                "Special": 2041,
+                # one Animal rule (William, 25 Nov 2026): the templates' 39 copies of Animal and Animals link the
+                # shared special, and Mutiny in Marienburg's "Animal (Mutiny in Marienburg)" is its alias: 41 fewer
+                "Special": 2000,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -618,7 +620,8 @@ class SeedAllTests(TestCase):
     def test_a_rule_one_beast_holds_is_named_for_it(self):
         # the review (5 Nov 2026: W7): a book rule typed Animal that one beast holds reads "<rule> (<beast>)" in the
         # Boons & Banes pickers ("Save (Temple Dog)", the Rhinox's rarity rule "Rarity (Rhinox)"); one that several
-        # hold keeps its name (Battle Schooled), and so does Animal, every animal's
+        # hold keeps its name (Battle Schooled), and so does Animal, every animal's (a shared special, William, 25 Nov
+        # 2026, which every creature the shop sells holds)
         animal = Special.objects.filter(campaign__isnull=True, type="Animal", archived_at__isnull=True)
         self.assertEqual({row.name for row in animal if not row.name.endswith(")")}, {"Animal", "Battle Schooled"})
 
@@ -631,13 +634,15 @@ class SeedAllTests(TestCase):
         self.assertEqual(rules("War Boar"), {"Animal", "Ferocious Charge (War Boar)", "Thick Skinned (War Boar)"})
         self.assertEqual(rules("Rhinox"), {"Rarity (Rhinox)", "Fear", "Bad Tempered (Rhinox)", "Thunderous Charge (Rhinox)"})  # fmt: skip
         self.assertEqual(rules("Cold One"), {"Fear", "Stupidity", "Scaly (Cold One)"})
-        self.assertEqual(rules("Gnoblar Fighter"), {"Weapons/Armour (Gnoblar)", "Largely Insignificant (Gnoblar)", "Bicker (Gnoblar)"})  # fmt: skip
+        self.assertEqual(rules("Gnoblar Fighter"), {"Animal", "Weapons/Armour (Gnoblar)", "Largely Insignificant (Gnoblar)", "Bicker (Gnoblar)"})  # fmt: skip
+        self.assertEqual(rules("Crocagator") & {"Animal", "Animal (Mutiny in Marienburg)"}, {"Animal"})
         charge = Special.objects.get(campaign__isnull=True, name="Ferocious Charge (Temple Dog)").description
         self.assertIn("+1 Strength", charge)  # the Temple Dog's own, not the boar's +2S
         # only beasts hold them: off Boons & Banes (William, 7 Nov 2026: "keep bestiary rules from displaying on the
         # boons and banes page"); the shared ones they hold stay general
         kinds = dict(animal.values_list("name", "owner_kind"))
-        self.assertEqual({kinds["Save (Temple Dog)"], kinds["Animal"], kinds["Battle Schooled"]}, {"beast"})
+        self.assertEqual({kinds["Save (Temple Dog)"], kinds["Battle Schooled"]}, {"beast"})
+        self.assertEqual(kinds["Animal"], "general")  # shared: the templates' animals hold it too
         self.assertEqual(Special.objects.get(campaign__isnull=True, name="Fear").owner_kind, "general")
 
     def test_border_town_burning_brings_its_beasts_of_the_east(self):

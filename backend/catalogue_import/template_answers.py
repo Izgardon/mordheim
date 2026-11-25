@@ -606,6 +606,25 @@ SPECIAL_GROUPS_BY_FIGHTER: dict[tuple[str, str], list[str]] = {
 }
 SPECIAL_ADDED: dict[str, list[str]] = {"black-dwarfs": ["Bull Centaur"]}  # mordheimer leaves its tick off
 
+# The shared specials a fighter holds that his page leaves off (William, 25 Nov 2026: the beasts lacking the one Animal
+# rule; not the Rat Ogres): page, fighter key -> shared special names. A page or fighter we no longer have stops the
+# build.
+ANIMAL = "Animal"
+RULES_ADDED: dict[tuple[str, str], list[str]] = {
+    ("skaven-eshin", "giant-rats"): [ANIMAL],
+    ("skaven-of-clan-moulder", "giant-rats"): [ANIMAL],
+    ("skaven-of-clan-moulder", "wolf-rats"): [ANIMAL],
+    ("skaven-pestilens", "giant-rats"): [ANIMAL],
+    ("skaven-of-clan-skryre-rel", "giant-rat"): [ANIMAL],
+    ("undead", "dire-wolves"): [ANIMAL],
+    ("slavers", "hound"): [ANIMAL],
+    ("the-fallen", "wild-dog"): [ANIMAL],
+    ("underworld-alliance", "sewer-squigs"): [ANIMAL],
+    ("pirates-of-the-cathayan-sea", "floordog"): [ANIMAL],
+    ("forest-goblins", "gigantic-spider"): [ANIMAL],
+    ("forest-goblins-lus", "gigantic-spider"): [ANIMAL],
+}
+
 # The Pit Fighters (William, question 28): two warband notes give the styles; four plain lists at usual prices
 PIT_FIGHTERS = "pit-fighters"
 STYLE_NOTES = (

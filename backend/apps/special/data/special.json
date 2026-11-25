@@ -25,11 +25,6 @@
     "description": "Roll a D6 at the beginning of the turn for each Gnoblar within 2\" of another Gnoblar and not engaged in close combat. On a result of 1 the Gnoblar starts to bicker, insult and/or bully the other Gnoblar and may do nothing else this turn."
   },
   {
-    "name": "Animal",
-    "type": "Animal",
-    "description": "Animals never gain experience"
-  },
-  {
     "name": "Battle Schooled",
     "type": "Animal",
     "description": "The mount has been specially trained to fight on a battlefield. The rider may re-roll any failed loss of control tests. Only one re-roll is allowed per test.\n\nNote\n\nIt is suggested that Chaos steeds should be available to all Chaos warbands, not just those that existed when these rules were originally published."
@@ -578,11 +573,6 @@
     "name": "Stampede (Colossal Squig)",
     "type": "Animal",
     "description": "After it appears, the squig rampages straight towards the far side of the board, destroying anything in its way: a building is destroyed at once and anyone inside suffers the usual collapsing-building damage, and every warrior and vehicle in its path takes an automatic hit at Strength 7 plus the distance rolled for its movement that round. It then moves on until it leaves the board. While it is allied to a warband that warband may turn it by 90 degrees between turns, but it can never stop moving or turn right around."
-  },
-  {
-    "name": "Animal (Mutiny in Marienburg)",
-    "type": "Animal",
-    "description": "The creature counts as an animal."
   },
   {
     "name": "Aquatic (Crocagator)",

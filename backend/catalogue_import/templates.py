@@ -12,7 +12,14 @@ from catalogue_import.pdf_warbands import is_pdf, link_of, pdf_lores, pdf_types,
 from catalogue_import.shared_specials import SharedSpecials
 from catalogue_import.snapshot import Snapshot
 from catalogue_import.sources import BACKEND
-from catalogue_import.template_answers import SIZES, TEMPLATE_TYPES, VARIANT_HERO_SKILLS, VARIANT_TERMS, VARIANTS
+from catalogue_import.template_answers import (
+    RULES_ADDED,
+    SIZES,
+    TEMPLATE_TYPES,
+    VARIANT_HERO_SKILLS,
+    VARIANT_TERMS,
+    VARIANTS,
+)
 from catalogue_import.template_fighters import FighterLog, Lores, build_fighter
 from catalogue_import.template_lists import ItemIndex
 from catalogue_import.template_parts import ListLog, build_lists, build_rules
@@ -101,6 +108,23 @@ def _share(fighters: list[dict[str, Any]], upgrades: list[dict[str, Any]], name:
             upgrade["special"] = {"name": entry["name"], "type": entry["type"]}
 
 
+def add_rules(slug: str, fighters: list[dict[str, Any]], name: str, shared: SharedSpecials) -> None:
+    """The shared specials William gives a fighter his page leaves them off (RULES_ADDED: the beasts' Animal), linked as
+    his own rule of that name would be, and held once."""
+    keys = {fighter["key"] for fighter in fighters}
+    missing = [key for page, key in RULES_ADDED if page == slug and key not in keys]
+    if missing:
+        raise ValueError(f"template_answers.RULES_ADDED: {slug} has no fighter {', '.join(missing)}")
+    for fighter in fighters:
+        for rule in RULES_ADDED.get((slug, fighter["key"]), []):
+            found = shared.rule("warband", f"{name}: {fighter['name']}", rule)
+            if found is None or found[0] != "shared":
+                raise ValueError(f"template_answers.RULES_ADDED: {rule!r} is no shared special")
+            entry = found[1]
+            if entry["name"] not in [special["name"] for special in fighter["specials"]]:
+                fighter["specials"].append({"name": entry["name"], "type": entry["type"]})
+
+
 def _specials_once(fighters: list[dict[str, Any]], upgrades: list[dict[str, Any]], slug: str, log: TemplateLog) -> None:
     """One special per rule name in a template (the seeder makes one of each): a rule worded for another fighter only
     takes the first wording; one that really differs is named apart, "Cause Fear (Scarecrow)"."""
@@ -147,6 +171,7 @@ def build_template(slug: str, snapshot: Snapshot, context: dict[str, Any], log: 
     hero_skills(slug, fighters, log)
     upgrades, upgrade_rules = build_upgrades(slug, page, owner, log.upgrades)
     _share(fighters, upgrades, name, context["shared"])
+    add_rules(slug, fighters, name, context["shared"])
     _specials_once(fighters, upgrades, slug, log)
     rules = build_rules(slug, page, variants, log.lists) + upgrade_rules
     book = page.get("warbandRules") or {}
@@ -188,6 +213,9 @@ def build_templates(
 ) -> list[dict[str, Any]]:
     """Every page's template, by name, its rules that are shared specials linked to them (`shared`) and its tailored
     lists of the shared mutations added; a type two pages claim is reported (the seeder keeps one template a type)."""
+    unknown = sorted({page for page, _key in RULES_ADDED} - set(snapshot.pages))
+    if unknown:
+        raise ValueError(f"template_answers.RULES_ADDED: no page {', '.join(unknown)}")
     casters = Lores(snapshot.magic, snapshot.pages, lores, log.fighters)
     casters.by_fighter.update(pdf_lores({slug: page for slug, page in snapshot.pages.items() if is_pdf(page)}))
     context = {

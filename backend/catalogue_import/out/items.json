@@ -1251,12 +1251,6 @@
     "rules": [
       {
         "name": "",
-        "summary": "Fights like a warband member but is equipment of the Hero who bought it",
-        "text": "If you purchase a wardog, it will fight exactly like a member of your warband, though it is treated as part of the equipment of the Hero who bought it. You will need a model to represent it on a battlefield.",
-        "tables": []
-      },
-      {
-        "name": "",
         "summary": "Never gain experience, same recovery chance as Henchmen",
         "text": "Wardogs never gain experience, and if they are put out of action they have exactly the same chance of recovering as Henchmen (ie, 1-2: Dead; 3-6: Alive).",
         "tables": []

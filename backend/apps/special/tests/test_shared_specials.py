@@ -104,16 +104,18 @@ class SharedSeedTests(TestCase):
             Special.objects.create(name="Regeneration", type="Warband - Orc Mob", owner_kind=WARBAND),
             # the Druchii Witch Elf's, before Frenzy was shared (William, 7 Nov 2026: "yes")
             Special.objects.create(name="Frenzy", type="Warband - Druchii", owner_kind=WARBAND),
+            # a template's own Animals, before the one Animal rule (William, 25 Nov 2026)
+            Special.objects.create(name="Animals", type="Warband - Witch Hunters", owner_kind=WARBAND),
         ]
         animosity = Special.objects.create(name="Animosity", type="Animal")
 
-        self.assertIn("Shared specials - Created: 82, Updated: 0, copies archived: 6.", seed())
+        self.assertIn("Shared specials - Created: 83, Updated: 0, copies archived: 7.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         animosity.refresh_from_db()
         self.assertIsNone(animosity.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 82, copies archived: 0.", seed())
+        self.assertIn("Shared specials - Created: 0, Updated: 83, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):

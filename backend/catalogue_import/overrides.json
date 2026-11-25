@@ -557,6 +557,21 @@
           "text": "A model equipped with a set of lock picks may make his test to open doors on his Initiative rather than his Strength characteristic if he wishes. This is done at the end of his Movement phase as if the model were ripping the door off its hinges, though he uses his Initiative rather than Strength, without the -2 to the test, and there is no chance that the door is too damaged to be locked again later."
         }
       ]
+    },
+    "Wardogs": {
+      "rules": [
+        {
+          "name": "",
+          "summary": "Never gain experience, same recovery chance as Henchmen",
+          "text": "Wardogs never gain experience, and if they are put out of action they have exactly the same chance of recovering as Henchmen (ie, 1-2: Dead; 3-6: Alive)."
+        },
+        {
+          "name": "",
+          "summary": "Counts towards maximum warriors in warband",
+          "text": "Wardogs count towards the maximum number of warriors allowed in your warband."
+        }
+      ],
+      "why": "William, 25 Nov 2026: a wardog bought is recruited from the stash as a creature group, so the rule that it is part of the equipment of the Hero who bought it, and needs a model of its own, goes; the other two stay"
     }
   },
   "item_notes": {
