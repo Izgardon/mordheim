@@ -4,8 +4,9 @@ phase 2).
 Raising stays one step and hires nobody: the warband gets the campaign's gold plus the template's difference from 500
 (payload.raise_gold), the template's most warriors, its variant (the type's preset, else the one picked) and a copy of
 the template's rules for that variant, in the book's order. A type with no template raises as before. Later the
-variant can change in Settings, and "Add missing rules" copies the rules whose title the warband lacks; nothing
-is ever removed for the player, and a later change to the template touches none of it. The campaign's preset's
+variant or the type can change in Settings, which swaps the untouched copies of the old one's rules for the new one's
+(rule_swap.py), and "Add missing rules" copies the rules whose title the warband lacks; a later change to the
+template touches none of it. The campaign's preset's
 warband rules for the warband's type or race follow the template's on both (apps/campaign_presets).
 """
 

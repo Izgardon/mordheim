@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.db import transaction
 from rest_framework import permissions, status
 from rest_framework.request import Request
@@ -12,10 +14,12 @@ from apps.campaigns.permissions import get_writable_membership, parse_campaign_i
 from apps.warband_templates.services.payload import raise_gold
 from apps.warband_templates.services.raising import copy_rules, picked_variant, settle_variant
 from apps.warband_templates.services.resolve import template_for_type, template_size
+from apps.warband_templates.services.rule_swap import RuleSwap, swap_rules
 from apps.warbands.access import check_backstory_change
 from apps.warbands.models import LedgerAction, Warband, WarbandResource
 from apps.warbands.serializers import (
     WarbandCreateSerializer,
+    WarbandRuleSerializer,
     WarbandSerializer,
     WarbandSummarySerializer,
     WarbandUpdateSerializer,
@@ -80,6 +84,20 @@ class WarbandListCreateView(APIView):
         return Response(WarbandSerializer(warband).data, status=status.HTTP_201_CREATED)
 
 
+def rules_changed(swap: RuleSwap | None) -> dict[str, Any] | None:
+    """What a change of variant or type did to the warband's rules (null: it changed neither): the server's words,
+    the counts, the edited rules kept, and its rules as they now stand, for the sheet's pills."""
+    if swap is None:
+        return None
+    return {
+        "words": swap.words(),
+        "added": len(swap.added),
+        "removed": swap.removed,
+        "kept": swap.kept,
+        "rules": WarbandRuleSerializer(swap.rules, many=True).data,
+    }
+
+
 class WarbandDetailView(WarbandScopedView):
     rules = {**WarbandScopedView.rules, "DELETE": "delete"}  # only the warband's owner may delete it
 
@@ -94,13 +112,16 @@ class WarbandDetailView(WarbandScopedView):
         check_plot(self.warband.campaign_id, serializer.validated_data)
         check_backstory_change(request.user, self.warband, self.membership, serializer.validated_data)
         plotted = {"plot_id", "campaign_points"} & set(serializer.validated_data)
+        was = (self.warband.warband_type_id, self.warband.template_variant)
         with transaction.atomic():
             serializer.save()
             if counts_as is not None:
                 self.warband.counts_as.set(counts_as)
             if plotted:  # a new plot, or a new total: its plot rules are written again (apps/plots)
                 sync_plot_rules(self.warband)
-        return Response(WarbandSerializer(self.warband).data)
+            # a new variant or type swaps the rules it was given for the new ones' (William, 25 Nov 2026)
+            swapped = swap_rules(self.warband, *was)
+        return Response({**WarbandSerializer(self.warband).data, "rules_changed": rules_changed(swapped)})
 
     def delete(self, request: Request, warband_id: int) -> Response:
         self.warband.delete()
