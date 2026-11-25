@@ -17,7 +17,7 @@ const tisk = {
 } as unknown as RosterUnit;
 
 describe("unitSections", () => {
-  it("sorts units under Heroes, Henchmen and Hired swords", () => {
+  it("sorts units under Heroes and Henchmen, never a hired sword", () => {
     expect(unitSections([pack, tisk, vrask, krekk])).toEqual([
       {
         label: "Heroes",
@@ -27,14 +27,12 @@ describe("unitSections", () => {
         ],
       },
       { label: "Henchmen", options: [{ value: "henchmen_group:5", label: "Verminkin Pack" }] },
-      { label: "Hired swords", options: [{ value: "hireling:7", label: "Tisk" }] },
     ]);
   });
 
   it("leaves a section with no units empty, for the dropdown to drop", () => {
-    const [, henchmen, swords] = unitSections([vrask]);
+    const [, henchmen] = unitSections([vrask]);
     expect(henchmen.options).toEqual([]);
-    expect(swords.options).toEqual([]);
   });
 });
 

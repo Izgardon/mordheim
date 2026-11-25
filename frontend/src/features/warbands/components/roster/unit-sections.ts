@@ -20,11 +20,15 @@ export function placeOf(value: string): ItemPlace | null {
   return type ? { type: type as ItemPlace["type"], id: Number(id) } : null;
 }
 
-/** Units under Heroes, Henchmen and Hired swords, for Equip, Give to and Move to. */
+/**
+ * Where an item may go (Equip, Give to and Move to): heroes and henchmen. A hired sword's or dramatis
+ * persona's kit changes only through his Edit form (William, 25 Nov 2026), and the server refuses a move
+ * to him.
+ */
 export const unitSections = (units: RosterUnit[]): SelectSection[] =>
   sectionsOf(
-    units,
-    UNIT_SECTIONS,
+    units.filter((entry) => entry.kind !== "hireling"),
+    UNIT_SECTIONS.filter((section) => section.key !== "hireling"),
     (entry) => entry.kind,
     (entry) => ({ value: unitValue(entry), label: unitName(entry.unit) })
   );

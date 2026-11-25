@@ -324,6 +324,9 @@ class WarbandItemSummarySerializer(serializers.Serializer):
         return sale_price(entry.current_price, entry.cost).basis
 
 
+HIRELING_KIT = "A hired sword's or dramatis persona's kit changes only through his Edit form."
+
+
 class WarbandItemTransferSerializer(serializers.Serializer):
     source_type = serializers.ChoiceField(choices=("hero", "hireling", "henchmen_group", "stash"))
     source_id = serializers.IntegerField(required=False, allow_null=True)
@@ -346,6 +349,9 @@ class WarbandItemTransferSerializer(serializers.Serializer):
             attrs["source_id"] = None
         elif source_id is None:
             raise serializers.ValidationError({"source_id": "source_id is required for non-stash sources."})
+        if target_type == "hireling":
+            # his kit changes only through his Edit form (William, 25 Nov 2026)
+            raise serializers.ValidationError({"target_type": HIRELING_KIT})
         if target_type == "stash":
             attrs["target_id"] = None
         elif target_id is None:

@@ -10,6 +10,7 @@ from typing import Any
 from django.utils import timezone
 
 from apps.warbands.models import Henchman, LedgerAction, WarbandItem
+from apps.warbands.serializers.warbands import HIRELING_KIT
 from apps.warbands.services import ledger
 
 from .roster_support import (
@@ -59,8 +60,9 @@ AXE_SALE = {
 # Heroes and hired swords hold one row per copy; a henchmen group holds a loadout, one row for every member, which moves
 # and sells whole (test_henchmen_loadouts.py), so the per-copy tests below leave groups out.
 COPY_KINDS = (HERO, HIRELING)
-# the other kind each kind hands an item to in the cross-kind test
-OTHER_KIND = {HERO.key: HIRELING, HIRELING.key: HERO}
+# the kinds an item may be moved to: never a hired sword or dramatis persona, whose kit changes only through his Edit
+# form (William, 25 Nov 2026)
+TAKERS = tuple(kind for kind in KINDS if kind is not HIRELING)
 
 
 class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):
@@ -91,7 +93,7 @@ class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):
                 self.assertEqual(self._carried(kind, unit), [(self.sword.id, 10), (self.axe.id, 7)])
 
     def test_moving_a_stash_item_to_a_unit(self):
-        for kind in KINDS:
+        for kind in TAKERS:
             with self.subTest(kind=kind.key):
                 WarbandItem.objects.all().delete()
                 WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=9)
@@ -117,10 +119,10 @@ class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):
                 self.assertFalse(WarbandItem.objects.filter(warband=self.warband).exists())
 
     def test_moving_an_item_to_another_kind_of_unit(self):
-        for kind in COPY_KINDS:
+        # a hired sword may hand his kit on; nothing is handed to him
+        for kind, other in ((HIRELING, HERO),):
             with self.subTest(kind=kind.key):
                 source = self._armed(kind)
-                other = OTHER_KIND[kind.key]
                 target = make_unit(other, self.warband)
 
                 body = self._transfer(
@@ -202,7 +204,7 @@ class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):
     def test_a_missing_dead_dismissed_or_foreign_target_is_404_and_nothing_moves(self):
         # BUG-06: the target used to be looked up after the source lost its copies, and the 404 committed that
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=9)
-        for kind in KINDS:
+        for kind in TAKERS:
             off_roster = [
                 make_unit(kind, self.warband, dead=True),
                 make_unit(kind, self.warband, dismissed_at=timezone.now()),
@@ -231,6 +233,8 @@ class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):
                     source_type=kind.key, source_id=unit.id, target_type="stash", item_id=self.sword.id, quantity=3
                 )
                 self.assertEqual((too_many.status_code, too_many.json()), (400, {"detail": "Item not found."}))
+                if kind is HIRELING:
+                    continue  # nothing moves to a hired sword (test_nothing_moves_to_a_hired_sword)
                 from_stash = self._transfer(
                     source_type="stash", target_type=kind.key, target_id=unit.id, item_id=self.sword.id, quantity=2
                 )
@@ -238,6 +242,23 @@ class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):
                     (from_stash.status_code, from_stash.json()), (400, {"detail": "Item not found in stash."})
                 )
                 self.assertEqual(len(self._carried(kind, unit)), 3)
+        self.assertEqual(list(WarbandItem.objects.values_list("quantity", flat=True)), [1])
+
+    def test_nothing_moves_to_a_hired_sword(self):
+        # William, 25 Nov 2026: "Shouldn't be able to transfer items to hired swords or dramatis from stash or other
+        # units, only editing them should add items"
+        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=1, cost=9)
+        hero = self._armed(HERO)
+        sword = make_unit(HIRELING, self.warband)
+        for source_body in ({"source_type": "stash"}, {"source_type": "hero", "source_id": hero.id}):
+            with self.subTest(**source_body):
+                refused = self._transfer(
+                    **source_body, target_type="hireling", target_id=sword.id, item_id=self.sword.id, quantity=1
+                )
+                self.assertEqual(refused.status_code, 400)
+                self.assertIn(HIRELING_KIT, str(refused.json()))  # in the server's words
+        self.assertEqual(self._carried(HIRELING, sword), [])
+        self.assertEqual(len(self._carried(HERO, hero)), 3)
         self.assertEqual(list(WarbandItem.objects.values_list("quantity", flat=True)), [1])
 
     def test_unknown_items_and_malformed_bodies(self):
