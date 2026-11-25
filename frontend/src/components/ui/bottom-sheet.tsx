@@ -4,10 +4,8 @@ import { X } from "lucide-react";
 
 import { closeListFirst, DialogKicker, keepOpenForPortals } from "@/components/ui/dialog";
 import { IconButton } from "@/components/ui/icon-button";
+import { useSheetDrag } from "@/components/ui/use-sheet-drag";
 import { cn } from "@/lib/utils";
-
-/** How far the handle must be dragged down before letting go closes the sheet. */
-export const SHEET_DISMISS_DISTANCE = 80;
 
 type BottomSheetProps = {
   open: boolean;
@@ -25,33 +23,10 @@ type BottomSheetProps = {
   className?: string;
 };
 
-/** Dragging the handle down moves the sheet with the finger; far enough closes it. */
-function useDragToClose(onClose: () => void) {
-  const start = React.useRef<number | null>(null);
-  const [offset, setOffset] = React.useState(0);
-  const end = (clientY: number | null) => {
-    const distance = start.current === null || clientY === null ? 0 : clientY - start.current;
-    start.current = null;
-    setOffset(0);
-    if (distance > SHEET_DISMISS_DISTANCE) onClose();
-  };
-  return {
-    offset,
-    handleProps: {
-      onPointerDown: (event: React.PointerEvent<HTMLElement>) => {
-        start.current = event.clientY;
-        event.currentTarget.setPointerCapture?.(event.pointerId);
-      },
-      onPointerMove: (event: React.PointerEvent<HTMLElement>) => {
-        if (start.current !== null) setOffset(Math.max(0, event.clientY - start.current));
-      },
-      onPointerUp: (event: React.PointerEvent<HTMLElement>) => end(event.clientY),
-      onPointerCancel: () => end(null),
-    },
-  };
-}
-
-/** The phone's sheet from the bottom: a drag handle, a header, a scrolling body, a footer. */
+/**
+ * The phone's sheet from the bottom: a drag handle, a header, a scrolling body, a footer. Dragged
+ * down from anywhere it closes (`useSheetDrag`).
+ */
 export function BottomSheet({
   open,
   onOpenChange,
@@ -63,7 +38,7 @@ export function BottomSheet({
   children,
   className,
 }: BottomSheetProps) {
-  const { offset, handleProps } = useDragToClose(() => onOpenChange(false));
+  const dragRef = useSheetDrag(() => onOpenChange(false));
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
@@ -72,11 +47,11 @@ export function BottomSheet({
             no clicks: iOS's delayed ghost clicks can't land on it and close the next sheet. */}
         <DialogPrimitive.Overlay className="pointer-events-none fixed inset-0 z-50 bg-scrim data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <DialogPrimitive.Content
+          ref={dragRef}
           {...(description ? {} : { "aria-describedby": undefined })}
           onInteractOutside={keepOpenForPortals}
           onEscapeKeyDown={closeListFirst}
           onOpenAutoFocus={(event) => event.preventDefault()}
-          style={offset ? { transform: `translateY(${offset}px)` } : undefined}
           className={cn(
             // full height but for the status bar, so the handle and the × stay reachable
             // (William, 20 Nov 2026: "should be able to go full height as we need the space")
@@ -85,7 +60,6 @@ export function BottomSheet({
           )}
         >
           <div
-            {...handleProps}
             data-testid="sheet-handle"
             aria-hidden="true"
             className="flex touch-none justify-center pb-2 pt-2"

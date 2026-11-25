@@ -28,7 +28,7 @@ export function VeteranXp({
           {total} left
         </span>
       </div>
-      <div className="flex items-center gap-2.5">
+      <div data-no-sheet-drag="" className="flex items-center gap-2.5">
         <span className="flex-1 text-sm font-semibold text-ink">
           {fixed ? "Each joins at the group's XP" : "XP each"}
         </span>

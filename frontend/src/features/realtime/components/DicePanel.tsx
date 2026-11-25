@@ -88,7 +88,12 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
   const stepper = (label: string, value: string, onDown: () => void, onUp: () => void) => (
     <div className="flex flex-col gap-1.5">
       <span className="text-xs font-bold text-muted-foreground">{label}</span>
-      <div role="group" aria-label={label} className="flex items-center gap-1.5">
+      <div
+        role="group"
+        aria-label={label}
+        data-no-sheet-drag=""
+        className="flex items-center gap-1.5"
+      >
         <IconButton aria-label={`Lower ${label.toLowerCase()}`} className="w-10" onClick={onDown}>
           <Minus aria-hidden="true" />
         </IconButton>

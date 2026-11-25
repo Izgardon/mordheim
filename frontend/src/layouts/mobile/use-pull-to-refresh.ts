@@ -1,6 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-const ACTIVATION_DISTANCE = 48;
+import { dialogOpen, inSidewaysScroller, scrollPanes } from "@/lib/touch-gestures";
+
+/** How far a finger pulls before the page starts to follow (William, 25 Nov 2026: was 48). */
+const ACTIVATION_DISTANCE = 90;
+/** Past this sideways, before the pull starts, the touch is a swipe for the rest of its life. */
+const SIDEWAYS_SLOP = 10;
 export const PULL_TO_REFRESH_THRESHOLD = 72;
 const MAX_DISTANCE = 120;
 const RESISTANCE = 0.45;
@@ -10,22 +15,6 @@ type PullToRefreshOptions = {
   /** Resolves once the refresh is done (or never, if it falls back to a full reload). */
   onRefresh: () => Promise<void>;
 };
-
-/**
- * A pane of the page's own, between the touch and the scroll container: the battle feed, the
- * battle screen's column, a sheet's body. A drag that starts in one is that pane's to scroll.
- */
-function insideItsOwnPane(target: EventTarget | null, root: HTMLElement) {
-  let node = target instanceof Element ? target : null;
-  while (node && node !== root) {
-    const { overflowY } = getComputedStyle(node);
-    if ((overflowY === "auto" || overflowY === "scroll") && node.scrollHeight > node.clientHeight) {
-      return true;
-    }
-    node = node.parentElement;
-  }
-  return false;
-}
 
 /**
  * Pull down at the top of the scroll container to refresh. The touch listeners are native, and
@@ -38,13 +27,23 @@ function insideItsOwnPane(target: EventTarget | null, root: HTMLElement) {
  * listeners sit on the scroll container, so every touch in the page reached them, and a screen
  * built from panes leaves that container at scrollTop 0 behind them: scrolling the feed down was a
  * pull, which cancelled the scroll and refreshed the page.
+ *
+ * It is also harder to set off by accident (William, 25 Nov 2026): it waits for 90 px, a pull must
+ * be clearly downward (twice as far down as sideways when it starts), a sideways swipe is never a
+ * pull, nor is a touch in a row that scrolls sideways or while a dialog or sheet is open.
  */
 export function usePullToRefresh({ enabled, onRefresh }: PullToRefreshOptions) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [pullDistance, setPullDistance] = useState(0);
   const [isPulling, setIsPulling] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const gesture = useRef({ startY: null as number | null, distance: 0, refreshing: false });
+  const gesture = useRef({
+    startX: 0,
+    startY: null as number | null,
+    started: false,
+    distance: 0,
+    refreshing: false,
+  });
   const onRefreshRef = useRef(onRefresh);
 
   useLayoutEffect(() => {
@@ -63,27 +62,46 @@ export function usePullToRefresh({ enabled, onRefresh }: PullToRefreshOptions) {
     };
     const resetPull = () => {
       gesture.current.startY = null;
+      gesture.current.started = false;
       setIsPulling(false);
       setDistance(0);
     };
 
     const handleTouchStart = (event: TouchEvent) => {
       if (gesture.current.refreshing) return;
-      if (element.scrollTop > 0 || insideItsOwnPane(event.target, element)) {
+      const touch = event.touches[0];
+      if (
+        !touch ||
+        element.scrollTop > 0 ||
+        scrollPanes(event.target, element).length > 0 ||
+        inSidewaysScroller(event.target, element) ||
+        dialogOpen()
+      ) {
         resetPull();
         return;
       }
-      gesture.current.startY = event.touches[0]?.clientY ?? null;
+      gesture.current.startX = touch.clientX ?? 0;
+      gesture.current.startY = touch.clientY;
+      gesture.current.started = false;
     };
 
     const handleTouchMove = (event: TouchEvent) => {
-      const { startY, refreshing } = gesture.current;
+      const { startX, startY, refreshing } = gesture.current;
       if (refreshing || startY === null) return;
       if (element.scrollTop > 0) {
         resetPull();
         return;
       }
-      const deltaY = (event.touches[0]?.clientY ?? startY) - startY;
+      const touch = event.touches[0];
+      const deltaY = (touch?.clientY ?? startY) - startY;
+      const deltaX = Math.abs((touch?.clientX ?? startX) - startX);
+      if (!gesture.current.started) {
+        // sideways first is a swipe for the rest of the touch, and a pull starts clearly downward
+        if (deltaX > Math.max(SIDEWAYS_SLOP, Math.abs(deltaY))) return resetPull();
+        if (deltaY <= ACTIVATION_DISTANCE) return;
+        if (deltaY < 2 * deltaX) return resetPull();
+        gesture.current.started = true;
+      }
       if (deltaY <= ACTIVATION_DISTANCE) {
         setIsPulling(false);
         setDistance(0);
@@ -96,6 +114,7 @@ export function usePullToRefresh({ enabled, onRefresh }: PullToRefreshOptions) {
 
     const handleTouchEnd = () => {
       gesture.current.startY = null;
+      gesture.current.started = false;
       setIsPulling(false);
       if (gesture.current.refreshing) return;
       if (gesture.current.distance < PULL_TO_REFRESH_THRESHOLD) {

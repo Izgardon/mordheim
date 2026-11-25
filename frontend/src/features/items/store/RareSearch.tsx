@@ -160,7 +160,12 @@ export default function RareSearch(props: RareSearchProps) {
           {chip(NO_HERO, NO_HERO.who)}
         </div>
       </div>
-      <div role="group" aria-label="Search bonus" className="flex items-center gap-1.5">
+      <div
+        role="group"
+        aria-label="Search bonus"
+        data-no-sheet-drag=""
+        className="flex items-center gap-1.5"
+      >
         <span className={LABEL}>Bonus</span>
         <IconButton
           aria-label="Lower the bonus"

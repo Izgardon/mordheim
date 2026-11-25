@@ -8,6 +8,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 // other
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Tooltip } from "@components/tooltip";
+import { useSheetDrag } from "@/components/ui/use-sheet-drag";
 
 /**
  * Outside-interaction handler for anything built on the Radix dialog: a tap inside a portaled
@@ -91,6 +92,17 @@ const DialogContent = React.forwardRef<
     ref
   ) => {
     const isMobile = useMediaQuery("(max-width: 960px)");
+    // a phone's dialog is a bottom sheet, dragged down to close through its own Close
+    const closeRef = React.useRef<HTMLButtonElement>(null);
+    const dragRef = useSheetDrag(() => closeRef.current?.click(), isMobile);
+    const contentRef = React.useCallback(
+      (node: HTMLDivElement | null) => {
+        dragRef(node);
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [dragRef, ref]
+    );
     const [mobileMaxHeight, setMobileMaxHeight] = React.useState<number | null>(null);
     const handleOpenAutoFocus: React.ComponentPropsWithoutRef<
       typeof DialogPrimitive.Content
@@ -154,7 +166,7 @@ const DialogContent = React.forwardRef<
           </DialogClose>
         )}
         <DialogPrimitive.Content
-          ref={ref}
+          ref={contentRef}
           className={cn(
             // overflow visible: a field's list floats out past the edge (useFloating); the body scrolls inside
             "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[calc(100dvh-env(safe-area-inset-top,0px))] overflow-visible overscroll-x-none border-t border-accent-line bg-panel shadow-[0_-16px_40px_var(--color-shadow)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -179,6 +191,7 @@ const DialogContent = React.forwardRef<
           >
             <div className="mb-3 flex justify-center min-[960px]:hidden">
               <span className="h-1 w-10 bg-strong" />
+              <DialogPrimitive.Close ref={closeRef} hidden tabIndex={-1} aria-hidden="true" />
             </div>
             {/* the side padding is the body's own (William: "modal scroll bar is in a bad place as
                 it sits on top of content"): its scrollbar runs down the modal's edge, a gutter

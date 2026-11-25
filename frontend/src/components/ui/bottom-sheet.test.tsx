@@ -2,7 +2,8 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { BottomSheet, SHEET_DISMISS_DISTANCE } from "./bottom-sheet";
+import { BottomSheet } from "./bottom-sheet";
+import { SHEET_DISMISS_DISTANCE } from "./use-sheet-drag";
 
 function Harness({ onOpenChange = vi.fn() }: { onOpenChange?: (open: boolean) => void }) {
   const [open, setOpen] = useState(true);

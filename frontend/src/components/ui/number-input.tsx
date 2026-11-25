@@ -96,6 +96,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
 
     return (
       <div
+        data-no-sheet-drag=""
         className={cn(
           "flex items-stretch",
           HEIGHT[inputSize],
