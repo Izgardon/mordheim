@@ -413,7 +413,7 @@ table thead th {
        opened panel's border; a boon's icon keeps its own gold (--color-boon) */
     --color-kind-item: #cd9a5b;
     --color-kind-skill: #93c47d;
-    --color-kind-special: #e3b55a;
+    --color-kind-special: #f2e7d2; /* ink: a boon's icon keeps gold, a bane's red (William, 25 Nov 2026) */
     /* spells a muted, deeper royal blue (William, 25 Nov 2026: "a bit less intense and darker"), beside the
        green's and bronze's weight; 5.7:1 on the panel */
     --color-kind-spell: #7a95c4;
@@ -482,7 +482,7 @@ table thead th {
     --color-good-line: #9cc29f;
     --color-kind-item: #8a5320;
     --color-kind-skill: #3f6e2b;
-    --color-kind-special: #80560a;
+    --color-kind-special: #2b211a;
     --color-kind-spell: #2f4a80; /* 8.2:1 on the panel */
     --color-boon: #7a5c12;
     /* gold yellower and bronze a redder brown, so the two read apart on the light card (William:
