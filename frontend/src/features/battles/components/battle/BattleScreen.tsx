@@ -15,7 +15,7 @@ import { useTabScroll } from "@/lib/use-tab-scroll";
 import { cn } from "@/lib/utils";
 
 import BattleFeed from "./BattleFeed";
-import BattleMenuSheet, { type BattleMenuRow } from "./BattleMenuSheet";
+import BattleMenuSheet, { type BattleMenuPart } from "./BattleMenuSheet";
 import { battleMenu } from "./battle-menu";
 import BattleRulesSheet from "./BattleRulesSheet";
 import BattleTools, { type BattleTool } from "./BattleTools";
@@ -38,7 +38,7 @@ import {
 } from "./UnitSheets";
 import { nextStatus, sideId, type BattleUnitView } from "./battle-units";
 
-type Panel = "menu" | "rules" | "notes" | "edit" | "add" | "neutral" | "leave" | "cancel" | "end";
+type Panel = "menu" | "rules" | "notes" | "edit" | "add" | "neutral" | "cancel" | "end";
 
 /**
  * The battle screen (design E's E-Mobile-Battle). On a phone it fills the screen: the
@@ -144,22 +144,25 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
     : [];
 
   const manages = campaignCapabilities(campaign).manage_battles;
-  const menuRows: BattleMenuRow[] = battleMenu({
+  const menu: BattleMenuPart[] = battleMenu({
     canFinishMine: screen.canFinishMine,
     canAct,
     fighting: Boolean(me),
     canEndForEveryone: manages && battleState.battle.status === "active",
     canCancel: screen.canCancelBattle,
-  }).map((row) => ({
-    ...row,
-    onSelect: () => {
-      if (row.action === "finish-mine") {
-        screen.finishing.setIsOpen(true);
-        return;
-      }
-      if (row.action === "add") setAddGroupKey(undefined);
-      setPanel(row.action);
-    },
+  }).map(({ items, ...section }) => ({
+    ...section,
+    rows: items.map((row) => ({
+      ...row,
+      onSelect: () => {
+        if (row.action === "finish-mine") {
+          screen.finishing.setIsOpen(true);
+          return;
+        }
+        if (row.action === "add") setAddGroupKey(undefined);
+        setPanel(row.action);
+      },
+    })),
   }));
 
   const killerFor = (name: string, models: BattleUnitView[]) => setKiller({ name, models });
@@ -328,7 +331,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
         scenario={{ name: scenario, link: battleState.battle.scenario_link }}
         warbands={participants.map((participant) => participant.warband)}
       />
-      <BattleMenuSheet {...panelProps("menu")} kicker={scenario} rows={menuRows} />
+      <BattleMenuSheet {...panelProps("menu")} kicker={scenario} sections={menu} />
       <FinishSheet finishing={screen.finishing} />
       <EditStatsSheet {...panelProps("edit")} units={editable} onSave={config.saveUnitOverride} />
       <AddUnitSheet
@@ -364,13 +367,6 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
           onSave={config.saveBattleNotes}
         />
       ) : null}
-      <ConfirmDialog
-        {...panelProps("leave")}
-        description="Back to the campaign? The battle goes on; Rejoin brings you back to it."
-        confirmText="Leave"
-        cancelText="Stay"
-        onConfirm={back}
-      />
       <ConfirmDialog
         {...panelProps("cancel")}
         description="Cancel this battle for everyone? Nothing in it is kept."
