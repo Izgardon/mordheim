@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import type { KillHow } from "@/features/battles/api/battles-api";
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
@@ -10,6 +9,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 
 import { victimOptions, type BattleSide, type BattleUnitView } from "./battle-units";
+import KillVictims from "./KillVictims";
 
 /** Who is logging the kill: one unit, or a henchmen group whose model is picked in the sheet. */
 export type Killer = { name: string; models: BattleUnitView[] };
@@ -41,7 +41,8 @@ const pill = (on: boolean) =>
 
 /**
  * The kill sheet (design E): who (the model, for henchmen), the victim from another warband's
- * units (hired swords and animals among them) or a neutral group's creatures, or Someone else
+ * units (hired swords and animals among them, each with its mark) or a neutral group's creatures
+ * (its tab its name alone), or Someone else
  * with a typed name; how; and XP earned, on by default. Saving records the kill, which puts the
  * victim out of action.
  */
@@ -162,61 +163,24 @@ export default function KillSheet({
               }}
               className={cn(pill(entry.id === side?.id), "min-h-10 truncate px-2 text-xs")}
             >
-              {entry.kind === "neutral" ? `${entry.name} · neutral` : entry.name}
+              {entry.name}
             </button>
           ))}
         </div>
       ) : null}
-      <div role="radiogroup" aria-label="Victim" className="flex flex-col">
-        {victims.map((entry) => {
-          const on = entry.id === victimId;
-          return (
-            <button
-              key={entry.id}
-              type="button"
-              role="radio"
-              aria-checked={on}
-              onClick={() => {
-                setVictimId(entry.id);
-                setTyped("");
-              }}
-              className={cn(
-                "flex min-h-12 items-center gap-3 border-t border-line px-2.5 py-1 text-left",
-                on && "bg-accent-soft"
-              )}
-            >
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "h-4 w-4 shrink-0 border-2",
-                  on ? "border-primary bg-primary" : "border-strong bg-transparent"
-                )}
-              />
-              <span className="flex flex-col">
-                <span className="text-sm font-semibold text-ink">{entry.name}</span>
-                <span className="text-xs text-muted-foreground">{entry.detail}</span>
-              </span>
-            </button>
-          );
-        })}
-        {victims.length === 0 ? (
-          <p className="m-0 border-t border-line px-2.5 py-3 text-sm text-muted-foreground">
-            Nobody left standing here.
-          </p>
-        ) : null}
-        <label className="flex min-h-12 items-center gap-2.5 border-t border-line px-2.5 py-1 text-[13px] text-muted-foreground">
-          Someone else
-          <Input
-            value={typed}
-            placeholder="Name"
-            onChange={(event) => {
-              setTyped(event.target.value);
-              if (event.target.value.trim()) setVictimId(null);
-            }}
-            className="flex-1"
-          />
-        </label>
-      </div>
+      <KillVictims
+        victims={victims}
+        victimId={victimId}
+        typed={typed}
+        onPick={(id) => {
+          setVictimId(id);
+          setTyped("");
+        }}
+        onType={(text) => {
+          setTyped(text);
+          if (text.trim()) setVictimId(null);
+        }}
+      />
       <div role="group" aria-label="How" className="grid grid-cols-4 gap-1.5">
         {HOWS.map((entry) => (
           <button

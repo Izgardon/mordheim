@@ -1,3 +1,4 @@
+import type { UnitMarker } from "@/components/ui/game-icons";
 import type { StatKey as StripKey } from "@/components/ui/stat-strip";
 import {
   getCurrentUnitWounds,
@@ -284,14 +285,16 @@ export type VictimOption = {
   id: string;
   name: string;
   detail: string;
+  /** The warband page's mark for what it is (hero, henchman, hired sword, animal). */
+  marker: UnitMarker;
   unitKey?: string;
   neutralKey?: string;
 };
 
 /**
  * Who a kill can take out on one side (design E): its heroes, hired swords, pets and temporary
- * units, a henchmen group as one row ("A Brethren") that takes its first standing member, or a
- * neutral group's creatures. Models already out of action are left out.
+ * units, a henchmen group as one row by its name, its henchman type under it, that takes its first
+ * standing member, or a neutral group's creatures. Models already out of action are left out.
  */
 export function victimOptions(
   side: BattleSide,
@@ -303,35 +306,43 @@ export function victimOptions(
       .map((creature) => ({
         id: creature.key,
         name: creature.name,
-        detail: `Neutral · ${STATUS_LABEL[creature.status].toLowerCase()}`,
+        detail: [creature.creature_type, STATUS_LABEL[creature.status].toLowerCase()]
+          .filter(Boolean)
+          .join(" · "),
+        marker: "animal" as const,
         neutralKey: creature.key,
       }));
   }
   const sections = battleSections(side.participant, rosters[side.participant.user.id]);
-  const single = (entry: BattleUnitView, kind: string): VictimOption => ({
+  const single = (entry: BattleUnitView, kind: string, marker: UnitMarker): VictimOption => ({
     id: entry.unit.key,
     name: entry.unit.displayName,
     detail: [distinctType(entry.unit), kind].filter(Boolean).join(" · "),
+    marker,
     unitKey: entry.unit.key,
   });
   const standing = (entry: BattleUnitView) => entry.status !== "out_of_action";
   return [
-    ...sections.heroes.filter(standing).map((entry) => single(entry, "hero")),
+    ...sections.heroes.filter(standing).map((entry) => single(entry, "hero", "hero")),
     ...sections.groups.flatMap(({ group, members }) => {
       const up = members.filter(standing);
       return up.length
         ? [
             {
               id: up[0].unit.key,
-              name: `A ${group.unitType || group.name}`,
-              detail: `Henchman · ${up.length} of ${members.length} standing`,
+              name: group.name || group.unitType,
+              detail: [
+                distinctType({ unitType: group.unitType, displayName: group.name }) || "Henchmen",
+                `${up.length} of ${members.length} standing`,
+              ].join(" · "),
+              marker: group.beastKind ? ("animal" as const) : ("henchmen" as const),
               unitKey: up[0].unit.key,
             },
           ]
         : [];
     }),
-    ...sections.swords.filter(standing).map((entry) => single(entry, "hired sword")),
-    ...sections.pets.filter(standing).map((entry) => single(entry, "animal")),
-    ...sections.temporary.filter(standing).map((entry) => single(entry, "temporary")),
+    ...sections.swords.filter(standing).map((entry) => single(entry, "hired sword", "hired")),
+    ...sections.pets.filter(standing).map((entry) => single(entry, "animal", "animal")),
+    ...sections.temporary.filter(standing).map((entry) => single(entry, "temporary", "henchmen")),
   ];
 }
