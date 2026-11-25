@@ -2,11 +2,10 @@ import { useId, useState } from "react";
 
 // routing
 import { Link } from "react-router-dom";
-import { Check, Copy } from "lucide-react";
 
 // components
 import { Card } from "@components/card";
-import { IconButton } from "@/components/ui/icon-button";
+import { CopyCode } from "@/components/ui/copy-code";
 import { ChipLabel } from "@components/chip";
 import { cn } from "@/lib/utils";
 
@@ -37,23 +36,9 @@ export default function CampaignCard(campaign: CampaignSummary) {
   const { id, name, player_count, max_players, role, join_code, archived_at, my_warband } =
     campaign;
   const titleId = useId();
-  const [copied, setCopied] = useState(false);
   const [isRosterOpen, setIsRosterOpen] = useState(false);
   const roleLabel = role ? `${role.charAt(0).toUpperCase()}${role.slice(1)}` : "Player";
   const state = campaignState(campaign);
-
-  const handleCopyJoinCode = async () => {
-    if (!join_code) {
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(join_code);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1500);
-    } catch {
-      setCopied(false);
-    }
-  };
 
   return (
     <Card
@@ -74,18 +59,7 @@ export default function CampaignCard(campaign: CampaignSummary) {
           </div>
           {/* Every member sees the code; owners and admins regenerate it in Settings (1b). */}
           {join_code ? (
-            <div className="relative z-[2] flex shrink-0 items-center gap-1.5">
-              <span className="font-mono text-sm font-bold uppercase tracking-[0.08em] text-head">
-                {join_code}
-              </span>
-              <IconButton
-                aria-label={copied ? "Join code copied" : "Copy join code"}
-                className="h-9 w-9"
-                onClick={() => void handleCopyJoinCode()}
-              >
-                {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
-              </IconButton>
-            </div>
+            <CopyCode code={join_code} label="join code" className="relative z-[2]" />
           ) : null}
         </div>
         <h3
