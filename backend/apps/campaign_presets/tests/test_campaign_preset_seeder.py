@@ -93,7 +93,10 @@ class PresetSeederTests(TestCase):
         self.assertEqual(rules[0].title, "Campaign points")
         charts = list(marienburg.charts.prefetch_related("rows").select_related("row__chart"))
         # a table belonging to a rule, to one result or to a location is not a chart of its own (William, 20 Nov 2026)
-        self.assertEqual(sum(1 for chart in charts if chart.is_standalone), 14)
+        # 15: the rulebook's Rewards of the Shadowlord, which the Sanitarium and the Bog roll (William, 25 Nov 2026)
+        self.assertEqual(sum(1 for chart in charts if chart.is_standalone), 15)
+        located = {chart.title for chart in charts if chart.location_id is not None}
+        self.assertLessEqual({"Greater Artefacts", "Custom Weapons", "Experimental Weapon"}, located)
         self.assertEqual(
             [(group.name, group.locations.count()) for group in marienburg.location_groups.all()],
             [

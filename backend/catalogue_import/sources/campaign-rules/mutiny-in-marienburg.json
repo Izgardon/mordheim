@@ -1196,6 +1196,45 @@
      "text": "The sewer walls close in. The model must pass an Initiative test to dodge, and if he had stopped on the unexplored tile he is moved to within 1\" of the opposite side. On a failure he is crushed and takes a Strength 8 hit. The walls then spring open again, ready for the next intruder."
     }
    ]
+  },
+  {
+   "title": "Rewards of the Shadowlord",
+   "description": "A boon begged of the Shadowlord: the Mordheim rulebook's optional rules (also the book's Gifts of the Shadowlord).",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Wrath of the Shadowlord!",
+     "text": "The warrior is mutated beyond recognition and vanishes into the ruins, joining the many other horrors that roam Mordheim."
+    },
+    {
+     "result": "3-6",
+     "name": "Nothing Happens.",
+     "text": "The capricious Shadowlord ignores the pleas of his servant."
+    },
+    {
+     "result": "7-8",
+     "name": "Mutation.",
+     "text": "The warrior develops a severe mutation. Roll a D6. On a roll of 1 you lose a single point from one of your warrior’s characteristics (chosen by you), due to atrophy, or some such degrading mutation. On a roll of 2 or more you may choose which one of the mutations listed in the Cult of the Possessed Warbands section your warrior has been rewarded with."
+    },
+    {
+     "result": "9-10",
+     "name": "Chaos Armour.",
+     "text": "The warrior’s body becomes encrusted with an arcane, all-enveloping suit of armour. This confers a basic 4+ save, but does not affect the model’s ability to cast spells or move in any way."
+    },
+    {
+     "result": "11",
+     "name": "Daemon Weapon.",
+     "text": "The warrior receives a weapon with a bound Daemon inside it. This weapon adds +1 to his Strength in close combat, grants a +1 bonus on all to hit rolls using it. The user may choose the weapon’s form (a sword, an axe, etc), though it will not have any of the special abilities normally associated with common weapons of that type. An axe with a bound Daemon, for example, will not benefit from the usual extra save modifier."
+    },
+    {
+     "result": "12",
+     "name": "Possessed!",
+     "text": "A Daemon takes over the soul and body of the warrior. He immediately gains +1 Weapon Skill, +1 Strength, +1 Attacks and +1 Wounds. These increases do not count towards his maximum characteristics. The warrior loses D3 of his skills (chosen by the player) and may no longer use weapons or armour, except for Chaos Armour or Daemon weapons."
+    }
+   ]
   }
  ],
  "location_groups": [
@@ -1496,7 +1535,45 @@
         {
          "result": "12",
          "name": "Greater Artefact",
-         "text": "No price. In return for news of a Greater Artefact held by the Thieves' Guild, the Hero must give the workshop a magical or arcane item that was not bought there. The next time you roll on this table other than at the Magician's Workshop, roll on the Greater Artefacts chart instead (the book names it but does not print it). Any other warband that holds a Greater Artefact must also tell you which one."
+         "text": "No price. In return for news of a Greater Artefact held by the Thieves' Guild, the Hero must give the workshop a magical or arcane item that was not bought there. The next time you roll on this table other than at the Magician's Workshop, roll on the Greater Artefacts chart instead. Any other warband that holds a Greater Artefact must also tell you which one."
+        }
+       ]
+      },
+      {
+       "title": "Greater Artefacts",
+       "description": "The artefact a warband finds where it is told to roll on the Greater Artefacts chart.",
+       "dice": "D6",
+       "note": "Finding: a Greater Artefact is much too important and dangerous to be left in the warband's camp or hideout. It may never be stored in the warband's stored equipment but must be carried by a Hero; only warbands following the Ten Great Families plot may keep it stored in a Trade Wagon or similar vehicle. Losing: Greater Artefacts are magically protected and cannot be destroyed. If a model with one is taken out of action, place a marker; any model may pick the item up by moving into contact with it. If the marker is not taken, the model out of action keeps the artefact, and if he dies from his Serious Injuries it goes to the warband leader; if the leader dies after the battle, to the new leader. If a Greater Artefact is lost with no new owner, the next time a warband finds an Arcane Item it finds that Greater Artefact instead. These artefacts can only be stolen by other means if the thieves have discovered the item's identity.",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Devil's Box",
+         "text": "The box is used once each battle during the movement phase of another player before charges are declared. Nominate one Hero, Hired Sword or a Henchman group within 20\" of the artefact – any affected model must either declare a charge against the warrior carrying the box or immediately flee as if it had just escaped from combat."
+        },
+        {
+         "result": "2",
+         "name": "Mask of the Merlord",
+         "text": "The mask confers a 6+ armour save which can be combined with other equipment normally. In addition, the wearer can move over marshes, rivers or other water features without penalty and benefit from a -1 modifier to hit against shooting attacks while in such terrain."
+        },
+        {
+         "result": "3",
+         "name": "Van Horstmann's Speculum",
+         "text": "When the wearer fights in hand-to-hand combat he can 'swap' his base Strength, Toughness, Attacks and Initiative characteristics with his enemy. He has the choice of not using the mirror, but if he does he must swap all characteristics for the duration of the combat. The wearer fights with his enemy's Strength, Toughness, Attacks and Initiative whilst his enemy fights with the wearer's Strength, Toughness, Attacks and Initiative."
+        },
+        {
+         "result": "4",
+         "name": "Aldred's Casket of Sorcery",
+         "text": "At the end of each of the movement phase, the bearer may automatically remove and capture one randomly determined spell from an enemy wizard in base contact with him. The spell is unable to be cast by the wizard for the remainder of the battle. The bearer can cast the captured spell in his own shooting phase by releasing it from the casket! No roll is required to cast the spell. Any number of spells may be captured by the casket, and the bearer can cast each one once, either over several shooting phases or all at the same time if he prefers!"
+        },
+        {
+         "result": "5",
+         "name": "Kadon's Whistle",
+         "text": "The Hero who possesses this item is able to transfix and control aquatic models. If the warrior does nothing for a whole turn, he may play the flute. If this happens, any aquatic creature within 6\" may not move or attack in their subsequent turn. The Hero can control a single aquatic model with the whistle provided that it remains within 6\" of him. If a model is not within 6\" of the whistler in the Movement phase, they will move 2D6\" in a random direction. If that takes the model into contact with a model, either friend or foe, it will attack as if charging."
+        },
+        {
+         "result": "6",
+         "name": "Runefang",
+         "text": "A Runefang automatically wounds any target despite its toughness and regardless of the users strength. No armour saves are allowed. Roll for critical hits as usual."
         }
        ]
       }
@@ -1505,7 +1582,7 @@
     },
     {
      "name": "Animal Emporium",
-     "rules": "On his first visit a Hero places an order: he chooses an animal or ridden mount from the Pricing chart (named by the book but not printed in it), or rolls 2D6 on the Speciality Animals table. He then rolls for its rarity, adding +1 on each later visit as the dealer works to find it. Once ordered he must buy the animal when it becomes available; until he does, no other Hero of his warband may visit. A Hero may have only one order at a time. Speciality animals do not gain experience.\n\nTrained animals need a tamer: a Hero must be a Beastmaster, or have the animal handling skill for the beast (such as Bear Handler), before it can fight. A Trained animal is subject to stupidity, but needs no Stupidity test while its handler is within 6\". It listens to nobody else: it never uses the leader's Leadership, though it may use its handler's within 6\". It may not fight in a game its handler misses, and a warband with no handler keeps it caged until it hires one.\n\nA Great Beast may only be used in multi-player games. Staggered, but not down: a knocked down result makes a great beast lose 1 Attack until it recovers in the recovery phase of its next turn, and several such results cost an Attack each; at 0 Attacks or fewer it may not attack until it recovers.\n\nA Familiar may sit with any wizard model or on its own base, which is then ignored in play. A wizard with a familiar may re-roll one failed casting roll each turn, and the re-roll stands. A wizard Hired Sword may claim one.\n\nFalconer, a new animal handling skill alongside those of the Empire in Flames supplement: hunting birds (hawks, owls, ospreys and eagles) may be used as missile weapons and in hand-to-hand combat by a warrior with this skill. Shooting reaches 24\" and hits with the warrior's Ballistic Skill; the bird then flies back. In close combat it strikes first with one attack at the warrior's Weapon Skill. Each hit is Strength 3. If the warrior is taken out of action the bird flies off and returns after the battle; it cannot be attacked or slain, but is lost with the warrior if he dies. Without a leather or mesh falconry glove he is hurt by the bird landing on his arm: roll on the Serious Injury table in the post-battle sequence for each battle he uses it bare-armed. A falconer may handle only one hunting bird unless something says otherwise.",
+     "rules": "On his first visit a Hero places an order: he chooses an animal or ridden mount from the store, or rolls 2D6 on the Speciality Animals table. He then rolls for its rarity, adding +1 on each later visit as the dealer works to find it. Once ordered he must buy the animal when it becomes available; until he does, no other Hero of his warband may visit. A Hero may have only one order at a time. Speciality animals do not gain experience.\n\nTrained animals need a tamer: a Hero must be a Beastmaster, or have the animal handling skill for the beast (such as Bear Handler), before it can fight. A Trained animal is subject to stupidity, but needs no Stupidity test while its handler is within 6\". It listens to nobody else: it never uses the leader's Leadership, though it may use its handler's within 6\". It may not fight in a game its handler misses, and a warband with no handler keeps it caged until it hires one.\n\nA Great Beast may only be used in multi-player games. Staggered, but not down: a knocked down result makes a great beast lose 1 Attack until it recovers in the recovery phase of its next turn, and several such results cost an Attack each; at 0 Attacks or fewer it may not attack until it recovers.\n\nA Familiar may sit with any wizard model or on its own base, which is then ignored in play. A wizard with a familiar may re-roll one failed casting roll each turn, and the re-roll stands. A wizard Hired Sword may claim one.\n\nFalconer, a new animal handling skill alongside those of the Empire in Flames supplement: hunting birds (hawks, owls, ospreys and eagles) may be used as missile weapons and in hand-to-hand combat by a warrior with this skill. Shooting reaches 24\" and hits with the warrior's Ballistic Skill; the bird then flies back. In close combat it strikes first with one attack at the warrior's Weapon Skill. Each hit is Strength 3. If the warrior is taken out of action the bird flies off and returns after the battle; it cannot be attacked or slain, but is lost with the warrior if he dies. Without a leather or mesh falconry glove he is hurt by the bird landing on his arm: roll on the Serious Injury table in the post-battle sequence for each battle he uses it bare-armed. A falconer may handle only one hunting bird unless something says otherwise.",
      "min_heroes": 1,
      "max_heroes": 1,
      "trading_action": true,
@@ -2344,7 +2421,7 @@
        "title": "Fights Won",
        "description": "The opponent a returning Hero faces, by the fights he has won.",
        "dice": "",
-       "note": "Beating the opponents for 6 to 9 wins earns a further +1 experience and +25 gold crowns. The book names the Custom Weapons chart but does not print it.",
+       "note": "Beating the opponents for 6 to 9 wins earns a further +1 experience and +25 gold crowns.",
        "rows": [
         {
          "result": "0 wins",
@@ -2400,6 +2477,69 @@
          "result": "10 wins",
          "name": "",
          "text": "After 9 wins, the next challenge is two Pit Fighters and two Ogre Pit Fighters, all with the Pit Fighter skill. A win pays a purse of 250 gold crowns and a further D3 experience; roll twice on the Custom Weapons chart and give him the weapon of his choice of the two."
+        }
+       ]
+      },
+      {
+       "title": "Custom Weapons",
+       "description": "The weapon a Hero is offered where he is told to roll on the Custom Weapons chart.",
+       "dice": "2D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "2",
+         "name": "Celestial iron fan",
+         "text": "125 gold crowns, Rare 12. Range: Close Combat. Strength: As user. Special rules: Parry, Iron Fan, Parry Missiles.\n\nIron Fan: attacks made with an iron fan give the bearer +1 Initiative. If a Hero has the Art of Silent Death skill then it applies to fan attacks as well.\n\nParry Missiles: a Celestial iron fan can be used to parry missiles in addition to close combat attacks. For each hit by a missile weapon the warrior armed with the fan may roll a D6. If the score is greater than the hit score, the warrior has parried the blow, and the attack is disregarded."
+        },
+        {
+         "result": "3",
+         "name": "Magnin throwing knife",
+         "text": "45 gold crowns, Rare 11. Range: 8\". Strength: As user. Special rules: Thrown weapon, Weighted.\n\nWeighted: this exquisitely crafted thrown blade gets an increased chance to critical: critical hit on a 5+."
+        },
+        {
+         "result": "4",
+         "name": "Hunter's throwing axe",
+         "text": "30 gold crowns, Rare 10. Range: 6\". Strength: As user +1. Special rules: Thrown weapon."
+        },
+        {
+         "result": "5",
+         "name": "Dragon sword",
+         "text": "20 gold crowns, Rare 10. Range: Close Combat. Strength: As user +1. Special rules: Two-handed, Parry."
+        },
+        {
+         "result": "6",
+         "name": "Great axe",
+         "text": "25 gold crowns, Rare 8. Range: Close Combat. Strength: As user +2. Special rules: Two-handed, Strike last, Cutting edge.\n\nStrike Last: great axes are so heavy that any warrior using them always strikes last, even when charging, unless it has the Strongman skill or is a large model.\n\nCutting Edge: a great axe has an extra save modifier of -1, so a Strength 4 warrior using the axe has a -4 save modifier in close combat."
+        },
+        {
+         "result": "7",
+         "name": "Trident",
+         "text": "15 gold crowns, Rare 7. Range: Close Combat. Strength: As user. Special rules: Strike first, Parry."
+        },
+        {
+         "result": "8",
+         "name": "Chain sticks",
+         "text": "20 gold crowns, Rare 8. Range: Close Combat. Strength: As user. Special rules: Two-handed, Flurry.\n\nFlurry: a warrior armed with chain sticks gets +2 Attacks. This bonus only applies in the first turn of each hand-to-hand combat. Using chain sticks otherwise counts as having two hand weapons."
+        },
+        {
+         "result": "9",
+         "name": "Claw of the Old Ones",
+         "text": "30 gold crowns, Rare 12. Range: Close Combat. Strength: As user +1. Special rules: Parry, No save.\n\nNo Save: a warrior wounded by the sword receives no armour saves."
+        },
+        {
+         "result": "10",
+         "name": "Obsidian weapon",
+         "text": "4 x price, Rare 12. An obsidian cleaver gives its user +1 Strength in hand-to-hand combat, and costs four times the price of a normal weapon of its kind. You may choose which type of hand-to-hand weapon is offered to you.\n\nBlemished: Obsidian weapons may never be used by Dwarfs, Elves, Sisters of Sigmar, Witch Hunters or Human Priests.\n\nHeavy: Obsidian weapons are so heavy that the warrior using them always strikes last, even when charging."
+        },
+        {
+         "result": "11",
+         "name": "Cathayan longsword",
+         "text": "75 gold crowns, Rare 12. Range: Close Combat. Strength: As user. Special rules: Parry, Cutting edge, Mastercrafted.\n\nMastercrafted: attacks made with a Cathayan longsword give the bearer +1 Initiative and +1 Weapon Skill."
+        },
+        {
+         "result": "12",
+         "name": "Kraken-tooth sword",
+         "text": "165 gold crowns, Rare 15. Range: Close Combat. Strength: As user. Special rules: Parry, Teeth.\n\nTeeth: razor teeth of the blade can saw through all obstacles. A kraken-tooth sword ignores armour saves. Blade strikes with its saw cause an additional wound. Roll to determine critical hits as usual."
         }
        ]
       }
@@ -2733,7 +2873,7 @@
         {
          "result": "1",
          "name": "West Tower",
-         "text": "The sealed wing. The Hero may break in on pain of death: if he fails an Initiative test he is executed on the spot; if he passes, roll on the Rewards of the Shadowlord chart (named by the book, not printed in it)."
+         "text": "The sealed wing. The Hero may break in on pain of death: if he fails an Initiative test he is executed on the spot; if he passes, roll on the Rewards of the Shadowlord chart."
         },
         {
          "result": "2",
@@ -2877,7 +3017,9 @@
        ]
       }
      ],
-     "charts": []
+     "charts": [
+      "Rewards of the Shadowlord"
+     ]
     },
     {
      "name": "Bazaar of Books",
@@ -3431,7 +3573,7 @@
         {
          "result": "12",
          "name": "Profaned Shrine",
-         "text": "The Heroes may sacrifice a captured warrior or a Henchman here. If they do, each Hero takes a Leadership test: those who pass roll on the Gifts of the Shadowlord table, those who fail on the random mutation table (the book does not print Gifts of the Shadowlord). A Hero with a Mark of Chaos may instead choose a Gift of Chaos, or a free standard mutation with the Mark of Chaos Undivided."
+         "text": "The Heroes may sacrifice a captured warrior or a Henchman here. If they do, each Hero takes a Leadership test: those who pass roll on the Rewards of the Shadowlord chart, those who fail on the random mutation table. A Hero with a Mark of Chaos may instead choose a Gift of Chaos, or a free standard mutation with the Mark of Chaos Undivided."
         },
         {
          "result": "13",
@@ -3484,7 +3626,9 @@
        ]
       }
      ],
-     "charts": []
+     "charts": [
+      "Rewards of the Shadowlord"
+     ]
     },
     {
      "name": "Plank-work",
@@ -3704,7 +3848,7 @@
     },
     {
      "name": "Warpforge Workshop",
-     "rules": "A Skaven visitor may take a weapon already made or order one. For what is on offer now, roll 2D6 on the Warpforge Workshop table. To order, choose any weapon from the table and roll for its rarity; if it is not found, the tinker rats start work, and each later visit adds +1 to the rarity roll. If the warband has any Technicians, engineers or Tinker Rats, one may miss the next battle to work on it, and it is ready on the next visit. A Hero may have only one order at a time; a new order stops work on the old one.\n\nSeveral of these weapons fail on the Experimental Weapon chart, which the book names but does not print.",
+     "rules": "A Skaven visitor may take a weapon already made or order one. For what is on offer now, roll 2D6 on the Warpforge Workshop table. To order, choose any weapon from the table and roll for its rarity; if it is not found, the tinker rats start work, and each later visit adds +1 to the rarity roll. If the warband has any Technicians, engineers or Tinker Rats, one may miss the next battle to work on it, and it is ready on the next visit. A Hero may have only one order at a time; a new order stops work on the old one.\n\nSeveral of these weapons fail on the Experimental Weapon table.",
      "min_heroes": 1,
      "max_heroes": 1,
      "trading_action": true,
@@ -3776,7 +3920,7 @@
        "title": "Ratling Gun Misfire",
        "description": "Rolled when a double comes up for the Ratling Gun's number of shots.",
        "dice": "D6",
-       "note": "The book names the Experimental Weapon chart but does not print it.",
+       "note": "",
        "rows": [
         {
          "result": "1",
@@ -3807,6 +3951,29 @@
          "result": "6",
          "name": "Roar!",
          "text": "It cooks off its ammunition: every model within 16\" of the firer and in his line of sight, friend or foe, takes 2 automatic hits."
+        }
+       ]
+      },
+      {
+       "title": "Experimental Weapon",
+       "description": "What becomes of a weapon that fails.",
+       "dice": "D6",
+       "note": "",
+       "rows": [
+        {
+         "result": "1",
+         "name": "Scrap",
+         "text": "The weapon is mangled beyond repair. The only use left for it is as a fancy club or as scrap metal. The weapon must be removed from the warband's roster. They may choose to either add 1 club to the warband's roster or add 3 gold crowns for the scrap metal value."
+        },
+        {
+         "result": "2-4",
+         "name": "Badly Mangled",
+         "text": "The weapon is just a pile of bits at the moment. The engineer thinks he can fix it, but wouldn't like to guarantee it. You can either not risk it and add the bits to the warband's parts pile, counting as gaining 1 wyrdstone shard more than normal in the post battle sequence, or you can try to repair it. Roll a D6: on a 3+ the weapon is repaired and can be used as normal from now on. Any other result means that the engineer was being more optimistic than realistic: the weapon is useless and there are not enough bits to even make an eggcup out of! The weapon is removed from the roster."
+        },
+        {
+         "result": "5-6",
+         "name": "Few Bits Missing",
+         "text": "The weapon is damaged, but the engineer has just the right parts to fix it! The weapon is fine, apart from a bit of cosmetic damage, and can be used as normal from now on."
         }
        ]
       }

@@ -599,7 +599,7 @@
        "title": "Da Bash Tent",
        "description": "The opponent a returning Hero faces, by the fights he has won.",
        "dice": "",
-       "note": "Beating the opponents for 6 to 9 wins earns a further +1 experience and +25 gold crowns; your leader may take +1 Campaign Point instead. The book names the Custom Weapons chart but does not print it.",
+       "note": "Beating the opponents for 6 to 9 wins earns a further +1 experience and +25 gold crowns; your leader may take +1 Campaign Point instead.",
        "rows": [
         {
          "result": "0 wins",
@@ -654,7 +654,7 @@
         {
          "result": "10 wins",
          "name": "",
-         "text": "After 9 wins, the next challenge is two Mangler Squigs and two Trolls. A win pays a purse of 250 gold crowns and a further D3 experience; roll twice on the Custom Weapons chart and give him the weapon of his choice of the two."
+         "text": "After 9 wins, the next challenge is two Mangler Squigs and two Trolls. A win pays a purse of 250 gold crowns and a further D3 experience; roll twice on the Custom Weapons table (Fighting Pit) and give him the weapon of his choice of the two."
         }
        ]
       }
