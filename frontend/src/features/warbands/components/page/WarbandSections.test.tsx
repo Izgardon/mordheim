@@ -55,14 +55,14 @@ const sheet = {
   showCreated: vi.fn(),
 } as unknown as Parameters<typeof WarbandSections>[0]["sheet"];
 
-const show = () =>
+const show = (shown = sheet) =>
   renderWithQueryClient(
     <MemoryRouter initialEntries={["/campaigns/7/warband"]}>
       <WarbandSections
         campaignId={7}
         campaign={{ id: 7, enable_campaign_points: true } as never}
         warband={warband}
-        sheet={sheet}
+        sheet={shown}
         canEdit
         breakdownOpen={false}
         setBreakdownOpen={vi.fn()}
@@ -109,5 +109,25 @@ describe("the warband page's sections", () => {
     expect(screen.queryByRole("region", { name: "Resources" })).toBeNull();
     expect(screen.queryByRole("region", { name: "Campaign points" })).toBeNull();
     expect(screen.queryByRole("region", { name: "Warband rules" })).toBeNull();
+  });
+
+  it("shows a workshop's warband as its roster and backstory, with its cost and no gold, record, resources, plot or encampments", () => {
+    show({
+      ...sheet,
+      capabilities: readCapabilities({ edit: true, workshop: true }),
+      workshop: { cost: 620, budget: 500, share_code: "WAGN2345" },
+    } as typeof sheet);
+
+    expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual([
+      "Roster",
+      "Backstory",
+    ]);
+    expect(screen.getByText("620 / 500")).toHaveClass("text-danger");
+    expect(screen.queryByText("Gold")).toBeNull();
+    expect(screen.queryByText("Record")).toBeNull();
+    expect(screen.queryByRole("region", { name: "Resources" })).toBeNull();
+    expect(screen.queryByRole("region", { name: "Campaign points" })).toBeNull();
+    expect(screen.queryByRole("region", { name: "Encampments" })).toBeNull();
+    expect(screen.getByRole("region", { name: "Warband rules" })).toBeVisible();
   });
 });

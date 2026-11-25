@@ -25,6 +25,8 @@ type TemplateDetailProps = {
   isMobile: boolean;
   /** Opens the template editor (those who edit the catalogue). */
   onEdit?: () => void;
+  /** Its page already names it (a workshop's list): the detail leaves its name out. */
+  untitled?: boolean;
 };
 
 /**
@@ -39,6 +41,7 @@ export default function TemplateDetail({
   typeId,
   isMobile,
   onEdit,
+  untitled = false,
 }: TemplateDetailProps) {
   const query = useWarbandTemplate(campaignId, templateId);
   const [picked, setPicked] = useState<string | null>(null);
@@ -69,7 +72,7 @@ export default function TemplateDetail({
 
   return (
     <ReferenceDetail
-      title={template.name}
+      title={untitled ? "" : template.name}
       kind={[sourceLabel(template), template.source].filter(Boolean).join(" · ")}
       isMobile={isMobile}
       aside={

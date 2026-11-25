@@ -49,6 +49,7 @@ beforeEach(() => {
   fakeRealtime.reset();
   fakeApi.on("GET /notifications/", []);
   fakeApi.on("GET /campaigns/", []);
+  fakeApi.on("GET /workshop/", { warbands: [], lists: [] });
 });
 
 afterEach(() => {
@@ -77,23 +78,24 @@ describe("a cold start signed out", () => {
 });
 
 describe("a cold start signed in", () => {
-  it("renders from the cached user at once, with /auth/me read in the background beside the notifications and the campaigns list (PERF-50)", async () => {
+  it("renders from the cached user at once, with /auth/me read in the background beside the notifications, the campaigns list and the workshop (PERF-50)", async () => {
     storeSession();
     const me = deferred<typeof RAIDER>();
     fakeApi.on("GET /auth/me/", () => me.promise);
     renderApp("/campaigns");
 
     await screen.findByText("Welcome back, Raider");
-    expect(await settledCalls(3)).toEqual([
+    expect(await settledCalls(4)).toEqual([
       "GET /auth/me/",
       "GET /campaigns/",
       "GET /notifications/",
+      "GET /workshop/",
     ]);
     expect(fakeRealtime.channels()).toEqual(["private-user-1-notifications"]);
 
     await act(async () => me.resolve(RAIDER));
 
-    expect(await settledCalls(3)).toHaveLength(3);
+    expect(await settledCalls(4)).toHaveLength(4);
     expect(fakeRealtime.subscriberCount("private-user-1-notifications")).toBe(1);
   });
 
@@ -109,25 +111,27 @@ describe("a cold start signed in", () => {
     await act(async () => me.resolve(RAIDER));
 
     await screen.findByText("Welcome back, Raider");
-    expect(await settledCalls(3)).toEqual([
+    expect(await settledCalls(4)).toEqual([
       "GET /auth/me/",
       "GET /campaigns/",
       "GET /notifications/",
+      "GET /workshop/",
     ]);
     expect(withoutSsoProviders(fakeApi.calls())[0]).toBe("GET /auth/me/");
   });
 
-  it("from / reads the same three, on its way to /campaigns", async () => {
+  it("from / reads the same four, on its way to /campaigns", async () => {
     storeSession();
     fakeApi.on("GET /auth/me/", RAIDER);
     const app = renderApp("/");
 
     await screen.findByText("Welcome back, Raider");
     expect(app.location().pathname).toBe("/campaigns");
-    expect(await settledCalls(3)).toEqual([
+    expect(await settledCalls(4)).toEqual([
       "GET /auth/me/",
       "GET /campaigns/",
       "GET /notifications/",
+      "GET /workshop/",
     ]);
   });
 });
@@ -149,7 +153,7 @@ describe("a cold start on a campaign page", () => {
 });
 
 describe("signing in or up from the landing page", () => {
-  it("signs in with one login and no /auth/me, then one notifications read, one list read and one channel (PERF-50, AUTH-TEST-22)", async () => {
+  it("signs in with one login and no /auth/me, then one notifications read, the two lists and one channel (PERF-50, AUTH-TEST-22)", async () => {
     fakeApi.on("POST /auth/login/", loginAnswer(RAIDER));
     fakeApi.on("GET /auth/me/", RAIDER);
     const user = setupUser();
@@ -161,9 +165,10 @@ describe("signing in or up from the landing page", () => {
     await user.click(submitButton());
 
     await screen.findByText("Welcome back, Raider");
-    expect(await settledCalls(3)).toEqual([
+    expect(await settledCalls(4)).toEqual([
       "GET /campaigns/",
       "GET /notifications/",
+      "GET /workshop/",
       "POST /auth/login/",
     ]);
     expect(fakeRealtime.subscriberCount("private-user-1-notifications")).toBe(1);
@@ -183,9 +188,10 @@ describe("signing in or up from the landing page", () => {
     await user.click(submitButton());
 
     await screen.findByText("Welcome back, Raider");
-    expect(await settledCalls(3)).toEqual([
+    expect(await settledCalls(4)).toEqual([
       "GET /campaigns/",
       "GET /notifications/",
+      "GET /workshop/",
       "POST /auth/register/",
     ]);
   });

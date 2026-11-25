@@ -1,5 +1,5 @@
 import { Suspense, useMemo, useState } from "react";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useSearchShortcut } from "@/features/search/useSearchShortcut";
@@ -123,6 +123,11 @@ export default function CampaignLayout() {
         onRetry={isCampaignId(campaignId) ? () => void campaignQuery.refetch() : undefined}
       />
     );
+  }
+
+  // a workshop is never a campaign (apps/workshop): its warband or list has a page of its own
+  if (campaign.kind === "workshop") {
+    return <Navigate to={`/workshop/${campaign.id}`} replace />;
   }
 
   const userName = user?.name?.trim() || "You";

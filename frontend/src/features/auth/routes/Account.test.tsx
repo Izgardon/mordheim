@@ -45,7 +45,7 @@ describe("reaching the account page (AUTH-NEW-01)", () => {
   it("is linked from the campaigns list beside Log out", async () => {
     const user = setupUser();
     const app = renderApp("/campaigns");
-    await screen.findByRole("heading", { name: "Campaigns", level: 1 });
+    await screen.findByRole("heading", { name: "Home", level: 1 });
 
     await user.click(screen.getByRole("link", { name: "Account" }));
 
@@ -61,7 +61,7 @@ describe("reaching the account page (AUTH-NEW-01)", () => {
     for (const name of ["Display name", "Password", "Sign out everywhere else", "Delete account"]) {
       expect(section(name)).toBeInTheDocument();
     }
-    expect(screen.getByRole("link", { name: "Campaigns" })).toHaveAttribute("href", "/campaigns");
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/campaigns");
     expect(
       screen.getByText(/not affiliated with or endorsed by Games Workshop/)
     ).toBeInTheDocument();

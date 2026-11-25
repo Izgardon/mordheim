@@ -4,7 +4,7 @@
  * type's variant; the variant switch changes the skill groups and the rule pills, a pill opens
  * the warband sheet's rules modal, and the lists show their lines at list prices.
  */
-import { screen, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { RAIDER, storeSession } from "@/test/auth-fixtures";
@@ -418,5 +418,37 @@ describe("Making and editing templates on the Warbands page", () => {
     await user.click(await row("Reiklanders"));
     await user.click(await screen.findByRole("button", { name: "Edit template" }));
     expect(await screen.findByText("The book's · used by 3 warbands")).toBeInTheDocument();
+  });
+
+  it("imports a shared list by its code as the campaign's own, then reads the templates again", async () => {
+    fakeApi.on("GET /workshop/shared/WTCH2345/", {
+      kind: "list",
+      share_code: "WTCH2345",
+      maker: "Pia",
+      name: "Night Watch",
+      warband_types: [{ id: 10, name: "Reiklanders" }],
+    });
+    fakeApi.on(`POST /campaigns/${CAMPAIGN_ID}/warband-templates/import/`, {
+      template_id: 44,
+      name: "Night Watch",
+      warnings: [],
+    });
+    const user = setupUser();
+    renderApp(PAGE);
+    await row("Reiklanders");
+    const reads = fakeApi.countOf(`GET /warband-templates/?campaign_id=${CAMPAIGN_ID}`);
+
+    await user.click(screen.getByRole("button", { name: "Import a list" }));
+    const dialog = screen.getByRole("dialog", { name: "Import a list" });
+    await user.type(within(dialog).getByLabelText("Code"), "WTCH2345");
+    expect(await within(dialog).findByText("Night Watch")).toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: "Import" }));
+
+    await waitFor(() =>
+      expect(fakeApi.countOf(`GET /warband-templates/?campaign_id=${CAMPAIGN_ID}`)).toBe(reads + 1)
+    );
+    expect(fakeApi.bodyOf(`POST /campaigns/${CAMPAIGN_ID}/warband-templates/import/`)).toEqual({
+      code: "WTCH2345",
+    });
   });
 });

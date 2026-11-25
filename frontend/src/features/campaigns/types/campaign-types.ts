@@ -54,6 +54,15 @@ export type CampaignSummary = {
   archived_at?: string | null;
   /** Chat messages from others after your read mark (the detail only, CAMP-TWEAK-09). */
   chat_unread?: number;
+  /**
+   * A workshop (apps/workshop) is a hidden campaign holding one custom warband or warband list,
+   * shown on its own page (`/workshop/<id>`), never as a campaign; a campaign's kind is "campaign".
+   */
+  kind?: "campaign" | "workshop";
+  /** What a workshop holds; blank for a campaign. */
+  holds?: "warband" | "list" | "";
+  /** A workshop's share code; blank for a campaign. */
+  share_code?: string;
   /** Your own warband in it, or null without one (the campaigns list only). */
   my_warband?: { id: number; name: string; type_name: string } | null;
   created_at: string;

@@ -7,14 +7,18 @@ const TABS = ["Roster", "Treasury", "Backstory", "Log"] as const;
 export type WarbandTab = (typeof TABS)[number];
 
 /**
- * The warband page's tabs (design E): Roster, Treasury, Backstory and Log, each rendered here. A
+ * The warband page's tabs (design E): Roster, Treasury, Backstory and Log (a workshop's warband
+ * has no Treasury or Log), each rendered here. A
  * tab change keeps the tab bar at the top of the screen, never the page's top (`useTabScroll`);
  * `show` changes it from inside a tab (the Gold window's Treasury link), landing the bar there.
  */
 export default function WarbandTabs({
   render,
+  tabs: shown = TABS,
 }: {
   render: (tab: WarbandTab, show: (tab: WarbandTab) => void) => ReactNode;
+  /** The tabs it has (a workshop's warband: Roster and Backstory); every tab by default. */
+  tabs?: readonly WarbandTab[];
 }) {
   const [tab, setTab] = useState<WarbandTab>("Roster");
   const tabs = useTabScroll();
@@ -30,7 +34,7 @@ export default function WarbandTabs({
         aria-label="Warband"
         className="flex gap-7 border-b border-line"
       >
-        {TABS.map((name) => (
+        {shown.map((name) => (
           <button
             key={name}
             type="button"

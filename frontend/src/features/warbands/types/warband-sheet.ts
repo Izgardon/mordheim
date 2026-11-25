@@ -19,6 +19,9 @@ export const WARBAND_CAPABILITIES = [
   "edit_catalogue",
   // Decision 10: only the warband's owner trades for it (campaign owners and admins don't).
   "trade",
+  // A workshop's warband (apps/workshop): its roster, backstory and cost; no treasury, log,
+  // resources, campaign points, battles, trades, encampments, visits or bounties.
+  "workshop",
 ] as const;
 
 export type WarbandCapability = (typeof WARBAND_CAPABILITIES)[number];
@@ -51,6 +54,8 @@ export type WarbandSheet = {
   item_names?: Record<string, Record<string, string>>;
   /** The encampments it holds while the campaign has Encampments on; [] while they are off. */
   encampments?: HeldEncampment[];
+  /** A workshop's warband: its cost, budget and share code (null in a campaign). */
+  workshop?: { cost: number; budget: number; share_code: string } | null;
   heroes: WarbandHero[];
   henchmen_groups: HenchmenGroup[];
   hirelings: WarbandHireling[];

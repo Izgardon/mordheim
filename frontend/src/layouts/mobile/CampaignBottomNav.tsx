@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Flag, LayoutList, LogOut, Search, Settings, Shield, Swords } from "lucide-react";
+import { Flag, House, LogOut, Search, Settings, Shield, Swords } from "lucide-react";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
@@ -143,8 +143,8 @@ export default function CampaignBottomNav({
           <div className="grid grid-cols-2 gap-2">
             <Button variant="secondary" asChild>
               <Link to="/campaigns" onClick={close}>
-                <LayoutList aria-hidden="true" />
-                Campaigns
+                <House aria-hidden="true" />
+                Home
               </Link>
             </Button>
             <Button variant="ghost" className="text-danger" onClick={signOut}>

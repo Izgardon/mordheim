@@ -17,6 +17,7 @@ import PlotSelect from "../plot/PlotSelect";
 import WarbandTypePicker from "../type-picker/WarbandTypePicker";
 import { linkAfterPick } from "../type-picker/warband-type-picker";
 import RaiseOutline from "./RaiseOutline";
+import ImportWarbandButton from "@/features/workshop/components/ImportWarbandButton";
 
 /**
  * No warband in this campaign yet (design E): name one, pick its warband type (which fills the
@@ -24,6 +25,7 @@ import RaiseOutline from "./RaiseOutline";
  * pick where the type presets none), pick the plot it follows where the campaign plays with any
  * (changed for nothing later), then raise it. Browse warbands opens the Warbands reference to
  * choose from (William, 23 Nov 2026), at the picked type's own row once its template is read.
+ * Import a warband brings in a shared warband by its code instead (the workshop).
  */
 export default function CreateWarband({
   campaignId,
@@ -73,9 +75,12 @@ export default function CreateWarband({
             Raise a warband
           </h1>
         </div>
-        <Button asChild variant="secondary">
-          <Link to={browse}>Browse warbands</Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <ImportWarbandButton campaignId={campaignId} />
+          <Button asChild variant="secondary">
+            <Link to={browse}>Browse warbands</Link>
+          </Button>
+        </div>
       </header>
       <Card className="p-5 max-[960px]:p-4">
         <form

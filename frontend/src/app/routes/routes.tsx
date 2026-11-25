@@ -41,6 +41,8 @@ const CampaignSettings = lazy(() => import("../../features/campaigns/routes/Camp
 const Encampments = lazy(() => import("../../features/campaigns/routes/Encampments"));
 const Locations = lazy(() => import("../../features/campaigns/routes/Locations"));
 const Scenarios = lazy(() => import("../../features/scenarios/routes/Scenarios"));
+const WorkshopLayout = lazy(() => import("../../features/workshop/routes/WorkshopLayout"));
+const WorkshopPage = lazy(() => import("../../features/workshop/routes/WorkshopPage"));
 
 function RootLayout() {
   return (
@@ -82,6 +84,17 @@ export const routes: RouteObject[] = [
           {
             path: "/account",
             element: <Account />,
+          },
+          {
+            // A workshop's warband or list on its own (apps/workshop): Home's frame, no campaign shell.
+            path: "/workshop/:id",
+            element: <WorkshopLayout />,
+            children: [
+              {
+                errorElement: <RouteError variant="inline" />,
+                children: [{ index: true, element: <WorkshopPage /> }],
+              },
+            ],
           },
           {
             path: "/campaigns/:id",

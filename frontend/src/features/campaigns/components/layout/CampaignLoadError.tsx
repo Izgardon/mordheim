@@ -20,7 +20,7 @@ export default function CampaignLoadError({ message, onRetry }: CampaignLoadErro
           onRetry={onRetry}
           actions={
             <Button asChild variant="secondary" size="sm">
-              <Link to="/campaigns">Back to campaigns</Link>
+              <Link to="/campaigns">Back to Home</Link>
             </Button>
           }
         />

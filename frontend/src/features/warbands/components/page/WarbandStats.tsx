@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { GameIcon, type GameIconName } from "@/components/ui/game-icons";
 import { useFitText } from "@/lib/use-fit-text";
+import { cn } from "@/lib/utils";
 
 import GoldWindow from "../header/GoldWindow";
 import RatingWindow from "../header/RatingWindow";
@@ -25,6 +26,8 @@ type WarbandStatsProps = {
   setBreakdownOpen: (open: boolean) => void;
   /** Shows the Treasury tab (the Gold window's link). */
   onTreasury: () => void;
+  /** A workshop's warband: its cost against its budget in place of its gold and record. */
+  workshop?: { cost: number; budget: number } | null;
 };
 
 type Window = "gold" | "units" | "record";
@@ -35,25 +38,45 @@ type Total = {
   value: string | number;
   unit?: string;
   hint: string;
-  onClick: () => void;
+  /** Opens its window; a total with none (a workshop's cost) is plain text. */
+  onClick?: () => void;
+  /** Above what it should be (a workshop's cost over its budget): the danger colour. */
+  warn?: boolean;
 };
 
 /**
  * A total's value, opening its window: on one line, its text shrinking to fit a narrow column
  * (William, 22 Nov 2026: "I would rather the text shrank ... data should try and stay on one line").
  */
-function StatValue({ label, value, unit, hint, onClick }: Total) {
-  const fit = useFitText<HTMLButtonElement>(26, [value, unit]);
+function StatValue({ label, value, unit, hint, onClick, warn }: Total) {
+  // a span or a button: the one ref fits either
+  const fit = useFitText<HTMLSpanElement & HTMLButtonElement>(26, [value, unit]);
+  const look = cn(
+    "block w-full overflow-hidden whitespace-nowrap text-left font-display text-[26px] font-semibold",
+    warn ? "text-danger" : "text-head"
+  );
+  const shown = (
+    <>
+      {value}{" "}
+      {unit ? <span className="font-sans text-[0.5em] font-medium text-faint">{unit}</span> : null}
+    </>
+  );
+  if (!onClick) {
+    return (
+      <span ref={fit} className={look}>
+        {shown}
+      </span>
+    );
+  }
   return (
     <button
       ref={fit}
       type="button"
       onClick={onClick}
-      className="block w-full overflow-hidden whitespace-nowrap text-left font-display text-[26px] font-semibold text-head underline-offset-4 hover:underline"
+      className={cn(look, "underline-offset-4 hover:underline")}
       aria-label={`${label} ${value}${unit ? ` ${unit}` : ""}: ${hint}`}
     >
-      {value}{" "}
-      {unit ? <span className="font-sans text-[0.5em] font-medium text-faint">{unit}</span> : null}
+      {shown}
     </button>
   );
 }
@@ -101,12 +124,29 @@ export default function WarbandStats(props: WarbandStatsProps) {
       onClick: () => setShown("record"),
     },
   ];
+  const { workshop } = props;
+  // a workshop's warband (apps/workshop) shows what it costs against its budget, never its gold
+  // or a record: it plays no battles
+  const shownTotals = workshop
+    ? [
+        {
+          label: "Cost",
+          icon: "gold" as const,
+          value: `${workshop.cost} / ${workshop.budget}`,
+          unit: "gc",
+          hint: "",
+          warn: workshop.cost > workshop.budget,
+        },
+        totals[0],
+        totals[2],
+      ]
+    : totals;
   const opener = (name: Window) => (open: boolean) => setShown(open ? name : null);
 
   return (
     <>
-      <dl className="m-0 grid grid-cols-4 border-y border-line">
-        {totals.map((total) => (
+      <dl className={cn("m-0 grid border-y border-line", workshop ? "grid-cols-3" : "grid-cols-4")}>
+        {shownTotals.map((total) => (
           <div key={total.label} className="flex min-w-0 flex-col gap-0.5 py-3.5 pr-3">
             <dt className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
               <GameIcon name={total.icon} className="h-3.5 w-3.5 text-accent-text" />

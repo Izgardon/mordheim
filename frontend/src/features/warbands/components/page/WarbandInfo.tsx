@@ -30,6 +30,7 @@ export default function WarbandInfo({
   canEdit,
   pricing,
   onTreasury,
+  workshop,
   children,
 }: {
   campaignId: number;
@@ -45,6 +46,8 @@ export default function WarbandInfo({
   pricing: SalePricing;
   /** Shows the Treasury tab (the Gold window's link). */
   onTreasury: () => void;
+  /** A workshop's warband: its cost for its gold and record, and no resources. */
+  workshop?: { cost: number; budget: number } | null;
   /** The sections after the plot (the warband rules), in this block's spacing. */
   children?: ReactNode;
 }) {
@@ -59,13 +62,16 @@ export default function WarbandInfo({
         breakdownOpen={breakdownOpen}
         setBreakdownOpen={setBreakdownOpen}
         onTreasury={onTreasury}
+        workshop={workshop}
       />
-      <WarbandResources
-        warbandId={warband.id}
-        resources={warband.resources ?? []}
-        canEdit={canEdit}
-        pricing={pricing}
-      />
+      {workshop ? null : (
+        <WarbandResources
+          warbandId={warband.id}
+          resources={warband.resources ?? []}
+          canEdit={canEdit}
+          pricing={pricing}
+        />
+      )}
       {plot === undefined ? null : (
         <WarbandPlotSection
           campaignId={campaignId}

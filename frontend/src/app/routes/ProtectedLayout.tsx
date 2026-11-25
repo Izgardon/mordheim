@@ -8,10 +8,11 @@ import { RealtimeProvider } from "@/features/realtime/components/RealtimeProvide
 import CampaignPageSkeleton from "@/layouts/shell/CampaignPageSkeleton";
 import ShellSkeleton from "@/layouts/shell/ShellSkeleton";
 import SitePage from "@/layouts/shell/SitePage";
+import WarbandSkeleton from "@/features/warbands/components/page/WarbandSkeleton";
 
 /**
  * What shows while a signed-in page's code loads: the page's frame with its skeleton (the
- * campaigns list and Account in their site bar, a campaign page in the shell), never the
+ * campaigns list, Account and a workshop in their site bar, a campaign page in the shell), never the
  * swords, which are for a slow boot and entering a battle. Anything else: the plain page.
  */
 function PageFallback() {
@@ -21,6 +22,13 @@ function PageFallback() {
       <ShellSkeleton>
         <CampaignPageSkeleton pathname={pathname} />
       </ShellSkeleton>
+    );
+  }
+  if (pathname.startsWith("/workshop/")) {
+    return (
+      <SitePage>
+        <WarbandSkeleton />
+      </SitePage>
     );
   }
   if (pathname.startsWith("/account")) {

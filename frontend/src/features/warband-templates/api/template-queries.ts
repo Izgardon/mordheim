@@ -37,11 +37,12 @@ export function useWarbandTemplateContents(campaignId: number) {
   return { data: query.data ?? NONE, isLoading: query.isLoading };
 }
 
-/** One whole template, read when its row opens. */
+/** One whole template, read when its row opens (0: none yet, nothing read). */
 export function useWarbandTemplate(campaignId: number, templateId: number) {
   return useQuery({
     queryKey: queryKeys.campaign.warbandTemplate(campaignId, templateId),
     queryFn: ({ signal }) => getWarbandTemplate(templateId, signal),
     staleTime: CATALOGUE_STALE_TIME_MS,
+    enabled: templateId > 0,
   });
 }

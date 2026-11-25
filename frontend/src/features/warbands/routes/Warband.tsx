@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
+import { CopyCode } from "@/components/ui/copy-code";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import type { StoreOpening } from "@/features/items/store/StorePanel";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
@@ -87,6 +88,10 @@ export default function Warband() {
 
   const canEdit = capabilities.edit;
   const mine = warband.user_id === user?.id;
+  // A workshop's warband (apps/workshop) has a budget for its gold: the store, the tally and the
+  // hire screens spend what is left of it; it has no battles, trades, visits or encampments.
+  const { workshop } = sheet;
+  const shown = workshop ? { ...warband, gold: workshop.budget - workshop.cost } : warband;
   const units: RosterUnit[] = [
     ...sheet.heroes.map((unit) => ({ kind: "hero" as const, unit })),
     ...sheet.henchmenGroups.map((unit) => ({ kind: "henchmen_group" as const, unit })),
@@ -99,7 +104,7 @@ export default function Warband() {
     campaign,
     warbandId,
     userId: user?.id,
-    enabled: mine && canEdit,
+    enabled: mine && canEdit && !workshop,
     isMobile,
     onHire: hire,
     onStore: () => openStore({}),
@@ -111,9 +116,10 @@ export default function Warband() {
       <WarbandHeader
         kicker={[warband.warband_type?.name, mine ? user?.name : null].filter(Boolean).join(" · ")}
         name={warband.name}
+        code={workshop ? <CopyCode code={workshop.share_code} label="share code" /> : null}
         stashCount={stashCount}
-        showLocations={Boolean(campaign?.enable_locations)}
-        showEncampment={isMobile && Boolean(campaign?.enable_encampments)}
+        showLocations={!workshop && Boolean(campaign?.enable_locations)}
+        showEncampment={!workshop && isMobile && Boolean(campaign?.enable_encampments)}
         onOpen={(next) => (next === "store" ? openStore({}) : setPanel(next))}
         menu={[
           ...(capabilities.trade
@@ -138,7 +144,7 @@ export default function Warband() {
           <WarbandSections
             campaignId={campaignId}
             campaign={campaign}
-            warband={warband}
+            warband={shown}
             sheet={sheet}
             canEdit={canEdit}
             breakdownOpen={breakdownOpen}
@@ -162,7 +168,7 @@ export default function Warband() {
 
       <WarbandPanels
         campaignId={campaignId}
-        warband={warband}
+        warband={shown}
         heroes={sheet.heroes}
         henchmenGroups={sheet.henchmenGroups}
         units={units}

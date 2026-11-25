@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutList, LogOut, UserRound } from "lucide-react";
+import { House, LogOut, UserRound } from "lucide-react";
 
 import { IconButton } from "@/components/ui/icon-button";
 import { useAuth } from "@/features/auth/hooks/use-auth";
@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import WebTopBar, { WebTopBarLink } from "./WebTopBar";
 
 const PAGES = [
-  { to: "/campaigns", label: "Campaigns", icon: LayoutList },
+  { to: "/campaigns", label: "Home", icon: House },
   { to: "/account", label: "Account", icon: UserRound },
 ] as const;
 
@@ -67,9 +67,9 @@ function PhoneBar() {
 }
 
 /**
- * The frame of the signed-in pages outside a campaign, the campaigns list and Account (design E),
+ * The frame of the signed-in pages outside a campaign, Home, Account and a workshop (design E),
  * then the page, which scrolls inside it (the body never does). On the web the bar is the
- * permanent web bar (the wordmark, then Campaigns, Account and Log out at its right end);
+ * permanent web bar (the wordmark, then Home, Account and Log out at its right end);
  * a phone keeps its own bar, with the wordmark, the two pages and Log out as icons.
  */
 export default function SitePage({

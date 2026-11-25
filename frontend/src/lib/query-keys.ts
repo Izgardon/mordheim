@@ -29,6 +29,12 @@ export const queryKeys = {
   warbandGroups: () => ["warband-groups"] as const,
   /** Your campaigns, as the campaigns page lists them. */
   campaigns: () => ["campaigns"] as const,
+  /** Your workshops: the custom warbands and warband lists on the Home page (apps/workshop). */
+  workshop: () => ["workshop"] as const,
+  /** What a share code holds, read before an import (anyone signed in). */
+  sharedCode: (code: string) => ["shared-code", code] as const,
+  /** The book's warband templates and the types each serves (a workshop warband's type picker). */
+  bookWarbandTemplates: () => ["book-warband-templates"] as const,
   account: {
     /** What deleting your account would do (read each time the delete dialog opens). */
     deletionPreview: () => ["account", "deletion"] as const,

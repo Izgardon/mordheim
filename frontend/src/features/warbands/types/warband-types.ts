@@ -152,6 +152,8 @@ export type WarbandUnitsSummary = WarbandRosterCounts & {
   heroes?: WarbandHero[];
   hirelings?: WarbandHireling[];
   henchmen_groups?: HenchmenGroup[];
+  /** A workshop's warband's cost against its budget, after every write (null in a campaign). */
+  workshop?: { cost: number; budget: number } | null;
 };
 
 export type WarbandResource = {

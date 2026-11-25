@@ -40,7 +40,7 @@ export default function RouteError({ variant = "page" }: RouteErrorProps) {
       actions={
         variant === "page" ? (
           <Button asChild variant="secondary">
-            <Link to="/campaigns">Back to campaigns</Link>
+            <Link to="/campaigns">Back to Home</Link>
           </Button>
         ) : null
       }

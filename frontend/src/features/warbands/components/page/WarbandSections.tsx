@@ -9,9 +9,12 @@ import type { RosterUnit } from "../roster/unit-view";
 import WarbandEncampments from "../encampments/WarbandEncampments";
 import WarbandRules from "../rules/WarbandRules";
 import WarbandInfo from "./WarbandInfo";
-import WarbandTabs from "./WarbandTabs";
+import WarbandTabs, { type WarbandTab } from "./WarbandTabs";
 import { BackstoryTab, LogTab } from "./StoryAndLogTabs";
 import TreasuryTab from "./TreasuryTab";
+
+/** A workshop's warband is its roster and backstory (apps/workshop). */
+const WORKSHOP_TABS: readonly WarbandTab[] = ["Roster", "Backstory"];
 
 type WarbandSectionsProps = {
   campaignId: number;
@@ -30,22 +33,26 @@ type WarbandSectionsProps = {
 /**
  * The warband page's tabs and what each holds (William, 20 Nov 2026: the tab bar sits under the
  * warband's name, and the stats, resources, plot and rules it used to sit under are the top of the
- * **Roster** tab, so Treasury, Backstory and Log open with nothing above them).
+ * **Roster** tab, so Treasury, Backstory and Log open with nothing above them). A workshop's
+ * warband has its cost for its gold, and no Treasury, Log, resources, plot or encampments.
  */
 export default function WarbandSections(props: WarbandSectionsProps) {
   const { campaignId, campaign, warband, sheet, canEdit } = props;
   const { capabilities } = sheet;
   const warbandId = warband.id;
 
+  const workshop = sheet.workshop;
   return (
     <WarbandTabs
+      tabs={workshop ? WORKSHOP_TABS : undefined}
       render={(tab, show) =>
         tab === "Roster" ? (
           <div className="flex flex-col gap-6">
             <WarbandInfo
               campaignId={campaignId}
               warband={warband}
-              plot={campaign?.enable_campaign_points ? sheet.plot : undefined}
+              plot={campaign?.enable_campaign_points && !workshop ? sheet.plot : undefined}
+              workshop={workshop}
               heroes={sheet.heroes}
               hirelings={sheet.hirelings}
               henchmenGroups={sheet.henchmenGroups}
@@ -62,7 +69,9 @@ export default function WarbandSections(props: WarbandSectionsProps) {
                 rules={sheet.rules}
                 canEdit={canEdit}
               />
-              <WarbandEncampments campaignId={campaignId} encampments={sheet.encampments} />
+              {workshop ? null : (
+                <WarbandEncampments campaignId={campaignId} encampments={sheet.encampments} />
+              )}
             </WarbandInfo>
             <RosterSections
               warbandId={warbandId}

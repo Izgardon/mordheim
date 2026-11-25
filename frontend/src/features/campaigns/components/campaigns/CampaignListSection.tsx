@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 
 // components
@@ -16,6 +16,8 @@ type CampaignListSectionProps = {
   campaigns: CampaignSummary[];
   isLoading: boolean;
   error: string;
+  /** Join and Create, beside the section's title. */
+  actions?: ReactNode;
 };
 
 function CampaignGrid({ campaigns }: { campaigns: CampaignSummary[] }) {
@@ -58,6 +60,7 @@ export default function CampaignListSection({
   campaigns,
   isLoading,
   error,
+  actions,
 }: CampaignListSectionProps) {
   const live = campaigns.filter((campaign) => !campaign.archived_at);
   const archived = campaigns.filter((campaign) => campaign.archived_at);
@@ -65,11 +68,17 @@ export default function CampaignListSection({
     <section aria-labelledby="your-campaigns" className="flex flex-col gap-4">
       <SectionHead
         id="your-campaigns"
-        title="Your campaigns"
+        title="Campaigns"
+        className="flex-wrap items-center"
         aside={
-          <span className="text-[13px] text-faint">
-            {live.length} {live.length === 1 ? "campaign" : "campaigns"}
-          </span>
+          <div className="flex items-center gap-3 max-[960px]:w-full">
+            <span className="text-[13px] text-faint max-[960px]:hidden">
+              {live.length} {live.length === 1 ? "campaign" : "campaigns"}
+            </span>
+            <div className="flex gap-2 max-[960px]:grid max-[960px]:w-full max-[960px]:grid-cols-2">
+              {actions}
+            </div>
+          </div>
         }
       />
 

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,8 @@ type WarbandHeaderProps = {
   showEncampment: boolean;
   onOpen: (panel: WarbandPanel) => void;
   menu: MoreMenuEntry[];
+  /** Before the buttons: a workshop's share code with Copy. */
+  code?: ReactNode;
 };
 
 const PANEL_BUTTONS: { panel: WarbandPanel; label: string; icon: GameIconName }[] = [
@@ -44,7 +47,9 @@ export default function WarbandHeader(props: WarbandHeaderProps) {
           {props.name}
         </h1>
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
+        {/* on a phone, a line of its own above the buttons */}
+        {props.code ? <div className="flex max-[960px]:basis-full">{props.code}</div> : null}
         {PANEL_BUTTONS.filter((button) => button.panel !== "locations" || props.showLocations).map(
           (button) => (
             <Button

@@ -58,12 +58,12 @@ describe("the Settings sheet", () => {
 
     const sheet = await openSettingsSheet(user);
 
-    // the two rows, then the footer's Campaigns
+    // the two rows, then the footer's Home
     expect(
       within(sheet)
         .getAllByRole("link")
         .map((link) => link.textContent)
-    ).toEqual(["Campaign settings", "Account", "Campaigns"]);
+    ).toEqual(["Campaign settings", "Account", "Home"]);
     expect(within(sheet).getByRole("link", { name: "Campaign settings" })).toHaveAttribute(
       "href",
       `${BASE}/settings`
@@ -81,14 +81,14 @@ describe("the Settings sheet", () => {
     );
   });
 
-  it("ends in Campaigns, which leaves the campaign for the list (William: '2 buttons at bottom of sheet')", async () => {
+  it("ends in Home, which leaves the campaign for the list (William: '2 buttons at bottom of sheet')", async () => {
     fakeApi.on(`GET ${BASE}/`, campaignSummary());
     fakeApi.on("GET /campaigns/", []);
     const user = setupUser();
     const app = renderApp(`${BASE}/house-rules`);
 
     const sheet = await openSettingsSheet(user);
-    await user.click(within(sheet).getByRole("link", { name: "Campaigns" }));
+    await user.click(within(sheet).getByRole("link", { name: "Home" }));
 
     expect(app.location().pathname).toBe("/campaigns");
   });

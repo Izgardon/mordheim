@@ -79,14 +79,11 @@ afterEach(() => {
 });
 
 describe("the web bar's fixed slots", () => {
-  it("are Campaigns and Log out on every campaign page, the battle screens included", async () => {
+  it("are Home and Log out on every campaign page, the battle screens included", async () => {
     renderApp(`${BASE}/battles/31/prebattle`);
 
     const slots = within(await bar()).getByRole("navigation", { name: "Site" });
-    expect(within(slots).getByRole("link", { name: "Campaigns" })).toHaveAttribute(
-      "href",
-      "/campaigns"
-    );
+    expect(within(slots).getByRole("link", { name: "Home" })).toHaveAttribute("href", "/campaigns");
     expect(within(slots).getByRole("button", { name: "Log out" })).toBeInTheDocument();
     expect(await bar()).not.toHaveTextContent("Before the battle"); // the screen says it
   });
@@ -147,7 +144,7 @@ describe("the web bar off the overview", () => {
     expect(header).not.toHaveTextContent("House rules");
     expect(header).not.toHaveTextContent(campaignSummary().name);
     expect(within(header).queryByRole("status")).toBeNull();
-    expect(within(header).getByRole("link", { name: "Campaigns" })).toBeInTheDocument();
+    expect(within(header).getByRole("link", { name: "Home" })).toBeInTheDocument();
   });
 });
 

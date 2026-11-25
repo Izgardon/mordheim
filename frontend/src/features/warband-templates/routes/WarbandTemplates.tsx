@@ -18,6 +18,7 @@ import { useWarbandTemplates } from "../api/template-queries";
 import MakeTemplateDialog from "../components/MakeTemplateDialog";
 import TemplateDetail from "../components/TemplateDetail";
 import TemplateEditor from "../editor/TemplateEditor";
+import ImportListButton from "@/features/workshop/components/ImportListButton";
 import { typeRows, type TemplateTypeRow } from "../template-view";
 import {
   nextSort,
@@ -102,13 +103,19 @@ export default function WarbandTemplates() {
       section="warband-templates"
       actions={
         canEdit ? (
-          <Button
-            variant="secondary"
-            className={isMobile ? "min-h-10" : undefined}
-            onClick={() => setMaking({})}
-          >
-            Add new
-          </Button>
+          <>
+            <ImportListButton
+              campaignId={campaignId}
+              className={isMobile ? "min-h-10" : undefined}
+            />
+            <Button
+              variant="secondary"
+              className={isMobile ? "min-h-10" : undefined}
+              onClick={() => setMaking({})}
+            >
+              Add new
+            </Button>
+          </>
         ) : null
       }
       filters={

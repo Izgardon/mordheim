@@ -8,6 +8,8 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { toast } from "sonner";
+
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
@@ -20,6 +22,8 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
+
+vi.mock("sonner", () => ({ toast: Object.assign(vi.fn(), { warning: vi.fn(), error: vi.fn() }) }));
 
 const caravans: WarbandTypeRow = {
   id: 7,
@@ -205,5 +209,44 @@ describe("Raising a warband from its type's template", () => {
     await pickType();
     await waitFor(() => expect(fakeApi.countOf(OUTLINE)).toBe(1));
     expect(screen.queryByRole("region", { name: "Template outline" })).not.toBeInTheDocument();
+  });
+
+  it("imports a shared warband by its code instead, paying its cost, and shows the server's warnings", async () => {
+    const user = setupUser();
+    fakeApi.on("GET /workshop/shared/WAGN2345/", {
+      kind: "warband",
+      share_code: "WAGN2345",
+      maker: "Pia",
+      name: "The Gilded Wagon",
+      warband_type: { id: 7, name: "Merchant Caravans" },
+      cost: 480,
+      budget: 500,
+      heroes: 2,
+      henchmen: 5,
+      hired_swords: 0,
+    });
+    fakeApi.on("POST /campaigns/4/warbands/import/", {
+      warband_id: 30,
+      template_id: null,
+      gold: -30,
+      warnings: [{ code: "gold_negative", message: "The Gilded Wagon is 30 gc in debt." }],
+    });
+    fakeApi.on("GET /warbands/?campaign_id=4", [{ id: 30, campaign_id: 4, user_id: 1 }]);
+    renderRaise(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
+
+    await user.click(screen.getByRole("button", { name: "Import a warband" }));
+    const dialog = screen.getByRole("dialog", { name: "Import a warband" });
+    await user.type(within(dialog).getByLabelText("Code"), "wagn2345");
+    expect(await within(dialog).findByText("Cost")).toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: "Import" }));
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf("POST /campaigns/4/warbands/import/")).toEqual({ code: "WAGN2345" })
+    );
+    await waitFor(() =>
+      expect(toast.warning).toHaveBeenCalledWith("The Gilded Wagon is 30 gc in debt.", {
+        id: "server-warning-gold_negative",
+      })
+    );
   });
 });

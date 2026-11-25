@@ -120,6 +120,11 @@ export function useWarbandSheet({ campaignId, hasCampaignId, warbandId }: UseWar
     rules: data?.rules ?? NO_RULES,
     /** The encampments it holds (none while the campaign has Encampments off). */
     encampments: data?.encampments ?? NO_ENCAMPMENTS,
+    /**
+     * A workshop's warband (apps/workshop): its cost against its budget, from the summary every
+     * write answers (so it follows each purchase and recruit); null in a campaign.
+     */
+    workshop: data?.workshop ? { ...data.workshop, ...data.summary.workshop } : null,
     /** The plot it follows, with its ladder for the track (apps/plots); null: none. */
     plot: (data?.plot ?? null) as WarbandPlot | null,
     isLoading,

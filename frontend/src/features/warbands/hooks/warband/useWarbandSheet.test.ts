@@ -164,6 +164,7 @@ const capabilities = {
   delete: true,
   edit_catalogue: false,
   trade: true,
+  workshop: false,
 };
 
 const sheetOf = (overrides: Partial<WarbandSheet> = {}): WarbandSheet => ({
@@ -197,6 +198,29 @@ describe("useWarbandSheet", () => {
     expect(result.current.capabilities).toEqual(capabilities);
   });
 
+  it("reads a workshop warband's cost from the summary every write answers, with its code", async () => {
+    apiMocks.getWarbandSheet.mockResolvedValue(
+      sheetOf({
+        workshop: { cost: 100, budget: 500, share_code: "ABCD2345" },
+        summary: { workshop: { cost: 455, budget: 500 } } as WarbandSheet["summary"],
+      })
+    );
+
+    const { result } = renderSheet();
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.workshop).toEqual({ cost: 455, budget: 500, share_code: "ABCD2345" });
+  });
+
+  it("has no workshop for a campaign's warband", async () => {
+    apiMocks.getWarbandSheet.mockResolvedValue(sheetOf({ workshop: null }));
+
+    const { result } = renderSheet();
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.workshop).toBeNull();
+  });
+
   it("reads missing or unknown capabilities as not allowed", async () => {
     apiMocks.getWarbandSheet.mockResolvedValue(
       sheetOf({ capabilities: { edit: "yes", level_up: true } as never })
@@ -213,6 +237,7 @@ describe("useWarbandSheet", () => {
       delete: false,
       edit_catalogue: false,
       trade: false,
+      workshop: false,
     });
     expect(result.current.heroes).toEqual([richHero]);
     expect(result.current.hirelings).toEqual([richHireling]);

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutList, LogOut } from "lucide-react";
+import { House, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/use-auth";
@@ -61,8 +61,8 @@ export default function WebTopBar({
         <div className="mx-auto flex w-full min-w-0 max-w-[1520px] items-center">{children}</div>
       </div>
       <nav aria-label="Site" className="flex shrink-0 items-stretch gap-1 pr-6">
-        <WebTopBarLink to="/campaigns" icon={<LayoutList aria-hidden="true" />}>
-          Campaigns
+        <WebTopBarLink to="/campaigns" icon={<House aria-hidden="true" />}>
+          Home
         </WebTopBarLink>
         {links}
         <Button variant="ghost" size="sm" className="my-auto text-danger" onClick={signOut}>
