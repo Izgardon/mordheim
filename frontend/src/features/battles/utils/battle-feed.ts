@@ -25,6 +25,7 @@ const STAMPED = new Set<BattleEvent["type"]>([
   "unit_ooa_unset",
   "neutral_ooa_set",
   "neutral_group_added",
+  "neutral_creature_added",
 ]);
 
 function rosterUnits(roster: ParticipantRoster | undefined): PrebattleUnit[] {
@@ -134,16 +135,17 @@ export function battleFeed(
           undoable: false,
         });
         break;
-      case "neutral_group_added": {
+      case "neutral_group_added":
+        // a group is made empty (William, 25 Nov 2026); its creatures join it on their own lines
+        line(`${text(payload.name) || "A neutral group"} joined the fight`);
+        break;
+      case "neutral_creature_added": {
         const count = Number(payload.count) || 1;
-        line(
-          `${text(payload.name) || "Creatures"} joined the fight${count > 1 ? ` (${count})` : ""}`
-        );
+        const who = text(payload.creature_type) || text(payload.name) || "A creature";
+        const group = text(payload.group_name);
+        line(`${who}${count > 1 ? ` ×${count}` : ""} joined ${group || "the fight"}`);
         break;
       }
-      case "neutral_creature_added":
-        line(`${text(payload.name) || "A creature"} joined the fight`);
-        break;
       case "participant_finished_battle":
         line(`${player(event.actor_user_id)} finished their battle`);
         break;

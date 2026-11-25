@@ -64,8 +64,15 @@ describe("battleFeed and the rounds", () => {
       }),
       event(5, "unit_ooa_set", { round: 2, unit: { warband_id: 3, unit_key: "hero:9" } }),
       event(6, "item_used", { unit_key: "hero:9", item_name: "Blessed Water" }),
-      event(7, "neutral_group_added", { round: 2, name: "Giant Rats", count: 3 }),
-      event(8, "participant_finished_battle"),
+      event(7, "neutral_group_added", { round: 2, name: "Vermin" }),
+      event(8, "neutral_creature_added", {
+        round: 2,
+        group_name: "Vermin",
+        creature_type: "Giant Rat",
+        count: 3,
+      }),
+      event(9, "neutral_creature_added", { group_name: "Vermin", creature_type: "Rat Ogre" }),
+      event(10, "participant_finished_battle"),
     ]);
     expect(lines.map((line) => line.text)).toEqual([
       "Battle started",
@@ -73,7 +80,9 @@ describe("battleFeed and the rounds", () => {
       "Ulrich took a Darksoul out of action · melee",
       "A model is out of action",
       "A model used Blessed Water",
-      "Giant Rats joined the fight (3)",
+      "Vermin joined the fight",
+      "Giant Rat ×3 joined Vermin",
+      "Rat Ogre joined Vermin",
       "Cap finished their battle",
     ]);
     expect(lines.filter((line) => line.kill)).toHaveLength(1);

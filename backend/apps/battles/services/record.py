@@ -16,6 +16,7 @@ from apps.campaigns.chronicle import unit_results
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..models.kill import called
+from .neutral_groups import creature_type, creatures_of, neutral_groups
 
 EVENT_TYPES = (
     BattleEvent.TYPE_UNIT_OOA_SET,
@@ -33,7 +34,7 @@ def _dict(value: Any) -> dict[str, Any]:
 
 class Names:
     """A unit's name in the battle by its warband and key: the Aftermath's, else the battle roster's, else a temporary
-    unit's; a creature's from its group."""
+    unit's; a creature's type its own (or, stored before, its group's)."""
 
     def __init__(self, battle: Battle, rows: list[BattleParticipant]) -> None:
         self.units: dict[tuple[int, str], str] = {}
@@ -48,8 +49,11 @@ class Names:
                     self._add(row.warband_id, str(unit.get("key", "")).strip(), unit.get("name"), unit.get("unit_type"))
             for key, result in unit_results(row.postbattle_json).items():
                 self._add(row.warband_id, key, result.get("unit_name"), result.get("unit_type"), first=True)
-        groups = battle.neutral_groups_json if isinstance(battle.neutral_groups_json, list) else []
-        self.creature_types = {group.get("key"): str(group.get("creature_type") or "") for group in groups}
+        self.creature_types = {
+            creature.get("key"): creature_type(group, creature)
+            for group in neutral_groups(battle)
+            for creature in creatures_of(group)
+        }
 
     def _add(self, warband_id: int, key: Any, name: Any, unit_type: Any, first: bool = False) -> None:
         if not isinstance(key, str) or not key:
@@ -67,7 +71,7 @@ class Names:
 
     def creature(self, neutral: dict[str, Any]) -> str:
         name = str(neutral.get("name") or "").strip()
-        return called(name, self.creature_types.get(neutral.get("group_key"), ""), start=True)
+        return called(name, self.creature_types.get(neutral.get("key"), ""), start=True)
 
 
 def _victim(payload: dict[str, Any]) -> tuple[str, Any, Any] | None:

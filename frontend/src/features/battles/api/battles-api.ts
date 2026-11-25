@@ -189,27 +189,25 @@ export function changeRound(campaignId: number, battleId: number, action: RoundA
   return battleWrite(campaignId, battleId, "round/", { action });
 }
 
-/** A group of creatures nobody plays, numbered when there is more than one. */
-export function addNeutralGroup(
-  campaignId: number,
-  battleId: number,
-  payload: {
-    name: string;
-    creature_type: string;
-    count: number;
-    wounds: number;
-    stats?: Partial<BattleUnitStats>;
-  }
-) {
+/** A neutral group: a name, filled through `changeNeutralGroup`'s `add`. */
+export function addNeutralGroup(campaignId: number, battleId: number, payload: { name: string }) {
   return battleWrite(campaignId, battleId, "neutral-groups/", payload);
 }
 
-/** One more creature in a neutral group (`add`), or the group taken away (`remove`). */
+/** Creatures of one type, how many, their wounds and profile, for a neutral group. */
+export type NeutralCreaturesInput = {
+  creature_type: string;
+  count: number;
+  wounds: number;
+  stats?: Partial<BattleUnitStats>;
+};
+
+/** Creatures added to a neutral group (`add`, numbered among their type), or the group taken away. */
 export function changeNeutralGroup(
   campaignId: number,
   battleId: number,
   groupKey: string,
-  change: { add: true } | { remove: true }
+  change: { add: NeutralCreaturesInput } | { remove: true }
 ) {
   return battleWrite(campaignId, battleId, `neutral-groups/${groupKey}/`, change);
 }

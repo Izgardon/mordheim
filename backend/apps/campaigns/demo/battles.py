@@ -76,8 +76,9 @@ class Battle:
 
     def fight(self) -> None:
         creator = self.plan.players[0]
-        for name, creature_type, count in self.plan.neutrals:
-            self.post(creator, "neutral-groups", {"name": name, "creature_type": creature_type, "count": count})
+        for number, (name, creature_type, count) in enumerate(self.plan.neutrals, start=1):
+            self.post(creator, "neutral-groups", {"name": name})
+            self.post(creator, f"neutral-groups/n{number}", {"add": {"creature_type": creature_type, "count": count}})
         for number, kills in enumerate(self.plan.rounds):
             if number:
                 self.post(creator, "round", {"action": "force"})

@@ -1,10 +1,13 @@
 """Neutral groups: creatures nobody plays, added to a fight by anyone in it (next step 6).
 
 They live on the battle (`Battle.neutral_groups_json`), go out in every snapshot, and are never rostered: nothing of
-them reaches the post-game. A group is `{key, name, creature_type, stats, creatures}`; each creature is `{key, name,
-status, wounds}`, its key stable (`<group key>-<n>`) so a kill can name it as its victim. Status is "standing",
-"knocked_down", "stunned" or "out_of_action"; each new round stands the creatures up a step, as it does the players'
-units (services/rounds.py).
+them reaches the post-game. A group is only a name (William, 25 Nov 2026: "a named group where I can add whatever unit
+to it in whatever amounts"): `{key, name, creatures}`, made empty and filled through Add a unit. Each creature carries
+its own type and profile, so one group may hold several kinds: `{key, name, creature_type, stats, max_wounds, status,
+wounds}`, its key stable (`<group key>-<n>`) so a kill can name it as its victim. Status is "standing", "knocked_down",
+"stunned" or "out_of_action"; each new round stands the creatures up a step, as it does the players' units
+(services/rounds.py). A group stored before (one type and profile on the group) is read through
+`neutral_groups.public_groups`.
 """
 
 from typing import Any
@@ -12,6 +15,7 @@ from typing import Any
 from ..models import Battle, BattleEvent
 from .errors import Refused
 from .events import append_event
+from .neutral_groups import creature_type, creatures_of, neutral_groups
 from .unit_information import ALL_OVERRIDE_STAT_KEYS, ARMOUR_SAVE_STAT_KEY, KNOCKED_DOWN, STUNNED
 
 STANDING, OUT_OF_ACTION = "standing", "out_of_action"
@@ -19,11 +23,6 @@ CREATURE_STATUSES = (STANDING, KNOCKED_DOWN, STUNNED, OUT_OF_ACTION)
 MAX_GROUPS = 12
 MAX_CREATURES = 30
 NOT_FOUND = "No such neutral group or creature in this battle."
-
-
-def neutral_groups(battle: Battle) -> list[dict[str, Any]]:
-    raw = battle.neutral_groups_json
-    return [group for group in raw if isinstance(group, dict)] if isinstance(raw, list) else []
 
 
 def _text(data: Any, field: str, limit: int) -> str:
@@ -66,9 +65,14 @@ def _stats(raw: Any) -> dict[str, Any]:
 
 
 def new_group_request(data: Any) -> dict[str, Any]:
-    """A group as `neutral-groups/` sends it: name, creature type, how many and their wounds (ValueError)."""
+    """A group as `neutral-groups/` sends it: its name alone (ValueError)."""
+    return {"name": _text(data, "name", 60)}
+
+
+def creatures_request(data: Any) -> dict[str, Any]:
+    """Creatures as `neutral-groups/<key>/ {add}` sends them: their type, how many, their wounds and the bestiary
+    profile they came with, if any (ValueError)."""
     return {
-        "name": _text(data, "name", 60),
         "creature_type": _text(data, "creature_type", 80),
         "count": _whole(data, "count", 1, MAX_CREATURES, 1),
         "wounds": _whole(data, "wounds", 1, 10, 1),
@@ -83,24 +87,15 @@ def _index(key: str) -> int:
         return 0
 
 
-def _creature(group_key: str, creature_type: str, number: int, wounds: int, numbered: bool) -> dict[str, Any]:
-    name = f"{creature_type} {number}" if numbered else creature_type
-    return {"key": f"{group_key}-{number}", "name": name, "status": STANDING, "wounds": wounds}
-
-
 def add_group(battle: Battle, request: dict[str, Any], actor) -> dict:
-    """Add a group of `count` creatures, numbered when there is more than one (Zombie 1, Zombie 2)."""
+    """Add an empty group by its name; its creatures come through `add_creatures`."""
     groups = neutral_groups(battle)
     if len(groups) >= MAX_GROUPS:
         raise Refused(f"A battle holds at most {MAX_GROUPS} neutral groups.", code="too_many_groups")
     key = f"n{max((_index(str(group.get('key', ''))) for group in groups), default=0) + 1}"
-    count, wounds = request["count"], request["wounds"]
-    creatures = [_creature(key, request["creature_type"], n, wounds, count > 1) for n in range(1, count + 1)]
-    group = {"key": key, "name": request["name"], "creature_type": request["creature_type"], "max_wounds": wounds}
-    group = {**group, "stats": request["stats"], "creatures": creatures}
-    battle.neutral_groups_json = [*groups, group]
+    battle.neutral_groups_json = [*groups, {"key": key, "name": request["name"], "creatures": []}]
     battle.save(update_fields=["neutral_groups_json"])
-    payload = {"group_key": key, "name": request["name"], "count": count, "round": battle.round}
+    payload = {"group_key": key, "name": request["name"], "round": battle.round}
     return append_event(battle, BattleEvent.TYPE_NEUTRAL_GROUP_ADDED, actor_user=actor, payload=payload)
 
 
@@ -111,23 +106,37 @@ def _group(groups: list[dict[str, Any]], group_key: str) -> dict[str, Any]:
     raise Refused(NOT_FOUND, code="not_found", status=404)
 
 
-def add_creature(battle: Battle, group_key: str, actor) -> dict:
-    """One more creature in the group, numbered after the last; a lone unnumbered one becomes "<type> 1"."""
+def add_creatures(battle: Battle, group_key: str, request: dict[str, Any], actor) -> dict:
+    """`count` creatures of one type in the group, numbered among those of their type when there is more than one
+    (Zombie 1, Zombie 2); a lone unnumbered one of the type becomes "<type> 1"."""
     groups = neutral_groups(battle)
     group = _group(groups, group_key)
-    creatures = [creature for creature in group.get("creatures", []) if isinstance(creature, dict)]
-    if len(creatures) >= MAX_CREATURES:
+    creatures = creatures_of(group)
+    count, kind = request["count"], request["creature_type"]
+    if len(creatures) + count > MAX_CREATURES:
         raise Refused(f"A neutral group holds at most {MAX_CREATURES} creatures.", code="too_many_creatures")
-    creature_type = str(group.get("creature_type") or group.get("name") or "Creature")
-    if len(creatures) == 1 and creatures[0].get("name") == creature_type:
-        creatures[0]["name"] = f"{creature_type} 1"
-    number = max((_index(str(creature.get("key", ""))) for creature in creatures), default=0) + 1
-    wounds = int(group.get("max_wounds") or 1)
-    creature = _creature(group_key, creature_type, number, wounds, True)
-    group["creatures"] = [*creatures, creature]
+    same = [creature for creature in creatures if creature_type(group, creature) == kind]
+    if len(same) == 1 and same[0].get("name") == kind:
+        same[0]["name"] = f"{kind} 1"
+    first_key = max((_index(str(creature.get("key", ""))) for creature in creatures), default=0) + 1
+    numbered = len(same) + count > 1
+    added = [
+        {
+            "key": f"{group_key}-{first_key + n}",
+            "name": f"{kind} {len(same) + n + 1}" if numbered else kind,
+            "creature_type": kind,
+            "stats": request["stats"],
+            "max_wounds": request["wounds"],
+            "status": STANDING,
+            "wounds": request["wounds"],
+        }
+        for n in range(count)
+    ]
+    group["creatures"] = [*creatures, *added]
     battle.neutral_groups_json = groups
     battle.save(update_fields=["neutral_groups_json"])
-    payload = {"group_key": group_key, "creature_key": creature["key"], "name": creature["name"]}
+    payload = {"group_key": group_key, "group_name": group.get("name"), "creature_type": kind, "count": count}
+    payload |= {"creature_keys": [creature["key"] for creature in added], "round": battle.round}
     return append_event(battle, BattleEvent.TYPE_NEUTRAL_CREATURE_ADDED, actor_user=actor, payload=payload)
 
 

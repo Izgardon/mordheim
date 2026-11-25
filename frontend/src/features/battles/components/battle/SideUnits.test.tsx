@@ -7,7 +7,7 @@ import { battleRosters, OPPONENT, opponentParticipant } from "@/test/battle-fixt
 import { setupUser } from "@/test/user-event";
 
 import { battleSides } from "./battle-units";
-import { OtherWarband } from "./SideUnits";
+import { NeutralGroupUnits, OtherWarband } from "./SideUnits";
 
 /** The opponent's hero with gear, a skill and a rule, as `GET rosters/` sends everyone's. */
 function theirRosters(): BattleRosterMap {
@@ -75,5 +75,43 @@ describe("OtherWarband", () => {
     render(<OtherWarband side={side} roster={undefined} isMobile={false} onOpen={vi.fn()} />);
 
     expect(screen.getByText("Reading their roster…")).toBeInTheDocument();
+  });
+});
+
+describe("NeutralGroupUnits", () => {
+  const creature = (key: string, name: string, type: string, wounds: number) => ({
+    key,
+    name,
+    creature_type: type,
+    stats: {},
+    max_wounds: wounds,
+    status: "standing" as const,
+    wounds,
+  });
+
+  it("shows each creature by its own type, wounds from its own profile (William, 25 Nov 2026)", () => {
+    const group = {
+      key: "n1",
+      name: "Graveyard",
+      creatures: [creature("n1-1", "Zombie 1", "Zombie", 1), creature("n1-2", "Ghoul", "Ghoul", 2)],
+    };
+    render(
+      <NeutralGroupUnits
+        group={group}
+        canAct
+        onCycle={vi.fn()}
+        onWounds={vi.fn()}
+        onAdd={vi.fn()}
+        onRemove={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText("Neutral group")).toBeInTheDocument();
+    // the name, then the type beside it
+    expect(screen.getAllByText("Ghoul")).toHaveLength(2);
+    expect(screen.getByText("Zombie 1")).toBeInTheDocument();
+    expect(screen.getByText("Zombie")).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Wounds for Ghoul" })).toHaveTextContent(/2\D+2/);
+    expect(screen.getByRole("button", { name: "Add a unit" })).toBeInTheDocument();
   });
 });

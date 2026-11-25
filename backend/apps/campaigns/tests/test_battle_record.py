@@ -33,6 +33,7 @@ HURT = {
     },
     "hero:6": {"unit_name": "Prioress", "unit_kind": "hero", "dead": False, "serious_injury_rolls": []},
 }
+ZOMBIE = {"key": "neutral-1-1", "name": "", "creature_type": "Zombie", "status": "out_of_action", "wounds": 0}
 UNHURT = {"hero:3": {"unit_name": "Seer", "unit_kind": "hero", "dead": False, "serious_injury_rolls": []}}
 
 
@@ -44,7 +45,7 @@ class BattleRecordTests(CampaignTestCase):
             scenario="Street Fight",
             status=Battle.STATUS_ENDED,
             ended_at=datetime(2026, 3, 24, tzinfo=UTC),
-            neutral_groups_json=[{"key": "neutral-1", "creature_type": "Zombie", "creatures": []}],
+            neutral_groups_json=[{"key": "neutral-1", "name": "The dead", "creatures": [ZOMBIE]}],
         )
         for user, warband, results in ((self.player, self.warband, HURT), (self.rival, self.rival_warband, UNHURT)):
             roster = {"heroes": [{"key": "hero:7", "displayName": "Vera", "unitType": "Sister"}]}

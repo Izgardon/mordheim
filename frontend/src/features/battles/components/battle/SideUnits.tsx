@@ -46,8 +46,9 @@ export function OtherWarband({
 }
 
 /**
- * A neutral group (design E): creatures nobody plays. Anyone in the fight tracks each one's status
- * and wounds, adds another, or takes the group away; they can be kill victims.
+ * A neutral group (design E): creatures nobody plays, each of its own type. Anyone in the fight
+ * tracks each one's status and wounds, adds more (Add a unit), or takes the group away; they can
+ * be kill victims.
  */
 export function NeutralGroupUnits({
   group,
@@ -64,11 +65,10 @@ export function NeutralGroupUnits({
   onAdd: () => void;
   onRemove: () => void;
 }) {
-  const max = group.max_wounds ?? group.stats?.wounds ?? 1;
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2.5">
-        <span className="text-xs text-muted-foreground">Neutral group · {group.creature_type}</span>
+        <span className="text-xs text-muted-foreground">Neutral group</span>
         {canAct ? (
           <div className="flex gap-1.5">
             <button
@@ -97,7 +97,7 @@ export function NeutralGroupUnits({
             <span className="font-display text-[15px] font-semibold text-head">
               {creature.name}
             </span>
-            <span className="text-xs text-muted-foreground">Neutral</span>
+            <span className="text-xs text-muted-foreground">{creature.creature_type}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <StatusButton
@@ -109,7 +109,7 @@ export function NeutralGroupUnits({
             <WoundsControl
               name={creature.name}
               wounds={creature.wounds}
-              max={Math.max(max, creature.wounds)}
+              max={Math.max(creature.max_wounds || 1, creature.wounds)}
               disabled={!canAct || creature.status === "out_of_action"}
               onChange={(delta) => onWounds(creature.key, creature.wounds + delta)}
             />

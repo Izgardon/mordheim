@@ -199,8 +199,9 @@ class KillWriteTests(BattleTestCase):
         return {key: entry["kill_count"] for key, entry in mine["unit_information_json"].items()}
 
     def test_victims_of_every_kind_and_the_undo(self):
-        neutral = {"name": "Zombies", "creature_type": "Zombie", "count": 2, "wounds": 1}
-        self.ok(self.post_as(self.player, self.url(self.battle_id, "neutral-groups"), neutral), 201)
+        self.ok(self.post_as(self.player, self.url(self.battle_id, "neutral-groups"), {"name": "Zombies"}), 201)
+        zombies = {"add": {"creature_type": "Zombie", "count": 2, "wounds": 1}}
+        self.ok(self.post_as(self.player, self.url(self.battle_id, "neutral-groups/n1"), zombies), 201)
         dog = self.ok(self.kill(self.player, self.battle_id, self.a, "custom:dog", how="shooting"), 201).data
         zombie = self.ok(self.kill(self.player, self.battle_id, self.a, victim_neutral_key="n1-2", how="other"), 201)
         self.assertEqual(self.counts(), {self.a: 2})

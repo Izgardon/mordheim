@@ -1,7 +1,7 @@
 /**
  * The Melee and Ranged pickers (William, 24 Nov 2026: "for the dropdown for selecting yours and
- * theirs, we only need to show the henchmen group names dont individual"): a henchmen group and a
- * neutral group are one row each, by the group's name.
+ * theirs, we only need to show the henchmen group names dont individual"): a henchmen group is one
+ * row by its name, and a neutral group one row for each kind of creature in it, by its type.
  */
 import { describe, expect, it } from "vitest";
 
@@ -34,14 +34,16 @@ function setUp({ downed = [] as string[] } = {}) {
     selected_unit_keys_json: ["hero:1", "hero:3", "henchman:2", "henchman:5", "hireling:4"],
     unit_information_json: information,
   });
+  const creature = (key: string, name: string, type: string, stats: object, status = "standing") =>
+    ({ key, name, creature_type: type, stats, max_wounds: 1, status, wounds: 1 }) as const;
+  const rat = { weapon_skill: 2, toughness: 3 };
   const neutral = {
     key: "n1",
-    name: "Giant rats",
-    creature_type: "Giant Rat",
-    stats: { weapon_skill: 2, toughness: 3 },
+    name: "Vermin",
     creatures: [
-      { key: "n1:1", name: "Giant Rat 1", status: "standing" as const },
-      { key: "n1:2", name: "Giant Rat 2", status: "standing" as const },
+      creature("n1-1", "Giant Rat 1", "Giant Rat", { ...rat, toughness: 9 }, "out_of_action"),
+      creature("n1-2", "Giant Rat 2", "Giant Rat", rat),
+      creature("n1-3", "Rat Ogre", "Rat Ogre", { strength: 5 }),
     ],
   };
   const sides = battleSides([me, opponentParticipant()], rosters, [neutral as never], ME.id);
@@ -78,13 +80,16 @@ describe("combatOptions", () => {
     expect(yours.map((option) => option.name)).toEqual(["Captain Wolf", "Ogre Bodyguard"]);
   });
 
-  it("gives theirs a neutral group once by its name, with its profile", () => {
+  it("gives theirs each kind in a neutral group once, under the group's name, with its profile", () => {
     const { theirs } = setUp();
 
     expect(theirs.map((option) => [option.name, option.section])).toEqual([
       [`Black Fang`, `${OPPONENT.warband.name} · Heroes`],
-      ["Giant rats", "Neutral groups"],
+      ["Giant Rat", "Vermin"],
+      ["Rat Ogre", "Vermin"],
     ]);
+    // read from the first still standing
     expect(theirs[1].stats).toEqual({ weapon_skill: 2, toughness: 3 });
+    expect(theirs[2].stats).toEqual({ strength: 5 });
   });
 });

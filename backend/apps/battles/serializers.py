@@ -16,6 +16,7 @@ from apps.users.names import display_name
 
 from .models import Battle, BattleEvent, BattleParticipant
 from .services.kills import unit_information_with_kills, with_live_kills
+from .services.neutral_groups import public_groups
 from .services.timing import is_overdue
 
 PARTICIPANT_VIEWS = ("full", "prebattle", "active", "postbattle")
@@ -50,7 +51,7 @@ def serialize_battle(battle: Battle) -> dict:
         "results_confirmer_user_id": battle.results_confirmer_id,
         "round": battle.round,
         "round_request": battle.round_request or None,
-        "neutral_groups": battle.neutral_groups_json or [],
+        "neutral_groups": public_groups(battle),
         "number": battle.number,  # the campaign battle number (services/numbering.py)
     }
 

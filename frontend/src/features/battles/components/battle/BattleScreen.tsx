@@ -30,12 +30,9 @@ import SideStrip from "./SideStrip";
 import UnitNoteSheet, { type NoteTarget } from "./UnitNoteSheet";
 import type { GearTab } from "./UnitCardParts";
 import WarbandUnits, { type WarbandUnitActions } from "./WarbandUnits";
-import {
-  AddNeutralGroupSheet,
-  AddUnitSheet,
-  EditStatsSheet,
-  type EditableUnit,
-} from "./UnitSheets";
+import AddNeutralGroupSheet from "./AddNeutralGroupSheet";
+import AddUnitSheet from "./AddUnitSheet";
+import { EditStatsSheet, type EditableUnit } from "./UnitSheets";
 import { nextStatus, sideId, type BattleUnitView } from "./battle-units";
 
 type Panel = "menu" | "rules" | "notes" | "edit" | "add" | "neutral" | "cancel" | "end";
@@ -78,7 +75,9 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
   };
   const panelProps = (which: Panel) => ({
     open: panel === which,
-    onOpenChange: (open: boolean) => setPanel(open ? which : null),
+    // closing a sheet leaves alone one opened from it (a new group goes on to Add a unit)
+    onOpenChange: (open: boolean) =>
+      setPanel((current) => (open ? which : current === which ? null : current)),
   });
 
   // The next round: an ask from someone else pops up until you agree or say Not yet.
@@ -336,21 +335,25 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       <EditStatsSheet {...panelProps("edit")} units={editable} onSave={config.saveUnitOverride} />
       <AddUnitSheet
         {...panelProps("add")}
+        campaignId={campaignId}
         draft={config.customUnitDraft}
         groups={neutralGroups}
         canAddToWarband={Boolean(me)}
         initialGroup={addGroupKey}
         onAddToWarband={config.addCustomUnit}
-        onAddCreature={screen.addCreature}
+        onAddCreatures={screen.addCreatures}
       />
       <AddNeutralGroupSheet
         {...panelProps("neutral")}
-        campaignId={campaignId}
-        onAdd={async (group) => {
-          await screen.addGroup(group);
+        onAdd={async (name) => {
+          await screen.addGroup(name);
           const groups = battle.battleStateRef.current?.battle.neutral_groups ?? [];
           const added = groups[groups.length - 1];
-          if (added) setSelected(sideId.neutral(added.key));
+          if (!added) return;
+          // name only, then add (William, 25 Nov 2026): Add a unit opens with the new group picked
+          setSelected(sideId.neutral(added.key));
+          setAddGroupKey(added.key);
+          setPanel("add");
         }}
       />
       <EndFightSheet

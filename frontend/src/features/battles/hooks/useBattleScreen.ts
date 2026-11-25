@@ -12,6 +12,7 @@ import {
   setUnitDismounted,
   setUnitOutOfAction,
   type KillHow,
+  type NeutralCreaturesInput,
   type RoundAction,
 } from "@/features/battles/api/battles-api";
 import {
@@ -29,11 +30,7 @@ import {
   useUsedSingleUseItems,
 } from "@/features/battles/hooks/useUsedSingleUseItems";
 import { useBattle } from "@/features/battles/state/battle-context";
-import type {
-  BattleCreatureStatus,
-  BattleState,
-  BattleUnitStats,
-} from "@/features/battles/types/battle-types";
+import type { BattleCreatureStatus, BattleState } from "@/features/battles/types/battle-types";
 import { battleFeed } from "@/features/battles/utils/battle-feed";
 import { newestOwnEvent } from "@/features/battles/utils/battle-events";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -46,14 +43,6 @@ export type KillInput = {
   victim: KillVictim;
   how: KillHow;
   earnedXp: boolean;
-};
-
-export type NeutralGroupInput = {
-  name: string;
-  creatureType: string;
-  count: number;
-  wounds: number;
-  stats?: Partial<BattleUnitStats>;
 };
 
 /**
@@ -182,28 +171,22 @@ export function useBattleScreen() {
     [battleId, campaignId, write]
   );
 
+  /** A neutral group by its name alone: it starts empty, and Add a unit fills it. */
   const addGroup = useCallback(
-    async (group: NeutralGroupInput) => {
-      applyBattleResponse(
-        await addNeutralGroup(campaignId, battleId, {
-          name: group.name,
-          creature_type: group.creatureType,
-          count: group.count,
-          wounds: group.wounds,
-          ...(group.stats ? { stats: group.stats } : {}),
-        })
-      );
+    async (name: string) => {
+      applyBattleResponse(await addNeutralGroup(campaignId, battleId, { name }));
     },
     [applyBattleResponse, battleId, campaignId]
   );
 
-  const addCreature = useCallback(
-    (groupKey: string) =>
-      write(
-        () => changeNeutralGroup(campaignId, battleId, groupKey, { add: true }),
-        "Couldn't add the creature."
-      ),
-    [battleId, campaignId, write]
+  /** Creatures of one type in a neutral group; throws when refused, so the sheet shows why. */
+  const addCreatures = useCallback(
+    async (groupKey: string, creatures: NeutralCreaturesInput) => {
+      applyBattleResponse(
+        await changeNeutralGroup(campaignId, battleId, groupKey, { add: creatures })
+      );
+    },
+    [applyBattleResponse, battleId, campaignId]
   );
 
   const removeGroup = useCallback(
@@ -247,7 +230,7 @@ export function useBattleScreen() {
     recordKill,
     changeTheRound,
     addGroup,
-    addCreature,
+    addCreatures,
     removeGroup,
     changeCreature,
     leave,

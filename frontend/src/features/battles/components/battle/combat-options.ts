@@ -1,4 +1,8 @@
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
+import type {
+  BattleNeutralCreature,
+  BattleNeutralGroup,
+} from "@/features/battles/types/battle-types";
 
 import type { CombatOption } from "./CombatPicker";
 import {
@@ -53,7 +57,26 @@ export function sideOptions(
   ];
 }
 
-/** Yours (still standing) and theirs: every other side's, a neutral group once by its name. */
+/**
+ * A neutral group's kinds, each once by its type under the group's name, read from its first
+ * creature still standing (or its first, with none standing).
+ */
+function neutralOptions(group: BattleNeutralGroup): CombatOption[] {
+  const firsts = new Map<string, BattleNeutralCreature>();
+  for (const creature of group.creatures) {
+    const known = firsts.get(creature.creature_type);
+    if (!known || (known.status === "out_of_action" && creature.status !== "out_of_action"))
+      firsts.set(creature.creature_type, creature);
+  }
+  return [...firsts.entries()].map(([type, creature]) => ({
+    key: `neutral:${group.key}:${type}`,
+    name: type || creature.name,
+    stats: creature.stats ?? {},
+    section: group.name,
+  }));
+}
+
+/** Yours (still standing) and theirs: every other side's, each kind in a neutral group once. */
 export function combatOptions(
   sections: BattleSections | null,
   otherSides: BattleSide[],
@@ -64,14 +87,7 @@ export function combatOptions(
   const several = otherSides.length > 1;
   const theirs = otherSides.flatMap((entry): CombatOption[] =>
     entry.kind === "neutral"
-      ? [
-          {
-            key: `neutral:${entry.group.key}`,
-            name: entry.group.name,
-            stats: entry.group.stats ?? {},
-            section: "Neutral groups",
-          },
-        ]
+      ? neutralOptions(entry.group)
       : sideOptions(battleSections(entry.participant, rosters[entry.participant.user.id]), {
           side: several ? entry.name : undefined,
         })

@@ -11,10 +11,11 @@ from ..services.dismount import set_dismounted
 from ..services.errors import BattleError, Refused, battle_status_changed
 from ..services.item_use import check_payload_size
 from ..services.neutrals import (
-    add_creature,
+    add_creatures,
     add_group,
     change_creature,
     creature_change_request,
+    creatures_request,
     new_group_request,
     remove_group,
 )
@@ -189,8 +190,8 @@ class CampaignBattleRoundView(BattleWriteView):
 
 
 class CampaignBattleNeutralGroupsView(BattleWriteView):
-    """POST neutral-groups/ {name, creature_type, count, wounds, stats?}: a group of creatures nobody plays
-    (services/neutrals.py), added by anyone in the fight."""
+    """POST neutral-groups/ {name}: an empty group of creatures nobody plays (services/neutrals.py), added by anyone
+    in the fight; its creatures come through the group's {add}."""
 
     rules = CampaignBattleUnitOoaView.rules
 
@@ -206,23 +207,28 @@ class CampaignBattleNeutralGroupsView(BattleWriteView):
 
 
 class CampaignBattleNeutralGroupView(BattleWriteView):
-    """POST neutral-groups/<key>/ {add: true} adds a creature to the group; {remove: true} takes the group away."""
+    """POST neutral-groups/<key>/ {add: {creature_type, count, wounds, stats?}} adds creatures of one type to the
+    group; {remove: true} takes the group away."""
 
     rules = CampaignBattleUnitOoaView.rules
 
     def parse(self, request):
         if request.data.get("remove") is True:
             return "remove"
-        if request.data.get("add") is True:
-            return "add"
-        return Response({"detail": "Send add: true or remove: true"}, status=400)
+        if isinstance(request.data.get("add"), dict):
+            try:
+                return creatures_request(request.data["add"])
+            except ValueError as exc:
+                return Response({"detail": str(exc)}, status=400)
+        return Response({"detail": "Send add: {creature_type, count} or remove: true"}, status=400)
 
     def act(self, scope: Scope):
         group_key = self.kwargs["group_key"]
         if self.input == "remove":
             remove_group(scope.battle, group_key)
             return Written([], reason="neutral_group_removed")
-        return Written([add_creature(scope.battle, group_key, scope.user)], status=status.HTTP_201_CREATED)
+        event = add_creatures(scope.battle, group_key, self.input, scope.user)
+        return Written([event], status=status.HTTP_201_CREATED)
 
 
 class CampaignBattleNeutralCreatureView(BattleWriteView):

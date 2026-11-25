@@ -55,21 +55,24 @@ export type BattleUnitStatus = "knocked_down" | "stunned";
 /** A neutral creature's state: the four the status button cycles through. */
 export type BattleCreatureStatus = "standing" | "knocked_down" | "stunned" | "out_of_action";
 
-/** One creature nobody plays; `key` is stable, so a kill can name it. */
+/**
+ * One creature nobody plays; `key` is stable, so a kill can name it. It carries its own type and
+ * profile (the bestiary's, or none when typed in), so a group may hold several kinds.
+ */
 export type BattleNeutralCreature = {
   key: string;
   name: string;
+  creature_type: string;
+  stats: Partial<BattleUnitStats>;
+  max_wounds: number;
   status: BattleCreatureStatus;
   wounds: number;
 };
 
-/** A group of creatures nobody plays: its name, its bestiary type and profile, its creatures. */
+/** A group of creatures nobody plays: a name, and whatever creatures were added to it. */
 export type BattleNeutralGroup = {
   key: string;
   name: string;
-  creature_type: string;
-  max_wounds?: number;
-  stats?: Partial<BattleUnitStats>;
   creatures: BattleNeutralCreature[];
 };
 

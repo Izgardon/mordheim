@@ -18,7 +18,8 @@ from .errors import Refused, battle_status_changed
 from .events import append_event
 from .item_use import item_use_payload
 from .locks import locked
-from .neutrals import find_creature, neutral_groups, put_back, take_out
+from .neutral_groups import creature_type, neutral_groups
+from .neutrals import find_creature, put_back, take_out
 from .roster_units import roster_pet
 from .selection import custom_unit_entry, selected_unit_keys
 from .unit_information import is_empty, unit_entry
@@ -141,7 +142,7 @@ def _neutral_victim(battle: Battle, creature_key: str, source: str) -> tuple[dic
         group, creature, taken_out = take_out(battle, creature_key)
     else:
         (group, creature), taken_out = find_creature(neutral_groups(battle), creature_key), False
-    victim = {**NO_VICTIM_UNIT, "name": creature.get("name"), "type_name": group.get("creature_type")}
+    victim = {**NO_VICTIM_UNIT, "name": creature.get("name"), "type_name": creature_type(group, creature)}
     return {**victim, "neutral_key": creature_key}, taken_out
 
 
