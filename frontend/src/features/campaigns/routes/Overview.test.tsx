@@ -288,9 +288,8 @@ describe("the overview's campaign rules link", () => {
     expect(row.parentElement?.previousElementSibling?.tagName).toBe("DL");
     expect(row.parentElement?.previousElementSibling).toHaveTextContent("Heroes lost");
     expect(link).toHaveAttribute("href", `/campaigns/${CAMPAIGN_ID}/campaign-rules`);
-    await waitFor(() =>
-      expect(link).toHaveTextContent("1 campaign rule · 1 battle rule · 1 chart")
-    );
+    // its name on one line, nothing under it (William, 25 Nov 2026)
+    expect(link).toHaveTextContent(/^Campaign rules$/);
     // the rules themselves are read on that page now, not here
     expect(screen.queryByText("No warband leaves.")).toBeNull();
   });

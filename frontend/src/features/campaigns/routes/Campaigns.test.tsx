@@ -59,11 +59,15 @@ describe("Campaigns list and the join code", () => {
     expect(card(owned.name)).toHaveTextContent("WYR123");
     expect(card(joined.name)).toHaveTextContent("PIT777");
 
-    await user.click(within(card(joined.name)).getByRole("button", { name: "Copy" }));
+    await user.click(within(card(joined.name)).getByRole("button", { name: "Copy join code" }));
 
     expect(await navigator.clipboard.readText()).toBe("PIT777");
-    expect(within(card(joined.name)).getByRole("button", { name: "Copied" })).toBeInTheDocument();
-    expect(within(card(owned.name)).getByRole("button", { name: "Copy" })).toBeInTheDocument();
+    expect(
+      within(card(joined.name)).getByRole("button", { name: "Join code copied" })
+    ).toBeInTheDocument();
+    expect(
+      within(card(owned.name)).getByRole("button", { name: "Copy join code" })
+    ).toBeInTheDocument();
     // Regenerating it is in Settings, for owners and admins.
     expect(screen.queryByRole("button", { name: /new code|regenerate/i })).toBeNull();
   });

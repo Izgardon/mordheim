@@ -2,10 +2,11 @@ import { useId, useState } from "react";
 
 // routing
 import { Link } from "react-router-dom";
+import { Check, Copy } from "lucide-react";
 
 // components
-import { Button } from "@components/button";
 import { Card } from "@components/card";
+import { IconButton } from "@/components/ui/icon-button";
 import { ChipLabel } from "@components/chip";
 import { cn } from "@/lib/utils";
 
@@ -27,9 +28,10 @@ function campaignState({ archived_at, in_progress }: CampaignSummary) {
 
 /**
  * A campaign on the list (design E): your role and its state, its name (the card's real link,
- * stretched over the whole card), your warband in it (or the way to raise one), then the players,
- * the join code with Copy and the roster. Raise, Copy and Roster sit above the stretched link, so
- * no control is nested in a link (CAMP-UX-07).
+ * stretched over the whole card), your warband in it (or the way to raise one), then the players
+ * with the roster beside them. The join code sits top right with a copy button (William, 25 Nov
+ * 2026). Raise, Copy and Roster sit above the stretched link, so no control is nested in a link
+ * (CAMP-UX-07).
  */
 export default function CampaignCard(campaign: CampaignSummary) {
   const { id, name, player_count, max_players, role, join_code, archived_at, my_warband } =
@@ -63,11 +65,28 @@ export default function CampaignCard(campaign: CampaignSummary) {
       )}
     >
       <div className="flex flex-col gap-2.5 p-5 max-[960px]:p-4">
-        <div className="flex flex-wrap items-center gap-1.5">
-          <ChipLabel tone={role === "player" || !role ? "default" : "accent"}>
-            {roleLabel}
-          </ChipLabel>
-          <ChipLabel tone={state.tone}>{state.label}</ChipLabel>
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <ChipLabel tone={role === "player" || !role ? "default" : "accent"}>
+              {roleLabel}
+            </ChipLabel>
+            <ChipLabel tone={state.tone}>{state.label}</ChipLabel>
+          </div>
+          {/* Every member sees the code; owners and admins regenerate it in Settings (1b). */}
+          {join_code ? (
+            <div className="relative z-[2] flex shrink-0 items-center gap-1.5">
+              <span className="font-mono text-sm font-bold uppercase tracking-[0.08em] text-head">
+                {join_code}
+              </span>
+              <IconButton
+                aria-label={copied ? "Join code copied" : "Copy join code"}
+                className="h-9 w-9"
+                onClick={() => void handleCopyJoinCode()}
+              >
+                {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
+              </IconButton>
+            </div>
+          ) : null}
         </div>
         <h3
           id={titleId}
@@ -105,33 +124,13 @@ export default function CampaignCard(campaign: CampaignSummary) {
           )}
         </p>
       </div>
-      <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line px-5 py-3 max-[960px]:px-4">
+      <div className="mt-auto flex items-center gap-x-6 border-t border-line px-5 py-3 max-[960px]:px-4">
         <div className="flex flex-col gap-0.5">
           <span className={CAPTION}>Players</span>
           <span className="font-mono text-sm font-bold text-head">
             {player_count} / {max_players}
           </span>
         </div>
-        {/* Every member sees the code; owners and admins regenerate it in Settings (1b). */}
-        {join_code ? (
-          <div className="flex items-end gap-2">
-            <div className="flex flex-col gap-0.5">
-              <span className={CAPTION}>Join code</span>
-              <span className="font-mono text-sm font-bold uppercase tracking-[0.08em] text-head">
-                {join_code}
-              </span>
-            </div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="relative z-[2] border-border"
-              onClick={() => void handleCopyJoinCode()}
-            >
-              {copied ? "Copied" : "Copy"}
-            </Button>
-          </div>
-        ) : null}
         <div className="relative z-[2] ml-auto">
           <CampaignPlayersDialog
             campaignId={id}

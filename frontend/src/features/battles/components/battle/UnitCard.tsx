@@ -97,23 +97,24 @@ export default function UnitCard({ view, typeLine, recent, onOpen, actions }: Un
             <button
               type="button"
               role="switch"
-              aria-checked={view.dismounted}
+              // on while he rides, "Mounted"; off, "Dismounted" (William, 25 Nov 2026)
+              aria-checked={!view.dismounted}
               disabled={!actions.canAct || out}
               onClick={() => actions.onDismount(!view.dismounted)}
               className="flex min-h-11 items-center gap-2 pl-2 pr-0.5 text-xs font-semibold text-text2 disabled:opacity-50"
             >
-              Dismounted
+              {view.dismounted ? "Dismounted" : "Mounted"}
               <span
                 aria-hidden="true"
                 className={cn(
                   "flex h-[22px] w-10 border border-strong p-0.5",
-                  view.dismounted ? "justify-end bg-primary" : "justify-start bg-page"
+                  view.dismounted ? "justify-start bg-page" : "justify-end bg-primary"
                 )}
               >
                 <span
                   className={cn(
                     "h-4 w-4",
-                    view.dismounted ? "bg-on-accent" : "bg-muted-foreground"
+                    view.dismounted ? "bg-muted-foreground" : "bg-on-accent"
                   )}
                 />
               </span>
