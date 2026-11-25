@@ -101,7 +101,9 @@ EITHER = frozenset({"lost-prince-tc5"})  # "works perfectly well for two players
 DROP = frozenset(  # Archive Pestilen's copies of Town Cryer #7's and #9's scenarios (William, 25 Nov 2026)
     {"scourge-and-purge-archive-pestilen", "the-forbidden-square", "scripts-of-sigmar"}
 )
-TABLES = {"scenario-table": "Mordheim 1a", "cots-table": "Mordheim 1a"}  # the index's tables -> the setting
+# the index's tables -> the setting; Chaos on the Streets' gives its scenarios their numbers and adds them to no
+# setting: base Mordheim holds the rulebook's nine alone (William, 25 Nov 2026: "it shouldnt have the multiplayer ones")
+TABLES: dict[str, str | None] = {"scenario-table": "Mordheim 1a", "cots-table": None}
 TWO_D6 = {total: 6 - abs(total - 7) for total in range(2, 13)}  # each 2D6 total's chance in 36ths
 
 
@@ -253,5 +255,6 @@ def setting_tables(markup: str, slugs: set[str]) -> tuple[list[dict[str, Any]], 
                 raise ValueError(f"scenarios: the {table_id} names {slug}, which no page is")
             rows.append({"slug": slug, "rolls": rolls, "weight": _rolls_weight(rolls)})
             numbers[slug] = number
-        tables.append({"setting": setting, "table": table_id, "scenarios": rows})
+        if setting is not None:
+            tables.append({"setting": setting, "table": table_id, "scenarios": rows})
     return tables, numbers

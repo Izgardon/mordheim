@@ -23,8 +23,9 @@ How the build reads them:
 - `h2` and `h3` headings (and a stray `h1`) are sections in order, named the standard way (Terrain, Warbands, Set-up,
   Starting the game, Special rules, Ending the game, Experience, Wyrdstone) or in sentence case; `h4` and smaller stay
   lines in their section; a list item is a line starting "•"; a table is `{columns, rows}` placed by `{{table:N}}`;
-- the site's own notes ("info", "possible error", "possible typo" boxes) are left out; its other boxes (a letter,
-  the original experience) are the book's and read as text under their heading;
+- the site's "info" boxes (each says only that the scenario is multiplayer) are left out; its other boxes read as
+  text under their heading: the book's (a letter, the original experience) and the site's corrections ("Possible
+  typo", "Possible error"), which carry rules (William, 25 Nov 2026);
 - tagged Multiplayer or Chaos on the Streets: multiplayer, else 1v1; tagged 1v1 as well, or written for both
   (The Lost Prince), either (William, 25 Nov 2026; the import report lists them);
 - Archive Pestilen's copies of Town Cryer's Scourge & Purge, Forbidden Square and The Script of Sigmar are left

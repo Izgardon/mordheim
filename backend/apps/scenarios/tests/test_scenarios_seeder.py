@@ -1,4 +1,4 @@
-"""seed_scenarios: the import's 194 scenarios upserted by slug, Mordheim 1a's sixteen and the other settings' at their
+"""seed_scenarios: the import's 194 scenarios upserted by slug, Mordheim 1a's nine and the other settings' at their
 weights, a book scenario the import drops archived, and a table naming a setting we don't hold skipped."""
 
 import io
@@ -25,15 +25,16 @@ class SeederTests(TestCase):
         call_command("seed_scenarios", *(["--source", str(source)] if source else []), stdout=out)
         return out.getvalue()
 
-    def test_the_import_seeds_every_scenario_and_mordheims_sixteen(self) -> None:
+    def test_the_import_seeds_every_scenario_and_mordheims_nine(self) -> None:
         said = self.seed()
 
-        self.assertIn("Scenarios: 194, setting scenarios: 16", said)  # the settings not seeded here are skipped
+        self.assertIn("Scenarios: 194, setting scenarios: 9", said)  # the settings not seeded here are skipped
         hunt = Scenario.objects.get(slug="wyrdstone-hunt", campaign=None)
         self.assertEqual((hunt.name, hunt.number, hunt.players), ("Wyrdstone Hunt", "3", "1v1"))
         self.assertEqual(hunt.sections[0]["title"], "Terrain")
         weights = dict(SettingScenario.objects.filter(setting=self.mordheim).values_list("scenario__slug", "weight"))
-        self.assertEqual((len(weights), weights["skirmish"], weights["ambush-tc5"]), (16, Decimal(6), Decimal(9)))
+        self.assertEqual((len(weights), weights["skirmish"]), (9, Decimal(6)))
+        self.assertNotIn("ambush-tc5", weights)  # Chaos on the Streets' are no base Mordheim's (William, 25 Nov 2026)
 
     def test_a_second_run_upserts_and_archives_what_the_import_drops(self) -> None:
         self.seed()

@@ -1,4 +1,4 @@
-"""A campaign made through the API after the book's scenarios were seeded, so it starts with Mordheim 1a's sixteen
+"""A campaign made through the API after the book's scenarios were seeded, so it starts with Mordheim 1a's nine
 (apps/campaigns/tests/campaign_support.py's roles: the owner, an admin, two players and an outsider)."""
 
 from typing import Any

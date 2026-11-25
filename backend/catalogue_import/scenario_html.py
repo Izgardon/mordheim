@@ -4,8 +4,10 @@ each block in reading order: the title, the lines naming its source, paragraphs,
 Only the standard library's parser reads the snapshot (no downloaded code runs). Text keeps the book's words: a
 paragraph's line breaks from the PDF become spaces, a `<br>` a new line, a list item a line of its own starting "•"
 (or its number), and a table the item rules' shape (`{columns, rows}`), its place marked `{{table:N}}`. The site's
-own notes (its "info", "possible error" and "possible typo" boxes) are left out; any other box is the book's (a
-letter, the original experience) and reads as text under its heading.
+"info" boxes are left out (each says only that the scenario is multiplayer, which its icon shows); every other box
+reads as text under its heading: the book's (a letter, the original experience) and the site's corrections
+("Possible typo", "Possible error"), which carry rules (William, 25 Nov 2026: "the scenario description has important
+information in it").
 """
 
 import re
@@ -14,7 +16,7 @@ from html.parser import HTMLParser
 from typing import Any
 
 VOID = frozenset({"br", "img", "hr", "input", "meta", "link", "wbr"})
-SITE_NOTES = frozenset({"info", "possible error", "possible typo"})
+SITE_NOTES = frozenset({"info"})
 PLAIN_BOXES = frozenset({"note", "narrative content"})  # a box whose heading says nothing of its own
 SECTION_HEADINGS = frozenset({"h1", "h2", "h3"})
 INLINE_HEADINGS = frozenset({"h4", "h5", "h6"})
@@ -116,7 +118,7 @@ def _table(node: Node) -> dict[str, Any]:
 
 
 def _box(node: Node) -> list[Block]:
-    """An admonition: the site's own note is left out, any other is its heading and its content."""
+    """An admonition: the site's "info" box is left out, any other is its heading and its content."""
     parts = node.elements()
     heading = next((part for part in parts if any(c.startswith("admonitionHeading") for c in part.classes)), None)
     content = next((part for part in parts if any(c.startswith("admonitionContent") for c in part.classes)), None)

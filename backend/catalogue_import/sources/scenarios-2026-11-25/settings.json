@@ -234,7 +234,9 @@
       },
       {
        "rolls": "10",
-       "name": "Defend the Cave"
+       "name": "Defend the Cave",
+       "slug": "defend-the-tomb",
+       "why": "printed nowhere; its slot in the table is this scenario's (William, 25 Nov 2026)"
       },
       {
        "rolls": "11",
@@ -260,7 +262,9 @@
       },
       {
        "rolls": "7",
-       "name": "Great Skirmish"
+       "name": "Great Skirmish",
+       "slug": "street-brawl-tc5",
+       "why": "printed nowhere; its slot in the table is this scenario's (William, 25 Nov 2026)"
       },
       {
        "rolls": "8-9",
@@ -268,19 +272,17 @@
       },
       {
        "rolls": "10",
-       "name": "Raid"
+       "name": "Raid",
+       "slug": "tomb-raid",
+       "why": "printed nowhere; its slot in the table is this scenario's (William, 25 Nov 2026)"
       },
       {
        "rolls": "11",
-       "name": "Defend the Cave"
+       "name": "Defend the Cave",
+       "slug": "defend-the-tomb",
+       "why": "printed nowhere; its slot in the table is this scenario's (William, 25 Nov 2026)"
       }
      ]
-    }
-   ],
-   "missing": [
-    {
-     "name": "Defend the Cave, Great Skirmish and Raid",
-     "why": "named by the tables, printed nowhere in the Albion rules or on mordheimer"
     }
    ]
   },
@@ -340,7 +342,9 @@
       },
       {
        "rolls": "7",
-       "name": "Desert Skirmish"
+       "name": "Desert Skirmish",
+       "slug": "street-brawl-tc5",
+       "why": "printed nowhere; its slot in the table is this scenario's (William, 25 Nov 2026)"
       },
       {
        "rolls": "8-9",
@@ -355,12 +359,6 @@
        "slug": "one-mans-rescue-is-another-mans-kidnap"
       }
      ]
-    }
-   ],
-   "missing": [
-    {
-     "name": "Desert Skirmish",
-     "why": "named by the multi-player table, printed nowhere we hold"
     }
    ]
   },

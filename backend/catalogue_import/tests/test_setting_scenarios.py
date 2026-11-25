@@ -89,8 +89,8 @@ class SettingSnapshotTests(SimpleTestCase):
             {
                 "Empire in Flames": 18,
                 "Lustria": 15,
-                "Albion": 9,
-                "Khemri 1b": 13,
+                "Albion": 12,
+                "Khemri 1b": 14,
                 "The Nemesis Crown": 9,
                 "Relics of the Crusades": 21,
                 "Karak Azgal": 17,
@@ -126,9 +126,18 @@ class SettingSnapshotTests(SimpleTestCase):
         self.assertEqual(self.weights("Karak Azgal")["the-engineers-workshop"], 3)  # The Wizard's Mansion's place
 
     def test_a_row_we_hold_nothing_for_is_left_out_and_said(self) -> None:
-        albion = [row["name"] for row in self.tables["Albion"]["missing"]]
-        self.assertIn("Defend the Cave", albion)
-        self.assertIn("Desert Skirmish", [row["name"] for row in self.tables["Khemri 1b"]["missing"]])
+        sartosa = [row["name"] for row in self.tables["Sartosa"]["missing"]]
+        self.assertIn("Haunted Wreck (Jim Schumacher)", sartosa)
+
+    def test_a_name_printed_nowhere_points_at_the_scenario_in_its_slot(self) -> None:
+        # William, 25 Nov 2026: "check the contents briefly and see if it would make sense, if so point at them"
+        albion = {row["slug"]: row["rolls"] for row in self.tables["Albion"]["scenarios"]}
+        self.assertEqual(albion["defend-the-tomb"], "Two-player scenarios 10; Multi-player scenarios 11")
+        self.assertEqual(albion["street-brawl-tc5"], "Multi-player scenarios 7")  # Great Skirmish
+        self.assertEqual(albion["tomb-raid"], "Multi-player scenarios 10")  # Raid
+        khemri = {row["slug"]: row["rolls"] for row in self.tables["Khemri 1b"]["scenarios"]}
+        self.assertEqual(khemri["street-brawl-tc5"], "Multi-player scenarios 7")  # Desert Skirmish
+        self.assertFalse(self.tables["Albion"]["missing"] or self.tables["Khemri 1b"]["missing"])
 
     def test_a_setting_page_reads_with_its_books_number_and_source(self) -> None:
         avalanche = self.by_slug["avelanche"]

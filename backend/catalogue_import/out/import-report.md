@@ -3696,16 +3696,6 @@ Left out as copies: scourge-and-purge-archive-pestilen, scripts-of-sigmar, the-f
 - Chance Encounter: 3 (10; linked)
 - Defend the Find: 2 (11; linked)
 
-#### Mordheim 1a (cots-table)
-
-- Monster Hunt: 2 (3; linked)
-- The Wizard's Mansion: 3 (4; linked)
-- Treasure Hunt: 9 (5-6; linked)
-- Street Brawl: 6 (7; linked)
-- Ambush!: 9 (8-9; linked)
-- The Pool: 3 (10; linked)
-- The Lost Prince: 2 (11; linked)
-
 #### Empire in Flames (Two-player scenarios; Multi-player scenarios)
 
 From Empire in Flames (2004), its two scenario tables (mordheimer's Empire in Flames scenarios page holds the same) and its Beastmen scenarios.
@@ -3758,15 +3748,13 @@ From the Albion campaign rules (Martin Greminger), their two scenario tables; mo
 - Breakthrough: 4 (Two-player scenarios 5; linked)
 - Skirmish: 16 (Two-player scenarios 6-8; linked)
 - The Ogham Stones: 4 (Two-player scenarios 9; added)
+- Defend the Tomb: 5 (Two-player scenarios 10; Multi-player scenarios 11; added)
 - Chance Encounter: 2 (Two-player scenarios 11; linked)
 - Monster Hunt: 2 (Multi-player scenarios 3; linked)
 - Treasure Hunt: 9 (Multi-player scenarios 5-6; linked)
+- Street Brawl: 6 (Multi-player scenarios 7; linked)
 - Ambush!: 9 (Multi-player scenarios 8-9; linked)
-- Left out: Two-player scenarios 10: Defend the Cave
-- Left out: Multi-player scenarios 7: Great Skirmish
-- Left out: Multi-player scenarios 10: Raid
-- Left out: Multi-player scenarios 11: Defend the Cave
-- Left out: Defend the Cave, Great Skirmish and Raid. named by the tables, printed nowhere in the Albion rules or on mordheimer
+- Tomb Raid: 3 (Multi-player scenarios 10; added)
 
 #### Khemri 1b (Two-player scenarios; Multi-player scenarios)
 
@@ -3777,16 +3765,15 @@ From the Khemri Town Cryer compilation, its two scenario tables (the Khemri camp
 - Breakthrough: 4 (Two-player scenarios 5; linked)
 - Skirmish: 16 (Two-player scenarios 6-8; linked)
 - Defend the Oasis: 4 (Two-player scenarios 9; added)
-- Defend the Tomb: 3 (Two-player scenarios 10; added)
+- Defend the Tomb: 3 (Two-player scenarios 10; linked)
 - Chance Encounter: 2 (Two-player scenarios 11; linked)
 - Monster Hunt: 2 (Multi-player scenarios 3; linked)
-- Tomb Raid: 3 (Multi-player scenarios 4; added)
+- Tomb Raid: 3 (Multi-player scenarios 4; linked)
 - Treasure Hunt: 9 (Multi-player scenarios 5-6; linked)
+- Street Brawl: 6 (Multi-player scenarios 7; linked)
 - Ambush!: 9 (Multi-player scenarios 8-9; linked)
 - Protect the Prince: 3 (Multi-player scenarios 10; added)
 - One Man's Rescue is Another Man's Kidnap: 2 (Multi-player scenarios 11; added)
-- Left out: Multi-player scenarios 7: Desert Skirmish
-- Left out: Desert Skirmish. named by the multi-player table, printed nowhere we hold
 
 #### The Nemesis Crown (no table)
 

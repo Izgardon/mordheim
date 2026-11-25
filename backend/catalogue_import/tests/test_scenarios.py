@@ -32,6 +32,21 @@ Geheimnisnacht.</em></p>
 
 
 class PageTests(SimpleTestCase):
+    def test_the_sites_corrections_are_kept_and_its_info_box_left_out(self) -> None:
+        # William, 25 Nov 2026: "the scenario description has important information in it"
+        page = read_page(
+            PAGE.replace(
+                "<h2>Experience</h2>",
+                '<div class="theme-admonition"><div class="admonitionHeading_Gvgb">Possible Typo</div>'
+                '<div class="admonitionContent_BuS1"><p>Should read +1 per Skaven.</p></div></div><h2>Experience</h2>',
+            ),
+            "kidnapped",
+        )
+        rules = page["sections"][2]["text"]
+        self.assertIn("Possible Typo", rules)
+        self.assertIn("Should read +1 per Skaven.", rules)
+        self.assertNotIn("Multiplayer scenario", page["intro"])
+
     def test_a_page_reads_as_its_title_source_lines_opening_lines_and_sections(self) -> None:
         page = read_page(PAGE, "kidnapped")
 
@@ -94,11 +109,6 @@ class TableTests(SimpleTestCase):
                     "setting": "Mordheim 1a",
                     "table": "scenario-table",
                     "scenarios": [{"slug": "skirmish", "rolls": "7", "weight": 6}],
-                },  # fmt: skip
-                {
-                    "setting": "Mordheim 1a",
-                    "table": "cots-table",
-                    "scenarios": [{"slug": "treasure-hunt-tc5", "rolls": "5-6", "weight": 9}],
                 },  # fmt: skip
             ],
         )
@@ -164,10 +174,11 @@ class SnapshotTests(SimpleTestCase):
         caravan = [section["title"] for section in self.by_slug["the-caravan"]["sections"]]
         self.assertEqual(caravan[2:7], ["Special rules", "Wagons", "Rout tests", "Payment and looting", "Banditry"])
 
-    def test_mordheim_1a_adds_the_rulebooks_nine_and_chaos_on_the_streets_seven_at_their_weights(self) -> None:
+    def test_mordheim_1a_adds_the_rulebooks_nine_alone_at_their_weights(self) -> None:
+        # base Mordheim leaves Chaos on the Streets' multiplayer seven out (William, 25 Nov 2026)
         mordheim = [table for table in self.data["settings"] if table["setting"] == "Mordheim 1a"]
         weights = {row["slug"]: row["weight"] for table in mordheim for row in table["scenarios"]}
-        self.assertEqual([table["table"] for table in mordheim], ["scenario-table", "cots-table"])
+        self.assertEqual([table["table"] for table in mordheim], ["scenario-table"])
         self.assertEqual(
             weights,
             {
@@ -180,12 +191,5 @@ class SnapshotTests(SimpleTestCase):
                 "chance-encounter": 3,
                 "street-fight": 2,
                 "defend-the-find": 2,
-                "treasure-hunt-tc5": 9,
-                "ambush-tc5": 9,
-                "street-brawl-tc5": 6,
-                "wizards-mansion-tc5": 3,
-                "pool-tc5": 3,
-                "monster-hunt-tc5": 2,
-                "lost-prince-tc5": 2,
             },
         )

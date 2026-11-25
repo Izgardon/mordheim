@@ -1,4 +1,4 @@
-"""A campaign's list of scenarios (William, 24 Nov 2026): Mordheim 1a's sixteen from its creation, a ticked setting's
+"""A campaign's list of scenarios (William, 24 Nov 2026): Mordheim 1a's nine (the rulebook's) from its creation, a ticked setting's
 added and an unticked one's kept, read by every member in a fixed number of queries, and added to, weighted and
 taken from by `manage_scenarios` holders only (owners and admins), never in an archived campaign."""
 
@@ -22,25 +22,18 @@ MORDHEIMS = {
     "chance-encounter": 3.0,
     "street-fight": 2.0,
     "defend-the-find": 2.0,
-    "treasure-hunt-tc5": 9.0,
-    "ambush-tc5": 9.0,
-    "street-brawl-tc5": 6.0,
-    "wizards-mansion-tc5": 3.0,
-    "pool-tc5": 3.0,
-    "monster-hunt-tc5": 2.0,
-    "lost-prince-tc5": 2.0,
 }
 
 
 class CampaignListTests(ScenarioTestCase):
-    def test_a_new_campaign_starts_with_mordheims_sixteen_at_their_weights(self) -> None:
+    def test_a_new_campaign_starts_with_mordheims_nine_at_their_weights(self) -> None:
         self.assertEqual(self.listed(), MORDHEIMS)
 
     def test_every_member_reads_the_list_whole_and_an_outsider_gets_404(self) -> None:
         response = self.get_as(self.rival, self.url("scenarios/"))
         first = response.json()[0]
         self.assertEqual(set(first), {"id", "weight", "scenario"})
-        self.assertEqual(first["scenario"]["name"], "Ambush!")  # by name
+        self.assertEqual(first["scenario"]["name"], "Breakthrough")  # by name
         self.assertTrue(first["scenario"]["sections"])
         self.assertEqual(self.get_as(self.outsider, self.url("scenarios/")).status_code, 404)
 

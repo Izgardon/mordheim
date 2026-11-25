@@ -3065,7 +3065,7 @@
         },
         {
           "title": "Experience",
-          "text": "• +2 Putting a Skaven Out of Action. Any Hero earns +1 Experience for each enemy put out of action.\n\n• +1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n• +1 Per Enemy Out of Action. A Hero earns +1 Experience for each enemy he puts out of action.",
+          "text": "• +2 Putting a Skaven Out of Action. Any Hero earns +1 Experience for each enemy put out of action.\n\nPossible Typo\n\nThe above condition seems like a typo, and should probably read:\n\n• +1 Putting a Skaven Out of Action. Any Hero earns +1 additional Experience for each Skaven enemy put out of action.\n\n• +1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n• +1 Per Enemy Out of Action. A Hero earns +1 Experience for each enemy he puts out of action.",
           "tables": []
         }
       ],
@@ -3298,7 +3298,7 @@
         },
         {
           "title": "Experience",
-          "text": "• +1 Taking out a leader. An attacking model which takes out the defending leader earns one extra experience.\n• +1 Fame for the Winner. The winning warband gains +1 Fame.\n\n• +1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n• +1 Winning Leader. The leader of the winning warband gains +1 Experience.\n• +1 Per Enemy Out of Action. A Hero earns +1 Experience for each enemy he puts out of action.",
+          "text": "• +1 Taking out a leader. An attacking model which takes out the defending leader earns one extra experience.\n• +1 Fame for the Winner. The winning warband gains +1 Fame.\n\nPossible error\n\nNote that Fame is not a standard campaign metric. This could be left over from a pre-edit version of the game.\n\n• +1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n• +1 Winning Leader. The leader of the winning warband gains +1 Experience.\n• +1 Per Enemy Out of Action. A Hero earns +1 Experience for each enemy he puts out of action.",
           "tables": []
         },
         {
@@ -15557,47 +15557,6 @@
       ]
     },
     {
-      "setting": "Mordheim 1a",
-      "table": "cots-table",
-      "scenarios": [
-        {
-          "slug": "monster-hunt-tc5",
-          "rolls": "3",
-          "weight": 2
-        },
-        {
-          "slug": "wizards-mansion-tc5",
-          "rolls": "4",
-          "weight": 3
-        },
-        {
-          "slug": "treasure-hunt-tc5",
-          "rolls": "5-6",
-          "weight": 9
-        },
-        {
-          "slug": "street-brawl-tc5",
-          "rolls": "7",
-          "weight": 6
-        },
-        {
-          "slug": "ambush-tc5",
-          "rolls": "8-9",
-          "weight": 9
-        },
-        {
-          "slug": "pool-tc5",
-          "rolls": "10",
-          "weight": 3
-        },
-        {
-          "slug": "lost-prince-tc5",
-          "rolls": "11",
-          "weight": 2
-        }
-      ]
-    },
-    {
       "setting": "Empire in Flames",
       "table": "Two-player scenarios; Multi-player scenarios",
       "scenarios": [
@@ -15808,6 +15767,11 @@
           "weight": 4
         },
         {
+          "slug": "defend-the-tomb",
+          "rolls": "Two-player scenarios 10; Multi-player scenarios 11",
+          "weight": 5
+        },
+        {
           "slug": "chance-encounter",
           "rolls": "Two-player scenarios 11",
           "weight": 2
@@ -15823,37 +15787,22 @@
           "weight": 9
         },
         {
+          "slug": "street-brawl-tc5",
+          "rolls": "Multi-player scenarios 7",
+          "weight": 6
+        },
+        {
           "slug": "ambush-tc5",
           "rolls": "Multi-player scenarios 8-9",
           "weight": 9
+        },
+        {
+          "slug": "tomb-raid",
+          "rolls": "Multi-player scenarios 10",
+          "weight": 3
         }
       ],
-      "missing": [
-        {
-          "table": "Two-player scenarios",
-          "rolls": "10",
-          "name": "Defend the Cave"
-        },
-        {
-          "table": "Multi-player scenarios",
-          "rolls": "7",
-          "name": "Great Skirmish"
-        },
-        {
-          "table": "Multi-player scenarios",
-          "rolls": "10",
-          "name": "Raid"
-        },
-        {
-          "table": "Multi-player scenarios",
-          "rolls": "11",
-          "name": "Defend the Cave"
-        },
-        {
-          "name": "Defend the Cave, Great Skirmish and Raid",
-          "why": "named by the tables, printed nowhere in the Albion rules or on mordheimer"
-        }
-      ],
+      "missing": [],
       "from": "the Albion campaign rules (Martin Greminger), their two scenario tables; mordheimer's Albion page has a shorter table of the three Town Cryer scenarios alone"
     },
     {
@@ -15911,6 +15860,11 @@
           "weight": 9
         },
         {
+          "slug": "street-brawl-tc5",
+          "rolls": "Multi-player scenarios 7",
+          "weight": 6
+        },
+        {
           "slug": "ambush-tc5",
           "rolls": "Multi-player scenarios 8-9",
           "weight": 9
@@ -15926,17 +15880,7 @@
           "weight": 2
         }
       ],
-      "missing": [
-        {
-          "table": "Multi-player scenarios",
-          "rolls": "7",
-          "name": "Desert Skirmish"
-        },
-        {
-          "name": "Desert Skirmish",
-          "why": "named by the multi-player table, printed nowhere we hold"
-        }
-      ],
+      "missing": [],
       "from": "the Khemri Town Cryer compilation, its two scenario tables (the Khemri campaign rules hold the same), and mordheimer's pages of the Khemri scenarios"
     },
     {

@@ -23,6 +23,7 @@ class DrawTests(ScenarioTestCase):
         self.assertAlmostEqual(drawn["skirmish"] / 2000, 3 / 8, delta=0.04)  # skirmish 3 against occupy's 5
 
     def test_1v1_and_multiplayer_scenarios_are_both_drawn(self) -> None:
+        CampaignScenario.objects.create(campaign=self.campaign, scenario=self.book("ambush-tc5"), weight=Decimal(9))
         rng = random.Random(1)
         drawn = {draw(self.campaign.id, rng).scenario.players for _ in range(200)}  # type: ignore[union-attr]
         self.assertLessEqual({"1v1", "multiplayer"}, drawn)
