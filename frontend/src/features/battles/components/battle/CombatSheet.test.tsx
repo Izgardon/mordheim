@@ -73,8 +73,6 @@ describe("the combat sheet's layout", () => {
     expect(within(yours).getByText("Yours")).not.toHaveClass("flex-1");
     expect(within(theirs).getByLabelText("T").closest("label")).toHaveClass("text-right");
     expect(within(yours).getByLabelText("S").closest("label")).not.toHaveClass("text-right");
-    expect(within(yours).getByRole("combobox", { name: "Yours" })).toBeInTheDocument();
-    expect(within(theirs).getByRole("combobox", { name: "Theirs" })).toBeInTheDocument();
     expect(numbers("Yours")).toEqual(["WS", "S"]);
     expect(numbers("Theirs")).toEqual(["WS", "T", "Sv"]);
   });
@@ -108,5 +106,62 @@ describe("the Misfire chart (William, 24 Nov 2026)", () => {
   it("is not in Melee", () => {
     show();
     expect(screen.queryByRole("button", { name: MISFIRE })).toBeNull();
+  });
+});
+
+describe('the pickers\' first pick (William, 25 Nov 2026: "just default to the top result")', () => {
+  const yours = [
+    {
+      key: "hero:1",
+      name: "Captain Wolf",
+      stats: { weapon_skill: 4, ballistic_skill: 5, strength: 3 },
+      section: "Heroes",
+    },
+    { key: "hero:2", name: "Sergeant", stats: { weapon_skill: 3, strength: 4 }, section: "Heroes" },
+  ];
+  const theirs = [
+    {
+      key: "hero:9",
+      name: "Black Fang",
+      stats: { weapon_skill: 5, toughness: 4, armour_save: 5 },
+      section: "Heroes",
+    },
+  ];
+  const box = (side: string, label: string) =>
+    within(screen.getByRole("group", { name: side })).getByLabelText(label);
+
+  it("starts Yours and Theirs on their top model, its numbers filled in", () => {
+    render(<CombatSheet kind="melee" yours={yours} theirs={theirs} onOpenChange={vi.fn()} />);
+
+    expect(screen.getByRole("combobox", { name: "Yours" })).toHaveTextContent("Captain Wolf");
+    expect(screen.getByRole("combobox", { name: "Theirs" })).toHaveTextContent("Black Fang");
+    expect(box("Yours", "WS")).toHaveValue(4);
+    expect(box("Yours", "S")).toHaveValue(3);
+    expect(box("Theirs", "WS")).toHaveValue(5);
+    expect(box("Theirs", "T")).toHaveValue(4);
+    expect(box("Theirs", "Sv")).toHaveValue(5);
+  });
+
+  it("reads your BS for Ranged, and the boxes stay typeable", async () => {
+    const user = setupUser();
+    render(<CombatSheet kind="ranged" yours={yours} theirs={theirs} onOpenChange={vi.fn()} />);
+
+    expect(box("Yours", "BS")).toHaveValue(5);
+    await user.clear(box("Theirs", "T"));
+    await user.type(box("Theirs", "T"), "6");
+    expect(box("Theirs", "T")).toHaveValue(6);
+  });
+
+  it("offers no Type the numbers, and no picker at all with nobody to pick", async () => {
+    const user = setupUser();
+    render(<CombatSheet kind="melee" yours={yours} theirs={[]} onOpenChange={vi.fn()} />);
+
+    expect(screen.queryByRole("combobox", { name: "Theirs" })).toBeNull();
+    expect(box("Theirs", "T")).toBeInTheDocument();
+    await user.click(screen.getByRole("combobox", { name: "Yours" }));
+    expect(screen.getAllByRole("option").map((option) => option.textContent)).toEqual([
+      "Captain Wolf",
+      "Sergeant",
+    ]);
   });
 });

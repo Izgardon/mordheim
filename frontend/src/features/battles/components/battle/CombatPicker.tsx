@@ -10,9 +10,6 @@ export type CombatOption = {
   section?: string;
 };
 
-/** The picker's first row, which leaves the numbers to type. */
-const TYPED = "typed";
-
 /** The options under their headings, in the order they first come. */
 function bySection(options: CombatOption[]): SelectSection[] {
   const sections: SelectSection[] = [];
@@ -28,7 +25,10 @@ function bySection(options: CombatOption[]): SelectSection[] {
   return sections;
 }
 
-/** Yours or Theirs: "Type the numbers", then the models under their headings. */
+/**
+ * Yours or Theirs: the models under their headings (William, 25 Nov 2026: "remove type the numbers
+ * as an option"). With none to pick from there is no picker: the numbers are typed.
+ */
 export default function CombatPicker({
   label,
   options,
@@ -51,16 +51,15 @@ export default function CombatPicker({
       )}
     >
       {label}
-      <SectionedSelect
-        aria-label={label}
-        className="h-11 min-w-0 pl-2 md:h-11"
-        value={value || TYPED}
-        onValueChange={(next) => onChange(next === TYPED ? "" : next)}
-        sections={[
-          { label: "", options: [{ value: TYPED, label: "Type the numbers" }] },
-          ...bySection(options),
-        ]}
-      />
+      {options.length > 0 ? (
+        <SectionedSelect
+          aria-label={label}
+          className="h-11 min-w-0 pl-2 md:h-11"
+          value={value}
+          onValueChange={onChange}
+          sections={bySection(options)}
+        />
+      ) : null}
     </div>
   );
 }

@@ -13,13 +13,14 @@ const OPTIONS: CombatOption[] = [
 ];
 
 describe("CombatPicker", () => {
-  it("offers Type the numbers, then the models under their headings", async () => {
+  it("offers only the models, under their headings (William, 25 Nov 2026)", async () => {
     const user = setupUser();
-    render(<CombatPicker label="Yours" options={OPTIONS} value="" onChange={vi.fn()} />);
+    render(<CombatPicker label="Yours" options={OPTIONS} value="hero:1" onChange={vi.fn()} />);
 
     const picker = screen.getByRole("combobox", { name: "Yours" });
-    expect(picker).toHaveTextContent("Type the numbers");
+    expect(picker).toHaveTextContent("Vrask the Hidden");
     await user.click(picker);
+    expect(screen.queryByRole("option", { name: "Type the numbers" })).toBeNull();
 
     const heroes = screen.getByRole("group", { name: "Heroes" });
     expect(
@@ -30,20 +31,19 @@ describe("CombatPicker", () => {
     expect(screen.getByRole("group", { name: "Henchmen" })).toHaveTextContent("Verminkin 1");
   });
 
-  it("sends the model's key, and nothing for Type the numbers", async () => {
+  it("sends the model's key", async () => {
     const user = setupUser();
     const onChange = vi.fn();
-    const { rerender } = render(
-      <CombatPicker label="Theirs" options={OPTIONS} value="" onChange={onChange} />
-    );
+    render(<CombatPicker label="Theirs" options={OPTIONS} value="hero:1" onChange={onChange} />);
 
     await pickOption(user, screen.getByRole("combobox", { name: "Theirs" }), "Verminkin 1");
     expect(onChange).toHaveBeenLastCalledWith("henchman:4");
+  });
 
-    rerender(
-      <CombatPicker label="Theirs" options={OPTIONS} value="henchman:4" onChange={onChange} />
-    );
-    await pickOption(user, screen.getByRole("combobox", { name: "Theirs" }), "Type the numbers");
-    expect(onChange).toHaveBeenLastCalledWith("");
+  it("shows no picker with no models: the numbers are typed", () => {
+    render(<CombatPicker label="Theirs" options={[]} value="" onChange={vi.fn()} />);
+
+    expect(screen.getByText("Theirs")).toBeInTheDocument();
+    expect(screen.queryByRole("combobox")).toBeNull();
   });
 });

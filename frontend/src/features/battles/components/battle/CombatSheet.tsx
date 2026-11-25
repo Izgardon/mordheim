@@ -93,8 +93,8 @@ function Result({ label, value }: { label: string; value: string }) {
 }
 
 /**
- * Melee and Ranged (design E): pick your model and theirs (or type the numbers) for the roll to
- * hit, to wound and the save left; the critical hit tables sit underneath, minimised. Yours and
+ * Melee and Ranged (design E): your model and theirs, the top of each list at first, and their
+ * numbers, which stay typeable, give the roll to hit, to wound and the save left; the critical hit tables sit underneath, minimised. Yours and
  * Theirs are two columns, each picker over its numbers at the column's width, so nothing is cut
  * off on a phone (William, 24 Nov 2026: "2 columns of yours and theirs with all inputs taking up
  * full width").
@@ -115,7 +115,6 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
     save: "",
   });
   const [modifiers, setModifiers] = useState<string[]>([]);
-  useEffect(() => setModifiers([]), [kind]);
 
   const fromStats = (
     stats: Partial<UnitStats>,
@@ -137,6 +136,16 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
     const option = theirs.find((entry) => entry.key === key);
     if (option) setTheir(fromStats(option.stats, "weapon_skill"));
   };
+  // each opening starts on the top model of each side, its numbers filled in (William, 25 Nov
+  // 2026: "just default to the top result"); the boxes stay editable
+  useEffect(() => {
+    setModifiers([]);
+    if (!kind) return;
+    pickMine(yours[0]?.key ?? "");
+    pickTheirs(theirs[0]?.key ?? "");
+    // the options as they stand when it opens; a later change leaves the pick alone
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kind]);
 
   const modifier = RANGED_MODIFIERS.filter((entry) => modifiers.includes(entry.id)).reduce(
     (sum, entry) => sum + entry.value,
