@@ -8,7 +8,12 @@ import type { KillInput } from "@/features/battles/hooks/useBattleScreen";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 
-import { victimOptions, type BattleSide, type BattleUnitView } from "./battle-units";
+import {
+  pickableVictims,
+  victimOptions,
+  type BattleSide,
+  type BattleUnitView,
+} from "./battle-units";
 import KillVictims from "./KillVictims";
 
 /** Who is logging the kill: one unit, or a henchmen group whose model is picked in the sheet. */
@@ -80,7 +85,7 @@ export default function KillSheet({
 
   const side = sides.find((entry) => entry.id === sideId) ?? sides[0];
   const victims = useMemo(() => (side ? victimOptions(side, rosters) : []), [rosters, side]);
-  const victim = victims.find((entry) => entry.id === victimId) ?? null;
+  const victim = pickableVictims(victims).find((entry) => entry.id === victimId) ?? null;
   const name = typed.trim();
   const ready = Boolean(modelKey) && (victim !== null || name.length > 0);
 

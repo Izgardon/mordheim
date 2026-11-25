@@ -289,7 +289,13 @@ export type VictimOption = {
   marker: UnitMarker;
   unitKey?: string;
   neutralKey?: string;
+  /** A henchmen group's standing members: the group opens to them, and one of them is picked. */
+  members?: VictimOption[];
 };
+
+/** Every option that can be picked: the rows themselves, and a group's members in its place. */
+export const pickableVictims = (victims: VictimOption[]) =>
+  victims.flatMap((entry) => entry.members ?? [entry]);
 
 /**
  * A henchmen group of animals, as the warband page's paw marks it: recruited from a creature, or
@@ -338,14 +344,22 @@ export function victimOptions(
       return up.length
         ? [
             {
-              id: up[0].unit.key,
+              id: `group:${group.id}`,
               name: group.name || group.unitType,
               detail: [
                 distinctType({ unitType: group.unitType, displayName: group.name }) || "Henchmen",
                 `${up.length} of ${members.length} standing`,
               ].join(" · "),
               marker: animalGroup(group, up[0].unit) ? ("animal" as const) : ("henchmen" as const),
-              unitKey: up[0].unit.key,
+              members: up.map((entry) => ({
+                id: entry.unit.key,
+                name: entry.unit.displayName,
+                detail: STATUS_LABEL[entry.status].toLowerCase(),
+                marker: animalGroup(group, entry.unit)
+                  ? ("animal" as const)
+                  : ("henchmen" as const),
+                unitKey: entry.unit.key,
+              })),
             },
           ]
         : [];

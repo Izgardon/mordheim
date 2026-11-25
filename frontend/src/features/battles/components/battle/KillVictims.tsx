@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { ChevronRight } from "lucide-react";
+
 import { UNIT_MARKER_ICONS, type UnitMarker } from "@/components/ui/game-icons";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -23,7 +26,102 @@ function VictimMarker({ marker }: { marker: UnitMarker }) {
   );
 }
 
-/** The kill sheet's victims on one side, each with its mark, then Someone else with a typed name. */
+/** One victim to pick: the box, the mark, the name and what it is. */
+function VictimRow({
+  entry,
+  on,
+  onPick,
+}: {
+  entry: VictimOption;
+  on: boolean;
+  onPick: (id: string) => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={on}
+      onClick={() => onPick(entry.id)}
+      className={cn(
+        "flex min-h-12 w-full items-center gap-3 border-t border-line px-2.5 py-1 text-left",
+        on && "bg-accent-soft"
+      )}
+    >
+      <span
+        aria-hidden="true"
+        className={cn(
+          "h-4 w-4 shrink-0 border-2",
+          on ? "border-primary bg-primary" : "border-strong bg-transparent"
+        )}
+      />
+      <VictimMarker marker={entry.marker} />
+      <span className="flex flex-col">
+        <span className="text-sm font-semibold text-ink">{entry.name}</span>
+        <span className="text-xs text-muted-foreground">{entry.detail}</span>
+      </span>
+    </button>
+  );
+}
+
+/**
+ * A henchmen group opens to its standing members (William, 25 Nov 2026: "clicking the group should
+ * expand it and show a list of henchmen names rather than the group being the checkbox").
+ */
+function VictimGroup({
+  entry,
+  victimId,
+  onPick,
+}: {
+  entry: VictimOption & { members: VictimOption[] };
+  victimId: string | null;
+  onPick: (id: string) => void;
+}) {
+  const holdsPick = entry.members.some((member) => member.id === victimId);
+  const [open, setOpen] = useState(holdsPick);
+  const shown = open || holdsPick;
+  return (
+    <div>
+      <button
+        type="button"
+        aria-expanded={shown}
+        onClick={() => setOpen(!shown)}
+        className={cn(
+          "flex min-h-12 w-full items-center gap-3 border-t border-line px-2.5 py-1 text-left",
+          holdsPick && "bg-accent-soft"
+        )}
+      >
+        <ChevronRight
+          aria-hidden="true"
+          className={cn(
+            "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
+            shown && "rotate-90"
+          )}
+        />
+        <VictimMarker marker={entry.marker} />
+        <span className="flex flex-col">
+          <span className="text-sm font-semibold text-ink">{entry.name}</span>
+          <span className="text-xs text-muted-foreground">{entry.detail}</span>
+        </span>
+      </button>
+      {shown ? (
+        <div
+          role="group"
+          aria-label={entry.name}
+          className="border-l-[3px] border-l-accent-line bg-page"
+        >
+          {entry.members.map((member) => (
+            <VictimRow key={member.id} entry={member} on={member.id === victimId} onPick={onPick} />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * The kill sheet's victims on one side, each with its mark (a henchmen group opening to its
+ * members), then Someone else with a typed name.
+ */
 export default function KillVictims({
   victims,
   victimId,
@@ -39,35 +137,18 @@ export default function KillVictims({
 }) {
   return (
     <div role="radiogroup" aria-label="Victim" className="flex flex-col">
-      {victims.map((entry) => {
-        const on = entry.id === victimId;
-        return (
-          <button
+      {victims.map((entry) =>
+        entry.members ? (
+          <VictimGroup
             key={entry.id}
-            type="button"
-            role="radio"
-            aria-checked={on}
-            onClick={() => onPick(entry.id)}
-            className={cn(
-              "flex min-h-12 items-center gap-3 border-t border-line px-2.5 py-1 text-left",
-              on && "bg-accent-soft"
-            )}
-          >
-            <span
-              aria-hidden="true"
-              className={cn(
-                "h-4 w-4 shrink-0 border-2",
-                on ? "border-primary bg-primary" : "border-strong bg-transparent"
-              )}
-            />
-            <VictimMarker marker={entry.marker} />
-            <span className="flex flex-col">
-              <span className="text-sm font-semibold text-ink">{entry.name}</span>
-              <span className="text-xs text-muted-foreground">{entry.detail}</span>
-            </span>
-          </button>
-        );
-      })}
+            entry={{ ...entry, members: entry.members }}
+            victimId={victimId}
+            onPick={onPick}
+          />
+        ) : (
+          <VictimRow key={entry.id} entry={entry} on={entry.id === victimId} onPick={onPick} />
+        )
+      )}
       {victims.length === 0 ? (
         <p className="m-0 border-t border-line px-2.5 py-3 text-sm text-muted-foreground">
           Nobody left standing here.

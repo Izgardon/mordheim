@@ -45,7 +45,7 @@ const VERMIN: BattleNeutralGroup = {
   ],
 };
 
-function show() {
+function show(onSave = vi.fn().mockResolvedValue(undefined)) {
   const rosters = toParticipantRosters(battleRosters());
   // the opponent logs a kill on the owner's warband, or on the neutral group
   const theirs = opponentParticipant();
@@ -60,7 +60,7 @@ function show() {
       sides={sides}
       rosters={rosters}
       onOpenChange={vi.fn()}
-      onSave={vi.fn().mockResolvedValue(undefined)}
+      onSave={onSave}
     />
   );
 }
@@ -80,10 +80,37 @@ describe("the kill sheet's victims", () => {
     expect(rows()).toEqual([
       ["hero", "Captain WolfCaptain · hero"],
       ["hero", "RolfChampion · hero"],
-      ["henchmen", "YoungbloodsYoungblood · 1 of 1 standing"],
       ["hired", "Ogre BodyguardOgre · hired sword"],
     ]);
+    const group = screen.getByRole("button", { name: /Youngbloods/ });
+    expect(group).toHaveTextContent("YoungbloodsYoungblood · 1 of 1 standing");
+    expect(group.querySelector("[data-marker]")?.getAttribute("data-marker")).toBe("henchmen");
     expect(screen.queryByText(/^A /)).toBeNull();
+  });
+
+  it("opens a henchmen group to its members, one of whom is the victim", async () => {
+    const user = setupUser();
+    const onSave = vi.fn().mockResolvedValue(undefined);
+    show(onSave);
+    const member = battleSections(myParticipant(), toParticipantRosters(battleRosters())[ME.id])
+      .groups[0].members[0].unit;
+
+    const group = screen.getByRole("button", { name: /Youngbloods/ });
+    expect(group).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("group", { name: "Youngbloods" })).toBeNull();
+    await user.click(group);
+
+    expect(group).toHaveAttribute("aria-expanded", "true");
+    const members = within(screen.getByRole("group", { name: "Youngbloods" })).getAllByRole(
+      "radio"
+    );
+    expect(members.map((row) => row.textContent)).toEqual([`${member.displayName}standing`]);
+    await user.click(members[0]);
+    await user.click(screen.getByRole("button", { name: "Log kill" }));
+
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({ victim: { unitKey: member.key } })
+    );
   });
 
   it("gives a neutral group's tab its name alone, its creatures by their own type", async () => {
