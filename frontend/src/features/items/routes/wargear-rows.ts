@@ -18,6 +18,7 @@ import {
   type StoreCategory,
 } from "../store/store-items";
 import type { Item, ItemAvailability, ItemOffer } from "../types/item-types";
+import { isSold } from "../utils/item-listing";
 
 /** A Wargear row: the item, the price row the warband sees, its offer, and why it can't usually. */
 export type WargearRowData = {
@@ -43,7 +44,8 @@ type WargearFilters = {
 };
 
 /**
- * Wargear's rows and filters: the items in play in the campaign (`inPlayOnly`), each with the price
+ * Wargear's rows and filters: the items in play in the campaign (`inPlayOnly`) that the shop sells (an unsold
+ * beast's item lives on the Bestiary page only: William, 25 Nov 2026), each with the price
  * row the warband sees (the server's), the rows searched, kind and setting counts (Mordheim's
  * grades as one), and the summary line.
  */
@@ -52,6 +54,7 @@ export function useWargearRows(filters: WargearFilters) {
   const all = useMemo<WargearRowData[]>(
     () =>
       inPlayOnly(items)
+        .filter(isSold)
         .sort((a, b) => itemName(a).localeCompare(itemName(b)))
         .map((item) => {
           const offer = offers ? offers.get(item.id) : undefined;
