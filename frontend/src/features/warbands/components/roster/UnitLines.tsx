@@ -1,6 +1,8 @@
 import { GameIcon, type GameIconName } from "@/components/ui/game-icons";
+import { cn } from "@/lib/utils";
 import type { Item } from "@/features/items/types/item-types";
 
+import { sectionIconColour } from "./UnitSectionLabel";
 import { boxRows, type RosterUnit } from "./unit-view";
 
 /** A closed card's line: its kind's icon (named for screen readers and on hover) and its names. */
@@ -54,7 +56,7 @@ export default function UnitLines({
         <div key={line.label} className="flex items-baseline gap-3">
           <p className="m-0 min-w-0 break-words text-[13px] text-text2">
             <span className={CAPTION} title={line.label}>
-              <GameIcon name={line.icon} className="h-4 w-4 text-accent-text" />
+              <GameIcon name={line.icon} className={cn("h-4 w-4", sectionIconColour(line.icon))} />
               <span className="sr-only">{line.label}</span>
             </span>
             {line.names.join(", ")}

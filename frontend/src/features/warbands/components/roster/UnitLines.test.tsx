@@ -71,6 +71,17 @@ describe("A closed card's lines", () => {
     expect(screen.getAllByText(/^XP /)).toHaveLength(1);
   });
 
+  // William, 25 Nov 2026: the line of icons takes each kind's colour, as its boxes do
+  it("colour each line's icon in its kind's colour", () => {
+    renderCard({ kind: "hero", unit: wizard });
+
+    const icon = (label: string) => screen.getByText(label).parentElement?.querySelector("svg");
+    expect(icon("Items")).toHaveClass("text-kind-item");
+    expect(icon("Skills")).toHaveClass("text-kind-skill");
+    expect(icon("Spells")).toHaveClass("text-kind-spell");
+    expect(icon("Boons & Banes")).toHaveClass("text-kind-special");
+  });
+
   it("leave out a kind he has none of", () => {
     renderCard({ kind: "hero", unit: { ...wizard, skills: [], spells: [] } });
 

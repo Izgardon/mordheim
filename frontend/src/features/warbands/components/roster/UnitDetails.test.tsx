@@ -13,6 +13,7 @@ import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 import {
   dagger,
+  makeHenchmenGroup,
   makeHero,
   makeItem,
   makeVeteranHenchmenGroup,
@@ -393,6 +394,7 @@ describe("An open card's boxes", () => {
           onMoveItem={vi.fn()}
           onSellItem={vi.fn()}
           onBuyAgain={vi.fn()}
+          onRide={vi.fn()}
           onLoadout={vi.fn()}
           campaignId={1}
           warbandId={9}
@@ -485,6 +487,7 @@ describe("An open group's members", () => {
           onMoveItem={vi.fn()}
           onSellItem={vi.fn()}
           onBuyAgain={vi.fn()}
+          onRide={vi.fn()}
           onLoadout={vi.fn()}
           campaignId={1}
           warbandId={9}
@@ -502,5 +505,177 @@ describe("An open group's members", () => {
     const list = await screen.findByRole("dialog", { name: "Kills of Blade One" });
     expect(await within(list).findByText("Snikrit in melee")).toBeInTheDocument();
     expect(within(list).queryByText(/Skab/)).not.toBeInTheDocument();
+  });
+});
+
+// William, 25 Nov 2026: section icons in their kind's colour; creatures and pets stand out like a
+// mount; a mount's panel rides, a creature's makes henchmen; the actions in one row above the rules;
+// on a phone the panel under the tapped box's line
+describe("An open card's beasts and panels", () => {
+  const beast = (id: number, name: string, kind: "mount" | "pet" | "creature") => ({
+    id,
+    name,
+    kind,
+    has_profile: true,
+    movement: 6,
+    weapon_skill: 4,
+    ballistic_skill: 0,
+    strength: 4,
+    toughness: 3,
+    wounds: 1,
+    initiative: 4,
+    attacks: 1,
+    leadership: 5,
+    armour_save: null,
+    specials: [{ id: id + 100, name: `${name} rule`, description: `What a ${name} does.` }],
+  });
+  const animal = (id: number, row: number, name: string, kind: "mount" | "pet" | "creature") =>
+    makeItem({
+      id,
+      row_id: row,
+      name,
+      type: "Animal",
+      beast_kind: kind,
+      companion: false,
+      bestiary_entry: beast(id + 1000, name, kind),
+    });
+  const warhorse = animal(201, 31, "Warhorse", "mount");
+  const wardog = animal(202, 32, "Wardog", "creature");
+  const polecat = animal(203, 34, "Polecat", "pet");
+  const hero: RosterUnit = {
+    kind: "hero",
+    unit: makeHero({
+      id: 5,
+      name: "Aldric Voss",
+      items: [sword, warhorse, wardog, { ...wardog, row_id: 33 }, polecat],
+      skills: [{ id: 7, name: "Strike to Injure", description: "" }],
+      spells: [spell({ id: 301, name: "Fires of U'Zhul", type: "Lesser Magic", dc: 7 })],
+      specials: [{ id: 2, name: "Hatred", type: "Psychology", kind: "boon", category: "aura" }],
+    }),
+  };
+  const dogs: RosterUnit = {
+    kind: "henchmen_group",
+    unit: makeHenchmenGroup({
+      id: 21,
+      name: "Hounds",
+      unit_type: "Wardog",
+      source_beast_id: 1202,
+      henchmen: [{ id: 1, name: "", dead: false } as never],
+    }),
+  };
+  const renderDetails = (onRide = vi.fn()) =>
+    renderWithQueryClient(
+      <MemoryRouter>
+        <UnitDetails
+          entry={hero}
+          campaign={{ id: 1 } as CampaignSummary}
+          canEdit
+          others={[dogs]}
+          onXp={vi.fn()}
+          onMoveItem={vi.fn()}
+          onSellItem={vi.fn()}
+          onBuyAgain={vi.fn()}
+          onRide={onRide}
+          onLoadout={vi.fn()}
+          campaignId={1}
+          warbandId={9}
+          onPick={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+  const box = (name: RegExp) => screen.getByRole("button", { name });
+
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /skill-groups/?campaign_id=1", [skillGroup({ id: 10, skill_ids: [7] })]);
+  });
+  afterEach(() => {
+    mobile = false;
+  });
+
+  it("colour each section heading's icon in its kind's colour", () => {
+    renderDetails();
+
+    const icon = (label: string) => screen.getByText(label).querySelector("svg");
+    expect(icon("Items")).toHaveClass("text-kind-item");
+    expect(icon("Skills")).toHaveClass("text-kind-skill");
+    expect(icon("Boons & Banes")).toHaveClass("text-kind-special");
+    expect(icon("Spells")).toHaveClass("text-kind-spell");
+  });
+
+  it("highlight a creature and a pet as a mount is, and leave a sword an item", () => {
+    renderDetails();
+
+    for (const name of [/^Warhorse/, /^Polecat/]) {
+      expect(box(name)).toHaveAttribute("data-kind", "beast");
+      expect(box(name)).toHaveClass("bg-accent-soft");
+    }
+    for (const tile of screen.getAllByRole("button", { name: /^Wardog/ }))
+      expect(tile).toHaveAttribute("data-kind", "beast");
+    expect(box(/^Sword/)).toHaveAttribute("data-kind", "item");
+  });
+
+  it("ride a mount from its panel, the main action first in one row above its rules", async () => {
+    const onRide = vi.fn();
+    const user = setupUser();
+    renderDetails(onRide);
+    await user.click(box(/^Warhorse/));
+
+    const row = screen.getByTestId("item-actions");
+    // the Move to picker is a combobox
+    expect(
+      Array.from(row.querySelectorAll("button"), (button) =>
+        button.getAttribute("role") === "combobox"
+          ? button.getAttribute("aria-label")
+          : button.textContent
+      )
+    ).toEqual(["Ride", "Move to", "Stash", "Sell", "Buy again"]);
+    const rule = screen.getByText(/What a Warhorse does\./);
+    expect(row.compareDocumentPosition(rule) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+    await user.click(within(row).getByRole("button", { name: "Ride" }));
+    expect(onRide).toHaveBeenCalledWith(31, true);
+  });
+
+  it("make henchmen of a creature's copies, joining a group of the same beast", async () => {
+    fakeApi.on("POST /warbands/9/beasts/recruit/", {
+      group: dogs.unit,
+      source: hero.unit,
+      stash_item: null,
+      removed_stash_item_id: null,
+      summary: {},
+      warnings: [],
+    });
+    const user = setupUser();
+    renderDetails();
+    await user.click(screen.getAllByRole("button", { name: /^Wardog/ })[0]);
+    await user.click(screen.getByRole("button", { name: "Make henchmen" }));
+
+    const sheet = await screen.findByRole("dialog", { name: "Make henchmen" });
+    await user.click(within(sheet).getByRole("button", { name: "Hounds ×1" }));
+    await user.click(within(sheet).getByRole("button", { name: "Make 2 henchmen" }));
+
+    expect(fakeApi.bodyOf("POST /warbands/9/beasts/recruit/")).toEqual({
+      source: { type: "hero", id: 5, item_id: 202 },
+      quantity: 2,
+      target: { group_id: 21 },
+    });
+  });
+
+  it("open a box's panel under its line of two on a phone", async () => {
+    mobile = true;
+    const user = setupUser();
+    renderDetails();
+    await user.click(box(/^Sword/));
+
+    // Sword and Warhorse share the first line: the panel follows Warhorse
+    const cells = Array.from(box(/^Sword/).parentElement?.children ?? []);
+    const at = cells.findIndex((cell) => cell.getAttribute("data-testid") === "box-panel");
+    expect(cells[at - 1]).toHaveTextContent(/^Warhorse/);
+
+    await user.click(box(/^Polecat/));
+    const after = Array.from(box(/^Sword/).parentElement?.children ?? []);
+    const next = after.findIndex((cell) => cell.getAttribute("data-testid") === "box-panel");
+    expect(after[next - 1]).toHaveTextContent(/^Add item/);
   });
 });

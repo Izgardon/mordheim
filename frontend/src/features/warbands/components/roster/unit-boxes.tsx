@@ -105,3 +105,11 @@ export function entryBoxes(unit: RosterUnit, list: PendingList, entries: Entry[]
     })),
   ];
 }
+
+/**
+ * On a phone, where a row's boxes sit two abreast, the cell an opened box's panel follows: the
+ * last of the line holding the box (William, 25 Nov 2026: "directly under the line of the box that
+ * was tapped"), or the row's last cell when the line isn't full.
+ */
+export const panelAfter = (index: number, cells: number) =>
+  Math.min(index - (index % 2) + 1, cells - 1);

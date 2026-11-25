@@ -414,7 +414,9 @@ table thead th {
     --color-kind-item: #cd9a5b;
     --color-kind-skill: #93c47d;
     --color-kind-special: #e3b55a;
-    --color-kind-spell: #7fa8ee;
+    /* spells a muted, deeper royal blue (William, 25 Nov 2026: "a bit less intense and darker"), beside the
+       green's and bronze's weight; 5.7:1 on the panel */
+    --color-kind-spell: #7a95c4;
     --color-boon: #d9c27e;
     /* a roster card's trim by unit kind (its left stripe, the gem before its name, its type line):
        heroes gold, hired swords silver, henchmen bronze; as text, AA on the card's surface */
@@ -481,7 +483,7 @@ table thead th {
     --color-kind-item: #8a5320;
     --color-kind-skill: #3f6e2b;
     --color-kind-special: #80560a;
-    --color-kind-spell: #2a4f9a;
+    --color-kind-spell: #2f4a80; /* 8.2:1 on the panel */
     --color-boon: #7a5c12;
     /* gold yellower and bronze a redder brown, so the two read apart on the light card (William:
        "yes" to pushing them apart); both AA as text on it, 5.2:1 and 7.6:1 */

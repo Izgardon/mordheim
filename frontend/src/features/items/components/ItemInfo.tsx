@@ -17,6 +17,8 @@ type ItemInfoProps = {
   /** The price row whose cost and rarity it shows (the one the warband sees). */
   availability: ItemAvailability | null;
   onClose: () => void;
+  /** What the warband can do with the copy it holds, above the details (Make henchmen). */
+  actions?: ReactNode;
 };
 
 /**
@@ -25,7 +27,7 @@ type ItemInfoProps = {
  * summaries and D6 tables as its Wargear card reads them, without the flavour. Its header closes
  * it, as the X does (William, 22 Nov 2026).
  */
-export default function ItemInfo({ item, availability, onClose }: ItemInfoProps) {
+export default function ItemInfo({ item, availability, onClose, actions }: ItemInfoProps) {
   const heading = useId();
   const who = availability?.who_text ?? "";
   return (
@@ -48,6 +50,7 @@ export default function ItemInfo({ item, availability, onClose }: ItemInfoProps)
           <X aria-hidden="true" />
         </IconButton>
       </div>
+      {actions}
       <FactLine facts={itemFacts(item, availability)} />
       {who ? <p className="m-0 text-[13px] font-semibold text-ink">{who}</p> : null}
       <ItemRules item={item} />
@@ -70,12 +73,14 @@ export function OwnedItemInfo({
   itemId,
   fallback,
   onClose,
+  actions,
 }: {
   campaignId: number;
   warbandId: number;
   itemId: number;
   fallback: Item;
   onClose: () => void;
+  actions?: ReactNode;
 }) {
   const catalogue = useCatalogue("items", campaignId).data;
   const whoCan = useWhoCan(campaignId, warbandId);
@@ -83,7 +88,7 @@ export function OwnedItemInfo({
   const rows = item.availabilities ?? [];
   const offer = whoCan.items.get(item.id);
   const row = rows.find((entry) => entry.id === offer?.availability_id) ?? rows[0] ?? null;
-  return <ItemInfo item={item} availability={row} onClose={onClose} />;
+  return <ItemInfo item={item} availability={row} onClose={onClose} actions={actions} />;
 }
 
 /** A list row's item part (its icon, name and figures): a click shows its details, again hides them. */

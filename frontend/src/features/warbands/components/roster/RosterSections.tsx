@@ -112,6 +112,7 @@ export default function RosterSections(props: RosterSectionsProps) {
               actions.sellItem(entry, itemId, price, 1, material)
             }
             onBuyAgain={(item) => props.onBuyAgain(entry, item)}
+            onRide={(rowId, on) => actions.rideMount(entry, rowId, on)}
             onLoadout={() => props.onLoadout(entry)}
             campaignId={campaign?.id ?? 0}
             warbandId={warbandId}

@@ -4,10 +4,11 @@ import { cn } from "@/lib/utils";
 
 /**
  * item, skill, special and spell: each with its own colour, on its icon and its stripe (William, 25 Nov 2026);
- * mount: a mount (accent);
+ * beast: a mount, creature or pet in item form (accent; William, 25 Nov 2026: creatures and pets "stand out like the
+ * mount does"), told apart by their icons;
  * pending: a pick an advance left; quiet: a plain rule.
  */
-export type BoxTileKind = "item" | "mount" | "skill" | "special" | "spell" | "pending" | "quiet";
+export type BoxTileKind = "item" | "beast" | "skill" | "special" | "spell" | "pending" | "quiet";
 
 const KIND_STYLES: Record<BoxTileKind, { box: string; name: string; type: string; icon: string }> =
   {
@@ -17,7 +18,7 @@ const KIND_STYLES: Record<BoxTileKind, { box: string; name: string; type: string
       type: "text-muted-foreground",
       icon: "text-kind-item",
     },
-    mount: {
+    beast: {
       box: "border-accent-line bg-accent-soft",
       name: "text-accent-hi",
       type: "text-accent-text",
@@ -77,7 +78,7 @@ type BoxTileProps = {
  * card too"). */
 export const BOX_TRIM: Record<BoxTileKind, string> = {
   item: "border-kind-item",
-  mount: "border-accent-line",
+  beast: "border-accent-line",
   skill: "border-kind-skill",
   special: "border-kind-special",
   spell: "border-kind-spell",

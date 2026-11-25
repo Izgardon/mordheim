@@ -1,19 +1,14 @@
-import { useState } from "react";
 import { X } from "lucide-react";
 
 import { BOX_TRIM, type BoxTileKind } from "@/components/ui/box-tile";
-import { NumberInput } from "@/components/ui/number-input";
-import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
-import { ROW_SELECT, SectionedSelect } from "@/components/ui/sectioned-select";
 import type { Item } from "@/features/items/types/item-types";
 import { ProfileStrip, type CatalogueProfile } from "@/features/reference/profile";
 import PsychologyRuleLink from "@/features/rules/components/PsychologyRuleLink";
 
-import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { cn } from "@/lib/utils";
 
-import { placeOf, unitSections } from "./unit-sections";
+import ItemActionRow, { type ItemActions } from "./ItemActionRow";
 import { isGroup, type RosterUnit } from "./unit-view";
 
 /** What a box shows when opened: its name, a kind line and its rules text. */
@@ -35,24 +30,18 @@ export type BoxDetail = {
 type RulesPanelProps = {
   detail: BoxDetail;
   onClose: () => void;
-  /** The unit carrying it and the others it could move to; omitted when the viewer can't act. */
-  itemActions?: {
-    owner: RosterUnit;
-    targets: RosterUnit[];
-    onMove: (to: ItemPlace) => void;
-    onSell: (price: number) => void;
-    /** Opens the store for the unit with this item, at the campaign's current price. */
-    onBuyAgain: () => void;
-  };
+  /** The unit carrying it and what can be done with it; omitted when the viewer can't act. */
+  itemActions?: ItemActions & { owner: RosterUnit };
 };
 
-/** A box's rules under its row, and for an item the existing actions: move, stash, sell, buy again. */
+/**
+ * A box's rules under its row; for an item its actions come first, in one row above its rules
+ * (William, 25 Nov 2026).
+ */
 export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelProps) {
-  const [selling, setSelling] = useState(false);
   // a group sells a loadout row: a copy for each member who carries it (henchmen loadouts)
   const copies = itemActions && isGroup(itemActions.owner) ? (detail.item?.carriers ?? 1) : 1;
   const suggested = (detail.item?.suggested_sale_price ?? detail.item?.cost ?? 0) * copies;
-  const [price, setPrice] = useState(String(suggested ?? 0));
 
   return (
     <div
@@ -68,6 +57,9 @@ export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelP
           <X aria-hidden="true" />
         </IconButton>
       </div>
+      {itemActions && detail.item ? (
+        <ItemActionRow actions={itemActions} suggested={suggested ?? 0} />
+      ) : null}
       {detail.profile ? <ProfileStrip profile={detail.profile} /> : null}
       {detail.rules?.map((rule) => (
         <p key={rule.name} className="m-0 whitespace-pre-line text-[13px] text-text2">
@@ -79,51 +71,6 @@ export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelP
         <p className="whitespace-pre-line text-[13px] text-text2">{detail.text}</p>
       ) : null}
       {detail.special ? <PsychologyRuleLink specialName={detail.name} /> : null}
-      {itemActions && detail.item ? (
-        <div className="flex flex-wrap items-center gap-2 border-t border-line pt-2">
-          <SectionedSelect
-            aria-label="Move to"
-            placeholder="Move to…"
-            value=""
-            sections={unitSections(itemActions.targets)}
-            className="h-9 w-auto gap-1.5 pl-2.5 pr-2 md:h-9"
-            contentClassName={ROW_SELECT.contentClassName}
-            onValueChange={(value) => {
-              const to = placeOf(value);
-              if (to) itemActions.onMove(to);
-            }}
-          />
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => itemActions.onMove({ type: "stash" })}
-          >
-            To stash
-          </Button>
-          <Button size="sm" variant="secondary" onClick={itemActions.onBuyAgain}>
-            Buy again
-          </Button>
-          {selling ? (
-            <span className="flex items-center gap-1.5">
-              <NumberInput
-                compact
-                aria-label="Sale price"
-                inputSize="sm"
-                className="w-20"
-                value={price}
-                onChange={(event) => setPrice(event.target.value)}
-              />
-              <Button size="sm" onClick={() => itemActions.onSell(Number(price) || 0)}>
-                Sell for {Number(price) || 0} gc
-              </Button>
-            </span>
-          ) : (
-            <Button size="sm" variant="secondary" onClick={() => setSelling(true)}>
-              Sell
-            </Button>
-          )}
-        </div>
-      ) : null}
     </div>
   );
 }

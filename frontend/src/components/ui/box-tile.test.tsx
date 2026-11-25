@@ -27,11 +27,11 @@ describe("BoxTile", () => {
 
   it("is a toggle button when it opens a detail, reporting whether it is pressed", () => {
     const onClick = vi.fn();
-    render(<BoxTile name="Warhorse" type="Mount" kind="mount" pressed onClick={onClick} />);
+    render(<BoxTile name="Warhorse" type="Mount" kind="beast" pressed onClick={onClick} />);
 
     const tile = screen.getByRole("button", { name: /Warhorse/ });
     expect(tile).toHaveAttribute("aria-pressed", "true");
-    expect(tile).toHaveAttribute("data-kind", "mount");
+    expect(tile).toHaveAttribute("data-kind", "beast");
     fireEvent.click(tile);
     expect(onClick).toHaveBeenCalledTimes(1);
   });

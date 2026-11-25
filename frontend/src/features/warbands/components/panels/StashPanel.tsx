@@ -20,6 +20,7 @@ import { stashKey } from "../../api/warband-cache";
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { copiesForGroup } from "../../units/loadout";
 import { placeOf, unitSections } from "../roster/unit-sections";
+import StashMakeHenchmen from "./StashMakeHenchmen";
 import { isGroup, type RosterUnit } from "../roster/unit-view";
 import type { WarbandItemSummary } from "../../types/warband-types";
 
@@ -157,24 +158,46 @@ export function StashList({
   );
 }
 
-/** The details of the item a panel's row shows, at the foot of the panel; null for none. */
+/**
+ * The details of the item a panel's row shows, at the foot of the panel; null for none. A creature
+ * in the stash offers Make henchmen above them.
+ */
 export function ShownItemDock({
   campaignId,
   warbandId,
   details,
+  canEdit = false,
+  units = [],
 }: {
   campaignId: number;
   warbandId: number;
   details: ReturnType<typeof useShownItem>;
+  canEdit?: boolean;
+  units?: RosterUnit[];
 }) {
+  const stash = useQuery(warbandStashQuery(campaignId, warbandId));
   if (!details.shown) return null;
+  const { key, item } = details.shown;
+  const row = (stash.data ?? []).find((entry) => `stash:${stashKey(entry)}` === key);
   return (
     <OwnedItemInfo
       campaignId={campaignId}
       warbandId={warbandId}
-      itemId={details.shown.item.id}
-      fallback={details.shown.item}
+      itemId={item.id}
+      fallback={item}
       onClose={details.close}
+      actions={
+        canEdit && row?.beast_kind === "creature" ? (
+          <StashMakeHenchmen
+            key={key}
+            warbandId={warbandId}
+            row={row}
+            item={item}
+            units={units}
+            onDone={details.close}
+          />
+        ) : null
+      }
     />
   );
 }
@@ -193,6 +216,8 @@ export default function StashPanel({ open, onOpenChange, ...props }: StashPanelP
             campaignId={props.campaignId}
             warbandId={props.warbandId}
             details={details}
+            canEdit={props.canEdit}
+            units={props.units}
           />
         ) : null
       }

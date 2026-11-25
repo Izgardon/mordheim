@@ -166,8 +166,11 @@ export function xpInfo(entry: RosterUnit, campaign: CampaignSummary | null) {
   };
 }
 
+const BEASTS = new Set(["mount", "creature", "pet"]);
+
+/** An item's box: a mount, creature or pet stands out (William, 25 Nov 2026), any other item is an item. */
 export const itemBoxKind = (item: Item): BoxTileKind =>
-  item.beast_kind === "mount" ? "mount" : "item";
+  BEASTS.has(itemKind(item)) ? "beast" : "item";
 
 /** How a kill was scored, as a kill's line ends (William, 22 Nov 2026). */
 const KILL_HOW: Record<NonNullable<UnitKill["how"]>, string> = {

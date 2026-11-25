@@ -75,6 +75,8 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
             campaignId={props.campaignId}
             warbandId={props.warbandId}
             details={details}
+            canEdit={props.canEdit}
+            units={props.units}
           />
         ) : null
       }

@@ -179,3 +179,62 @@ describe("StashPanel materials", () => {
     expect(onMove).toHaveBeenCalledWith(101, { type: "hero", id: 1 }, 1, "gromril");
   });
 });
+
+// William, 25 Nov 2026: a creature in the stash turns into henchmen from its opened details
+describe("A creature in the stash", () => {
+  const wardog = makeItem({
+    id: 210,
+    name: "Wardog",
+    type: "Animal",
+    beast_kind: "creature",
+    bestiary_entry: { id: 50, name: "Wardog", kind: "creature" } as never,
+  });
+
+  it("makes henchmen of its copies, a new group by default", async () => {
+    fakeApi.on(`POST /warbands/${WARBAND}/beasts/recruit/`, {
+      group: makeHenchmenGroup({ id: 8, name: "Wardog", source_beast_id: 50 }),
+      source: null,
+      stash_item: null,
+      removed_stash_item_id: 210,
+      summary: {},
+      warnings: [],
+    });
+    const queryClient = createTestQueryClient();
+    const stashKey = queryKeys.campaign.warbandStash(CAMPAIGN, WARBAND);
+    queryClient.setQueryData(stashKey, [
+      makeStashItem({ id: 210, name: "Wardog", cost: 15, quantity: 3, beast_kind: "creature" }),
+    ]);
+    queryClient.setQueryData(catalogueListKey(CAMPAIGN, "items"), [wardog]);
+    queryClient.setQueryData(queryKeys.campaign.warbandWhoCan(CAMPAIGN, WARBAND), whoCan);
+    const hounds = makeHenchmenGroup({ id: 6, name: "Hounds", source_beast_id: 50 });
+    renderWithQueryClient(
+      <StashPanel
+        campaignId={CAMPAIGN}
+        warbandId={WARBAND}
+        open
+        onOpenChange={vi.fn()}
+        canEdit
+        units={[...units, { kind: "henchmen_group", unit: hounds }]}
+        onMove={vi.fn()}
+        onSell={vi.fn()}
+      />,
+      { queryClient }
+    );
+    const user = setupUser();
+
+    await user.click(screen.getByRole("button", { name: /^Wardog/ }));
+    await user.click(screen.getByRole("button", { name: "Make henchmen" }));
+    const sheet = await screen.findByRole("dialog", { name: "Make henchmen" });
+    // only a group of the same beast can take them in
+    expect(within(sheet).getByRole("button", { name: /^Hounds/ })).toBeInTheDocument();
+    expect(within(sheet).queryByRole("button", { name: /Verminkin/ })).not.toBeInTheDocument();
+    await user.click(within(sheet).getByRole("button", { name: "Make 3 henchmen" }));
+
+    expect(fakeApi.bodyOf(`POST /warbands/${WARBAND}/beasts/recruit/`)).toEqual({
+      source: { type: "stash", item_id: 210 },
+      quantity: 3,
+      target: { new: {} },
+    });
+    expect(queryClient.getQueryData(stashKey)).toEqual([]);
+  });
+});

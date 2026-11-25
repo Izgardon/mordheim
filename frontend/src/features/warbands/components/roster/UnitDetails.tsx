@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from "react";
 
-import { BoxTile } from "@/components/ui/box-tile";
 import { ItemKindIcon } from "@/components/ui/game-icons";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { itemKind, itemStatsLine, itemSubtype } from "@/features/items/item-kind";
@@ -18,7 +17,7 @@ import { loadoutLine } from "../../units/loadout";
 import { accessNames } from "../../utils/warband-utils";
 import GroupMembers from "./GroupMembers";
 import UnitBoxDetail, { type OpenBox } from "./UnitBoxDetail";
-import UnitSectionLabel from "./UnitSectionLabel";
+import UnitBoxRow, { PILL } from "./UnitBoxRow";
 import UnitXp from "./UnitXp";
 import { entryBoxes, type Row } from "./unit-boxes";
 import { boxRows, buysItems, isCreature, isGroup, itemBoxKind, type RosterUnit } from "./unit-view";
@@ -34,6 +33,8 @@ type UnitDetailsProps = {
   onMoveItem: (itemId: number, to: ItemPlace, material?: string) => void;
   onSellItem: (itemId: number, price: number, material?: string) => void;
   onBuyAgain: (item: Item) => void;
+  /** A mount's Ride / Dismount, from its opened box. */
+  onRide: (rowId: number, on: boolean) => void;
   /** Add item: the unit's loadout. */
   onLoadout: () => void;
   campaignId: number;
@@ -42,19 +43,13 @@ type UnitDetailsProps = {
   onPick: (pick: AdvancePick) => void;
 };
 
-/**
- * On a phone a row's boxes are two abreast, each half the row less half the gap, their text
- * ending in "…" (William, 22 Nov 2026: "so 2 always fit on mobile"); the web keeps their own size.
- */
-const PILL = "max-[960px]:w-[calc(50%-3px)] max-[960px]:min-w-0 max-[960px]:max-w-none";
-
 /** An open card's body: experience across the top, then design E's columns on the web (items, skills and the rest). */
 export default function UnitDetails(props: UnitDetailsProps) {
   const { entry, campaign, canEdit, others } = props;
   const { kind } = entry;
   const [open, setOpen] = useState<OpenBox | null>(null);
-  // on a phone a box's detail opens inside its own section, under the boxes it was picked from
-  // (William, 20 Nov 2026); the web's columns are too narrow for it, so it sits under them all
+  // on a phone a box's detail opens under the line of boxes holding it (William, 25 Nov 2026);
+  // the web's columns are too narrow for it, so it sits under them all
   const inSection = useMediaQuery("(max-width: 960px)");
   const lists = boxRows(entry);
   const itemLabel = useItemLabel(props.campaignId, props.warbandId);
@@ -112,9 +107,11 @@ export default function UnitDetails(props: UnitDetailsProps) {
         open={open}
         entry={entry}
         campaignId={props.campaignId}
+        warbandId={props.warbandId}
         canEdit={canEdit}
         others={others}
         onClose={() => setOpen(null)}
+        onRide={props.onRide}
         onPick={props.onPick}
         onMoveItem={props.onMoveItem}
         onSellItem={props.onSellItem}
@@ -122,27 +119,22 @@ export default function UnitDetails(props: UnitDetailsProps) {
       />
     ) : null;
 
-  const row = (line: Row, extra?: ReactNode) => (
-    <div key={line.key} className="flex flex-col gap-2">
-      <UnitSectionLabel icon={line.icon}>{line.label}</UnitSectionLabel>
-      <div className="flex flex-wrap gap-1.5">
-        {line.boxes.map((box, index) => (
-          <BoxTile
-            key={`${box.name}-${index}`}
-            name={box.name}
-            type={box.subtitle}
-            kind={box.boxKind}
-            icon={box.icon}
-            className={PILL}
-            pressed={selected === box}
-            onClick={() => setOpen(selected === box ? null : { row: line.key, index })}
-          />
-        ))}
-        {extra}
-      </div>
-      {inSection && open?.row === line.key ? detail : null}
-    </div>
-  );
+  const row = (line: Row, extra?: ReactNode) => {
+    const here = open?.row === line.key;
+    return (
+      <UnitBoxRow
+        key={line.key}
+        line={line}
+        selected={selected}
+        openIndex={here ? open?.index : undefined}
+        panel={inSection && here ? detail : null}
+        extra={extra}
+        onToggle={(index) =>
+          setOpen(selected === line.boxes[index] ? null : { row: line.key, index })
+        }
+      />
+    );
+  };
   const members = isGroup(entry) && !isCreature(entry);
   const addsItems = canEdit && buysItems(entry);
   const showItems = lists.items.length > 0 || addsItems;

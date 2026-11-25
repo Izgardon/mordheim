@@ -3,6 +3,20 @@ import type { ReactNode } from "react";
 import { GameIcon, type GameIconName } from "@/components/ui/game-icons";
 import { cn } from "@/lib/utils";
 
+/**
+ * A section's icon in its kind's colour, as its boxes' icons are (William, 25 Nov 2026): items
+ * bronze, skills green, boons & banes gold, spells blue; any other section the accent.
+ */
+const SECTION_COLOURS: Partial<Record<GameIconName, string>> = {
+  items: "text-kind-item",
+  skills: "text-kind-skill",
+  specials: "text-kind-special",
+  spells: "text-kind-spell",
+};
+
+export const sectionIconColour = (icon: GameIconName) =>
+  SECTION_COLOURS[icon] ?? "text-accent-text";
+
 /** A unit's section title (Items, Skills, Spells...) with its game icon, on the card and in Edit. */
 export default function UnitSectionLabel({
   icon,
@@ -20,7 +34,7 @@ export default function UnitSectionLabel({
         className
       )}
     >
-      <GameIcon name={icon} className="h-4 w-4 text-accent-text" />
+      <GameIcon name={icon} className={cn("h-4 w-4", sectionIconColour(icon))} />
       {children}
     </span>
   );
