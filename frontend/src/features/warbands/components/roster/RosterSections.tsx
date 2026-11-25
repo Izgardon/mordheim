@@ -4,6 +4,7 @@ import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import type { Item } from "@/features/items/types/item-types";
 import MakeTemplateForWarband from "@/features/warband-templates/components/MakeTemplateForWarband";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useWarbandHireTemplate } from "../../api/warband-template-queries";
 import type { RecruitKind } from "../../hooks/units/useRecruit";
@@ -54,6 +55,7 @@ export default function RosterSections(props: RosterSectionsProps) {
   // read ahead for Add hero and Add group, so Recruit as is there when they open (the templates plan)
   const hireTemplate = useWarbandHireTemplate(campaign?.id ?? 0, warbandId, canEdit);
   const cards = useRosterCards();
+  const phone = useMediaQuery("(max-width: 960px)");
 
   const heroes: RosterUnit[] = props.heroes.map((unit) => ({ kind: "hero", unit }));
   const groups: RosterUnit[] = props.henchmenGroups.map((unit) => ({
@@ -141,6 +143,7 @@ export default function RosterSections(props: RosterSectionsProps) {
     ) : null;
   const maxHired = campaign?.max_hired_swords;
   const models = props.henchmenGroups.reduce((sum, group) => sum + group.henchmen.length, 0);
+  const groupCount = `${groups.length} ${groups.length === 1 ? "group" : "groups"}`;
 
   return (
     <div className={ROSTER_SECTIONS}>
@@ -148,6 +151,7 @@ export default function RosterSections(props: RosterSectionsProps) {
         title="Heroes"
         meta={`${props.counts?.hero_count ?? heroes.length}${maxHeroes ? ` of ${maxHeroes}` : ""}`}
         add={canEdit ? "Add hero" : undefined}
+        phone={phone}
         onAdd={() => cards.setRecruiting("hero")}
         form={recruitForm("hero", heroes)}
         extra={makeTemplate}
@@ -156,8 +160,11 @@ export default function RosterSections(props: RosterSectionsProps) {
       </RosterSection>
       <RosterSection
         title="Henchmen"
-        meta={`${groups.length} ${groups.length === 1 ? "group" : "groups"} · ${models} models`}
+        // a phone says how many groups only (William, 25 Nov 2026)
+        meta={phone ? groupCount : `${groupCount} · ${models} models`}
         add={canEdit ? "Add group" : undefined}
+        addName="Add henchmen group"
+        phone={phone}
         divided
         onAdd={() => cards.setRecruiting("henchmen_group")}
         form={recruitForm("henchmen_group", groups)}
@@ -170,6 +177,8 @@ export default function RosterSections(props: RosterSectionsProps) {
         title="Hired swords"
         meta={`${props.counts?.hireling_count ?? hired.length}${maxHired ? ` of ${maxHired}` : ""}`}
         add={canEdit ? "Hire" : undefined}
+        addName="Hire a hired sword"
+        phone={phone}
         divided
         onAdd={props.onHire}
       >
