@@ -35,7 +35,9 @@ describe("GroupCard", () => {
     const user = setupUser();
     const { onWounds } = renderGroup();
 
-    expect(screen.getByRole("group", { name: "Wounds for Youngblood A" })).toHaveTextContent("W 1/1");
+    expect(screen.getByRole("group", { name: "Wounds for Youngblood A" })).toHaveTextContent(
+      "W 1/1"
+    );
     expect(screen.getByRole("button", { name: "Youngblood A heals a wound" })).toBeDisabled();
     await user.click(screen.getByRole("button", { name: "Youngblood A loses a wound" }));
 
@@ -44,7 +46,9 @@ describe("GroupCard", () => {
 
   it("shows the shared wounds and offers none to a model out of action", () => {
     renderGroup({ unit_information_json: { "henchman:2": { current_wounds: 0 } } });
-    expect(screen.getByRole("group", { name: "Wounds for Youngblood A" })).toHaveTextContent("W 0/1");
+    expect(screen.getByRole("group", { name: "Wounds for Youngblood A" })).toHaveTextContent(
+      "W 0/1"
+    );
 
     renderGroup({ unit_information_json: { "henchman:2": { out_of_action: true } } });
     const [, out] = screen.getAllByRole("button", { name: "Youngblood A loses a wound" });
