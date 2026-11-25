@@ -1,4 +1,4 @@
-"""Mordheim's scenarios (scenarios.py, William, 24 Nov 2026): mordheimer's 70 pages, each a title, source lines,
+"""Mordheim's scenarios (scenarios.py, William, 24 Nov 2026): mordheimer's 70 pages less Archive Pestilen's 3 copies, each a title, source lines,
 opening lines and sections under the standard names; the index's two 2D6 tables as Mordheim 1a's weights."""
 
 from typing import Any, ClassVar
@@ -117,13 +117,27 @@ class SnapshotTests(SimpleTestCase):
         cls.data = build_scenarios()
         cls.by_slug = {entry["slug"]: entry for entry in cls.data["scenarios"]}
 
-    def test_seventy_scenarios_each_named_once_with_sections(self) -> None:
+    def test_sixty_seven_scenarios_each_named_once_with_sections(self) -> None:
         rows = self.data["scenarios"]
-        self.assertEqual(len(rows), 70)
-        self.assertEqual(len({entry["name"].lower() for entry in rows}), 70)
+        self.assertEqual(len(rows), 67)
+        self.assertEqual(len({entry["name"].lower() for entry in rows}), 67)
         self.assertTrue(all(entry["sections"] and entry["source"] for entry in rows))
         self.assertEqual(self.by_slug["breakthrough-archive-pestilen"]["name"], "Breakthrough (Archive Pestilen)")
         self.assertEqual(self.by_slug["breakthrough"]["name"], "Breakthrough")
+
+    def test_archive_pestilens_copies_are_left_out_and_town_cryers_keep_their_names(self) -> None:
+        for slug in ("scourge-and-purge-archive-pestilen", "the-forbidden-square", "scripts-of-sigmar"):
+            self.assertNotIn(slug, self.by_slug)
+        names = {
+            self.by_slug[slug]["name"] for slug in ("scourge-and-purge", "forbidden-square", "the-script-of-sigmar")
+        }
+        self.assertEqual(names, {"Scourge & Purge", "Forbidden Square", "The Script of Sigmar"})
+
+    def test_a_scenario_tagged_both_or_written_for_both_is_for_either(self) -> None:
+        self.assertEqual(self.by_slug["lost-prince-tc5"]["players"], "either")
+        tagged_both = [entry for entry in self.data["scenarios"] if {"1v1", "Multiplayer"} <= set(entry["tags"])]
+        self.assertTrue(tagged_both)
+        self.assertEqual({entry["players"] for entry in tagged_both}, {"either"})
 
     def test_the_rulebook_reads_in_the_standard_sections_with_its_numbers(self) -> None:
         hunt = self.by_slug["wyrdstone-hunt"]

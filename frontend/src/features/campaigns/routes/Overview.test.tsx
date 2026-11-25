@@ -188,7 +188,7 @@ describe("Start a battle's players", () => {
     expect(olga).toHaveTextContent("In battle 6");
   });
 
-  it("starts a battle as a scenario of the campaign's list, drawn for the warbands picked", async () => {
+  it("starts a battle as a scenario drawn from the campaign's whole list", async () => {
     // William, 24 Nov 2026: a picker over the list, Random scenario, and no link box
     fakeApi.on(`GET ${BASE}/scenarios/`, [HUNT, POOL]);
     fakeApi.on(`POST ${BASE}/scenarios/random/`, HUNT);
@@ -204,7 +204,7 @@ describe("Start a battle's players", () => {
     expect(
       await within(dialog).findByRole("button", { name: /Scenario: Wyrdstone Hunt/ })
     ).toBeInTheDocument();
-    expect(fakeApi.bodyOf(`POST ${BASE}/scenarios/random/`)).toEqual({ players: 2 });
+    expect(fakeApi.bodyOf(`POST ${BASE}/scenarios/random/`)).toBeUndefined(); // whoever plays
     await user.click(within(dialog).getByRole("button", { name: "Start battle" }));
 
     await waitFor(() =>

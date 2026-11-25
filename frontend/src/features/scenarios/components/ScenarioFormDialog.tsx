@@ -134,6 +134,7 @@ export default function ScenarioFormDialog({
             >
               <option value="1v1">1v1</option>
               <option value="multiplayer">Multiplayer</option>
+              <option value="either">1v1 or multiplayer</option>
             </select>
           </div>
         </div>

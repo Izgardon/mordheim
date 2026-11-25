@@ -106,7 +106,7 @@ export function useCreateScenario(campaignId: number) {
   });
 }
 
-/** The server's weighted draw for that many warbands (nothing is cached). */
+/** The server's weighted draw from the whole list, whoever plays (nothing is cached). */
 export function useDrawScenario(campaignId: number) {
-  return useMutation({ mutationFn: (warbands: number) => drawScenario(campaignId, warbands) });
+  return useMutation({ mutationFn: () => drawScenario(campaignId) });
 }

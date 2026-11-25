@@ -1,7 +1,7 @@
 import type { RuleTable } from "@/features/items/types/item-types";
 
-/** Who a scenario is for: two warbands, or three or more. */
-export type ScenarioPlayers = "1v1" | "multiplayer";
+/** Who a scenario is for: two warbands, three or more, or either (William, 25 Nov 2026). */
+export type ScenarioPlayers = "1v1" | "multiplayer" | "either";
 
 /** One heading of a scenario and its text; its tables stand where `{{table:N}}` marks them. */
 export type ScenarioSection = { title: string; text: string; tables: RuleTable[] };

@@ -82,7 +82,3 @@ class AddScenarioInput(serializers.Serializer):
     weight = serializers.DecimalField(
         max_digits=6, decimal_places=2, min_value=Decimal(0), max_value=Decimal(9999), required=False
     )
-
-
-class DrawInput(serializers.Serializer):
-    players = serializers.IntegerField(min_value=2, max_value=64)

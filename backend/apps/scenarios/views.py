@@ -3,8 +3,8 @@
 `GET campaigns/<id>/scenarios/` is the campaign's list, each row with its weight and its scenario whole, for every
 member; `POST` adds a scenario from the catalogue (the book's or the campaign's own, as the campaign's current entry
 for it) at a weight, 1 unless sent. `PATCH`/`DELETE .../<row>/` weight a row or take it off the list. Writes take
-`manage_scenarios` (owners and admins hold it); an archived campaign is read only. `POST .../random/ {players}`
-draws one by weight among the rows that fit the battle (any member: starting a battle is every member's).
+`manage_scenarios` (owners and admins hold it); an archived campaign is read only. `POST .../random/`
+draws one by weight from the whole list, whoever plays (any member: starting a battle is every member's).
 """
 
 from decimal import Decimal
@@ -25,10 +25,10 @@ from apps.core.errors import ApiError
 from apps.realtime.services import sender_socket_id
 
 from .models import CampaignScenario, Scenario
-from .serializers import AddScenarioInput, CampaignScenarioSerializer, DrawInput, WeightInput
+from .serializers import AddScenarioInput, CampaignScenarioSerializer, WeightInput
 from .services import campaign_list
-from .services.draw import draw, players_for
-from .wording import none_fits
+from .services.draw import draw
+from .wording import NOTHING_TO_DRAW
 
 WRITE = "manage_scenarios"
 
@@ -107,16 +107,12 @@ class CampaignScenarioView(CampaignScopedView):
 
 
 class RandomScenarioView(CampaignScopedView):
-    """POST {players: the number of warbands}: a scenario drawn by weight among those that fit, or 400
-    `no_scenario_fits`."""
+    """POST: a scenario drawn by weight from the campaign's whole list, or 400 `nothing_to_draw`."""
 
     rules = {"POST": "view"}
 
     def post(self, request: Request, campaign_id: int) -> Response:
-        payload = DrawInput(data=request.data)
-        payload.is_valid(raise_exception=True)
-        warbands = payload.validated_data["players"]
-        drawn = draw(campaign_id, warbands)
+        drawn = draw(campaign_id)
         if drawn is None:
-            raise ApiError(none_fits(players_for(warbands)), code="no_scenario_fits", status=400)
+            raise ApiError(NOTHING_TO_DRAW, code="nothing_to_draw", status=400)
         return Response(_row(drawn))

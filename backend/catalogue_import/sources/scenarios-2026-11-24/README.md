@@ -25,6 +25,8 @@ How the build reads them:
   lines in their section; a list item is a line starting "•"; a table is `{columns, rows}` placed by `{{table:N}}`;
 - the site's own notes ("info", "possible error", "possible typo" boxes) are left out; its other boxes (a letter,
   the original experience) are the book's and read as text under their heading;
-- tagged Multiplayer or Chaos on the Streets: multiplayer, else 1v1 (21 pages are tagged both, and read as
-  multiplayer: the import report lists them);
+- tagged Multiplayer or Chaos on the Streets: multiplayer, else 1v1; tagged 1v1 as well, or written for both
+  (The Lost Prince), either (William, 25 Nov 2026; the import report lists them);
+- Archive Pestilen's copies of Town Cryer's Scourge & Purge, Forbidden Square and The Script of Sigmar are left
+  out ("Remove duplicates"); the pages stay in the snapshot;
 - each table's results weigh their 2D6 chance (2 or 12 is 1 ... 7 is 6; a span adds its numbers) for Mordheim 1a.

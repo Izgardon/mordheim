@@ -20,7 +20,8 @@ from apps.core.models import CatalogueEntry, version_constraints
 
 ONE_V_ONE = "1v1"
 MULTIPLAYER = "multiplayer"
-PLAYERS = ((ONE_V_ONE, "1v1"), (MULTIPLAYER, "Multiplayer"))
+EITHER = "either"  # tagged both, or written for both (William, 25 Nov 2026: The Lost Prince)
+PLAYERS = ((ONE_V_ONE, "1v1"), (MULTIPLAYER, "Multiplayer"), (EITHER, "1v1 or multiplayer"))
 STANDARD_SECTIONS = (  # the titles every scenario names the same way, in their usual order
     "Terrain",
     "Warbands",

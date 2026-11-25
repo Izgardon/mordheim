@@ -1,4 +1,4 @@
-"""seed_scenarios: the import's 70 scenarios upserted by slug, Mordheim 1a's sixteen at their weights, a book
+"""seed_scenarios: the import's 67 scenarios upserted by slug, Mordheim 1a's sixteen at their weights, a book
 scenario the import drops archived, and a table naming a setting we don't hold skipped."""
 
 import io
@@ -28,7 +28,7 @@ class SeederTests(TestCase):
     def test_the_import_seeds_seventy_scenarios_and_mordheims_sixteen(self) -> None:
         said = self.seed()
 
-        self.assertIn("Scenarios: 70, setting scenarios: 16", said)
+        self.assertIn("Scenarios: 67, setting scenarios: 16", said)
         hunt = Scenario.objects.get(slug="wyrdstone-hunt", campaign=None)
         self.assertEqual((hunt.name, hunt.number, hunt.players), ("Wyrdstone Hunt", "3", "1v1"))
         self.assertEqual(hunt.sections[0]["title"], "Terrain")
@@ -45,7 +45,7 @@ class SeederTests(TestCase):
             said = self.seed(path)
 
         self.assertIn("archived (no longer in the import): 1", said)
-        self.assertEqual(Scenario.objects.filter(campaign=None).count(), 70)
+        self.assertEqual(Scenario.objects.filter(campaign=None).count(), 67)
         self.assertIsNotNone(Scenario.objects.get(slug="raid").archived_at)
 
     def test_a_table_for_a_setting_we_dont_hold_is_skipped(self) -> None:

@@ -237,8 +237,6 @@ export function useStartBattleForm({
     changeMode,
     scenarioPick: pick,
     setScenarioPick: setPick,
-    /** How many warbands play (you and those picked): what the random scenario is drawn for. */
-    warbandCount: participantUserIds.length,
     battleDate,
     setBattleDate,
     eligiblePlayers,

@@ -468,7 +468,7 @@
       "name": "A Night In The Graveyard",
       "number": "",
       "source": "Town Cryer #19",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Warbands compete to plunder a dead man's grave while his restless spirit attempts to stop them. The spooky graveyard setting results in fear tests every turn and, you've guessed it, random zombies doing their shuffle-thing.",
       "intro": "In Mordheim they say if you aren’t already dead, you soon will be. There are various reasons why warbands get caught within the confines of one of Mordheim’s old cemeteries. More often than not the wide expanse of flat ground, littered with broken gravestones and tumbledown mausoleums, is just another area of the shattered city to scour for Wyrdstsone. Occasionally though, there are those unscrupulous sorts who would steal away the corpses of those that rest there with the intention of selling them to foul Necromancers and their ilk. Then, of course, there are the denizens of the graveyard, creatures twisted by the presence of Wyrdstone that hunger for flesh...",
       "sections": [
@@ -547,7 +547,7 @@
       "name": "A Stroll In The Garden",
       "number": "",
       "source": "Town Cryer #23",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Skirmish set in Mordheim’s Steinhardt Memorial Gardens. Warriors within 2” of a tree or bush receive hits from the chaos-wracked foliage.",
       "intro": "YYour warband has heard the fantastic stories about the old Memorial Gardens in the northwest corner of the city. However, even if your warriors believed the tales about enormous carnivorous plants, the other stories spread about the Gardens — the stories about piles of wyrdstone lying unguarded on the ground, and secret basement vaults filled with treasures beyond measure were enough to draw your band to this place, heedless of the risk. So you find yourselves here, walking slowly through the gate, peering into the tangled depths and wondering just which stories are true. Then you notice that you are not the only figures brave enough to ignore the warnings...",
       "sections": [
@@ -648,7 +648,7 @@
       "name": "Assault on the Rock",
       "number": "",
       "source": "Town Cryer #22",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Warbands infiltrate the Sisters’ rock and attempt to steal a magical tome. Warbands must search through buildings/rooms to find the tome. Meanwhile, a growing number of random nuns (well it makes a change from zombies) – controlled by a referee – attempt to repel the invaders. For 2-4 warbands plus the referee.",
       "intro": "The Rock is the fortress abbey of the Sisters of Sigmar, the only building to survive the holocaust caused by the comet. It is said that the Sisters survived the holy wrath of Sigmar through their penitence and prayer (and hiding out within the deep catacombs beneath the abbey!). From the Rock these fanatical daughters of Sigmar patrol the ruins of the Cursed City fighting the heathen followers of the Shadowlord and collecting shards of Wyrdstone to be later destroyed within the holy confines of their abbey. Many arcane and heretical items are held within the bowels of the Rock, guarded from the prying eyes of those who would misuse their power. It is the rumour of these treasures that lure the greedy and the power-crazed to attempt to infiltrate the heavily guarded abbey. The catacombs of the Rock are extensive and barely explored, with miles of tunnels leading off in every direction. Just recently a long forgotten tunnel has been discovered that leads into the crypts of the Rock and rumour of a powerful magic tome has brought all manner of scum running like moths to a candle flame. This scenario can be played by up to four warbands of any type and requires a referee.",
       "sections": [
@@ -730,7 +730,7 @@
       "name": "Bar Room Brawl",
       "number": "",
       "source": "Town Cryer #19",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "A bar room brawl. Players start with 3 warriors in bar with more arriving during battle. Special rules for using furniture as cover, for using beer bottles as weapons and for taking on the Landlord of the establishment.",
       "intro": "When the comet struck the city, most of its buildings and, indeed population, were destroyed. As adventurers and scoundrels began flocking to Mordheim in search of treasure, astute barkeeps realised that all of the fighting and wyrdstone hunting would make people thirsty. Taverns and brothels were the first establishments to begin the rebuilding process. Warbands often meet in these places to discuss plans, exchange information, and search for good times. Inevitably, fights break out.",
       "sections": [
@@ -829,7 +829,7 @@
       "name": "Blood Hunt",
       "number": "",
       "source": "Town Cryer #25",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Clashing warbands gain the help of a Dramatis Personae, most likely Johann The Knife & Marriana Chevaux, free of charge. Take out the opponent’s Dramatis Personae to win. Cynics might suggest that the objective of this scenario is for Games Workshop to shift a few more Dramatis Personae miniatures... but not me, no sir.",
       "intro": "Each warband assumes they have been fortunate enough to hire the services of one of Mordheim’s most notorious hired swords. What they aren’t aware of is that each of these new ‘hirelings’ is involved in a deadly game of cat and mouse, and the warbands are merely pawns in this struggle...",
       "sections": [
@@ -969,7 +969,7 @@
       "name": "Down At The Docks",
       "number": "",
       "source": "Town Cryer #25",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Either a two player scenario where warbands must attempt to gain cargo crates from smugglers’ ship by carrying them off or by forcing other warband & smugglers to rout; or a a multiplayer scenario where the defending warband, along with assisting smugglers, must see off other warbands who are attempting to steal cargo.",
       "intro": "Information is an expensive commodity in the lawless settlements that surround the City of the Damned. Through a combination of good fortune and spying, several warbands have overheard of the impending arrival of a river pirate’s/smuggler’s ship to the now deserted, crumbling quays of Mordheim. Even the toughest river pirates are loath to use the docks of the Cursed City and so they must be carrying some very rare contraband indeed. Obviously, any warband worth their salt is interested in taking the cargo for themselves. The timing of the shipment has been learnt, and as the warbands close they can see the exact location as the ship docks and weighs anchor.",
       "sections": [
@@ -1211,7 +1211,7 @@
       "name": "Forbidden Square",
       "number": "",
       "source": "Town Cryer #7",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Cult of Possessed vs. any warband. Skirmish in the square over the Wyrdstone.",
       "intro": "This scenario takes place in the north-eastern quarter of Mordheim. Here many Chaos cults of the Possessed have gathered their Wyrdstone in a great tribute for the Chaos Gods. However, as is all too common with the unruly Cults of the Possessed subversion and intrigue are always prevalent as betrayal is part of their way of life.\n\nLittle do the Cults of the Possessed know but word bas been brought to the attention of several zealous Witch Hunters and mercenaries of the whereabouts of this den of evil and they have dispatched their toughest warriors to cleanse this area (and undoubtedly to steal as much of the stockpiled Wyrdstone as they can get their grubby paws on!). The scenario should be fought between two or more warbands. An equal number of warbands must fight on each side, or the weaker warband must be allocated some advantages to counter their weakness. This could be additional soldiers ( either Chaos priests who patrol the Forbidden Square or additional zealots for the Witch Hunters), special deployments, weapons or any other similar advantages you think are appropriate.\n\nOne side represents the collective Cults of the Possessed and the other the Witch Hunters and their mercenary allies. If only evil warbands are available then one of them should represent an independent warband launching an attack against their rivals.\n\nEach Warband is at liberty to attack its erstwhile allies. This represents in-fights, quarrels and the greed over the stones.",
       "sections": [
@@ -2795,7 +2795,7 @@
       "name": "The Gauntlet",
       "number": "",
       "source": "Town Cryer #21",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Classic Indiana Jones stuff. Warbands race along trap-laden corridors towards a great treasure. For 2+ warbands.",
       "intro": "Deep in the Catacombs, under the dark city of Mordheim, buried under the pyramids of Khemri, and lost in caverns deep in the Lustrian jungles are hidden great treasures of a time more ancient than any can remember. However, the ancients were not fools. A surprise awaits those foolish enough to seek them...\n\nWith all those great adventure films like ‘Raiders of the Lost Ark’ and ‘The Mummy’ for inspiration, I’ve always wanted to do a scenario that incorporates a race to steal the precious treasure. And what game is more perfect for this than Mordheim? The following scenario is a great multi-player one, although you can certainly play with only two players if you want. You can even play with only one player! Of course, it would take a little tweaking to make it more fun for solitary gaming.",
       "sections": [
@@ -2932,7 +2932,7 @@
       "name": "The Item Lost",
       "number": "",
       "source": "Town Cryer #25",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Nicodemus joins one warband (presumably a warband far weaker than the others) in an attempt to retrieve a magic wand. Naturally the other warbands would like the wand for themselves. Much bloodshed ensues.",
       "intro": "The wizard Nicodemus has hired a warband to help him find a magic wand that has been reported lost in the city. Following up on the latest reports has led him and the warband to this section of the city. Unfortunately, others have also heard of the wand, and wish to keep it for themselves.",
       "sections": [
@@ -3061,7 +3061,7 @@
       "name": "The Lost Prince",
       "number": "3",
       "source": "Town Cryer #5",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Multiplayer. Rescue wandering prince (also works perfectly well for two players).",
       "intro": "Travelling entertainers often tell tales of the ruined city and because of this, sons of the privileged classes often see the city of Mordheim as one big romantic adventure. Sometimes one will run away from home to join a mercenary warband and make a name for himself. Often these individuals are killed before they even get to the city but once in a while one will get lucky and actually make it that far. Sometimes their families are happy to see the young fool go but once in a while, a rich merchant or noble will actually pay to have his son saved from his inevitable fate in Mordheim.\n\nThe warbands have heard rumours that a powerful man’s son has wandered into the ruins and a handsome reward will be paid for his return.",
       "sections": [
@@ -3152,7 +3152,7 @@
       "name": "The Mummy",
       "number": "",
       "source": "Town Cryer #15",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Hidden Treasure except warbands look for the stash of a mummy while its scary original owner plus friends have their say.",
       "intro": "Before the catastrophe that befell Mordheim, it was home to many wealthy Merchants and Wizards. Many of these were great entrepreneurs and historians interested in the many and varied mysteries of the world. They collected relics and antiquities from all corners of the globe. All manner of items were collected: art and pottery from Tilea; jewel-encrusted glyphs from far off Lustria and ancient scrolls, books and even sarcophagi from myth shrouded desert lands of Khemri. Not all of these sarcophagi were, of course, empty...\n\nMany an archaeologist or unscrupulous tomb robber made a tidy profit by selling the relics and idols of Khemri to the more morbid and sinister of Mordheim’s residents. Of course, it wasn't just wise sages or pretentious nobles who sought the lost treasures of Khemri, many were shady warlocks who studied the dark arts.\n\nA tale has slowly filtered back to the taverns and drinking dens of the encampments surrounding the City of the Damned. This tale tells of a Necromancer who discovered one of these valuable finds amongst the ruins of the city. He made discovery of a sarcophagus that contained the mummified remains of the dread Tomb King KaHotep of Khemri. The Necromancer was apparently slain by the Tomb King after awakening him from bis centuries-long slumber and trying to bend him to his will.\n\nApparently the mummy is still at large haunting the dark streets of Mordheim and has reputedly gathered a host of skeletons as his servants and warriors to protect his hoard of treasure and ancient artefacts. It is rumoured that if a brave warband can find the mummy and slay him that the riches he will discover in the Mummy’s lair will be a king's ransom.\n\nNeedless to say many warriors whose greed has made them foolish are out searching the ruins of Mordheim for a monster's gold.\n\nIn this scenario the warbands have discovered the lair of an Undead Mummy and are trying to steal its treasure.",
       "sections": [
@@ -3346,7 +3346,7 @@
       "name": "The Night Of The Headless One",
       "number": "",
       "source": "Town Cryer #12",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Hidden Treasure except warbands look for skull of the Headless One while its awesome original owner creates carnage.",
       "intro": "Death stalks the streets of the City of the Damned in the shape of a mysterious headless figure in this decapitatingly exciting special scenario by Kevin J Coleman.\n\nMordheim was once a flourishing city of the Empire until its horrific destruction from an accursed twin-tailed comet. Now unthinkable horrors lurk in the shadows waiting to prey upon greedy mercenaries and would-be adventurers. Among these unspeakable denizens stalking Mordheim’s inhospitable ruins roams the Headless One. A relentless killing machine, tall, dark and headless! His true origin remains a mystery, though it is known that he wreaks horrible vengeance upon those whom foolishly cross his path, lopping heads off interlopers to satisfy his own dark needs.",
       "sections": [
@@ -3684,7 +3684,7 @@
       "name": "The Sword of the Herald",
       "number": "",
       "source": "Town Cryer #13",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Multiplayer scenario involving a mean sword, huge chunks of Wyrdstone & those ever-popular random zombies.",
       "intro": "An adjudicated multi-player scenario for Mordheim.\n\nThis scenario pits several warbands against one another as they commit themselves to a terrifying, and very profitable, exploration that concludes in a running battle to escape their enemies.",
       "sections": [
@@ -3790,7 +3790,7 @@
       "name": "The Watchers",
       "number": "",
       "source": "Town Cryer #25",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "An Empire In Flames scenario. At least 1/2 the terrain is spooky fear-inducing woods. For each warband there is one Thing in the Woods (no details until TC28 but is presumably pretty scary) which will move randomly until within charge range then charge nearest model. Last to rout wins.",
       "intro": "Only the most brave or foolhardy of warbands dare to explore the South-eastern Quarter of the city. Few of those that do are ever seen again, for this part of Mordheim is well known as the domain of the reviled Shadowlord. Here, the warbands of the Possessed hold the sway of power and the closer that a warband gets to the still smouldering crater left by the comet the closer they are to invite death or eternal damnation. Still, those whose greed knows no bounds or those who wholeheartedly believe that the map they have bought (or stolen) is a genuine guide to untold riches will risk their souls. One particular area of interest for the discerning warband captain, that is reputed to be overflowing with wealth, is the area under the shadow of the eastern gatehouse once populated by wizards and warlocks. The rumours go that this area is rich especially with magical artifacts although warriors are warned to be wary of the statues...",
       "sections": [
@@ -4059,7 +4059,7 @@
       "name": "Upon the Eerie Downs",
       "number": "",
       "source": "Fanatic Magazine #1",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Skirmish. Battle is fought on open terrain. Fog causes reduced visibility hence reduced shooting, magic, charging, etc. Fog also means models may become lost resulting In random movement & all alone tests.",
       "intro": "A sombre and mysterious place, the Eerie Downs holds a palpable dread for the folk of the Mark; too well do they know the tales of engulfing fog and voices that whisper words of madness into the ears of travellers lost upon them.\n\nTwo rival warbands are travelling through Ostermark, seeking to pillage and plunder or to punish those who would. As they draw close to each other, the barren land all about them and not another soul in sight, a curious fog rolls over their feet and soon they are both engulfed, unable to discern friend from foe. Upon the Eerie Downs is a Skirmish scenario and all the rules given apply with any exceptions noted below.\n\nThe Eerie Downs\n\nSouth of Bechafen there is a wide and open plain known as the Eerie Downs. Possessed of a curious and unnerving stillness, the Eerie Downs are a foreboding place. A perpetual pall of low fog rolls upon the wild and unkempt grasslands of the Downs, numerous crags jutting up from the thick and vaporous mists like broken teeth. Woe betide any traveller lost there; men have been driven insane as the silence and the white fog engulfs them, all sense of direction evaporating into a vast expanse of nothing. It is said the souls of those who died upon the Downs haunt them still, that their spirits crave more souls to join them, their howls of anguish and bitterness a dreaded midnight chorus. It is a brave or foolish traveller indeed who ventures upon those pastures and lives to tell of it…",
       "sections": [
@@ -4235,7 +4235,7 @@
       "name": "Night Of The Dead",
       "number": "",
       "source": "Fanatic Online #30",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Warband members must venture to the centre of the board, grab a Wyrdstone shard and escape from the table. However, from each warband only one randomly-determined Hero and Henchman group may be on the table at any time. Each time a shard is picked up a number of random zombies attack the warriors. Continues until only one warband has any warriors still alive.",
       "intro": "This game is for a one time multi-player game (one-off) or can be modified to be used in a campaign. Pitfighter trainer, Greenwood Gaming Group, Kawarda and myself: (BankofMarienburgh) modified this scenario from Troll 23 for a Halloween Game.\n\nYour warband has been in the City of the Damned and has had a difficult time finding Wyrdstone and keeping your warband happy. You have recently heard rumors at local watering hole that there is a pile of Wyrdstone so large that an Ogre could not carry it all! After hearing the story over many drinks there are several warbands contemplating the idea of searching for the pile. Along with the story of Wyrdstone there are consistent stories of Demons, Zombies and Bears. Oops, I mean nefarious things that lurk in this unexplored section of town. It has been rumored that the famed “Town Cryer” of Mordheim walks the streets here.",
       "sections": [
@@ -4331,7 +4331,7 @@
       "name": "Round-up at the Mordheim Corral",
       "number": "",
       "source": "Fanatic Online",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Two to four wild boars have eaten a merchant’s Wyrdstone. Warbands must kill randomly moving and aggressive boars to recover it. Optional suggestion of using mutations. Really good fun.",
       "intro": "Giovanni was a travelling merchant, and not a very good one. Perhaps it was his choice of wild boar as merchandise; perhaps it was his accent, but whatever the case he’d been kicked out of every town on this side of the Reik. Mordheim was his last hope.\n\nHe approached the ruined city with some trepidation, and the sprawled bodies near the gates didn’t make him feel any easier. Mind you, beggars can’t be choosers, and as there was nobody else about he examined a few of the bodies to see if they had any easily portable wealth. There were a few trinkets, but most intriguingly there was a handful of green stones that glowed with a faint inner light. This must be the fabled wyrdstone. Giovanni smiled. At last his luck had changed.\n\nWhistling merrily to himself, Giovanni and his assistants herded his charges through the streets, looking for somewhere to put his boars on show. Soon he came across the old market place, complete with pens for livestock – the perfect site. He really was in luck today. Giovanni and his hapless assistant were attempting to guide the boars into an old pen when he slipped and fell. The boars may be thickskulled, but they know an opportunity when they see one and they jumped on him.\n\nHis assistants tried to intervene; all but one were trampled, gored and tusked in the fray, and soon there wasn’t much left of ‘lucky’ Giovanni and his men. The boars, on the other hand, were loose. Their taste of merchant mixed with the wyrdstone they had wolfed down at the same time (that had been hiding in the pockets of the unfortunate Giovanni) all added to their naturally belligerent, vicious and mean character making them even nastier than usual. On the other hand, word from the sole survivor soon travelled throughout Mordheim: there’s a bunch of boars running around Mordheim with wyrdstone in their stomachs…",
       "sections": [
@@ -4447,7 +4447,7 @@
       "name": "The Great Library",
       "number": "",
       "source": "Fanatic Online #46",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Shhhhh...Ancient lore recovered.",
       "intro": "The North-East Quarter of Mordheim was renowned for trade and learning. When Mordheim was a living city, the crowded labyrinth of streets and market plazas were called the Merchant's Quarter, more commonly known as the District of the Flying Horse. Mordheim became known as the finest market of the city in the Empire, rivaling even the busiest ports as Marienburg. There were many traders who would claim that for the right price they could locate any object for you so desired in a day.\n\nAnother notable aspect of the North-Eastern Quarter was the Great Library. During the rule of the extravagant Count Ignatius Steinhardt, the library grew extensively to become the largest building in the entire city. The Count was particularly fond of collecting mystical and religious tomes. Of course, unwittingly, The Great Library managed to collect on of the largest deposits of Daemonic and Necromantic lore in the Empire.\n\nNow after the disaster struck Mordheim Library was engulfed by flames from the comet. Only the bravest ever consider going anywhere near the ruins but the lure of ancient tomes is enough to persuade mages from across the Empire to hire warbands to retrieve any books that they can find. For enough gold, fools can find enough bravery to risk even this dark place.\n\n*Credit given toTC 25 Space McQuirk and Nick Jakos.",
       "sections": [
@@ -4528,7 +4528,7 @@
       "name": "The Recipe",
       "number": "",
       "source": "Fanatic Online",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Warbands must attempt to abduct an esteemed pie-maker who is being stoutly defended by his ballistically adept bodyguard. There are also plenty of pies to be purloined as long as the warriors don’t drop them first. Last to rout wins as long as the pie-man has been taken Out Of Action first.",
       "intro": "Geefer Lugbottom has stumbled upon an amazing new recipe for Bindleberry pie. It’s rumoured that once a Halfling tastes one of Geefer’s new pies, the poor sod will not be satisfied with pies of any other sort. The other chefs of the region have heard the rumours of this fantastic new recipe, and each has decided to teach Geefer a lesson in sharing. So, while Chef Lugbottom transports a batch of his new pies to market, plans are set in motion…\n\nThe game can be played by two or more players. Each warband has been hired by one of Geefer’s rivals to kidnap the pie master and return him for some harmless ‘questioning’. Any pies that are brought back intact earn a lesser reward, as they may be useful in recreating the recipe, even without their creator’s input.",
       "sections": [
@@ -4862,7 +4862,7 @@
       "name": "Don't Wake the Giant",
       "number": "",
       "source": "Archive Pestilen",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Two warbands fight for the giant's goodies while trying not to wake him.",
       "intro": "A wounded warrior has stumbled out of Mordheim, battered and hysterical, he claims a giant ambushed his band, and took theirtreasure. The warrior gives a vague location before he passes to the next life. Rumors spread quickly, and various warbands (3-4)prepare to enter the city to steal the prize.",
       "sections": [
@@ -5323,216 +5323,6 @@
       ]
     },
     {
-      "slug": "scourge-and-purge-archive-pestilen",
-      "name": "Scourge and Purge",
-      "number": "",
-      "source": "Archive Pestilen",
-      "players": "1v1",
-      "summary": "",
-      "intro": "From: His Most Exalted Inquisitor Lord Gunther Ummfeld To: Insert Inquisitor's Name here Subject: Chaos Cult\n\nI just received a message from one of my informers in Mordheim, about an imminent disaster. It seems that a small chaos cult is operating in part of the city of the Damned. A couple of people have gone missing in that area for the last couple of days and yesterday the mutilated body of one of the missing men has been found. There is strong evidence that this man was ritually sacrificed. The local authorities are becoming uneasy, and have asked our noble order to look into this situation. Your task is to form a group of dedicated men and go into this area and cleanse it of all that is foul and evil. May Sigmar help thee!\n\nThe informer is wrong. Although he was right about an imminent disaster, it is not from a Chaos cult. The reason for the missing people is an insane wizard who has chosen to settle down in this part of the city. This wizard is a petty daemonologist and he is trying to make a pact with Chaos. He has been sacrificing people to attract the attention of one or more daemons and hopefully win their favor. Unfortunately for him, it seems he is about to succeed.\n\nThe Inquisition warband doesn't know this and is therefore on the lookout for a group of people to purge and cleanse. And as Fate would have it, another warband is in the area looking for some wyrdstone. This \"innocent\" warband is just in the wrong place at the wrong time. Let the purging begin!",
-      "sections": [
-        {
-          "title": "Terrain",
-          "text": "Each player takes it in turn to place a piece of terrain, either a ruined building structure or a connecting walkway. It is suggested that the terrain is set up within an area of 4' x 4' or slightly smaller so that the warbands start off at a reasonable distance apart.",
-          "tables": []
-        },
-        {
-          "title": "Warbands",
-          "text": "Each player rolls a D6. The low scorer chooses which table edge he wishes to set up on and places all of his warband fighters within 8\" of that edge. His opponent then sets up within 8\" of the opposite table edge.",
-          "tables": []
-        },
-        {
-          "title": "Starting the game",
-          "text": "Both players roll a D6. The highest scoring player takes the first turn.",
-          "tables": []
-        },
-        {
-          "title": "Ending the game",
-          "text": "The primary objective of the Scourge and Purge scenario is simply to destroy the opposing warband and purge this region. If a warband loses more than half of its members, it automatically bottles out and the game ends immediately. The warband that bottles out loses and the other warband automatically wins. The secondary objective is to destroy the possessed wizard.",
-          "tables": []
-        },
-        {
-          "title": "Experience",
-          "text": "Fighters who take part in the Scourge and Purge scenario earn Experience points as noted below.",
-          "tables": []
-        },
-        {
-          "title": "General Experience",
-          "text": "• +1: Survives. If a fighter survives the battle, then 1 Experience point is earned. Even fighters who are wounded and taken out of action receive experience for taking part.\n• +1: Out. A fighter earns 1 Experience point for each opposing fighter he takes down or out during the battle.\n• +2: Winning leader. The leader of the winning side earns an extra 2 Experience points.\n• +5: Kill. The fighter that destroyed the possessed wizard earns 5 Experience points.",
-          "tables": []
-        },
-        {
-          "title": "Inquisition Experience",
-          "text": "• +2: Purge. An Inquisition fighter earns double Experience points for each opposing fighter he takes down or out during the battle.\n• +10: Cleanse. If the Inquisitor personally destroyed the possessed wizard, he earns double Experience points.",
-          "tables": []
-        },
-        {
-          "title": "Special: Insane Wizard",
-          "text": "During the battle between the warbands, the wizard is trying to attract the attention of the Chaos powers. Unfortunately for him, he is succeeding in this. A nearby daemon has noticed the fluctuations of magical energy through the ritualistic killings and has become interested in this wizard. Only not to serve him, but to enter the material world through him and wreak havoc on the world. The daemon is just waiting for the right moment...\n\nEvery turn, during the Magick Phase, roll once on the Perils of the Warp table.",
-          "tables": []
-        },
-        {
-          "title": "Modifiers",
-          "text": "• +1: Per Wounding hit. Add +1 for each wounding hit that is inflicted during the battle.\n• +2: Magick. Add +2 for each magical spell cast or magical artifact activated.\n• +5: Kill. Add +5 for each model that has been taken out or down during the battle.",
-          "tables": []
-        },
-        {
-          "title": "Perils of the Warp Table",
-          "text": "{{table:1}}",
-          "tables": [
-            {
-              "columns": [
-                "2D6",
-                "Effect"
-              ],
-              "rows": [
-                [
-                  "2-11",
-                  "Nothing happens"
-                ],
-                [
-                  "12",
-                  "Possessed. The wizard has been possessed by the daemon. See \"Daemonic Possession\" below. Place the model outside a building 12\" from both warbands."
-                ]
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Daemonic Possession",
-          "text": "A wizard who is possessed has had his body completely taken over by the daemon. The ferocious energy of the creature will quickly burn up the frail body of the wizard, but before it does so, the daemon will go on a rampage and attempt to cause as much death and destruction as possible!\n\nThe possessed wizard moves in each player's turn. Carry out his move and attacks before moving any other models. The wizard will move 2D6\" in a direction chosen by the player whose turn is not taking place. The wizard must enter close combat if he is able to reach a model.\n\nIf the wizard is not engaged in close combat, he will unleash a bolt of magical energy at the nearest model he can see. The energy bolt hits on a roll of 2+ and causes a strength 4 hit with no armour save allowed. Normal to-hit modifiers for cover, etc. apply.\n\nRoll for damage against the wizard as normal. However, he ignores pinning and any 'flesh' wounds and 'down' results on the 'Injury Table'. If a player takes him out of action, roll immediately on the Serious Injuries Chart. Only a 'Dead' result will destroy the daemon, and with him, the wizard. On any other roll, the wizard gets straight back up again and is completely unaffected.\n\nFortunately for both warbands involved in the battle, the daemon will quickly burn up the energy reserves for the wizard's fragile mortal body. Roll a D6 for the wizard at the end of each player's turn. On a roll of 1, the wizard's body finally burns up and the daemon is forced to return to the Warp. Remove the wizard's model from the battlefield — all that is left is a charred skeleton amidst a pile of ashes!",
-          "tables": []
-        },
-        {
-          "title": "Profile",
-          "text": "{{table:1}}\n\nSpecial rules:\n\n• The possessed wizard causes Fear — and quite right too!",
-          "tables": [
-            {
-              "columns": [
-                "M",
-                "WS",
-                "BS",
-                "S",
-                "T",
-                "W",
-                "I",
-                "A",
-                "Ld"
-              ],
-              "rows": [
-                [
-                  "2D6",
-                  "6",
-                  "3",
-                  "9",
-                  "3",
-                  "1",
-                  "3",
-                  "3",
-                  "n/a"
-                ]
-              ]
-            }
-          ]
-        }
-      ],
-      "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/scourge-and-purge-archive-pestilen",
-      "tags": [
-        "Set in Mordheim",
-        "Brawl",
-        "Hostile NPC",
-        "1v1"
-      ]
-    },
-    {
-      "slug": "scripts-of-sigmar",
-      "name": "Scripts of Sigmar",
-      "number": "",
-      "source": "Archive Pestilen",
-      "players": "1v1",
-      "summary": "Witch Hunters vs. Sisters of Sigmar. Two linked scenarios involving burgling the Sisters' Abbey. First get across the River Stir and up to the gates without raising the alarm, then find & make off with the goodies.",
-      "intro": "Before the devastation wrought by the comet, a beautiful convent stood overlooking the city from an island in the river. The convent is owned by the Sisters of Sigmar, an all-female religious sect that worships Sigmar, much to the despair of the Grand Theogonist. There has long been arguments between the Sisterhood and the Church of Sigmar, often leading to bloody conflict. During the fall of Mordheim, the question of the Sister's purity was finally brought into open question when the only building left completely intact after the catastrophe. The church of Sigmar started spreading rumours about demonic pacts.\n\nThe Convent in Mordheim was supposedly the centre of the Sister's belief system and held all their holy manuscripts written by priests and martyrs throughout the ages. One of them is supposedly written by Sigmar himself. The Grand Theogonist decided that now that the general populace was questioning the right of the sisterhood, he would force a return of the most important document for his study. Of course... like the chaos spawn they are, they refused. What else was to be done? Deacon Avaris was sent to reclaim the manuscript at whatever cost... total extermination of the sisterhood could do no harm. Thus, the Witch Hunters came to Mordheim en masse.",
-      "sections": [
-        {
-          "title": "Witch Hunters Vs Sisters of Sigmar",
-          "text": "Either of the two sides could be replaced, all you need to do is change the aim of the mission. i.e. change the script to a stash of wyrdstone or gold instead. In addition to the Mordheim rules, some floorplans such as those from Warhammer Quest will be needed. Until Mordheim is released, you will have to use another gang to represent the Sisterhood.\n\nThis adventure has been written as a small campaign for Mordheim, but it could easily be translated into a Warhammer Quest scenario using a party of Witch Hunters and their hirelings. Yes Tuomas... I'll get around to writing that one up when I finally get to see what the rules for the Sisters of Sigmar are.",
-          "tables": []
-        },
-        {
-          "title": "Mission One - The Bridge; Not Too Far",
-          "text": "Deacon Avaris has decided that the best time to assault the Convent is in the middle of the night when they rely on raw recruits to guard the bridges, leaving the more seasoned veterans to deal with the day-to-day warfare in the city.\n\nThis part of the mission is to be a stealthy operation. Any cries from the guards and the others will be awake and aware of the raid.",
-          "tables": []
-        },
-        {
-          "title": "Set-up",
-          "text": "For this mission, you need to set up the table with a large river down the centre of the table with a large bridge across it. On one side of the table, you need to have the entrance of the Convent; the other will have ruins of Mordheim. The rest I leave up to you... (Do they really need more information? River, bridge, ruins one side... clear ground and temple other... seems fairly simple to me).",
-          "tables": []
-        },
-        {
-          "title": "River",
-          "text": "The river is counted as impassable terrain (unless they are using a boat or are skinks) for the mere fact that it is so deep and fast-flowing. Anyone falling in is lost for this game as they have been washed down the river. All equipment must be dropped to enable the model to swim to safety, and if they were wearing heavy armour, they (after much debate and argument on the Mordheim list) drown outright. End of character. He is no more. Dead. Gone. Finished. Ka-put.",
-          "tables": []
-        },
-        {
-          "title": "Night Time",
-          "text": "In the dark, people's vision is severely impaired (Dwarves, elves, and skaven can ignore the following rules if you decide to use different gangs). Ranged attacks (bows, crossbows, pistols, rifles, bags of explosives, and ranged magic) have their range halved. Movement is limited to walking speed on the Mordheim side of the river... would you want to run across ruins at night? You'd quickly catch your foot and break something. Once across the bridge, the ground is clear, flat, and faintly illuminated by light pouring from the doorway into the convent, so movement is returned to normal, though ranged weapons are still limited.\n(Adjustments anyone?)",
-          "tables": []
-        },
-        {
-          "title": "Sides",
-          "text": "The Sisterhood has 5 basic non-\"gang\" member warriors, the player’s actual team is considered asleep inside the convent. The Sisterhood can set up anywhere on their side of the table or on the bridge. These models do not count as part of your gang and nor do they gain experience. This is to represent the fact that there are more than one gang's worth of Sisters in the city of Mordheim, but your lot live in the area around the script.\n\nIf you really want to, you can use five actual members of your gang to patrol around outside, but these cannot be used in the second mission. If you do use your gang members, they do gain experience as normal.\n\nThe Sisters are randomly patrolling the area around the bridge, so each turn they move D3 inches in a randomly determined direction (a scatter dice is useful for this) until one of the enemy is spotted and the guards are alerted. Sentries can attempt to spot the enemy if they are within 12\". Witch Hunters in the open will be spotted on a 2+ on one D6; in partial cover, they are spotted on a 4+ and in solid cover, it takes a 6+. If a Witch Hunter is within initiative range of a sentry, they will be spotted on a 2+. If a guard is standing on the bridge, there is a 2\" zone either side of the bridge that they cannot see into... counts as solid cover for detecting the enemy from the bridge.\n\nOnce the enemy is detected, the guards can move freely under the control of the Sister’s player. The guards can alert those inside if one of them reaches the door. In effect, the Sisters win the scenario, but it doesn't end until all the guards are dead/off the table or the Witch Hunter leader has decided he has enough men through the door to carry on to the next mission.\n\nThe Witch Hunters may take as many of their gang as they wish, with the exception of the wardogs, chariots, carts, and horses because they are too noisy for a stealth mission. They must come on the Mordheim side of the table, starting at the very edge of the table. If powder weapons or visible magic (i.e. fireballs and the like... what are the magic rules anyway?) are used before the guards are alerted, they automatically become alerted. Wouldn't you be?\n\nThe Witch Hunters may use boats to try and sneak across the river.",
-          "tables": []
-        },
-        {
-          "title": "Objectives",
-          "text": "The Witch Hunters must reach the door to the temple with as little resistance as possible, preferably avoiding the guards completely. Obviously, the Sisters hope to stop any intruders, or at least call out to those inside.",
-          "tables": []
-        },
-        {
-          "title": "Experience",
-          "text": "• +1 Survives: If a Hero or a Henchman group survives the battle they gain +1 Experience.\n• +1 Winning Leader: The leader of the winning warband gains +1 Experience.\n• +1 Per Enemy Out Of Action. A Hero earns +1 Experience for each enemy he puts Out Of Action.\n\nOriginal Experience\n\nIn the original source, the following experience was used:\n\n• +D6 Survives\n• +5 per wounding hit\n• +10 Sisterhood gang leader if the alarm is raised\n• +10 to each surviving Witch Hunter gang member who makes it to the door\n• +10 to the Witch Hunter leader if they reach the door unmolested.\n\nIt is assumed a different XP tracker was used from the one found on the warband sheet",
-          "tables": []
-        },
-        {
-          "title": "Mission 2 - Unto the Temple, My Brothers",
-          "text": "This mission varies wildly depending upon whether or not the alarm was raised by the guards. If the alarm was raised, the Sister’s player may set their entire gang up wherever they want. Otherwise, three will be randomly patrolling (as with the previous scenario) the corridors while the others sleep.",
-          "tables": []
-        },
-        {
-          "title": "Sides",
-          "text": "The Sisters will have their entire force. Witch Hunters may use any who made it from the first scenario (this means no wardogs, Tuomas). There has been no time for the injured to rest unless they were healed by the Warrior Priest.",
-          "tables": []
-        },
-        {
-          "title": "Layout",
-          "text": "Randomly generate an entire floorplan with the Warhammer Quest floor tiles (NB: the only objective room tiles to be used are the crypt and the fountain... all else isn’t really viable for a convent), or get someone else to place it for you before the game. Using the idea of 1 square = 1 inch, it is easy to translate to the boards. It is well lit inside the convent, so weapon ranges are normal.\n\nThe Sister’s player may secretly mark one room down as the library where the scroll is stored and places the rest of their troops anywhere on the map. Those asleep may not move until awakened. The Witch Hunter should be told that this is the library when he enters the room. He now has the scroll and must now fight his way out again.\n\nThe sleeping gang members can be awoken when one of the guards reaches the room where they are. If the Witch Hunter player reaches the sleeping chambers before the guards, the troops within are unprepared and are not wearing any armour, although the attackers do have to pass a LD test, else they receive a -1 to hit in H-T-H (scantily clad women will sway all but the most devout).\nThe Warrior Priest, dogs (if they could be used... which they can't), and Witch Hunters automatically pass the test because they are convinced of the foulness of these harlot women.",
-          "tables": []
-        },
-        {
-          "title": "Objectives",
-          "text": "• The Sisters must repel the invasion, or at least stop the Witch Hunters making off with the scroll.\n• The Witch Hunters must first locate the scroll then escape back to the entrance.",
-          "tables": []
-        },
-        {
-          "title": "Experience",
-          "text": "• +1 Survives: If a Hero or a Henchman group survives the battle they gain +1 Experience.\n• +1 Winning Leader: The leader of the winning warband gains +1 Experience.\n• +1 Per Enemy Out Of Action. A Hero earns +1 Experience for each enemy he puts Out Of Action.\n\nOriginal Experience\n\nIn the original source, the following experience was used:\n\n• +D6 Survives\n• +5 per wounding hit\n• +10 Winning gang leader\n\nIt is assumed a different XP tracker was used from the one found on the warband sheet",
-          "tables": []
-        }
-      ],
-      "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/scripts-of-sigmar",
-      "tags": [
-        "Set in Mordheim",
-        "Warband - Witch Hunters",
-        "Warband - Sisters of Sigmar",
-        "Official Scenario",
-        "Attacker/Defender",
-        "Traverse the Board",
-        "Low Visibility",
-        "Boats",
-        "1v1"
-      ]
-    },
-    {
       "slug": "the-caravan-archive-pestilen",
       "name": "The Caravan (Archive Pestilen)",
       "number": "",
@@ -5646,86 +5436,11 @@
       ]
     },
     {
-      "slug": "the-forbidden-square",
-      "name": "The Forbidden Square",
-      "number": "",
-      "source": "Archive Pestilen",
-      "players": "multiplayer",
-      "summary": "",
-      "intro": "The red sun stood low; half of it was beyond the horizon. In a couple of minutes, it would vanish into unknown parts of the World. Master Rudiger stirred at the sunset. Mordheim, the cursed city in the northeastern corner of the Empire, rose two miles away to continue as long as the eyes of a man could reach. The river Stir ran slightly through the landscape and disappeared under the first walls into the sewer channels. \"Who knows,\" thought Master Rudiger, \"what kinds of plague fleets along these waters.\"\n\nJaakop the Archer, Master Rudiger's companion, sat down on a stone and drew a map from his traveling bag. The map showed the known parts of Mordheim; the unknown parts were crossed over with black ink.\n\n\"So,\" said Jaakop in an attempt to gain Master Rudiger's attention. \"It is told that these ruins in the north-eastern quarters,\" he pointed out the area on the map and continued, \"that they are infested by the followers of Chaos.\"\n\nMaster Rudiger stepped to the riverbank and watched himself in the dark water. \"So what?\" he said. \"The powers of Chaos are not to be underestimated. I have fought dozens of beasts and broods and monsters in my days, and I know them. One hound can scare ten men, and they will have nightmares the rest of their lives ... no, my dear friend. We will go the safe way through the old streets and avoid unnecessary fights. The worshippers of Chaos are, by Sigmar, the last ones I will ever meet.\"\n\nJaakop the Archer, who led a group of dogs of war, answered in a deep voice: \"Master, we are sent by the Duke himself. In a search for Wyrdstone. We have accepted our mission ourselves, we are not here for watching the sun go down. We are here for adventure - for fame, for honor, for treasure. Let me tell you something, Master.\"\n\nHe closed the map and returned it to the bag. \"The area is called the Forbidden Square. It is closed - totally closed. Surrounded by impassable ruins and deadly walls. It is the most sacred and holy area of the Chaos cults, and rumors from Toville say they have gathered all their Wyrdstone here in the Forbidden Square. They wanted to sacrifice it to their dark gods, but now an in-fight has started, and they are no more in peace with each other.\"\n\n\"Oh, they never are,\" murmured Master Rudiger. \"They bribe, they kill, they lie, they slaughter, they break treaties and they assassinate each other every day. Peace is not an option in the Chaos circles.\"\n\n\"Listen up now,\" said Jaakop. \"The Forbidden Square is the holiest area for the Chaos possessed. Weapons are not allowed there, neither swords nor bows. We can infiltrate them, steal their Wyrdstone and quickly get out again before anyone finds out that the stones are gone. Very easy.\"\n\nMaster Rudiger considered the plan. \"And how do we get there?\" he asked. \"I suppose the entrance has been heavily guarded by their toughest warriors.\"\n\n\"Yes it is. But who says we will have to fight them? I know a tailor in Toville. He can provide us some suitable cloth, and with a bit of cleverness, we will all look like cultists. They will let us in immediately.\"\n\n\"Are you sure?\" asked Master Rudiger.\n\n\"I am sure,\" answered Jaakop.\n\n\"Then,\" said Master Rudiger thoughtfully. \"I will consider it.\"\n\nThe two men stood up. Jaakop lighted his lantern, and together they went towards Toville along the river.",
-      "sections": [
-        {
-          "title": "The Scenario",
-          "text": "This scenario takes place in the north-eastern parts of Mordheim, the city of the damned. Here the Chaos cultists have gathered their Wyrdstone in a great sacrifice for the Chaos gods. The gods have promised them horrible mutations and infinite power in reward for the stones. However, as the greatest priests have begun to argue with each other about who are actually the rightful owners of the magic stones, the rumors have passed over the nearby towns like a lightning bolt striking down from heaven.\n\nThe scenario should be fought between two or more warbands. An equal number of warbands must fight on each side, or the weaker warband must be allocated some advantages to counter their weakness. This could be additional soldiers (either Chaos priests who patrol the Forbidden Square or supporting farmers from the surrounding towns), special deployments, weapons, or any other similar advantages. One of the sides represents the Chaos worshippers, and the other side is the good races of humans, Dwarfs, and Elves. If only evil warbands are available, then one of them should represent an independent warband launching an attack against their rivals; in the opposite case, one side could be a group of weak men who have sold their souls to the Chaos gods, and their old friends are trying to kill them before they become too mighty. Players may attack each other if they want - nothing can prevent a Chaos warband from attacking another warband on its own side, and warriors from the infiltrating side may charge each other too. This represents the inside fights and envy for each other when they capture the stones.",
-          "tables": []
-        },
-        {
-          "title": "Set-up",
-          "text": "The gaming table must be set up under certain restrictions, and the players must deploy under special rules. Before you begin the scenario, make sure you have the terrain and buildings required. It may be necessary to create special terrain, or you can alternatively use some other objects to represent the terrain. The size of the table should be about 4' x 4'. This map shows roughly how to set up, and it defines where to deploy the warriors.",
-          "tables": []
-        },
-        {
-          "title": "The Gate",
-          "text": "One of the sides must have a gate from which the infiltrating warbands enter. If you have a gateway from the Warhammer Fortress, this would be excellent; otherwise, you must create your own. It is very easy to make, and it adds some variation to the work. You can make the gateway very interesting by adding ladders, balconies, small towers, and so forth to the building.",
-          "tables": []
-        },
-        {
-          "title": "The Totem",
-          "text": "In the middle of the Forbidden Square, the Chaos cultists have built a big totem to honor their gods. The totem can be made in a load of different ways: From a single rod or stone glued on a cardboard base to a finely structured and detailed totem sculpted from Green Stuff or cut out of a tree. Or if you have a Chaos monument or totem for your Warhammer Fantasy Battle army, this might fit too.",
-          "tables": []
-        },
-        {
-          "title": "Buildings",
-          "text": "You will need a couple of buildings to represent the borders of the Forbidden Square. If you have some card buildings, these can do it very well; otherwise, you can easily create your own buildings. Your buildings should roughly cover the edges of the table - maybe a single house or two in the Square itself. If you do not have enough buildings, the gaps can be closed with walls or a steep hill.",
-          "tables": []
-        },
-        {
-          "title": "Terrain",
-          "text": "To make the scene more interesting, you can use additional terrain pieces such as cargo boxes (between three and seven boxes glued on bases do not only look great - they also provide excellent cover for the warriors and add a lot of tactics to the game), dead trees, rocks and meteor craters, pillories, gallows, and so forth.",
-          "tables": []
-        },
-        {
-          "title": "Wyrdstone Counters",
-          "text": "A set of Wyrdstone counters must be made. The Warpstone counters from Warhammer Magic can be used here, or you can either paint or model your own counters.",
-          "tables": []
-        },
-        {
-          "title": "Special Set-up Rules",
-          "text": "The Forbidden Square is the most sacred place for the Chaos worshippers, and carrying weapons is not allowed for either the Chaos nor the infiltrating warbands - all warriors have been thoroughly inspected by the guards. However, it has been possible for the infiltrators to smuggle in daggers. The Chaos are also armed with daggers - the Old World is a dangerous place, and no one would ever leave his own home without at least having a knife or dagger in his belt.\n\nThat means that no warbands may use their weapons. Only daggers and armour are allowed. Some races, however, count more on weapons than others, and that means that all weapons carried by all warriors in all warbands are counted together and noted down on small counters representing the weapons. Before the warbands deploy, each player in turn rolls a D6. On a roll of 3+, he randomly draws a weapon counter and puts it anywhere he likes at least 12 inches from his own deployment zone. On a roll of 1 or 2, the weapon counter is discarded.\n\nWhen all weapon counters have been placed, the Wyrdstone must be placed. Each player in turn rolls a D6 again. On a roll of 2+, he may position a Wyrdstone counter. This must be placed at least 14\" from his deployment zone and at least 4\" from the totem base. When he has positioned the counter, he must roll the Scatter dice and move the counter D6 inches in the direction shown by the dice. If a \"HIT\" is rolled, the counter ends up where it was placed. Each player continues placing Wyrdstone counters until one player rolls a 1. When that happens, no more counters may be placed. Counters may be placed in the enemy's deployment zone if players wish to do so.",
-          "tables": []
-        },
-        {
-          "title": "Starting the game",
-          "text": "When all Wyrdstone and weapon counters have been placed, the warbands must deploy. The Chaos side deploys first under the following restrictions: All henchmen groups must be placed in the buildings at the table edges. Only one group may be deployed in each building. If your buildings are closed, like card-buildings, the warriors must be set up behind the buildings. When the Chaos have deployed, the infiltrators must deploy. They deploy under and behind the gate, but they may not enter the Square itself. The infiltrators get the first turn.",
-          "tables": []
-        },
-        {
-          "title": "The Counters",
-          "text": "When a warrior enters a weapon counter, he may pick it up. This costs nothing, and the warrior may use that weapon if it is on the warrior's Equipment list. If it is not, then he may choose to keep it anyway instead of just leaving it. If he keeps it, he may hand it over to another warrior from his own side, or he can just keep it until the battle is over. Or he may choose to throw it away somewhere so that another warrior may later pick it up. Warriors can carry any number of weapons, but they cannot use all their weapons. For example, warriors with two bows cannot shoot with both bows in one shooting phase, and warriors with two swords can only use one of them in close combat.\n\nIf a warrior enters a Wyrdstone counter, he may pick it up or leave it. As with weapon counters, Wyrdstone can be thrown away and handed over, and warriors can carry any number of Wyrdstone counters. When a warrior has a counter, simply place it at the warrior's base or beside its base if there is no more empty space left for the counter. If a warrior at any time is knocked down, stunned, or wiped out, he will lose all Wyrdstone counters he is carrying. Warriors will lose any additional weapon counters they cannot use - i.e., a warrior with two axes will lose one of the two counters that he cannot use, and warriors with a longbow and throwing stars will lose one of the two missile weapons he is carrying (the player may choose what weapons to throw away).",
-          "tables": []
-        },
-        {
-          "title": "Ending the game",
-          "text": "When an infiltrating warrior has a Wyrdstone counter, it is his job to get away as quickly as possible. The only way out is through the gate... The Chaos players must carry the counters into the totem. Every counter that is put beside the totem will vanish into other dimensions where the Demons and the Dark Gods rule. These are the main objectives of the two sides. When all Wyrdstone counters have been carried away or switched to the Gods, the game ends, and each player counts together the number of counters they have brought away. The player with the highest number of stones is the winner of the scenario. If the result is a draw, then the side which scored the most casualties wins the game.",
-          "tables": []
-        }
-      ],
-      "url": "https://mordheimer.net/docs/campaigns/scenarios/archive-pestilen/the-forbidden-square",
-      "tags": [
-        "Set in Mordheim",
-        "Wyrdstone Tokens",
-        "Traverse the Board",
-        "Warband - Cult of the Possessed",
-        "1v1",
-        "Multiplayer"
-      ]
-    },
-    {
       "slug": "the-restless-dead",
       "name": "The Restless Dead",
       "number": "",
       "source": "Archive Pestilen",
-      "players": "multiplayer",
+      "players": "either",
       "summary": "Random zombies invade the table, attacking both players.",
       "intro": "The impact of the meteor on Mordheim not only affected the living residents of that blighted city. The pernicious effects of the vast quantities of warpstone began to work on those long dead and those the meteor had itself killed. Soon the streets of the city echoed to the tread of bony feet and the stench of rotting flesh filled the air as the corpses of Mordheim walked abroad. The adventurers seeking wealth in the ruined city soon found themselves beset by bands of undead warriors.",
       "sections": [

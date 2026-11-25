@@ -18,10 +18,10 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 const LIST = "/campaigns/7/scenarios/";
 let picked: ScenarioPick = { name: "", scenarioId: null };
 
-function Harness({ warbands = 2 }: { warbands?: number }) {
+function Harness() {
   const [value, setValue] = useState<ScenarioPick>({ name: "", scenarioId: null });
   picked = value;
-  return <ScenarioField campaignId={7} value={value} onChange={setValue} warbands={warbands} />;
+  return <ScenarioField campaignId={7} value={value} onChange={setValue} />;
 }
 
 beforeEach(() => {
@@ -54,26 +54,26 @@ describe("Start a battle's scenario", () => {
     expect(screen.getByRole("button", { name: "Scenario: Bridge fight" })).toBeInTheDocument();
   });
 
-  it("draws one for the warbands picked and draws again in its place", async () => {
+  it("draws one from the whole list, whoever plays, and draws again in its place", async () => {
     const user = setupUser();
     const answers = [POOL, HUNT];
     fakeApi.on(`POST ${LIST}random/`, () => answers.shift());
-    renderWithQueryClient(<Harness warbands={3} />);
+    renderWithQueryClient(<Harness />);
 
     await user.click(screen.getByRole("button", { name: "Random scenario" }));
     await waitFor(() => expect(picked).toEqual({ name: "The Pool", scenarioId: 12 }));
-    expect(fakeApi.bodyOf(`POST ${LIST}random/`)).toEqual({ players: 3 });
+    expect(fakeApi.bodyOf(`POST ${LIST}random/`)).toBeUndefined();
 
     await user.click(screen.getByRole("button", { name: "Random scenario" }));
     await waitFor(() => expect(picked).toEqual({ name: "Wyrdstone Hunt", scenarioId: 11 }));
   });
 
-  it("shows the server's words when nothing fits", async () => {
+  it("shows the server's words when nothing can be drawn", async () => {
     const user = setupUser();
-    const detail = "No scenario on the campaign's list is for two warbands with a weight above 0.";
+    const detail = "No scenario on the campaign's list has a weight above 0.";
     fakeApi.fail(
       `POST ${LIST}random/`,
-      new ApiError(detail, 400, { detail, code: "no_scenario_fits" })
+      new ApiError(detail, 400, { detail, code: "nothing_to_draw" })
     );
     renderWithQueryClient(<Harness />);
 

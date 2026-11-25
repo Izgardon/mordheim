@@ -22,19 +22,17 @@ const optionOf = ({ scenario }: CampaignScenario): SearchOption => ({
 
 /**
  * Start a battle's scenario: a picker over the campaign's list (its icon beside each) that still
- * takes a typed name, and Random scenario, the server's weighted draw for the warbands picked
- * (1v1 for two), which fills the box; drawing again replaces it.
+ * takes a typed name, and Random scenario, the server's weighted draw from the whole list
+ * (whoever plays: William, 25 Nov 2026), which fills the box; drawing again replaces it.
  */
 export default function ScenarioField({
   campaignId,
   value,
   onChange,
-  warbands,
 }: {
   campaignId: number;
   value: ScenarioPick;
   onChange: (pick: ScenarioPick) => void;
-  warbands: number;
 }) {
   const rows = useCampaignScenarios(campaignId);
   const draw = useDrawScenario(campaignId);
@@ -62,7 +60,7 @@ export default function ScenarioField({
           className="min-h-10"
           disabled={draw.isPending}
           onClick={() =>
-            draw.mutate(Math.max(2, warbands), {
+            draw.mutate(undefined, {
               onSuccess: (row) => choose({ name: row.scenario.name, scenarioId: row.scenario.id }),
               onError: (failure) => setError(getErrorMessage(failure, "Couldn't draw a scenario.")),
             })

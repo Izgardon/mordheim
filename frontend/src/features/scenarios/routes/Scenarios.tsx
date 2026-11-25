@@ -16,11 +16,12 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { useCampaignScenarios } from "../api/scenario-queries";
 import AddScenarioDialog from "../components/AddScenarioDialog";
 import ScenarioFormDialog from "../components/ScenarioFormDialog";
+import { playersMatch } from "../components/ScenarioPlayersIcon";
 import ScenarioRow from "../components/ScenarioRow";
 import { SORT_OPTIONS, scenarioRows, type ScenarioSort } from "../scenario-rows";
-import type { CampaignScenario, ScenarioPlayers } from "../types";
+import type { CampaignScenario } from "../types";
 
-type PlayersFilter = "all" | ScenarioPlayers;
+type PlayersFilter = "all" | "1v1" | "multiplayer";
 
 const SOURCE = "w-[220px] shrink-0";
 const WEIGHT = "w-[96px] shrink-0";
@@ -44,7 +45,7 @@ export default function Scenarios() {
   const sort = params.get("sort", "name") as ScenarioSort;
   const all = list.data ?? [];
   const rows = scenarioRows(
-    all.filter((row) => players === "all" || row.scenario.players === players),
+    all.filter((row) => playersMatch(row.scenario.players, players)),
     params.query,
     sort
   );
@@ -56,7 +57,7 @@ export default function Scenarios() {
   const reveal = (row: CampaignScenario) =>
     params.reveal(String(row.id), { q: null, players: null });
   const counts = (filter: PlayersFilter) =>
-    all.filter((row) => filter === "all" || row.scenario.players === filter).length;
+    all.filter((row) => playersMatch(row.scenario.players, filter)).length;
 
   return (
     <ReferencePage

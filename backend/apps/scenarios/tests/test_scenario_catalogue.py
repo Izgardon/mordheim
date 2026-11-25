@@ -31,7 +31,7 @@ class CatalogueTests(ScenarioTestCase):
         self.assertEqual(body["sections"][0], {"title": "Terrain", "text": "A river.", "tables": []})
 
         listed = self.get_as(self.player, f"/api/scenarios/?campaign_id={self.campaign.id}").json()
-        self.assertEqual(len(listed), 71)
+        self.assertEqual(len(listed), 68)
         self.assertTrue(all(row["in_play"] for row in listed))  # no setting: never hidden
 
         taken = self.post_as(self.owner, "/api/scenarios/", {**OWN, "campaign_id": self.campaign.id})

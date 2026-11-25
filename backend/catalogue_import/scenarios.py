@@ -6,7 +6,9 @@ one-line summary), its opening lines, then its sections in order, each heading n
 one of the standard ones (Terrain, Warbands, Set-up, Starting the game, Special rules, Ending the game, Experience,
 Wyrdstone) and in sentence case otherwise. A page's sub-headings (`h3`, the Caravan's Wagons, Kidnapped's Freeing the
 sacrificial victim) are sections too, in their place; smaller ones stay lines in their section's text. A scenario is
-for two players unless the site tags it Multiplayer or Chaos on the Streets. The book's number is kept where the
+for two players unless the site tags it Multiplayer or Chaos on the Streets; tagged 1v1 as well, or written for both
+(`EITHER`), it is for either (William, 25 Nov 2026). Archive Pestilen's copies of Town Cryer's pages are left out
+(`DROP`: "Remove duplicates"). The book's number is kept where the
 book numbers it: the rulebook's nine and Chaos on the Streets' seven ("Play Scenario 4: The Wizard's Mansion").
 
 The index page's two 2D6 tables are which scenarios a setting adds, and how often each is drawn: a result's chance
@@ -51,6 +53,10 @@ NAMES = {  # two Archive Pestilen pages both title "Ambush", beside Chaos on the
     "ambush-2-archive-pestilen": "Ambush 2 (Archive Pestilen)",
 }
 MULTIPLAYER_TAGS = frozenset({"Multiplayer", "Chaos on the Streets"})
+EITHER = frozenset({"lost-prince-tc5"})  # "works perfectly well for two players" (William: yes, both)
+DROP = frozenset(  # Archive Pestilen's copies of Town Cryer #7's and #9's scenarios (William, 25 Nov 2026)
+    {"scourge-and-purge-archive-pestilen", "the-forbidden-square", "scripts-of-sigmar"}
+)
 TABLES = {"scenario-table": "Mordheim 1a", "cots-table": "Mordheim 1a"}  # the index's tables -> the setting
 TWO_D6 = {total: 6 - abs(total - 7) for total in range(2, 13)}  # each 2D6 total's chance in 36ths
 
@@ -123,7 +129,7 @@ def _scenario(row: dict[str, Any], page: dict[str, Any]) -> dict[str, Any]:
         "name": NAMES.get(row["slug"], name.strip()),
         "number": number if row["folder"] == "mordheim-rulebook" else "",
         "source": page["lines"].get("source", ""),
-        "players": "multiplayer" if MULTIPLAYER_TAGS & set(row["tags"]) else "1v1",
+        "players": _players(row),
         "summary": page["lines"].get("notes", ""),
         "intro": page["intro"],
         "sections": page["sections"],
@@ -131,6 +137,13 @@ def _scenario(row: dict[str, Any], page: dict[str, Any]) -> dict[str, Any]:
         "tags": row["tags"],
         "folder": row["folder"],
     }
+
+
+def _players(row: dict[str, Any]) -> str:
+    tags = set(row["tags"])
+    if row["slug"] in EITHER or ("1v1" in tags and MULTIPLAYER_TAGS & tags):
+        return "either"
+    return "multiplayer" if MULTIPLAYER_TAGS & tags else "1v1"
 
 
 def _distinct_names(scenarios: list[dict[str, Any]]) -> None:
@@ -181,6 +194,8 @@ def build_scenarios(snapshot: Path = SNAPSHOT) -> dict[str, Any]:
     manifest = load_json(snapshot / "manifest.json")
     scenarios = []
     for row in manifest:
+        if row["slug"] in DROP:
+            continue
         markup = (snapshot / "pages" / row["folder"] / f"{row['slug']}.html").read_text(encoding="utf-8")
         scenarios.append(_scenario(row, read_page(markup, row["slug"])))
     _distinct_names(scenarios)
@@ -209,8 +224,9 @@ def render_scenarios(data: dict[str, Any]) -> str:
     for entry in rows:
         titles = ", ".join(section["title"] for section in entry["sections"])
         lines.append(f"| {entry['name']} | {entry['number']} | {entry['source']} | {entry['players']} | {titles} |")
-    both = [entry["name"] for entry in rows if {"1v1", "Multiplayer"} <= set(entry["tags"])]
-    lines += ["", f"Tagged both 1v1 and Multiplayer (imported as multiplayer): {', '.join(both)}.", ""]
+    either = [entry["name"] for entry in rows if entry["players"] == "either"]
+    lines += ["", f"For either (tagged both, or written for both): {', '.join(either)}.", ""]
+    lines += [f"Left out as copies: {', '.join(sorted(DROP))}.", ""]
     for table in data["settings"]:
         weights = ", ".join(f"{row['slug']} {row['weight']} ({row['rolls']})" for row in table["scenarios"])
         lines.append(f"- {table['setting']} ({table['table']}): {weights}")

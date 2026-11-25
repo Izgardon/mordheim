@@ -83,7 +83,6 @@ export default function StartBattleDialog({
           campaignId={campaignId}
           value={form.scenarioPick}
           onChange={form.setScenarioPick}
-          warbands={form.warbandCount}
         />
         {report ? (
           <label className={LABEL}>

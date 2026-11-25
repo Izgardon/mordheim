@@ -43,12 +43,9 @@ export function removeCampaignScenario(campaignId: number, rowId: number) {
   });
 }
 
-/** `POST campaigns/:id/scenarios/random/`: the server's weighted draw for that many warbands. */
-export function drawScenario(campaignId: number, warbands: number) {
-  return apiRequest<CampaignScenario>(`${list(campaignId)}random/`, {
-    method: "POST",
-    body: { players: warbands },
-  });
+/** `POST campaigns/:id/scenarios/random/`: the server's weighted draw from the whole list. */
+export function drawScenario(campaignId: number) {
+  return apiRequest<CampaignScenario>(`${list(campaignId)}random/`, { method: "POST" });
 }
 
 /** `POST scenarios/`: the campaign's own scenario (the catalogue's write path, `edit_catalogue`). */
