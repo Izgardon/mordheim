@@ -40,3 +40,14 @@ describe("A unit's boon or bane", () => {
     expect(screen.queryByRole("link")).toBeNull();
   });
 });
+
+describe("An opened box's panel", () => {
+  it("takes its kind's colour on its border, as its box does (William, 25 Nov 2026)", () => {
+    const { container } = renderPanel({
+      name: "Strike to Injure",
+      kind: "Combat",
+      boxKind: "skill",
+    });
+    expect(container.querySelector('[data-trim="skill"]')).toHaveClass("border-kind-skill");
+  });
+});

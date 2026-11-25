@@ -3,7 +3,8 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * item: carried gear; mount: a mount (accent); skill, special and spell: each with its own accent;
+ * item, skill, special and spell: each with its own colour, on its icon and its stripe (William, 25 Nov 2026);
+ * mount: a mount (accent);
  * pending: a pick an advance left; quiet: a plain rule.
  */
 export type BoxTileKind = "item" | "mount" | "skill" | "special" | "spell" | "pending" | "quiet";
@@ -11,10 +12,10 @@ export type BoxTileKind = "item" | "mount" | "skill" | "special" | "spell" | "pe
 const KIND_STYLES: Record<BoxTileKind, { box: string; name: string; type: string; icon: string }> =
   {
     item: {
-      box: "border-border bg-raised",
+      box: "border-border border-l-kind-item bg-raised",
       name: "text-ink",
       type: "text-muted-foreground",
-      icon: "text-accent-text",
+      icon: "text-kind-item",
     },
     mount: {
       box: "border-accent-line bg-accent-soft",
@@ -72,6 +73,18 @@ type BoxTileProps = {
  * An item, skill, special or spell box in a unit's rows, told apart by icon and accent. At
  * most 200 px wide (William): a long name or second line ends in "…", the full text in its title.
  */
+/** An opened box's panel border, in its kind's colour (William, 25 Nov 2026: "their trim colour on the expanded unit
+ * card too"). */
+export const BOX_TRIM: Record<BoxTileKind, string> = {
+  item: "border-kind-item",
+  mount: "border-accent-line",
+  skill: "border-kind-skill",
+  special: "border-kind-special",
+  spell: "border-kind-spell",
+  pending: "border-accent-line",
+  quiet: "border-accent-line",
+};
+
 export function BoxTile({
   name,
   type,
@@ -82,7 +95,7 @@ export function BoxTile({
   className,
 }: BoxTileProps) {
   const styles = KIND_STYLES[kind];
-  const accented = kind === "skill" || kind === "special" || kind === "spell";
+  const accented = kind === "item" || kind === "skill" || kind === "special" || kind === "spell";
   const classes = cn(
     "flex min-h-12 min-w-[118px] max-w-[200px] items-center gap-2 border px-[11px] py-1.5 text-left",
     accented && "border-l-[3px] pl-[9px]",

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { BoxTile } from "./box-tile";
+import { BOX_TRIM, BoxTile } from "./box-tile";
 
 describe("BoxTile", () => {
   it("is a plain box with its name and type line when nothing opens it", () => {
@@ -34,5 +34,16 @@ describe("BoxTile", () => {
     expect(tile).toHaveAttribute("data-kind", "mount");
     fireEvent.click(tile);
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("gives each kind its own colour on its icon and its stripe, items too (William, 25 Nov 2026)", () => {
+    for (const kind of ["item", "skill", "special", "spell"] as const) {
+      const { container, unmount } = render(<BoxTile name={kind} kind={kind} icon={<svg />} />);
+      const tile = container.querySelector(`[data-kind="${kind}"]`);
+      expect(tile).toHaveClass("border-l-[3px]", `border-l-kind-${kind}`);
+      expect(tile?.querySelector("span[aria-hidden]")).toHaveClass(`text-kind-${kind}`);
+      expect(BOX_TRIM[kind]).toBe(`border-kind-${kind}`);
+      unmount();
+    }
   });
 });

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
+import { BOX_TRIM, type BoxTileKind } from "@/components/ui/box-tile";
 import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
@@ -10,6 +11,8 @@ import { ProfileStrip, type CatalogueProfile } from "@/features/reference/profil
 import PsychologyRuleLink from "@/features/rules/components/PsychologyRuleLink";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
+import { cn } from "@/lib/utils";
+
 import { placeOf, unitSections } from "./unit-sections";
 import { isGroup, type RosterUnit } from "./unit-view";
 
@@ -25,6 +28,8 @@ export type BoxDetail = {
   item?: Item;
   /** A boon or bane: a psychology one links its part of the Rules page ("Fear in the rules"). */
   special?: boolean;
+  /** Its box's kind, whose colour the panel's border takes. */
+  boxKind?: BoxTileKind;
 };
 
 type RulesPanelProps = {
@@ -50,7 +55,10 @@ export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelP
   const [price, setPrice] = useState(String(suggested ?? 0));
 
   return (
-    <div className="flex flex-col gap-2 border border-accent-line bg-panel p-3">
+    <div
+      data-trim={detail.boxKind ?? "item"}
+      className={cn("flex flex-col gap-2 border bg-panel p-3", BOX_TRIM[detail.boxKind ?? "item"])}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col">
           <span className="font-bold text-head">{detail.name}</span>

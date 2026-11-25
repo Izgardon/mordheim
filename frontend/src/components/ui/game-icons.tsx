@@ -137,7 +137,7 @@ export const SPECIAL_CATEGORY_ICONS: Record<SpecialCategory, IconType> = {
 
 /** The colour a special's kind gives its icon: a boon gold, a bane red, a trait the ink. */
 export const SPECIAL_KIND_COLOURS: Record<SpecialKind, string> = {
-  boon: "text-kind-special",
+  boon: "text-boon",
   bane: "text-danger",
   trait: "text-ink",
 };

@@ -56,17 +56,17 @@ const BOX_KIND: Record<PendingList, BoxTileKind> = {
   spells: "spell",
 };
 
-/** A box's icon: a skill's group, a special's category in its kind's colour; spells have none. */
+/** A box's icon: a skill's group, a special's category in its kind's colour, a spell's book. */
 function entryIcon(list: PendingList, entry: Entry): ReactNode {
   if (list === "skills") return <SkillListIcon list={entry.list ?? "special"} />;
   if (list === "specials") return <SpecialIcon category={entry.category} kind={entry.kind} />;
-  return undefined;
+  return <GameIcon name="spells" />;
 }
 
 const PENDING_ICON: Record<PendingList, ReactNode> = {
   skills: <GameIcon name="skills" />,
   specials: <GameIcon name="specials" />,
-  spells: undefined,
+  spells: <GameIcon name="spells" />,
 };
 
 /** A pill's type, less the "Warband - " a warband's own rule carries, which a phone cuts off (William, 23 Nov 2026). */
