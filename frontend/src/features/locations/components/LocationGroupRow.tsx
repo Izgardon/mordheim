@@ -74,8 +74,12 @@ export default function LocationGroupRow({
         ) : null}
         {group.locations.length ? (
           // edge to edge in the group (William, 23 Nov 2026: "full width of container as they have
-          // a lot of text")
-          <div className="-mx-3">
+          // a lot of text"), on a darker ground with the accent stripe down their side, so it is
+          // clear they are the open group's, without indenting them (William, 25 Nov 2026)
+          <div
+            data-testid="group-locations"
+            className="-mx-3 border-l-[3px] border-l-accent-line bg-page"
+          >
             <ReferenceList isEmpty={false}>
               {group.locations.map((place) => (
                 <ReferenceRow

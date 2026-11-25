@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -27,6 +27,7 @@ export default function LocationTree({
   visit,
   enabled = true,
   initialSearch,
+  searchEnd,
 }: {
   campaignId: number;
   canManage: boolean;
@@ -35,6 +36,8 @@ export default function LocationTree({
   enabled?: boolean;
   /** Searched for this at first: a location a link names. */
   initialSearch?: string;
+  /** Beside the search box, on its row (the panel's Go to page: William, 25 Nov 2026). */
+  searchEnd?: ReactNode;
 }) {
   const groups = useLocationGroups(campaignId, { enabled });
   const all = groups.data ?? [];
@@ -74,13 +77,17 @@ export default function LocationTree({
           Add group
         </Button>
       ) : null}
-      <Input
-        type="search"
-        aria-label="Search locations"
-        placeholder="Search locations"
-        value={tree.search}
-        onChange={(event) => tree.setSearch(event.target.value)}
-      />
+      <div className="flex items-center gap-2">
+        <Input
+          type="search"
+          aria-label="Search locations"
+          placeholder="Search locations"
+          value={tree.search}
+          onChange={(event) => tree.setSearch(event.target.value)}
+          className="min-w-0 flex-1"
+        />
+        {searchEnd}
+      </div>
       {groups.error ? (
         <p className="m-0 text-sm text-danger">{getErrorMessage(groups.error)}</p>
       ) : null}

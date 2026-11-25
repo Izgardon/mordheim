@@ -36,10 +36,12 @@ export default function LocationsPanel(props: LocationsPanelProps) {
       kicker="Campaign"
       title="Trade locations"
     >
-      <Button asChild variant="secondary" className="self-start">
-        <Link to={`/campaigns/${campaignId}/locations`}>Go to page</Link>
-      </Button>
       <LocationTree
+        searchEnd={
+          <Button asChild variant="secondary" className="shrink-0">
+            <Link to={`/campaigns/${campaignId}/locations`}>Go to page</Link>
+          </Button>
+        }
         campaignId={campaignId}
         canManage={false}
         visit={visit}

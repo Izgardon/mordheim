@@ -67,6 +67,21 @@ describe("LocationsPanel", () => {
     expect(screen.queryByRole("button", { name: "Visit" })).toBeNull();
   });
 
+  it("puts Go to page beside the search and marks an open group's locations (William, 25 Nov 2026)", async () => {
+    const user = setupUser();
+    renderPanel(false);
+
+    const search = await screen.findByRole("searchbox", { name: "Search locations" });
+    expect(screen.getByRole("link", { name: "Go to page" }).parentElement).toBe(
+      search.parentElement
+    );
+    await user.click(await screen.findByRole("button", { name: /The Undercity/ }));
+    expect(screen.getByTestId("group-locations")).toHaveClass(
+      "border-l-[3px]",
+      "border-l-accent-line"
+    );
+  });
+
   it("picks the first hero with his trading action and sends him", async () => {
     const user = setupUser();
     fakeApi.on("POST /warbands/9/location-visits/", {
