@@ -24,6 +24,15 @@ function rulesChanged(
   void queryClient.invalidateQueries({ predicate: isWarbandQuery(warbandId, "template") });
 }
 
+/**
+ * A new variant or type swapped the warband's rules (the warband PATCH's `rules_changed`): every
+ * cached sheet takes them as they now stand, and the battle Rules sheet's copy reads again.
+ */
+export function rulesSwapped(queryClient: QueryClient, warbandId: number, rules: WarbandRule[]) {
+  rulesChanged(queryClient, warbandId, () => rules);
+  void queryClient.invalidateQueries({ predicate: isWarbandQuery(warbandId, "rules") });
+}
+
 export function useRuleCreate(warbandId: number) {
   const queryClient = useQueryClient();
   return useMutation({

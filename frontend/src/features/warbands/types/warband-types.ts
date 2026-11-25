@@ -179,6 +179,19 @@ export type WarbandRule = {
 };
 
 /**
+ * What a change of its variant or type did to the warband's rules (the warband PATCH's
+ * `rules_changed`; null when it changed neither): the server's words, and its rules as they now
+ * stand.
+ */
+export type WarbandRulesChanged = {
+  words: string[];
+  added: number;
+  removed: number;
+  kept: string[];
+  rules: WarbandRule[];
+};
+
+/**
  * The plot a warband follows, as its page reads it (apps/plots): its name and its ladder's points,
  * which the campaign point track draws as its heavy boxes. Its lines are in the rules it wrote.
  */

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { ChipLabel } from "@/components/ui/chip";
+import { rulesSwapped } from "@/features/warbands/api/rule-queries";
 import { updateWarband } from "@/features/warbands/api/warbands-core";
 import WarbandTypePicker from "@/features/warbands/components/type-picker/WarbandTypePicker";
 import {
@@ -46,6 +48,13 @@ export default function WarbandTypeCard({ warband, canEdit, onSaved }: WarbandTy
         warband_link: updated.warband_link,
         template_variant: updated.template_variant,
       });
+      // a new variant or type swapped its rules: the pills follow, and the server says what changed
+      const swapped = updated.rules_changed;
+      if (swapped) {
+        rulesSwapped(queryClient, warband.id, swapped.rules);
+        const [first, ...rest] = swapped.words;
+        if (first) toast(first, rest.length ? { description: rest.join(" ") } : undefined);
+      }
       // its template's fighters and rules read with the variant (the templates plan, phase 2)
       void queryClient.invalidateQueries({
         queryKey: queryKeys.campaign.warbandHireTemplate(warband.campaign_id, warband.id),

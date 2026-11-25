@@ -6,6 +6,7 @@ import type {
   WarbandCreatePayload,
   WarbandUpdatePayload,
   WarbandRecordBattle,
+  WarbandRulesChanged,
   WarbandUnitsSummary,
 } from "../types/warband-types";
 
@@ -39,8 +40,11 @@ export function createWarband(campaignId: number, payload: WarbandCreatePayload)
   });
 }
 
+/** The warband as saved, and what a new variant or type did to its rules. */
+export type WarbandUpdateAnswer = Warband & { rules_changed?: WarbandRulesChanged | null };
+
 export function updateWarband(warbandId: number, payload: Partial<WarbandUpdatePayload>) {
-  return apiRequest<Warband>(`/warbands/${warbandId}/`, {
+  return apiRequest<WarbandUpdateAnswer>(`/warbands/${warbandId}/`, {
     method: "PATCH",
     headers: socketIdHeaders(),
     body: payload,
