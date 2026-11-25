@@ -128,7 +128,7 @@ export default function AddUnitSheet({
         ))}
       </div>
       {group ? (
-        <div className="grid grid-cols-[minmax(0,1fr)_5rem] items-end gap-2">
+        <div className="flex flex-col gap-3">
           <CreaturePicker
             label="Creature"
             bestiary={bestiary}
@@ -136,7 +136,7 @@ export default function AddUnitSheet({
             typed={{ value: typed, onType: setTyped }}
             onPick={(picked) => setBeastId(picked?.id ?? null)}
           />
-          <label className="flex flex-col gap-1 text-xs font-bold text-text2">
+          <label className="flex w-40 flex-col gap-1 text-xs font-bold text-text2">
             How many
             <NumberInput
               value={count}
