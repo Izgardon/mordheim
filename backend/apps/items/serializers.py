@@ -179,6 +179,7 @@ class ItemSerializer(serializers.ModelSerializer):
             "flavour",
             "strength",
             "range",
+            "save_bonus",  # the steps it moves the wearer's save, for its subtitle ("Save +2")
             "statblock",
             "source",
             "link_url",
@@ -191,6 +192,7 @@ class ItemSerializer(serializers.ModelSerializer):
             "bestiary_entry",
             "generated_effect_key",  # set on a house rule's clone, which can't be edited or deleted (BUG-51)
         )
+        read_only_fields = ("save_bonus",)  # written by the import and the bestiary, never by a payload
 
     def get_fields(self) -> dict[str, Field]:
         return with_save(super().get_fields())

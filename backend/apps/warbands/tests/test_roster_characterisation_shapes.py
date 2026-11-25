@@ -77,6 +77,7 @@ ITEM_DETAIL = {
     "strength": "str",
     "range": "str",
     "save": "str",
+    "save_bonus": None,  # the steps it moves the wearer's save, for its subtitle (William, 25 Nov 2026)
     "statblock": None,
     "row_id": "int",  # the bestiary rewrite step 4: this copy, its companion switch, the beast's kind
     "companion": "bool",

@@ -11,7 +11,8 @@ import {
 
 import ItemFormDialog from "../components/ItemFormDialog";
 import ItemRules, { itemFacts } from "../components/ItemRules";
-import { itemName, kindOf } from "../store/store-items";
+import { itemSubtype } from "../item-kind";
+import { itemName } from "../store/store-items";
 import type { Item, ItemAvailability, ItemOffer } from "../types/item-types";
 import { longCostNote, priceLabel, rarityLabel, whoLine } from "../utils/item-prices";
 import { beastEditLink, beastOf, isSold } from "../utils/item-listing";
@@ -149,7 +150,7 @@ export default function WargearDetail(props: WargearDetailProps) {
   return (
     <ReferenceDetail
       title={itemName(item)}
-      kind={kindOf(item)}
+      kind={itemSubtype(item)}
       isMobile={props.isMobile}
       aside={aside}
     >

@@ -7,6 +7,7 @@ import {
   GiBowman,
   GiBreastplate,
   GiBroadsword,
+  GiCat,
   GiCheckedShield,
   GiChest,
   GiCrossedSwords,
@@ -41,7 +42,9 @@ import {
   GiTrophyCup,
   GiTwoCoins,
   GiUpgrade,
+  GiVisoredHelm,
   GiWingfoot,
+  GiWolfHead,
   GiYinYang,
 } from "react-icons/gi";
 
@@ -83,7 +86,10 @@ export type ItemKind =
   | "blackpowder"
   | "armour"
   | "shield"
-  | "animal"
+  | "helmet"
+  | "mount"
+  | "creature"
+  | "pet"
   | "consumable"
   | "trade"
   | "misc";
@@ -94,7 +100,11 @@ export const ITEM_KIND_ICONS: Record<ItemKind, IconType> = {
   blackpowder: GiBlunderbuss,
   armour: GiBreastplate,
   shield: GiRoundShield, // a shield's own (William, 22 Nov 2026: "subtype shields should have a shield icon")
-  animal: GiHorseHead,
+  // William, 25 Nov 2026: a helmet, a mount, a creature and a pet each their own
+  helmet: GiVisoredHelm,
+  mount: GiHorseHead,
+  creature: GiWolfHead,
+  pet: GiCat,
   consumable: GiPotionBall,
   trade: GiTrade,
   misc: GiSwapBag,

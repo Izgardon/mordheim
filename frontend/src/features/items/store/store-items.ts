@@ -23,9 +23,6 @@ export function storeCategory(item: Pick<Item, "type" | "subtype">): Exclude<Sto
   return "misc";
 }
 
-/** The line under an item's name: its subtype, else its type ("Blackpowder", "Armour"). */
-export const kindOf = (item: Pick<Item, "type" | "subtype">) => item.subtype || item.type;
-
 /** An item's name with its variant in brackets: "Lamp of the Djinn (Mutiny in Marienburg)". */
 export const itemName = (item: Pick<Item, "name" | "variant">) =>
   item.variant ? `${item.name} (${item.variant})` : item.name;

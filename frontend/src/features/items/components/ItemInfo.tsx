@@ -7,7 +7,8 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 import { cn } from "@/lib/utils";
 
 import { useWhoCan } from "../api/who-can-queries";
-import { itemName, kindOf } from "../store/store-items";
+import { itemSubtype } from "../item-kind";
+import { itemName } from "../store/store-items";
 import type { Item, ItemAvailability } from "../types/item-types";
 import ItemRules, { itemFacts } from "./ItemRules";
 
@@ -41,9 +42,7 @@ export default function ItemInfo({ item, availability, onClose }: ItemInfoProps)
               <span id={heading}>{itemName(item)}</span>
             </button>
           </h3>
-          {kindOf(item) ? (
-            <span className="text-xs text-muted-foreground">{kindOf(item)}</span>
-          ) : null}
+          <span className="text-xs text-muted-foreground">{itemSubtype(item)}</span>
         </div>
         <IconButton aria-label="Close details" look="plain" className="h-8 w-8" onClick={onClose}>
           <X aria-hidden="true" />

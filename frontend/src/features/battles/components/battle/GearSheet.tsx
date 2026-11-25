@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import type { PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
+import { itemStatsLine } from "@/features/items/item-kind";
 import { beastProfile, itemRuleLines } from "@/features/items/utils/item-rules";
 import { ProfileStrip, type CatalogueProfile } from "@/features/reference/profile";
 import { cameThrough, unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
@@ -35,13 +36,6 @@ type GearSheetProps = {
 };
 
 const TITLE: Record<GearTab, string> = { gear: "gear", skills: "skills", spells: "spells" };
-
-/** "S4", "S+1", or the words ("As user"). */
-function strengthLabel(strength: string | null | undefined) {
-  const value = strength?.trim();
-  if (!value) return null;
-  return /^[+-]?\d+$/.test(value) ? `S${value}` : value;
-}
 
 function firstName(name: string) {
   return name.split(" ")[0] || name;
@@ -77,11 +71,10 @@ export default function GearSheet({
       ? (unit.items ?? []).map((owned) => {
           const item = items.find((entry) => entry.id === owned.id);
           const single = unit.singleUseItems?.find((entry) => entry.id === owned.id);
-          const stats = [item?.range, strengthLabel(item?.strength)].filter(Boolean);
           return {
             key: `item:${owned.id}`,
             name: owned.count > 1 ? `${owned.name} ×${owned.count}` : owned.name,
-            kind: [item?.type, stats.join(" ")].filter(Boolean).join(" · ") || "Item",
+            kind: item ? itemStatsLine(item) : "Item",
             // the fluff stays on the item's page: this is the quick reference (William, 12 Nov 2026)
             rules: item ? itemRuleLines(item) : [],
             profile: item ? beastProfile(item) : null,

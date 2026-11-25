@@ -26,12 +26,12 @@ import {
 export const ITEM_TYPE_OPTIONS = ["Weapon", "Armour", "Miscellaneous"];
 
 /**
- * The subtypes a type picks from (the Wargear filter's too): an Animal item's is its beast's kind.
- * Any other type writes its own ("Poisons and Drugs" for a miscellaneous item).
+ * The subtypes a type picks from, the catalogue's own: an Animal item's is its beast's kind. Any
+ * other type writes its own ("Poisons and Drugs" for a miscellaneous item).
  */
 export const ITEM_SUBTYPE_OPTIONS: Record<string, string[]> = {
   Weapon: ["Melee", "Ranged", "Blackpowder"],
-  Armour: ["Armour", "Shield", "Helmet", "Barding"],
+  Armour: ["Body Armour", "Shield", "Helmet", "Barding", "Cloak"],
   Animal: ["Mount", "Pet", "Creature"],
 };
 

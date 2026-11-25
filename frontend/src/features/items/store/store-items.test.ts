@@ -3,11 +3,10 @@ import { describe, expect, it } from "vitest";
 import { availability, item } from "@/test/catalogue-fixtures";
 
 import { diceLabel, priceLabel, rarityLabel, rolledPrice, whoLine } from "../utils/item-prices";
-import { itemKindLine } from "../item-kind";
+import { itemSubtype } from "../item-kind";
 import {
   inStoreOrder,
   itemName,
-  kindOf,
   searchRank,
   searchWords,
   STORE_CATEGORIES,
@@ -78,8 +77,8 @@ describe("store items", () => {
   it("label a bow with the word its chip uses, on the store row and the unit card", () => {
     const bow = item({ type: "Weapon", subtype: "Ranged" });
     const chip = STORE_CATEGORIES.find((entry) => entry.id === storeCategory(bow));
-    expect(chip?.label).toBe(kindOf(bow));
-    expect(itemKindLine(bow)).toBe("Ranged weapon");
+    expect(chip?.label).toBe(itemSubtype(bow));
+    expect(itemSubtype({ ...bow, subtype: "Missile" })).toBe("Ranged");
   });
 
   it("sort into the store's chips, name a variant, and are found by their rules and tags", () => {

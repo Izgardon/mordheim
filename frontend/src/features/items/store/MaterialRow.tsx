@@ -4,6 +4,7 @@ import { ItemKindIcon } from "@/components/ui/game-icons";
 import { RuleBlock } from "@/features/reference/ReferenceDetail";
 import { cn } from "@/lib/utils";
 
+import { ITEM_KIND_LABEL } from "../item-kind";
 import type { WeaponMaterial } from "../types/item-types";
 import { rarityLabel } from "../utils/item-prices";
 import AcquireForm from "./AcquireForm";
@@ -74,7 +75,7 @@ export default function MaterialRow(props: MaterialRowProps) {
                   <span className="text-accent-text">{rarityLabel(material.rarity)}</span>
                 </>
               ) : (
-                "Melee weapon"
+                ITEM_KIND_LABEL.melee
               )}
             </span>
             {warnings.map((text) => (

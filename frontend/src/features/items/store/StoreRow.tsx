@@ -2,11 +2,11 @@ import { ItemKindIcon } from "@/components/ui/game-icons";
 import { cn } from "@/lib/utils";
 
 import { ItemRowButton, type ShownItem } from "../components/ItemInfo";
-import { itemKind } from "../item-kind";
+import { itemKind, itemStatsLine } from "../item-kind";
 import type { Item, ItemAvailability } from "../types/item-types";
 import { isCommon, priceLabel, rarityLabel } from "../utils/item-prices";
 import AcquireForm from "./AcquireForm";
-import { itemName, kindOf } from "./store-items";
+import { itemName } from "./store-items";
 import type { BasketLine, Recipient } from "./useStoreBasket";
 
 /** One offer: the item, the price row the server picked first, the rows it may buy at, why not usually. */
@@ -70,7 +70,7 @@ export default function StoreRow({ offer, his, ...props }: StoreRowProps) {
               {his?.name ?? itemName(item)}
             </span>
             <span className={cn("text-xs text-muted-foreground", his?.off && "opacity-60")}>
-              {props.isMobile ? `${priceLabel(availability)} · ` : `${kindOf(item)}`}
+              {props.isMobile ? `${priceLabel(availability)} · ` : itemStatsLine(item)}
               {props.isMobile ? (
                 <span className={!isCommon(availability.rarity) ? "text-accent-text" : ""}>
                   {rarityLabel(availability.rarity)}

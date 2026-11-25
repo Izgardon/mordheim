@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 
 import { PriceRarity, ReferenceRow } from "@/features/reference/ReferenceList";
 
-import { itemName, kindOf } from "../store/store-items";
-import type { Item } from "../types/item-types";
+import { itemFigures, itemStatsLine, itemSubtype } from "../item-kind";
+import { itemName } from "../store/store-items";
 import { isCommon, priceLabel, rarityLabel } from "../utils/item-prices";
 import type { WargearRowData } from "./wargear-rows";
 
@@ -14,15 +14,6 @@ export const WARGEAR_COLUMNS = [
   { label: "Rules", className: "w-[240px] shrink-0 max-[1180px]:hidden" },
   { label: "Setting", className: "w-[120px] shrink-0 max-[1320px]:hidden" },
 ];
-
-/** "S as user +1", "30\" · S 4", "Save 6+": an item's figures in one line. */
-function statOf(item: Item) {
-  const parts: string[] = [];
-  if (item.range && !/close/i.test(item.range)) parts.push(item.range);
-  if (item.strength) parts.push(`S ${item.strength.replace(/^As user/i, "as user")}`);
-  if (item.save) parts.push(`Save ${item.save}`);
-  return parts.join(" · ");
-}
 
 /** One Wargear row: the item's kind and figures, the warband's price and rarity, its first rules. */
 export default function WargearRow({
@@ -44,14 +35,14 @@ export default function WargearRow({
   const price = priceLabel(availability);
   const rarity = availability ? rarityLabel(availability.rarity) : "-";
   const rare = Boolean(availability && !isCommon(availability.rarity));
-  const stat = statOf(item);
+  const stat = itemFigures(item);
   return (
     <ReferenceRow
       id={key}
       open={open}
       onToggle={onToggle}
       name={itemName(item)}
-      sub={isMobile ? [kindOf(item), stat].filter(Boolean).join(" · ") : undefined}
+      sub={isMobile ? itemStatsLine(item) : undefined}
       warn={warning}
       dim={Boolean(warning)}
       aside={<PriceRarity price={price} rarity={rarity} rare={rare} />}
@@ -60,7 +51,7 @@ export default function WargearRow({
           ? undefined
           : [
               <>
-                <span>{kindOf(item)}</span>
+                <span>{itemSubtype(item)}</span>
                 <span className="font-mono text-[11px] text-muted-foreground">{stat}</span>
               </>,
               <span key="price" className="font-mono font-bold text-ink">

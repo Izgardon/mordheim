@@ -150,6 +150,8 @@ export type Item = CatalogueBadgeFields & {
   strength?: string | null;
   range?: string | null;
   save?: string | null;
+  /** The steps equipping it moves the wearer's save (null: none by itself). */
+  save_bonus?: number | null;
   /** JSON: a vehicle's or an animal's profile rows. */
   statblock?: string | null;
   rules?: ItemRuleLink[];

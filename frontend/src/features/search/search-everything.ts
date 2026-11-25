@@ -3,7 +3,7 @@ import { beastKindLabel } from "@/features/bestiary/bestiary-kinds";
 import type { LocationGroup } from "@/features/locations/types";
 import { hirelingRace } from "@/features/hirelings/hireling-catalogue-kinds";
 import type { HirelingProfile } from "@/features/hirelings/types/hireling-catalogue-types";
-import { kindOf } from "@/features/items/store/store-items";
+import { itemSubtype } from "@/features/items/item-kind";
 import type { Item, ItemRule } from "@/features/items/types/item-types";
 import type { RuleEntry } from "@/features/rules/rules-index";
 import { ruleSnippet } from "@/features/rules/rules-index";
@@ -76,7 +76,7 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
       ).map(({ entry, snippet }) => ({
         key: `item-${entry.id}`,
         title: entry.name,
-        meta: kindOf(entry),
+        meta: itemSubtype(entry),
         snippet,
         to: `items?open=${entry.id}`,
       })),

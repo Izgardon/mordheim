@@ -8,7 +8,7 @@ import { SearchCombobox } from "@/components/ui/search-select";
 import { getItemAvailabilityCostLabel } from "@/features/battles/components/postbattle/find-items";
 import type { PostbattleDraft } from "@/features/battles/hooks/usePostbattleDraft";
 import { useFindItemSearch } from "@/features/battles/hooks/useFindItemSearch";
-import { itemKind, itemKindLine } from "@/features/items/item-kind";
+import { itemKind, itemSubtype } from "@/features/items/item-kind";
 import { cn } from "@/lib/utils";
 
 /**
@@ -83,7 +83,7 @@ export default function FindsCard({
               options={items.map((item) => ({
                 id: item.id,
                 title: item.name,
-                subtitle: `${itemKindLine(item)} · ${getItemAvailabilityCostLabel(item)}`,
+                subtitle: `${itemSubtype(item)} · ${getItemAvailabilityCostLabel(item)}`,
                 icon: <ItemKindIcon kind={itemKind(item)} className="text-accent-text" />,
               }))}
               onPick={(option) => {

@@ -104,6 +104,15 @@ class ItemWriteTests(CatalogueTestCase):
         self.assertEqual((created.data["save"], edited.data["save"]), ("6+", "5+"))
         self.assertEqual(Item.objects.get(id=created.data["id"]).save_value, "5+")
 
+    def test_an_items_save_bonus_is_read_for_its_subtitle_and_never_written(self):
+        # William, 25 Nov 2026: armour's subtitle says its save, "Save +2" where it prints none
+        created = self.create_as(self.owner, ITEMS, "Iron Bark", type="Armour", subtype="Body Armour", save_bonus=3)
+        Item.objects.filter(id=created.data["id"]).update(save_bonus=2, save_slot="extra")
+        read = self.get_as(self.owner, ITEMS.detail_url(created.data["id"]))
+
+        self.assertIsNone(created.data["save_bonus"])
+        self.assertEqual(read.data["save_bonus"], 2)
+
     def test_an_item_can_be_moved_to_no_campaign_by_neither_create_nor_edit(self):
         created = self.post_as(self.owner, ITEMS.list_url(), {**ITEMS.body("Pike", self.campaign), "campaign": None})
         edited = self.patch_as(

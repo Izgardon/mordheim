@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { itemSubtype } from "@/features/items/item-kind";
 import { priceLabel, rarityLabel } from "@/features/items/utils/item-prices";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
@@ -22,7 +23,7 @@ export function useItemCharts(campaignId: number, templateId: number) {
       if (!item) return "";
       const row = chartRow(item, offers.get(itemId));
       const chart = row ? `chart: ${priceLabel(row)}, ${rarityLabel(row.rarity)}` : "";
-      return [item.subtype || item.type, chart].filter(Boolean).join(" · ");
+      return [itemSubtype(item), chart].filter(Boolean).join(" · ");
     };
     const reasonOf = (itemId: number) => {
       const offer = offers.get(itemId);

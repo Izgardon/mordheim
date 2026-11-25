@@ -161,3 +161,61 @@ describe("the gear quick reference", () => {
     expect(screen.queryByText("No rules written down.")).toBeNull();
   });
 });
+
+describe("the gear sheet's subtitles", () => {
+  // William, 25 Nov 2026: "Why does heavy armour here not explain its armour save rule"
+  it("gives each item its subtype and figures: a weapon's Str, armour's save, a mount's kind", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(catalogueListKey(1, "items"), [
+      item({
+        id: 1,
+        name: "Dagger",
+        type: "Weapon",
+        subtype: "Melee",
+        strength: "As user",
+        range: "Close Combat",
+      }),
+      item({
+        id: 2,
+        name: "Heavy Armour",
+        type: "Armour",
+        subtype: "Body Armour",
+        save: "5+",
+        strength: null,
+        range: null,
+      }),
+      item({ id: 3, name: "Bow", type: "Weapon", subtype: "Ranged", strength: "3", range: '24"' }),
+      item({
+        id: 4,
+        name: "Rhinox",
+        type: "Animal",
+        subtype: "Mount",
+        strength: null,
+        range: null,
+      }),
+    ]);
+    const carrier = {
+      ...unit,
+      items: [1, 2, 3, 4].map((id) => ({ id, name: `Item ${id}`, count: 1 })),
+      singleUseItems: [],
+    } as unknown as PrebattleUnit;
+    renderWithQueryClient(
+      <GearSheet
+        campaignId={1}
+        target={{ unit: carrier, tab: "gear" }}
+        canAct={false}
+        usedCount={() => 0}
+        busyKey={null}
+        onOpenChange={vi.fn()}
+        onUse={vi.fn()}
+        onUndoUse={vi.fn()}
+      />,
+      { queryClient }
+    );
+
+    expect(screen.getByText("Melee · Str As user")).toBeInTheDocument();
+    expect(screen.getByText("Armour · Save 5+")).toBeInTheDocument();
+    expect(screen.getByText('Ranged · 24" · Str 3')).toBeInTheDocument();
+    expect(screen.getByText("Mount")).toBeInTheDocument();
+  });
+});

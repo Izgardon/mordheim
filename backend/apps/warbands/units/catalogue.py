@@ -58,6 +58,7 @@ class ItemDetailSerializer(serializers.ModelSerializer):
             "single_use",
             "strength",
             "range",
+            "save_bonus",  # the steps it moves the wearer's save, for its subtitle ("Save +2")
             "statblock",
             "rules",
             "availabilities",
