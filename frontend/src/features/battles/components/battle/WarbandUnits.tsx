@@ -83,8 +83,6 @@ export default function WarbandUnits({
   );
   const groups: { kind: PrebattleUnit["kind"]; cards: ReactNode[] }[] = [
     { kind: "hero", cards: sections.heroes.map(card) },
-    { kind: "hireling", cards: sections.swords.map(card) },
-    { kind: "pet", cards: sections.pets.map(card) },
     {
       kind: "henchman",
       cards: sections.groups.map((entry) => (
@@ -115,6 +113,9 @@ export default function WarbandUnits({
         />
       )),
     },
+    // after the henchmen, as the warband page and the pickers order them (William, 25 Nov 2026)
+    { kind: "hireling", cards: sections.swords.map(card) },
+    { kind: "pet", cards: sections.pets.map(card) },
     { kind: "custom", cards: sections.temporary.map(card) },
   ];
   return (

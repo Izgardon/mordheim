@@ -61,7 +61,7 @@ describe("WarbandUnits", () => {
     );
 
     // no animals and no temporary units in the fixture: those headings stay away
-    expect(headings()).toEqual(["Heroes", "Hired swords", "Henchmen"]);
+    expect(headings()).toEqual(["Heroes", "Henchmen", "Hired swords"]);
     expect(screen.getByRole("article", { name: "Captain Wolf" })).toBeInTheDocument();
     expect(screen.getByRole("article", { name: "Youngbloods" })).toBeInTheDocument();
   });
