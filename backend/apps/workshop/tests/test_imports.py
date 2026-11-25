@@ -208,12 +208,25 @@ class ListComesWithItTests(ImportTestCase):
         self.assertEqual(response.status_code, 201, response.data)
         template = WarbandTemplate.objects.get(pk=response.data["template_id"])
         self.assertEqual((template.campaign_id, template.name), (self.campaign.id, "Watch"))
+        self.assertIn("list_serves_type", [warning["code"] for warning in response.data["warnings"]])
         campaign_rule = Special.objects.get(campaign=self.campaign, name="Watchful")
         self.assertEqual(campaign_rule.type, "Warband - Watch")
         links = TemplateFighterSpecial.objects.filter(fighter__template=template, special__name="Watchful")
         self.assertEqual(list(links.values_list("special_id", flat=True)), [campaign_rule.id])
         held = HeroSpecial.objects.filter(hero__warband_id=response.data["warband_id"], special__name="Watchful")
         self.assertEqual(list(held.values_list("special_id", flat=True)), [campaign_rule.id])
+
+    def test_a_player_who_cant_edit_the_catalogue_brings_the_list_serving_no_type(self) -> None:
+        listed = self.make_list_workshop(user=self.rival, name="Watch", copy_of_template_id=self.made.template.id)
+        row = self.kitted(list_code=listed["share_code"])
+        self.assertEqual(self.join(self.outsider).status_code, 201)
+        self.revoke(self.outsider, "edit_catalogue")
+        response = self.import_warband(self.outsider, row["share_code"])
+        self.assertEqual(response.status_code, 201, response.data)
+        template = WarbandTemplate.objects.get(pk=response.data["template_id"])
+        self.assertEqual((template.campaign_id, template.type_links.count()), (self.campaign.id, 0))
+        codes = [warning["code"] for warning in response.data["warnings"]]
+        self.assertIn("list_serves_none", codes)
 
 
 class ListImportTests(ImportTestCase):

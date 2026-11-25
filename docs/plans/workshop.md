@@ -120,7 +120,10 @@ names it (its warband, its campaign, its templates), and a deleted one is 404 fo
 - `warnings` (each `{code, message, ...}`): `not_in_play` (`names`: entries, or the warband type, whose setting the
   campaign doesn't tick; linked all the same), `left_out` (`names`: a link to another campaign's own entry the copy
   could not use, never expected from a workshop), `gold_negative` (`gold`) for a campaign, `over_budget` (`cost`,
-  `budget`) for a workshop.
+  `budget`) for a workshop; a warband raised from a custom list brings it, `list_serves_type` when the importer may
+  edit the catalogue (it then serves its type for every warband there, the campaign's own before the book's), else
+  `list_serves_none` (it arrives serving no type, so nobody else's recruiting changes; the warband keeps its list's
+  rules, and an editor may make it serve its type).
 
 ### What a copy takes
 
@@ -167,9 +170,8 @@ roster's size.
 
 ### Open questions for William
 
-- A warband imported from a custom list brings the list as the campaign's own template, which then serves that
-  type **for everyone in the campaign** (the campaign's own comes before the book's). Should an imported list serve
-  only the importer's warband, or should it arrive serving no type (the editor then picks)? Two imports of one list
-  make two templates ("Watch", "Watch (2)").
+- A warband imported from a custom list brings the list as the campaign's own template. Decided overnight: it
+  serves its type only when the importer holds `edit_catalogue` (warned: for every warband there), else it arrives
+  serving none (warned). Is that right? Two imports of one list make two templates ("Watch", "Watch (2)").
 - Should a recruit, and not only a purchase or a roster save, warn `over_budget` in a workshop? Today the hire
   dialog's (`hirelings/hire/`) answer doesn't; the page shows the cost against the budget throughout.

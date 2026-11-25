@@ -93,7 +93,8 @@ class CampaignWarbandImportView(CampaignScopedView):
     def post(self, request: Request, campaign_id: int) -> Response:
         body = CodeSerializer(data=request.data)
         body.is_valid(raise_exception=True)
-        imported = importing.import_warband(self.access.campaign, request.user, body.validated_data["code"])
+        code = body.validated_data["code"]
+        imported = importing.import_warband(self.access.campaign, request.user, code, self.access.has("edit_catalogue"))
         assert imported.warband is not None
         answer = {
             "warband_id": imported.warband.pk,

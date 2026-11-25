@@ -50,6 +50,10 @@ from apps.warbands.models import (
 from .copy_list import copy_list
 from .relink import Relinker, Warning
 
+SERVES_NONE = (
+    "Its list {name} came too, serving no warband type, so recruiting reads this campaign's list for its type: "
+    "someone who edits the catalogue can make it serve its type."
+)
 ALIVE = {"dead": False, "dismissed_at__isnull": True}
 # the warband's own fields a copy keeps (the rest: its campaign, owner, gold, plot, points, wins and losses, dates)
 WARBAND_FIELDS = (
@@ -149,11 +153,19 @@ def _own_list(source: Warband) -> WarbandTemplate | None:
     return template if template is not None and template.campaign_id == source.campaign_id else None
 
 
-def copy_warband(source: Warband, campaign_id: int, user: Any) -> CopiedWarband:
+def copy_warband(source: Warband, campaign_id: int, user: Any, serve_types: bool = True) -> CopiedWarband:
     """The copy, in the caller's transaction, with its Starting Gold row (`raising.open_treasury`: the target's gold
-    and the copy's template) and nothing paid yet; the warnings in the server's words."""
+    and the copy's template) and nothing paid yet; the warnings in the server's words.
+
+    A list that comes with it serves its types in the target only with `serve_types` (an importer who may edit the
+    campaign's catalogue, or his own workshop), because a campaign's own template serves its type for every warband
+    there; otherwise it arrives serving none, so the copy keeps its list's rules and nobody else's list changes."""
     own_list = _own_list(source)
     listed = copy_list(own_list, campaign_id, user) if own_list is not None else None
+    if listed is not None and not serve_types:
+        listed.template.type_links.all().delete()
+        name = listed.template.name
+        listed.warnings.append({"code": "list_serves_none", "message": SERVES_NONE.format(name=name), "names": [name]})
     rows = _read(source)
     relinker = Relinker(campaign_id, {Special: listed.specials} if listed else {})
     relinker.prepare(rows)

@@ -38,6 +38,7 @@ NOT_A_WARBAND = "That code is a warband list's, not a warband's: import it from 
 NOT_A_LIST = "That code is a warband's, not a warband list's."
 EMPTY = "That workshop holds nothing to copy."
 NOT_SERVED = "This list doesn't serve that warband type."
+SERVES_HERE = "Its list {name} came too, and now serves its warband type for every warband in this campaign."
 SERVES_NONE = "This list serves no warband type yet: its maker picks one in its Basics."
 
 
@@ -123,16 +124,21 @@ def _pay(copied: Warband, name: str) -> list[Warning]:
     return gold_warnings(copied)
 
 
-def import_warband(campaign: Campaign, user: Any, code: Any) -> Imported:
-    """The warband `code` shares, copied into the campaign as the user's and paid for."""
+def import_warband(campaign: Campaign, user: Any, code: Any, serve_types: bool) -> Imported:
+    """The warband `code` shares, copied into the campaign as the user's and paid for (`serve_types`: whether a list
+    that comes with it serves its types here, for an importer who may edit the catalogue)."""
     source = _shared_warband(code)
     if Warband.objects.filter(campaign=campaign, user=user).exists():
         raise CampaignError(HAS_WARBAND, code="has_warband", status=409)
     try:
         with transaction.atomic():
-            copied = copy_warband(source, campaign.pk, user)
+            copied = copy_warband(source, campaign.pk, user, serve_types)
             copied.warband.campaign = campaign
             warnings = [*copied.warnings, *_pay(copied.warband, source.name)]
+            if serve_types and copied.template is not None:
+                name = copied.template.name
+                message = SERVES_HERE.format(name=name)
+                warnings.append({"code": "list_serves_type", "message": message, "names": [name]})
     except IntegrityError as error:  # two imports at once: the unique warband per player has the last word
         if "unique_campaign_warband" not in str(error):
             raise
