@@ -37,12 +37,15 @@ def _count(rows: Any, column: str) -> Subquery:
     return Subquery(counted, output_field=IntegerField())
 
 
-def carriers(row: str = "pk", group: str = "henchmen_group_id") -> Any:
+def carriers(row: str = "pk", group: str = "henchmen_group_id", *, present: bool = False) -> Any:
     """The copies a loadout row stands for, as an expression on a query of rows (`row` and `group` reach its id and
-    its group's from there): the group's living members less those with a gap on it, never below 0. Two subqueries
-    in the query's own SELECT."""
-    living = _count(on_roster(Henchman.objects.filter(group_id=OuterRef(group))), "group_id")
+    its group's from there): the group's living members less those with a gap on it, never below 0; `present`: only
+    the members not missing games (the rating's). Two subqueries in the query's own SELECT."""
+    members = on_roster(Henchman.objects.filter(group_id=OuterRef(group)))
     gaps = HenchmanItemGap.objects.filter(group_item_id=OuterRef(row), henchman__dead=False)
+    if present:
+        members, gaps = members.filter(missing_games=0), gaps.filter(henchman__missing_games=0)
+    living = _count(members, "group_id")
     lacking = _count(gaps.filter(henchman__dismissed_at__isnull=True), "group_item_id")
     return Greatest(Coalesce(living, Value(0)) - Coalesce(lacking, Value(0)), Value(0))
 

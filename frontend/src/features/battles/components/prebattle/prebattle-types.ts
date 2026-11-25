@@ -2,7 +2,6 @@ import type {
   BattleRosterCompanion,
   BattleRosterCompanionFields,
   BattleRosterItemRoll,
-  BattleRosterMissingFields,
 } from "@/features/battles/types/battle-types";
 import type { BattleWarning } from "@/features/battles/utils/battle-warnings";
 import type { WrittenStats } from "@/features/catalogue/utils/statblock";
@@ -87,7 +86,7 @@ export type PrebattleUnit = BattleRosterCompanionFields & {
   paymentNote?: string;
 };
 
-export type HenchmenGroupRoster = BattleRosterMissingFields & {
+export type HenchmenGroupRoster = {
   id: number;
   name: string;
   unitType: string;

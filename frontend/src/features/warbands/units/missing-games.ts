@@ -8,3 +8,7 @@ export const isMissing = (unit: MissingGamesFields) => missingGamesOf(unit) > 0;
 
 /** A unit that isn't missing games: it counts towards the rating. */
 export const fights = (unit: MissingGamesFields) => !isMissing(unit);
+
+/** "Missing · 2 games", as a missing unit or member is marked. */
+export const missingLabel = (games: number) =>
+  `Missing · ${games} ${games === 1 ? "game" : "games"}`;

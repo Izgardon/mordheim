@@ -1,7 +1,8 @@
 """Missing games at finalise (units/services/missing.py has the rest of the feature).
 
-Each battle a warband finalises counts one game for every unit of it that is missing (heroes, hired swords and henchmen
-groups, whether or not they fought); at 0 the unit is back and forgets its reason. A cancelled battle, and a postbattle
+Each battle a warband finalises counts one game for every unit of it that is missing (heroes and hired swords, and the
+members of its groups on the roster: a group misses none of its own; whether or not they fought); at 0 the unit is back
+and forgets its reason. A cancelled battle, and a postbattle
 skipped or closed (nothing applied), count nothing; a reported result counts one for each of its warbands when it is
 approved (`count_down`, services/reported.py: William). Then the serious injuries the player confirmed set a hero's or
 hired sword's missing games for the games after this one, replacing any count left. Both run after the unit results,
@@ -14,30 +15,38 @@ from typing import Any
 from django.db.models import Case, F, IntegerField, Value, When
 from django.utils import timezone
 
-from apps.warbands.models import HenchmenGroup, Hero, Hireling, on_roster
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, on_roster
 from apps.warbands.units.kinds import KIND_BY_MODEL
-from apps.warbands.units.services.missing import LogEntry, missing_log, returns_log
+from apps.warbands.units.services.missing import LogEntry, missing_log, missing_members, returns_log
 
 from ...validation.unit_keys import parse_unit_key
 from .context import FinaliseContext
 
-MODELS: tuple[Any, ...] = (Hero, HenchmenGroup, Hireling)
+MODELS: tuple[Any, ...] = (Hero, Hireling, Henchman)
+MEMBER = MODELS.index(Henchman)
 
 
 def _name(model: Any, name: str, unit_type: str) -> str:
-    return name or unit_type or KIND_BY_MODEL[model].unknown_name
+    return name or unit_type or (KIND_BY_MODEL[model].unknown_name if model in KIND_BY_MODEL else "Henchman")
 
 
-def count_down(warband_id: int) -> list[LogEntry]:
-    """One game off each missing unit on the warband's roster: one read for the three kinds, then one UPDATE per kind
-    that has one (its version moves, so an edit begun before it is refused rather than undoing it). The "returns"
-    rows of the units back."""
+def _missing_reads(warband_id: int) -> list[Any]:
+    """Each kind's missing rows (a member's type is his group's), as one shape the union reads."""
     reads = [
         on_roster(model.objects.filter(warband_id=warband_id, missing_games__gt=0))
         .annotate(v_kind=Value(index, output_field=IntegerField()))
         .values_list("v_kind", "id", "name", "unit_type", "missing_games")
-        for index, model in enumerate(MODELS)
+        for index, model in enumerate(MODELS[:MEMBER])
     ]
+    members = missing_members(group__warband_id=warband_id).annotate(v_kind=Value(MEMBER, output_field=IntegerField()))
+    return [*reads, members.values_list("v_kind", "id", "name", "group__unit_type", "missing_games")]
+
+
+def count_down(warband_id: int) -> list[LogEntry]:
+    """One game off each missing unit and member on the warband's roster: one read for the three, then one UPDATE per
+    kind that has one (its version moves, a member's group's with it, so an edit begun before it is refused rather than
+    undoing it). The "returns" rows of the units back."""
+    reads = _missing_reads(warband_id)
     ids: defaultdict[int, list[int]] = defaultdict(list)
     logs = []
     for index, unit_id, name, unit_type, games in reads[0].union(*reads[1:], all=True).order_by("v_kind", "id"):
@@ -46,11 +55,14 @@ def count_down(warband_id: int) -> list[LogEntry]:
             logs.append(returns_log(_name(MODELS[index], name, unit_type)))
     now = timezone.now()
     for index, unit_ids in ids.items():
+        versioned = {} if index == MEMBER else {"updated_at": now}
         MODELS[index].objects.filter(id__in=unit_ids).update(
             missing_games=F("missing_games") - 1,
             missing_reason=Case(When(missing_games=1, then=Value("")), default=F("missing_reason")),
-            updated_at=now,
+            **versioned,
         )
+    if ids.get(MEMBER):
+        HenchmenGroup.objects.filter(henchmen__id__in=ids[MEMBER]).update(updated_at=now)
     return logs
 
 

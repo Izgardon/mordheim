@@ -4,9 +4,21 @@ import { Chip, ChipLabel } from "@/components/ui/chip";
 import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
+import { isMissing, missingGamesOf, missingLabel } from "../../units/missing-games";
 import { carriedMounts } from "../../utils/companions";
 import { BADGE } from "./badge-style";
-import type { RosterUnit } from "./unit-view";
+import { isGroup, liveMembers, type RosterUnit } from "./unit-view";
+
+/**
+ * The card's Missing badge: a hero's or hired sword's games, or how many of a group's members miss
+ * games (William, 25 Nov 2026: a henchman misses them on his own); null while every one fights.
+ */
+function missingBadge(entry: RosterUnit) {
+  if (!isGroup(entry))
+    return isMissing(entry.unit) ? missingLabel(missingGamesOf(entry.unit)) : null;
+  const out = liveMembers(entry.unit).filter(isMissing).length;
+  return out ? `Missing · ${out} ${out === 1 ? "member" : "members"}` : null;
+}
 
 /**
  * A card's top row of badges, every one the same chip (William, 12 Nov 2026: the row "is busy, with
@@ -30,6 +42,7 @@ export default function UnitBadges({
 }) {
   const { unit } = entry;
   const mounts = carriedMounts(unit.items);
+  const missing = missingBadge(entry);
   return (
     <>
       {mounts.map((mount) => {
@@ -46,9 +59,9 @@ export default function UnitBadges({
           </Chip>
         );
       })}
-      {unit.missing_games ? (
+      {missing ? (
         <ChipLabel tone="danger" className={BADGE}>
-          Missing · {unit.missing_games} {unit.missing_games === 1 ? "game" : "games"}
+          {missing}
         </ChipLabel>
       ) : null}
       {campaign?.enable_blood_pacts && entry.kind === "hireling" && entry.unit.blood_pacted ? (
@@ -65,7 +78,7 @@ export function hasBadges(entry: RosterUnit, campaign: CampaignSummary | null) {
   const { unit } = entry;
   return Boolean(
     carriedMounts(unit.items).length ||
-      unit.missing_games ||
+      missingBadge(entry) ||
       (campaign?.enable_blood_pacts && entry.kind === "hireling" && entry.unit.blood_pacted)
   );
 }

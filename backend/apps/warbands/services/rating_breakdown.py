@@ -56,7 +56,7 @@ def rating_breakdown(units: WarbandUnits, settings: CampaignSettings | None) -> 
             "henchmen_group",
             "henchmen_group",
             row,
-            row["henchmen_count"] or 0,
+            row["rated_count"] or 0,  # its members missing games add nothing (William, 25 Nov 2026)
             20 if row["large"] else 5,
             int(row.get("mount_rating") or 0),
             settings,

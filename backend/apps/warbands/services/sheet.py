@@ -51,9 +51,9 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "unit_type": g.unit_type,
                 "xp": g.xp,
                 "large": g.large,
-                "missing_games": g.missing_games,
                 "henchmen_count": len(g.henchmen.all()),  # the prefetch holds living members only
-                "mount_rating": group_mount_rating_of(g.henchmen_group_items.all(), list(g.henchmen.all())),
+                "rated_count": len(present := [m for m in g.henchmen.all() if not m.missing_games]),
+                "mount_rating": group_mount_rating_of(g.henchmen_group_items.all(), present),
             }
             for g in rosters[HENCHMEN_GROUP.key]
         ],

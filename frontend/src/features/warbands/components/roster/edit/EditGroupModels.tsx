@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 
 import type { HenchmenGroup } from "../../../types/warband-types";
 import { memberShare } from "../../../units/loadout";
+import { missingLabel } from "../../../units/missing-games";
+import MissingGamesFields from "./MissingGamesFields";
 import type { KitChoice, MemberDraft, UnitEditDraft } from "./useUnitEditDraft";
 
 const SECTION_LABEL = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
@@ -13,8 +15,9 @@ const NEXT: Record<KitChoice, KitChoice> = { buy: "stash", stash: "without", wit
 
 /**
  * A group's models in its edit form (henchmen loadouts). A recruit carries the loadout: each row
- * is bought with him (in his cost), taken from the stash, or he joins without it; removing a model
- * asks whether his share goes to the stash or leaves with him.
+ * is bought with him (in his cost), taken from the stash, or he joins without it; dismissing a
+ * model asks whether his share goes to the stash or leaves with him. Beside Dismiss, each saved
+ * model's own Missing games (William, 25 Nov 2026: a henchman misses games on his own).
  */
 export default function EditGroupModels({
   group,
@@ -27,6 +30,7 @@ export default function EditGroupModels({
 }) {
   const { members, setMembers, setDismissed } = form;
   const [asking, setAsking] = useState<number | null>(null);
+  const [missingOpen, setMissingOpen] = useState<number | null>(null);
   const rows = group.items;
 
   const kitLabel = (choice: KitChoice, cost: number | null | undefined) =>
@@ -50,6 +54,8 @@ export default function EditGroupModels({
     );
 
   const remove = (index: number) => setMembers((list) => list.filter((_, i) => i !== index));
+  const setMember = (index: number, change: Partial<MemberDraft>) =>
+    setMembers((list) => list.map((m, i) => (i === index ? { ...m, ...change } : m)));
 
   const dismissWith = (index: number, id: number, share: "stash" | "leaves") => {
     setDismissed((current) => ({ ...current, [id]: share }));
@@ -67,20 +73,47 @@ export default function EditGroupModels({
               inputSize="sm"
               aria-label={`Model ${index + 1} name`}
               value={member.name ?? ""}
-              onChange={(event) =>
-                setMembers((list) =>
-                  list.map((m, i) => (i === index ? { ...m, name: event.target.value } : m))
-                )
-              }
+              onChange={(event) => setMember(index, { name: event.target.value })}
             />
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => (member.id === undefined ? remove(index) : setAsking(member.id))}
-            >
-              Remove
-            </Button>
+            {member.id === undefined ? (
+              <Button size="sm" variant="ghost" onClick={() => remove(index)}>
+                Remove
+              </Button>
+            ) : (
+              <>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="shrink-0"
+                  aria-expanded={missingOpen === member.id}
+                  aria-label={`Missing games of model ${index + 1}`}
+                  onClick={() => setMissingOpen(missingOpen === member.id ? null : member.id!)}
+                >
+                  {Number(member.missing_games) > 0
+                    ? missingLabel(Number(member.missing_games))
+                    : "Missing games"}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-danger hover:text-danger"
+                  onClick={() => setAsking(member.id!)}
+                >
+                  Dismiss
+                </Button>
+              </>
+            )}
           </div>
+          {member.id !== undefined && missingOpen === member.id ? (
+            <MissingGamesFields
+              label={`Model ${index + 1}`}
+              games={String(member.missing_games ?? "")}
+              reason={member.missing_reason ?? ""}
+              onGames={(value) => setMember(index, { missing_games: value })}
+              onReason={(value) => setMember(index, { missing_reason: value })}
+              onDone={() => setMissingOpen(null)}
+            />
+          ) : null}
           {member.id !== undefined && asking === member.id ? (
             <div className="flex flex-wrap items-center gap-1.5 text-[13px] text-ink">
               <span>

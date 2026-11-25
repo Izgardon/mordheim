@@ -24,13 +24,12 @@ describe("prebattle-config", () => {
     expect(JSON.parse(initial.savedHash).selected_unit_keys_json).toEqual([]);
   });
 
-  it("leaves units missing games out of the first selection, with a missing group's pets", () => {
+  it("leaves units missing games out of the first selection, with a group's pets once every member is", () => {
     const missing = {
       ...roster,
       heroes: [wolf, { ...roster.heroes[1], missingGames: 2, missingReason: "Deep wound" }],
       henchmenGroups: roster.henchmenGroups.map((group) => ({
         ...group,
-        missingGames: 1,
         members: group.members.map((member) => ({ ...member, missingGames: 1 })),
       })),
       petModels: [{ ...wolf, key: "pet:henchmen_group:7", kind: "pet", ownerKey: "group:11" }],
@@ -44,6 +43,33 @@ describe("prebattle-config", () => {
 
     expect(initial.selectedKeys).toEqual(["hero:1", "hireling:4"]);
     expect(saved.selectedKeys).toEqual(["hero:3"]); // brought anyway: a saved pick stands
+  });
+
+  it("leaves out only the member who misses games: his group's others fight", () => {
+    // William, 25 Nov 2026: "Henchmen need to be able to miss a game individually not as a group"
+    const [group] = roster.henchmenGroups;
+    const member = group.members[0];
+    const two = {
+      ...roster,
+      henchmenGroups: [
+        {
+          ...group,
+          members: [
+            { ...member, missingGames: 1 },
+            { ...member, id: 99, key: "henchman:99" },
+          ],
+        },
+      ],
+      petModels: [
+        { ...wolf, key: "pet:henchmen_group:7", kind: "pet", ownerKey: `group:${group.id}` },
+      ],
+    } as typeof roster;
+
+    const initial = initialPrebattleConfig(myParticipant({ selected_unit_keys_json: [] }), two);
+
+    expect(initial.selectedKeys).toContain("henchman:99");
+    expect(initial.selectedKeys).toContain("pet:henchmen_group:7");
+    expect(initial.selectedKeys).not.toContain(member.key);
   });
 
   it("leaves a member whose kit went to the stash out at first; he can still be brought", () => {

@@ -1,55 +1,24 @@
 import { useState } from "react";
 
-import { NumberInput } from "@/components/ui/number-input";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { useDirtySince, useDiscardChanges } from "@/components/ui/discard-changes";
-import { Input } from "@/components/ui/input";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { useMediaQuery } from "@/lib/use-media-query";
 
+import { missingLabel } from "../../units/missing-games";
 import EditNotes from "./edit/EditNotes";
 import EditUnitFields from "./edit/EditUnitFields";
-import { useUnitEditDraft, type UnitEditDraft } from "./edit/useUnitEditDraft";
+import MissingGamesFields from "./edit/MissingGamesFields";
+import { useUnitEditDraft } from "./edit/useUnitEditDraft";
 import { isGroup, unitName, type RosterUnit } from "./unit-view";
-
-const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
-
-/** Missing games, opened from its button: how many games and why, kept with the draft. */
-function MissingGames({ form, onDone }: { form: UnitEditDraft; onDone: () => void }) {
-  const { draft, set } = form;
-  return (
-    <div className="flex flex-wrap items-end gap-2 border border-border bg-raised p-2.5">
-      <label className={LABEL}>
-        Missing games
-        <NumberInput
-          compact
-          inputSize="sm"
-          className="w-24 font-mono"
-          value={String(draft.missing_games ?? "")}
-          onChange={(event) => set("missing_games", event.target.value)}
-        />
-      </label>
-      <label className={`${LABEL} min-w-40 flex-1`}>
-        Why
-        <Input
-          inputSize="sm"
-          value={String(draft.missing_reason ?? "")}
-          onChange={(event) => set("missing_reason", event.target.value)}
-        />
-      </label>
-      <Button size="sm" variant="secondary" onClick={onDone}>
-        Done
-      </Button>
-    </div>
-  );
-}
 
 /**
  * One unit's edit form (design E): inline in its open card on the web, a bottom sheet on a
  * phone. Saved alone through the batch save; Duplicate and Dismiss go the same way. On the web
  * every action sits at the bottom: Save, Cancel and Duplicate on the left, Notes, Missing games
- * and Dismiss on the right. On a phone the sheet's own bar holds the three that act on the unit --
+ * and Dismiss on the right (a group has none of its own: each member has his, by his row). On a
+ * phone the sheet's own bar holds the three that act on the unit --
  * Dismiss, Duplicate and Save (William, 19 Nov 2026) -- leaving Notes and Missing games in the
  * body; there is no Cancel, because the sheet's X and a swipe already close it. Closing with
  * changes unsaved asks "Discard changes?" first (William: a form of more than 8 inputs).
@@ -119,9 +88,15 @@ export default function EditUnitForm({
           </span>
         ) : null}
       </Button>
-      <Button variant="ghost" aria-expanded={missingOpen} onClick={() => setMissingOpen((o) => !o)}>
-        {missing ? `Missing · ${missing} ${missing === 1 ? "game" : "games"}` : "Missing games"}
-      </Button>
+      {isGroup(entry) ? null : (
+        <Button
+          variant="ghost"
+          aria-expanded={missingOpen}
+          onClick={() => setMissingOpen((o) => !o)}
+        >
+          {missing ? missingLabel(missing) : "Missing games"}
+        </Button>
+      )}
     </>
   );
   const right = (
@@ -142,7 +117,15 @@ export default function EditUnitForm({
         onAddItem={onAddItem}
       />
       {notesOpen ? <EditNotes form={form} onDone={() => setNotesOpen(false)} /> : null}
-      {missingOpen ? <MissingGames form={form} onDone={() => setMissingOpen(false)} /> : null}
+      {missingOpen ? (
+        <MissingGamesFields
+          games={String(draft.missing_games ?? "")}
+          reason={String(draft.missing_reason ?? "")}
+          onGames={(value) => form.set("missing_games", value)}
+          onReason={(value) => form.set("missing_reason", value)}
+          onDone={() => setMissingOpen(false)}
+        />
+      ) : null}
     </>
   );
 

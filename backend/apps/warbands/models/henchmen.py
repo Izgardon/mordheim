@@ -60,6 +60,10 @@ class Henchman(models.Model):
     kills = models.PositiveIntegerField(default=0)
     dead = models.BooleanField(default=False)
     dismissed_at = models.DateTimeField(null=True, blank=True)  # left out of a group save: kept as a record
+    # Missing games, one member's own (William, 25 Nov 2026): he stays in the group and its size, out of the rating and
+    # left out of prebattle at first; each battle the warband finalises counts one off (units/services/missing.py)
+    missing_games = models.PositiveSmallIntegerField(default=0)
+    missing_reason = models.CharField(max_length=120, blank=True, default="")
 
     class Meta:
         db_table = "henchman"

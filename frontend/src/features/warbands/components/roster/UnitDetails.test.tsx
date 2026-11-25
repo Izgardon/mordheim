@@ -474,7 +474,7 @@ describe("An open group's members", () => {
     });
   });
 
-  it("each show their own kills as a number, and Dismiss in red", async () => {
+  it("each show their own kills as a number", async () => {
     const user = setupUser();
     renderWithQueryClient(
       <MemoryRouter>
@@ -499,7 +499,8 @@ describe("An open group's members", () => {
     expect(screen.getAllByRole("button", { name: /^Kills \d/ })).toHaveLength(2);
     const blade = screen.getByRole("button", { name: "Kills 2: the breakdown" });
     expect(blade).toHaveTextContent(/^2$/);
-    expect(screen.getAllByRole("button", { name: "Dismiss" })[0]).toHaveClass("text-danger");
+    // William, 25 Nov 2026: Dismiss is the edit form's, not the member rows'
+    expect(screen.queryByRole("button", { name: "Dismiss" })).not.toBeInTheDocument();
 
     await user.click(blade);
     const list = await screen.findByRole("dialog", { name: "Kills of Blade One" });

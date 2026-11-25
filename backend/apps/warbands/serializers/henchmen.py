@@ -14,7 +14,6 @@ from apps.warbands.units.companions import group_mount_warnings, mount_kinds, mo
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
-    MISSING_FIELDS,
     STAT_FIELDS,
     XP_CHANGE_FIELDS,
     UnitDetailSerializer,
@@ -23,6 +22,7 @@ from apps.warbands.units.serializers import (
     get_prefetched_or_query,
 )
 from apps.warbands.units.services.hire_cost import henchman_hire_cost
+from apps.warbands.units.services.missing import MAX_MISSING_GAMES
 
 WRITE_FIELDS = (
     "name",
@@ -54,7 +54,7 @@ class HenchmanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Henchman
-        fields = ("id", "name", "kills", "dead", "gaps")
+        fields = ("id", "name", "kills", "dead", "missing_games", "missing_reason", "gaps")
 
     def get_gaps(self, member: Henchman) -> list[dict[str, Any]]:
         """Read with his row (`gap_entries`), else in one query."""
@@ -81,10 +81,25 @@ class HenchmanEntrySerializer(serializers.ModelSerializer):
     dismiss = serializers.ChoiceField(choices=("stash", "leaves"), required=False)
     from_stash = serializers.ListField(child=serializers.IntegerField(), required=False)
     without = serializers.ListField(child=serializers.IntegerField(), required=False)
+    # a member's own missing games (William, 25 Nov 2026); the group misses none
+    missing_games = serializers.IntegerField(min_value=0, max_value=MAX_MISSING_GAMES, required=False)
+    missing_reason = serializers.CharField(max_length=120, allow_blank=True, required=False)
 
     class Meta:
         model = Henchman
-        fields = ("id", "name", "kills", "dead", "cost", "item_notes", "dismiss", "from_stash", "without")
+        fields = (
+            "id",
+            "name",
+            "kills",
+            "dead",
+            "missing_games",
+            "missing_reason",
+            "cost",
+            "item_notes",
+            "dismiss",
+            "from_stash",
+            "without",
+        )
         extra_kwargs = {"name": {"required": False, "allow_blank": True, "trim_whitespace": False}}
 
     def validate_cost(self, value: Any) -> Any:
@@ -209,7 +224,6 @@ class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer
             "source_beast_id",
             "beast_kind",
             "is_animal",
-            *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,
             "mounts",
@@ -252,7 +266,6 @@ class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
             "source_beast_id",
             "beast_kind",
             "is_animal",
-            *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,
             "mounts",
@@ -287,4 +300,4 @@ class HenchmenGroupUpdateSerializer(UnitWriteSerializer):
 
     class Meta:
         model = HenchmenGroup
-        fields = (*WRITE_FIELDS, *MISSING_FIELDS, *XP_CHANGE_FIELDS)
+        fields = (*WRITE_FIELDS, *XP_CHANGE_FIELDS)  # a group misses no games: its members do

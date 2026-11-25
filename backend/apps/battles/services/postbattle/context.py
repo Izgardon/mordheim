@@ -26,6 +26,7 @@ from apps.warbands.models import (
     WarbandResource,
     on_roster,
 )
+from apps.warbands.units.services.missing import missing_members
 
 from ...models import Battle, BattleEvent, BattleParticipant
 from ...validation.unit_keys import parse_unit_key
@@ -67,7 +68,8 @@ def _ids(draft: dict, unit_type: str) -> list[int]:
     return [parsed["unit_id"] for parsed in keys if parsed["unit_type"] == unit_type]
 
 
-MISSING_UNITS: dict[str, Any] = {"missing_heroes": Hero, "missing_groups": HenchmenGroup, "missing_hirelings": Hireling}
+MISSING_UNITS: dict[str, Any] = {"missing_heroes": Hero, "missing_hirelings": Hireling}
+MISSING_MEMBERS = "missing_members"  # a group misses no games: its members do (William, 25 Nov 2026)
 
 
 def _locked_warband(battle_id: int, warband_id: int, resource_id: int | None) -> Warband:
@@ -78,6 +80,7 @@ def _locked_warband(battle_id: int, warband_id: int, resource_id: int | None) ->
         name: Exists(on_roster(model.objects.filter(warband_id=OuterRef("pk"), missing_games__gt=0)))
         for name, model in MISSING_UNITS.items()
     }
+    missing[MISSING_MEMBERS] = Exists(missing_members(group__warband_id=OuterRef("pk")))
     resources = WarbandResource.objects.filter(warband_id=OuterRef("pk"))
     resources = resources.filter(id=resource_id) if resource_id is not None else resources.filter(is_default=True)
     warbands = locked(
@@ -136,7 +139,7 @@ def load_context(battle: Battle, participant: BattleParticipant, draft: dict, ch
         resource_id=getattr(warband, "resource_pk", None),
         resource_found=getattr(warband, "resource_pk", None) is not None,
         resource_name=getattr(warband, "resource_name", None),
-        has_missing=any(getattr(warband, name) for name in MISSING_UNITS),
+        has_missing=any(getattr(warband, name) for name in (*MISSING_UNITS, MISSING_MEMBERS)),
         heroes=heroes,
         hirelings=hirelings,
         henchmen=henchmen,

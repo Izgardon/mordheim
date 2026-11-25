@@ -1,7 +1,8 @@
 """Missing games (edit mode): a unit out for a number of the warband's battles, with an optional reason.
 
-Heroes, hired swords and dramatis personae, and henchmen groups (the whole group) are set missing through their
-update (PATCH, or an update entry of the roster's batch Save); 0 brings the unit back early. Setting it writes
+Heroes, hired swords and dramatis personae are set missing through their update (PATCH, or an update entry of the
+roster's batch Save), and a henchman through his group's member list (William, 25 Nov 2026: one member misses games, a
+group none); 0 brings the unit back early. Setting it writes
 "<name> misses 2 games: <reason>" to the log and bringing it back "<name> returns". A dead unit can't be set
 missing, and one that dies is missing no more. A missing unit stays on the roster: it counts towards warband size
 and the caps, but the rating leaves it out. Setting or clearing it sends `warband.changed`, so other members' open
@@ -14,12 +15,13 @@ from unittest import mock
 
 from django.test import override_settings
 
-from apps.warbands.models import Hero, Hireling, WarbandLog
+from apps.warbands.models import HenchmenGroup, Hero, Hireling, WarbandLog
 from apps.warbands.services.summary import load_warband_units
 
-from .roster_support import HENCHMEN, HERO, HIRELING, KINDS, Kind, RosterTestCase, make_unit, unit_url
+from .roster_support import HENCHMEN, HERO, HIRELING, Kind, RosterTestCase, make_unit, unit_url
 
 SOCKET = "123.456"
+UNIT_KINDS = (HERO, HIRELING)  # a group misses no games of its own: its members do
 
 
 def missing_logs(unit_name: str) -> list[tuple[str, dict[str, Any]]]:
@@ -32,7 +34,7 @@ class MissingGamesEditTests(RosterTestCase):
         return self.client.patch(unit_url(kind, self.warband.id, unit.id), body, format="json")
 
     def test_every_kind_can_be_set_missing_with_a_reason_and_it_is_logged(self):
-        for kind in KINDS:
+        for kind in UNIT_KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, name=f"Pieter {kind.key}")
 
@@ -44,7 +46,7 @@ class MissingGamesEditTests(RosterTestCase):
                 self.assertEqual(missing_logs(unit.name), [("unit_missing", payload)])
 
     def test_clearing_brings_the_unit_back_early_and_forgets_the_reason(self):
-        for kind in KINDS:
+        for kind in UNIT_KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, name=f"Back {kind.key}", missing_games=2, missing_reason="Lost")
 
@@ -110,31 +112,45 @@ class MissingGamesEditTests(RosterTestCase):
         self.assertEqual(Hero.objects.get(id=hero.id).missing_games, 0)
 
     def test_unit_payloads_say_how_many_games_and_why(self):
-        group = make_unit(HENCHMEN, self.warband, name="Swords", missing_games=1, missing_reason="Hiding")
+        hero = make_unit(HERO, self.warband, name="Aldric", missing_games=1, missing_reason="Hiding")
+        group = make_unit(HENCHMEN, self.warband, name="Swords", members=("Hans",))
+        group.henchmen.update(missing_games=2, missing_reason="Lost")
 
         sheet = self.client.get(f"/api/warbands/{self.warband.id}/sheet/").json()
         listed = self.client.get(unit_url(HENCHMEN, self.warband.id)).json()
 
-        shown = next(entry for entry in sheet["henchmen_groups"] if entry["id"] == group.id)
+        shown = next(entry for entry in sheet["heroes"] if entry["id"] == hero.id)
         self.assertEqual((shown["missing_games"], shown["missing_reason"]), (1, "Hiding"))
-        self.assertEqual((listed[0]["missing_games"], listed[0]["missing_reason"]), (1, "Hiding"))
+        member = listed[0]["henchmen"][0]
+        self.assertEqual((member["missing_games"], member["missing_reason"]), (2, "Lost"))
+        self.assertNotIn("missing_games", listed[0])  # the group's own
+
+    def test_a_groups_update_sets_no_missing_games_of_its_own(self):
+        group = make_unit(HENCHMEN, self.warband, name="Swords")
+
+        response = self.patch(HENCHMEN, group, {"missing_games": 2, "missing_reason": "Lost"})
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(HenchmenGroup.objects.get(id=group.id).missing_games, 0)
+        self.assertEqual(missing_logs("Swords"), [])
 
 
 class MissingGamesRatingTests(RosterTestCase):
     def test_missing_units_leave_the_rating_but_count_towards_warband_size_and_the_caps(self):
         Hero.objects.create(warband=self.warband, name="Here", xp=Decimal("10"))
         Hero.objects.create(warband=self.warband, name="Away", xp=Decimal("30"), missing_games=2)
-        make_unit(HENCHMEN, self.warband, members=("A", "B"), xp=Decimal("1"), missing_games=1)
+        group = make_unit(HENCHMEN, self.warband, members=("A", "B"), xp=Decimal("1"))
+        group.henchmen.filter(name="A").update(missing_games=1)  # a member missing games: B still fights
         Hireling.objects.create(warband=self.warband, name="Ranger", rating=18, blood_pacted=True, missing_games=1)
 
         units = load_warband_units([self.warband.id])[self.warband.id]
 
-        self.assertEqual(units.rating, 5 + 10)  # only the hero who is here
+        self.assertEqual(units.rating, 5 + 10 + 6)  # the hero who is here, and B
         # warband size: both heroes, both henchmen and the blood-pacted hired sword; the hero cap: both heroes
         self.assertEqual((units.unit_count, units.hero_count), (2 + 2 + 1, 2))
         summary = self.client.get(f"/api/warbands/{self.warband.id}/summary/").json()
         sheet = self.client.get(f"/api/warbands/{self.warband.id}/sheet/").json()
-        self.assertEqual((summary["rating"], sheet["summary"]["rating"]), (15, 15))
+        self.assertEqual((summary["rating"], sheet["summary"]["rating"]), (21, 21))
         self.assertEqual(summary["unit_count"], 5)
 
 

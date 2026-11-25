@@ -41,8 +41,14 @@ const REMOVED_KEY = {
 
 /** A recruit's loadout row: bought with him (in his cost), taken from the stash, or he joins without it. */
 export type KitChoice = "buy" | "stash" | "without";
-/** A model in the edit form: a new one carries his kit choices, by loadout row id. */
-export type MemberDraft = Partial<Henchman> & { kit?: Record<number, KitChoice> };
+/**
+ * A model in the edit form: a new one carries his kit choices, by loadout row id; a saved one his
+ * missing games as typed (William, 25 Nov 2026: a henchman misses games on his own).
+ */
+export type MemberDraft = Omit<Partial<Henchman>, "missing_games"> & {
+  kit?: Record<number, KitChoice>;
+  missing_games?: number | string;
+};
 
 const kitLists = (kit: Record<number, KitChoice> = {}) => {
   const rows = (choice: KitChoice) =>
@@ -77,8 +83,13 @@ function initialDraft(entry: RosterUnit): Draft {
     price: unit.price ?? 0,
     xp: unit.xp ?? 0,
     half_rate: Boolean(unit.half_rate),
-    missing_games: unit.missing_games ?? 0,
-    missing_reason: unit.missing_reason ?? "",
+    // a group misses no games of its own: its members do
+    ...(entry.kind === "henchmen_group"
+      ? {}
+      : {
+          missing_games: entry.unit.missing_games ?? 0,
+          missing_reason: entry.unit.missing_reason ?? "",
+        }),
     notes: unit.notes ?? "",
     large: Boolean(unit.large),
     armour_save: unit.armour_save ?? "",
@@ -137,7 +148,7 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
       ...rest,
       price: Number(draft.price) || 0,
       xp: Number(draft.xp) || 0,
-      missing_games: Number(draft.missing_games) || 0,
+      ...("missing_games" in draft ? { missing_games: Number(draft.missing_games) || 0 } : {}),
       ...statsPayload(draft),
       ...(access
         ? { available_skills: buildAvailableSkillsPayload(access as Record<string, boolean>) }
@@ -148,12 +159,17 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
       ...(isGroup(entry)
         ? {
             henchmen: [
-              ...members.map(({ id, name, kills, dead, kit }) => ({
+              ...members.map(({ id, name, kills, dead, kit, missing_games, missing_reason }) => ({
                 id,
                 name: name ?? "",
                 kills,
                 dead,
-                ...(id === undefined ? kitLists(kit) : {}),
+                ...(id === undefined
+                  ? kitLists(kit)
+                  : {
+                      missing_games: Number(missing_games) || 0,
+                      missing_reason: missing_reason ?? "",
+                    }),
               })),
               ...Object.entries(dismissed).map(([id, share]) => ({
                 id: Number(id),

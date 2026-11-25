@@ -133,8 +133,9 @@ SPECIAL_SUMMARY = {"id": "int", "name": "str", "kind": "str", "category": "str"}
 SPECIAL_DETAIL = {"id": "int", "name": "str", "type": "str", "kind": "str", "category": "str", "description": "str"}
 SPELL_SUMMARY = {"id": "int", "name": "str", "dc_change": "int"}  # dc_change: his own, from the advance flow
 SPELL_DETAIL = {"id": "int", "name": "str", "type": "str", "dc": "str", "description": "str", "dc_change": "int"}
-MEMBER = {"id": "int", "name": "str", "kills": "int", "dead": "bool", "gaps": []}  # gaps: the loadout rows he lacks
 MISSING = {"missing_games": "int", "missing_reason": "str"}  # missing games: how many and why (edit mode)
+# gaps: the loadout rows he lacks; a member misses games on his own, a group none (William, 25 Nov 2026)
+MEMBER = {"id": "int", "name": "str", "kills": "int", "dead": "bool", **MISSING, "gaps": []}
 PICKS = {"pending_skills": "int", "pending_spells": "int", "pending_specials": "int"}  # picks to make later
 HIRE_FEE: dict[str, Any] = {
     "kind": "str",
@@ -210,7 +211,6 @@ HENCHMEN_SUMMARY = {
     "source_beast_id": None,  # recruited from a creature: its beast and kind
     "beast_kind": None,
     "is_animal": "bool",  # an animal group's paw on its card (William, 24 Nov 2026)
-    **MISSING,
     **STATS,
     **COMPANIONS,
     "mounts": [],  # each kind of mount the members ride (the step 5 follow-up)

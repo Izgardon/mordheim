@@ -1,7 +1,7 @@
 """Missing games in battles: each battle a warband finalises counts one game for every unit of it that is missing.
 
-Heroes, hired swords and henchmen groups count down whether or not they fought; at 0 the unit is back, forgets its
-reason and the log says "<name> returns". A cancelled battle, and a postbattle skipped or closed (nothing applied),
+Heroes, hired swords and henchmen (each member his own: a group misses none) count down whether or not they fought; at
+0 the unit is back, forgets its reason and the log says "<name> returns", and a member's group's version moves. A cancelled battle, and a postbattle skipped or closed (nothing applied),
 count nothing, and another warband's finalise never counts ours. The battle roster says who is missing, so prebattle
 can leave them out; upkeep skips a missing hired sword. A serious injury the player confirms sets a hero's or hired
 sword's missing games at finalise, for the games after this one. Finalise sends `warband.changed`, so other members'
@@ -35,9 +35,9 @@ class MissingGamesCountdownTests(BattleTestCase):
         self.fighter = self.warband.heroes.create(name="Fighter", unit_type="Captain", is_leader=True)
         self.wounded = self.warband.heroes.create(name="Pieter Kalb", unit_type="Champion", missing_games=2,
                                                   missing_reason="Deep wound")  # fmt: skip
-        self.group = HenchmenGroup.objects.create(warband=self.warband, name="Swords", missing_games=1,
-                                                  missing_reason="Lost")  # fmt: skip
-        Henchman.objects.create(group=self.group, name="Hans")
+        self.group = HenchmenGroup.objects.create(warband=self.warband, name="Swords", unit_type="Swordsman")
+        self.hans = Henchman.objects.create(group=self.group, name="Hans", missing_games=1, missing_reason="Lost")
+        Henchman.objects.create(group=self.group, name="Kurt")
         self.grukk = self.warband.hirelings.create(
             name="Grukk", unit_type="Ogre", upkeep_fee=make_fee(gold=30), missing_games=3
         )
@@ -48,7 +48,7 @@ class MissingGamesCountdownTests(BattleTestCase):
         return self.to_postbattle({self.player: [self.mine], self.viewer: [self.rat]})
 
     def counts(self) -> tuple[int, ...]:
-        units = (self.wounded, self.group, self.grukk, self.rat_hero)
+        units = (self.wounded, self.hans, self.grukk, self.rat_hero)
         return tuple(type(unit).objects.get(id=unit.id).missing_games for unit in units)
 
     def test_finalising_counts_one_game_for_every_missing_unit_of_the_warband(self):
@@ -57,9 +57,10 @@ class MissingGamesCountdownTests(BattleTestCase):
         self.ok(self.finalize(self.player, battle_id, draft({self.mine: unit_result(self.mine)})))
 
         self.assertEqual(self.counts(), (1, 0, 2, 2))  # the rival hasn't finalised: its hero still misses 2
-        self.assertEqual(HenchmenGroup.objects.get(id=self.group.id).missing_reason, "")
+        self.assertEqual(Henchman.objects.get(id=self.hans.id).missing_reason, "")
+        self.assertGreater(HenchmenGroup.objects.get(id=self.group.id).updated_at, self.group.updated_at)
         self.assertEqual(Hero.objects.get(id=self.wounded.id).missing_reason, "Deep wound")
-        self.assertEqual(missing_logs(self.warband.id), [("unit_returns", {"name": "Swords"})])
+        self.assertEqual(missing_logs(self.warband.id), [("unit_returns", {"name": "Hans"})])
 
     def test_a_unit_brought_anyway_counts_down_too(self):
         wounded = f"hero:{self.wounded.id}"
@@ -71,16 +72,16 @@ class MissingGamesCountdownTests(BattleTestCase):
         self.assertEqual(self.counts()[0], 1)
 
     def test_a_unit_that_dies_here_is_missing_no_more(self):
-        # as one killed in edit mode: a hero brought anyway, and a group whose last member dies
-        wounded, hans = f"hero:{self.wounded.id}", f"henchman:{Henchman.objects.get(group=self.group).id}"
+        # as one killed in edit mode: a hero brought anyway, and a missing member brought anyway
+        wounded, hans = f"hero:{self.wounded.id}", f"henchman:{self.hans.id}"
         battle_id = self.to_postbattle({self.player: [self.mine, wounded, hans], self.viewer: [self.rat]})
 
         results = {key: unit_result(key, dead=key != self.mine) for key in (self.mine, wounded, hans)}
         self.ok(self.finalize(self.player, battle_id, draft(results)))
 
-        hero, group = Hero.objects.get(id=self.wounded.id), HenchmenGroup.objects.get(id=self.group.id)
+        hero = Hero.objects.get(id=self.wounded.id)
         self.assertEqual((hero.dead, hero.missing_games, hero.missing_reason), (True, 0, ""))
-        self.assertEqual((group.dead, group.missing_games, group.missing_reason), (True, 0, ""))
+        self.assertTrue(Henchman.objects.get(id=self.hans.id).dead)
         self.assertEqual(missing_logs(self.warband.id), [])  # dead, not back
 
     def test_skipped_closed_and_cancelled_battles_count_nothing(self):
@@ -101,8 +102,9 @@ class MissingGamesCountdownTests(BattleTestCase):
 
         heroes = {entry["displayName"]: (entry["missingGames"], entry["missingReason"]) for entry in roster["heroes"]}
         self.assertEqual(heroes, {"Fighter": (0, ""), "Pieter Kalb": (2, "Deep wound")})
-        group = roster["henchmenGroups"][0]
-        self.assertEqual((group["missingGames"], group["members"][0]["missingGames"]), (1, 1))
+        members = {entry["displayName"]: (entry["missingGames"], entry["missingReason"]) for entry in roster["henchmenGroups"][0]["members"]}  # fmt: skip
+        self.assertEqual(members, {"Hans": (1, "Lost"), "Kurt": (0, "")})  # his own: Kurt fights
+        self.assertNotIn("missingGames", roster["henchmenGroups"][0])
         self.assertEqual(roster["hirelings"][0]["missingGames"], 3)
 
     def test_upkeep_skips_a_missing_hired_sword(self):
@@ -153,8 +155,8 @@ class MissingGamesCountdownTests(BattleTestCase):
                 self.ok(self.client.post(url, {}, format="json", HTTP_X_PUSHER_SOCKET_ID=SOCKET))
 
         self.assertEqual(self.counts(), (1, 0, 2, 1))  # both warbands, whoever fought
-        self.assertEqual(HenchmenGroup.objects.get(id=self.group.id).missing_reason, "")
-        self.assertEqual(missing_logs(self.warband.id), [("unit_returns", {"name": "Swords"})])
+        self.assertEqual(Henchman.objects.get(id=self.hans.id).missing_reason, "")
+        self.assertEqual(missing_logs(self.warband.id), [("unit_returns", {"name": "Hans"})])
         changed = [call.args[2] for call in pusher.trigger.call_args_list if call.args[1] == "warband.changed"]
         self.assertEqual(changed, [{"warband_id": self.warband.id}, {"warband_id": self.rival.id}])
 

@@ -667,7 +667,7 @@ export type BattleRosterCompanionFields = {
 
 /**
  * How many more of its warband's battles a roster unit misses, and why (0 and "" while it
- * fights): prebattle leaves it out at first. A henchman carries his group's.
+ * fights): prebattle leaves it out at first. A henchman carries his own (a group misses none).
  */
 export type BattleRosterMissingFields = {
   missingGames?: number;
@@ -704,7 +704,7 @@ export type BattleRosterUnit = BattleRosterCompanionFields & {
   paymentNote?: string;
 };
 
-export type BattleRosterGroup = BattleRosterMissingFields & {
+export type BattleRosterGroup = {
   id: number;
   name: string;
   unitType: string;

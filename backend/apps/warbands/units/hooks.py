@@ -17,6 +17,7 @@ from apps.warbands.services import ledger
 from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
 
 from .services.hire_cost import henchman_hire_cost
+from .services.missing import LogEntry, member_missing_logs, missing_state
 
 if TYPE_CHECKING:
     from .kinds import UnitKindSpec
@@ -106,7 +107,7 @@ class LeaderHooks(UnitHooks):
         ensure_single_living_leader(warband.id)
 
 
-MEMBER_FIELDS = ("name", "kills", "dead")
+MEMBER_FIELDS = ("name", "kills", "dead", "missing_games", "missing_reason")
 
 
 @dataclass(frozen=True)
@@ -114,6 +115,7 @@ class MemberSync:
     new_members: list[tuple[dict[str, Any], Henchman]]  # each entry that became a new member, and the member
     living_before: int  # the group's living members before the sync
     shares_to_stash: list[Henchman]  # members dismissed with `"dismiss": "stash"`: their shares go to the stash
+    missing_logs: list[LogEntry]  # a member set missing games, or back (William, 25 Nov 2026: one member misses them)
 
 
 def _dismissed(members: dict[int | None, Henchman], entries: MemberEntries, sent: Set[int]) -> dict[int, str]:
@@ -138,6 +140,7 @@ def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberSync:
     ignored. A fixed number of writes, however many members the group has (PERF-28).
     """
     members: dict[int | None, Henchman] = {member.id: member for member in Henchman.objects.filter(group=group)}
+    missing_before = {member.id: missing_state(member) for member in members.values()}
     sent: dict[int, set[str]] = {}  # living member id -> the fields its entries carry
     changed_ids: set[int] = set()
     new_entries = []
@@ -156,6 +159,9 @@ def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberSync:
                     setattr(member, name, entry[name])
                     changed_ids.add(member.id)
 
+    missing_logs = member_missing_logs(
+        group, [members[member_id] for member_id in sorted(changed_ids)], missing_before, sent
+    )
     dismissed = _dismissed(members, entries, set(sent))
     if dismissed:
         on_roster(Henchman.objects.filter(group=group, id__in=dismissed)).update(dismissed_at=timezone.now())
@@ -176,7 +182,7 @@ def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberSync:
     )
     living_before = sum(1 for member in members.values() if not member.dead and member.dismissed_at is None)
     to_stash = [members[member_id] for member_id, share in dismissed.items() if share == "stash"]
-    return MemberSync(list(zip(new_entries, created, strict=True)), living_before, to_stash)
+    return MemberSync(list(zip(new_entries, created, strict=True)), living_before, to_stash, missing_logs)
 
 
 def _parse_henchman_cost(value: Any) -> int | None:
@@ -231,6 +237,8 @@ class HenchmenHooks(UnitHooks):
         default_cost = _hire_cost_before_loadout(group)  # before the sync: the loadout the recruits join
         synced = sync_members(group, members)
         share_to_stash(group.warband, group, synced.shares_to_stash)
+        for entry in synced.missing_logs:
+            log_warband_event(group.warband_id, *entry)
         if not synced.new_members:
             return []
         saved = equip_recruits(group.warband, group, synced.new_members)

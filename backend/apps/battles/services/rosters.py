@@ -240,7 +240,7 @@ def henchman_entry(group: HenchmenGroup, member, links: list, number: int = 1) -
         "kind": "henchman",
         "displayName": member.name or f"{group.unit_type or 'Henchman'} {number}",
         "unitType": group.unit_type or "Henchman",
-        **_missing(group),  # the whole group misses games
+        **_missing(member),  # his own (William, 25 Nov 2026): prebattle leaves him out at first
         **_profile(group),
         **_companions(group, carried),
         "noLevelUps": bool(group.no_level_ups),
@@ -264,7 +264,6 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
         "id": group.id,
         "name": name,
         "unitType": group.unit_type or "Henchmen",
-        **_missing(group),
         "sourceBeastId": group.source_beast_id,  # recruited from a creature: its beast and kind
         "beastKind": getattr(group, "beast_kind", None),
         "pets": [_beast(row, "henchmen_group") for row in companions(links).pets],  # the group's own: one model each

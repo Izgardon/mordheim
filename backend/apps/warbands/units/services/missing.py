@@ -1,11 +1,19 @@
-"""Missing games: a unit out for a number of the warband's battles (heroes, hired swords, henchmen groups alike).
+"""Missing games: a unit out for a number of the warband's battles (heroes and hired swords), or one member of a
+henchmen group (William, 25 Nov 2026: "Henchmen need to be able to miss a game individually not as a group"), who
+stays in his group and its size but is out of the rating and left out of prebattle at first; a group misses none.
 
-Edit mode sets and clears them through the unit's update; a battle the warband finalises counts one game for each
-missing unit (apps/battles/services/postbattle/missing.py). Both write the same two log rows: "<name> misses 2 games:
-<reason>" when a count or reason is set, and "<name> returns" when the unit is back.
+Edit mode sets and clears them through the unit's update (a member's through his group's member list); a battle the
+warband finalises counts one game for each missing unit and member (apps/battles/services/postbattle/missing.py). Both
+write the same two log rows: "<name> misses 2 games: <reason>" when a count or reason is set, and "<name> returns" when
+the unit is back.
 """
 
+from collections.abc import Mapping
 from typing import Any
+
+from django.db.models import QuerySet
+
+from apps.warbands.models import Henchman, HenchmenGroup, on_roster
 
 MAX_MISSING_GAMES = 99
 MISSING_LOG, RETURNS_LOG = "unit_missing", "unit_returns"  # personnel log entry types
@@ -41,3 +49,33 @@ def missing_change_log(name: str, before: tuple[int, str], after: tuple[int, str
     if games:
         return missing_log(name, games, reason)
     return returns_log(name) if before[0] else None
+
+
+def missing_members(**where: Any) -> QuerySet[Henchman]:
+    """The living members of groups on a roster who miss games, filtered by `where` (`group__warband_id=...`)."""
+    rows = Henchman.objects.filter(group__dead=False, group__dismissed_at__isnull=True, missing_games__gt=0, **where)
+    return on_roster(rows)
+
+
+def member_name(group: HenchmenGroup, member: Henchman) -> str:
+    return member.name or group.unit_type or "Henchman"
+
+
+def member_missing_logs(
+    group: HenchmenGroup, changed: list[Henchman], before: Mapping[Any, tuple[int, str]], sent: dict[int, set[str]]
+) -> list[LogEntry]:
+    """For members a group save changed: each settled (a dead one misses nothing, one back keeps no reason, and a
+    field that settles is written with the rest: `sent`), and the log rows of those whose missing games changed."""
+    logs = []
+    for member in changed:
+        settle_missing(member)
+        after = missing_state(member)
+        if after == before[member.id]:
+            continue
+        sent[member.id] |= {"missing_games", "missing_reason"}
+        if member.dead:
+            continue  # dead, not back
+        entry = missing_change_log(member_name(group, member), before[member.id], after)
+        if entry is not None:
+            logs.append(entry)
+    return logs

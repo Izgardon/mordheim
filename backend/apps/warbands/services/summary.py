@@ -29,8 +29,10 @@ from apps.warbands.models import (
 from apps.warbands.services.loadouts import carriers
 from apps.warbands.units.companions import mount_bonuses_array, mount_rating_bonus
 
-# A group's members on the roster (on_roster, through the group).
+# A group's members on the roster (on_roster, through the group), and those of them the rating counts: a member
+# missing games stays in his group and its size (William, 25 Nov 2026)
 LIVING_MEMBERS = Q(henchmen__dead=False, henchmen__dismissed_at__isnull=True)
+RATED_MEMBERS = LIVING_MEMBERS & Q(henchmen__missing_games=0)
 
 
 def _as_number(value: Any) -> float | int:
@@ -58,16 +60,16 @@ class WarbandUnits:
         """What the mounts add to the rating: each rider's first mount's bonus, and a group's ridden mount's for each
         member who carries it. Missing riders don't count."""
         riders = sum(mount_rating_bonus(row.get("mount_bonuses"), 1) for row in rated([*self.heroes, *self.hirelings]))
-        return riders + sum(int(row.get("mount_rating") or 0) for row in rated(self.henchmen_groups))
+        return riders + sum(int(row.get("mount_rating") or 0) for row in self.henchmen_groups)
 
     @property
     def rating(self) -> float | int:
-        """5 a model (20 a large one) and its XP, a hired sword's rating and XP, and the mounts' bonuses; units missing
-        games are left out (they still count towards warband size and the caps)."""
+        """5 a model (20 a large one) and its XP, a hired sword's rating and XP, and the mounts' bonuses; units and
+        members missing games are left out (they still count towards warband size and the caps)."""
         hero_rating = sum(((20 if row["large"] else 5) + _as_number(row["xp"])) for row in rated(self.heroes))
         henchmen_rating = sum(
-            (row["henchmen_count"] or 0) * ((20 if row["large"] else 5) + _as_number(row["xp"]))
-            for row in rated(self.henchmen_groups)
+            (row["rated_count"] or 0) * ((20 if row["large"] else 5) + _as_number(row["xp"]))
+            for row in self.henchmen_groups
         )
         hired_rating = sum((_as_number(row["rating"]) + _as_number(row["xp"])) for row in rated(self.hirelings))
         return hero_rating + henchmen_rating + hired_rating + self.mounts_rating
@@ -93,11 +95,12 @@ class WarbandUnits:
 
 
 def group_mount_rating() -> Subquery:
-    """A group's first ridden mount's rating bonus times the members who carry it, read with the group's row."""
+    """A group's first ridden mount's rating bonus times the members not missing games who carry it, read with the
+    group's row."""
     rows = HenchmenGroupItem.objects.filter(
         henchmen_group=OuterRef("pk"), companion=True, item__bestiary_entry__kind=MOUNT
     ).order_by("id")
-    bonus = Coalesce(F("item__bestiary_entry__rating_bonus"), Value(0)) * carriers()
+    bonus = Coalesce(F("item__bestiary_entry__rating_bonus"), Value(0)) * carriers(present=True)
     return Subquery(rows.annotate(rating=bonus).values("rating")[:1], output_field=IntegerField())
 
 
@@ -120,11 +123,10 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
     groups = (
         on_roster(HenchmenGroup.objects.filter(warband_id__in=ids))
         .annotate(henchmen_count=Count("henchmen", filter=LIVING_MEMBERS))
+        .annotate(rated_count=Count("henchmen", filter=RATED_MEMBERS))
         .annotate(mount_rating=group_mount_rating())
         .order_by("id")
-        .values(
-            "id", "warband_id", "name", "unit_type", "xp", "large", "henchmen_count", "missing_games", "mount_rating"
-        )
+        .values("id", "warband_id", "name", "unit_type", "xp", "large", "henchmen_count", "rated_count", "mount_rating")
     )
     for group_row in groups:
         units[group_row["warband_id"]].henchmen_groups.append(dict(group_row))

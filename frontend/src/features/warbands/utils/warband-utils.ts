@@ -128,7 +128,7 @@ const mountsRating = (
 ) =>
   [...heroes, ...hirelings, ...henchmenGroups].reduce((sum, unit) => sum + unitMountBonus(unit), 0);
 
-/** Units missing games are left out of the rating, as the server's summary leaves them out. */
+/** Units and members missing games are left out of the rating, as the server's summary leaves them out. */
 export const calculateWarbandRating = (
   allHeroes: WarbandHero[],
   allHirelings: WarbandHireling[],
@@ -137,7 +137,6 @@ export const calculateWarbandRating = (
 ): number => {
   const heroes = allHeroes.filter(fights);
   const hirelings = allHirelings.filter(fights);
-  const henchmenGroups = allHenchmenGroups.filter(fights);
   const heroRating = heroes.reduce((total, hero) => {
     const base = hero.large ? 20 : 5;
     const xp = toNumber(hero.xp);
@@ -150,8 +149,8 @@ export const calculateWarbandRating = (
     return total + base + xp;
   }, 0);
 
-  const henchmenRating = henchmenGroups.reduce((total, group) => {
-    const count = group.henchmen?.length ?? 0;
+  const henchmenRating = allHenchmenGroups.reduce((total, group) => {
+    const count = group.henchmen?.filter(fights).length ?? 0;
     if (!count) return total;
     const base = group.large ? 20 : 5;
     const xp = toNumber(group.xp);
@@ -160,7 +159,10 @@ export const calculateWarbandRating = (
 
   if (allHeroes.length || allHirelings.length || allHenchmenGroups.length) {
     return (
-      heroRating + hirelingRating + henchmenRating + mountsRating(heroes, hirelings, henchmenGroups)
+      heroRating +
+      hirelingRating +
+      henchmenRating +
+      mountsRating(heroes, hirelings, allHenchmenGroups)
     );
   }
   return typeof fallbackRating === "number" ? fallbackRating : 0;
