@@ -22,7 +22,6 @@ from apps.warbands.serializers import (
     WarbandSummarySerializer,
 )
 from apps.warbands.services.loadouts import group_mount_rating_of
-from apps.warbands.services.roster_cost import roster_value
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.companions import mount_bonuses
 from apps.warbands.units.kinds import HENCHMEN_GROUP, HERO, HIRELING, KINDS
@@ -82,13 +81,12 @@ def _encampments(warband: Warband) -> list[dict[str, Any]]:
     return held_by(warband) if settings is not None and settings.enable_encampments else []
 
 
-def workshop_facts(warband: Warband) -> dict[str, Any] | None:
-    """A workshop's warband's cost against its budget and its workshop's code (two queries: roster_cost.py); null
+def workshop_facts(warband: Warband, summary: dict[str, Any]) -> dict[str, Any] | None:
+    """A workshop's warband's cost against its budget (its summary's: roster_cost.py) and its workshop's code; null
     for a campaign's warband."""
-    if not warband.campaign.is_workshop:
+    if not warband.campaign.is_workshop or summary.get("workshop") is None:
         return None
-    value = roster_value(warband)
-    return {"cost": value.cost, "budget": value.budget, "share_code": warband.campaign.share_code}
+    return {**summary["workshop"], "share_code": warband.campaign.share_code}
 
 
 def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, Any]:
@@ -103,9 +101,10 @@ def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, 
     prefetch_related_objects(items, *item_detail_prefetches())
 
     summary_context = {"warband_units": _summary_units(rosters)}
+    summary = WarbandSummarySerializer(warband, context=summary_context).data
     return {
         "warband": WarbandSerializer(warband).data,
-        "summary": WarbandSummarySerializer(warband, context=summary_context).data,
+        "summary": summary,
         "capabilities": capabilities,
         "rules": WarbandRuleSerializer(warband.rules.all(), many=True).data,
         # the plot it follows and its ladder's points, for the campaign point track (apps/plots); null: none
@@ -115,7 +114,7 @@ def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, 
         # what it holds while the campaign has Encampments on (one query); [] while they are off
         "encampments": _encampments(warband),
         # a workshop's warband (apps/workshop): {cost, budget, share_code}; null for a campaign's
-        "workshop": workshop_facts(warband),
+        "workshop": workshop_facts(warband, summary),
         **{kind.collection: UNIT_SERIALIZERS[key].detail(rosters[key], many=True).data for key, kind in KINDS.items()},
     }
 

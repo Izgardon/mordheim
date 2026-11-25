@@ -3,6 +3,7 @@ blocked."""
 
 from typing import Any
 
+from apps.warbands.models import Warband
 from apps.warbands.services.purchases import OVER_BUDGET
 from apps.warbands.services.roster_cost import roster_cost, roster_value
 
@@ -48,3 +49,18 @@ class CostTests(WorkshopTestCase):
         self.assertEqual((warning["cost"], warning["budget"]), (KIT_COST + 300, 500))
         sheet = self.get_as(self.player, f"/api/warbands/{row['warband_id']}/sheet/").data
         self.assertEqual(sheet["workshop"]["cost"], KIT_COST + 300)
+
+    def test_every_writes_summary_carries_the_cost_after_it(self) -> None:
+        # the page's "Cost 455 / 500 gc" follows each write from its answer's summary, as the gold does
+        row = self.kitted()
+        base = f"/api/warbands/{row['warband_id']}/"
+        summary = self.get_as(self.player, f"{base}summary/").data
+        self.assertEqual(summary["workshop"], {"cost": KIT_COST, "budget": 500})
+        body = {"item_id": self.heavy_armour.id, "target_type": "stash", "quantity": 1, "price": 50}
+        response = self.post_as(self.player, f"{base}purchases/", body)
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["summary"]["workshop"], {"cost": KIT_COST + 50, "budget": 500})
+
+    def test_a_campaigns_warband_has_no_workshop_in_its_summary(self) -> None:
+        warband = Warband.objects.create(campaign=self.elsewhere, user=self.outsider, name="Far")
+        self.assertIsNone(self.get_as(self.outsider, f"/api/warbands/{warband.id}/summary/").data["workshop"])
