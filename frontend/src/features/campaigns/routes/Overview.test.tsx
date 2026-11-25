@@ -27,7 +27,9 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
 vi.mock("@/lib/realtime/client", async () => (await import("@/test/fake-realtime")).fakeClient);
-vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
+// the phone's layout for the tests that ask for it (`phone = true`)
+let phone = false;
+vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => phone }));
 
 const BASE = `/campaigns/${CAMPAIGN_ID}`;
 
@@ -281,8 +283,10 @@ describe("the overview's campaign rules link", () => {
     // the rail has a Campaign rules link of its own, so this looks only at the page's own row
     const row = await screen.findByRole("region", { name: "Campaign rules and charts" });
     const link = within(row).getByRole("link", { name: /Campaign rules/ });
-    expect(row.previousElementSibling?.tagName).toBe("DL");
-    expect(row.previousElementSibling).toHaveTextContent("Heroes lost");
+    // in the links' row with Scenarios (side by side on a phone), right under the info bar
+    expect(row.parentElement).toHaveAttribute("data-testid", "overview-links");
+    expect(row.parentElement?.previousElementSibling?.tagName).toBe("DL");
+    expect(row.parentElement?.previousElementSibling).toHaveTextContent("Heroes lost");
     expect(link).toHaveAttribute("href", `/campaigns/${CAMPAIGN_ID}/campaign-rules`);
     await waitFor(() =>
       expect(link).toHaveTextContent("1 campaign rule · 1 battle rule · 1 chart")
@@ -300,5 +304,22 @@ describe("the overview's campaign rules link", () => {
     await screen.findByRole("heading", { level: 1 });
     await waitFor(() => expect(fakeApi.countOf(`GET ${BASE}/campaign-rules/`)).toBe(1));
     expect(screen.queryByRole("region", { name: "Campaign rules and charts" })).toBeNull();
+  });
+});
+
+describe("the overview on a phone (William, 25 Nov 2026)", () => {
+  afterEach(() => {
+    phone = false;
+  });
+
+  it("puts the campaign rules and scenarios side by side, and View full battle logs over the battles", async () => {
+    phone = true;
+    renderApp(BASE);
+
+    const links = await screen.findByTestId("overview-links");
+    expect(links).toHaveClass("flex", "[&>*]:flex-1");
+    await setupUser().click(await screen.findByRole("tab", { name: "Battles" }));
+    const button = await screen.findByRole("link", { name: "View full battle logs" });
+    expect(button).toHaveAttribute("href", `/campaigns/${CAMPAIGN_ID}/battles`);
   });
 });

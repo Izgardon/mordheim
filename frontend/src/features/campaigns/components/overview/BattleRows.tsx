@@ -64,6 +64,7 @@ export default function BattleRows({
   isMobile,
   record = false,
   linkedId = null,
+  closed = false,
 }: {
   battles: CampaignBattleHistoryEntry[];
   campaignId: number;
@@ -71,11 +72,14 @@ export default function BattleRows({
   record?: boolean;
   /** A battle a link opened the page on (`?battle=`): it starts open, scrolled to. */
   linkedId?: number | null;
+  /** Every row starts closed (the overview's Battles: William, 25 Nov 2026). */
+  closed?: boolean;
 }) {
-  // The linked battle, else the newest, starts open (undefined), until a row is toggled.
+  // The linked battle, else the newest (none on the overview: `closed`), starts open until a row is toggled.
   const [picked, setOpenId] = useState<number | null | undefined>(undefined);
   const linked = battles.some((battle) => battle.id === linkedId) ? linkedId : null;
-  const openId = picked === undefined ? (linked ?? battles[0]?.id ?? null) : picked;
+  const first = closed ? null : (battles[0]?.id ?? null);
+  const openId = picked === undefined ? (linked ?? first) : picked;
   const scrollTo = useCallback((row: HTMLLIElement | null) => {
     row?.scrollIntoView?.({ block: "start" });
   }, []);

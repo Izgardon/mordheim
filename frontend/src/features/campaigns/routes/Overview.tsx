@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { Button } from "@/components/ui/button";
 import { GameIcon } from "@/components/ui/game-icons";
 import { SectionHead } from "@/components/ui/section-title";
 import { useAuth } from "@/features/auth/hooks/use-auth";
@@ -101,7 +102,12 @@ export default function Overview() {
     />
   );
   const recent = (
-    <BattleRows battles={history.slice(0, RECENT)} campaignId={campaignId} isMobile={isMobile} />
+    <BattleRows
+      battles={history.slice(0, RECENT)}
+      campaignId={campaignId}
+      isMobile={isMobile}
+      closed
+    />
   );
   const allLink =
     history.length > RECENT ? (
@@ -166,8 +172,14 @@ export default function Overview() {
       />
       <OverviewNotices campaignId={campaignId} managesBattles={capabilities.manage_battles} />
       {stats}
-      <CampaignRulesLink campaignId={campaignId} canManage={capabilities.manage_campaign_rules} />
-      <ScenariosLink campaignId={campaignId} />
+      {/* side by side on a phone, half each (William, 25 Nov 2026); either alone takes the row */}
+      <div
+        data-testid="overview-links"
+        className={cn(isMobile ? "flex gap-3 [&>*]:min-w-0 [&>*]:flex-1" : "flex flex-col")}
+      >
+        <CampaignRulesLink campaignId={campaignId} canManage={capabilities.manage_campaign_rules} />
+        <ScenariosLink campaignId={campaignId} />
+      </div>
       {isMobile ? (
         <>
           <div
@@ -206,8 +218,11 @@ export default function Overview() {
           ) : null}
           {tab === "battles" ? (
             <>
+              {/* a proper button above the table (William, 25 Nov 2026) */}
+              <Button asChild variant="secondary" className="min-h-11 w-full">
+                <Link to={battlesHref}>View full battle logs</Link>
+              </Button>
               {recent}
-              {allLink}
             </>
           ) : null}
         </>

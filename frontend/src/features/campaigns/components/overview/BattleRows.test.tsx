@@ -32,6 +32,16 @@ describe("BattleRows", () => {
     );
   });
 
+  it("starts with every row closed on the overview (William, 25 Nov 2026)", () => {
+    renderWithQueryClient(
+      <MemoryRouter>
+        <BattleRows battles={battles} campaignId={7} isMobile closed />
+      </MemoryRouter>
+    );
+    for (const name of [/Street Fight/, /Bridge/])
+      expect(screen.getByRole("button", { name })).toHaveAttribute("aria-expanded", "false");
+  });
+
   // the header's Record window links a battle (William, 22 Nov 2026)
   it("starts with a linked battle open instead", () => {
     renderWithQueryClient(
