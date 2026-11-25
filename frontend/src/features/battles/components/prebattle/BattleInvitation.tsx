@@ -1,6 +1,9 @@
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChipLabel } from "@/components/ui/chip";
+import ScenarioSheet from "@/features/battles/components/battle/ScenarioSheet";
 import AcceptClearsNote from "@/features/battles/components/shared/AcceptClearsNote";
 import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 import type { PrebattlePage } from "@/features/battles/hooks/usePrebattlePage";
@@ -22,7 +25,8 @@ export default function BattleInvitation({ page }: { page: PrebattlePage }) {
   const inviter = participants.find((entry) => entry.user.id === inviterId)?.user.label;
   const waitingOn = participants.filter((entry) => entry.status === "invited").length;
   const scenario = battleState.battle.scenario || `Battle #${battleId}`;
-  const scenarioLink = battleState.battle.scenario_link;
+  const scenarioId = battleState.battle.scenario_id;
+  const [reading, setReading] = useState(false);
   const numbered = battleNumberLabel(battleState.battle.number);
 
   return (
@@ -43,15 +47,15 @@ export default function BattleInvitation({ page }: { page: PrebattlePage }) {
               {inviter ?? "Another player"} invited you to battle.
             </p>
           )}
-          {scenarioLink ? (
-            <a
-              href={scenarioLink}
-              target="_blank"
-              rel="noreferrer"
-              className="text-sm font-semibold text-accent-text underline underline-offset-2"
+          {scenarioId ? (
+            <button
+              type="button"
+              aria-haspopup="dialog"
+              onClick={() => setReading(true)}
+              className="inline-flex min-h-11 items-center self-start text-sm font-semibold text-accent-text underline underline-offset-2"
             >
               Read the scenario
-            </a>
+            </button>
           ) : null}
         </div>
 
@@ -123,6 +127,14 @@ export default function BattleInvitation({ page }: { page: PrebattlePage }) {
           </div>
         )}
       </Card>
+      {scenarioId ? (
+        <ScenarioSheet
+          campaignId={campaignId}
+          scenario={{ name: scenario, id: scenarioId }}
+          open={reading}
+          onOpenChange={setReading}
+        />
+      ) : null}
     </div>
   );
 }

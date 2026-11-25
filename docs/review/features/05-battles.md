@@ -27,7 +27,7 @@ Also P1: **BATL-BUG-04** (postbattle kill edits discarded) and **BATL-PERF-04** 
 
 ### Models (`backend/apps/battles/models/`)
 
-- **`Battle`**: `campaign`, `created_by_user`, `flow_type` (`normal` | `reported_result`), `status`, `scenario`, `scenario_link`, `winner_warband_ids_json`, timestamps. Indexes `(campaign, status)`, `(status, created_at)`.
+- **`Battle`**: `campaign`, `created_by_user`, `flow_type` (`normal` | `reported_result`), `status`, `scenario`, `scenario_ref` (the campaign scenario, null for a typed name), `winner_warband_ids_json`, timestamps. Indexes `(campaign, status)`, `(status, created_at)`.
 - **`BattleParticipant`**: one row per user/warband in a battle. Phase status, timeline timestamps, and four JSON blobs that carry all battle-scoped state: `selected_unit_keys_json` (unit keys like `hero:12`, `henchman:88`, `custom:<uuid>`), `unit_information_json` (per-unit `stats_override`, `notes`, `current_wounds`, `out_of_action`, `kill_count`), `custom_units_json` (temporary units), `postbattle_json` (draft results). `connection_state`, `last_seen_at`, `last_event_id` are written on every request but never read by the client.
 - **`BattleEvent`**: append-only timeline (`unit_ooa_set/unset`, `unit_kill_recorded`, `item_used`, lifecycle events). Index `(battle, id)`, `(battle, type)`.
 

@@ -182,7 +182,7 @@ export function battleState({
       flow_type: "normal",
       status,
       scenario: "Street Fight",
-      scenario_link: null,
+      scenario_id: null,
       winner_warband_ids_json: [],
       created_at: "2026-10-18T10:00:00Z",
       updated_at: "2026-10-18T10:00:00Z",

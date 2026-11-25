@@ -61,10 +61,10 @@ export default function BattlePrebattle() {
   const { battle: info, participants } = page.battle.battleState;
   const rules = useMemo(
     () => ({
-      scenario: { name: info.scenario, link: info.scenario_link },
+      scenario: { name: info.scenario, id: info.scenario_id },
       warbands: participants.map((participant) => participant.warband),
     }),
-    [info.scenario, info.scenario_link, participants]
+    [info.scenario, info.scenario_id, participants]
   );
   useEffect(() => {
     setBattleRules(rules);

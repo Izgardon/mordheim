@@ -1,4 +1,4 @@
-import type { CampaignScenario } from "./types";
+import type { CampaignScenario, Scenario } from "./types";
 
 export type ScenarioSort = "name" | "weight" | "source";
 
@@ -40,5 +40,5 @@ export function scenarioRows(rows: CampaignScenario[], query: string, sort: Scen
 }
 
 /** The line under a scenario's name: its source, and its number there ("Mordheim Rulebook · 3"). */
-export const sourceLine = ({ scenario }: CampaignScenario) =>
+export const sourceLine = ({ scenario }: { scenario: Pick<Scenario, "source" | "number"> }) =>
   [scenario.source, scenario.number].filter(Boolean).join(" · ");

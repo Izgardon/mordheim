@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
+import { makeScenario } from "@/test/scenario-fixtures";
 import { setupUser } from "@/test/user-event";
 
 import BattleRulesSheet from "./BattleRulesSheet";
@@ -68,13 +69,13 @@ function answer() {
   fakeApi.on("GET /warbands/1/rules/", [{ id: 5, title: "Hard Head", description: "Maces." }]);
 }
 
-const open = (link: string | null = null) =>
+const open = (id: number | null = null) =>
   renderWithQueryClient(
     <BattleRulesSheet
       open
       onOpenChange={vi.fn()}
       campaignId={3}
-      scenario={{ name: "Skirmish", link }}
+      scenario={{ name: "Skirmish", id }}
       warbands={[{ id: 1, name: "Grudgebearers" }]}
     />
   );
@@ -161,17 +162,33 @@ describe("BattleRulesSheet", () => {
     expect(shooting[0]).toHaveAttribute("aria-expanded", "true");
   });
 
-  it("opens the scenario's details from its button, with its link", async () => {
+  it("opens the campaign scenario the battle is played as, read whole, in the sheet's place", async () => {
+    fakeApi.on("GET /scenarios/4/", makeScenario({ id: 4, name: "Skirmish" }));
     const user = setupUser();
-    open("https://example.com/skirmish");
+    open(4);
+    expect(fakeApi.calls()).not.toContain("GET /scenarios/4/"); // read only once opened
 
     await user.click(screen.getByRole("button", { name: /Scenario: Skirmish/ }));
 
     const details = await screen.findByRole("dialog", { name: "Skirmish" });
-    expect(within(details).getByRole("link", { name: /Read the scenario/ })).toHaveAttribute(
-      "href",
-      "https://example.com/skirmish"
-    );
+    const rules = await within(details).findByRole("region", { name: "Special rules" });
+    expect(within(rules).getByText("Place D3+1 counters.")).toBeInTheDocument();
+    expect(within(details).getByText("Mordheim Rulebook · 3")).toBeInTheDocument();
+    expect(within(details).getByRole("img", { name: "1v1" })).toBeInTheDocument();
+    expect(within(details).queryByText(/Read the scenario/)).toBeNull();
     expect(screen.queryByRole("group", { name: "Rules section" })).toBeNull();
+  });
+
+  it("holds only the name of a scenario that was typed", async () => {
+    const user = setupUser();
+    open(null);
+
+    await user.click(screen.getByRole("button", { name: /Scenario: Skirmish/ }));
+
+    const details = await screen.findByRole("dialog", { name: "Skirmish" });
+    expect(within(details).queryByRole("heading", { level: 3 })).toBeNull();
+    expect(within(details).queryByRole("status")).toBeNull();
+    expect(within(details).queryByText(/Read the scenario/)).toBeNull();
+    expect(fakeApi.calls().filter((call) => call.startsWith("GET /scenarios/"))).toEqual([]);
   });
 });

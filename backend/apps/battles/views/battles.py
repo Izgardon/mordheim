@@ -71,13 +71,12 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
         except Refused as refused:
             return refused.response()
         logger.info(
-            "Battle create requested campaign_id=%s user_id=%s participants=%s ratings=%s scenario=%r scenario_link=%r",
+            "Battle create requested campaign_id=%s user_id=%s participants=%s ratings=%s scenario=%r",
             campaign_id,
             request.user.id,
             requested.user_ids,
             requested.ratings,
             requested.scenario,
-            requested.scenario_link,
         )
         try:
             with transaction.atomic():

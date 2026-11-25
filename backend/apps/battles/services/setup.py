@@ -145,7 +145,6 @@ def participant_ratings(raw, user_ids: list[int]) -> dict[int, int | None]:
 @dataclass
 class NewBattle:
     scenario: str
-    scenario_link: str | None
     user_ids: list[int]
     warbands: dict[int, Warband]
     ratings: dict[int, int | None]
@@ -162,10 +161,8 @@ def new_battle(data, campaign_id: int, creator) -> NewBattle:
     if refusal := fighting_refusal(campaign_id, user_ids, you=creator.id):  # one battle at a time (one_battle.py)
         raise refusal
     warnings = busy_player_warnings(campaign_id, user_ids, creator.id)
-    raw_link = data.get("scenario_link")
-    scenario_link = (raw_link.strip() if isinstance(raw_link, str) else None) or None
     ratings = participant_ratings(data.get("participant_ratings", {}), user_ids)
-    return NewBattle(scenario, scenario_link, user_ids, warbands, ratings, warnings, picked.pk if picked else None)
+    return NewBattle(scenario, user_ids, warbands, ratings, warnings, picked.pk if picked else None)
 
 
 def _invite(battle: Battle, creator, user_id: int) -> None:
@@ -208,7 +205,6 @@ def create_battle(campaign_id: int, creator, request: NewBattle) -> tuple[Battle
         flow_type=Battle.FLOW_TYPE_NORMAL,
         status=Battle.STATUS_INVITING,
         scenario=request.scenario,
-        scenario_link=request.scenario_link,
         scenario_ref_id=request.scenario_ref_id,
         state_version=1,
         closes_at=invite_deadline(),  # 72 hours to answer (decision 2)

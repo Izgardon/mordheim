@@ -215,7 +215,6 @@ describe("Start a battle's players", () => {
         scenario_id: 11,
       })
     );
-    expect(fakeApi.bodyOf(`POST ${BASE}/battles/`)).not.toHaveProperty("scenario_link");
   });
 
   it("shows the server's refusal when a player's fight began meanwhile", async () => {

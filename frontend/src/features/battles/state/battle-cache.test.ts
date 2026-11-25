@@ -19,7 +19,7 @@ const baseState: BattleState = {
     flow_type: "normal",
     status: "active",
     scenario: "Street Fight",
-    scenario_link: null,
+    scenario_id: null,
     winner_warband_ids_json: [],
     created_at: "",
     updated_at: "",

@@ -23,7 +23,7 @@ function createBattleState({
       flow_type: "normal",
       status,
       scenario: "Skirmish",
-      scenario_link: null,
+      scenario_id: null,
       winner_warband_ids_json: [],
       created_at: "",
       updated_at: "",

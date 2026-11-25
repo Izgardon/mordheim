@@ -114,6 +114,7 @@ export default function BattleRulesSheet({
       </ModalSheet>
       {scenario ? (
         <ScenarioSheet
+          campaignId={campaignId}
           scenario={scenario}
           open={open && details}
           onOpenChange={(next) => setDetails(next)}

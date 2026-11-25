@@ -289,9 +289,8 @@ export type BattleSummary = {
   flow_type: BattleFlowType;
   status: BattleStatus;
   scenario: string;
-  scenario_link: string | null;
   /** The campaign scenario it is played as (`GET scenarios/:id/`), null when the name was typed. */
-  scenario_id?: number | null;
+  scenario_id: number | null;
   winner_warband_ids_json: number[];
   created_at: string;
   updated_at: string;

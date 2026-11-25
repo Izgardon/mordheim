@@ -21,7 +21,6 @@ BATTLE_KEYS = [
     "flow_type",
     "status",
     "scenario",
-    "scenario_link",
     "scenario_id",
     "winner_warband_ids_json",
     "created_at",
@@ -168,16 +167,14 @@ class BattleCreateTests(BattleTestCase):
         self.assertEqual(self.post_as(self.outsider, self.battles_url(), {"scenario": "B"}).status_code, 404)
         self.assertFalse(Battle.objects.exists())
 
-    def test_ratings_and_link_are_stored_per_participant(self):
+    def test_ratings_are_stored_per_participant(self):
         body = {
             "participant_user_ids": [self.viewer.id],
             "scenario": "Bridge",
-            "scenario_link": " https://example.com/bridge ",
             "participant_ratings": {str(self.viewer.id): "150", str(self.player.id): ""},
         }
         battle_id = self.ok(self.post_as(self.player, self.battles_url(), body), 201).data["battle"]["id"]
 
-        self.assertEqual(self.battle(battle_id).scenario_link, "https://example.com/bridge")
         ratings = BattleParticipant.objects.filter(battle_id=battle_id).order_by("id")
         self.assertEqual(list(ratings.values_list("declared_rating", flat=True)), [None, 150])
 
