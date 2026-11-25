@@ -10,16 +10,23 @@ template touches none of it. The campaign's preset's
 warband rules for the warband's type or race follow the template's on both (apps/campaign_presets).
 """
 
-from collections.abc import MutableMapping
+from collections.abc import Iterable, MutableMapping
 from typing import Any
 
+from django.db import transaction
 from rest_framework import serializers
 
+from apps.campaign_presets.models import CampaignPreset
+from apps.campaign_presets.services.resources import give_fixed, other_resources
 from apps.campaign_presets.services.warband_rules import copy_warband_rules
-from apps.warbands.models import Warband, WarbandRule
+from apps.campaigns.models import DEFAULT_RESOURCE_NAME, CampaignSettings
+from apps.warbands.models import LedgerAction, Warband, WarbandResource, WarbandRule, WarbandType
+from apps.warbands.services import ledger
+from apps.warbands.services.plot_rules import sync_plot_rules
 
 from ..models import WarbandTemplate
-from .resolve import template_for_type, variant_keys, variant_rules, warband_variant
+from .payload import raise_gold
+from .resolve import template_for_type, template_size, variant_keys, variant_rules, warband_variant
 
 UNKNOWN_VARIANT = "Not one of this warband type's variants."
 NO_VARIANT = "Pick one of this warband type's variants."
@@ -86,3 +93,33 @@ def add_template_rules(warband: Warband) -> int:
     if template is not None:
         added = copy_rules(warband, template, warband_variant(warband, template), missing_only=True)
     return added + copy_warband_rules(warband, warband.campaign.preset_id, missing_only=True)
+
+
+def raise_warband(campaign_id: int, user: Any, fields: dict[str, Any], counts_as: Iterable[WarbandType]) -> Warband:
+    """Raise the user's warband in the campaign from validated fields (its `warband_type` found, its plot checked),
+    all or nothing: its type's template gives its variant, most warriors, gold and rules; it starts with its default
+    resource (named as the campaign names it) and its preset's fixed counters, its Starting Gold ledger row, then its
+    preset's rules for its type or race and the plot rungs it has reached."""
+    template = template_for_type(campaign_id, fields["warband_type"].pk)
+    variant = picked_variant(template, fields.pop("template_variant", ""))
+    if template is not None:
+        fields.setdefault("max_units", template_size(template, variant))
+    with transaction.atomic():
+        # locked: a rename of the default resource reaches this warband too, before or after (one at a time)
+        settings = CampaignSettings.objects.select_for_update().filter(campaign_id=campaign_id).first()
+        warband = Warband.objects.create(campaign_id=campaign_id, user=user, template_variant=variant, **fields)
+        warband.counts_as.set(counts_as)
+        # the one everyone starts with (William, 3 Nov 2026), named as the campaign names it
+        name = settings.default_resource_name if settings else DEFAULT_RESOURCE_NAME
+        WarbandResource.objects.create(warband=warband, name=name, amount=0, is_default=True)
+        # and the counters its campaign's preset keeps for every warband (Marienburg's Wyrdstone)
+        preset = CampaignPreset.objects.filter(campaigns__id=campaign_id).first()
+        give_fixed([warband], other_resources(preset))
+        starting_gold = raise_gold(abs(settings.starting_gold) if settings else 500, template, variant)
+        ledger.record(warband, LedgerAction.STARTING_GOLD, starting_gold, "Starting Gold")
+        if template is not None:
+            copy_rules(warband, template, variant)
+        # then its preset's rules for its type or race (William, 23 Nov 2026: Karak Azgal's Dwarf drunks)
+        copy_warband_rules(warband, preset.pk if preset else None)
+        sync_plot_rules(warband)  # the rungs it has reached, after those rules (apps/plots)
+    return warband
