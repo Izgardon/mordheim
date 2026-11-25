@@ -13,6 +13,12 @@ export const DEFAULT_THEME: Theme = "dark";
 /** The browser bar's colour for each theme: design E's --color-page (index.html, theme-init.js). */
 export const THEME_BAR_COLORS: Record<Theme, string> = { dark: "#0f0c09", light: "#e8dfd0" };
 
+/** An iPhone home-screen app's status bar for each theme (theme-init.js holds the same). */
+export const IOS_STATUS_BAR: Record<Theme, string> = {
+  dark: "black-translucent",
+  light: "default",
+};
+
 const listeners = new Set<() => void>();
 
 /** The stored choice, or dark when there is none or storage can't be read (private mode). */
@@ -35,6 +41,10 @@ export function setTheme(theme: Theme) {
   document
     .querySelector('meta[name="theme-color"]')
     ?.setAttribute("content", THEME_BAR_COLORS[theme]);
+  // an iPhone home-screen app reads this at launch (theme-init.js sets it there too)
+  document
+    .querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
+    ?.setAttribute("content", IOS_STATUS_BAR[theme]);
   try {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch {

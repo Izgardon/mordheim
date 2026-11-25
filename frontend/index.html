@@ -2,13 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
     <!-- The browser bar takes the page colour; theme-init.js and lib/theme.ts switch it with the theme. -->
     <meta name="theme-color" content="#0f0c09" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Installable on Android and iPhone (William, 25 Nov 2026). An iPhone's home-screen app reads its status bar
+         style at launch: theme-init.js sets it from the stored theme, so it opens in its light or dark shade. -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Chronicler" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Mordheim Chronicler</title>
     <!-- The page colour before the stylesheet arrives (design E's --color-page, dark and light). -->
     <style>

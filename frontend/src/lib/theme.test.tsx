@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import indexHtml from "../../index.html?raw";
 import themeInitScript from "../../public/theme-init.js?raw";
 import {
+  IOS_STATUS_BAR,
   THEME_BAR_COLORS,
   THEME_STORAGE_KEY,
   currentTheme,
@@ -72,6 +73,36 @@ describe("theme", () => {
     expect(() => setTheme("light")).not.toThrow();
     expect(currentTheme()).toBe("light");
     expect(readStoredTheme()).toBe("dark");
+  });
+});
+
+describe("an installed iPhone app's status bar (William, 25 Nov 2026: a light and dark mode shade)", () => {
+  const iosBar = () => {
+    const bar = document.createElement("meta");
+    bar.name = "apple-mobile-web-app-status-bar-style";
+    document.head.append(bar);
+    return bar;
+  };
+
+  it("follows the theme when it is switched", () => {
+    const bar = iosBar();
+    setTheme("light");
+    expect(bar).toHaveAttribute("content", IOS_STATUS_BAR.light);
+    setTheme("dark");
+    expect(bar).toHaveAttribute("content", IOS_STATUS_BAR.dark);
+    bar.remove();
+  });
+
+  it("is set from the stored theme before the first paint, as theme.ts sets it", () => {
+    const bar = iosBar();
+    window.localStorage.setItem(THEME_STORAGE_KEY, "light");
+    runThemeInit();
+    expect(bar).toHaveAttribute("content", IOS_STATUS_BAR.light);
+    window.localStorage.setItem(THEME_STORAGE_KEY, "dark");
+    runThemeInit();
+    expect(bar).toHaveAttribute("content", IOS_STATUS_BAR.dark);
+    bar.remove();
+    window.localStorage.clear();
   });
 });
 

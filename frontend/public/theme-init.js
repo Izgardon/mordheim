@@ -16,4 +16,10 @@
   if (bar) {
     bar.setAttribute("content", theme === "light" ? "#e8dfd0" : "#0f0c09");
   }
+  // An iPhone home-screen app: dark draws the page under the status bar with light text; light keeps the
+  // bar's own light shade with dark text. Read at launch, so a change shows next time the app opens.
+  var iosBar = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+  if (iosBar) {
+    iosBar.setAttribute("content", theme === "light" ? "default" : "black-translucent");
+  }
 })();
