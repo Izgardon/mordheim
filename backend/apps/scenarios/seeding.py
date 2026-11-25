@@ -1,5 +1,5 @@
-"""The book's scenarios, read from the catalogue import's `out/scenarios.json` in place (catalogue_import/scenarios.py
-builds it from mordheimer's pages).
+"""The book's scenarios, read from the catalogue import's `out/scenarios.json` in place
+(catalogue_import/scenario_build.py builds it from mordheimer's pages and the campaign PDFs').
 
 A scenario is upserted by slug with its sections written afresh every run, and a book scenario the import drops is
 archived, as the other seeders archive a book entry the import drops (never deleted: a campaign may list one, and its

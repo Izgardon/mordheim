@@ -1,0 +1,1153 @@
+{
+ "document": "Sartosa, the campaign setting: its scenario lists and variations (pages 2-4) and its scenarios (pages 5-21)",
+ "scenarios": [
+  {
+   "source": "Sartosa",
+   "intro": "Recruits have been few and far between of late, and it’s time you find some ‘volunteers’ to thicken the ranks. The best places to visit are the areas around the pubs, where souls are too blasted with rum to make wise decisions, or to see you coming. Get out there, and make sure you get some new recruits … by hook or by crook.",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "Each player takes it in turn to place a piece of terrain, starting with a large building in the dead center. This is the Pub. Set up the rest of the buildings as normal for a city scenario with, towers, shops, or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "After the board is set up, each player may place 1D3 Drunks on the board. After they have been placed, the players set up a total of 1D6 additional Drunks within 3” of the Pub building. After that, Each player rolls a dice. Whoever rolls highest chooses who sets up first. The first player then chooses which table edge to set up on, placing all his warriors within 8\" of that edge. His opponent then sets up within 8\" of the opposite edge.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Each warband is using this night as a chance to recruit Swabbies. You may attempt to recruit a Drunk by charging him. Once you are in base contact, you must attempt to get the Hiring Dubloon into his hand in one of two ways:",
+     "tables": []
+    },
+    {
+     "title": "The Easy Way",
+     "text": "You try to talk the Drunk into it, who demands 2D6 gold in addition to the Hiring Dubloon (it is assumed all models have access to your Treasury when hiring). If you are unable or unwilling to pay the 2D6gc, you may attempt to convince him the Easy Way your next combat phase (reroll the 2D6 gold), or you may attempt to recruit him the Hard Way; he will not attack you this turn, unless he’s an Angry Drunk (see below). Heroes with the skills Haggle, Novice Pressganger, or Expert Pressganger only require 1D6gc when hiring the easy way… they’re that smooth! Once you’ve convinced a Drunk to join, he is immediately removed from the board.",
+     "tables": []
+    },
+    {
+     "title": "The Hard Way",
+     "text": "Attack the Drunk, using the stats below. If able, the Drunk will attack back. When you take the Drunk out of action, you force the dubloon into his hand, hiring him. If multiple players are attacking the same Drunk, the first player to take him out of action recruits him. Once you’ve convinced a Drunk to join, he is immediately removed from the board.\n\nShooting at Drunks: You may shoot at a Drunk, but if he is taken out of action, his unconscious body remains on the board. The first player to get a model in base contact with the unconscious Drunk recruits him.\n\nNote that ‘Dubbloons’ do not cost you any gold coins. It is assumed that the captain has some coins squirreled away for just such jobs, and distributed plenty too all\n\nheroes and henchmen. Animals cannot carry Dubbloons.\n\n{{table:1}}\n\nEquipment: Armed with a Sword and Dagger. Special Rules Loitering: Drunks will not move after deployment. The exception is whenever they are shot at- after any shooting phase in which shot at, they move full distance away from the closest model in your warband. Recovery: Once the first Drunk is injured, they receive their own Recovery Phase, which takes place immediately before the current player’s next turn. Drunken Fighters: The drunks are immune to Fear and all alone. The first time that a warrior gets in contact with a drunk, after deciding to use the hard or the easy way, roll a 1D6: 1-2 Passed Out – The model is ripe for the plucking. You automatically recruit him, with no need to attack or spend money. 3-4 Half Sober – Recruit the Drunk as normal, using the hard or easy way as decided, using the above stats. 5-6 Angry Drunk – Treat the Drunk as having the skill ‘Lightning Reflexes’ and the rules for Frenzy. He attacks, regardless of you using the Easy or the Hard Way. If an angry Drunk is still Frenzied and not in combat with any model, it will charge or move maximum distance towards the nearest non-Drunk model. They will move during the Drunk Turn (see ‘Recovery’ above.)",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Drunk",
+         "4",
+         "2",
+         "2",
+         "3",
+         "3",
+         "1",
+         "3",
+         "1",
+         "6"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Ending The Game",
+     "text": "The game ends when all but one of the warbands fail their Rout tests, then the last remaining warband wins. Fail that, it ends when all of the Drunks and Drunks have been removed the board; the player with the highest number of Living Drunks (see below) wins.\n\nImmediately after the game ends, roll 1D6 for every model recruited the Hard Way: on a 1 or 2, the recruiter was too rough and the Drunk is dead! Oops! (No, this model can’t become a Swabbie to another warband or give you Khorne Toughened Leathers… nice try.)",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband gains +1 extra Experience.\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy model he puts out of action.\n+1 Living Recruit. A hero receives +1 Experience for every new recruit that survived the game.",
+     "tables": []
+    },
+    {
+     "title": "Post Game",
+     "text": "Any living recruits may immediately be added to your Swabbie henchmen, or sold for 2D6 gold each. As Swabbies, they lose their swords in the scuffle, but keep their default daggers (and no, Angry Drunks-turned- Swabbies lose Frenzy and Lightning Reflexes). If your warband is a Khorne Pirate warband, every living recruit may be made into 1D3 Toughened Leathers (as normal).",
+     "tables": []
+    }
+   ],
+   "slug": "press-gang",
+   "name": "Press Gang",
+   "players": "either",
+   "summary": "Pressgang the drunks round the pub into your crew, by the easy way or the hard way."
+  },
+  {
+   "source": "Sartosa",
+   "intro": "Taken from the Border Town Burning and Nemesis Crown Campaigns\n\nIt is hard to walk down Peg Street without being in spitting distance of a lowly tavern… and once the spit starts flying, it’s inevitable for a brawl to break out, like it does every night. When the bottles start flying and the chairs start breaking, will you be as part of the standing group, or one of the aching dregs on the floor?",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "This scenario takes place inside a large inn. The layout of the inn is decided by the players using any suitable terrain that they have available, although we would suggest the following: The site of this ‘battle’ should consist of two or three sections, at least 10” x 10”, and not needing to be more than 18” x 18”. There is one section to represent each floor of the inn. The ground floor is the location of the bar room. It should be relatively open. It should include a bar, a few tables plus several chairs or benches scattered around. Stairs lead up to the upper floor. There might be a wine cellar, a kitchen, a store room or a lavatory. The upper floor of the inn consists of a series of rooms off a main hallway. Each room might include a bed. Add other furnishings you desire. Do not forget to include a marker to represent the top of the stairs from below. Add another set of stairs to the next level if you have one! The bar room also has another floor, which is in the open air. The roof! (Consider it 6” high, should anyone fall!)",
+     "tables": []
+    },
+    {
+     "title": "Warbands",
+     "text": "The player who determined this scenario shall be used may also choose how many and which additional players take part in the brawl. Rather than players fielding their full warbands we suggest a maximum of 30 models in a multiplayer scenario. In a multiplayer scenario each player randomly determines a Hero from his warband to take part in the scenario. On the second round of selection, each player randomly determines a non-animal Henchman (only Wardogs are allowed!). This is alternated each until the maximum number of models is reached. Any mounts and vehicles must remain outside.",
+     "tables": []
+    },
+    {
+     "title": "Set-Up",
+     "text": "The warbands are scattered about the inn when the trouble starts. Randomly determine which floor of the inn each warband member begins on. Then each player takes turns placing each warrior in his warband. Warriors may not be placed in hand-to-hand combat. starting the game Each player rolls a D6. The highest scoring player takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Diving Charges: Warriors may always attempt a Diving Charge from the tables and bar, irrespective of the height of the furniture. Stairs may also be used. Unarmed: All weapons have been confiscated for this game. Armour can be worn including helmets and shields. Miscellaneous equipment can be carried. Weapons Amnesty: Due to the generally non-lethal nature of the weapons used in this fight, players should roll twice for Injury for each warrior taken out of action during the game, and choose the best result. Injuries for\n\nHeroes are rolled twice. In some cases, which result is determined to be the best may be something the player has to decide for himself! Smuggling Weapons: AFTER your warriors have been placed on the board, any warrior with a Dagger or a Pocket Pistol may attempt to sneak ONE of those two weapons into the bar. Roll 1D6: on a 3-6, he has successfully sneaked it in; on a 1-2 the warrior has been caught, and is removed from the board, having been banned from the bar. Once a member of your warband has been banned, no further members of your warband may attempt to smuggle a weapon in. Having a smuggled weapon does not change the ‘Weapons Amnesty’ rule. Improvised weapons: Being forbidden to bring their weapons into the bar means that the warriors must make do with whatever comes to hand. At the start of any turn, a warrior can search the inn for a blunt implement to use as a bludgeoning weapon. (This could be a bowl, a stein, a cooking ladle, the leg of a chair or a local codger’s walking stick!). Only warriors capable of gaining experience may attempt to search. If a searching is attempted the warrior may not charge. Roll a D6: on a 3-6 the fighter finds something suitable, but on a 1-2 nothing close by will work and the warrior will have to make do with his fists. A warrior searching for a weapon in combat will strike last that turn, regardless of success. A warrior with a weapon may not improvise another. If a weapon is found, treat it as a club with the following features: Range: Close Combat; Strength: As user; Special Rules: Concussion, Breakable, Projectile SPECIAL RULES Breakable: If the warrior attempts a close combat attack with an improvised weapon and rolls a 1 to hit, the item has broken and becomes useless. The warrior must resort to his fists for the rest of the combat and may search for another weapon in the next turn. Projectile: Alternatively, a warrior may treat the improvised weapon as a missile. The weapon is automatically lost after it has been thrown. A weapon is thrown as a missile using the following features. Range: 6”; Strength: As user; Special Rules: Thrown Weapon",
+     "tables": []
+    },
+    {
+     "title": "Ending The Game",
+     "text": "The warriors have been indulging in the inn's refreshments and are now very refreshed indeed! No Rout tests are necessary – the winner is the player with the last standing model. Any player may voluntarily rout if the excitement becomes too much.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n+1 for Taking the Ogre Bouncer out of Action (see ‘Random Happenings.’)",
+     "tables": []
+    },
+    {
+     "title": "Random happenings",
+     "text": "The following random happenings replace the Sartosa random happenings when using this scenario. At the start of each player’s turn, roll a D6. If the result is 1 then roll another D6 to determine which event takes place. Random happenings are commonplace in the pub! More than one happening can occur during this scenario so players continue to roll for random happenings. D6 Result 1 Kitchen Hands: The warbands are not alone in the pub. Nearly a dozen hardened warriors are employed to run the inn and keep it safe from outsiders. Kitchen workers and bar staff enjoy a good brawl as well! One randomly determined member of your warband, that is not knocked down or stunned, takes a single Strength 3 hit from the inn staff. These attacks will not cause Critical Hits.\n\n2 The Buxom Barmaid: A busty serving wench flits about the bar, flirting with patrons. This barmaid has a body to die for… The barmaid will approach a randomly determined model from your warband and invite him to defend her honour against the ‘nasty man over there’. That warrior must pass a Leadership test or move with all haste, escaping from combat if necessary, to charge a randomly determined model. First the player must roll to determine which warband (including his) and then roll again to see which model is the target. The optional rules for escaping from combat can be found in the rulebook. The warrior will pursue and fight his new rival until one of them is taken out of action. Warriors that are immune to psychology may ignore the barmaid’s advances. All of the warriors know that attacking the bar staff can only result in them getting banned. No model will risk attacking the barmaid.\n\n3 Liquid Courage: Heavy quaffing of Alsgaard’s intoxicating home brew takes its toll on even the most hardened of drinkers. Randomly determine which model fell off the wagon. The effects of the ale last the remainder of the battle. Models that are immune to poison ignore this effect. In addition to the effects below, the model is Immune to Fear and All Alone effects, and if he’s fleeing, will automatically rally. D6 Result 1 Blurred. The model has -1 Ballistic Skill. 2 Bungled. The model has -1 Weapon Skill 3 Drowsy. The model has -1 Initiative. 4 Sluggish. The model has -1 Movement. 5 Fortitude. The model has +1 Wound. 6 Leathered! Roll twice on this table.\n\n4 Renegade There is a mercenary leaning against the wall. The veteran casually observes the mayhem, quietly sipping from his stein. Ducking crudely improvised projectiles, this renegade waits to offer his services. The renegade approaches a random unengaged warrior of your warband. The model may pay him 3 gold crowns. Any models are assumed to be carrying some of gold crowns from whatever is left in the warbands treasury. If paid, he'll toss a throwing knife at a target of the player’s choice. On a 1-4 the renegade pockets the gold and asks for more. The renegade continues to take a\n\nfurther 3 gold crowns until a knife is thrown or until the player chooses not to pay him. The thrown knife will hit the target on a roll of 4+ with Strength 4.\n\n5 Ogre Bouncer The landlord has hired an ogre to work on the door. The bouncer is not at all happy that he has suddenly got so much hard graft to do. Place the ogre bouncer at the doorway to the inn. The bouncer is employed to charge towards the nearest hand-to-hand combat, engaging as many models as possible. If no hand-to-hand combat is taking place then the ogre bouncer will stand his ground, watching for any further trouble. Re-roll this result if the ogre has been placed already.\n\n{{table:1}}\n\nEquipment: Club SPECIAL RULES Fearsome: The Bouncer causes fear. Large: The Bouncer is a large target. Bull Charge: The Bouncer’s combination of momentum and mass gain him an automatic S4 hit when he charges greater than 6\". Stupid: Years of being paid in cheap grog have taken their toll. The Bouncer suffers from Stupidity.\n\n6 Wong-chun Li, Drunken Master! In the corner a small collapsed figure starts to rise up: it is Wong-chun Li, the Drunken Master from far off Cathay! He joins in eagerly, attacking at will! Re-roll this result if the Wong-Chun has been placed already. Randomly determine a floor, and then determine a random corner: in it, Wong-Chun wakes up and starts to move about! Take an immediate turn for him, before your own. Roll 1D6: on a 2+. He moves towards the closest enemy model, charging when able. On a 1, he makes a full move (9”) in a random direction, attacking/charging any person he comes in contact with. If he was in combat when a 1 was rolled, he leaves combat without penalty or strike back. Any warband who takes Wong-Chun out in hand-to-hand combat, roll 1D6 after the match: on a 4+, he is so impressed with your prowess, that he joins your warband for your next battle (on a roll of 2-6 each turn, he moves like normal under your control.)\n\n{{table:2}}\n\nEquipment: None. Special Skills: Dodge, Step Aside, Jump Up, Sprint, Art of the Silent Death Swaggering: Wong-chun gains +1 on all Step Aside and Dodge rolls. Drunken Strikes: Each round of combat, roll to see how many base attacks Wong-chun has. (Remember, he also has an additional hand attack from ‘Art of the Silent Death’.) Drunk: Wong-chun passes Pschyology tests he is required to take.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Ogre Bouncer",
+         "6",
+         "3",
+         "2",
+         "4",
+         "4",
+         "3",
+         "2",
+         "3",
+         "7"
+        ]
+       ]
+      },
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Wong-chun Li",
+         "3",
+         "4",
+         "3",
+         "4",
+         "3",
+         "2",
+         "2",
+         "1D3",
+         "10"
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "slug": "last-orders-sartosa",
+   "name": "Last Orders!",
+   "players": "either",
+   "summary": "A brawl in a Peg Street tavern: Border Town Burning's and the Nemesis Crown's scenario with Sartosa's random happenings and pocket pistols."
+  },
+  {
+   "source": "Sartosa",
+   "intro": "On the high seas, a large advantage is given to the ships that are fastest or carry the most firepower... but ultimately, when the ships pull side by side, the victor is the side with the strongest will and the calmest head in the rush of battle.",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "Each player is deployed on a Large Boat, or fail that, a Large Boat Template, between 12-18” long. The twos boats start 2” from each other, and will not move during the game. There should be two gangplanks bridging the 2” gap.",
+     "tables": []
+    },
+    {
+     "title": "Warbands",
+     "text": "Each player may only deploy on their own ship. If the player owns a raft or rowboat, it may be deployed (with crew) touching your ship, on the side OPPOSITE of the boarding. If one ship is 2” or more inches larger than the opposing boat, the player on the larger sets up first. Otherwise, each player rolls a dice. Whoever rolls highest chooses who sets up first. Models moved with Hunch, Catacomb Map, or Infiltrate may be placed in the water in a raft or boat (if you own one), anywhere 2D6” away from the enemy’s craft(s).",
+     "tables": []
+    },
+    {
+     "title": "Starting The Game",
+     "text": "Both players roll a D6. The higher scoring player takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "Ending The Game",
+     "text": "When one of the warbands fails its Rout test, the game ends. The routing warband loses and their opponents win.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "For full rules on Boarding ships, consult the ‘Basic Boat Rules’ in Sartosa PDF #1. For this scenario, considering both Large Ships to be equal heights, to avoid an unfair advantage. For the sake of ease, here is a reprint of the basic rules:",
+     "tables": []
+    },
+    {
+     "title": "Boarded Ship Has Equal Or Higher Gunwhales",
+     "text": "The boarding crewmen are moved up to base move (usually 4)” from their position on their own ship on to the boarded ship. These models count as charging, but may only move their normal movement distance due to the difficulty of moving from one ship to another. They are assumed to leap on to the boarded vessel's lower decks to combat with the enemy crew. Combat proceeds as usual. Any defending model may move 2” to intercept any model boarding, as if intercepting a charge. If so, the boarder counts as charging.",
+     "tables": []
+    },
+    {
+     "title": "Swinging On Board",
+     "text": "Any model armed with a Rope & Hook or standing on a Large Boat may attempt to swing onto or off of a boat, in a most ‘swashbuckler’-like fashion. They must nominate a direction they are swinging, and roll 2D6” to see how far their swing would take them (they always swing in a straight line). If this rolled distance falls short of the opposing boat or shore, the model falls in the gap between your boat and the shore/enemy boat (He falls in water, see the Swimming Rules.) If the distance rolled is enough to carry the model to the\n\nshore/enemy boat, the model must take an Initiative test: If the model rolls a natural 1, he automatically passes, lands the rolled 2D6” inches, and may continue his move as normal; If he fails the initiative test or rolls natural 6, he automatically fails, and falls in the gap between the boat, landing in the water; If he passes the test (but doesn’t roll a natural 1), he successfully swings the 2D6 inches, but cannot make any additional move or charges this turn. A model cannot swing onto a boat/surface that is more than 1” higher than the surface he is currently on, nor onto any surface that is more than 6” lower. A model that swings into an enemy model in his swing path counts as Charging. In the first round of combat, the Swinger cannot use any additional hand weapons, bucklers, shields, nor double handed weapons.) If the direct line of your swing path includes a Fear Causing model within 12” of your swinger (and your hero is affected by Fear), your warrior must pass the Leadership test before swinging, as he risks swinging into something terrifying. Models that can reroll Diving Charges (heroes with the Acrobat skill, Bossun Henchmen, etc) may reroll failed initiative rolls once when swinging.\n\nBanner: If your warband has a Pirate Banner, it affects all members of your crew while they are on your ship, without anyone having to hold it. If you have the ‘Friendly’ Flag, instead of moving your warband +6”, you may choose to have your warband start first. If you have the Quarantine Flag, it affects all friendly heroes, while they are on your ship.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband gains +1 extra Experience.\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy model he puts out of action.",
+     "tables": []
+    }
+   ],
+   "slug": "boarding-action",
+   "name": "Boarding Action",
+   "players": "1v1",
+   "summary": "Two ships on the high seas: board the enemy's."
+  },
+  {
+   "source": "Sartosa",
+   "intro": "It sometimes happens that a crew of seamen suffers a loss in faith with their captain. This can result bloodlessly, with an election or a committee discussion. But eventually, every crew faces the dreaded mutiny, and a line is drawn between friends and co-pirates. These rebellions may seem a natural occurrence, but some are orchestrated by an outside source. Perhaps a rival crew promises riches and power to anyone who joins them… sweet lies sewn to reap discord.",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "Each player takes it in turn to place a piece of terrain, either a building or a natural terrain piece. We suggest that the terrain is set up within an area roughly 4' x 4'. The first building should be placed in the centre of the table, and it is the building the Defender has holed himself up in. Alternatively, you may have the center building be a ship, anchored to the shore or port.",
+     "tables": []
+    },
+    {
+     "title": "Warbands",
+     "text": "Roll a dice to decide which warband is suffering the Mutiny. That player is the Defender. The other player is the Attacker. If one player has suffered more Mutiny’s than his opponent, that player is automatically the Attacker.\n\nThe Attacker: The defending player must make a Leadership test for each of his Non-Leader Heroes, in the order of Experience. Any Heroes that fail become under the control of the Attacker. If all heroes pass their Leadership test, the non-Leader Hero with the lowest experience is automatically recruited by the Attacker. All other heroes remain under the control of the defender.\n\nAfter all heroes have been tested, both the attacker and the defender take turns dividing up the henchmen, picking one warrior at a time. Henchmen group may be broken up. The defending player always picks first, and any uneven number of models remain with the defender. After all henchmen are divided, evenly divide all Hired Swords just like the Henchmen.\n\nFinalizing Warbands: If the Attacker has equal or greater number of models under his control than the Defender, then his warband for this game is finalized. If it is smaller than the Defender, he may add members from his own warband to his mutinying force. The total number of warriors cannot exceed the number of Defending models, and the attacker may not have more heroes on the board than the defending player controls. The Attacker chooses one Hero from the models under his control, and that hero temporarily gains the ability ‘Leader’, if he doesn’t have it already.\n\n(ex. The defending player has a Wasteland Privateer warband of 12; 5 heroes, 6 henchmen, and 1 Hired Sword. The defender then rolls for leadership for his non-leader heroes. The two mates pass their tests and remains loyal, but the two cabin boys fail and join in the mutiny. Next, the defending player chooses one henchmen to remain loyal... he chooses his Swivel Gunner. Now, the attacker picks another henchmen from the Privateers: he picks one experienced Gunner, plucked from a henchmen group of three. They both take turns one more time, until the both the Defender and\n\nAttacker have 3 henchmen each. There is only one Hired Sword (an Ogre Bodyguard!), and the Defender gets first pick. So, all in all, the Defender has 3 Heroes, 3 Henchmen and 1 Hired Sword, for a total of 7. The Attacker has 2 Heroes and 3 Henchmen, for a total of 5. He may add members of his own warband (Araby Smugglers) to his force, but his total may not exceed 7 models. Also, his total number of heroes cannot exceed 3, the number of heroes the Defender controls. He drops in his own leader, who becomes his force’s new Leader.\n\nThe defender is deployed first inside or within 6\" of the objective building. The attacking warband is deployed within 6\" of any table edge. Note that you can split the warband to enter from different edges if you wish.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Playing Fair: The attacker, when controlling members of his opponents’ warband, cannot make them take any action that he would not make with his own warband, (ex. Make them walk off a cliff for no reason.) He may also not have any models that he controls attack each other.",
+     "tables": []
+    },
+    {
+     "title": "Starting The Game",
+     "text": "The attacker has the first turn.",
+     "tables": []
+    },
+    {
+     "title": "Ending The Game",
+     "text": "When the attacker or defender fails its Rout test the game ends. Given that the warbands are reduced in size, a warband is required to lose 50% of its numbers before needing to roll for rout check.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience. If a member of an Attacker’s henchmen group takes part in the Mutiny but the rest of the group is not present, the entire group gains +1 experience.\n+1 Winning Leader. If the defender wins the scenario, the leader gains +1 Experience. If the Attacker wins, the hero of his from own warband gains +1 Experience.\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action (regardless of which warband the model is from).",
+     "tables": []
+    },
+    {
+     "title": "Leader",
+     "text": "If the Defender wins the scenario, the warband returns to normal at the end of the scenario. If the attacker wins, the warband is rejoined again, but under is new management. The Attacker may choose any hero he temporarily controlled; that hero gains the skill Leader and becomes the warband’s Leader for the next D3 games, while the existing Leader temporarily loses the skill for the duration. After that point, the warband returns to normal.",
+     "tables": []
+    },
+    {
+     "title": "Exploration",
+     "text": "The Defender gains two Exploration Dice for every hero that he controlled that was not taken out of action, to a max of 6. The Attacker gains one exploration dice for every hero that he controlled that was not taken out of action, to a max of 6. Any borrowed heroes may not look for Equipment, Dramatic Personae, or use any special items or rules. They provide Exploration Dice for the Attacker, and nothing else.",
+     "tables": []
+    }
+   ],
+   "slug": "mutiny",
+   "name": "Mutiny",
+   "players": "1v1",
+   "summary": "A crew turns on its captain, the other player leading the mutineers."
+  },
+  {
+   "source": "Sartosa",
+   "intro": "By Ian Davies, of the Yahoo! Mordheim eGroup. Transcribed & edited by The Mordheimer.\n\nAfter dodging navy vessels for a week, you find a secluded beach to repair and careen your Ship. Upon your landing, however, you soon discover that the enemy has done the same. More unfortunate still, the local Mount Ertinia seems to be spitting rock in your direction, threatening to squash your parties, even as the seas rise to drown them!",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "The table represents the beach except for a 1\" strip along the North edge which represents a cliff top. At the South side of the table is the sea.\n\nThe sea-line is most easily represented by a piece of taut string and some blue-tack. Place some stones on the table to represent rocky outcrops as well as some twigs to represent driftwood. Walls can be placed perpendicular to the cliff-face to represent groynes. One large rocky outcrop and one ruined building should also be placed on the beach. The upper stories of this ruin and the large rock will not be submerged as the tide comes in (see later).",
+     "tables": []
+    },
+    {
+     "title": "Warbands",
+     "text": "Both player roll D6 and add their leader's Initiative rating. The higher total is the attacker and deploys first within 10\" of either the Eastern & Western edges. The attackers must be placed within 10\" of the opposite edge. Boats and Rafts are not deployed this game.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Tide: During the battle the tide will come in by D6\" per turn until the tide reaches the cliff, at which time it will begin to recede by D6\" per turn (the effects of Chaos are even influencing the speed of the tides on Sartosa!) Any warrior 3+\" out to sea must swim.\n\nSwimming: Unarmored figures swim base movement in a direction of their choice. Light armored figures (including Ithilmar & Gromril) must roll 4+ to swim base movement. A failure results in no swimming movement. Heavy armored figures can only bob (N.B. the word \"bob\" should be said in a comedy, Blackadder-style voice.) Every figure then bobs 3\" in a random direction. While in deep water a figure can perform neither missile fire nor Hand To Hand combat nor offensive spells. They can however be the targets\n\nfor missiles & spells making them sitting ducks. If the tide retreats to leave the figure on land again they are treated as Knock Down. Swimming models are assumed to have all Gunpowder Weapons soaked, and are unable to fire them for the rest of the battle, unless they are equipped with a Powder Horn.\n\nNon-aquatic Stunned models that fall in the water must immediately test for Drowning: they recover on a D6 roll of 4+ or are removed as a casualty. If they are wearing armour that provides a 5+ or better save, they are taken out of action without having to roll. Knocked down models that fall in the water recover on a D6 roll of 2+, and have no ill effects for wearing armor. Enemy troops in contact with swimming models count them as knocked down for the purposes of hand-to-hand combat.\n\nMt. Ertinia: The volcanic rock pours down on your warriors, seemingly guided by a malicious hand. Beginning on the 2nd turn, boulders will descend upon the warriors beneath. It will spit one boulder in each of the players recovery phases at one of the 12 warriors nearest to the cliff (roll a red & a white dice: 1-3 on red = 1-6 on white, 4-6 on red = 7-12 on white). Any warrior targeted must pass an I test or take a S6 hit (armor saves apply) with a +1 to the Injury roll. You may wish to place stones where the boulders land for extra cover.",
+     "tables": []
+    },
+    {
+     "title": "Starting The Game",
+     "text": "Both players roll a D6. The higher scoring player takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "Ending The Game",
+     "text": "The non-routing warband wins.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Winning Leader: The leader of the winning warband gains +1 Experience.\n+1 Survives: If a Hero or Henchman group survives the battle they gain +1 Experience.\n+1 Per Enemy Out Of Action: Any Hero earns +1 experience for each enemy he puts Out Of Action.",
+     "tables": []
+    },
+    {
+     "title": "Post Game",
+     "text": "The victors are able to light a fire, catch some fish and have a peaceful night. Add +1 to all models LD value for the next battle. The losers spend the night looking for a safe pitch, cold, tired & hungry. Subtract -1 from all models LD value for the next battle.\n\nThe crew of the Magpye, nee the Celeste, stormed over the enemy’s deck. The firing of a dozen pistols and short muskets filled the air with thick smoke, to the point that Balthazar could no longer see his hand before his face. He gripped his saber tightly, waiting for death to come from any direction.\n\nA large mass crashed into him from his behind, but it wasn’t his death. It was the flailing form of Captain Vanderbelt, as he madly tried to escape his attacker. Estella was right on his heels, and Vanderbelt did his best to block her flitting rapier attacks with his massive boarding axes. Each parry and block was physically wearing on him, and it was only a matter of time before the beast-of-a-man tired out. Estella struck and struck again and again until she found an opening… then, with a flicking motion faster than Balthazar could see, she plunged the rapier into Vanderbelt’s chest.\n\nThe bear-sized captain cried out in pain, but the pain only motivated him. Abandoning defense for offense, he lunged at the tiny swordsman, barely missing her with his axe blades, each the size of her torso. Estella sidestepped him at the last possible second, and in his blind spot, she dipped her rapier point into the blood of his back.\n\nYears ago, Balthazar had the opportunity to see a bullfight in Estalia. It was much the same to him; the massive bull charging, and the matador gracefully dodging by a hair, only to plunge his sword in deep. It was not over with a",
+     "tables": []
+    }
+   ],
+   "slug": "lifes-a-beach",
+   "name": "Life's a Beach",
+   "players": "1v1",
+   "summary": "Two crews careening their ships on one secluded beach, with the tide coming in."
+  },
+  {
+   "source": "Sartosa",
+   "intro": "On the Southern coast of Sartosa, there are the Skull Sands, a treacherous barrier that wrecks nearly every ship that strays into it. Pirate crews will loaf within visible range of the Sands, waiting to descend upon the helpless merchant vessels. Of course, occasionally, the ships are only playing possum, and are waiting for the predators to become prey.",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "In the center of the board is a large area of water (18”- 48”), be it pure water, lagoon, or tributaries. In it may be up to three 3” islands or sandbars. In the middle of the water is placed an anchored large boat, or fail that, a marker at least 13” by 8”. On the remaining land, each player takes it in turn to place a piece of jungle terrain, ruined temples, or other similar item. We strongly suggest each little ‘island’ be have a screen of terrain hiding it from nearby islands. We suggest that the terrain is set up within an area roughly 4' x 4'.",
+     "tables": []
+    },
+    {
+     "title": "Warbands",
+     "text": "Each player rolls a dice. Whoever rolls highest chooses who sets up first. The first player then chooses which table edge to set up on, placing all his warriors within 8\" of that edge. His opponent then sets up within 8\" of the opposite edge. Each warband is allowed 1 rowboat or raft, plus any boats they have purchased, which is placed in the water, as close as possible to the deployment zone.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Water: The water is either placid or a myriad of currents sweeping in every direction. Do not roll for current. The water counts as Difficult Terrain. See rules for Swimming.\n\nThe Wreck: The ship may have been wrecked, but most of the crew is still alive and kicking. Roll 1D6 to determine which where the ship was coming from, and what models are defending it. The ship will have 3 henchmen for each player in the game. Also, if more than 2 players have a warband rating over 250, then a Dramatic Personae is the captain of the vessel. If this ship would be friendly to you (i.e. Lothern Sea Patrol attacking a High Elf ship), then consider the wrecked sailors to be liars and traitors to the cause!\n\nAfter all of the sailors on the ship have been taken out of action, the Treasure will be revealed. It can be moved the same rate as a Cargo (see Cargo section.) Depending on which ship it is, the rewards inside it will. If a warband routs while in possession of the treasure, they will not receive it, but leave it behind. If ended with more than one warband on the board, the treasure is awarded to the warband in current possession of it, unless there is a non-injured (Knocked Down, Stunned) enemy model within Charge range of the possessor or of the treasure chest, in which case no one receives the treasure.\n\nRoll 1D6 1 Tilea 2 Marienburg 3 Barak Varn (Dwarf) 4 Ulthuan (High Elf) 5 Araby 6 Ghost Ship!",
+     "tables": []
+    },
+    {
+     "title": "Tilea Crew",
+     "text": "The ship is crewed with Tilean Crossbowmen. They are all armed with a Sword, a Dagger, and a Crossbow.\n\n{{table:1}}\n\nDramatic Personae: Flora and Estella Mab. Treasure; roll 1D6 on the following chart for single player games; for multiplayer games, roll for every player past one, rerolling any doubles. 1- 1D3 Crossbows 2- 1D3 Crossbow Pistols 3- 1D3 Vials of Crimson Shade 4- 1D3 Vials of Dark Venom 5- 1D6 Vials of Black Lotus 6- Tarot Cards",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Tilean Crossbowman",
+         "4",
+         "3",
+         "4",
+         "3",
+         "3",
+         "1",
+         "3",
+         "1",
+         "7"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Marienburgers",
+     "text": "The ship is crewed with Wasteland Privateers. They are each armed with a Hammer, a Dagger, and a Rifle. They also have the skill ‘Hunter’.\n\n{{table:1}}\n\nDramatic Personae: Johan the Knife (one of his descendants, no doubt.) Treasure; roll 1D6 on the following chart for single player games; for multiplayer games, roll for every player past one, rerolling any doubles. 1. 1D3 Handguns 2. 1D6 doses of Superior Gunpowder 3. 1 Brace of Double-Barreled Pistols 4. 1 Brace of Repeater Pistols 5. Halfling Cookbook 6. Warpstone Pendulum",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Wasteland Privateer",
+         "4",
+         "3",
+         "3",
+         "3",
+         "3",
+         "1",
+         "3",
+         "1",
+         "7"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Barak Varn",
+     "text": "(Dwarves) The ship is crewed with Seatroll Slayers (see the Dwarf Treasure Hunter Warband or the Slayer Pirate Warband for rules on Slayers and Dwarves). They are each armed with a 2 Swords, a Pistol, and a Dagger.\n\n{{table:1}}\n\nDramatic Personae: Kromwell (treat him as a normal Dwarf instead of a Chaos Dwarf.) Treasure; roll 1D6 on the following chart for single player games; for multiplayer games, roll for every player past one, rerolling any doubles. 1. 1D3 Gromril Axes 2. 1D3 Doses of Bugmans Ale 3. 1 Suit of Gromril Armor 4. 1D3 Fire Bombs 5. 1D3 Bags of Flash Powder 6. 1 Brace of Dwarven Pistols",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Seatroll Slayer",
+         "3",
+         "4",
+         "3",
+         "3",
+         "4",
+         "1",
+         "2",
+         "1",
+         "9"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Ulthuan",
+     "text": "(High Elves) The ship is protected by High Elf Lothen Sea Guards. They are each armed with a Spear, a Shield, a Dagger, and a Bow. They also have the ability Spear Master, which has the following rule: Spear Master: In the first round of combat, when using a spear, a Seaguard adds +1 to his Strength and may reroll one failed roll to hit.\n\n{{table:1}}\n\nDramatic Personae: Aenur (from the Mordheim Book.) Given how slow Elves age, it might be the same Aenur! Treasure; roll 1D6 on the following chart for single player games; for multiplayer games, roll for every player past one, rerolling any doubles. 1. 1D3 Quivers of Hunting Arrows 2. 1D3 Decanters of Elven Wine (may be drunken by non-elves.) 3. 1D3 Doses of Healing Herbs 4. 1 Elven Runestones 5. 1 suit of Ithilmar Armor 6. Elven Cloak",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Lothern Sea Guard",
+         "5",
+         "4",
+         "3",
+         "3",
+         "3",
+         "1",
+         "4",
+         "1",
+         "8"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Araby",
+     "text": "The ship is crewed with Janissaries. They are each armed with a Halberd, a Dagger, and a Rifle.\n\n{{table:1}}\n\nDramatic Personae: Krushj the Anchorman Treasure; roll 1D6 on the following chart for single player games; for multiplayer games, roll for every player past one, rerolling any doubles. 1. 1D3 Venom Rings 2. Vermin Pot (Relics) 3. Stickfire Pot (Relics) 4. 1 Vial of Perfume and 1 Abacus (Relics) 5. 1D6 Slaves (see Araby Smugglers Warband). They may be added to your warband (max 5), and/or sold for 2D6 each. 6. A Surgeon is added to your staff/ equipment (Relics.)",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Janissary",
+         "4",
+         "4",
+         "3",
+         "4",
+         "3",
+         "1",
+         "3",
+         "1",
+         "7"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Ghost Pirates",
+     "text": "They aren’t stranded so much as biding their time! They do not appear on deck until a model has successfully climbed on board. After that, they are placed immediately after that player’s turn and take a\n\nturn immediately. Also, when playing against the Ghost Pirates, roll TWICE on the Weather Table, and choose whichever roll is higher… storms just seem to follow them around! The ship is protected by Gibbets, which are each armed with 2 Swords, 2 Cursed Pistols, a Dagger (reminder: their iron cage gives them a 5+ bonus, like heavy armor.) See the Ghost Pirate Warband for more rules.\n\n{{table:1}}\n\nDramatic Personae: Jeremiah Bane Treasure; roll 1D6 on the following chart for single player games; for multiplayer games, roll for every player past one, rerolling any doubles. 1. 1 Rowboat and 1D3 Toughened Leathers 2. 1 Banner (your Pick) 3. 1D3 Whalebone Charms 4. 1 Duck-Barrel Pistol 5. 1D3 Doses of Mandrake Root 6. 1 Treasure Map",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Ghost Pirate",
+         "4",
+         "4",
+         "3",
+         "3",
+         "3",
+         "1",
+         "3",
+         "1",
+         "7"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Starting The Game",
+     "text": "Both players roll a D6. The higher scoring player takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "Ending The Game",
+     "text": "When one of the warbands fails its Rout test, the game ends. The routing warband loses and their opponents win.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 survives. If a Hero or Henchmen group survive the battle they gain +1 experience.\n+1 winning leader. +1 per enemy out of action.\n+1 for carrying the treasure of the table. The heroes or henchman group that rows the treasure off the table gains the experience.\n+1 for putting a DP OOA. If a hero puts a Dramatic Personae OOA he gains an additional experience in addition to the\n+1 for enemy out of action. +1 per enemy boat/raft sunk or captured. The Hero with the highest leadership in a boat/raft which sinks an enemy vessel gains +1 experience. A hero or henchman that capture an enemy craft gain +1 experience.\n\nBased on the miniatures you own, you can include nearly any Nation you want in ‘Wrecking’. The Sartosa Pirate Warbands are a great jumping off points, but there are many more possibilities. Here are a few ideas: Orcs & Goblins: A ship filled with Orc Pirates. Prizes include Mad Cap Mushrooms and Booma Pistols (see the Orc Captain Hired Sword.) Maybe win a few Goblin Swabbies too! Skaven Searats: Warplock Pistols and Poison Globes await anyone daring enough to follow a rat into his own den! Lizardmen Craft: A rare cold-blooded vessel, manned by Sauruses and Skinks. Treasures include ready-to-open Cargo and Weapons from the Amazon Warband list. Nurgle Skinriders: Use Carnival of Chaos rules, giving each defending human crewman a few Nurgle mutations. Not much treasure except cheap, common HtH weapons and toughened leathers, but +1 Experience for each Nurgle raider out of action. Navy Trap!: Same rules as the Marienburgers or Tileans, except they have a Swivel Gun Hired Sword and all of the models Hate Pirates (this includes any New Sartosa Warband except Lothern Sea Patrol). Any player who beats them gets an extra treasure roll; if the winning player is a Pirate, he gets two extra rolls instead. Transport Ship: Combine this Scenario with ‘Lost Prince’. Instead of rolling for treasure, the ship is carrying a ‘Lost Prince’, plus an extra Lost Prince for every player past two. The only reward in this scenario comes from kidnapping the young maidens (be sure to read the ‘Governor’s Daughter’ variation on Page 4.) Dogs of War Ship: Instead of facing 3 Normal Henchmen per player, for each player, include 1 or 2 Randomly Chosen Hired Swords (the two together should cost between 60-120gc together). Or, for a quick pick, use the ‘Warring Houses’ chart.",
+     "tables": []
+    }
+   ],
+   "slug": "wrecking",
+   "name": "Wrecking",
+   "players": "either",
+   "summary": "Plunder a merchant ship wrecked on the Skull Sands, if its crew lets you."
+  },
+  {
+   "source": "Sartosa",
+   "intro": "A fully ship loaded down with Cathayan goods has pulled into a harbor, just off of Sartosa. In the dead of night, your crew sneaks onboard and effortlessly disposes of the guards. But a haul that big didn’t stay secret for long, and just because you’re the first to the find it doesn’t mean you’re the only one interested…",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "Harbour setting. The map is mostly water, except for strips of land at the table edges where they players can deploy. Each player takes it in turn to place a piece of terrain, either wrecked ships, non-broken ships rocks, reefs, or other similar item. We suggest that the terrain is set up within an area roughly 4\"x6\". The ship should be placed in the centre of the table, and the objective of the scenario is to take control of this ship. It should be roughly 12”x5” or bigger. Connecting the boat to the land edge is one or more wharfs and gangplanks. Distribute 2 rowboats/rafts amongst each attacking player as well.",
+     "tables": []
+    },
+    {
+     "title": "Warbands",
+     "text": "One player is the defender, determined as normal (see ‘Attackers and defenders’ at the beginning of the Chaos in the Streets article), representing the warband that reached the Merchant Ship first. The defender is deployed first inside or within 6\" of the objective ship. Then the attacking warbands are set up as normal.\n\nIn addition, the defender gains a bonus depending on rating of attackers. Tally up the total warband rating of the attackers and divide it by the defender’s rating to see what kind of bonus the defender receives:\n\n1X: One roll on the Goodies Chart 2X: A Swivel Gun (see below for special rules). 3X: A Swivel Gun, and once on the Goodies chart 4X: Two Swivel Guns, and once on the Goodies chart 5X: Two Swivel Guns and twice on the Goodies chart (and so on….)",
+     "tables": []
+    },
+    {
+     "title": "Goodies Chart",
+     "text": "1 1D3 doses of Manticore Spoor 2 1D3 batches of Superior Gunpowder 3 Cathayan Candle 4 Whalebone Charm 5 Cathayan Silk Cloak 6 1D3 Smoke Bombs",
+     "tables": []
+    },
+    {
+     "title": "Mounted Swivel Gun Rules",
+     "text": "Fixed: Any Swivel Guns on a ship are permanently fixed to the spot, and cannot be moved (except to swivel 360 degrees.) If the boat has two Swivel guns, but they must be placed at the opposite sides of the ship (apt & stern, or port and starboard) and can only pivot 180 degrees. Too Easy: Any hero using a swivel gun may only gain a maximum of 1 experience per shooting phase, regardless of how many casualties he inflicts. Not-so-friendly fire: During raiding parties, a pirate warband can find it easy to avoid Grapeshot; but not so much on a crowded deck. When firing grapeshot, it strikes D6 models, but includes friendly models. Limited Shot: Each gun has two shots of ballshot, grapeshot, and chainshot.",
+     "tables": []
+    },
+    {
+     "title": "Unusual Weapons",
+     "text": "For the purpose of this Scenario, heroes do not need Weapons Expert to use Swivel Guns or Cathayan Candles this game. If a Hero uses a Cathayan Candle, roll 1D6 after the scenario: on 4+, he has mastered the art and may use the Candle (and ONLY the candle) without requiring Weapons Expert. Otherwise, the item is useless until someone learns the skill or unless sold. A model may NOT use a Swivel outside this scenario without Weapons Expert.",
+     "tables": []
+    },
+    {
+     "title": "Starting The Game",
+     "text": "Each player rolls a D6. The player rolling the highest has the first turn and order of play proceeds clockwise around the table (based on where players placed their warbands).",
+     "tables": []
+    },
+    {
+     "title": "Ending The Game",
+     "text": "Starting with Round 8 and every Round after that, if there is only one Warband with any members on the Ship or within 6” of the Ship, that sole warband is declared the winner of the Scenario and receives the Booty. If all warbands but one rout, the remaining warband is declared the winner, but cannot claim the Booty unless they have a member on the ship or within 6”. If one of more warbands have allied, and there are no non-allied models on the ship or within 6”, the players may choose to share the victory and end the game (how they divide the loot is a matter of negotiation!)",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n+1 Per Enemy out of action. Any Hero earns +1 experience for each enemy he puts out of action.",
+     "tables": []
+    },
+    {
+     "title": "Booty",
+     "text": "At the end of the game the winning warband finds all of the items on the table above which were not found before the battle. In addition, roll on the following chart to see what additional items the warband finds in the Merchant Ship. Note that you’ll roll for each item separately, apart from gold crowns, which are always found. For example, you will need to roll a 5+ to find Goodies. Then roll to see if you find the Cathayan Plate Mail and so on.\n\nD6 Roll D6 Roll Needed 3D6 gc Automatic 1 Roll on the Goodies Chart 5+ Cathayan Plate Mail 4+ Ithilmar Katana 3+ Jeweled Sword- can be sold for 10gc 4+ 1D3 Doses of Healing Herbs 4+ Treasure Map 5+\n\nFor guides and links on how to build rafts, boats, piers, and harbour towns, be sure to check out Sartosa PDF #9.",
+     "tables": []
+    },
+    {
+     "title": "Rules For Cathayan Items",
+     "text": "{Note: All new Cathayan items (and the corner pic) taken from the campaign setting ‘ Border Town Burning ”, the supplement available at http://www.bordertownburning.de.vu/. Be sure to try it out!}",
+     "tables": []
+    },
+    {
+     "title": "Katana",
+     "text": "Availability: Rare 10 - 20 gold crowns Katanas are great-swords that are usually used by Cathayan Soldiers and Ronins. Range: Close Combat, Strength: As user +1, Special rules: Two-handed, Parry SPECIAL RULES Two-handed: A model armed with a katana may not use a shield, buckler or additional weapon in close combat. However it gets an additional +1 armour save bonus against ranged attacks if it carries a shield. Parry: Katanas, despite their great size, can be used for parrying like a sword. When his opponent rolls to hit, the model armed with a katana may roll a D6. If the score is greater than the highest to hit score of his opponent, the model has parried the blow, and that attack is discarded. A model may not parry attacks made with double or more its own Strength – they are simply too powerful to be stopped.",
+     "tables": []
+    },
+    {
+     "title": "Cathayan Candles",
+     "text": "Availability: 9 - 25+ D6 gold crowns Cathayan Candles are explosive sticks, made with black powder and other foreign ingredients. They detonate on impact, igniting objects and bodies with which they make contact. Range: 6”; Strength: 3; Special Rules: Thrown weapon, Set on fire SPECIAL RULES Thrown weapon: A model using Cathayan candles does not suffer penalties for range or moving. Set on fire: If you hit with the Cathayan candles roll a D6. If you score a 5+ your\n\nopponent has been set on fire. They must roll a D6 in the Recovery phase and score a 4+ to put themselves out or they will suffer a Strength 4 hit and will be unable to do anything other than move for each turn they are on fire. Allies may also attempt to put the warrior out. They must be in base contact and need a 4+ to be successful. {Note: Like Throwing Stars, a hero does not have a limited number of Cathayan Candles.]",
+     "tables": []
+    },
+    {
+     "title": "Cathayan Plate Armor",
+     "text": "Availability: 11 - 120 gold crowns The Cathayan blacksmiths forge these heavy armours for the noble knights that protect the farmsteads. Especially among the Palace Guard of the Cathayan Emperor the plate armour is very common. The armour covers no only its wearer torso but also his upper arm and parts of his legs. SPECIAL RULES Save: A warrior that is wearing Cathayan plate armour has a basic D6 saving throw of 4+. Movement: A warrior that is armed with both plate armour and a shield suffers a –1 Movement penalty.",
+     "tables": []
+    },
+    {
+     "title": "Manticore Spoor",
+     "text": "Availability: 10 - 30+ 2D6 gold crowns A soporific substance just as lethal as the beast that excreted it. Penetration of the victim’s flesh by a warrior’s blade smeared with fresh dung from a Manticore induces a dreamlike sleep state, followed by near certain death. Any model wounded by a weapon coated with Sabretooth Poison must roll a D6 at the beginning of its turn: On a roll of 1 the poisoned model loses one wound. On a roll of 6 the poison's effect ends and the model has to test no more. Note that multiple wounds caused by a weapon using Sabbretooth Poison do not cause the victim to test more than once per turn.",
+     "tables": []
+    },
+    {
+     "title": "Smoke Bomb",
+     "text": "Availability: 10 - 30+ 2D6 gold crowns The Cathayans are experts in working with blackpowder, poisons and other strange natural ingredients far superior to the alchemists of the Old World. Smoke Bombs are especially popular with the Cathayan thieves and assassins as their smoke provides opportunity for a quick retreat. At the beginning of the Movement phase a smoke bomb may be thrown at any point within 4\" where it creates a thick smoke of 2\" radius that lasts until the beginning of the model's next turn. If the model is in close combat, it must pass an Initiative test or suffers one automatic hit from each enemy model. After that the bomb detonates anyhow – even if the model is wounded. Models within the smoke may not attack/shoot or be attacked/shot at. Same applies to casting spells and prayers. Models engaged in close combat are immediately moved 1\" away from each other. As models cannot see through the smoke they cannot attack through it either. However, models can move in the smoke, out of it and through it as normal. Note that the Augur of the Sisters of Sigmar is not affected by smoke bombs due to her Blessed Sight. Whenever a model carrying a smoke bomb is knocked down, stunned or out of action, the bomb detonates on a roll of 4+. Note that no extra roll is needed when a stunned model turns knocked down at the beginning of its turn.",
+     "tables": []
+    }
+   ],
+   "slug": "king-of-the-hull",
+   "name": "King of the Hull",
+   "players": "multiplayer",
+   "summary": "Take a ship laden with Cathayan goods in the harbour."
+  },
+  {
+   "source": "Sartosa",
+   "intro": "The local pirate lords are anxious to curry favor their way, to gather attention from voters by waving their banners in the streets… and careful enough to employ mercenaries to defend the banner on their behalf, and to show their strength. Each of your warbands have found a temporary backer… make him proud, and he’ll shower you with gifts. Disgrace him, and he’ll have your sensitive parts in a vice.",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "Each player takes it in turn to place a piece of terrain, either a building, tower, or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'.",
+     "tables": []
+    },
+    {
+     "title": "Warbands",
+     "text": "Each player rolls a dice. Whoever rolls highest chooses who sets up first. The first player then chooses which table edge to set up on, placing all his warriors within 8\" of that edge. His opponent then sets up within 8\" of the opposite edge.",
+     "tables": []
+    },
+    {
+     "title": "Starting The Game",
+     "text": "Both players roll a D6. The higher scoring player takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Hired Hands: Your Pirate Lord backers have decided to help you out, by hiring a few Hired Swords to aid you in your struggle. Each warband, before setting up, rolls on the following chart, and temporarily controls the rolled hired sword(s). Roll 1D6 1 SWIVEL GUNNER OR JEZZAIL GUNNER (Jezzail for evil warbands only.) 2 LEVIATHAN HUNTER & BARD 3 ELF RANGER & SWASHBUCKLER (by DANIEL LOGEE see SG Website) 4 SLAYER PIRATE (by MYNTOK, see SG Website) & HALFLING THIEF 5 ORC PIRATE & GOBLIN SWABBIE 6 DARK ELF ASSASSIN & TILEAN MARKSMEN\n\nIf the hired sword rolled seems highly out of character for a warband, (A Marauder warband with a Halfling; A Dwarf Warband with an Orc captain) you may choose to alter the miniature used to represent the Hired Sword, so long as the stats and rules are not changed. (Ex. Dwarf Slayer becomes a Chaos Dwarf Slayer; Dark Elf becomes a High Elf and vice-versa, etc)\n\nHouse Banner: Each warband is charged with the keeping of the Pirate Lord’s Banner (no doubt his old\n\nJolly Rogers), the symbol of their employer. It is deployed with them, and placed anywhere in their deployment zone, so long as it is not more than 12” off of the ground, and can be reached without climbing rolls. They may not be initially moved by your own warband (you might leave a tear!) but if an enemy moves it, you may move it back to its original location. The Flag has no movement penalties, but requires a hand to carry. If taken by an enemy, they will hold it until they are taken out of action. It may not be handed off to another friendly warrior.",
+     "tables": []
+    },
+    {
+     "title": "Ending The Game",
+     "text": "When one of the warbands fails its Rout test, the game ends. The routing warband loses and their opponents win.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband gains +1 extra Experience. +1 Leader with a Safe Flag. The leader of the winning warband gains +1 extra Experience if his employer’s flag is not being carried by an enemy warband. +1 Leader with a Captured Flag. The leader of the winning warband gains +1 extra Experience if his warband is in possession of an enemy flag.\n+1 For Capturing a Flag: Any hero or henchmen group in possession of an enemy flag at the end of the game gains +1 Experience.\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy model he puts out of action.",
+     "tables": []
+    },
+    {
+     "title": "Postgame",
+     "text": "The Pirate Lords reward the heroes based on their efforts and courage. The winning or last standing warband receives +2 Cargo; the warband to remain on the board the second longest receives +1 Cargo and +3D6gc. The Third longest warband receives +1 Cargo, the forth receives +3D6 gc. The last warband receives nothing (even if he was 2 nd -4 th .)\n\nIf your warband, however, voluntarily routed, you get no extra reward, and the Pirate Lord who backed you is displeased. In this post-game, for every Exploration Dice that comes up a 1 (after rerolls and modifiers), a random un-injured warrior of yours rolls for Injury.\n\nThe Hired Swords that were fielded in this game may be hired by players (if legal), but require the full Hiring Fee before they will join. If you pay it, they start with +1 experience, to show their experience in this game.\n\n“We asked for parley,” Estella whispered through clenched teeth to the red-faced and blood-stained Captain Vanderbelt, who has castrate before her, “and you opened fire.” Her rapier was braced against Vanderbelt’s throat, boring a tiny red hole in the skin of his neck.\n\n“Mercy, princess,” Vanderbelt said weakly, doing his best to sound meek and honest. He flashed an ‘honest’ smile, exposing his loose and sparse scurvy-ridden teeth.\n\n“Mercy is shall be,” Estella said. Vanderbelt let out a noxious breath of relief. Before words of thanks could escape his lips, Estella’s hand fell to the deck, stealing one of the captain’s massive battle axes. The petite frame of Estella showed no difficulty as it hefted the axe and brought it crashing down on Vanderbelt in one swift motion, severing his neck with a single blow.\n\n“You call that mercy?” Balthazar said meekly.\n\n“Certainly,” Estella said, wiping the spray of blood, from her steel colored eyes. “If it’d left him alive, Fleur would find much more inventive ways of killing him. She never liked Vanderbelt much.”",
+     "tables": []
+    }
+   ],
+   "slug": "warring-houses",
+   "name": "Warring Houses",
+   "players": "multiplayer",
+   "summary": "Warbands fight under the banners of the Pirate Lords who back them."
+  },
+  {
+   "source": "Sartosa",
+   "intro": "The island of Sartosa is spotted with grottos and caves, providing near infinite hiding places. Pirates have used these countless times in the last few centuries, as every hundred years or so, some nation invades the tiny isle, only to be beaten back a decade later. But these coves hide darker things than renegade seafarers. The hunter becomes the prey, and pirate ships are often attacked by sea monsters, and other horrific abominations from the deep. These creatures will snap a schooner like a matchstick, and drag the damaged parts back to their coves, so they can slowly feast on the crewmen, who wait in the dark hull for their eminent death. But by accident or design, the monsters drag the precious cargo with them, blanketing their coves with gold and jewels. Of course, only a fool would follow the beast into its cove and try to take them.",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "Setting Style: Cave or swamp. Lots of pools of water, rocks, broken ships tossed about by the monster. Each player takes it in turn to place a piece of terrain. We suggest that the terrain is set up within an area roughly 4'x6'. The first piece should be rather large (at least 6\"x6\") and open-topped area with steep sides, like a ruins or a rocky nest. The bottom of it is filled with water… this terrain piece is the monsters ‘Cove’. This terrain should be placed in the centre of the table, and this is where the monster cove is located.",
+     "tables": []
+    },
+    {
+     "title": "Warbands",
+     "text": "Players use the normal warband set-up rules.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "The monster’s cove is located in the central piece and this is where the beast will be. The monster is young for one of its kind and its profile reflects this. In addition, these creatures are aquatic, and start the game submerged. The monster will not leave its cove for any reason, though it will use its breath weapon against any model in range that it can see and will, of course, attack any model entering its cove. It will charge all models entering its cove if possible. For the monster’s stats, see ‘over the page.",
+     "tables": []
+    },
+    {
+     "title": "Starting The Game",
+     "text": "Each player rolls a D6. The player rolling the highest has the first turn, and order of play proceeds clockwise around the table (based on where players placed their warbands).",
+     "tables": []
+    },
+    {
+     "title": "Ending The Game",
+     "text": "When one warband (or more than one, if the players have agreed to share the monster’s hoard) is the only one to have any models within 6\" of the monster’s cove, and the monster has been put out of action, that warband is victorious and gets the monster’s hoard. If two or more players have decided to share the hoard, they must decide how to split it up. If they cannot determine this peacefully, their warbands will have to decide it un-peacefully!",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n+1 Per Enemy out of action. Any Hero earns +1\n\nExperience for each enemy he puts out of action.\n+1 For Wounding the Monster. Any Hero or Henchman earns +1 Experience for each wound he inflicts on the monster. +2 For Putting the monster out of action. The Hero that puts the monster out of action gets a bonus +2 experience.",
+     "tables": []
+    },
+    {
+     "title": "Treasure Hoard",
+     "text": "The young monster has moved its treasure hoard with it to its new cove. Because of its age, the young monster has not collected as much treasure as an older creature of its type. Still, it has amassed a respectable amount. Whichever warband has control of the monster’s cove at the end of the game may search it to see what it contains. Note that you roll for each item separately, apart from gold crowns, which are always found. Item D6 Result Needed 5D6 gc Automatic Magical artefact (roll on artefact table) 6+ D3+1 Cargo (may open immediately) 4+ Gromril axe 5+ Suit of Heavy Armour 5+ Dueling Pistol 4+ Toughened Leather 3+ Buckler 4+ Helmet 4+ D3 swords 4+ D3 gems worth 10 gc each 5+ Jewelry worth D6x10 gc 5+\n\nPlayers who wish to include sea monsters in their Sartosa games can do so using Scenario: ‘Here be Monsters’, or may wish to create their own scenarios using these rules. If a monster is desired, the players should either choose what type of beast they are hunting or roll on the following chart:\n\nThe monster starts the game off the board, and any warrior may move into contact with the cove and disturb the water, hoping to agitate the beast into coming to the surface. Once per Combat Phase, the player rolls a 1D6 on the chart below.\n\n1 ENRAGED! The monster surfaces immediately after your turn, and gains a turn of its own. Also, the monster gets 1D3 extra attacks against the model that disturbed the water. 2–3 Hungry - The monster surfaces immediately after your turn, and gains a turn of its own. 4 Slow Rise - The monster surfaces immediately after your turn, and gains a turn of its own. However, it rises slowly to the surface, and one warrior of your choosing may immediately make a single attack, in hand-to-hand or shooting. 5-6 Bubbles- The monster’s down there, sure enough, but he stays under this turn.\n\nAlternatively, any (foolish) warrior may attempt to steal treasure from the cove without fighting. If they do, roll multiple times on the chart above, equal to 6 minus the stealer’s Initiative (ex. An Initiative 3 model rolls 3 times). Always roll 1 dice, no matter what, and choose the lowest result rolled. Only a non-animal model that is not engaged in combat may attempt to steal treasure, and Hired Swords and Dramatic Personae will never do anything that stupid. Any warrior who attempts to\n\nsteal from the cove automatically gains one Cargo, but if the Monster appears, it is at +1 to hit the stealer and the stealer is unable to fight back in the first round of combat. Once the Monster has appeared, no one may steal any more Cargo for the rest of the game.",
+     "tables": []
+    },
+    {
+     "title": "Monster Table",
+     "text": "D6 Roll Result 1 Tentacled Horror 2 Young Sea Drake 3 Young Merwyrm 4 Young Cavern Mouthed Behemoth 5 Young Emperor Crab 6 Young Turtigon\n\nUnless stated otherwise, all Monsters have the following rules, in addition to any unique rules they might also have:\n\nLarge: The monster counts as Large. It is at +1 to hit while shooting, and may be shot at ground level even if there are closer enemy models near the shooter. Fear: The creature is still a terrifying opponent. It causes fear. Will not Rout: The monster is far too greedy to abandon its hoard. It will automatically pass any Rout test or any other test that would cause it to leave its cove. It will not leave its cove for any reason. Skull of Iron: The Monster’s skull is much too thick for normal blows to penetrate. It is immune to the effects of being stunned. Treat any stunned results from the Injury table as a knocked down result instead (see below). Staggered, but not down: Mighty blows will rock the monster but most creatures lack the ability to truly knock it into the depths. Therefore, any knocked down result the monster receives will instead cause it to lose 1 Attack until it recovers (during the Recovery phase of its next turn). Multiple knocked down results will cause it to lose multiple attacks in this way (if taken to 0 Attacks or fewer, the monster may not attack until it recovers).",
+     "tables": []
+    },
+    {
+     "title": "Tentacled Horror",
+     "text": "A horrific monster with massive tentacles and deadly suckers. It is hard to tell if it is squid-like or slug-like in origin, but it seldom shows its head above surface… unless it’s eating you, of course.\n\n{{table:1}}\n\n*Movement 6 in water, 3 on land.\n\nLash Attack: The monster may use a tentacle to lash against its opponents, even those too cowardly to get close. This attack is made in the Shooting phase and may be made even if the Horror is involved in close combat. The lash attacks one random model within 8” of the monster, and the model receives 1D3 S3 hits. Loss of Limbs: Each wound suffered by a Horror represents one of its many limbs getting taken out of action. Because of this, any successful (unsaved and unregenerated) Wound to a Horror reduces its Attacks characteristic by one. In addition, the loss of limbs makes for fewer lash attacks, so for every 2 successful Wounds, the number of the Horror’s Lash Attacks is reduced by one, from 1D3 to 1D2 and finally 1. So, for\n\nexample, if the Horror has taken 3 (unsaved and unregenerated) Wounds, it would have 2 attacks remaining and number of its lash attacks would be reduced to 1D2. Regeneration: All Horrors have the ability to regrow damaged limbs. Some can do this immediately, while for others it may take a matter of hours or even days to replace a tentacle that is lost. To represent this ability, at the end of each round of close combat roll a D6 for each wound the Horror has suffered that round. On a roll of 4 or more that Wound has regenerated; any regenerated Wounds are reinstated. If a Horror is down to its last Wound remaining, make this roll to regenerate before rolling on the Injury table; a successful Regenerate roll means that no Injury roll is made.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Tentacled Horror",
+         "6*",
+         "3",
+         "0",
+         "4",
+         "4",
+         "5",
+         "3",
+         "5",
+         "8"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Young Sea Drake",
+     "text": "An aquatic cousin of the Dragon, with four flippers and a hard shell on their backs. Sea Drakes are often found along the shores of the Southlands and Lustria, where the Slann tame them to use in large-scale war. The wild ones, however, are far more vicious.\n\n{{table:1}}\n\n*8 in water, 5 on land.\n\nSave: The young Sea Drake’s scales aren’t as strong as a normal Sea Drake’s, but they are still as strong as metal. The young Sea Drake has an Armour save of 5+ that is not modified by the strength of attacks against it (or by other save modifiers). Breath Weapon: When the young Sea Drake breathes, flames leap from its mouth. It can use these flames as a weapon if it wishes. This attack is made in the Shooting phase, and may be made even if the Sea Drake is involved in close combat. Simply place the small teardrop shaped template supplied opposite with the narrow end at the Sea Drake’s mouth. Any models under the template will be hit by flames on a dice roll of 4+. A model hit by flames takes a single S3 hit. Normal armour saves apply. Do not worry about any buildings the template may cover; the Sea Drake’s fire is too weak to set them alight without prolonged exposure. Cold Blooded: Sea Drakes are oft found along the coasts of Southland and Lustria, suggesting the Old Ones may have had some hand in their evolution. When taking Leadership tests (that they don’t automatically pass), they gain the Lizardmen bonus ‘ Cold-Blooded’.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Young Sea Drake",
+         "8*",
+         "4",
+         "0",
+         "5",
+         "5",
+         "5",
+         "6",
+         "4",
+         "7"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Young Merwyrm",
+     "text": "From the deeps are the most wretched and foul of sea monsters, the Merwyrm or Sea Serpent. They are cowardly scavengers and ambushers, but dangerous enough when cornered. Ironically, they are often magically trained by the most noble sorcerors of Ulthuan, especially by mages who travel with the Lothern Sea Patrol.\n\n{{table:1}}\n\n*6 in water, 6 on land.\n\nSave: The Young Merwyrm’s scales aren’t as strong as a normal Merwyrm’s, but they are still as strong as metal. The Merwyrm has an armour save 6+ that is not modified by the strength of attacks against it (or other save modifiers). Tail Whip: The Merwyrm has a whip-like tail that it thrashes forward among its enemies, either lashing them, or simply clubbing them into submission. In game terms this is represented by a special tail strike that the Merwyrm makes before its normal attacks in close combat. Roll a D6. Any enemy models that are in base contact with the Merwyrm and that it may attack in the Close Combat phase (eg, it is either the Merwyrm’s ‘turn’ or the model’s turn) that have a lower Initiative than the dice score are automatically hit by the Merwyrm’s tail. Models with Initiative equal to or higher than the D6 roll have successfully dodged the tail and are not affected. Each model struck by the Merwyrm’s tail takes a Strength 4 hit.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Young Merwyrm",
+         "6*",
+         "4",
+         "0",
+         "5",
+         "4",
+         "3",
+         "4",
+         "2",
+         "8"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Cavern Mouthed Behemoth",
+     "text": "An exceptionally large fish with a mouth the size of a cave. Its long pointy teeth are longer than a man’s arm, and its eyes are bigger than wagon wheels. Most mysterious and unnerving, it has a mysterious antenna hangs in the air, the end of which glows a pale yellow. Many ships have been lured to its warm glow, only to end up in the Behemoth’s massive maw.\n\n{{table:1}}\n\n*8 in water, 1 on land.\n\nLantern Lure: The Behemoth has a glowing spine that emerges from its head, and its hypnotic wiggling can both attract and distract its prey. Because of this, all Shooting at the Behemoth is at -1 to hit (combined with the fact that it is Large, shooters gain no positive or negative bonus.)",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Cavern Mouthed Behemoth",
+         "8*",
+         "4",
+         "0",
+         "5",
+         "4",
+         "4",
+         "4",
+         "3",
+         "8"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Young Emperor Crab",
+     "text": "The most common scourge of the seas, especially in the Northern Seas, like the Sea of Claws. One of these crabs, if killed, can feed a village for a month. One of these crabs alive, however, can gobble up all local fish and destroy all ships entering a port, starving a village for a year.\n\n{{table:1}}\n\nSave: The Crab’s shell isn’t as strong as a normal Emperor Crab’s, but it is still as strong as metal. The Emperor Crab has an armour save 6+ that is not modified by the strength of attacks against it (or other save modifiers). Pincer Attack: One of the Emperor Crab’s attacks is a Pincer attack, which can chop off a head in an instant. It deals +1 on all Injury Rolls.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Young Emperor Crab",
+         "5",
+         "4",
+         "0",
+         "4",
+         "5",
+         "4",
+         "4",
+         "2",
+         "8"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Young Turtigon",
+     "text": "The rarest of all monsters, the Turtigon was always a creature of mystery and legend. Stories of a two-headed, man-eating, fire-breating turtle the size of a man-o-war seemed like a tall-tale, even amongst Leviathan Hunters. Recently, though, stories of attacks by young Turtigons have cropped up everywhere, from the Naggaroth coast to the shores of Ind. Maybe they’re about to become less a legend, and more a creature of fact.\n\n{{table:1}}\n\n*8 in water, 5 on land.\n\nSave: The Young Turtigon’s shell isn’t as strong as a normal Turtigon, but it is still as strong as metal. The Emperor Crab has an armour save 5+ that is not modified by the strength of attacks against it (or other save modifiers). Massive Beak: Two of the Turtigon’s attacks are a bite attacks. Each maw is a massively sharp, iron-hard beak that can easily slice through the thickest armour as if it were made of paper. An opponent damaged by these attacks suffers an additional -1 penalty to his armour save, for a total armour save penalty of -3 (-1 for the bite and -2 for Strength). Breath Weapon: When the young Turtigon breathes, flames leap from its mouths. It can use these flames as a weapon if it wishes. This attack is made in the Shooting phase and may be made even if the Turtigon is involved in close combat. Simply place the small teardrop shaped template with the narrow end at one of the Turtigon’s mouths; any models under the template will be hit by flames on a dice roll of 4+. A model hit by flames takes a single S3 hit. Normal armour saves apply. Do not worry about any buildings the template may cover; the Turtigon’s fire is too weak to set them alight without prolonged exposure. Loss of Heads: The strength of a Turtigon is based on two heads attacking and breathing from together. Because of this, once the Turtigon is reduced to 2 Wounds, one head has been taken out of action. The number of attacks drops to 2, and the Turtigon can make only one Beak attack each turn. In addition, the loss of heads makes for fewer flames when it breathes, so after 2 successful Wounds, the strength of the Turtigon’s breath weapon is reduced to Strength 2.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Young Turtigon",
+         "8*",
+         "3",
+         "0",
+         "5",
+         "4",
+         "4",
+         "4",
+         "4",
+         "8"
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "slug": "here-be-monsters",
+   "name": "Here be Monsters",
+   "players": "multiplayer",
+   "summary": "Rob a young sea monster's cove of its hoard."
+  },
+  {
+   "source": "Sartosa",
+   "intro": "After traveling inland for several hours, the warbands see it: Blackfire Lagoon. In the center is a small island, overflowing with the smuggled goods of ‘Fingers’ O’Finn, who used to ditch stolen items there when things got too hot. Now that Fingers is gone (Manaan rest his evil soul,) it’s up to you carry on his legacy… namely, nickin’ what ain’t yours and selling at a grossly higher price. Of course, getting across to the island it might be difficult…",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "The board is mostly water, with a few exceptions: three of the four board edges should have roughly 6” of land. Each player should have a section of land DISCONNECTED from each other, and each strip should have at least ONE wood-based terrain piece (trees, shipwreck, old house) at the water’s edge. In the center of the board is 1-3 islands between 12-24” in diameter total, and divided up by bushes, trees, and various obstacles. The water between the island and the land should be more or less free of obstacles, except for a few small rocks. Players may place ruined buildings or jungle on any land strip, including the center island. NOTE: We recommend each island have a terrain screening it from the nearby islands, to avoid giving an advantage from shooty warbands, and/or, give a -1 to hit against models on the neighboring islands, on account of ‘Tall Grass’.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Once you have placed the terrain, place 1D3 Cargo crates on the middle Island for each warband involved in the game on the tabletop. Each player takes it in turn to place a Cargo crate. Each player rolls a D6 to determine who places first, second, third, etc. If the majority of the gaming group agrees, up to a third of the Cargo pieces may be placed just outside island, on the rocks in the water; these must be placed at least 10” from the edge of the board. Note that crates are placed before deciding which edge the warbands will play from. Warriors can pick up the counters by moving into contact with them, using the rules for Cargo.\n\nRough Seas: The water is this scenario is particularly unfriendly, and all models wanted to travel through it are at 1/4 th movement. Each turn, your warband members can attempt to build rafts from logs, vines, driftwood, and any other material. A model on land\n\nwithin 3” of a building, wooded area, shipwreck, or similar wood-based area may attempt to build a raft. The model may do nothing else for the entire turn. Roll 2D6 during your next Recovery phase: on a 10 or higher, your warrior succeeded in making a raft. You may have several models attempting to make rafts at the same time, so long as they are 3” of the wood-based terrain piece. Any makeshift rafts last only until the end of the game. Each wooded area has only enough material to successfully build up to 3 rafts.\n\nOnce a player has their hands on a Cargo, it may be carried off any edge of the board. Once a model, cargo, or raft has made it off the board, it cannot return back on.",
+     "tables": []
+    },
+    {
+     "title": "Raft rules",
+     "text": "RULES – See Basic Boat rules in Sartosa PDF 1 for rules, including capacity, movement, and sinking. Capacity Reminder: If there are enough equally sized rafts for each player, than each raft can carry 4+X passengers, where X is the length of the raft. (if there are not equally sized rafts, than all rafts carry 8 passengers, regardless of size. For every Cargo crate on the boat, the number of passengers is decreased by one.",
+     "tables": []
+    },
+    {
+     "title": "Warbands",
+     "text": "Players use the normal warband set-up rules (see ‘Setting up the warbands’).",
+     "tables": []
+    },
+    {
+     "title": "Starting The Game",
+     "text": "Players each roll a D6 to determine who goes first. Play proceeds clockwise around the table from there (based on where players placed their warbands).",
+     "tables": []
+    },
+    {
+     "title": "Ending The Game",
+     "text": "The game ends when all the Cargo crates have been taken off the board; if that is the case, then the player who has captured (or is carrying) the highest amount of Cargo wins. Fail that, if all warbands but one have failed their Rout test, then the routers automatically lose. If two or more warbands have allied, they may choose to share the victory and end the game.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband(s) gains +1 Experience.\n+1 Per Enemy out of action. Any Hero earns +1 Experience for each enemy he puts out of action.\n+1 Per Cargo Crate. If a Hero or Henchman is carrying or guarding a Cargo crate at the end of the battle, he receives +1 Experience. +1 per enemy boat/raft sunk or captured. The Hero with the highest leadership in a boat/raft which sinks an enemy vessel gains +1 experience. A hero or henchman that capture an enemy craft gain +1 experience.",
+     "tables": []
+    },
+    {
+     "title": "Cargo",
+     "text": "Your warband earn one Cargo crate for each crate in their possession at the end of the battle. Any crate taken off warband may immediately be opened in the post game phase.",
+     "tables": []
+    }
+   ],
+   "slug": "raft-race",
+   "name": "Raft Race",
+   "players": "multiplayer",
+   "summary": "Build rafts and race for the cargo on Blackfire Lagoon's island."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "in-the-drink",
+   "name": "In the Drink! (Street Fight)",
+   "base": "street-fight",
+   "summary": "Street Fight on a narrow wharf, where a model pushed off falls into the water.",
+   "title": "In the Drink! (Sartosa)",
+   "text": "Rather than fight in a crowded street, have the two warbands fight on a narrow wharf or a thick pier. Any models that get pushed off or fall off the edge go tumbling into the water, and suffer the normal rules for water."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "x-marks-the-spot",
+   "name": "X Marks the Spot! (Hidden Treasure)",
+   "base": "hidden-treasure",
+   "summary": "Hidden Treasure with the chest under one of the buildings' markers.",
+   "title": "X Marks the Spot! (Sartosa)",
+   "text": "Rather than discovering the treasure on a 2D6 roll of 12, make a marker for every searchable building. Mark the bottom of one of these markers with an X, and shuffle them randomly, face down. When a non-animal warrior gets in contact with a marker, he flips it over at the end of the Movement phase. The X marker is replaced with the treasure chest."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "heavy-load-wyrdstone-hunt",
+   "name": "Heavy Load! (Wyrdstone Hunt)",
+   "base": "wyrdstone-hunt",
+   "summary": "Wyrdstone Hunt for crates of Cargo instead of shards.",
+   "title": "Heavy Load! (Sartosa)",
+   "text": "Rather than placing Wyrdstone shards, place Cargo Crates. These are heavier to move (see rules for 'Cargo'), but any crate that your models are in possession of may be opened immediately in the exploration phase."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "heavy-load-treasure-hunt",
+   "name": "Heavy Load! (Treasure Hunt)",
+   "base": "treasure-hunt-tc5",
+   "summary": "Treasure Hunt for crates of Cargo instead of shards.",
+   "title": "Heavy Load! (Sartosa)",
+   "text": "Rather than placing Wyrdstone shards, place Cargo Crates. These are heavier to move (see rules for 'Cargo'), but any crate that your models are in possession of may be opened immediately in the exploration phase."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "sneaking-out-in",
+   "name": "Sneaking Out/In! (Breakthrough)",
+   "base": "breakthrough",
+   "summary": "Breakthrough by night, sneaking into the town or out of it to a ship.",
+   "title": "Sneaking Out/In! (Sartosa)",
+   "text": "After determining which player is the attacker, roll 1D6: on a 3-6, the Player is Sneaking Into town, and may have his models leave any place along the defender's edge. On a roll of 1-2, they have the much harder task of sneaking OUT of town; place a 12-18\" 'safe zone' on the defender's edge of the board (a large ship works wonderfully!) Attacking models only count as 'breaking through' if they are in the boat/space. The entire board uses the rules for Night, and the Defender suffers the rules for Sentry."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "guards-guards",
+   "name": "Guards! Guards! (Chance Encounter)",
+   "base": "chance-encounter",
+   "summary": "Chance Encounter in a coastal town with its guards, or on the way back from a night's drinking.",
+   "title": "Guards! Guards! or Fancy Meetin' YOU 'Ere! (Sartosa)",
+   "text": "Roll 1D6: 1-3 \"Guards! Guards!\" Variation; 4-6 \"Fancy Meetin' YOU 'Ere!\" Variation.\n\nGuards! Guards! Variation: The two warbands meet each other in a small coastal town, outside of the amnesty of Sartosa. You see through each other's flimsy disguises, and there's a good chance someone will call the local guards. Use the Guards rule from Relics of the Crusade.\n\n\"Fancy Meetin' YOU 'Ere!\" Variation: Both warbands are returning to the Sartosa piers from a night of drinking and more drinking. Using your Leader's Leadership value, both players make leadership tests for every henchmen group. If the test fails, that henchmen group counts as being under the effect of Grog (-1 WS, -1 BS, Passes all Fear and All Alone tests.) Non-living and daemonic henchmen suffer no penalties, and tee-totaling warbands (Witch Hunters, Sisters of Sigmar, Lothern Sea Patrol, Araby Smugglers) may reroll any failed leadership tests once, the second roll standing."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "rock-the-boat",
+   "name": "Rock the Boat! (Defend the Find)",
+   "base": "defend-the-find",
+   "summary": "Defend the Find aboard an anchored boat.",
+   "title": "Rock the Boat! (Sartosa)",
+   "text": "If your gaming group owns a middle or large boat model, you may choose to have the defending warband defend that instead of a central building. If that is the case, the boat is anchored in place for the entire game, and the board must be set up so at least two easily accessible gangplanks or piers connect the boat to land. The defenders receive no extra bonus for defending the boat (although models attempting to board from the water or boats of a height difference of 1\" or greater must still climb the sides of the defending boat in order to board it.)"
+  },
+  {
+   "source": "Sartosa",
+   "slug": "glittering-prizes-wyrdstone-hunt",
+   "name": "Glittering Prizes! (Wyrdstone Hunt)",
+   "base": "wyrdstone-hunt",
+   "summary": "Wyrdstone Hunt for small treasures, each worth a Cargo.",
+   "title": "Glittering Prizes! (Sartosa)",
+   "text": "While not dealing in 'Wyrdstone' per se, the treasure is in small, easy to carry forms (crowns, necklaces, etc.) After the game, each may be exchanged for a Cargo."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "glittering-prizes-treasure-hunt",
+   "name": "Glittering Prizes! (Treasure Hunt)",
+   "base": "treasure-hunt-tc5",
+   "summary": "Treasure Hunt for small treasures, each worth a Cargo.",
+   "title": "Glittering Prizes! (Sartosa)",
+   "text": "While not dealing in 'Wyrdstone' per se, the treasure is in small, easy to carry forms (crowns, necklaces, etc.) After the game, each may be exchanged for a Cargo."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "glittering-prizes-the-pool",
+   "name": "Glittering Prizes! (The Pool)",
+   "base": "pool-tc5",
+   "summary": "The Pool for small treasures, each worth a Cargo.",
+   "title": "Glittering Prizes! (Sartosa)",
+   "text": "While not dealing in 'Wyrdstone' per se, the treasure is in small, easy to carry forms (crowns, necklaces, etc.) After the game, each may be exchanged for a Cargo."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "archipelago",
+   "name": "Archipelago (Island Hopping)",
+   "base": "island-hopping",
+   "summary": "Island Hopping in seawater, with no upstream or downstream.",
+   "title": "Archipelago (Sartosa)",
+   "text": "When moving boats or floating models in seawater, remember that there is no upstream or downstream."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "back-to-the-ship",
+   "name": "Back to the Ship! (Breakthrough)",
+   "base": "breakthrough",
+   "summary": "Breakthrough to a strip of beach where the attacker's ship waits.",
+   "title": "Back to the Ship! (Sartosa)",
+   "text": "The far off table edge the attacker is trying to escape to is a 6\" strip of beach that extends across the table edge. The attacker may also place up to three warriors anywhere on the beach area (enemy models may not set up within 14\" of these models either.) Of course, these three warriors who are defending the ship do not count as 'breaking through' for the purposes of winning the game or for earning extra experience."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "the-governors-daughter",
+   "name": "The Governor's Daughter (The Lost Prince)",
+   "base": "lost-prince-tc5",
+   "summary": "The Lost Prince as the Governor's frightened, or feisty, daughter.",
+   "title": "The Governor's Daughter (Sartosa)",
+   "text": "The stats and equipment of the Prince(ss) remain the same, but the gender is different. Also, roll 1D6 to see what kind of daughter the Governor has raised:\n\n1-3 Frightened: The innocent young girl longs to be rescued, but is easily scared by any gruesome face. If she is within 8\" of any model that causes Fear, she will move in the opposite direction as quickly as possible. Once a warrior attaches himself to her, she will not run away until unattached once more.\n\n4-6 Feisty!: A girl with a healthy dose of fighting spirit. You begin to wonder if she was kidnapped, or just escaped! She refuses to be helped, and any model that wants to move her must fight her first (they may charge her like normal.) Any successful wound against her knocks her unconscious (do not roll for injury), and she can be carried over the attacker's shoulders (the model cannot run with her on his shoulders, unless they are Large or Mounted.) Each of your recovery phases, roll a D6: on a 1, she wakes up, and attacks the carrier in the combat phase (roll for initiative for order of attacks). The Daughter will fight until rendered unconscious again, or until all opposing warriors in base contact are taken out of action."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "stop-the-pigeon",
+   "name": "Stop the Pigeon! (The Lost Prince)",
+   "base": "lost-prince-tc5",
+   "summary": "The Lost Prince as a traitor with a bounty on his head, dead or alive.",
+   "title": "Stop the Pigeon! (Sartosa)",
+   "text": "You're after a traitorous, loose-lipped weasel with a bounty on his head. While you get more money for taking him alive, he's also valuable dead. If the 'Prince' is killed, leave a marker where his body fell. A successful Strength test will part his head from his shoulders, which is carried like a Wyrdstone counter; if the current carrier of it is taken out of action, another warrior may claim it from where he fell. Leaving the board or ending the game with the Traitor's head gains you treasure (see the Lost Prince scenario), but you deduct -1 from all dice rolls."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "thief-in-the-night",
+   "name": "Thief in the Night (Ambush!)",
+   "base": "ambush-tc5",
+   "summary": "Ambush! by night, each hero carrying a heavy crate of Cargo.",
+   "title": "Thief in the Night (Sartosa)",
+   "text": "Rather than simply to carry shards, each hero instead starts off with a heavy Cargo crate. He may not hand it off to another warrior, but he may have another, unburdened warrior share the weight, in that he may move normally. The conditions for Night apply, and all of the attacking players suffer the rules for Sentries. The defender may not exit from any undefended side of the board that is 2' or less of their deployment area (this should be blocked off, if possible.) Every Cargo crate captured is worth not 1 but 1D3 Cargo at the end of the game."
+  },
+  {
+   "source": "Sartosa",
+   "slug": "gypsy-switch",
+   "name": "Gypsy Switch! (Ambush!)",
+   "base": "ambush-tc5",
+   "summary": "Ambush! with Valuables hidden among the heroes in secret.",
+   "title": "Gypsy Switch! (Sartosa)",
+   "text": "Rather than dealing with Cargo crates (which hinder movement), the warband was lucky enough to come across golden Valuables, which are easy to hide and carry (like Wyrdstone.) For everyone to see, the defending warbands roll 1D3 for each hero, to see how many Valuables the player has found. On a piece of paper, the player then records how he wants the valuables to be secretly divided amongst his heroes. Each hero may carry between zero and three valuables, no more. When a player is taken out of action, the player then reveals how many valuables the hero was carrying, and any valuables are dropped on the ground where the warrior had been. Each Valuable, in the post game, may be traded for one Cargo each (only one Cargo may be opened in the Post Game phase as normal.)"
+  }
+ ]
+}

@@ -1,5 +1,5 @@
-"""seed_scenarios: the import's 67 scenarios upserted by slug, Mordheim 1a's sixteen at their weights, a book
-scenario the import drops archived, and a table naming a setting we don't hold skipped."""
+"""seed_scenarios: the import's 194 scenarios upserted by slug, Mordheim 1a's sixteen and the other settings' at their
+weights, a book scenario the import drops archived, and a table naming a setting we don't hold skipped."""
 
 import io
 import json
@@ -25,10 +25,10 @@ class SeederTests(TestCase):
         call_command("seed_scenarios", *(["--source", str(source)] if source else []), stdout=out)
         return out.getvalue()
 
-    def test_the_import_seeds_seventy_scenarios_and_mordheims_sixteen(self) -> None:
+    def test_the_import_seeds_every_scenario_and_mordheims_sixteen(self) -> None:
         said = self.seed()
 
-        self.assertIn("Scenarios: 67, setting scenarios: 16", said)
+        self.assertIn("Scenarios: 194, setting scenarios: 16", said)  # the settings not seeded here are skipped
         hunt = Scenario.objects.get(slug="wyrdstone-hunt", campaign=None)
         self.assertEqual((hunt.name, hunt.number, hunt.players), ("Wyrdstone Hunt", "3", "1v1"))
         self.assertEqual(hunt.sections[0]["title"], "Terrain")
@@ -45,7 +45,7 @@ class SeederTests(TestCase):
             said = self.seed(path)
 
         self.assertIn("archived (no longer in the import): 1", said)
-        self.assertEqual(Scenario.objects.filter(campaign=None).count(), 67)
+        self.assertEqual(Scenario.objects.filter(campaign=None).count(), 194)
         self.assertIsNotNone(Scenario.objects.get(slug="raid").archived_at)
 
     def test_a_table_for_a_setting_we_dont_hold_is_skipped(self) -> None:
@@ -53,3 +53,23 @@ class SeederTests(TestCase):
         said = self.seed()
         self.assertIn("isn't seeded; its scenarios are skipped", said)
         self.assertFalse(SettingScenario.objects.exists())
+
+    def test_each_setting_seeded_adds_its_own_at_their_weights(self) -> None:
+        settings = {
+            name: CampaignType.objects.create(slug=slug, name=name, grade="2b")
+            for slug, name in (("sartosa", "Sartosa"), ("border-town-burning", "Border Town Burning"))
+        }
+        self.seed()
+
+        def weights(name: str) -> dict[str, Decimal]:
+            rows = SettingScenario.objects.filter(setting=settings[name]).values_list("scenario__slug", "weight")
+            return dict(rows)
+
+        sartosa, burning = weights("Sartosa"), weights("Border Town Burning")
+        self.assertEqual(len(sartosa), 32)
+        self.assertEqual(sartosa["heavy-load-wyrdstone-hunt"], Decimal("2.67"))  # 4 in 36 for a 5, then 1-4 on a D6
+        self.assertEqual(sartosa["down-at-the-docks"], Decimal(0))  # recommended, never drawn
+        self.assertEqual((len(burning), burning["tainted-copse"], burning["siege"]), (17, Decimal(6), Decimal(0)))
+        drink = Scenario.objects.get(slug="in-the-drink", campaign=None)
+        self.assertEqual(drink.sections[0]["title"], "In the Drink! (Sartosa)")
+        self.assertEqual(drink.sections[1:], Scenario.objects.get(slug="street-fight", campaign=None).sections)

@@ -1,12 +1,14 @@
 """Mordheim's scenarios (scenarios.py, William, 24 Nov 2026): mordheimer's 70 pages less Archive Pestilen's 3 copies, each a title, source lines,
-opening lines and sections under the standard names; the index's two 2D6 tables as Mordheim 1a's weights."""
+opening lines and sections under the standard names; the index's two 2D6 tables as Mordheim 1a's weights. The other
+settings' (William, 25 Nov 2026) are tested in test_setting_scenarios.py."""
 
 from typing import Any, ClassVar
 
 from django.test import SimpleTestCase
 
+from catalogue_import.scenario_build import build_scenarios
 from catalogue_import.scenario_html import blocks, parse, source_lines
-from catalogue_import.scenarios import build_scenarios, heading, read_page, setting_tables
+from catalogue_import.scenarios import heading, read_page, setting_tables
 
 PAGE = """<div class="theme-doc-markdown markdown"><header><h1>18. Kidnapped</h1></header>
 <p><strong>Source:</strong> Town Cryer #6 <a href="x">PDF</a><br>
@@ -117,10 +119,11 @@ class SnapshotTests(SimpleTestCase):
         cls.data = build_scenarios()
         cls.by_slug = {entry["slug"]: entry for entry in cls.data["scenarios"]}
 
-    def test_sixty_seven_scenarios_each_named_once_with_sections(self) -> None:
+    def test_every_scenario_named_once_with_sections(self) -> None:
         rows = self.data["scenarios"]
-        self.assertEqual(len(rows), 67)
-        self.assertEqual(len({entry["name"].lower() for entry in rows}), 67)
+        self.assertEqual(len(rows), 194)  # the index's 67, mordheimer's 62 more and the PDFs' 65
+        self.assertEqual(len({entry["name"].lower() for entry in rows}), 194)
+        self.assertEqual(len({entry["slug"] for entry in rows}), 194)
         self.assertTrue(all(entry["sections"] and entry["source"] for entry in rows))
         self.assertEqual(self.by_slug["breakthrough-archive-pestilen"]["name"], "Breakthrough (Archive Pestilen)")
         self.assertEqual(self.by_slug["breakthrough"]["name"], "Breakthrough")
@@ -162,8 +165,9 @@ class SnapshotTests(SimpleTestCase):
         self.assertEqual(caravan[2:7], ["Special rules", "Wagons", "Rout tests", "Payment and looting", "Banditry"])
 
     def test_mordheim_1a_adds_the_rulebooks_nine_and_chaos_on_the_streets_seven_at_their_weights(self) -> None:
-        weights = {row["slug"]: row["weight"] for table in self.data["settings"] for row in table["scenarios"]}
-        self.assertEqual({table["setting"] for table in self.data["settings"]}, {"Mordheim 1a"})
+        mordheim = [table for table in self.data["settings"] if table["setting"] == "Mordheim 1a"]
+        weights = {row["slug"]: row["weight"] for table in mordheim for row in table["scenarios"]}
+        self.assertEqual([table["table"] for table in mordheim], ["scenario-table", "cots-table"])
         self.assertEqual(
             weights,
             {

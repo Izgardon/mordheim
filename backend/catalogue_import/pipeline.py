@@ -35,7 +35,7 @@ from catalogue_import.pointer_rules import check_answers, render_pointers, resol
 from catalogue_import.random_mutations import build_random_mutations, render_random
 from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules, reword_shared, word_item_rules
-from catalogue_import.scenarios import build_scenarios, render_scenarios
+from catalogue_import.scenario_build import build_scenarios, render_scenarios
 from catalogue_import.shared_specials import build_shared, load_shared, render_shared
 from catalogue_import.skill_lists import SkillLists
 from catalogue_import.snapshot import SNAPSHOT, load_snapshot

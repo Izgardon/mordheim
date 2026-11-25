@@ -1,0 +1,63 @@
+{
+ "document": "Relics of the Crusades Part 1 (the Accursed Knowledge Gaming Group): its new scenario (page 15) and its locales' scenario tables (pages 4-8)",
+ "scenarios": [
+  {
+   "source": "Relics of the Crusades",
+   "intro": "Warriors injured during a battle with a town's guards can easily become locked away within the city dungeon. If the warband doesn't attempt to rescue the captive he may be sold as a mamluk or slave, or simply executed for his crimes. Because of this, daring rescues are often attempted on those locked away.\n\nIf a warrior is captured by a town guard the warband may elect to rescue him through the following scenario. This scenario represents a warband's attempts to release their comrade and will be in the locale where the warrior was captured.",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "Place the dungeon building in the centre of the table and a sewer grate 12\" away from it. Each player then takes it in turn to place a piece of terrain for the type of area the battle takes place in. We suggest that this terrain is set up within an area roughly 4' x 4'. To the side of the main table set up a series of dungeon tiles to represent the holding cells, corridors and guard rooms of the underground prison. We suggest that this dungeon terrain is set up within an area roughly 2' x 4'.",
+     "tables": []
+    },
+    {
+     "title": "Set-up",
+     "text": "The defender is allowed 2D3 of his warriors who are present near the prison during the rescue attempt. He must place them 12\" away from the dungeon. He is also granted another D6 town guards who are patrolling the area and must be placed 8\" away from each other. These count as warband members for the purposes of rout tests. The first guard placed must start in the dungeon building. In the dungeon below the surface, the defending player may set up another D3 town guards. When he sets up his warband the defending player places the captive anywhere in a dungeon holding cell. The prisoner may not move until he is freed. The defender is not allowed to attack or 'execute' his prisoner, and must attempt to drive off the rescuers. Once the captive is freed he may be attacked or shot at like any other warrior. The defender sets up first. The attacking warband is deployed 6\" from a table edge of his choice.",
+     "tables": []
+    },
+    {
+     "title": "Special rules",
+     "text": "All of the defending warriors begin the game as sentries. The entry points that a warrior will use to get to the dungeon are the stairwell inside the dungeon building and the sewer grate. Players must decide where a model will enter the dungeon when using these points. If a warrior ends his turn next to an entry point, he will start his next turn in the spot designated as its exit point, unless he is unable to due to close combat or something similar. The prisoner is free to move and fight once his cell door is unlocked by a friendly fighter. Note that the captive has no weapons or other equipment, but may be given any one weapon carried by his liberator.",
+     "tables": []
+    },
+    {
+     "title": "Starting the game",
+     "text": "The attacker has the first turn.",
+     "tables": []
+    },
+    {
+     "title": "Ending the game",
+     "text": "If the prisoner moves off the battlefield then the game ends and the attacker is victorious. Alternatively, a warband which fails a Rout test loses the game. If the defending player fails the rout test, then no warrior taken out of action by a town guard is assumed to be taken prisoner by them.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n+1 Rescuer. A Hero that sets the captive free earns +1 Experience.\n+1 Escaping. If the captive escapes via a table edge he gains +1 Experience.",
+     "tables": []
+    }
+   ],
+   "slug": "dungeon-raid",
+   "name": "Dungeon Raid",
+   "players": "1v1",
+   "summary": "Free a warrior the town guards took captive from the dungeon where he is held."
+  },
+  {
+   "source": "Relics of the Crusades",
+   "slug": "the-thing-in-the-ruins",
+   "name": "The Thing in the Ruins",
+   "base": "the-thing-in-the-woods",
+   "summary": "The Thing in the Woods in Ma'arra's ruins, the Thing Sand Spiders.",
+   "title": "In the ruins (Relics of the Crusades)",
+   "text": "Play The Thing in the Woods, but replace the Thing with Sand Spiders and woody terrain with dense ruins."
+  },
+  {
+   "source": "Relics of the Crusades",
+   "slug": "the-thing-in-the-dark",
+   "name": "The Thing in the Dark",
+   "base": "the-thing-in-the-woods",
+   "summary": "The Thing in the Woods in the Caverns of the Worm, the Thing Sand Spiders.",
+   "title": "In the dark (Relics of the Crusades)",
+   "text": "Play The Thing in the Woods, but replace the Thing with Sand Spiders and woody terrain with stalagmites."
+  }
+ ]
+}

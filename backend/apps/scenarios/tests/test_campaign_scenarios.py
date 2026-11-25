@@ -54,7 +54,7 @@ class CampaignListTests(ScenarioTestCase):
         )
         with self.assertNumQueries(2):
             response = self.client.get(self.url("scenarios/"))
-        self.assertEqual(len(response.json()), 67)
+        self.assertEqual(len(response.json()), Scenario.objects.filter(campaign=None).count())
 
     def test_ticking_a_setting_adds_its_scenarios_and_unticking_removes_none(self) -> None:
         khemri = CampaignType.objects.create(slug="khemri", name="Khemri 1b", grade="1b")

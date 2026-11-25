@@ -33,7 +33,7 @@ Answers go into `overrides.json`; the next build applies them.
 | serious injuries (D66) | 20 |
 | shared specials | 82 |
 | random mutation results (D66) | 36 |
-| scenarios | 67 |
+| scenarios | 194 |
 
 ## mordheimer's contradictions
 
@@ -3477,7 +3477,7 @@ Left pointing (nothing to take the rule from):
 
 ## Scenarios
 
-`sources/scenarios-2026-11-24/` (mordheimer's 67 scenario pages) as `out/scenarios.json`.
+mordheimer's scenario pages (`sources/scenarios-2026-11-24/`, `sources/scenarios-2026-11-25/`) and the campaign PDFs' (`sources/scenarios-2026-11-25/pdf/`): 194 scenarios in `out/scenarios.json`.
 
 | Scenario | No. | Source | Players | Sections |
 | --- | --- | --- | --- | --- |
@@ -3496,38 +3496,68 @@ Left pointing (nothing to take the rule from):
 | Assault on the Rock |  | Town Cryer #22 | either | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Rewards |
 | Bar Room Brawl |  | Town Cryer #19 | either | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
 | Blood Hunt |  | Town Cryer #25 | either | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Bounty Hunting |  | Town Cryer #25 | either | Terrain, Special rules, Set-up, Starting the game, Ending the game, Experience |
 | Burn the Witches |  | Town Cryer #20 | 1v1 | Terrain, Special rules, Warbands, Starting the game, Ending the game, Experience, Rewards |
+| Death in the Mists |  | Town Cryer #15 | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience |
+| Defend the Oasis |  | Town Cryer #19 | 1v1 | Terrain, Warbands, Set-up, Starting the game, Ending the game, Experience, Rewards |
+| Defend the Tomb | 10 | Town Cryer | 1v1 | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience, Rewards |
+| Dem’s My Gubbinz! |  | Town Cryer | either | Set-up, Scenario, Ending the game, Experience |
 | Down At The Docks |  | Town Cryer #25 | either | Terrain, Special rules, Messin' about on the river..., Ship's crew, Swivel guns, Ending the game, Experience, Cargo |
+| Encampment Raid |  | Town Cryer #28 | 1v1 | Additional equipment, Defences, Sigmarhaven watch |
 | Finders Keepers |  | Town Cryer #14 | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Wyrdstone |
 | Forbidden Square |  | Town Cryer #7 | either | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
 | Gathering of the Horde |  | Town Cryer #26 | multiplayer | Battle On The Blood Soaked Streets..., Fighter horde battles in Mordheim, Terrain, Special rules, Warbands, Dramatis personae, Dirk 'Cleaver' Halstadt, Priest Valnor, Starting the game, Ending the game, Experience, Campaigns, Storn the bastion, Crossing the bridge |
+| Gift of the Truthsayers |  | Town Cryer #15 | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience, Rewards |
 | Haunted Treasure |  | Town Cryer #14 | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
 | In The Dead Of The Night |  | Town Cryer #22 | 1v1 | Terrain, Warbands, Set-up, Starting the game, Special rules, Ending the game, Experience, Warpstone, Zombies |
+| Island Hopping |  | Town Cryer #12 | either | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience |
+| Jungle Skirmish / The Fog of War |  | Town Cryer #12 | either | Set-up, Terrain, Starting the game, Special rules, Ending the game, Experience |
 | Kidnapped |  | Town Cryer #6 | 1v1 | Terrain, Warbands, Starting the game, Special rules, Freeing the sacrificial victim, Recapturing the sacrificial victim, Sacrificial victim, Ending the game, Experience |
+| Lost In The Bogs |  | Town Cryer #25 | either | Terrain, Special rules, Set-up, Starting the game, Ending the game, Experience |
+| Lost Temple Of The Slann |  | Town Cryer #13 | either | Terrain, Warbands, Starting the game, Ending the game, Experience, The old relics, New items |
 | Monster Hunt | 7 | Town Cryer #5 | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Treasure hoard, Great beasts in Mordheim, Young hydra, Young dragon, Young Wyvern, Young griffon, Young hippogriff, Young chimera |
 | Mule Train |  | Town Cryer #14 | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience, Special rules |
+| One Man's Rescue is Another Man's Kidnap |  | Town Cryer #20 | 1v1 | Terrain, Objective, Warbands, Special rules, Ending the game, Experience, Special Rules -— Tents, Optional rules, Tent models |
+| Protect the Prince |  | Town Cryer #19 | either | Warbands, Terrain, Set-up, Special rules, Ending the game, Experience, Rewards |
 | Rat Attack |  | Town Cryer #7 | 1v1 | Terrain, Warbands, Set-up, Starting the game, Special rules, Ending the game, Experience |
 | Scourge & Purge |  | Town Cryer #7 | 1v1 | Terrain, Set-up, Special rules, Insane wizard, Daemonic Possession, Starting the game, Ending the game, Experience, Additional experience, Brother Captain Eponious Krieger |
+| Stagecoach Ambush |  | Town Cryer #25 | either | Terrain, Set-up, Special rules, Ending the game, Experience |
 | Stake-Out |  | Town Cryer #8 | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Income |
 | Street Brawl | 2 | Town Cryer #5 | multiplayer | Terrain, Set-up, Starting the game, Ending the game, Experience |
 | Surrounded |  | Town Cryer #7 | 1v1 | Terrain, Warbands, Set-up, Starting the game, Ending the game, Experience |
 | That's All Mine |  | Town Cryer #10 | 1v1 | Warbands, Terrain and set-up, Special rules, Defenders, Attackers, Ending the game, Experience, Attackers, Defenders, Suggestions |
 | The Bodyguards |  | Town Cryer #23 | multiplayer | Terrain, Set-up, Warband roles, Special rules, Ending the game, Experience, Rewards |
 | The Caravan |  | Town Cryer #11 | 1v1 | Terrain, Set-up, Special rules, Wagons, Rout tests, Payment and looting, Banditry, Starting the game, Ending the game, Experience |
+| The Frenzied Mob |  | Town Cryer #27 | either | Terrain, Set-up, Special rules, Ending the game, Experience |
 | The Gauntlet |  | Town Cryer #21 | either | Terrain, Special rules, Warbands, Starting the game, Ending the game, Experience, The treasure |
+| The Hunters Become The Hunted |  | Town Cryer #13 | either | Set-up, Terrain, Carnivorous plants, Starting the game, Special rules, Ending the game, Experience, Beastmaster and cold ones, Winnings |
 | The Item Lost |  | Town Cryer #25 | either | Terrain, Special rules, The Wand of Phyrros, Set-up, Starting the game, Ending the game, Experience |
 | The Lair of the Snake |  | Town Cryer #9 | multiplayer | Warbands, Terrain, Set-up, Starting the game, Special rules, The Tail-Biting effect, Snakes!, Lair of the Snake, Ending the game, Experience, Tactics |
 | The Lost Prince | 3 | Town Cryer #5 | either | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, The reward |
 | The Mummy |  | Town Cryer #15 | either | Warbands, Terrain, Special rules, KaHotep the Mummy, Two Tomb Guardians per Warband, The Mummy Phase, Starting the game, Ending the game, Experience, Treasure Board |
 | The Night Of The Headless One |  | Town Cryer #12 | either | Terrain, Special rules, The Headless One, Set-up, Starting the game, Ending the game, Campaign, Experience |
+| The Ogham Stones |  | Town Cryer #15 | 1v1 | Terrain, Special rules, Warbands, Starting the game, Ending the game, Experience, Rewards |
 | The Pool | 5 | Town Cryer #5 | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
 | The Rat's Lair |  | Town Cryer #28 | multiplayer | Terrain, Special rules, Starting the game, Ending the game, Experience, Rewards |
 | The Script of Sigmar |  | Town Cryer #9 | 1v1 | Special rules, River, Boats, Night time, Mission 1 : The Bridge; not too far, Terrain, Special rules, Sides, Objectives, Experience, Mission 2 : Into the temple my Brothers, Sides, Terrain, Objectives, Experience |
+| The Secrets of Beujuntae |  | Town Cryer #12 | either | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Rewards |
 | The Sword of the Herald |  | Town Cryer #13 | either | Special note, Terrain, Set-up, Special rules, Multi-player rules, The green glowing fog, Zombie reinforcements, Star stone splinters, The sword of the herald, Starting the game, Ending the game, Experience, Acting fairly as the referee in an adjudicated scenario, What does the big green sword do?, After the game what can I do with it?, If you want to equip it., If you want to pass it to your betters... |
+| The Thing In The Woods |  | Town Cryer #25 | either | Terrain, Special rules, Set-up, Starting the game, Ending the game, Experience, The Thing in the Woods, Profile |
 | The Watchers |  | Town Cryer #25 | either | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Ill gotten gains |
 | The Wizard's Mansion | 4 | Town Cryer #5 | multiplayer | Terrain, Set-up, Starting the game, Ending the game, Experience, Wizard's treasure, New items |
+| Tomb Raid |  | Town Cryer #19 | either | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience, Rewards |
 | Treasure Hunt | 1 | Town Cryer #5 | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Wyrdstone |
+| Battle for the Farm |  | Fanatic Magazine #1 | either | Terrain, Warbands, Special rules, Starting the game, Ending the game, Experience |
+| Blood on the Pasturelands |  | Fanatic Magazine #3 | either | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience |
+| Brigands in the Pasturelands |  | Fanatic Magazine #4 | 1v1 | Terrain, Warbands, Special rules, Starting the game, Ending the game, Experience, Gold |
+| Hunt the Heretic |  | Fanatic Magazine #9 | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Reward |
+| Protect Hornsby's Ferry! |  | Fanatic Magazine #7 | either | Terrain, Special rules, Set-up, Starting the game, Ending the game, Experience |
+| River Watch |  | Fanatic Magazine #9 | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Reward |
+| Stop Thief! |  | Fanatic Magazine #7 | either | Terrain, Special rules, Set-up, Starting the game, Ending the game, Experience |
+| The Watchtower |  | Fanatic Magazine #4 | 1v1 | Terrain, Warbands, Special rules, Ending the game, Experience |
+| Through Black Fire Pass |  | Fanatic Magazine #3 | 1v1 | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience |
 | Upon the Eerie Downs |  | Fanatic Magazine #1 | either | Terrain, Special rules, Ending the game, Experience |
+| Wolf Hunt! |  | Fanatic Magazine #6 | either | Terrain, Special rules, Wolf, Bear, Warbands, Ending the game, Experience, Reward |
 | Happy Harpy Hunting Grounds |  | Fanatic Online | multiplayer | Terrain, Set-up, Special rules, Harpies, Ending the game, Experience, Harpy nest contents |
 | Night Of The Dead |  | Fanatic Online #30 | either | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
 | Round-up at the Mordheim Corral |  | Fanatic Online | either | Terrain, Set-up, Special rules, War boar, Starting the game, Ending the game, Experience |
@@ -3537,21 +3567,413 @@ Left pointing (nothing to take the rule from):
 | Ambush (Archive Pestilen) |  | Archive Pestilen | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
 | Ambush 2 (Archive Pestilen) |  | Archive Pestilen | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Wyrdstone |
 | Breakthrough (Archive Pestilen) |  | Archive Pestilen | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Defend the Village! |  | Archive Pestilen | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Rewards |
 | Don't Wake the Giant |  | Archive Pestilen | either | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
 | Grudge Match |  | Archive Pestilen | 1v1 | Terrain, Set-up, Starting the game, Ending the game, Experience |
 | Haunted Treasure (Archive Pestilen) |  | Archive Pestilen | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
 | It's all MINE!! |  | Archive Pestilen | 1v1 | Set-up, Warbands, Mission, Special rules, Ending the game, Experience, Suggestions |
 | Raid |  | Archive Pestilen | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience |
+| Raids |  | Archive Pestilen | 1v1 | The raid scenario, The townsfolk, The Townsfolk Table, Profiles, Setting up, deploying and starting, How long does the raid last?, Searching, Burning, Capturing Slaves, Ending the game, Raiding Results, Selling the Jewelleries, Raids in Warhammer Fantasy |
+| Rawhide |  | Archive Pestilen | 1v1 | Game Details, Special rules, Setting Up the Game, Warbands, Winning the Game, Experience |
 | Rescue |  | Archive Pestilen | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Experience |
 | Romero's Pride |  | Archive Pestilen | 1v1 | Special rules, Zombies!!, Terrain |
+| The Battle At Koleshire Keep |  | Archive Pestilen | 1v1 | How it all began, The current situation, Jarsyn’s Mercenary band, Skaggle’s Boys, The battlefield, Starting the game, Ending the game |
 | The Caravan (Archive Pestilen) |  | Archive Pestilen | 1v1 | Terrain, Warbands, The Merchant, The Cargo, Starting the game, Ending the game, Wyrdstone, Experience, "Lucky Fool" Variant, "Two's a Crowd" Variant, "Greedy Bastard" Variant, "A Friend in the Business" Variant, Suggestions for the Guarding Warband |
 | The Restless Dead |  | Archive Pestilen | either | Rules |
 | The Square Of The Snake |  | Archive Pestilen | multiplayer | The Scenario, Warbands, Objectives, Setting Up and Deploying, Special rules, The Tail-Biting Effect, Snakes!, Ending the game, Who Has Won?, Tactics |
 | The Wizard's Tower |  | Archive Pestilen | multiplayer | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Treasures |
+| The Ambush |  | Empire in Flames | 1v1 | Terrain, Warbands, Special rules, Starting the game, Ending the game, Experience |
+| The Beast Hunt |  | Empire in Flames | 1v1 | Terrain, Warbands, Special rules, Starting the game, Ending the game, Experience, The Spoils |
+| The Raid |  | Empire in Flames | 1v1 | Terrain, Warbands, Special rules, The Frenzied Mob, Torch the Village!, Starting the game, Ending the game, Experience, The Spoils |
+| Enter the Necromancer’s Tower | 2 | The Nemesis Crown | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Rewards, Experience |
+| Fowl Play | 8 | The Nemesis Crown | 1v1 | Set-up, Starting the game, Special rules, Pigeon Movement, Catch The Pigeon, Fly my Beauties, Winning the game, Experience |
+| Last Orders! | 5 | The Nemesis Crown | either | Terrain, Special rules, Unarmed, Improvised Weapons, Other Patrons, Set-up, Starting the game, Ending the game, Experience, Optional rules, Option A: Royal Rumble, Option B: Belligerent Drunks, Option C: The Weapons Cache, Option D: The Buxom Barmaid, Option E: Da Bouncer, Option F: Liquid Courage, Option G: The One-Armed Bandit |
+| Nightfall | 1 | The Nemesis Crown | 1v1 | Terrain, Set-up, Starting the game, Special rules, Winning the game, Experience |
+| The Flood Plain | 6 | The Nemesis Crown | 1v1 | Terrain, Set-up, Starting the game, Special rules, Flooded Land, Rafts, Flotsam, Winning the game, Rewards, Experience |
+| The Lost Mines of Khrazi Drudd | 4 | The Nemesis Crown | either | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| The Shifting Paths | 7 | The Nemesis Crown | either | Terrain, Set-up, Starting the game, Special rules, The Moving Paths, Bursting Through, Treasure, Winning the game, Rewards, Experience |
+| The Warmachine | 3 | The Nemesis Crown | 1v1 | Terrain, Set-up, Starting the game, Special rules, Winning the game, Rewards, Experience |
+| The Wild Wood | 9 | The Nemesis Crown | 1v1 | Set-up, Starting the game, Special rules, Winning the game, Experience |
+| Dungeon Raid |  | Relics of the Crusades | 1v1 | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| The Thing in the Dark |  | Relics of the Crusades | either | In the dark (Relics of the Crusades), Terrain, Special rules, Set-up, Starting the game, Ending the game, Experience, The Thing in the Woods, Profile |
+| The Thing in the Ruins |  | Relics of the Crusades | either | In the ruins (Relics of the Crusades), Terrain, Special rules, Set-up, Starting the game, Ending the game, Experience, The Thing in the Woods, Profile |
+| Dragonslayer |  | Karak Azgal | either | Objective, Terrain, Warbands, Starting the game, Special rules, Dragon's turn, Ending the game, Experience, Dragon's treasure trove, Multiplayer games |
+| The Engineers Workshop |  | Karak Azgal | multiplayer | Terrain, Warbands, Starting the game, Ending the game, Experience, Engineer's treasure, New items |
+| Avalanche! | 1 | Border Town Burning | 1v1 | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience |
+| Blockade | 3 | Border Town Burning | 1v1 | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience, Raiding the supply caravan, Campaign points |
+| Chaos Dragon Hunt | 11 | Border Town Burning | either | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience, Spoils |
+| Ghartok's Tomb | 15 | Border Town Burning | 1v1 | Terrain, Starting the game, Special rules, Ending the game, Experience, Hide and seek |
+| Horrors of the Underground | 2 | Border Town Burning | 1v1 | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience |
+| Hostile Embargo | 14 | Border Town Burning | 1v1 | Terrain, Starting the game, Special rules, Ending the game, Experience |
+| Journey Home | 16 | Border Town Burning | multiplayer | Terrain, Warbands, Starting the game, Ending the game, Experience |
+| Last Orders! (Border Town Burning) | 7 | Border Town Burning | either | Terrain, Warbands, Set-up, Starting the game, Special rules, Ending the game, Experience, Random happenings, 1. Kitchen Hands, 2. The Buxom Barmaid, 3. Liquid Courage, 4. Renegade, 5. Ogre Bouncer, 6. Ornamental Weapon, Improvised Weapons |
+| Man Hunt | 5 | Border Town Burning | either | Territory, Terrain, Special rules, Warbands, Starting the game, Ending the game, Experience |
+| Siege! | 13 | Border Town Burning | multiplayer | Terrain, Warbands, Special rules, Starting the game, Ending the game, Experience, The chaos artefact, Hints and tips |
+| Tainted Copse | 4 | Border Town Burning | 1v1 | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience, Notes on forest sections |
+| The Enemy of My Enemy | 8 | Border Town Burning | multiplayer | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience |
+| The Heist | 9 | Border Town Burning | 1v1 | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience, The Artefact |
+| The Horde Approaches | 12 | Border Town Burning | 1v1 | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience, Campaign Progress Points, On to the Border Town! |
+| The Lost Caravans | 10 | Border Town Burning | 1v1 | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience, Grateful Merchant |
+| Traces to Emprise | 6 | Border Town Burning | 1v1 | Terrain, Warbands, Starting the game, Special rules, Questioning, Torturing, Ending the game, Experience, Information points, Truce, Misinformation |
+| Battle at the Wharf |  | Mousillon | 1v1 | Warbands, Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Reward |
+| Beware the Plague |  | Mousillon | either | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Black Lily |  | Mousillon | 1v1 | Warbands, Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Cleanse the Wood |  | Mousillon | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Devils of Rimwood |  | Mousillon | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Reward |
+| Harbormaster's Lament |  | Mousillon | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Reward |
+| Hell Hath No Fury |  | Mousillon | 1v1 | Hell Hath No Fury (Mousillon), Terrain, Warbands, Starting the game, Ending the game, Experience |
+| Infested |  | Mousillon | 1v1 | Warbands, Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Rewards |
+| Knights vs. Knights |  | Mousillon | 1v1 | Warbands, Terrain, Set-up, Starting the game, Ending the game, Experience, Rewards |
+| Library of the Damned |  | Mousillon | either | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Rewards |
+| Look for the Stash |  | Mousillon | 1v1 | Terrain, Set-up, Starting the game, Ending the game, Experience, Rewards |
+| Primordial Chaos |  | Mousillon | 1v1 | Warbands, Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Safety on the Other Side |  | Mousillon | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Spoils |  | Mousillon | 1v1 | Terrain, Set-up, Starting the game, Ending the game, Experience, Reward |
+| Through the Gates of Morr |  | Mousillon | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| All Hands on Deck | 17 | Mutiny in Marienburg | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Black Market Lagoon | 2 | Mutiny in Marienburg | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Blood pacts, Experience |
+| Burrow Town Collapsing | 9 | Mutiny in Marienburg | either | Terrain, Set-up, Starting the game, The bolt-holes, Subterranean Event chart, Sewer rules, Trap chart, Complex Trap chart, Sunken rooms, Sewer Hazard chart, Albino sewer lizard, Tregara, Wolf rat, Warp bat, Moving sewer monsters, Burning House chart, Ending the game, Experience, Sinking Boat chart |
+| Colony of Plenty | 19 | Mutiny in Marienburg | multiplayer | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Dead Freight | 10 | Mutiny in Marienburg | multiplayer | Terrain, Roles, Set-up, Starting the game, Special rules, Conviction chart, Ending the game, Experience |
+| False Beacons | 14 | Mutiny in Marienburg | 1v1 | Terrain, Warbands, Special rules, Starting the game, Ending the game, Rewards, Experience |
+| Hangman's Square | 16 | Mutiny in Marienburg | either | Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Illegal Salvage Operation | 8 | Mutiny in Marienburg | either | Terrain, Set-up, Starting the game, Special rules, Cargo chart, Booty chart, Tainted Items chart, Rowing your boat, Setting boats on fire, Ending the game, Experience |
+| Midnight at the Mausoleum | 15 | Mutiny in Marienburg | either | Terrain, Set-up, Starting the game, Special rules, Grave Robbery chart, Ending the game, Experience, Diabolic Prescriptions, Slaaneshi's Dream, Black dust, Daemon dust |
+| Pit of Blood | 4 | Mutiny in Marienburg | either | Terrain, Set-up, Princes of the underworld, Starting the game, Special rules, Ending the game, Experience, Custom Weapons chart, Pit Events chart |
+| Powder Bridge | 3 | Mutiny in Marienburg | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Rolling Fog | 1 | Mutiny in Marienburg | either | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Silk Market | 7 | Mutiny in Marienburg | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Information points |
+| South Dock Massacre | 13 | Mutiny in Marienburg | multiplayer | Terrain, Warbands, Set-up, Special rules, Starting the game, Ending the game, Rewards, Experience, Bone goliath, Dire wolves, Farrak the necromancer, Ghouls, Grave guards, Necromancer, Zombies |
+| Stockade | 5 | Mutiny in Marienburg | 1v1 | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Stronghold | 20 | Mutiny in Marienburg | multiplayer | Terrain, Warbands, Set-up, Starting the game, Experience, Special rules, Ending the game |
+| Swap Meat | 18 | Mutiny in Marienburg | either | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| The Sting | 11 | Mutiny in Marienburg | 1v1 | Terrain, Set-up, Starting the game, Special rules, Cartel chart, Ending the game, Experience |
+| Nice Day for a Waaagh Beheadin' |  | Marienburg Annual | multiplayer | Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience |
+| Archipelago (Island Hopping) |  | Sartosa | either | Archipelago (Sartosa), Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience |
+| Back to the Ship! (Breakthrough) |  | Sartosa | 1v1 | Back to the Ship! (Sartosa), Terrain, Warbands, Starting the game, Ending the game, Experience |
+| Boarding Action |  | Sartosa | 1v1 | Terrain, Warbands, Starting the game, Ending the game, Special rules, Boarded Ship Has Equal Or Higher Gunwhales, Swinging On Board, Experience |
+| Glittering Prizes! (The Pool) |  | Sartosa | multiplayer | Glittering Prizes! (Sartosa), Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Glittering Prizes! (Treasure Hunt) |  | Sartosa | multiplayer | Glittering Prizes! (Sartosa), Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Wyrdstone |
+| Glittering Prizes! (Wyrdstone Hunt) |  | Sartosa | 1v1 | Glittering Prizes! (Sartosa), Terrain, Special rules, Warbands, Starting the game, Ending the game, Experience, Wyrdstone |
+| Guards! Guards! (Chance Encounter) |  | Sartosa | 1v1 | Guards! Guards! or Fancy Meetin' YOU 'Ere! (Sartosa), Terrain, Set-up, Starting the game, Special rules, Ending the game, Experience, Wyrdstone |
+| Gypsy Switch! (Ambush!) |  | Sartosa | multiplayer | Gypsy Switch! (Sartosa), Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Heavy Load! (Treasure Hunt) |  | Sartosa | multiplayer | Heavy Load! (Sartosa), Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, Wyrdstone |
+| Heavy Load! (Wyrdstone Hunt) |  | Sartosa | 1v1 | Heavy Load! (Sartosa), Terrain, Special rules, Warbands, Starting the game, Ending the game, Experience, Wyrdstone |
+| Here be Monsters |  | Sartosa | multiplayer | Terrain, Warbands, Special rules, Starting the game, Ending the game, Experience, Treasure Hoard, Monster Table, Tentacled Horror, Young Sea Drake, Young Merwyrm, Cavern Mouthed Behemoth, Young Emperor Crab, Young Turtigon |
+| In the Drink! (Street Fight) |  | Sartosa | 1v1 | In the Drink! (Sartosa), Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| King of the Hull |  | Sartosa | multiplayer | Terrain, Warbands, Goodies Chart, Mounted Swivel Gun Rules, Unusual Weapons, Starting the game, Ending the game, Experience, Booty, Rules For Cathayan Items, Katana, Cathayan Candles, Cathayan Plate Armor, Manticore Spoor, Smoke Bomb |
+| Last Orders! (Sartosa) |  | Sartosa | either | Terrain, Warbands, Set-up, Special rules, Ending the game, Experience, Random happenings |
+| Life's a Beach |  | Sartosa | 1v1 | Terrain, Warbands, Special rules, Starting the game, Ending the game, Experience, Post Game |
+| Mutiny |  | Sartosa | 1v1 | Terrain, Warbands, Special rules, Starting the game, Ending the game, Experience, Leader, Exploration |
+| Press Gang |  | Sartosa | either | Terrain, Set-up, Special rules, The Easy Way, The Hard Way, Ending the game, Experience, Post Game |
+| Raft Race |  | Sartosa | multiplayer | Terrain, Special rules, Raft rules, Warbands, Starting the game, Ending the game, Experience, Cargo |
+| Rock the Boat! (Defend the Find) |  | Sartosa | 1v1 | Rock the Boat! (Sartosa), Terrain, Warbands, Starting the game, Ending the game, Experience, Wyrdstone |
+| Sneaking Out/In! (Breakthrough) |  | Sartosa | 1v1 | Sneaking Out/In! (Sartosa), Terrain, Warbands, Starting the game, Ending the game, Experience |
+| Stop the Pigeon! (The Lost Prince) |  | Sartosa | either | Stop the Pigeon! (Sartosa), Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, The reward |
+| The Governor's Daughter (The Lost Prince) |  | Sartosa | either | The Governor's Daughter (Sartosa), Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience, The reward |
+| Thief in the Night (Ambush!) |  | Sartosa | multiplayer | Thief in the Night (Sartosa), Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
+| Warring Houses |  | Sartosa | multiplayer | Terrain, Warbands, Starting the game, Special rules, Ending the game, Experience, Postgame |
+| Wrecking |  | Sartosa | either | Terrain, Warbands, Special rules, Tilea Crew, Marienburgers, Barak Varn, Ulthuan, Araby, Ghost Pirates, Starting the game, Ending the game, Experience |
+| X Marks the Spot! (Hidden Treasure) |  | Sartosa | 1v1 | X Marks the Spot! (Sartosa), Terrain, Set-up, Special rules, Starting the game, Ending the game, Experience |
 
-For either (tagged both, or written for both): A Night In The Graveyard, A Stroll In The Garden, Assault on the Rock, Bar Room Brawl, Blood Hunt, Down At The Docks, Forbidden Square, The Gauntlet, The Item Lost, The Lost Prince, The Mummy, The Night Of The Headless One, The Sword of the Herald, The Watchers, Upon the Eerie Downs, Night Of The Dead, Round-up at the Mordheim Corral, The Great Library, The Recipe, Don't Wake the Giant, The Restless Dead.
+For either (tagged both, or written for both): A Night In The Graveyard, A Stroll In The Garden, Assault on the Rock, Bar Room Brawl, Blood Hunt, Bounty Hunting, Dem’s My Gubbinz!, Down At The Docks, Forbidden Square, Island Hopping, Jungle Skirmish / The Fog of War, Lost In The Bogs, Lost Temple Of The Slann, Protect the Prince, Stagecoach Ambush, The Frenzied Mob, The Gauntlet, The Hunters Become The Hunted, The Item Lost, The Lost Prince, The Mummy, The Night Of The Headless One, The Secrets of Beujuntae, The Sword of the Herald, The Thing In The Woods, The Watchers, Tomb Raid, Battle for the Farm, Blood on the Pasturelands, Protect Hornsby's Ferry!, Stop Thief!, Upon the Eerie Downs, Wolf Hunt!, Night Of The Dead, Round-up at the Mordheim Corral, The Great Library, The Recipe, Don't Wake the Giant, The Restless Dead, Last Orders!, The Lost Mines of Khrazi Drudd, The Shifting Paths, The Thing in the Dark, The Thing in the Ruins, Dragonslayer, Chaos Dragon Hunt, Last Orders! (Border Town Burning), Man Hunt, Beware the Plague, Library of the Damned, Burrow Town Collapsing, Hangman's Square, Illegal Salvage Operation, Midnight at the Mausoleum, Pit of Blood, Rolling Fog, Swap Meat, Archipelago (Island Hopping), Last Orders! (Sartosa), Press Gang, Stop the Pigeon! (The Lost Prince), The Governor's Daughter (The Lost Prince), Wrecking.
+
+A book's variation of a scenario we hold, read as that scenario with its changes: The Thing in the Dark (the-thing-in-the-woods), The Thing in the Ruins (the-thing-in-the-woods), Hell Hath No Fury (skirmish), Archipelago (Island Hopping) (island-hopping), Back to the Ship! (Breakthrough) (breakthrough), Glittering Prizes! (The Pool) (pool-tc5), Glittering Prizes! (Treasure Hunt) (treasure-hunt-tc5), Glittering Prizes! (Wyrdstone Hunt) (wyrdstone-hunt), Guards! Guards! (Chance Encounter) (chance-encounter), Gypsy Switch! (Ambush!) (ambush-tc5), Heavy Load! (Treasure Hunt) (treasure-hunt-tc5), Heavy Load! (Wyrdstone Hunt) (wyrdstone-hunt), In the Drink! (Street Fight) (street-fight), Rock the Boat! (Defend the Find) (defend-the-find), Sneaking Out/In! (Breakthrough) (breakthrough), Stop the Pigeon! (The Lost Prince) (lost-prince-tc5), The Governor's Daughter (The Lost Prince) (lost-prince-tc5), Thief in the Night (Ambush!) (ambush-tc5), X Marks the Spot! (Hidden Treasure) (hidden-treasure).
 
 Left out as copies: scourge-and-purge-archive-pestilen, scripts-of-sigmar, the-forbidden-square.
 
-- Mordheim 1a (scenario-table): street-fight 2 (3), hidden-treasure 3 (4), wyrdstone-hunt 4 (5), occupy 5 (6), skirmish 6 (7), breakthrough 5 (8), surprise-attack 4 (9), chance-encounter 3 (10), defend-the-find 2 (11)
-- Mordheim 1a (cots-table): monster-hunt-tc5 2 (3), wizards-mansion-tc5 3 (4), treasure-hunt-tc5 9 (5-6), street-brawl-tc5 6 (7), ambush-tc5 9 (8-9), pool-tc5 3 (10), lost-prince-tc5 2 (11)
+### What each setting adds
+
+#### Mordheim 1a (scenario-table)
+
+- Street Fight: 2 (3; linked)
+- Hidden Treasure: 3 (4; linked)
+- Wyrdstone Hunt: 4 (5; linked)
+- Occupy: 5 (6; linked)
+- Skirmish: 6 (7; linked)
+- Breakthrough: 5 (8; linked)
+- Surprise Attack: 4 (9; linked)
+- Chance Encounter: 3 (10; linked)
+- Defend the Find: 2 (11; linked)
+
+#### Mordheim 1a (cots-table)
+
+- Monster Hunt: 2 (3; linked)
+- The Wizard's Mansion: 3 (4; linked)
+- Treasure Hunt: 9 (5-6; linked)
+- Street Brawl: 6 (7; linked)
+- Ambush!: 9 (8-9; linked)
+- The Pool: 3 (10; linked)
+- The Lost Prince: 2 (11; linked)
+
+#### Empire in Flames (Two-player scenarios; Multi-player scenarios)
+
+From Empire in Flames (2004), its two scenario tables (mordheimer's Empire in Flames scenarios page holds the same) and its Beastmen scenarios.
+
+- Breakthrough: 2 (Two-player scenarios 3; linked)
+- The Thing In The Woods: 6 (Two-player scenarios 4; Multi-player scenarios 10; added)
+- Wyrdstone Hunt: 4 (Two-player scenarios 5; linked)
+- Skirmish: 5 (Two-player scenarios 6; linked)
+- Stagecoach Ambush: 12 (Two-player scenarios 7; Multi-player scenarios 7; added)
+- Bounty Hunting: 10 (Two-player scenarios 8; Multi-player scenarios 8; added)
+- Lost In The Bogs: 8 (Two-player scenarios 9; Multi-player scenarios 9; added)
+- Surprise Attack: 3 (Two-player scenarios 10; linked)
+- Chance Encounter: 2 (Two-player scenarios 11; linked)
+- The Lost Prince: 2 (Multi-player scenarios 3; linked)
+- Monster Hunt: 3 (Multi-player scenarios 4; linked)
+- Treasure Hunt: 4 (Multi-player scenarios 5; linked)
+- Street Brawl: 5 (Multi-player scenarios 6; linked)
+- Ambush!: 2 (Multi-player scenarios 11; linked)
+- The Frenzied Mob: 0 (listed at 0: the book's own scenario, on neither table; added)
+- The Ambush: 0 (listed at 0: a Beastmen scenario, rolled on its own D6 table only when a Beastmen warband plays; added)
+- The Raid: 0 (listed at 0: a Beastmen scenario, rolled on its own D6 table only when a Beastmen warband plays; added)
+- The Beast Hunt: 0 (listed at 0: a Beastmen scenario, rolled on its own D6 table only when a Beastmen warband plays; added)
+
+#### Lustria (Two-player scenarios; Multi-player scenarios)
+
+From the Lustria campaign rules, their two scenario tables (mordheimer's Lustria scenarios page holds the same).
+
+- The Hunters Become The Hunted: 4 (Two-player scenarios 3; Multi-player scenarios 3; added)
+- The Secrets of Beujuntae: 6 (Two-player scenarios 4; Multi-player scenarios 4; added)
+- Skirmish: 4 (Two-player scenarios 5; linked)
+- Jungle Skirmish / The Fog of War: 10 (Two-player scenarios 6; Multi-player scenarios 6; added)
+- Dem’s My Gubbinz!: 6 (Two-player scenarios 7; added)
+- Island Hopping: 9 (Two-player scenarios 8; Multi-player scenarios 9; added)
+- Defend the Find: 4 (Two-player scenarios 9; linked)
+- Hidden Treasure: 3 (Two-player scenarios 10; linked)
+- Chance Encounter: 2 (Two-player scenarios 11; linked)
+- Lost Temple Of The Slann: 4 (Multi-player scenarios 5; added)
+- Treasure Hunt: 6 (Multi-player scenarios 7; linked)
+- Street Brawl: 5 (Multi-player scenarios 8; linked)
+- The Pool: 3 (Multi-player scenarios 10; linked)
+- Ambush!: 2 (Multi-player scenarios 11; linked)
+- Kidnapped: 0 (listed at 0: "An interesting scenario to try", on neither table; linked)
+
+#### Albion (Two-player scenarios; Multi-player scenarios)
+
+From the Albion campaign rules (Martin Greminger), their two scenario tables; mordheimer's Albion page has a shorter table of the three Town Cryer scenarios alone.
+
+- Death in the Mists: 5 (Two-player scenarios 3; Multi-player scenarios 4; added)
+- Gift of the Truthsayers: 3 (Two-player scenarios 4; added)
+- Breakthrough: 4 (Two-player scenarios 5; linked)
+- Skirmish: 16 (Two-player scenarios 6-8; linked)
+- The Ogham Stones: 4 (Two-player scenarios 9; added)
+- Chance Encounter: 2 (Two-player scenarios 11; linked)
+- Monster Hunt: 2 (Multi-player scenarios 3; linked)
+- Treasure Hunt: 9 (Multi-player scenarios 5-6; linked)
+- Ambush!: 9 (Multi-player scenarios 8-9; linked)
+- Left out: Two-player scenarios 10: Defend the Cave
+- Left out: Multi-player scenarios 7: Great Skirmish
+- Left out: Multi-player scenarios 10: Raid
+- Left out: Multi-player scenarios 11: Defend the Cave
+- Left out: Defend the Cave, Great Skirmish and Raid. named by the tables, printed nowhere in the Albion rules or on mordheimer
+
+#### Khemri 1b (Two-player scenarios; Multi-player scenarios)
+
+From the Khemri Town Cryer compilation, its two scenario tables (the Khemri campaign rules hold the same), and mordheimer's pages of the Khemri scenarios.
+
+- Hidden Treasure: 2 (Two-player scenarios 3; linked)
+- Defend the Find: 3 (Two-player scenarios 4; linked)
+- Breakthrough: 4 (Two-player scenarios 5; linked)
+- Skirmish: 16 (Two-player scenarios 6-8; linked)
+- Defend the Oasis: 4 (Two-player scenarios 9; added)
+- Defend the Tomb: 3 (Two-player scenarios 10; added)
+- Chance Encounter: 2 (Two-player scenarios 11; linked)
+- Monster Hunt: 2 (Multi-player scenarios 3; linked)
+- Tomb Raid: 3 (Multi-player scenarios 4; added)
+- Treasure Hunt: 9 (Multi-player scenarios 5-6; linked)
+- Ambush!: 9 (Multi-player scenarios 8-9; linked)
+- Protect the Prince: 3 (Multi-player scenarios 10; added)
+- One Man's Rescue is Another Man's Kidnap: 2 (Multi-player scenarios 11; added)
+- Left out: Multi-player scenarios 7: Desert Skirmish
+- Left out: Desert Skirmish. named by the multi-player table, printed nowhere we hold
+
+#### The Nemesis Crown (no table)
+
+From the Nemesis Crown supplement's nine scenarios (mordheimer's pages), each suggested for a territory of the map, with no table to roll.
+
+- Nightfall: 1 (no table: 1; added)
+- Enter the Necromancer’s Tower: 1 (no table: 1; added)
+- The Warmachine: 1 (no table: 1; added)
+- The Lost Mines of Khrazi Drudd: 1 (no table: 1; added)
+- Last Orders!: 1 (no table: 1; added)
+- The Flood Plain: 1 (no table: 1; added)
+- The Shifting Paths: 1 (no table: 1; added)
+- Fowl Play: 1 (no table: 1; added)
+- The Wild Wood: 1 (no table: 1; added)
+
+#### Relics of the Crusades (Tyrius; Dimashque; Khalibon; Ma'arra; Caverns of the Worm; The Plain of Haytin)
+
+From Relics of the Crusades Part 1: each locale's 2D6 scenario table (Tyrius, Dimashque, Khalibon, Ma'arra, the Caverns of the Worm, the Plain of Haytin), added together, and its new scenario. A renamed scenario with no change links ours (Treasure Hunt is Wyrdstone Hunt, Lost in the Dunes and Lost in the Dark are Lost in the Bogs, The Oasis is The Pool, The Magister's Lair is The Wizard's Mansion); the two Things are variations.
+
+- Street Fight: 6 (Tyrius 3; Dimashque 3; Khalibon 3; linked)
+- The Frenzied Mob: 6 (Tyrius 4; Dimashque 4; linked)
+- Bounty Hunting: 7 (Tyrius 5; Khalibon 4; linked)
+- Occupy: 20 (Tyrius 6; Dimashque 6; Khalibon 6; Ma'arra 6; linked)
+- Skirmish: 21 (Tyrius 7; Dimashque 7; Khalibon 7; The Plain of Haytin 10; linked)
+- Breakthrough: 15 (Tyrius 8; Dimashque 8; Khalibon 8; linked)
+- Hidden Treasure: 11 (Tyrius 9; Dimashque 5; Ma'arra 4; linked)
+- Chance Encounter: 24 (Tyrius 10; Dimashque 10; Ma'arra 7; Caverns of the Worm 7; The Plain of Haytin 7; linked)
+- Stagecoach Ambush: 6 (Tyrius 11; Dimashque 11; Khalibon 11; linked)
+- Surprise Attack: 8 (Dimashque 9; Khalibon 9; linked)
+- The Wizard's Mansion: 9 (Khalibon 5; Caverns of the Worm 6; linked)
+- The Lost Prince: 14 (Khalibon 10; Ma'arra 9; Caverns of the Worm 10; The Plain of Haytin 9; linked)
+- Monster Hunt: 9 (Ma'arra 3; Caverns of the Worm 8; The Plain of Haytin 3; linked)
+- Wyrdstone Hunt: 12 (Ma'arra 5; Caverns of the Worm 5; The Plain of Haytin 5; linked)
+- Ambush!: 14 (Ma'arra 8; Caverns of the Worm 9; The Plain of Haytin 8; linked)
+- Defend the Find: 8 (Ma'arra 10; The Plain of Haytin 6; linked)
+- The Thing in the Ruins: 2 (Ma'arra 11; added)
+- The Thing in the Dark: 2 (Caverns of the Worm 3; added)
+- The Pool: 5 (Caverns of the Worm 4; The Plain of Haytin 11; linked)
+- Lost In The Bogs: 5 (Caverns of the Worm 11; The Plain of Haytin 4; linked)
+- Dungeon Raid: 0 (listed at 0: played only to rescue a warrior the town guards captured; added)
+
+#### Karak Azgal (The rulebook's scenarios; Chaos on the Streets' scenarios)
+
+From the Karak Azgal setting: the rulebook's scenario table and Chaos on the Streets', with its Engineers Workshop in place of The Wizard's Mansion ("Whenever a scenario refers to Wyrdstone just read that as Treasure"), and its special scenario Dragonslayer.
+
+- Street Fight: 2 (The rulebook's scenarios 3; linked)
+- Hidden Treasure: 3 (The rulebook's scenarios 4; linked)
+- Wyrdstone Hunt: 4 (The rulebook's scenarios 5; linked)
+- Occupy: 5 (The rulebook's scenarios 6; linked)
+- Skirmish: 6 (The rulebook's scenarios 7; linked)
+- Breakthrough: 5 (The rulebook's scenarios 8; linked)
+- Surprise Attack: 4 (The rulebook's scenarios 9; linked)
+- Chance Encounter: 3 (The rulebook's scenarios 10; linked)
+- Defend the Find: 2 (The rulebook's scenarios 11; linked)
+- Monster Hunt: 2 (Chaos on the Streets' scenarios 3; linked)
+- The Engineers Workshop: 3 (Chaos on the Streets' scenarios 4; added)
+- Treasure Hunt: 9 (Chaos on the Streets' scenarios 5-6; linked)
+- Street Brawl: 6 (Chaos on the Streets' scenarios 7; linked)
+- Ambush!: 9 (Chaos on the Streets' scenarios 8-9; linked)
+- The Pool: 3 (Chaos on the Streets' scenarios 10; linked)
+- The Lost Prince: 2 (Chaos on the Streets' scenarios 11; linked)
+- Dragonslayer: 0 (listed at 0: a special scenario, on neither table; added)
+
+#### Border Town Burning (Scenario table)
+
+From Border Town Burning's scenario table (mordheimer's pages), which replaces the rulebook's; its special scenarios 9 to 16 are played only when an objective or an event allows it.
+
+- Wyrdstone Hunt: 2 (Scenario table 3; linked)
+- Avalanche!: 3 (Scenario table 4; added)
+- Horrors of the Underground: 4 (Scenario table 5; added)
+- Blockade: 5 (Scenario table 6; added)
+- Tainted Copse: 6 (Scenario table 7; added)
+- Man Hunt: 5 (Scenario table 8; added)
+- Traces to Emprise: 4 (Scenario table 9; added)
+- Last Orders! (Border Town Burning): 3 (Scenario table 10; added)
+- The Enemy of My Enemy: 2 (Scenario table 11; added)
+- The Heist: 0 (listed at 0: a special scenario, played when an objective or an event allows it; added)
+- The Lost Caravans: 0 (listed at 0: a special scenario, played when an objective or an event allows it; added)
+- Chaos Dragon Hunt: 0 (listed at 0: a special scenario, played when an objective or an event allows it; added)
+- The Horde Approaches: 0 (listed at 0: a special scenario, played when an objective or an event allows it; added)
+- Siege!: 0 (listed at 0: a special scenario, played when an objective or an event allows it; added)
+- Hostile Embargo: 0 (listed at 0: a special scenario, played when an objective or an event allows it; added)
+- Ghartok's Tomb: 0 (listed at 0: a special scenario, played when an objective or an event allows it; added)
+- Journey Home: 0 (listed at 0: a special scenario, played when an objective or an event allows it; added)
+
+#### Mousillon (Mousillon scenarios)
+
+From the Mousillon campaign rules, Redux: its 3D6 scenario table (each result a district) and its scenarios; the first Mousillon rules list seventeen scenarios by name for their exploration results but print none, and the Redux prints these.
+
+- Primordial Chaos: 0.17 (Mousillon scenarios 3; added)
+- Beware the Plague: 0.5 (Mousillon scenarios 4; added)
+- Black Lily: 1 (Mousillon scenarios 5; added)
+- Spoils: 1.67 (Mousillon scenarios 6; added)
+- Harbormaster's Lament: 2.5 (Mousillon scenarios 7; added)
+- Cleanse the Wood: 3.5 (Mousillon scenarios 8; added)
+- Look for the Stash: 4.17 (Mousillon scenarios 9; added)
+- Safety on the Other Side: 4.5 (Mousillon scenarios 10; added)
+- Hell Hath No Fury: 4.5 (Mousillon scenarios 11; added)
+- Battle at the Wharf: 4.17 (Mousillon scenarios 12; added)
+- Lost In The Bogs: 3.5 (Mousillon scenarios 13; linked)
+- Devils of Rimwood: 2.5 (Mousillon scenarios 14; added)
+- Library of the Damned: 1.67 (Mousillon scenarios 15; added)
+- Infested: 1 (Mousillon scenarios 16; added)
+- Through the Gates of Morr: 0.5 (Mousillon scenarios 17; added)
+- Knights vs. Knights: 0.17 (Mousillon scenarios 18; added)
+
+#### Mutiny in Marienburg (Core scenario table)
+
+From Mutiny in Marienburg: its 2D6 core scenario table (which supplements the rulebook's) and its special scenarios 12 to 20, played only when a campaign plot or an event allows it. Its Last Orders! and The Heist are Border Town Burning's pages reprinted, so they link those.
+
+- Rolling Fog: 1 (Core scenario table 2; added)
+- Black Market Lagoon: 2 (Core scenario table 3; added)
+- Powder Bridge: 3 (Core scenario table 4; added)
+- Pit of Blood: 4 (Core scenario table 5; added)
+- Stockade: 5 (Core scenario table 6; added)
+- Last Orders! (Border Town Burning): 6 (Core scenario table 7; linked)
+- Silk Market: 5 (Core scenario table 8; added)
+- Illegal Salvage Operation: 4 (Core scenario table 9; added)
+- Burrow Town Collapsing: 3 (Core scenario table 10; added)
+- Dead Freight: 2 (Core scenario table 11; added)
+- The Sting: 1 (Core scenario table 12; added)
+- The Heist: 0 (listed at 0: a special scenario, played when a campaign plot or an event allows it; linked)
+- South Dock Massacre: 0 (listed at 0: a special scenario, played when a campaign plot or an event allows it; added)
+- False Beacons: 0 (listed at 0: a special scenario, played when a campaign plot or an event allows it; added)
+- Midnight at the Mausoleum: 0 (listed at 0: a special scenario, played when a campaign plot or an event allows it; added)
+- Hangman's Square: 0 (listed at 0: a special scenario, played when a campaign plot or an event allows it; added)
+- All Hands on Deck: 0 (listed at 0: a special scenario, played when a campaign plot or an event allows it; added)
+- Swap Meat: 0 (listed at 0: a special scenario, played when a campaign plot or an event allows it; added)
+- Colony of Plenty: 0 (listed at 0: a special scenario, played when a campaign plot or an event allows it; added)
+- Stronghold: 0 (listed at 0: a special scenario, played when a campaign plot or an event allows it; added)
+
+#### Marienburg Annual (no table)
+
+From the Marienburg Annual: its one scenario, the Greenskin plot's special scenario, played once a warband has completed all six prophecies with a full WAAAGH.
+
+- Nice Day for a Waaagh Beheadin': 0 (listed at 0: a special scenario, played when the Greenskin plot allows it; added)
+
+#### Sartosa (Two-player city scenarios; Two-player island scenarios; Multiplayer city scenarios; Multiplayer island scenarios)
+
+From Sartosa's scenario rules: four 2D6 tables (two-player and multiplayer, in the city and on the island; you pick a list, or the scenery does), its new scenarios and its variations of scenarios we hold (a variation is that scenario with Sartosa's changes first). A result that rolls again between two scenarios shares its chance.
+
+- In the Drink! (Street Fight): 2 (Two-player city scenarios 3; added)
+- X Marks the Spot! (Hidden Treasure): 10 (Two-player city scenarios 4; Two-player island scenarios 4; Multiplayer island scenarios 5; added)
+- Heavy Load! (Wyrdstone Hunt): 2.67 (Two-player city scenarios 5; added)
+- Press Gang: 10 (Two-player city scenarios 6; Multiplayer city scenarios 8; added)
+- Skirmish: 12 (Two-player city scenarios 7; Two-player island scenarios 7; linked)
+- Sneaking Out/In! (Breakthrough): 5 (Two-player city scenarios 8; added)
+- Guards! Guards! (Chance Encounter): 4 (Two-player city scenarios 9; added)
+- Last Orders! (Sartosa): 6 (Two-player city scenarios 10; Multiplayer city scenarios 10; added)
+- Rock the Boat! (Defend the Find): 2 (Two-player city scenarios 11; added)
+- Boarding Action: 2 (Two-player island scenarios 3; added)
+- Glittering Prizes! (Wyrdstone Hunt): 4 (Two-player island scenarios 5; added)
+- Archipelago (Island Hopping): 5 (Two-player island scenarios 6; added)
+- Back to the Ship! (Breakthrough): 5 (Two-player island scenarios 8; added)
+- Mutiny: 4 (Two-player island scenarios 9; added)
+- Life's a Beach: 3 (Two-player island scenarios 10; added)
+- Wrecking: 5 (Two-player island scenarios 11; Multiplayer island scenarios 4; added)
+- King of the Hull: 3 (Multiplayer city scenarios 4; added)
+- Warring Houses: 4 (Multiplayer city scenarios 5; added)
+- Heavy Load! (Treasure Hunt): 3.33 (Multiplayer city scenarios 6; added)
+- Street Brawl: 12 (Multiplayer city scenarios 7; Multiplayer island scenarios 7; linked)
+- The Governor's Daughter (The Lost Prince): 4 (Multiplayer city scenarios 9; added)
+- Thief in the Night (Ambush!): 2 (Multiplayer city scenarios 11; added)
+- Here be Monsters: 2 (Multiplayer island scenarios 3; added)
+- Glittering Prizes! (Treasure Hunt): 5 (Multiplayer island scenarios 6; added)
+- Stop the Pigeon! (The Lost Prince): 5 (Multiplayer island scenarios 8; added)
+- Gypsy Switch! (Ambush!): 4 (Multiplayer island scenarios 9; added)
+- Raft Race: 3 (Multiplayer island scenarios 10; added)
+- Glittering Prizes! (The Pool): 2 (Multiplayer island scenarios 11; added)
+- Down At The Docks: 0 (listed at 0: one of its "Other Recommended Scenarios"; linked)
+- The Flood Plain: 0 (listed at 0: one of its "Other Recommended Scenarios"; linked)
+- The Frenzied Mob: 0 (listed at 0: one of its "Other Recommended Scenarios"; linked)
+- Dungeon Raid: 0 (listed at 0: one of its "Other Recommended Scenarios"; linked)
+- Left out: Two-player city scenarios 5: Gunpowder Plot (the Specialist Games website)
+- Left out: Multiplayer city scenarios 3: Merchant Square (the Specialist Games website)
+- Left out: Multiplayer city scenarios 6: Gunpowder Plot (the Specialist Games website)
+- Left out: Haunted Wreck (Jim Schumacher). one of its "Other Recommended Scenarios", printed nowhere we hold (its Wrecking is based on it)
+
+Held, in no setting (a manager adds one by hand): Battle for the Farm, Blood on the Pasturelands, Brigands in the Pasturelands, Defend the Village!, Encampment Raid, Hunt the Heretic, Protect Hornsby's Ferry!, Raids, Rawhide, River Watch, Stop Thief!, The Battle At Koleshire Keep, The Watchtower, Through Black Fire Pass, Wolf Hunt!.
+
+#### Settings that add none of their own
+
+- Mordheim 1b: a grade of Mordheim's own content; scenarios carry no grade, and no table names this grade
+- Mordheim 1c: a grade of Mordheim's own content; scenarios carry no grade, and no table names this grade
+- Mordheim 2a: a grade of Mordheim's own content; scenarios carry no grade, and no table names this grade
+- Grade 3: a grade of Mordheim's own content; scenarios carry no grade, and no table names this grade
+- Khemri 3: Khemri's grade 3 warbands; Khemri's scenarios are Khemri 1b's, which the Khemri preset ticks beside it
+- Sylvania: the Sylvania rules have no scenarios or scenario table (only the light roll at a scenario's start)
+- Athel Loren: the Athel Loren rules have no scenarios; their hazards' mini-battles are exploration results
+- The Sealed City: its Ambitions and Lost and Found name special scenarios (Assassination, Activation, a city ring's scenario) that none of its documents we hold prints, and it has no scenario table

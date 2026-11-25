@@ -1,0 +1,1241 @@
+{
+ "settings": [
+  {
+   "setting": "Empire in Flames",
+   "from": "Empire in Flames (2004), its two scenario tables (mordheimer's Empire in Flames scenarios page holds the same) and its Beastmen scenarios",
+   "tables": [
+    {
+     "table": "Two-player scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "breakthrough"
+      },
+      {
+       "rolls": "4",
+       "slug": "the-thing-in-the-woods"
+      },
+      {
+       "rolls": "5",
+       "slug": "wyrdstone-hunt"
+      },
+      {
+       "rolls": "6",
+       "slug": "skirmish"
+      },
+      {
+       "rolls": "7",
+       "slug": "stagecoash-ambush"
+      },
+      {
+       "rolls": "8",
+       "slug": "bounty-hunting"
+      },
+      {
+       "rolls": "9",
+       "slug": "lost-in-the-bogs"
+      },
+      {
+       "rolls": "10",
+       "slug": "surprise-attack"
+      },
+      {
+       "rolls": "11",
+       "slug": "chance-encounter"
+      }
+     ]
+    },
+    {
+     "table": "Multi-player scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "lost-prince-tc5"
+      },
+      {
+       "rolls": "4",
+       "slug": "monster-hunt-tc5"
+      },
+      {
+       "rolls": "5",
+       "slug": "treasure-hunt-tc5"
+      },
+      {
+       "rolls": "6",
+       "slug": "street-brawl-tc5"
+      },
+      {
+       "rolls": "7",
+       "slug": "stagecoash-ambush"
+      },
+      {
+       "rolls": "8",
+       "slug": "bounty-hunting"
+      },
+      {
+       "rolls": "9",
+       "slug": "lost-in-the-bogs"
+      },
+      {
+       "rolls": "10",
+       "slug": "the-thing-in-the-woods"
+      },
+      {
+       "rolls": "11",
+       "slug": "ambush-tc5"
+      }
+     ]
+    }
+   ],
+   "listed": [
+    {
+     "slug": "the-frenzied-mob",
+     "why": "the book's own scenario, on neither table"
+    },
+    {
+     "slug": "eif-beastmen-the-ambush",
+     "why": "a Beastmen scenario, rolled on its own D6 table only when a Beastmen warband plays"
+    },
+    {
+     "slug": "eif-beastmen-the-raid",
+     "why": "a Beastmen scenario, rolled on its own D6 table only when a Beastmen warband plays"
+    },
+    {
+     "slug": "eif-beastmen-the-beast-hunt",
+     "why": "a Beastmen scenario, rolled on its own D6 table only when a Beastmen warband plays"
+    }
+   ]
+  },
+  {
+   "setting": "Lustria",
+   "from": "the Lustria campaign rules, their two scenario tables (mordheimer's Lustria scenarios page holds the same)",
+   "tables": [
+    {
+     "table": "Two-player scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "the-hunters-become-the-hunted"
+      },
+      {
+       "rolls": "4",
+       "slug": "the-secrets-of-beujuntae"
+      },
+      {
+       "rolls": "5",
+       "slug": "skirmish"
+      },
+      {
+       "rolls": "6",
+       "slug": "jungle-skirmish"
+      },
+      {
+       "rolls": "7",
+       "slug": "demz-my-gubbinz"
+      },
+      {
+       "rolls": "8",
+       "slug": "island-hopping"
+      },
+      {
+       "rolls": "9",
+       "slug": "defend-the-find"
+      },
+      {
+       "rolls": "10",
+       "slug": "hidden-treasure"
+      },
+      {
+       "rolls": "11",
+       "slug": "chance-encounter"
+      }
+     ]
+    },
+    {
+     "table": "Multi-player scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "the-hunters-become-the-hunted"
+      },
+      {
+       "rolls": "4",
+       "slug": "the-secrets-of-beujuntae"
+      },
+      {
+       "rolls": "5",
+       "slug": "lost-temple-of-the-slann"
+      },
+      {
+       "rolls": "6",
+       "slug": "jungle-skirmish"
+      },
+      {
+       "rolls": "7",
+       "slug": "treasure-hunt-tc5"
+      },
+      {
+       "rolls": "8",
+       "slug": "street-brawl-tc5"
+      },
+      {
+       "rolls": "9",
+       "slug": "island-hopping"
+      },
+      {
+       "rolls": "10",
+       "slug": "pool-tc5"
+      },
+      {
+       "rolls": "11",
+       "slug": "ambush-tc5"
+      }
+     ]
+    }
+   ],
+   "listed": [
+    {
+     "slug": "kidnapped",
+     "why": "\"An interesting scenario to try\", on neither table"
+    }
+   ]
+  },
+  {
+   "setting": "Albion",
+   "from": "the Albion campaign rules (Martin Greminger), their two scenario tables; mordheimer's Albion page has a shorter table of the three Town Cryer scenarios alone",
+   "tables": [
+    {
+     "table": "Two-player scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "death-in-the-mists"
+      },
+      {
+       "rolls": "4",
+       "slug": "gift-of-the-truthsayers"
+      },
+      {
+       "rolls": "5",
+       "slug": "breakthrough"
+      },
+      {
+       "rolls": "6-8",
+       "slug": "skirmish"
+      },
+      {
+       "rolls": "9",
+       "slug": "the-ogham-stones"
+      },
+      {
+       "rolls": "10",
+       "name": "Defend the Cave"
+      },
+      {
+       "rolls": "11",
+       "slug": "chance-encounter"
+      }
+     ]
+    },
+    {
+     "table": "Multi-player scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "monster-hunt-tc5"
+      },
+      {
+       "rolls": "4",
+       "slug": "death-in-the-mists"
+      },
+      {
+       "rolls": "5-6",
+       "slug": "treasure-hunt-tc5"
+      },
+      {
+       "rolls": "7",
+       "name": "Great Skirmish"
+      },
+      {
+       "rolls": "8-9",
+       "slug": "ambush-tc5"
+      },
+      {
+       "rolls": "10",
+       "name": "Raid"
+      },
+      {
+       "rolls": "11",
+       "name": "Defend the Cave"
+      }
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "name": "Defend the Cave, Great Skirmish and Raid",
+     "why": "named by the tables, printed nowhere in the Albion rules or on mordheimer"
+    }
+   ]
+  },
+  {
+   "setting": "Khemri 1b",
+   "from": "the Khemri Town Cryer compilation, its two scenario tables (the Khemri campaign rules hold the same), and mordheimer's pages of the Khemri scenarios",
+   "tables": [
+    {
+     "table": "Two-player scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "hidden-treasure"
+      },
+      {
+       "rolls": "4",
+       "slug": "defend-the-find"
+      },
+      {
+       "rolls": "5",
+       "slug": "breakthrough"
+      },
+      {
+       "rolls": "6-8",
+       "slug": "skirmish"
+      },
+      {
+       "rolls": "9",
+       "slug": "defend-the-oasis"
+      },
+      {
+       "rolls": "10",
+       "slug": "defend-the-tomb"
+      },
+      {
+       "rolls": "11",
+       "slug": "chance-encounter"
+      }
+     ]
+    },
+    {
+     "table": "Multi-player scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "monster-hunt-tc5"
+      },
+      {
+       "rolls": "4",
+       "slug": "tomb-raid"
+      },
+      {
+       "rolls": "5-6",
+       "slug": "treasure-hunt-tc5"
+      },
+      {
+       "rolls": "7",
+       "name": "Desert Skirmish"
+      },
+      {
+       "rolls": "8-9",
+       "slug": "ambush-tc5"
+      },
+      {
+       "rolls": "10",
+       "slug": "protect-the-prince"
+      },
+      {
+       "rolls": "11",
+       "slug": "one-mans-rescue-is-another-mans-kidnap"
+      }
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "name": "Desert Skirmish",
+     "why": "named by the multi-player table, printed nowhere we hold"
+    }
+   ]
+  },
+  {
+   "setting": "The Nemesis Crown",
+   "from": "the Nemesis Crown supplement's nine scenarios (mordheimer's pages), each suggested for a territory of the map, with no table to roll",
+   "each": [
+    "nightfall",
+    "enter-the-necromancers-tower",
+    "the-warmachine",
+    "the-lost-mines-of-khrazi-drudd",
+    "last-orders",
+    "the-flood-plain",
+    "the-shifting-paths",
+    "fowl-play",
+    "the-wild-wood"
+   ]
+  },
+  {
+   "setting": "Relics of the Crusades",
+   "from": "Relics of the Crusades Part 1: each locale's 2D6 scenario table (Tyrius, Dimashque, Khalibon, Ma'arra, the Caverns of the Worm, the Plain of Haytin), added together, and its new scenario. A renamed scenario with no change links ours (Treasure Hunt is Wyrdstone Hunt, Lost in the Dunes and Lost in the Dark are Lost in the Bogs, The Oasis is The Pool, The Magister's Lair is The Wizard's Mansion); the two Things are variations",
+   "tables": [
+    {
+     "table": "Tyrius",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "street-fight"
+      },
+      {
+       "rolls": "4",
+       "slug": "the-frenzied-mob"
+      },
+      {
+       "rolls": "5",
+       "slug": "bounty-hunting"
+      },
+      {
+       "rolls": "6",
+       "slug": "occupy"
+      },
+      {
+       "rolls": "7",
+       "slug": "skirmish"
+      },
+      {
+       "rolls": "8",
+       "slug": "breakthrough"
+      },
+      {
+       "rolls": "9",
+       "slug": "hidden-treasure"
+      },
+      {
+       "rolls": "10",
+       "slug": "chance-encounter"
+      },
+      {
+       "rolls": "11",
+       "slug": "stagecoash-ambush"
+      }
+     ]
+    },
+    {
+     "table": "Dimashque",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "street-fight"
+      },
+      {
+       "rolls": "4",
+       "slug": "the-frenzied-mob"
+      },
+      {
+       "rolls": "5",
+       "slug": "hidden-treasure"
+      },
+      {
+       "rolls": "6",
+       "slug": "occupy"
+      },
+      {
+       "rolls": "7",
+       "slug": "skirmish"
+      },
+      {
+       "rolls": "8",
+       "slug": "breakthrough"
+      },
+      {
+       "rolls": "9",
+       "slug": "surprise-attack"
+      },
+      {
+       "rolls": "10",
+       "slug": "chance-encounter"
+      },
+      {
+       "rolls": "11",
+       "slug": "stagecoash-ambush"
+      }
+     ]
+    },
+    {
+     "table": "Khalibon",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "street-fight"
+      },
+      {
+       "rolls": "4",
+       "slug": "bounty-hunting"
+      },
+      {
+       "rolls": "5",
+       "slug": "wizards-mansion-tc5"
+      },
+      {
+       "rolls": "6",
+       "slug": "occupy"
+      },
+      {
+       "rolls": "7",
+       "slug": "skirmish"
+      },
+      {
+       "rolls": "8",
+       "slug": "breakthrough"
+      },
+      {
+       "rolls": "9",
+       "slug": "surprise-attack"
+      },
+      {
+       "rolls": "10",
+       "slug": "lost-prince-tc5"
+      },
+      {
+       "rolls": "11",
+       "slug": "stagecoash-ambush"
+      }
+     ]
+    },
+    {
+     "table": "Ma'arra",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "monster-hunt-tc5"
+      },
+      {
+       "rolls": "4",
+       "slug": "hidden-treasure"
+      },
+      {
+       "rolls": "5",
+       "slug": "wyrdstone-hunt"
+      },
+      {
+       "rolls": "6",
+       "slug": "occupy"
+      },
+      {
+       "rolls": "7",
+       "slug": "chance-encounter"
+      },
+      {
+       "rolls": "8",
+       "slug": "ambush-tc5"
+      },
+      {
+       "rolls": "9",
+       "slug": "lost-prince-tc5"
+      },
+      {
+       "rolls": "10",
+       "slug": "defend-the-find"
+      },
+      {
+       "rolls": "11",
+       "slug": "the-thing-in-the-ruins"
+      }
+     ]
+    },
+    {
+     "table": "Caverns of the Worm",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "the-thing-in-the-dark"
+      },
+      {
+       "rolls": "4",
+       "slug": "pool-tc5"
+      },
+      {
+       "rolls": "5",
+       "slug": "wyrdstone-hunt"
+      },
+      {
+       "rolls": "6",
+       "slug": "wizards-mansion-tc5"
+      },
+      {
+       "rolls": "7",
+       "slug": "chance-encounter"
+      },
+      {
+       "rolls": "8",
+       "slug": "monster-hunt-tc5"
+      },
+      {
+       "rolls": "9",
+       "slug": "ambush-tc5"
+      },
+      {
+       "rolls": "10",
+       "slug": "lost-prince-tc5"
+      },
+      {
+       "rolls": "11",
+       "slug": "lost-in-the-bogs"
+      }
+     ]
+    },
+    {
+     "table": "The Plain of Haytin",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "monster-hunt-tc5"
+      },
+      {
+       "rolls": "4",
+       "slug": "lost-in-the-bogs"
+      },
+      {
+       "rolls": "5",
+       "slug": "wyrdstone-hunt"
+      },
+      {
+       "rolls": "6",
+       "slug": "defend-the-find"
+      },
+      {
+       "rolls": "7",
+       "slug": "chance-encounter"
+      },
+      {
+       "rolls": "8",
+       "slug": "ambush-tc5"
+      },
+      {
+       "rolls": "9",
+       "slug": "lost-prince-tc5"
+      },
+      {
+       "rolls": "10",
+       "slug": "skirmish"
+      },
+      {
+       "rolls": "11",
+       "slug": "pool-tc5"
+      }
+     ]
+    }
+   ],
+   "listed": [
+    {
+     "slug": "dungeon-raid",
+     "why": "played only to rescue a warrior the town guards captured"
+    }
+   ]
+  },
+  {
+   "setting": "Karak Azgal",
+   "from": "the Karak Azgal setting: the rulebook's scenario table and Chaos on the Streets', with its Engineers Workshop in place of The Wizard's Mansion (\"Whenever a scenario refers to Wyrdstone just read that as Treasure\"), and its special scenario Dragonslayer",
+   "tables": [
+    {
+     "table": "The rulebook's scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "street-fight"
+      },
+      {
+       "rolls": "4",
+       "slug": "hidden-treasure"
+      },
+      {
+       "rolls": "5",
+       "slug": "wyrdstone-hunt"
+      },
+      {
+       "rolls": "6",
+       "slug": "occupy"
+      },
+      {
+       "rolls": "7",
+       "slug": "skirmish"
+      },
+      {
+       "rolls": "8",
+       "slug": "breakthrough"
+      },
+      {
+       "rolls": "9",
+       "slug": "surprise-attack"
+      },
+      {
+       "rolls": "10",
+       "slug": "chance-encounter"
+      },
+      {
+       "rolls": "11",
+       "slug": "defend-the-find"
+      }
+     ]
+    },
+    {
+     "table": "Chaos on the Streets' scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "monster-hunt-tc5"
+      },
+      {
+       "rolls": "4",
+       "slug": "the-engineers-workshop"
+      },
+      {
+       "rolls": "5-6",
+       "slug": "treasure-hunt-tc5"
+      },
+      {
+       "rolls": "7",
+       "slug": "street-brawl-tc5"
+      },
+      {
+       "rolls": "8-9",
+       "slug": "ambush-tc5"
+      },
+      {
+       "rolls": "10",
+       "slug": "pool-tc5"
+      },
+      {
+       "rolls": "11",
+       "slug": "lost-prince-tc5"
+      }
+     ]
+    }
+   ],
+   "listed": [
+    {
+     "slug": "dragonslayer",
+     "why": "a special scenario, on neither table"
+    }
+   ]
+  },
+  {
+   "setting": "Border Town Burning",
+   "from": "Border Town Burning's scenario table (mordheimer's pages), which replaces the rulebook's; its special scenarios 9 to 16 are played only when an objective or an event allows it",
+   "tables": [
+    {
+     "table": "Scenario table",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "wyrdstone-hunt"
+      },
+      {
+       "rolls": "4",
+       "slug": "avelanche"
+      },
+      {
+       "rolls": "5",
+       "slug": "horrors-of-the-underground"
+      },
+      {
+       "rolls": "6",
+       "slug": "blockade"
+      },
+      {
+       "rolls": "7",
+       "slug": "tainted-copse"
+      },
+      {
+       "rolls": "8",
+       "slug": "man-hunt"
+      },
+      {
+       "rolls": "9",
+       "slug": "traces-to-emprise"
+      },
+      {
+       "rolls": "10",
+       "slug": "last-orders-border-town-burning"
+      },
+      {
+       "rolls": "11",
+       "slug": "the-enemy-of-my-enemy"
+      }
+     ]
+    }
+   ],
+   "listed": [
+    {
+     "slug": "the-heist",
+     "why": "a special scenario, played when an objective or an event allows it"
+    },
+    {
+     "slug": "the-lost-caravan",
+     "why": "a special scenario, played when an objective or an event allows it"
+    },
+    {
+     "slug": "chaos-dragon-hunt",
+     "why": "a special scenario, played when an objective or an event allows it"
+    },
+    {
+     "slug": "the-horde-approaches",
+     "why": "a special scenario, played when an objective or an event allows it"
+    },
+    {
+     "slug": "siege",
+     "why": "a special scenario, played when an objective or an event allows it"
+    },
+    {
+     "slug": "hostile-embargo",
+     "why": "a special scenario, played when an objective or an event allows it"
+    },
+    {
+     "slug": "ghartoks-tomb",
+     "why": "a special scenario, played when an objective or an event allows it"
+    },
+    {
+     "slug": "journey-home",
+     "why": "a special scenario, played when an objective or an event allows it"
+    }
+   ]
+  },
+  {
+   "setting": "Mousillon",
+   "from": "the Mousillon campaign rules, Redux: its 3D6 scenario table (each result a district) and its scenarios; the first Mousillon rules list seventeen scenarios by name for their exploration results but print none, and the Redux prints these",
+   "tables": [
+    {
+     "table": "Mousillon scenarios",
+     "dice": "3D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "primordial-chaos"
+      },
+      {
+       "rolls": "4",
+       "slug": "beware-the-plague"
+      },
+      {
+       "rolls": "5",
+       "slug": "black-lily"
+      },
+      {
+       "rolls": "6",
+       "slug": "spoils"
+      },
+      {
+       "rolls": "7",
+       "slug": "harbormasters-lament"
+      },
+      {
+       "rolls": "8",
+       "slug": "cleanse-the-wood"
+      },
+      {
+       "rolls": "9",
+       "slug": "look-for-the-stash"
+      },
+      {
+       "rolls": "10",
+       "slug": "safety-on-the-other-side"
+      },
+      {
+       "rolls": "11",
+       "slug": "hell-hath-no-fury"
+      },
+      {
+       "rolls": "12",
+       "slug": "battle-at-the-wharf"
+      },
+      {
+       "rolls": "13",
+       "slug": "lost-in-the-bogs"
+      },
+      {
+       "rolls": "14",
+       "slug": "devils-of-rimwood"
+      },
+      {
+       "rolls": "15",
+       "slug": "library-of-the-damned"
+      },
+      {
+       "rolls": "16",
+       "slug": "infested"
+      },
+      {
+       "rolls": "17",
+       "slug": "through-the-gates-of-morr"
+      },
+      {
+       "rolls": "18",
+       "slug": "knights-vs-knights"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "setting": "Mutiny in Marienburg",
+   "from": "Mutiny in Marienburg: its 2D6 core scenario table (which supplements the rulebook's) and its special scenarios 12 to 20, played only when a campaign plot or an event allows it. Its Last Orders! and The Heist are Border Town Burning's pages reprinted, so they link those",
+   "tables": [
+    {
+     "table": "Core scenario table",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "2",
+       "slug": "rolling-fog"
+      },
+      {
+       "rolls": "3",
+       "slug": "black-market-lagoon"
+      },
+      {
+       "rolls": "4",
+       "slug": "powder-bridge"
+      },
+      {
+       "rolls": "5",
+       "slug": "pit-of-blood"
+      },
+      {
+       "rolls": "6",
+       "slug": "stockade"
+      },
+      {
+       "rolls": "7",
+       "slug": "last-orders-border-town-burning"
+      },
+      {
+       "rolls": "8",
+       "slug": "silk-market"
+      },
+      {
+       "rolls": "9",
+       "slug": "illegal-salvage-operation"
+      },
+      {
+       "rolls": "10",
+       "slug": "burrow-town-collapsing"
+      },
+      {
+       "rolls": "11",
+       "slug": "dead-freight"
+      },
+      {
+       "rolls": "12",
+       "slug": "the-sting"
+      }
+     ]
+    }
+   ],
+   "listed": [
+    {
+     "slug": "the-heist",
+     "why": "a special scenario, played when a campaign plot or an event allows it"
+    },
+    {
+     "slug": "south-dock-massacre",
+     "why": "a special scenario, played when a campaign plot or an event allows it"
+    },
+    {
+     "slug": "false-beacons",
+     "why": "a special scenario, played when a campaign plot or an event allows it"
+    },
+    {
+     "slug": "midnight-at-the-mausoleum",
+     "why": "a special scenario, played when a campaign plot or an event allows it"
+    },
+    {
+     "slug": "hangmans-square",
+     "why": "a special scenario, played when a campaign plot or an event allows it"
+    },
+    {
+     "slug": "all-hands-on-deck",
+     "why": "a special scenario, played when a campaign plot or an event allows it"
+    },
+    {
+     "slug": "swap-meat",
+     "why": "a special scenario, played when a campaign plot or an event allows it"
+    },
+    {
+     "slug": "colony-of-plenty",
+     "why": "a special scenario, played when a campaign plot or an event allows it"
+    },
+    {
+     "slug": "stronghold",
+     "why": "a special scenario, played when a campaign plot or an event allows it"
+    }
+   ]
+  },
+  {
+   "setting": "Marienburg Annual",
+   "from": "the Marienburg Annual: its one scenario, the Greenskin plot's special scenario, played once a warband has completed all six prophecies with a full WAAAGH",
+   "listed": [
+    {
+     "slug": "nice-day-for-a-waaagh-beheadin",
+     "why": "a special scenario, played when the Greenskin plot allows it"
+    }
+   ]
+  },
+  {
+   "setting": "Sartosa",
+   "from": "Sartosa's scenario rules: four 2D6 tables (two-player and multiplayer, in the city and on the island; you pick a list, or the scenery does), its new scenarios and its variations of scenarios we hold (a variation is that scenario with Sartosa's changes first). A result that rolls again between two scenarios shares its chance",
+   "tables": [
+    {
+     "table": "Two-player city scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "in-the-drink"
+      },
+      {
+       "rolls": "4",
+       "slug": "x-marks-the-spot"
+      },
+      {
+       "rolls": "5",
+       "slug": "heavy-load-wyrdstone-hunt",
+       "share": "4/6"
+      },
+      {
+       "rolls": "5",
+       "name": "Gunpowder Plot (the Specialist Games website)",
+       "share": "2/6"
+      },
+      {
+       "rolls": "6",
+       "slug": "press-gang"
+      },
+      {
+       "rolls": "7",
+       "slug": "skirmish"
+      },
+      {
+       "rolls": "8",
+       "slug": "sneaking-out-in"
+      },
+      {
+       "rolls": "9",
+       "slug": "guards-guards"
+      },
+      {
+       "rolls": "10",
+       "slug": "last-orders-sartosa"
+      },
+      {
+       "rolls": "11",
+       "slug": "rock-the-boat"
+      }
+     ]
+    },
+    {
+     "table": "Two-player island scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "boarding-action"
+      },
+      {
+       "rolls": "4",
+       "slug": "x-marks-the-spot"
+      },
+      {
+       "rolls": "5",
+       "slug": "glittering-prizes-wyrdstone-hunt"
+      },
+      {
+       "rolls": "6",
+       "slug": "archipelago"
+      },
+      {
+       "rolls": "7",
+       "slug": "skirmish"
+      },
+      {
+       "rolls": "8",
+       "slug": "back-to-the-ship"
+      },
+      {
+       "rolls": "9",
+       "slug": "mutiny"
+      },
+      {
+       "rolls": "10",
+       "slug": "lifes-a-beach"
+      },
+      {
+       "rolls": "11",
+       "slug": "wrecking"
+      }
+     ]
+    },
+    {
+     "table": "Multiplayer city scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "name": "Merchant Square (the Specialist Games website)"
+      },
+      {
+       "rolls": "4",
+       "slug": "king-of-the-hull"
+      },
+      {
+       "rolls": "5",
+       "slug": "warring-houses"
+      },
+      {
+       "rolls": "6",
+       "slug": "heavy-load-treasure-hunt",
+       "share": "4/6"
+      },
+      {
+       "rolls": "6",
+       "name": "Gunpowder Plot (the Specialist Games website)",
+       "share": "2/6"
+      },
+      {
+       "rolls": "7",
+       "slug": "street-brawl-tc5"
+      },
+      {
+       "rolls": "8",
+       "slug": "press-gang"
+      },
+      {
+       "rolls": "9",
+       "slug": "the-governors-daughter"
+      },
+      {
+       "rolls": "10",
+       "slug": "last-orders-sartosa"
+      },
+      {
+       "rolls": "11",
+       "slug": "thief-in-the-night"
+      }
+     ]
+    },
+    {
+     "table": "Multiplayer island scenarios",
+     "dice": "2D6",
+     "rows": [
+      {
+       "rolls": "3",
+       "slug": "here-be-monsters"
+      },
+      {
+       "rolls": "4",
+       "slug": "wrecking"
+      },
+      {
+       "rolls": "5",
+       "slug": "x-marks-the-spot"
+      },
+      {
+       "rolls": "6",
+       "slug": "glittering-prizes-treasure-hunt"
+      },
+      {
+       "rolls": "7",
+       "slug": "street-brawl-tc5"
+      },
+      {
+       "rolls": "8",
+       "slug": "stop-the-pigeon"
+      },
+      {
+       "rolls": "9",
+       "slug": "gypsy-switch"
+      },
+      {
+       "rolls": "10",
+       "slug": "raft-race"
+      },
+      {
+       "rolls": "11",
+       "slug": "glittering-prizes-the-pool"
+      }
+     ]
+    }
+   ],
+   "listed": [
+    {
+     "slug": "down-at-the-docks",
+     "why": "one of its \"Other Recommended Scenarios\""
+    },
+    {
+     "slug": "the-flood-plain",
+     "why": "one of its \"Other Recommended Scenarios\""
+    },
+    {
+     "slug": "the-frenzied-mob",
+     "why": "one of its \"Other Recommended Scenarios\""
+    },
+    {
+     "slug": "dungeon-raid",
+     "why": "one of its \"Other Recommended Scenarios\""
+    }
+   ],
+   "missing": [
+    {
+     "name": "Haunted Wreck (Jim Schumacher)",
+     "why": "one of its \"Other Recommended Scenarios\", printed nowhere we hold (its Wrecking is based on it)"
+    }
+   ]
+  }
+ ],
+ "none": [
+  {
+   "setting": "Mordheim 1b",
+   "why": "a grade of Mordheim's own content; scenarios carry no grade, and no table names this grade"
+  },
+  {
+   "setting": "Mordheim 1c",
+   "why": "a grade of Mordheim's own content; scenarios carry no grade, and no table names this grade"
+  },
+  {
+   "setting": "Mordheim 2a",
+   "why": "a grade of Mordheim's own content; scenarios carry no grade, and no table names this grade"
+  },
+  {
+   "setting": "Grade 3",
+   "why": "a grade of Mordheim's own content; scenarios carry no grade, and no table names this grade"
+  },
+  {
+   "setting": "Khemri 3",
+   "why": "Khemri's grade 3 warbands; Khemri's scenarios are Khemri 1b's, which the Khemri preset ticks beside it"
+  },
+  {
+   "setting": "Sylvania",
+   "why": "the Sylvania rules have no scenarios or scenario table (only the light roll at a scenario's start)"
+  },
+  {
+   "setting": "Athel Loren",
+   "why": "the Athel Loren rules have no scenarios; their hazards' mini-battles are exploration results"
+  },
+  {
+   "setting": "The Sealed City",
+   "why": "its Ambitions and Lost and Found name special scenarios (Assassination, Activation, a city ring's scenario) that none of its documents we hold prints, and it has no scenario table"
+  }
+ ]
+}

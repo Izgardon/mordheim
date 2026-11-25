@@ -1,0 +1,209 @@
+{
+ "document": "Karak Azgal, the Mordheim setting (pages 72-75)",
+ "scenarios": [
+  {
+   "source": "Karak Azgal",
+   "intro": "The Dwarf Engineer's Guild is a remarkably conservative group. Despite such novelties as the Flame Cannon and the Gyrocopter, the elders frown on new developments and innovations. For this reason, many engineers choose to work alone and in secret. This must have been the abode of a Master Engineer. The workshop, offices and storerooms have been sealed with strong runes and have survived almost intact.",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "Each player takes it in turn to place a piece of terrain, either a ruined building or other similar item. We suggest that the terrain is set up within an area roughly 4' x 6'. The first building should be placed in the centre of the table, and the object of the scenario is to take control of this building.",
+     "tables": []
+    },
+    {
+     "title": "Warbands",
+     "text": "One player is the defender, determined as normal (see Attackers and Defenders in the 'Chaos on the Streets' article), representing the warband that reached the workshop first. The defender is deployed first, inside or within 6\" of the objective building. Then the attacking warband is set up as normal. In addition, for each attacking warband beyond the first, the defender rolls once on the table below to determine the additional equipment his warband gets to start with. Each item may only be found once. If the same number is rolled more than once, re-roll. These items represent the findings of the warband thus far and are meant to give the warband a chance against multiple opponents.\n\n{{table:1}}\n\nAll of the above are described in the Mordheim rules except for the Automaton. For rules on the Automaton, see New items below. A flask of Bugman's Ale works the same as in the Mordheim rulebook but there is only sufficient for one warrior (hero or henchman) to drink.",
+     "tables": [
+      {
+       "columns": [
+        "D6 Roll",
+        "Item Found"
+       ],
+       "rows": [
+        [
+         "1",
+         "Automaton"
+        ],
+        [
+         "2",
+         "1D3 doses of healing herbs"
+        ],
+        [
+         "3",
+         "1D3 flasks of Bugman's Ale"
+        ],
+        [
+         "4",
+         "Luck charm"
+        ],
+        [
+         "5",
+         "Holy (Unholy) Relic"
+        ],
+        [
+         "6",
+         "Cathayan Silk Cloak"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Starting the game",
+     "text": "Each player rolls a D6. The player rolling the highest has the first turn and order of play proceeds clockwise around the table (based on where players placed their warbands).",
+     "tables": []
+    },
+    {
+     "title": "Ending the game",
+     "text": "The game ends when all the warbands but one have failed their Rout test. The routers automatically lose. If one or more of the warbands have allied, they may choose to share the victory and end the game.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n+1 Per Enemy out of action. Any Hero earns +1 experience for each enemy he puts out of action.",
+     "tables": []
+    },
+    {
+     "title": "Engineer's treasure",
+     "text": "At the end of the game the winning warband finds all of the items on the table above which were not found before the battle. In addition, roll on the following chart to see what additional items the warband finds in the workshop. Note that you will need to roll for each item separately, apart from the gold crowns, which are always found. For example, you will need to roll a 4+ to find the Engineer's notebook. Then roll to see if you find the gromril sword and so on.\n\n{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "Item Found",
+        "D6 Roll Needed"
+       ],
+       "rows": [
+        [
+         "3D6 gc",
+         "Automatic"
+        ],
+        [
+         "D3 gems worth 10 gc each",
+         "5+"
+        ],
+        [
+         "Engineer's notebook",
+         "4+"
+        ],
+        [
+         "Gromril sword",
+         "5+"
+        ],
+        [
+         "Widget",
+         "4+"
+        ],
+        [
+         "Brace of pistols",
+         "4+"
+        ],
+        [
+         "Dispel scroll",
+         "5+"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "New items",
+     "text": "Automaton: Use the stats and special rules for a zombie with +1S and +1T. The Automaton is an ingenious mechanism roughly in the shape of a man. It will follow the instructions of the defending warband but will not leave the vicinity of the workshop for any reason, even after the game (ie it will stay within 6\" of it). The Automaton may obviously not be traded.\n\nEngineer's Notebook: To the casual observer this looks just like a battered old notebook, filled with strange writing. One of your heroes may study the Engineer's notebook, and the extra knowledge he gains will enable him to choose from Academic skills whenever he gains a new skill in addition to those skills normally available to him.\n\nWidget: Dwarf Engineers use many strange tools for which ordinary folk have no name. This one obviously serves some obscure function for the engineer but is useless to everyone else. Nevertheless you take it and it can be traded for 10 gc. If the warband who finds it includes an engineer, he will keep the widget until he can work out what it is for.",
+     "tables": []
+    }
+   ],
+   "slug": "the-engineers-workshop",
+   "name": "The Engineers Workshop",
+   "players": "multiplayer",
+   "summary": "Karak Azgal's replacement for Chaos on the Streets' Scenario 4, The Wizard's Mansion: take the sealed workshop of a Master Engineer."
+  },
+  {
+   "source": "Karak Azgal",
+   "intro": "In a deep dark cave, somewhere in the heart of The Worlds Edge Mountains, something stirred. Something huge. It lifted its head, groaned, and let it fall to the cavern floor again.\n\n\"Just another few years\", it promised itself, falling back into a doze. As it slumbered, it dreamed. It saw the world as it used to be, seven thousand years ago, felt the noiseless explosion which threw the second moon into the sky. It dreamed of the armies of gibbering, twisted things which poured across the land.\n\nThe Dragon stirred uneasily as the dream shifted. It saw a strange figure step forward, saw the glowing axe, and shuddered as the awesome weapon struck it. Then it jerked awake.\n\n\"That dream again\" it rumbled to itself. The Dragon pulled itself to its feet. Gaping wounds opened along the length of its great body - they should have been fatal, but the Dragon would not find death so easily. It roared as its head brushed the wall, jarring its broken tooth and aggravating its abscess - the size of a man's head - which lay beneath it. For hours it raged. Then its eye lit on the great Dragon skull which lay just outside.\n\n\"Yes\" it rumbled, \"I must pull myself together. Things to do\". It remembered the murder of its beloved mate, and grunted.\n\n\"Hmm... I can still remember his powerful face,\" it mused, \"My pain gets worse. But I'll sort it out. I'll kill every one of those little creatures that tries to steal my gold. The two-legged ones are not going to defeat Dragon-kin while I'm alive, and thanks to my Magic, I'm going to live for a very long time.\"",
+   "sections": [
+    {
+     "title": "Objective",
+     "text": "Two rival warbands have both stumbled upon a sleeping Dragon on his treasure trove at the same time and are now searching the immediate area for as much treasure as they can carry. Who knows what forgotten treasures may lie waiting to be found? The objective is to search the vast Dragon's cave for as much treasure as possible before the Dragon awakes. Of course, the biggest part of the treasure horde lies near (or under) the old Dragon.",
+     "tables": []
+    },
+    {
+     "title": "Terrain",
+     "text": "Each player takes it in turn to place a piece of terrain, either a ruined building or other similar item. We suggest that the terrain is set up within an area roughly 4' x 4'. In the centre of the table you should place a large model of a Dragon on a treasure hoard. Place a token to represent Skalf's Axe 4\" in front of the Dragon. Buildings must be placed a minimum of 10\" distance away from the Dragon.",
+     "tables": []
+    },
+    {
+     "title": "Warbands",
+     "text": "Each player rolls a D6. Whoever rolls the lowest chooses which table edge he wishes to set up on, and places all his warriors within 8\" of that edge. His opponent then sets up on the opposite side.",
+     "tables": []
+    },
+    {
+     "title": "Starting the game",
+     "text": "Each player rolls a D6. The player rolling the highest has the first turn and order of play proceeds clockwise around the table (based on where players placed their warbands).",
+     "tables": []
+    },
+    {
+     "title": "Special rules",
+     "text": "All the Heroes in both warbands are looking for as much treasure as possible to take with them. They can try to inspect the buildings to find treasure. Each time a Hero enters a building roll 2D6. On a score of 12 he has found 3D6 gc of treasure. A Hero may not search buildings in his own deployment zone.\n\nAfter finding the treasure, the Hero can then take it to safety via his own table edge or continue searching. If he is put out of action, place a counter in the spot where he fell. This counter represents all the gold coins that the Hero has found so far. Any warrior may pick the treasure up by moving into base contact with the counter.\n\nOf course the real treasure lies near, or under, the Dragon. Any Hero that spends a turn doing nothing within 6\" of the sleeping Dragon can roll 6D6 to see how much gold he finds.\n\nBut things are not as easy as it seems. Roll 2D6 every turn. Add the following modifiers to the dice roll:\n• +1 For each treasure that has been found by a Hero\n• +2 For each Hero searching within 6\" of the Dragon\n• +3 For each Hero searching within 4\" of the Dragon\n• +3 For picking up Skalf's Axe\n\nOn a roll of 12 the Dragon awakes and attacks the nearest warriors. The Dragon has the following characteristics:\n\n{{table:1}}\n\nSpecial rules: fear, scaly (4+ unmodified save), breath attack (large breath template), large monster. As soon as the Dragon is awake it will act at the end of each player's turns.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Dragon",
+         "8",
+         "6",
+         "0",
+         "6",
+         "6",
+         "6",
+         "3",
+         "5",
+         "8"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Dragon's turn",
+     "text": "Between each player's turns the Dragon acts and fights. Determine his actions by following the sequence below:\n\nMovement Phase - The Dragon moves towards the nearest model. If he can charge him, he will.\n\nShooting Phase - The Dragon breathes horrible flames over the warriors. Roll a Scatter dice. The Dragon breathes fire in that direction. Models under the template suffer damage. The Dragon can do this even if he is involved in combat.\n\nCombat Phase - The Dragon attacks any model he is in base to base combat with. If he fights several models, determine at random which models he attacks.\n\nDragon's Motivations:\n• The Dragon can sense anyone in the chamber if he wakes up, so nobody can be hidden to him.\n• The Dragon can sense anyone touching his treasure, and would charge the nearest person who found treasure (or the axe) as opposed to someone who hasn't.\n• The Dragon will charge a warrior who has tried to shoot him in preference to someone closer who has done nothing.\n• If the Dragon has joined combat with someone, he will stay to finish off everyone in close combat before pursuing someone else.\n• If a warrior runs past someone while the Dragon is pursuing him, the Dragon will attack the closer person subject to the above.",
+     "tables": []
+    },
+    {
+     "title": "Ending the game",
+     "text": "The game ends when either:\n• One warband failed its Rout test. The routing warband automatically loses.\n• All the Heroes in both warbands have moved from the table edge with treasure. No warband wins.\n• The Dragon has killed all the members in both warbands. The Dragon wins.\n• Escaping with Skalf's Axe - The warband that manages to move Skalf's Axe from the battlefield wins the game.\n• Killing the Dragon - The warband that manages to kill the Dragon wins the game.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n+1 Per Enemy out of action. Any Hero earns +1 experience for each enemy he puts out of action.\n+1 For Taking Skalf's Axe. If a Hero grabs Skalf's Axe and survives he earns +1 experience.",
+     "tables": []
+    },
+    {
+     "title": "Dragon's treasure trove",
+     "text": "In front of the Dragon's treasure trove lies a powerful Dwarven axe. The axe was wielded by the legendary Dwarven Hero Skalf (slayer of Graug) and is inscribed by powerful runes. Skalf was killed during a raid into the lower caverns to clear out goblins and the axe was lost. The axe has the following special rules:\n\nSkalf's Axe: The axe is a two-handed gromril axe with the Master Rune of Dragon Slaying (2+ to hit Dragons, 2+ to wound, and any unsaved wounds kill Dragons automatically on a 4+ on a D6) and the Rune of Swiftness (always strikes first). If the weapon is recovered by a non-Dwarf warband Kargan Skalfson will want the weapon back as a family heirloom. He will reward the finder with 12D6 gc. If the warband keeps the axe then all Dwarves are subject to Hatred to the bearer of that axe.",
+     "tables": []
+    },
+    {
+     "title": "Multiplayer games",
+     "text": "The dragon, moving after every player, is too powerful. He can cross the table before you can move again. We suggest that if this scenario is played with more than two players, that the dragon's turn is to be treated as if he was an extra player. Searching in a multi-player game can also be too beneficial. With more than 2 players, anyone searching is likely to wake the dragon anyway. We suggest to limit searching to once per building (and only those outside your deployment area) and also to limit gold found to 1D6 per hero, not 2D6.",
+     "tables": []
+    }
+   ],
+   "slug": "dragonslayer",
+   "name": "Dragonslayer",
+   "players": "either",
+   "summary": "A special scenario: two warbands loot a sleeping Dragon's cave before it wakes."
+  }
+ ]
+}

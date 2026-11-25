@@ -1,0 +1,45 @@
+{
+ "document": "The Marienburg Annual: the Greenskin plot's special scenario (page 57)",
+ "scenarios": [
+  {
+   "source": "Marienburg Annual",
+   "intro": "You'v dun it. All da boyz love ya, you got da best Waaagh around, now you gotta do the thin' you'se said you would do! Take da City! Kill da Not-Greenskins! Be Da Best!",
+   "sections": [
+    {
+     "title": "Terrain",
+     "text": "The terrain should be set up to represent the largest encampment/s in your campaign, eg: the stronghold in Marienburg.\n\nA wall should be made to surround the encampment if none exists. The encampments should take up a 2'x2' square in the middle of the map.\n\nDepending on the player count this map will be either a 4' x 4', a 6' x 4' or a 6' x 6'.",
+     "tables": []
+    },
+    {
+     "title": "Set-up",
+     "text": "Each other Greenskin warband in the campaign joins your side for the battle, they work for you now, no disobedience ya hear! Greenskins set up within an 8\" square of any side.\n\nFor each extra greenskin warband, the defenders (owners of the encampment) may take one ally. The Defenders set up within the Encampment walls.",
+     "tables": []
+    },
+    {
+     "title": "Starting the game",
+     "text": "The Attackers take the first turn.",
+     "tables": []
+    },
+    {
+     "title": "Special rules",
+     "text": "I'm Da Boss!: any warband leaders taken out by the leader of the Greenskin alliance are permanently killed.\n\nWAAAGH: as long as Da Boss of the greenskin alliance is alive the Greenskins automatically pass all Leadership based tests including rout tests.",
+     "tables": []
+    },
+    {
+     "title": "Ending the game",
+     "text": "Once the defending warbands have been routed the game ends and the Greenskins win the Campaign.\n\nIf all the Greenskins are routed they lose the scenario and the Warband of Da Boss loses 2D6 Campaign points from shame.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n+6 War Boss Out of Action. Any warrior that kills the warboss in Close Combat gains 6xp points.",
+     "tables": []
+    }
+   ],
+   "slug": "nice-day-for-a-waaagh-beheadin",
+   "name": "Nice Day for a Waaagh Beheadin'",
+   "players": "multiplayer",
+   "summary": "The Greenskin plot's last battle: every Greenskin warband storms the largest encampment, and winning wins the campaign."
+  }
+ ]
+}

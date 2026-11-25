@@ -1,0 +1,781 @@
+{
+ "document": "Mousillon campaign rules, Redux: its 3D6 scenario table and its scenarios (pages 23-39)",
+ "scenarios": [
+  {
+   "source": "Mousillon",
+   "intro": "Fimir, once favored by the Gods of Chaos in eons passed, have lost the much of their standing in the time since men started to draw the gaze of Eye of Chaos. This loss and decline have led to deep resentment and jealously. Ever looking to regain some of that glory the Fimir chip away at the domains of men. The calamities in Mousillon and its ideal fog choked bogs, make the doomed city a perfect new home.",
+   "sections": [
+    {
+     "title": "Forces",
+     "text": "Player Warband NPC D3x150+300gc Fimir warband",
+     "tables": []
+    },
+    {
+     "title": "Battlefield",
+     "text": "4x4 area depicting the marshy outskirts of Mousillon. One board edge should have some buildings or crumbling walls.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "The Warband (and any allies) deploy first on the edge featuring the city edge. The Fimir (and any allies) deploy on the opposite edge.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "The Fimir go first.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Supernatural Fog: The mists are especially dense due to the nature of the attacking Fimir. Deduct D3 inches of visibility to whatever the “regular” fog max visibility is currently. IE if the max visibility was 6” and you roll a 2, the max is now 4”.\n\nKidnappers: Fimir have a dark reputation for taking humans alive... Dark things are said to happen to anyone has been spirited away. If a OOA warrior rolls “Captured” on the serious injury table, they are removed from the Warband.",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "Due to the confusion of the mists, no voluntary routs are allowed The game ends when after all but one warband routs from casualties or if all warbands from one set of allies remain.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. For each Hero or a Henchman group survives the battle.\n+1 Winning Leader. The leader of a winning warband gains XP.\n+1 Per Enemy Out of Action. Any Hero earns +1 XP for each enemy he puts out of action.\n+1 For taking the Fimir Leader OOA",
+     "tables": []
+    }
+   ],
+   "slug": "primordial-chaos",
+   "name": "Primordial Chaos",
+   "players": "1v1",
+   "summary": "The Marshes: a Fimir warband raids from the fog-choked bogs."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "Your Warband has recently discovered a rather well-preserved building. The storeroom still had plenty of edible things. But more important the Noble who owned the mansion had forgotten his treasure chest. Unfortunately, word has leaked out about their find and warbands throughout the city are hunting them, determined to take the treasure for themselves. What no one knows is the household suffered a horrid outbreak of Red Pox...",
+   "sections": [
+    {
+     "title": "Battlefield",
+     "text": "Each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. The terrain is set up within an area roughly 4’x4’ (or 6’ if playing multiplayer). The center of the board needs to be consisting of two rather big buildings.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "All the models in the defending Warband must be set up within 6” of the center of the board. The attacking warband(s) may set up on 2 sides if wanted. Same for multiplayer set up as above.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "Roll a D6. High roll goes first.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Defenders: One player is the defender, determined by rolling the dice. Three of the defending warband’s Heroes carry 4D6 pieces of gold (his part of the treasure) in a purse. If a Hero carrying money is taken Out Of Action, place a counter, representing the purse he was carrying, on the ground where he fell. Any Hero moving into contact with them may pick up this money. The money is in a purse and will be determined after the battle has ended. Only when playing multiplayer all heroes of the defending warband carry a purse.\n\nInjuries: After the battle you may roll serious injuries as normal, any Dead results will require an additional 2D6 roll on the Red Pox table (below). If the model was infected by someone who has died from a Violent Death add a +2 to the roll.\n\n{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "2D6",
+        "Effect"
+       ],
+       "rows": [
+        [
+         "1-2",
+         "Death: While the character is infected with the Red Pox, his combat wounds are too severe, and the disease does not gets a chance to bloom on its victim. No further results."
+        ],
+        [
+         "2-4",
+         "Violent Death: The character dies horribly from a combination of his combat wounds and the Red Pox. After his death, his virulent condition has infected a random warband member, that warband member roll on this table with +2 to the roll."
+        ],
+        [
+         "5-6",
+         "Weakened Survivor: The character fights the Red Pox successfully and survives. The internal battle has been intense, and the disease has debilitated the character heavily. The character will be –1T and loses a wound, only if he has more than one."
+        ],
+        [
+         "7-8",
+         "Tainted: The Red Pox has left the character tainted; he will cause Fear now (as if Horribly Scarred) and suffers the permanent injury Old Battle Wound."
+        ],
+        [
+         "9-10",
+         "Psychologically Wounded: The character survives the ordeal with the disease, but he becomes mentally unstable. The character needs some time to recover and must misses one game and suffer a Nervous Condition."
+        ],
+        [
+         "11",
+         "Survival: The character recovers from the Red Pox without any lasting ailments."
+        ],
+        [
+         "12",
+         "Full Recovery: The character not only recovers from his ordeal with the Red Pox but feels hardened by the effect. Roll a D6, 1-4 character becomes Hardened, 5-6 character will gain +1T (this does not raise the race’s max for T)."
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Ending the Game",
+     "text": "Do not roll for Rout tests during this game. Instead, the game will last 8 turns or until all the purses have been carried off the board, whichever comes first. (in multiplayer use 10 turns) The warband that gets the most purses off the table (or held by its Heroes when the game ends) is considered the winner.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Winning Leader: The leader of the winning warband gains +1 XP.\n+1 Survives: If a Hero or Henchman group survives, they gain +1 XP.\n+1 Per Enemy Out Of Action: Any Hero earns +1 experience for each enemy he puts Out Of Action.\n+1 Per Purse. If a Hero is carrying a purse at the end of the battle, he receives +1 XP per purse he carries.",
+     "tables": []
+    }
+   ],
+   "slug": "beware-the-plague",
+   "name": "Beware the Plague",
+   "players": "either",
+   "summary": "Palace District: carry the plague house's treasure off the board."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "The shadow of the Red Duke has become an indelible stain on Mousillon since his reign of terror in those dark days. Ever since, Blood Dragon vampires have been drawn to the doomed city. It is not known if these are the progeny of the Red Duke or if they are former Knights of Bretonnia that since their blood baptism feel Mousillon is the only appropriate place in the Kingdom in which to reside.",
+   "sections": [
+    {
+     "title": "Forces",
+     "text": "Player warband NPC D3x125+ 300gc Blood Dragon warband",
+     "tables": []
+    },
+    {
+     "title": "Battlefield",
+     "text": "4x4 area with large buildings in various states of decay, overgrown gardens, vacant walled off menageries, empty fountains, and other terrain found in the Palace District.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "Divide the board into quadrants. Each player rolls D6 with high roll deciding to deploy first or second. The first player to deploy picks their quadrant. the second player deploys in the quadrant opposite of the first player, but no model may be set up within 14” of any enemy model.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "Each player rolls D6, high roll goes first.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Chivalric Code: Any Heroes taken OOA by the Blood Dragon do not have to roll for Serious Injuries and treat it as a Full Recovery.",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "The game ends when the after one warband routs. No voluntary routs until the 6th turn.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Winning Leader: The leader of the winning warband gains +1 XP.\n+1 Survives: If a Hero or Henchman group survives, they gain +1 XP.\n+1 Per Enemy Out Of Action: Any Hero earns +1 experience for each enemy he puts Out Of Action.\n+1 For taking the Blood Dragon OOA",
+     "tables": []
+    }
+   ],
+   "slug": "black-lily",
+   "name": "Black Lily",
+   "players": "1v1",
+   "summary": "Palace District: a Blood Dragon warband stalks the warband."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "Rival Vampire factions, Blood Dragons and the Strigoi lairing in the Grand Cemetery of Mousillon have been spilling each other’s vampiric blood in on going fights and ambushes. Finally, after the Vampire Knights have driven the Strigoi and their ghouls out of Mousillon; rumors that the abandoned Strigoi lair is filled with the valuables gleaned from the rich tombs have started to abound...",
+   "sections": [
+    {
+     "title": "Battlefield",
+     "text": "Each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. The terrain is set up within an area roughly 4’x4’. In the center of the table there should be a walled cemetery with a mausoleum or tomb entrance featuring a treasure pile.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "The warband with the lowest number of warriors deploys within 6” of the objective building in the center. The attacking warband is deployed within 6” of any table edge. Note that you can split the warband to enter from different edges if you wish.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "The attacking warband has the first turn.",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "If at the end of the defender’s turn the attacker has more standing models within 4” of the treasure pile than the defender, the attacker wins. Alternatively, when one of the warbands fails its Rout test the game ends.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "Surviving: If a Hero or a Henchmen group survives, they gain +1 XP.\nWinning: The leader of the winning warband gains +1 XP.\nTake down: For each enemy model taken OOA, heroes receive +1 XP.",
+     "tables": []
+    },
+    {
+     "title": "Reward",
+     "text": "After game ends, the treasure is explored. You may find out what is left, or what you managed to take from the defender. You may roll a D6 for every Hero still standing within 4” of the chest (winner and loser alike).\n\n{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1",
+         "Something stings the curious character, make a strength test, if the character fails roll on the serious injury table (reroll Robbed, Captured, and Duel)"
+        ],
+        [
+         "2",
+         "The box is empty."
+        ],
+        [
+         "3",
+         "The character finds a pouch with 2D6 gc. (next character rolls at -1, this added to any sustained modifiers)"
+        ],
+        [
+         "4",
+         "The character finds a small charm, which might be a lucky charm (1-3) or a rabbit’s foot (4+). (next character rolls at -1, this added to any sustained modifiers)"
+        ],
+        [
+         "5",
+         "You find sack, which contains a suite of light armor. (next character rolls at -1, this added to any sustained modifiers)"
+        ],
+        [
+         "6",
+         "Under in the pile there is a suit of heavy armor. (next character rolls at -1, this added to any sustained modifiers)"
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "slug": "spoils",
+   "name": "Spoils",
+   "players": "1v1",
+   "summary": "Noble District: take the Strigoi's abandoned treasure in the cemetery."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "Prior to the first Red Pox outbreak, The Main Wharf of Mousillon once shipped out goods from all the nearby fiefs. Now only the truly desperate make port here. Scavengers, rats, and worse still haunt the nearby storehouses while the docks fall into damp decay.",
+   "sections": [
+    {
+     "title": "Battlefield",
+     "text": "On a 4x4 area 18” of one side is water with docks and rotting ships. In the center of landward edge of the dock is a tower. The rest of the area are buildings in various stages of decay.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "Place D3 crate counters on the wharfs within 2D6” of the tower. Each player rolls D6, with the highest result choosing who deploys first on either landward corner.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "Roll D6, high roll goes first.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Harbormaster’s Rage: The tower is home to the Harbormaster of The Main Wharf. He has become very territorial and will fire his crossbow (BS 4) at any warrior coming within 15” of the tower. The tower is solid Bretonnian stonework with reinforced doors. The Harbormaster cannot be attacked.\n\nSlippery: The Wharf planking is slick from the constant mist and slime. Any model running or charging on the wharfs must pass an I test or risk slipping. If a warrior slips roll D6 on a 1-5 they are knocked down, on 6 the warrior falls into the sea. Any model falling into the debris strewn water will drown on a D6 roll of 1-2. Searching for bodies is impossible. Falling from the dock due to combat is also possible.",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "When one of the warbands fails its Rout test, the game ends. The routing warband loses and their opponents win. Any warrior solely in base contact with a crate at the end, claims it for their warband, win or lose.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives: If a Hero or a Henchman group survives, they gain +1 XP.\n+1 Winning Leader: The leader of the winning warband gains +1 XP.\n+1 Per Enemy Out Of Action: Any Hero earns +1 Experience for each enemy model he puts OOA.\n+1 Getting hit by the Harbormaster\n+1 for claiming a Cargo Crate",
+     "tables": []
+    },
+    {
+     "title": "Reward",
+     "text": "Roll on the Cargo chart under Scenario Down at the Docks for every crate claimed.",
+     "tables": []
+    }
+   ],
+   "slug": "harbormasters-lament",
+   "name": "Harbormaster's Lament",
+   "players": "1v1",
+   "summary": "The Main Wharf: claim cargo crates under the Harbormaster's crossbow."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "The woods outside of Mousillon provide about the only source of wholesome food in the area, especially once you tire of fish. Even so game is hard to find, and the woods are dense. Every branch breaking could mean an enemy is stalking you...",
+   "sections": [
+    {
+     "title": "Battlefield",
+     "text": "On a 4x4 battlefield designate a length of road that runs across the table near one side, cutting the battlefield roughly into thirds, two thirds above the road and one third below. The larger section above the road should be designated as the Rim-Woods. Within the “woods” area, appropriate terrain should include lots of trees, hills and impassable terrain such as dense undergrowth like thorn bushes. The road represents the Lyonnesse road and the area below it is open terrain, bordering a cliff above the Great Ocean.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "One player, who will be the defender, sets up all his models within the woods, no closer than 9” from the road or any table edge. No model may be closer than 5” from any other model on the defender’s side. The other player, who will be the attacker, then chooses one end of the road, and sets up all his models on the road or below it within 9” of the table edge.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "The Attacker goes first.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Cliffhanger: No model may flee the battlefield from the table edge below the road, designated as a cliff. Any model falling within 1” of the cliff must take an Initiative test. (See Mordheim rulebook page 28.) A failed test will result in the model being taken out of action and heroes will roll twice on the serious injury table.\n\nLost in the Woods: Any of the attacker’s models that flee the battlefield on the table edge above the woods will miss the next battle because they are lost in the woods. After the subsequent battle they may rejoin their warband as it is assumed that they will eventually find their way back.\n\nFieldcraft: Hiding in the woods is easier, so models suffer a –1 penalty to spot an enemy hiding in the woods. Models may move while hidden (negating the modifier) as long as they are not running, charging or shooting. Much of the wooded area should count as cover for the purpose of shooting modifiers.",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "The game ends when one warband fails a Rout test. The routing warband loses.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "Surviving: If a Hero or a Henchmen group survives, they gain +1 XP.\nWinning: The leader of the winning warband gains +1 XP.\nTake down: For each enemy model taken “out of action, heroes receive +1 XP.",
+     "tables": []
+    }
+   ],
+   "slug": "cleanse-the-wood",
+   "name": "Cleanse the Wood",
+   "players": "1v1",
+   "summary": "Western Approach: an ambush in the Rim-Woods above the Lyonnesse road."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "The Warband has come across what appears to have once been a large military establishment, the local barracks. Could this house the legendary stockpile of the Mousillon garrison? While exploring the weed-choked grounds, they meet unexpected resistance as they run into another warband searching the for the same thing! What began as a frugal exploration quickly erupts into a surprise skirmish, as they vie for control for the fabled stash!",
+   "sections": [
+    {
+     "title": "Battlefield",
+     "text": "On a board 4’x4’ set up a cluster of at least two buildings in the center of the board. Place at least 12” of forest along 1 table edge representing the borders of Rim Wood. Other suitable terrain should be used; overgrown buildings, training equipment and such. Include at least 12 smaller obstacles that provide cover but offer no movement penalty. Players should take it in turn to place such items.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "Each player rolls a die. Highest result chooses who sets up first. Their opponent may then choose which side to deploy on. Since they were exploring, warbands must be divided up into groups of 3 models. Each group member must be set up within 2” of each other. Groups may be no closer than 6” to each other. All groups must be setup within 8” of the table edge. Groups may be any combination of heroes/henchmen you choose. After the game begins, you are free to move models as normal.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "Both players roll a D6 The higher scoring player takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "When one of the warbands fails its Rout test, the game ends. The routing warband loses and their opponents win.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "Surviving: If a Hero or a Henchmen group survives, they gain +1 XP.\nWinning: The leader of the winning warband gains +1 XP.\nTake down: For each enemy model taken OOA heroes receive +1 XP.",
+     "tables": []
+    },
+    {
+     "title": "Rewards",
+     "text": "The winning warband finds the “legendary” stash! Roll a D6 for each item: D3 Daggers - 3+ D3 Swords - 5+ You also find a cache of longbows, spears, halberds and greatswords. Unfortunately, they all lie broken, rusted and ruined! Such is the way of Mousillon!",
+     "tables": []
+    }
+   ],
+   "slug": "look-for-the-stash",
+   "name": "Look for the Stash",
+   "players": "1v1",
+   "summary": "Western Approach: two exploring warbands clash over the garrison's fabled stash."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "The Warband is trying to avoid a large cavalcade of Blood Knights. Whatever has brought out the vampire knights in such a force is something the Warband wants to avoid, not to mention the matchless immortal warriors. The Warband is trying to put the river between themselves and the deadly force. Unfortunately, another warband is intent on blocking the way...",
+   "sections": [
+    {
+     "title": "Battlefield",
+     "text": "Each player takes it in turn to place a piece of terrain, either a ruined building, tower, or other similar item. The terrain is set up within an area roughly 4’x4’. One side of the area will become the river. There should be a bridge (4” wide) and a ford (4” wide) present in the river.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "The attacker sets up first, within 8” of his table edge with opposite edge being the river. The river reaches 6” into the playing area. The defender sets up anywhere on the table as long as all his warriors are at least 14” away from any attacker.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "The Warband trying to force the crossing goes first.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Slippery: The bridge planking is slick from the constant mist and slime. Any model running or charging on the bridge must pass an I test or risk slipping. If a warrior slips roll D6 on a 1-5 they are knocked down, on 6 the warrior falls into the river. Any model falling into the debris strewn water will drown on a D6 roll of 1-2. Both players roll the dice for each drowned character. The player with the highest roll may retrieve the equipment of the warrior, after that a character makes his serious injury roll and may join his warband, if he survives.",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "If one of the warbands fails a Rout test, the game ends immediately and the routing warband loses. If the attacker manages to move four or more standing warriors into or over the river, at the defender’s table edge, they have broken through and he wins the game. There for he needs to get the characters 4” past the river.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives: If a Hero or a Henchman group survives, they gain +1XP.\n+1 Winning Leader: The leader of the winning warband gains +1 XP.\n+1 Per Enemy OOA: Any Hero earns +1 Experience for each enemy he puts OOA\n+1 Breaking Through. Any warrior earns +1 Experience for breaking through enemy lines. If the warrior is a Henchman, then the whole group gains +1 XP.",
+     "tables": []
+    }
+   ],
+   "slug": "safety-on-the-other-side",
+   "name": "Safety on the Other Side",
+   "players": "1v1",
+   "summary": "The River Front: force a crossing of the river past another warband."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "The coast of Bretonnia is often beset by the notorious Black Arks of the Dark Elves. The Elves are making frequent raids on small villages collecting slaves to man their galley ships. One raiding party has landed at the derelict wharf of Mousillon and encountered the warband.",
+   "sections": [
+    {
+     "title": "Forces",
+     "text": "Player warband NPC D3x100+350gc warband (Dark Elf Corsairs)",
+     "tables": []
+    },
+    {
+     "title": "Battlefield",
+     "text": "On a 4x4 area 18” of one side is water with docks and rotting ships. The rest of the area are buildings in various stages of decay.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "Place 2D6 Mousillon Serf counters on the wharfs within D6” of the land Each player rolls D6, with the highest result choosing who deploys first. The Dark Elves deploy in a quadrant of the wharfs/seaside. The Warband deploys in a land quadrant.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "Roll D6, high roll goes first.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Slippery: The Wharf planking is slick from the constant mist and slime. Any model running or charging on the wharfs must pass an I test or risk slipping. If a warrior slips roll D6 on a 1-5 they are knocked down, on 6 the warrior falls into the sea. Any model falling into the debris strewn water will drown on a D6 roll of 1-2. Searching for bodies is impossible. Falling from the dock due to combat is also possible.\n\nSerf’s Up! If a Dark Elf warrior charges a Serf, the serf model is placed face down and is considered captured. If a Warband warrior charges an upright or downed serf, they can begin to escort them away from danger at the warrior’s M value. The serfs are paralyzed with fear and will not move otherwise.",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "If one of the warbands fails a Rout test, the game ends immediately and the routing warband loses. If all Serfs are downed the game ends with a Dark Elf victory.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "Surviving: If a Hero or a Henchmen group survives, they gain +1 XP.\nWinning: The leader of the winning warband gains +1 XP.\nTake down: For each enemy model taken OOA heroes receive +1 XP.\nHelping hand: for each downed Serf a warrior helps, gain +1 XP.",
+     "tables": []
+    },
+    {
+     "title": "Reward",
+     "text": "If the player wins, they gain D6 gc per Serf still standing.",
+     "tables": []
+    }
+   ],
+   "slug": "battle-at-the-wharf",
+   "name": "Battle at the Wharf",
+   "players": "1v1",
+   "summary": "The Main Wharf: save the serfs from a Dark Elf slaving party."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "The Warband has ventured into the dark Rim Forest at the bidding of a Bretonnian baron wishing to rid it of a growing pack of wolves. Should the creatures be allowed to go on unchecked, they will grow bolder attacking people instead of livestock and game and will hinder the baron’s wish to lay claim to lands and titles of Mousillon. However, not convinced that a single band could accomplish this feat, the baron has hired a second group of warriors, in the secret hope that they will slay all the wolves and each other in the process.",
+   "sections": [
+    {
+     "title": "Battlefield",
+     "text": "The battle is fought in dense woodland and the majority of the terrain should be woods, although there might also be thick bracken, a shallow stream, clustered rocks, foliage or even a small cave, which could be the wolves’ lair. The vast amount of the board will be covered by trees, but there should be areas of open ground so that warriors don’t get bogged down in difficult ground. Within these restrictions, each player should take it in turns to place a piece of terrain within an area roughly 4’ x 4’.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "Both players roll a D6 to see who deploys first. Whoever rolls highest, sets up first and moves his models on in his Movement phase from the table edge of his choice. His turn continues and then the other player moves his warband on from the opposite table edge in his Movement phase. The wolves are bold in their lair and prowl around with arrogance. There are D6+2 wolves on the board at the start of the game. At the start of the game, but before the warbands are deployed, each player takes it in turn to place a wolf (rolling a D6 to see who places first) but may place them no closer than 12” to any table edge and within 6” of another wolf (they are pack animals after all).",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "The player that deployed first, moves first.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Wolfpack: Once both players have taken a turn the wolves may then take a turn. A wolf will charge the nearest model is able, randomly determining its prey if two targets are equidistant. Any wolf that cannot charge must roll a D6 to determine its actions. 1-2 The wolf moves towards the nearest enemy model in the warband that went first. 3-4 The wolf moves towards the nearest enemy model in the warband that went second. 5-6 The wolf remains still and growls menacingly.\n\n{{table:1}}\n\nThe wolves are already in their lair, so do not take Rout tests. Wolves are adept at moving through terrain at speed, they treat all difficult ground as open ground and very difficult ground as difficult ground (but may not move through impassable terrain). Wolves are not large or particularly powerful creatures. Do not roll on the Injury table for them. Any wolf reduced to 0 wounds is automatically out of action.\n\nLure of the wild: As the battle rages, other wild creatures will be drawn into the fight. At the end of each ‘wolf’ turn (see below), roll a D6. On a roll of 1, D6 more wolves enter the fray, from a randomly determined table edge (roll a D6 and ignore rolls of 5 or 6). If the number of wolves is a 1, then a bear has turned up instead.\n\nBear: Bears are covered in the Kislevite warband rules (see p.81 Mordheim Annual ). As they are not goaded into battle by a Bear Tamer they are subject to the rules for stupidity. If they pass their Stupidity test, then they will move and attack as per the rules for wolves above.\n\n{{table:2}}\n\nWeapons and Armor: None, other than their claws and teeth!\n\nFearsome: A charging bear is a very scary sight indeed! A Trained Bear causes fear.\n\nBear Hug: If the Bear hits the same enemy warrior with both of his attacks in the same round of combat, the player may choose to make a single ‘Bear Hug’ attack instead of resolving the attacks normally. If this option is chosen, each player must roll a D6 and add his model’s Strength to the roll. If the Bear’s total is higher or the totals are equal, the opposing warrior takes a single automatic wound with no Armor Save allowed. If the enemy warrior’s total is higher, the warrior has broken the Bear’s hold and suffers no damage from the attack.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Wolf",
+         "9",
+         "3",
+         "0",
+         "3",
+         "3",
+         "1",
+         "4",
+         "1",
+         "4"
+        ]
+       ]
+      },
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Bear",
+         "6",
+         "3",
+         "0",
+         "5",
+         "5",
+         "2",
+         "1",
+         "2",
+         "6"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Ending the Game",
+     "text": "The game ends when one warband fails its Rout test. The routers automatically lose.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives: If a Hero or Henchman group survives, they gain +1 XP.\n+1 Winning Leader: The leader of the winning warband gains +1 XP.\n\n+1 Bear Slayer: Any Hero earns +1 Experience point for each bear he puts out of action.\n+1 Per Enemy Out of Action: Any Hero earns +1 Experience for each enemy he puts out of action (this also counts for wolves too).",
+     "tables": []
+    },
+    {
+     "title": "Reward",
+     "text": "The baron, much to his chagrin, will reward any warband a bounty of 10 gcs for each slain wolf. There is no reward whatsoever for slaying a bear (after all that wasn’t part of the deal!).",
+     "tables": []
+    }
+   ],
+   "slug": "devils-of-rimwood",
+   "name": "Devils of Rimwood",
+   "players": "1v1",
+   "summary": "Western Approach: two warbands hunt a wolf pack in the Rim Forest."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "The Duke’s palace compound in Mousillon features a grand library which is only superseded by the King’s “book collection” in Couronne. Unlike the King’s library, the Mousillon collection is rumored to hold books collected by some of the darker figures to rule the city: The Liber Malefic, The Book of the Dead, Codex Daemonica, and volumes from the Books of Nagash. Superstition and fear keep most away, but the chance of finding a rare tome whose value in gold or arcane knowledge is high brings those willing to brave the cursed area.",
+   "sections": [
+    {
+     "title": "Battlefield",
+     "text": "Each player will take it in turn to place a piece of terrain, either a small building, or other piece of terrain. If you have one piece of terrain or several that could “act” as the Library should be placed in the middle. Many of the tomes have been spewed across the many blocks close to the Library. The battle is fought in an area roughly 4’ x 4’. You may want to make the table larger if this is to be a multiplayer game.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "Players should then place D3+1 Tomes for each warband involved in the game on the tabletop to represent where the Tomes are. Each player takes it in turn to place a Tome counter. The counters must be placed more than 10” away from the edge of the table and at least 6” away from each other. Note that counters are placed before deciding which edge the warbands will play from. Roll D6, player with highest result deploys first, within 6” of any, one, board edge with the other player taking the opposite board edge.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "Each player rolls a D6 to determine who goes first. Play proceeds clockwise around the table.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Tomes of Evil: A warrior can carry any number of Tomes without any penalty. Warriors cannot transfer their Tomes to another warrior. If a warrior is put OOA then the Tome is placed next to where the model was taken OOA. The Tomes cause FEAR. You must take a FEAR test to pick one up, unless you are immune to FEAR. This is to represent the great unknown on whether or not the Tomes are Evil. To represent the chaotic nature of the disaster and the many magic tomes that are scattered in the area warbands will roll an extra time on the Mousillon Random Encounters table above when the first model touches a tome and will continue then at the beginning of each warbands turn. Yes, the first warband that touches a Tome will roll on the Random Happenings chart even though it will already be in the middle of their turn. Please exempt rolls of 33, 41, 46, 52, 61, 62, 63 during this battle, just roll again.",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "The game ends when all the warbands but one have failed their Rout Test. Warbands that Rout, automatically lose. If two or more warbands have allied they may choose to share the victory and end the game, or they may continue the game until one warband is victorious.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or Henchmen group survives, they gain +1 XP.\n+1 Winning Leader(s). The leader of the winning warband(s) gains +1 XP.\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n+1 Per each Tome Picked Up. If a Hero or Henchmen is carrying a Tome counter at the end of the game, he receives +1 Experience.\n+1 For the Warband with the Most Tomes. The leader of the warband with the most tomes at the end of the game gains +1 Experience.",
+     "tables": []
+    },
+    {
+     "title": "Rewards",
+     "text": "You can sell the Tomes for 25+D6 gc each or choose to keep the books. If you keep a book, then roll on the chart below (D6). Rolling on the chart below will represent that the Hero has decided to open the book and is trying to decipher its abilities. Please nominate which Hero will be opening the book.\n\n{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1",
+         "The Hero who keeps the book will miss the next game. You may come up with some creative on why he cannot play the next game from opening the book."
+        ],
+        [
+         "2",
+         "The Hero who keeps the book will gain +1 Initiative. This can take you above our racial Maximum."
+        ],
+        [
+         "3-4",
+         "The Hero who keeps the book will gain an Academic Skill. Those who normally cannot gain an Academic Skill can gain one (1) Academic Skill. Please note that this is for only one time and does not grant the user the ability to gain Academic Skills through normal experience."
+        ],
+        [
+         "5",
+         "The Hero who opens the book will gain D3 experience."
+        ],
+        [
+         "6",
+         "Driven to madness by what his has read, the Hero runs screaming into the fog and is never seen again. Remove the Hero from your roster."
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "slug": "library-of-the-damned",
+   "name": "Library of the Damned",
+   "players": "either",
+   "summary": "Noble District: gather the cursed tomes scattered round the Duke's library."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "The Main Wharf of Mousillon is home to a multitude of rats. Most are the common rats found anywhere, but here, the Skaven have a considerable presence. They continue to cultivate the plagues in Mousillon and prey on the diminishing locals. Their presence is in a large part of why Mousillon cannot rise out of squalor.",
+   "sections": [
+    {
+     "title": "Forces",
+     "text": "Player warband NPC D3x100+350gc warband (Pestilens Skaven)",
+     "tables": []
+    },
+    {
+     "title": "Battlefield",
+     "text": "On a 4x4 area 18” of one side is water with docks and rotting ships. The rest of the area are buildings in various stages of decay.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "Roll D6, player with highest result deploys first, within 6” of any, one, board edge with the other player taking the opposite board edge.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "The Warband goes first.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Slippery: The Wharf planking is slick from the constant mist and slime. Any model running or charging on the wharfs must pass an I test or risk slipping. If a warrior slips roll D6 on a 1-5 they are knocked down, on 6 the warrior falls into the sea. Any model falling into the debris strewn water will drown on a D6 roll of 1-2. Searching for bodies is impossible. Falling from the dock due to combat is also possible.",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "The game ends when one warband fails its Rout test. The routers automatically lose.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives: If a Hero or a Henchman group survives, they gain +1XP.\n+1 Winning Leader: The leader of the winning warband gains +1 XP.\n+1 Per Enemy OOA: Any Hero earns +1 Experience for each enemy he puts OOA",
+     "tables": []
+    },
+    {
+     "title": "Rewards",
+     "text": "The winning side finds D6 wyrdstone shards hidden around the area in addition to usual income and exploration.",
+     "tables": []
+    }
+   ],
+   "slug": "infested",
+   "name": "Infested",
+   "players": "1v1",
+   "summary": "The Main Wharf: a Pestilens Skaven warband defends its nest."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "Near “Lion’s Gate” and the Grand Cemetery of Mousillon stands the Temple of Morr, fallen into disrepair with its Priests long dead from disease or murder. Those who wish to city to once again flourish feel if the Winds of Shyish can be tamed, the Undead in the city will lose their vigor. The Temple of Morr is key to that end...",
+   "sections": [
+    {
+     "title": "Battlefield",
+     "text": "On a 4x4 battlefield designate a length of road that runs across the center of the table. This represents the main road through the city of Mousillon. At one end of the road is the Lions Gate. This is the west end of the battlefield. On the north side of the road is the graveyard and the temple of Morr. The Temple is the objective for this scenario. Other appropriate terrain should include ruined buildings and rubble in the “shanty camp”, a graveyard north of the temple, and other buildings in the Merchants District.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "The defender (the Evil side who wants to keep the Temple destroyed) sets up all his models within 12” of the Northeast corner of the battlefield. The attacker, then sets up all his models within 12” of the Southwest corner of the battlefield.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "The attacker goes first.",
+     "tables": []
+    },
+    {
+     "title": "Special Rules",
+     "text": "Aid: The defender gains the use of a Necromancer Hired Sword for this battle only. The attacker gains the use of a Priest of Morr Hired Sword for this battle only.",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "The game ends when one warband occupies the temple, at the end of his opponent’s turn, and there are no enemy models within 6” of the Temple. Alternately, when one of the warbands fails its Rout test the game ends. The routing warband loses.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "Surviving: If a Hero or a Henchmen group survives, they gain +1 XP.\nWinning: The leader of the winning warband gains +1 XP.\nTake down: For each enemy model taken “out of action, heroes receive +1 XP.",
+     "tables": []
+    }
+   ],
+   "slug": "through-the-gates-of-morr",
+   "name": "Through the Gates of Morr",
+   "players": "1v1",
+   "summary": "Noble District: fight for the ruined Temple of Morr."
+  },
+  {
+   "source": "Mousillon",
+   "intro": "The warband has made the acquaintance of a Bretonnian Knight. To most outsiders a Knight is a Knight. However, nothing is that clear in Mousillon or with the complicated feudal system of Bretonnia. The Knights that have arrived as part of the Errantry War to reclaim Mousillon have a strong disdain for the Knights local to Mousillon and other knights of bad repute and vice-versa. The Warband’s befriended Knight has asked you to “second” his coterie when it settles a “matter of honor” with another Knight and his band...",
+   "sections": [
+    {
+     "title": "Forces",
+     "text": "Each side consists of two allied warbands: Player warband & D3x50+300gc Bretonnian Warband D3x50+300gc Bretonnian Warband & another player warband of the opposite alignment of the first warband (Mousillon locals are preferable: Good if the Warband is Evil, Evil if the Warband is Good or Neutral)",
+     "tables": []
+    },
+    {
+     "title": "Battlefield",
+     "text": "On a 4x4 area, the center 12”x12” is an open are that served as a jousting ground and battle-royale field. The surrounding features are bleachers, viewing platforms, other buildings in various stages of ruin.",
+     "tables": []
+    },
+    {
+     "title": "Deployment",
+     "text": "The two Bretonnian warbands are deployed in and around the center field. One knight from each warband is posed to engage, with the rest of their warbands deployed within 6” of the field along two sides, but no closer than 6” from their enemies. Dice off for the Warband and the other warband. The winner picks a table edge deploy within 8”. The other band deploys on the opposite board edge.",
+     "tables": []
+    },
+    {
+     "title": "Who Goes First",
+     "text": "Move the two knights that are facing off into the center of the field, roll D6 with the winner going first, as if he charged. After one round of combat, roll D6 for each allied side. The winner goes first, having seen the other side “cheating.”",
+     "tables": []
+    },
+    {
+     "title": "Ending the Game",
+     "text": "The game ends when both warbands for one side fails its Rout test. The routers automatically lose.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "Surviving: If a Hero or a Henchmen group survives, they gain +1 XP.\nWinning: The leader of the winning warband gains +1 XP.\nTake down: For each enemy model taken “out of action, heroes receive +1 XP.",
+     "tables": []
+    },
+    {
+     "title": "Rewards",
+     "text": "The winning side takes trophies from the loser, as per Bretonnian tradition. The Knights gives their allies a captured suit of Heavy Armor and a Helmet as thanks.",
+     "tables": []
+    }
+   ],
+   "slug": "knights-vs-knights",
+   "name": "Knights vs. Knights",
+   "players": "1v1",
+   "summary": "Palace District: second a Bretonnian Knight in a matter of honour, each side two allied warbands."
+  },
+  {
+   "source": "Mousillon",
+   "slug": "hell-hath-no-fury",
+   "name": "Hell Hath No Fury",
+   "base": "skirmish",
+   "players": "1v1",
+   "summary": "The River Front: Skirmish across a river and two slippery bridges.",
+   "title": "Hell Hath No Fury (Mousillon)",
+   "text": "Play Skirmish at the River Front, with a river in the middle of the board crossed by two 4\" bridges.\n\nSlippery: The bridge planking is slick from the constant mist and slime. Any model running or charging on the bridge must pass an I test or risk slipping. If a warrior slips roll D6 on a 1-5 they are knocked down, on 6 the warrior falls into the river. Any model falling into the debris strewn water will drown on a D6 roll of 1-2."
+  }
+ ]
+}

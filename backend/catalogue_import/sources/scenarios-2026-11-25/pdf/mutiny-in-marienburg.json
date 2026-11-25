@@ -1,0 +1,1715 @@
+{
+ "document": "Mutiny in Marienburg (Dic Lombardi and others): its core and special scenarios (pages 50-84)",
+ "scenarios": [
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "There are a lot of violent people in the city. Yet the whole city goes mad when a deep-sea mist descends upon them from the Reik. Watch stations are snowed under with bleeding citizens, complaining of assaults, robberies and arson. The eerie fog has caused everyone in the district to lose their way. Leaders have given orders to convene but the members of each warband have gotten lost in the winding alleys and failed to meet up before the battle. Something about the shifting mist does not seem natural almost as if it has a will of its own.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest that the terrain is set up within an area roughly 4'x4'. In a multiplayer game, the terrain should be set up within an area roughly 6'x4' to accomodate for six or more players.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "Roll a scatter dice and 3D6 to determine where each model is being deployed. The model is deployed 3D6\" from the position on the table edge where the scatter dice is pointing at. Deployment is random meaning warbands can be deployed simultaneously.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "Each player rolls a D6. The player rolling the highest has the first turn. The order of play proceeds clockwise around the table based on where players placed their warbands.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Eerie Fog: All warriors are subject to the effects of being All Alone unless they are within 3\" of another friendly model due to reduced visibility from the foggy surroundings. If there are no friendly models visible then a fleeing warrior will stumble D6\" towards the nearest table edge avoiding enemy models.\n\nMist-Wreathed: The mist reduces visibility to 2D6\" for the purpose of shooting and ranged magic missile attacks. Roll to check for the distance of visibility at the beginning of each players shooting phase.\n\nMarsh Phantoms: Mythic amphibious creatures are encountered concealing themselves within the magically directed fog. An ambush party of dreaded Fimir has swam into the district!\n\nFrom the beginning of turn 2 onwards, roll a dice at the start of the turn if the Fimir are yet to arrive. On a 1 or 2, they have yet to reveal themselves - but you'll be able to roll for them again at the beginning of turn 3. On a 3 or more, the ambush party arrives, and will enter the board during the recovery phase.\n\nIf the ambushers do not turn up for the entire game, they are assumed to have kept themselves concealed!\n\nAn ambush party of D3 Fimir Warriors bursts up from the waterways. Deploy the Fimir 3D6\" as a group along the nearest canal or lagoon in a randomly determined direction from the centre of the battlefield. Fimir are aquatic so if possible they are naturally deployed in the canal. In a multiplayer game, an extra Fimir Warrior should be deployed for every additional warband.\n\nAn ambush party of Fimir protects themselves by using 'Mystic Mist'. Special effects of the protective spell from their blood-soaked talismans of bronze are detailed in the warband list for 'Lords of the Marsh'.\n\nThe phantom fiends will move towards the nearest warriors from player's warbands. Fimir warriors will charge whenever possible.\n\nAfter each player has taken a turn, there is an additional turn in which Fimir ambushers will recover before moving and charging. Fimir Warriors must always charge the nearest model from a player's warband. They never attack another target model unless a special rule forces this situation to happen.\n\nIf a warband fails their rout test any models taken out of action by the Fimir raiding party are captured and dragged off into the Cursed Marsh.",
+     "tables": []
+    },
+    {
+     "title": "ending the game",
+     "text": "No voluntary rout tests are allowed when playing this scenario so long as there are any warriors in the warband subject to All Alone tests.\n\nThe game ends when all of the warbands except for one have routed. The winning warband is the last warband standing.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of a winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n\n+D3 Fimir Out of Action. Any Hero earns +D3 Experience for if he puts a Fimir out of action.",
+     "tables": []
+    }
+   ],
+   "slug": "rolling-fog",
+   "name": "Rolling Fog",
+   "number": "1",
+   "players": "either",
+   "summary": "Warbands lost in an eerie fog, and a Fimir ambush party rising from the canals."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "Dubious sightings of a sea beast menacing waterways have begun to reach the River Watch. An oceanic intruder has indeed washed in through the Reik Estuary. The 'Creature' has nestled itself in a deep lagoon feeding into one of the canals off the back streets in the Craftsmarket. The aquatic monster has inconveniently established its hunting grounds within the perimeters of a secret loading bay. To maintain operations for the transport of illicit goods on the concealed dock, local smugglers have started feeding the marine beast! Contraband can only be moved once the deep-sea horror is appeased with a sacrifice. One gang of crooked dealers unwittingly kidnapped the wrong damsel! A rescue party has tracked the abduction to the Black Market lagoon.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest that an area roughly 10\"x10\" designating the lagoon is set up in a central position within an area roughly 4'x4' representing the concealed dock and its surrounds.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "The dockside of the lagoon is bordered on three sides by a jetty. On the fourth side is the secret canal inlet and the end of the jetty which terminates on a walkway leading into the centre of the lagoon.\n\nSeven objective markers are deployed on the 'G-shaped' jetty. Six pieces of freight are deployed at roughly equal distances along the jetty including each corner. The final marker is a damsel being sacrificed who is caged or tied to the end of the walkway. Markers cannot be moved during the game.\n\nIf one of the warbands would not be allowed to hire a Warlock, Witch, Sister of Sigmar or a Witch Hunter then that player is always the kidnapping player. Otherwise the player with the highest warband rating is the kidnapping player. The other player is leading the rescue party. In the event that neither warband is allowed human Hired Swords or the ratings are tied, roll a dice to determine roles.\n\nThe kidnapping player deploys first. The rescuing player may not deploy any models on the jetty or in the lagoon. Ridden mounts and wagons may not enter the dockside.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "The rescuing player takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "The Creature: The barnacled monstrosity emerges from the lagoon at the beginning of the hand-to-hand combat phase in the first turn. Roll a D6 to determine which of the six freight objective markers it will attack.\n\nWhenever the Creature emerges to attack a new marker it can be intercepted by any model in either warband that is within 2\" of the marker. Any undefended marker is destroyed.\n\n{{table:1}}\n\nWeapons/Armour: Gaping maw!\n\nSPECIAL RULES Fear: The Creature is a terrifying monster that causes fear.\n\nBite Attack: This bite uses the Creature's own Strength to wound and receives no penalty for not using a weapon. The bite attack always strikes last, regardless of who charged or which weapon is used. The bite even attacks after double-handed weapons.\n\nAquatic: The creature counts as being in cover in the water.\n\nSubmerge: Whenever a model causes the Creature to lose a Wound, or if a cargo marker was destroyed in the previous turn, the monster submerges and disappears. Remove the Creature from the game. It will reappear in the next turn at the start of the hand-to-hand combat phase. Roll a D6 to determine a new location for it to appear using the other six remaining markers.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "The Creature",
+         "–",
+         "3",
+         "–",
+         "5",
+         "4",
+         "–",
+         "2",
+         "2*",
+         "6"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "ending the game",
+     "text": "The kidnapping player wins the game if the damsel is eaten by the Creature. The rescuing player wins the game if all of the freight is destroyed by the Creature.\n\nIf a warband fails its rout test it automatically loses the game and the opposing warband wins.\n\nIf the kidnapping player wins the game the warband is rewarded with 1 Treasure for each freight marker left undestroyed.\n\nIf the rescuing player wins the game the warband is joined by the damsel as a Hired Sword. The damsel is a Warlock, Witch, Sister of Sigmar or a Witch Hunter depending on which Hired Sword the warband is allowed to hire. There is no hire fee to be paid and the Hired Sword is indebted to the warband for saving her life meaning a 'Blood Pact' is automatically made.",
+     "tables": []
+    },
+    {
+     "title": "Blood pacts",
+     "text": "The special rules for Blood Pact and Hired Swords including the Witch Hunter are featured in the Hired Swords compendium Swords of the Empire.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of a winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.",
+     "tables": []
+    }
+   ],
+   "slug": "black-market-lagoon",
+   "name": "Black Market Lagoon",
+   "number": "2",
+   "players": "1v1",
+   "summary": "A sea creature feeds in a smugglers' lagoon: one warband would see the damsel eaten, the other the freight."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "Luydenhoek Isle has a cleaner appearance than the rest of the South Dock, but an equally dubious reputation. Marienburg's Thieves Guild maintains a number of operations and boltholes here, notably Lisette's Leather Goods. On it can be found Potion Square, officially known as Graf Anders Square. It backs on to Zegepraal Street where doctors have quarters and the guildhouse of the Guild of Physicians is located. Here a traveller can find the Marienburg Home for Foundlings, the Long Dragon Tavern and Hassan's Spices.\n\nPotion Square is separated from its despatch and delivery route on Leech Street by Poultice Water, which is spanned by the Powder Bridge canal crossing. The prescriptions of chemical merchants would be rich pickings for thieves were is not for the protection afforded to them by powerful syndicates. Guarded medical supplies are valuable enough that thieves will risk testing the masked craft of their guild against that of the likewise masked physicians.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest that an area roughly 4'x4' be used to represent Potion Square with a 10\" wide strip running along one edge representing Leech Street. Divide the street from the square with a 4\" wide canal. The canal must be at least 2\" deep on each side and a 1\" wide walkway should be deployed at water level along the street side of the canal to represent a jetty. The jetty is split either side of Powder Bridge which is positioned centrally as the only crossing on the canal.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "A couple of upturned carts or wagons are deployed on Leech Street by the Physicians Guild player. Place one on each side of the bridge, no closer than 2\" to Powder Bridge or each other side-turned cart.\n\nIf one of the warbands is running a racket by following 'The Secret Deal' or 'The Body Trade' plots then that player is always the Physicians Guild player. Otherwise the player with the highest warband rating is the Physicians Guild player. In the event that two or more warbands are following the same plot or the ratings are tied, roll a dice to determine roles.\n\nThe Physicians Guild player first deploys three randomly determined models including at least one Hero on Leech Street. The Thieves Guild player deploys three randomly determined models including at least one Hero in Potion Square no closer than 6\" to Poultice Water.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "The Thieves Guild player takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Raise the Alarm: After each player has completed their first turn, at the beginning of each players turn roll a D6 for each model in the warband. On a roll of 4+ the model must be deployed in accordance with the warband set-up.\n\nPrescriptions: Roll a D6 for each Hero and Hired Sword controlled by the Thieves Guild player. On a roll of 1 the Hero has taken a physician hostage! On a roll of 2-5 the Hero is carrying Healing Herbs. On a roll of 6 the medical supplies he collected are illegal drugs. Roll a D6 to see which drug: 1. Mandrake Root 2. Madcap Mushrooms 3. Crimson Shade 4. Slaaneshi's Dream 5. Black Dust 6. Daemon Dust\n\nA Hero carrying illegal drugs must pass a Leadership test or consume a sample of the drug and become subject to its effects. He still carrie s a dose of the drug.\n\nHostages: Represent hostages using objective markers. A Hero with a hostage cannot be charged. The Hero can safely pass through any enemy models blocking his path if an Initiative test can be passed.\n\nThe best way to tackle the hostage taker is magic spells and missile weapons. Unfortunately any spell or missile targeting the Hero will hit the hostage instead by accident on a D6 roll of 4+.\n\nIf the hostage taker is knocked down, stunned or taken out of action the hostage is released. If the hostage is released remove the hostage marker from play. If the hostage is taken out of action replace the hostage marker with a corpse marker.\n\n{{table:1}}\n\nPoultice Water: If a Hero falls into the canal then any herbs or drugs he was carrying are destroyed.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Hostage",
+         "4",
+         "–",
+         "–",
+         "2",
+         "2",
+         "–",
+         "3",
+         "–",
+         "7"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "ending the game",
+     "text": "The Thieves Guild player wins the game as soon as each surviving Hero has fled from one of the table edges on Leech Street. At least one Hero must have successfully fled carrying Healing Herbs or illegal drugs to fulfil these criteria.\n\nThe Physicians Guild player wins the game if each of the Heroes of the Thieves Guild player carrying drugs or herbs were taken out of action or had their prescriptions destroyed or exhausted.\n\nIf a warband fails its rout test it automatically loses the game and the opposing warband wins. Voluntary routs are not permitted in this scenario by the Thieves Guild player. If the Thieves Guild player routs then Heroes carrying objectives manage to scarper with the prescriptions and hostages.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of a winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n\n+1 Per Hostage Released. Any Hero earns +1 Experience for each hostage he releases.\n\n–1 CP Per Hostage Out of Action. Any warband loses 1 Campaign Point for each hostage they put out of action.",
+     "tables": []
+    }
+   ],
+   "slug": "powder-bridge",
+   "name": "Powder Bridge",
+   "number": "3",
+   "players": "1v1",
+   "summary": "A fight over guarded medical supplies crossing the Powder Bridge from Potion Square."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "A pit-fight in the city's underbelly is being hosted at one of the baiting pits owned by the gang lord from one of Marienburg's notorious crime syndicates. Once word of the winning purse swept through the ghettos it was enough to lure in a few extraordinary contenders along with the usual crop of seasoned prize fighters.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest that an area designating the fighting pit is set up in a central position within an area roughly 4'x4' representing the arena and its surrounds.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "The pit in the fighting arena is divided from the rest of the battlefield. Each warband nominates three warriors, including at least one Hero, to enter the pit acting as champions. Each warband may also submit an animal if it can make 1 or more Attacks. Ridden mounts and vehicles may not enter the arena.\n\n1. Each player rolls a D6. A warband with a Pit Fighter, Racketeer or Fence adds +1 to their result. The player with the highest score chooses the order in which the warbands are set up. 2. Gladiators and weapons are deployed as described below. 3. Champions are deployed in the determined order of set up. 4. Optionally warbands can be deployed anywhere outside of the pit in the same determined order. 5. Weapons are scattered as described below.",
+     "tables": []
+    },
+    {
+     "title": "Princes of the underworld",
+     "text": "Gladiators: For each warband represented in the fighting arena, there are three leather-clad pit fighters deployed. Every warrior has the 'Pitfighter' skill and wears toughened leathers (6+ save). Gladiators are deployed in the pit. Space the gladiators out evenly. No gladiator should be closer than 2 \" to the pit edge or another gladiator.\n\n{{table:1}}\n\nWeapons: A selection of weapons is distributed in the pit at the start of the fight. Roll on the Pit Weapons chart twice for each warband. After the gladiators are deployed each player may position markers to represent where the weapons are found. Each weapon scatters D6\" in a random direction after deploying warbands. Roll a D6 and a scatter dice for each weapon to determine where it lies. D6 Result 1 Net 2 Club 3 Spear 4 Sword 5 Morning Star 6 Custom Weapon: Roll 2D6 on the Custom Weapons Chart.\n\nPit Events: At the start of each player's turn, roll a D6. If the result is 1 then roll another D6 and refer to the Pit Events Chart. Random happenings are commonplace in a pit fight! More than one happening can occur during this scenario so players continue to roll for random happenings.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Gladiator",
+         "4",
+         "4",
+         "3",
+         "4",
+         "3",
+         "1",
+         "4",
+         "2",
+         "7"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "starting the game",
+     "text": "Each player rolls a D6. A warband with a Racketeer or Fence adds +1 to their result. The highest scoring player takes the first turn, and order of play proceeds clockwise around the table based on where the players are currently positioned.\n\nAfter each player has taken a turn, there is an additional turn in which gladiators move and charge. Gladiators must always charge the nearest enemy model and will never attack another gladiator unless a special rule forces this situation to happen.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Champions fight unarmed and may not climb out of the pit. Warriors may not voluntarily invade the pit. Any model entering the pit involuntarily is escorted out of the premises by one of the crime lord's meatheads. Remove the model.\n\nThe use of magic is not allowed in pit fights. Firing of missile weapons into the baiting pit is not permitted with the notable exception of thrown weapons which are easily concealable. ie, throwing knives/throwing stars. Missiles and magic spells are allowed as normal in the fighting arena outside of the pit.\n\nFor the purpose of the pit fight, any warrior grabbing a weapon they are not trained to use may still fight with the weapon at -1 Weapon Skill.\n\nWhilst at least one champion from a warband remains standing or knocked down in the pit area their warband does not take rout tests and is not allowed to voluntarily rout. If all of the champions from a warband are taken out of action then that warband routs automatically.",
+     "tables": []
+    },
+    {
+     "title": "ending the game",
+     "text": "The game ends when at least one champion from one of the warbands remains standing in the pit, unless any gladiators or animals are left to be defeated!\n\nIf one or more champions from a warband are victorious then they then may collect any of the weapons that were used in the battle. The victorious champion will collect the prize purse D6x10 gold crowns for every two warbands playing the scenario.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+3 Champion Survives. If a Hero or Henchman survives the battle they gain +3 Experience. Henchman groups gain a maximum of +3 Experience.\n\n+1 Per Gladiator/Champion Out of Action. A Hero or Henchman in the pit earns +1 experience for each enemy he puts out of action.\n\n+1 Per Enemy Out of Action. A Hero earns +1 experience for each enemy he puts out of action.",
+     "tables": []
+    },
+    {
+     "title": "Custom Weapons chart",
+     "text": "2D6 Result\n2. Celestial iron fan\n\n125 gold crowns Availability: Rare 12\n\nGrand Masters of Dragon Monk brotherhoods have been known to fight armed with the most curious of items. Once such secret of Cathay ' s weaponsmiths are iron fans. Celestial iron fans can flick deadly force with the grace of a dance.\n\nRange: Close Combat Strength: As user Special Rules: Parry, Iron Fan, Parry Missiles\n\nIron Fan: Attacks made with an iron fan give the bearer +1 Initiative. If a Hero has the Art of Silent Death skill then it applies to fan attacks as well.\n\nParry Missiles: A Celestial iron fan can be used to parry missiles in addition to close combat attacks. For each hit by a missile weapon the warrior armed with the fan may roll a D6. If the score is greater than the hit score, the warrior has parried the blow, and the attack is disregarded.\n3. Magnin throwing knife\n\n45 gold crowns Availability: Rare 11\n\nThe knife is a master-crafted version of throwing knives. Each a fine piece of workmanship, with an eighteen-inch blade honed to razor edges. A thing of smooth curves and sharp line, it is not for show.\n\nRange: 8\" Strength: As user Special Rules: Thrown weapon, Weighted\n\nWeighted: This exquisitely crafted thrown blade gets an increased chance to critical, could represent the ninja style going for exposed spots, critical hit on a 5+.\n\n\"This was made by Magnin the steelsmith. It is the heaviest throwing knife in the known world. To be effective, such a weapon has to be balanced to within a thousandth of an ounce. To be thrown properly, the knifewielder has to have an accurate sense of time, an unusual strength of wrist and the eye of a hawk. You ' d better hope, scum, that those five bottles of wine I drank last night have not affected my aim this morning.\" — ' Filthy ' Harald Kleindeinst, Watch Captain\n4. Hunter's throwing axe\n\n30 gold crowns Availability: Rare 10\n\nHuntsmen stalk the unbridled wilds surrounding cities of the Empire skinning foes. A throwing axe procured from one such dark wanderer is a fine quality implem ent.\n\nRange: 6\" Strength: As user +1 Special Rules: Thrown weapon\n5. Dragon sword\n\n20 gold crowns Availability: Rare 10\n\nDragon swords are great-swords that are typically used by celestials from far away Cathay. The blades are popular among robber knights and occasionally lifted by Cathayan warrior monks.\n\nRange: Close Combat Strength: As user +1 Special Rules: Two-handed, Parry\n6. Great axe\n\n25 gold crowns Availability: Rare 8\n\nOver-sized battle axes can be wielded only by the strongest of warriors. Great axes are forged for northern barbarians from Norse and Kurgan tribes.\n\nRange: Close combat Strength: As user +2 Special Rules: Two-handed, Strike last, Cutting edge\n\nStrike Last: Great axes are so heavy that any warrior using them always strikes last, even when charging, unless it has the Strongman skill or is a large model.\n\nCutting Edge: A great axe has an extra save modifier of –1, so a Strength 4 warrior using the axe has a –4 save modifier in close combat.\n7. Trident\n\n15 gold crowns Availability: Rare 7\n\nTemplar marines of Manann and Stromfels cultists favour the long thrust of a trident. Unlike other arms the tri-pronged fork weapon is a sacred instrument of their warring mermedic patrons.\n\nCombined with a net in underworld bouts as a pit fighting weapon it originates from Tilea. In ancient days Tilean gladiators would impale opponents legally in public arenas!\n\nRange: Close combat Strength: As user Special Rules: Strike first, Parry\n8. Chain sticks\n\n20 gold crowns Availability: Rare 8\n\nConsisting of wooden bars, tied together, chain sticks are enhanced with iron or steel to gain more striking power. Compared to a flail it is light, providing the bearer more flexibility in combat.\n\nRange: Close Combat Strength: As user Special Rules: Two-handed, Flurry\n\nFlurry: A set of chain sticks allows its wielder to unleash a furious bludgeoning. A warrior armed with chain sticks gets +2 Attacks. This bonus only applies in the first turn of each hand-to-hard combat. Using chain sticks otherwise counts as having two hand weapons.\n\n9. Claw of the Old Ones\n\n30 gold crowns Availability: Rare 12\n\nStar swords as they are known are ancient weapons made from a strange multi-coloured metal that is impervious to age and corrosion. It is said the powers of this star-metal artefact are only be unleashed through a ritual known only to a handful of Amazons. The blade of the claw glows white hot and can cut through armour as if it were paper.\n\nRange: Close Combat Strength: As user +1 Special Rules: Parry, No save\n\nNo Save: A warrior wounded by the sword receives no armour saves.\n10. Obsidian weapon\n\n4 x Price Availability: Rare 12\n\nThe Eye of Sigmar was an unusual jewel. A fist-sized piece of obsidian, it was found where a star fell to the earth. Obsidian is mined in the Dark Lands by the minions of Chaos. When expertly derived from its ore, the curious volcanic rock becomes ensorcelled by engineers manufacturing artefacts in the furnaces of Zharr-Naggrund. Forging jagged-edged weapons using these vile techniques requires acute diabolic expertise making them extremely rare.\n\nAn obsidian cleaver gives its user +1 Strength in handto-hand combat, and costs four times the price of a normal weapon of its kind. You may choose which type of hand-to-hand weapon is offered to you.\n\nBlemished: Although not strictly tainted by Chaos, all artefacts of Obsidian are considered tinged with evil, by the same darkness associated with their artisans. Obsidian weapons may never be used by Dwarfs, Elves, Sisters of Sigmar, Witch Hunters or Human Priests.\n\nHeavy: Obsidian weapons are so heavy that the warrior using them always strikes last, even when charging.\n11. Cathayan longsword\n\n75 gold crowns Availability: Rare 12\n\nPrized indeed are blades of Ithilmar forged by Elves. Even more masterful are the arms crafted by swordsmiths in Cathay. Known as a Jintachi blade among Estalian merchants, the Cathayan longsword is a deadly crown jewel in the hands of a skilled fighter. Gold alone is never enough to acquire such a weapon. Jintachi are heirlooms and highly coveted. The few still smithed are gifted only in reward for some heroic deed that is done in the kingdoms to the east.\n\nRange: Close Combat Strength: As user Special Rules: Parry, Cutting edge, Mastercrafted\n\nMastercrafted: Attacks made with a Cathayan longsword give the bearer +1 Initiative and +1 Weapon Skill.\n12. Kraken-tooth sword\n\n165 gold crowns Availability: Rare 15\n\nKraken-tooth bites clean through armour, bone and heavy chains. Even the most resistant of obstacles cannot defy the sawing action of its razors edge.\n\nRange: Close Combat Strength: As user Special Rules: Parry, Teeth\n\nTeeth: Razor teeth of the blade can saw through all obstacles. A kraken-tooth sword ignores armour saves. Blade strikes with its saw causes an additional wound. Roll to determine critical hits as usual.",
+     "tables": []
+    },
+    {
+     "title": "Pit Events chart",
+     "text": "{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1",
+         "Gate Crashers: A party of late entrants arrive at the pit gate! Deploy D3+1 gladiators at the pit edge at a position determined using a scatter dice."
+        ],
+        [
+         "2",
+         "Over the Ropes. One of the champions has somehow tagged himself out of the match! Nominate one of your Champions and another warrior from your warband within charging distance of the pit edge. The warriors change places. Re-deploy the Champion outside of the pit edge and the other warrior inside the pit edge."
+        ],
+        [
+         "3",
+         "Feign Injury. An arena entrant was playing dead! Nominate one of your injured models. If the model was either knocked down or stunned at the beginning of the turn, the model stands up and is treated as if it were never injured. If the model was taken out of action in a previous turn, return it to the pit, where it is treated as being knocked down."
+        ],
+        [
+         "4",
+         "Take a Dive. Bribery is known to be used to determine the outcome of blood sports. One of the gladiators has colluded with your gang leader. Nominate one of the gladiators to bribe. Pay 2 gold crowns for the gladiator to be knocked down or pay 5 gold crowns for the gladiator to charge an enemy model of your choice."
+        ],
+        [
+         "5",
+         "Roar of the Crowd. The excitement of the grudge match sends one of entrants into a deadly frenzy! Nominate one of your Champions to be subject to the Psychology rules for frenzy."
+        ],
+        [
+         "6",
+         "Pit Beast! One of the pit keepers unleashes a terrifying beast into the pit! Deploy the creature at the pit edge at a position determined using a scatter dice. If a pit beast is taken out of action by one of the Champions it may be added to the warband's roster sheet. Roll a D6 to see what species the creature is; 1. Tiger 2. Bear 3. Snake 4. War Dog 5. Fighting Monkey 6. Cathayan Temple Rooster"
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "slug": "pit-of-blood",
+   "name": "Pit of Blood",
+   "number": "4",
+   "players": "either",
+   "summary": "Champions fight it out in a fighting pit while their warbands look on."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "Storm a city watch tower or launch a raid on a village sanctum outside the city walls! Swineherds, coopers and leatherworkers have laboured to build defensive earthworks around valuable positions. This is an attack on a protected place of sanctuary. Narrow window slits in the corner towers of the stockade house; a keep, obelisk or steeple poses the challenge of trespassing across its protected perimeter outside to breach the stockade.\n\nLehmburg, Grimpengratz or one of the other backwater surrounding settlements are ideal locations for the defenders to make their stand against interlopers. Places of solace inside Marienburg that attract unwanted attention from trespassers include lighthouse-temples of Manann, spires of a Shallyan cloister, the belfry in a Garden of Morr, prison-tower headquarters of a witch hunter or the plush minaret of a wealthy spice merchant.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest that the terrain is set up within an area roughly 2' x 2'. This represents the stockade in a city district sanctuary or a remote outlying location.\n\nThe area surrounding the perimeter of the tower offering sanctuary should be limited to encourage the raiding warband to remain within proximity of the sanctuary at all times.\n\nWe suggest that the tower building is positioned on higher ground. This may require raiders to traverse sta irways or causeways and/or overcome difficult terrain in order to breach the stockade! The building could be a chapel or watch post. The tower requires doors, windows, hatches or other points of entry to be used as access points by warriors on either side.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "The scenario can be played as a multi-player battle using two towers and four warbands. Two warbands act as the defenders and two as the raiders. Alliances can be determined using warband ratings or in any way the players choose to agree upon.\n\nTwo defending warbands will be working towards a shared victory. Raiding parties will be working towards the same end but cannot both claim victory! Remember that raiders are competing against one another for the spoils!\n\nIf one of the warbands is following the 'Gaze of the Gods' or the 'Poisoning the Well' plots then that player is always the raiding party. Otherwise the player with the highest warband rating is the raiding player. In the event that two or more warbands are following the same plot or the ratings are tied, roll a dice to determine roles.\n\nThe defending player deploys first. Unless the position of the defending warband is isolated by a surrounding body of water (ie, Lighthouse) then it is secured by deploying four sets of earthworks around the tower building within 4” of the tower. The defending warband is deployed anywhere with 8” of the tower.\n\nRaiding warbands deploy within 4\" of the table edge.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "The raiders and defenders each roll a D6. The side rolling the highest has the first turn.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Earthworks: Each set of earthworks should be no greater than 4\" in length.\n\nAny model attempting to move across earthworks or declared as charging another model positioned behind earthworks is required to make an Initiative test. If the test is failed then the model takes D3 Strength 2 hits. Large models and mounted models take D3 Strength 4 hits.\n\nAny model charging another model positioned behind earthworks receives -1 to hit during the first round of hand-to-hand combat.\n\nTrespass: Each of the Heroes from the raiding warband is carrying a torch at the beginning of the battle. The trespassers have also constructed a crude ladder that can be moved by any warriors in the warband. It takes two models to carry a ladder.",
+     "tables": []
+    },
+    {
+     "title": "ending the game",
+     "text": "The defending warband is not required to take rout tests. Roll a D6 on the fifth turn and on a 4+ a militia led by the local Watch turn up and the game ends. On the sixth turn the Watch arrive on a 3+ and every turn after they arrive on a 2+.\n\nIf when the game ends the stockade perimeter has been breached by one or more warriors the raiding warband is declared the winner.\n\nThe victorious raiding party is the warband with most Heroes and/or Hired Swords breaching the stockade. If when the game ends two or more raiding parties have breached the stockade with the same number of Heroes and/or Hired Swords then the winner is the warband who breached the stockade with the winning number of warriors first.\n\nIf a warrior breaching the stockade is taken out of action the stockade is no longer breached.\n\nThe game ends immediately if a warband routs or if the stockade has been breached and set on fire by the raiding warband. Refer to the Burning House Chart.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n\n+1 Stockade Breached. If a Hero or Hired Sword breaches the perimeter he gains +1 Experience unless he is put out of action.\n\n+D3 Stockade Burned. The first Hero to reach the pinnacle of the stockade then successfully set on fire gains +D 3 Experience.",
+     "tables": []
+    }
+   ],
+   "slug": "stockade",
+   "name": "Stockade",
+   "number": "5",
+   "players": "1v1",
+   "summary": "Storm a stockaded sanctuary: a watch tower, a temple or a village keep."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "The operator of a baiting pit in a seedy corner of the city has been murdered. He owned a fierce tiger that killed dogs for the amusement of the crowd between bouts. The tiger is held sacred by a group of monks who received visions leading them to the creature. The pit boss refused to sell the feline. The disappearing cat makes the Cathayans prime suspects in the investigation! Another death has occurred in the Silk Market. The victim has been clawed to death by an almighty beast!\n\nA price has been placed on the heads of the monks who liberated the big cat from the pits and transported it back to the Cathay ghetto. Intrigued factions with a stake in the outcome of the investigation have descended on the Silk Market to prize information from silk cloth traders and suspicious laundry proprietors located around this borough of cutthroats.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "The scenario is set in the downtown ghetto of the Cathayan district known as the Silk Market. At least six buildings should be placed where the Heroes search for information. We suggest that the terrain is set up within an area roughly 4' x 4'.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "Both players roll a D6 to see who deploys first. Whoever rolls highest sets up first, within 8\" of any chosen table edge and then the opponent sets up within 8\" of the opposite edge.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "Both players roll a D6. The highest scoring player takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "The Heroes move from house to house to gather information points. Each house can only be visited once per warband. Note down information points gathered for each Hero separately. If a Hero is taken out of action any points gathered are lost.\n\nAt the beginning of their movement phase a Hero in base contact with an entry point (door, open window etc.) of an unvisited house may enter it. The player then tries to get some information from the inhabitants. A Hero entering a building does nothing else during any turn spent getting information.\n\nThere are two ways of getting information from household inhabitants. Questioning them or by torturing them! It is up to the players, to decide which way works the best for their Heroes. Only one questioning and one torturing can be done per house.\n\nQuestioning: The Hero makes a Leadership test. For each point the test is passed by, one additional information point is gathered. Heroes cannot benefit from their leader's Leadership.\n\nExample: Rolling 5 with Leadership value of 7 grants 2 information points but rolling 7 grants 0 points.\n\nHeroes that don't come from the following races receive a +1 penalty on their Leadership tests because the villagers are less willing to speak with them: all Humans, Elves, Halflings and Dwarfs.\n\nHeroes with mutations or wearing Chaos armour always suffer a +1 penalty on their Leadership tests.\n\nIf a Hero passed a Leadership test from questioning he may not tor ture the inhabitants. If a Hero failed his\n\nLeadership test he may choose to torture the inhabitants in the following turn to get information out of them. It is pointless questioning inhabitants that the Hero has already tortured!\n\nTorturing: The Hero makes a Strength test. For each point the test is passed by, one additional information point is gathered. Weapon bonuses and Strength modifiers from skills like Mighty Blow do not apply!\n\nHeroes that cause fear receive a –1 bonus on their Strength tests because they are intimidating. Heroes with the 'Torturer' skill receive a –1 bonus.",
+     "tables": []
+    },
+    {
+     "title": "ending the game",
+     "text": "Voluntary routs are not permitted. The game ends as soon as a warband has searched every house or until the tiger is found. To determine which warband wins the scenario both players compare the amount of information gathered and the one with more information points wins. Alternatively a routing warband loses as normal.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.",
+     "tables": []
+    },
+    {
+     "title": "information points",
+     "text": "After the battle both players consult the following table to see what the information traces them to. The game is a race to achieve each benefit before the game ends. Benefits are cumulative, so gathering 6 information points equates to an additional +1 Campaign Point and being able to choose one of your next scenarios plus a chance of gathering some smelly Cathayan silk cloth!\n\nPoints Benefit 1-3 The warband makes off with a pile of dirty laundry! Collect D3-1 Cathayan silk cloaks. 4-6 May choose the next scenario you play. 7-9 +1 Campaign Point on a D6 roll of 5-6.\n\n10-14 The next scenario you play may be a special scenario (may not choose, Stronghold, or Southdock Massacre.)\n\n15+ The Tiger has been found by your warband! On a successful ld test by the warband leader, it may be kept, otherwise it",
+     "tables": []
+    }
+   ],
+   "slug": "silk-market",
+   "name": "Silk Market",
+   "number": "7",
+   "players": "1v1",
+   "summary": "Factions hunting the monks who freed a sacred tiger question the Silk Market's traders."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "Barges are loaded on private wharfs to transport freight up and down the Reik. Once a shipment is despatched other events befall these deliveries. Bootleggers also use their watercraft as a means to commit piracy on the canals of Marienburg. Upon being inventoried, the diminished contents from manifests can be attributed to careless recording keeping or skulduggery. Regardless of where blame is apportioned, salvage crews know where to scavenge for shipwrecked booty and other valuables jettisoned by smugglers in the Bruynwater Canal.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest that an area roughly 4'x4' be used to represent the site where the booty was shipwrecked. This should include a significant amount of waterways judging by the many networks of canals in the city.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "D3 cargo objective markers are included for each warband. Each player deploys their respective cargo objective markers anywhere in the water.\n\nEach player rolls a D6 to see who deploys first. A warband with any 'Seafaring' warriors adds +1 to their result. A warband with a Boatman Hired Sword adds +1 to their result. Whoever rolls highest sets up first, and order of setting up proceeds based on the next highest roll. Warbands may not be deployed in or on waterways except on a bridge or in a building. Whenever possible, players must not deploy models within the charge range of other warbands.\n\nEach cargo marker scatters D6\" in a random direction after deploying warbands. Roll a D6 and a scatter dice for each cargo maker to determine where it lands.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "Each player rolls a D6. A warband with any 'Seafaring' warriors adds +1 to their result. A warband with a Boatman Hired Sword adds +1 to their result. The highest scoring player takes the first turn, and order of play proceeds based on the next highest roll. Roll an artillery scatter dice to determine a direction for the current to flow in.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Building Rafts: In any scenario featuring waterways, the warbands can go still fishing if they do not have any kind of boat available. Instead they can use rafts. But first the warriors need to build themselves a raft!\n\nAt the start of the movement phase any number on warriors not in the water can be assigned to build rafts. Warriors building rafts cannot move, shoot, cast spells or do anything other than work on the raft.\n\nIt takes a team of two warriors 2D3 turns to build a raft. For each warrior who joins the team, the number of turns it takes to finish building a raft is reduced by one. It takes two models to carry a raft, like chests.\n\nA raft can transport up to three human-sized warriors or smaller, or the equivalent in cargo. Rafts use the rules for boats on page 34 of the Empire in Flames supplement.\n\nProfile\nM WS BS S T W I A Ld\n\nRaft - - - - 4 2 - -\n-\n\nCargo: Only warriors in a boat can recover cargo! Sacks or crates can be carried by a single model. Two models may carry a crate, in which case they may run. The number of cargo objectives that can be loaded onto a raft, boat or other form of waterbourne craft is determined by the number of models it can transport.\n\nie, A rowboat can transport up to six human-sized warriors or smaller, or the equivalent in cargo.\n\nAt the beginning of the movement phase a warrior can haul cargo onboard by passing a Strength test with a +2 modifier applied to the result. Apply a -1 modifier to the result if the warrior used a net or -2 for using a boat hook! Roll on the Cargo Chart for each piece of freight dredged from the canal. Freight cannot be opened. Roll for contents in the post battle sequence.",
+     "tables": []
+    },
+    {
+     "title": "Cargo chart",
+     "text": "{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1",
+         "Crest! A wave crashes against the cargo smashing its contents to smithereens!"
+        ],
+        [
+         "2",
+         "Crate. 2D6 gold crowns worth of light goods."
+        ],
+        [
+         "3",
+         "Chest. Two models are required to move a chest. Roll a D6 for its contents: 1-3 Treasure 4-5 D3 Treasures 6. Medicine Chest."
+        ],
+        [
+         "4",
+         "Barrel. Two models are required to move kegs. Roll a D6 to prize the barrel open to reveal its contents: 1. Hostage 2. Powder Keg 3. Superior Blackpowder 4. Alcoholic Spirits 5. Elven Wine 6. Bugman's Ale"
+        ],
+        [
+         "5",
+         "Coffin! Two models are required to move coffins. Roll a D6 for what the casket holds: 1-3 Waterlogged Corpse 4. Blunderbuss 5. D3 Handguns 6. Hochland Long Rifle"
+        ],
+        [
+         "6",
+         "Booty Sack! Inconspicuously packaged in a grain sack is an exquisite commodity of value! Roll on the Booty Chart for the looted article."
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Booty chart",
+     "text": "{{table:1}}\n\nPowder Kegs: Refer to page 33 of Border Town Burning supplement for rules on detonating kegs.\n\nMedicine Chest: A Medicine Chest can be used as D6 doses of Healing Herbs or as a one-off to allow a Hero to re-roll on the Serious Injury Chart, unless the result was 'Captured' or 'Sold to the Pits'.",
+     "tables": [
+      {
+       "columns": [
+        "2D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "2",
+         "Roll on the Arcane Items Chart (see Magician's Workshop in the Marketplace)"
+        ],
+        [
+         "3",
+         "Roll on the Herbs & Potions Chart (see Herbalist in the Marketplace)"
+        ],
+        [
+         "4",
+         "Telescope"
+        ],
+        [
+         "5",
+         "Compass"
+        ],
+        [
+         "6",
+         "Holy (or Unholy) Relic"
+        ],
+        [
+         "7",
+         "Roll on the Tainted Items Chart"
+        ],
+        [
+         "8",
+         "Duelling Pistol"
+        ],
+        [
+         "9",
+         "Marienburg Map"
+        ],
+        [
+         "10",
+         "Elven Boots"
+        ],
+        [
+         "11",
+         "Roll on the Custom Weapons Chart"
+        ],
+        [
+         "12",
+         "Roll on the Profane Books Chart (see Bazaar of Books in the Infamous Haunts)"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Tainted Items chart",
+     "text": "{{table:1}}\n\nTainted Goods: If a warrior carried a tainted item there is a chance the warrior becomes warp tainted! For full details concerning tainted items and the hazardous side effects of warriors carrying wyrdstone, see the 'Corrupted Characters' chapter.",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1",
+         "Wyrdstone Shard! Carry wyrdstone shard."
+        ],
+        [
+         "2",
+         "Wyrdstone Pendulum. Wear necklace."
+        ],
+        [
+         "3",
+         "Wyrdstone Poultice. Carries sealed poultice. Wyrdstone ink is poured to create a poultice that heretics apply as a salve to promote fortitude and fertility! A Hero with wyrdstone poultice can use it once only at the beginning of the recovery phases as long as he is not engaged in hand-to-hand combat. Roll a D6. On a 1-3 the Hero receives a mutation. Roll on the Random Mutation Chart and apply the result. On a 4-6 restore all wounds he has previously lost during the game instead."
+        ],
+        [
+         "4",
+         "Wyrdstone Tattoo Ink. Carries sealed vial of ink. Wyrdstone ink is used by the northern tribes and other cultists in applying tattoos. Tattoo ink has one use only. Roll on the Random Mutation Chart and apply the result. Whenever a double is rolled on an Advance roll for a Hero with a wyrdstone tattoo roll for a new mutation."
+        ],
+        [
+         "5",
+         "Wyrdstone Spyglass. Carry a wyrdstonelensed telescope! Wyrdstone spyglass can help a Hero spot Hidden enemies from twice as far away as other warriors (i.e. twice their Initiative in inches)."
+        ],
+        [
+         "6",
+         "Power in the Stones! Carries magic stone. Roll 2D6 on the Evaluation Chart to determine a power (see Alchemist)."
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "rowing your boat",
+     "text": "Rafts may move 4 \" when travelling against the current if a warrior passes a Strength test. If the crew fails the test the raft remains stationary fighting the current. Rowing boats and rafts move 6 \" when moving with the current of the river or canal (the direction of the flow must be established before the game).\n\nBoats may move 4 \" when travelling against the current. Boats must move at least half of their movement allowance unless they have been anchored or tethered to the shore. No movement penalty applies to drop or hoist anchor. If all models are in combat or shooting then a untethered boat is adrift! Drifting boats are moved 2D3 \" with the current. If a rowing boat is transporting a single warrior then on a successful Strength test the boat may move 6 \" when travelling against the current. Rowing boats with two or more warriors or the equivalent in cargo require two of its crew to pass a Strength test. If one of the crew fails the test the boat may only move 4 \". A riverboat crew may move 6 \" when travelling against the current if five of the warriors sailing it can pass a Strength test.\n\nIf one of the other crewmen failed it still moves 6 \". River barges may move freely against the current.\n\nAquatic Seamen: Aquatic warriors may recover cargo objectives one piece of cargo at a time. Warriors can move one piece of cargo at a time. They never move cargo at twice their movement. A warrior can dredge cargo off the riverbed by passing a Strength test with a +2 modifier applied to the result.",
+     "tables": []
+    },
+    {
+     "title": "setting boats on fire",
+     "text": "Refer to page 32 of Empire in Flames supplement for 'Shooting at a Vehicle' and page 35 for Boat Location and Propulsion Damage. Riverboats and river barges must have three hit locations; hull, rudder and propulsion (sail/oars/rigging/mast) but if players agree to use larger ships then additional hit locations can be assigned; fore/aft castle, poop deck and other features.\n\nIf a hit is scored against a boat location it is set on fire on a D6 roll of 5+ with a Brazier Iron, Fire Bomb or Cathayan Candle/Firepot. A boat is set on fire on a roll of 4+ with a Torch or Fire Arrows. At the beginning of the player's next shooting phase locations set on fire suffer damage, losing D3 wounds on a D6 roll of 4+.\n\nAdditional flaming attacks made to a location that is already set on fire may only cause impact damage.\n\nFirefighting: Crew on a boat can put out a fire in a single location. Roll a D6 at the end of a turn in which warriors did nothing but fight the fire. A single warrior will put out the flames on a roll of 6. Each additional crewman who assists in fighting the fire reduces the roll needed by -1. A roll of 1 is always a failure.\n\nHull Damage: When the ship loses its final point of damage/wound roll 2D6 on the Sinking Boat Chart.",
+     "tables": []
+    },
+    {
+     "title": "ending the game",
+     "text": "No voluntary rout tests are allowed when playing this scenario so long as any cargo markers are unclaimed.\n\nIf a warband fails its rout test it automatically loses all of its cargo and loses the game. Remove any cargo markers from the game when a warband routs.\n\nThe game ends when all warbands except one have failed their Rout test or when all cargo objectives have been dredged up from the canal.\n\nIn the event that all cargo markers are recovered, only one warband can claim theirs as salvage. The warband carrying the most cargo markers when the game ends wins the game. They are named the salvers. Salvers claim their find as sanctioned salvage while the remaining warbands are treated as looters!\n\nIf the number of cargo markers between two or more warbands is tied then no cargo can be claimed as salvage except by Watch Patrols. Cargo is impounded by the Marienburg Secretariat as illegal salvage when a River Watch patrol turns up on the scene!",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of acti on.",
+     "tables": []
+    }
+   ],
+   "slug": "illegal-salvage-operation",
+   "name": "Illegal Salvage Operation",
+   "number": "8",
+   "players": "either",
+   "summary": "Dredge sunken cargo out of the canals by boat."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "Under-Empire, the dominion of the underfolk extends to the Skaven burrows under the fish-stinking manwarren humans called Marienburg. The cavities of Undertown exist within a maze of catacombs. Newly burrowed breaching old openings to connect city vaults. Secret passageways of ancient construction by the dwarfs and sea elves feed into sewage ducts from behind rune-disguised entrances older than the city itself.\n\nThe Marienburg Grand Sewer Network is ripe with potential for hundreds of adventures, dungeoneering beneath the port. Wading through slurry in the culvert of a sewer to reach a hidden bolt-hole is a filthy job! Every wine cellar connecting a major confluence to a castle ' s cloaca leading warriors to intrigue and espionage. As cellars become more extensive, vaulted tunnels are used on smuggling runs by racketeers who needed more space but would prefer their business to remain undetected! Disgusting channels wilfully forgotten by most of the city ' s inhabitants make a perfect road for men who can ' t afford to be seen.\n\nUnderground turf-wars break out over wares between smugglers, cultists, sewer jacks and mutants with skaven clans, or even others who are waiting in the tunnels for a signal to emerge into the city.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "This underground scenario uses 8\" x 8\" floor tiles supplied in the Border Town Burning supplement. Floor tiles can alternatively be represented by using Warhammer dungeon floor plans like the ones from the Warhammer Quest game if you have them.\n\ncellar corridor corner junction crossroad bolt-hole\n\nThe area of the sewer network uses a grid. In a 2 player game use a grid of twelve tiles in a configuration of 3 x 4 tiles. Multi-player games require more tiles. ie, 3 or 4 player games use a grid of twenty tiles in a configuration of 4 x 5 tiles. 5 or 6 player games use a grid of thirty tiles in a configuration of 5 x 6 tiles etc.\n\nPlayers are encouraged to customise and expand their tunnel layouts according to the number of players and what dungeon tiles they have available!",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "Scoundrel gangs are hired to smuggle illegal freight through the Marienburg Grand Sewer Network! If any of the warbands is following 'The Secret Deal' or 'The Body Trade' plots then that player is always smuggling something. If none of the players are following these plots then the player with the highest warband rating will be smuggling. In the event that two or more warband ratings are tied, roll a dice to determine the smugglers. More than 4 warbands requires an additional player to be leading a rival smuggling operation!\n\nSmuggler gangs are assigned three cargo markers. Roll on the Cargo Chart to determine what types of freight they have for the cargo (re-roll a result of 1) but do not roll to see what contents the freight contains. This is done after the game ends!\n\nEach warband is deployed in a different cellar tile. This is the entry area already explored from where the warbands start. The cellar tile s are placed at random positions on the outer edge of the grid. Place a stairway marker on each cellar tile.\n\nRidden animals and vehicles never enter underground tunnels! If either warband owns any of these, they miss this battle.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "The smuggler player takes the first turn. If there are two smuggler gangs roll a dice to see which player takes the first turn. Order of play proceeds clockwise around the grid for the remaining players.\n\nWhen a model leaves a current tile, roll on the chart below to see what tile to place next to it. When adding an unexplored tile it must:\n\n1. Connect to the tile your model is moving from. 2. Be placed in contact with a side of the previous tile that is not connected to another tile whenever possible. 3. Not go off the grid configuration. 4. Have no section of the tile cause a dead end whenever possible. If tunnels cross each other but will not join up properly for any reason it is still acceptable.\n\nIf there is more than one direction to place the next unexplored tile in, roll a D6 to determine which edge of the last tile the new tile is placed against. (ie, Select each side to be a different value 1-2 left side, 3-4 ahead, 5-6 right side. After rolling for the edge place the new tile flat against that edge). As you go along you may connect to other tunnels and rooms including those placed by your opponent. Roll 2D6 to find out what type of tile you may place on the board. Roll again if there are no tiles of the type determined remaining to use.\n\nWhenever a warrior with the speed skill Tunnel Rat or Infiltration special skill enters a new tile first the direction of the next unexplored tile can be chosen.\n\n{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "2D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "2",
+         "Sunken Room! A hidden room, concealed or forgotten! See rules for Sunken Rooms."
+        ],
+        [
+         "3",
+         "Secret Passage! Place a secret passage tile. The next unexplored tile is a bolt-hole."
+        ],
+        [
+         "4",
+         "Junction. Place a junction tile. T-junctions connect up to three other adjacent tiles."
+        ],
+        [
+         "5",
+         "Corner. Place a corner tile."
+        ],
+        [
+         "6-8",
+         "Corridor. Place a corridor tile. Use corner tiles instead when entering corners of grid."
+        ],
+        [
+         "9-10",
+         "Bolt-hole. See rules for Bolt-holes."
+        ],
+        [
+         "11",
+         "Chaos Crossroad! There is only one crossroad tile. It connects up to four tiles."
+        ],
+        [
+         "12",
+         "Familiar Turn! Select any remaining tile of your choice including one of the sunken objective rooms."
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "the bolt-holes",
+     "text": "The tunnels connect to the room network beneath Marienburg, through collapsing walls or purposebuilt doors. Some of the rooms were built for sewer jacks long ago; these tend to be stone sided and still have the remnants of rotting furniture. Other rooms are basements to tenements above, or are those rooms that have sunk below the surface. The rooms and their contents therefore vary. Warbands might stumble across what was once a kitchen, a storeroom piled high with mouldy crates, or an old study complete with faded portraits on the wall. Some rooms may still show signs of use by the world above, but most are forgotten, filled with dust and decay, heavy with the smell of rot. Rooms connect to each other through doors or holes in the walls, whether man-made or caused by decay. Warriors may have to climb up or down mouldy stairs to reach other rooms. Some doors or passage ways have become blocked, old gates might remain locked, and certain rooms simply lead nowhere.\n\nBolt-holes are used by gangs as hideouts when they need to lay low or to stash their loot below the city. Roll a D6: 1-5 Treasure Chamber. The room contains a cache of 3D6 gold crowns. 6 Tomb. Roll on the Booty Chart to find out what was buried.",
+     "tables": []
+    },
+    {
+     "title": "Subterranean Event chart",
+     "text": "{{table:1}}\n\nSubterranean Events: After a model moves onto an unexplored tile, roll 2D6 on the Subterranean Event Chart to determine what happens next.\n\nCave-ins: Part of the tunnel roof crashes down in front of the warrior, creating a barrage of boulders which block the way. Place a marker directly before the exploring model to indicate this route has been blocked off. The block can be cleared by non-animal models. This is represented by attacking the barrage of boulders in the close combat phase (Toughness 6, Wounds 4). The barrage has a 3+ save that is affected as usual by Strength modifiers.\n\nExplosives Charges: If playing underground scenarios, roll a D6 whenever explosives such as powder kegs, Cathayan firepots, bog fire or a hand-held mortar is being detonated. On a 4+ the explosion caused the tunnel to cave-in! Place a marker at the position of the explosion as described in the Cave-in event.",
+     "tables": [
+      {
+       "columns": [
+        "2D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "2",
+         "Cave-in! The roof has collapsed. Place a marker denoting the tile is impassable."
+        ],
+        [
+         "3",
+         "Sewer Hazard. Roll a D6 on the Sewer Hazard Chart."
+        ],
+        [
+         "4",
+         "Mould. Every model becomes stunned by soporific spores unless it can pass a Toughness test. Spores have no effect on daemons or undead creatures."
+        ],
+        [
+         "5",
+         "Spiders. Place 2D3 Giant Spiders on the tile. (See Empire in Flames page 27)"
+        ],
+        [
+         "6",
+         "Rats. Place 2D3 Giant Rats on the tile. (See Mordheim Rulebook page 95)"
+        ],
+        [
+         "7",
+         "Trap. Roll a D6 on the Trap Chart."
+        ],
+        [
+         "8",
+         "Sconce. One of the Heroes in your warband collects a torch from the sconce."
+        ],
+        [
+         "9",
+         "Fungus. A Hero collects a batch of Mad Cap Mushrooms."
+        ],
+        [
+         "10",
+         "Powder Store. Place D3 powder kegs anywhere on the tile."
+        ],
+        [
+         "11",
+         "Ratskin Map. When a warrior with the ratskin map enters an unexplored tile first, you can re-roll what tile is being placed. The result of the re-roll must be accepted. Discard the map after battle if it was used."
+        ],
+        [
+         "12",
+         "Aqueduct! A loud rushing sound takes the party by surprise. Each model entering the tile must pass an Initiative test to avoid falling into the subterranean waterway. Any model dropping into the river is washed to another tile in the sewer network. Randomly determine an unexplored tile for the model to show up, or any tile that is not a cellar is all tiles are revealed."
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "sewer rules",
+     "text": "Archways: Sewer tiles are connected by archways and hidden entrances. As soon as unexplored tiles are placed then warriors can potentially see other models in an adjacent tile. This might mean they can shoot and cast spells at another warband.\n\nNight Vision: Sewer networks are poorly lit. Warriors can only see, hear or otherwise detect foes within their Initiative value in inches. Excellent Sight for elf warbands does not apply underground. Dwarf, Skaven and Goblin warriors have night vision meaning they are able to spot hidden enemies from twice their Initiative value in inches away.\n\nShot In The Dark: Shooting suffers a -2 modifier underground when the nearest target cannot be seen. An exception to the shooting rules is that warriors carrying a lantern or torch may be freely picked as a target to be shot at but a -2 modifier still applies.\n\nLarge Creatures: Large creatures (Ogres, Trolls etc.) can move and run normally in rooms and halls but cannot run in tunnels as they have to stoop. If they charge in a tunnel they are limited to normal movement.\n\nGrounded: Models may never fly because there is insufficient height.\n\nCongestion: Space to move around in tunnels is limited. Friendly models count as stepping to one side to allow others to pass unless in close combat.\n\nSecret Passages: Secret passage tiles are as narrow as 1\" or less! Running is not possible through narrow passages. Large creatures may not enter a secret passage at all meaning that ogres are particularly ill-suited to smuggling operations!\n\nUnexplored: A floor tile with path edges that have no adjacent tile yet placed counts as unexplored area. Models may not double their movement when crossing into an unexplored tile.\n\nLedges: If tiles illustrate raised ledges or drops then treat these as 2\" to avoid any confusion when climbing, jumping, diving/charging, falling or shooting.\n\nIf any portion of the target is hidden by a ledge, or a wall, the shooting model will suffer a penalty. It does not matter how much of the target is in cover.\n\nChasms: Chasms are 10\" deep. Use the rules for falling on page 28 of the Mordheim Rulebook. Any warrior heroic enough to survive falling in may attempt to climb out again!\n\nTraps: When a complex trap with a repeating effect is revealed it helps to leave a trap marker to denote that the trap can be triggered again.",
+     "tables": []
+    },
+    {
+     "title": "Trap chart",
+     "text": "{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1",
+         "Complex Trap! Ingeniously designed traps are remarkably destructive. Since the builder wanted no-one entering this place, the complex trap has the potential to hurt more than one model at a time. Some will activate each time they are triggered, and others work once only. Roll 2D6 and consult the Complex Trap Chart below."
+        ],
+        [
+         "2-5",
+         "Simple Trap. A simple device is quickly rigged that were easy to make. They will only ever affect the model that trips them, and cause a Strength 3 hit. Armour saves are allowed as normal."
+        ],
+        [
+         "6",
+         "Dud! The simple trap is broken. It won't work unless repaired by a trap expert."
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Complex Trap chart",
+     "text": "2D6 Result 2 Boulder! A giant boulder has fallen from the ceiling. The model beneath it must pass an Initiative test to avoid being crushed by the boulder. A failed test means the warrior takes D3 Strength 5 hits with no armour saves. The boulder will roll D6\" in a random direction (use a scatter dice). Any other warriors in its path must pass as Initiative test or take a Strength 5 hit. This trap will only work once. 3-4 Chasm! Suddenly the floor splits open and the model drops into a yawning fissure. Any models on the previous tile within 1\" of the edge must take an Initiative test. Failure meaning they fall into the chasm too! This trap will work only once, but there will be a gaping chasm splitting the tile in two. 5 Arrows! The model triggers a hail of D6 Strength 3 arrows. Roll a D6 for each arrow: 1-3 Hit, 4-6 Miss. Any models on the previous tile within 2\" of the edge must roll again once for every arrow that was a miss for its original target. If there are multiple targets, then divide the misses among them (starting with the closest and continuing outwards). This trap will trigger again. Each time a model enters the tile they must pass an Initiative test to avoid the trap. If the test is failed resolve the effects of the trap again. 6 Curse! Whichever wizard supervised the building of the room has placed a powerful hex on all who trespass here. All warriors on the tile adjacent to the unexplored tile are placed under a curse that lasts until the game ends. Cursed warriors must re-roll any successful to hit rolls or armour saves. 7 Swinging Blades! As any warrior passes through, large razor-sharp blades swing\n\nout from the walls. The warrior entering first and any who follow after must pass an Initiative test, or receive two Strength 5 hits. If a model stops on the tile during its movement it must pass an Initiative test at the beginning of the players next turn or suffer a further two Strength 5 hits. 8 Poison Gas! A blast of poisoned gas engulfs the warrior. The gas causes D3 Strength 4 hits as the warrior gasps for air. Any other model on the previous tile within 2\" of the edge is also affected by gas, suffering one Strength 4 hit. Warriors immune to poison take no damage. 9 Sandbox! Slabs of stone drop down from the roof behind and in front of the warband. The first model to enter the unexplored tile has triggered the trap, trapping any warriors on the tile behind him! Stone slabs block entry to the tile from all sides. The tile space between the slabs begins to fill with sand! The only way to escape is to find a loose stone beneath which there is a switch that resets the trap, clearing the area. Once per turn a different trapped warrior can take an Initiative test to locate the switch. The search has a cumulative modifier of -1 each turn after the first as sand slowly traps the warriors. If after modifiers are applied the effective Initiative of the warriors reaches 0 they are taken out of action. Make a Toughness test for each model. Any models failing the test failed to survive. Models passing the test make a full recovery after the battle. 10 Fireball! A pillar of fire blasts out from the wall, engulfing the warrior and scorching others nearby. The warrior receives a Strength 5 hit and on a roll of 4+ counts as being set on fire. Roll a D6 for any models on the previous tile within 2\" of the edge, on a score of 4+ they are also set on fire. 11 Deadfall! A large block of stone slowly descends from the ceiling, blocking all passage. The model that triggered the trap by entering the unexplored tile is blocked off from the rest of the warband but can be joined by any models on the previous tile within 2\" of the edge. Models can be moved across to the unexplored tile before the block descends. If any models trapped on the wrong side of the block fail to find another way out before the game ends, they will miss the next D3 games. 12 Collapsing Walls! The sewer walls close in, threatening to crush the intrepid scout! The model must make an Initiative test. If successful, the model is quick enough to dodge the trap (and if the model had stopped on the unexplored tile, move it to with 1\" of the opposite side). If the Initiative test was failed the model is crushed between. It receives a Strength 8 hit. Once the walls collapse, they immediately spring open again, ready for the next unwary intruder to activate them.",
+     "tables": []
+    },
+    {
+     "title": "sunken rooms",
+     "text": "Marienburg's location has given rise to an increasing problem. As the city's islands become more and more cramped, building construction tends to go upwards rather than outwards. But as more and more floors are added to the tops of houses and shops, the buildings have begun to sink into the soft earth below. The situation is especially prevalent in areas where cheap buildings lack proper foundations or repair. Whole rooms are below the surface of the streets above. Add to this cellars and basements, and the sewerage tunnels that run through certain parts of the city, and you have a complex network of rooms and passageways beneath the bustling surface of Marienburg. Of course, since the city is built on islands in the mouth of a river, many tunnels are often filled with water, and others flood in sync with the tides.\n\nRoll a D6 on the chart below to find out what objective room the warband has discovered.\n\nD6 Result 1 Gaol. An ancient channel links to a storm drain from the substructure in a fortified keep. The castle's cloaca is in the dungeons where four locked cells imprison captives. Place a hostage marker in each of four cells. 2 Cistern. Underground cavities form subterranean receptacles for conveying water. Dwarf-built pumps beneath the city floodwalls are used to send excess water back into the swamp. The pump will activate the floodgate if a warrior on the tile passes an Initiative test. If the pump is activated the gate opens at the end of that players turn flooding one of the revealed tiles. The cistern tile is unaffected by flooding. Determine a non-cellar tile at random to be flooded. At the end of the players next turn, any adjacent tiles become flooded. An unexplored adjacent tile floods upon being revealed. To represent how models interact see rules for Rivers and Fighting in Water on page 14 of the Empire in Flames supplement. 3 Burrow. Rat-runs dug by skaven miners, tunnel into the deep. Place a burrow marker on this tile. The player who revealed the sunken room places five more burrow markers on five revealed tiles, unless there is a Skaven warband player who must place the markers instead. Burrow markers may not be placed on cellar tiles unless no other tiles are available. Any warrior with the speed skill Tunnel Rat, Infiltration special skill, skaven or dwarf models can use the burrows to move between tiles. Roll a D6 when any other warrior enters a burrow to see which marker he exits the burrow from. On a roll of 1 the model is lost in the burrow until the following turn! Roll again next turn to see where the warrior appears. A warrior exiting a burrow cannot move until the next turn. He can shoot and cast spells. 4 Fulcrum. Ley lines enhancing magic are etched with circles of power. Roll on the\n\nArcane Items Chart to see what item was left in the circle. The fulcrum tile lowers the difficulty of spells by 3 for wizards on it. 5 Vault. The city depository contains 2D3 cargo markers of your choice. 6 Pawnshop Basement. Place a stairwell marker alongside the floor tile. Each Hero can make a search roll for any rare item. If a bargain is found the Hero just takes it!\n\nJunctions: When most sewer tiles are placed they will link to the next tile with a visible archway. The main exceptions are the crossroad and junctions. Sometimes there needs to be an additional route to join revealed tiles.\n\nIf the next unexplored tile rolled is a corridor or corner when this happens then a junction should be placed instead to connect the tiles. If the next unexplored tile rolled is a junction when this would be a dead-end then a corridor or corner should be placed instead (whichever fits best). Only the player whose warband makes the connection to revealed tiles is allowed to open a door that creates the link. Dwarf runes make it invisible from the other side!\n\nIf an additional route is still required to link the whole sewer network once all possible connecting tiles are revealed, there must be a hidden entrance!\n\nHidden Entrances: When players agree to identify a hidden entrance is needed to link two sections of the sewer network (after a cave-in etc.) a search is required to find it. At the end of the movement phase, any Hero standing on a tile edge that is adjacent to a tile from an unconnected section of the sewer can search. If the Hero passes an Initiative test with a -2 modifier then a hidden arch opens! Hidden entrances never open into cellar tiles.\n\nChaos Crossroad: When the crossroad is rolled it will connect all of the adjacent tiles with archways and hidden entrances. The crossroad tile cannot be placed on the outside edge of the grid configuration so re-roll on the chart if this happens.\n\nAny Hero carrying a tainted item onto the crossroad tile can use it to summon the crossroad daemon and make a deal! The daemon's deal is simple. In exchange for its favour the daemon gets to live within the warrior’s soul!\n\nRoll 2D6 on the Rewards of the Shadowlord Chart on page 162 of the Mordheim Rulebook. On a roll of 3-6 the Hero gains a Daemon Soul (see mutations for Cult of Possessed in the Mordheim Rulebook).",
+     "tables": []
+    },
+    {
+     "title": "Sewer Hazard chart",
+     "text": "{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1",
+         "Mutants. D3 Mutants armed with club (See Mordheim Rulebook page 74). Roll once for each mutant on the Random Mutation Chart in 'Corrupted Characters'."
+        ],
+        [
+         "2",
+         "Ghoul Nest. D3 Ghouls (See Mordheim Rulebook page 89)"
+        ],
+        [
+         "3",
+         "Albino Sewer Lizard. See following page."
+        ],
+        [
+         "4",
+         "Tregara. See following page."
+        ],
+        [
+         "5",
+         "Wolf Rat. See following page."
+        ],
+        [
+         "6",
+         "Warp Bat. See following page."
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "albino sewer lizard",
+     "text": "Scaly sewer reptiles with milky skin the size of a large dog are among the many ferocious beasts that find homes in the sewer tunnels twisting off from canals. Tiny red eyes peer from behind a gaping maw full of sharp teeth.\n\nProfile\nM WS BS S T W I A Ld\n\nSewer Lizard 6 3 0 5 4 3 3\n2 5\n\nSpecial Rules: Cold-blooded, Large, Aquatic, Fear, Great Beast, Scaly Skin, Bite Attack\n\nSPECIAL RULES Scaly Skin: Sewer Lizards have a 5+ armour save. This save cannot be modified beyond 6 due to Strength modifiers but any result of 'no save' on the Critical Hit Charts will negate this 6+ save.\n\nBite Attack: Lizards have a powerful bite attack. This bite attack uses the Lizard's strength to wound. The bite attack always strikes last, regardless of who charged or which weapon is used. The bite even attacks after double-handed weapons.",
+     "tables": []
+    },
+    {
+     "title": "tregara",
+     "text": "The pale, stone-coloured shell of the chitinous Tregara can be mistaken for part of a chamber ' s ceiling – that is until extending arms snatch up its unwary prey. Similar in form to a praying mantis, the Tregara is a blind subterranean insect from the folk stories of Clan Verms that uses vibrations in the air around it to hunt prey. These creatures grow up to eight feet in length, and their dangerous mandibles are the subjects of many nightmares for the skaven.\n\n{{table:1}}\n\nSpecial Rules: Wall Runner, Tunnel Rat, Large, Fear, Mandibles, Armoured Carapace\n\nSPECIAL RULES Mandibles: If the Tregara hits the same enemy warrior with both of its attacks in the same round of combat, it grapples with its mandibles instead of resolving the attacks normally. Roll a D6 for both models and add each model's Strength to the roll. If the Tregara's total is higher or the totals are equal, the grappled warrior takes a single automatic wound with no armour save allowed. If the warrior's total is higher, the warrior has broken the hold and suffers no damage from the attack.\n\nIf the warrior failed to break free then he remains trapped in the mandibles! In the next combat phase, roll a D6 again for both models and add each model's Strength to the roll.\n\nArmoured Carapace: The insect has a 4+ armour save. This save cannot be modified beyond 6 due to Strength modifiers but any result of 'no save' on the Critical Hit Charts will negate this 6+ save.\n\nTunnel Rat: Any characteristic-based tests being taken for scenarios set in sewers or elsewhere underground can be re-rolled.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Tregara",
+         "6",
+         "4",
+         "0",
+         "4",
+         "4",
+         "4",
+         "4",
+         "2",
+         "6"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "wolf rat",
+     "text": "Cave rat the size of a mastodon. Not even the insidious rat-men themselves know the origins of the ravenous packs of Wolf Rats that are found almost everywhere that the Skaven themselves infest. Neither wholly rat or wolf, but instead an aberrant and savage amalgamation of the two.\n\n{{table:1}}\n\nSpecial Rules: Strike First, Tunnel Rat, Cave Beast\n\nSPECIAL RULES Cave Beast: Wolf Rats are animals kept by the rat-men for a myriad of uses; for guarding their lairs, as hunting beasts, and occasionally even as food. If a Skaven Hero with the Beastmaster skill has control over the animal when the game ends or when the warband routs then the Wolf Rat can be added to the Skaven player's warband roster.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Wolf Rat",
+         "8",
+         "4",
+         "0",
+         "4",
+         "3",
+         "2",
+         "5",
+         "2",
+         "6"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "warp bat",
+     "text": "Ultra rare flightless animals that feast on wyrdstone are caught and bred by skaven miners to locate wyrdstone lodes. Warp Bats are similar in appearance to vampire bats, although their fur is pale and their bodies are bloated, distorted in size by constant exposure to wyrdstone, occasionally rivalling that of a pony. Warp Bats move by crawling quickly across the surfaces of their underground domain. Like other bats, they use a series of high-pitched shrieks to create a sort of sonar, allowing them to navigate in total darkness.\n\n{{table:1}}\n\nSpecial Rules: Warping Bite, Deafening Shriek, Sense Wyrdstone, Tunnel Rat, Cave Beast,\n\nSPECIAL RULES Warping Bite: The warping bite uses the Warp Bat's strength to wound. The bite attack always strikes last, regardless of who charged or which weapon is used. The bite attacks after double-handed weapons.\n\nAny model wounded by a Warp Bat bite must pass a Toughness test or develop a mutation! Roll on the Random Mutation Chart in 'Corrupted Characters'.\n\nDeafening Shriek: The Warp Bat can emit a powerful, deafening shriek to disorientate foes. Roll a D6 at start of the Sewer Monsters turn. On a 5 or 6 it starts shrieking incessantly. Any models within 2\" of the creature must pass a Toughness test or be deafened! A deafened model can do nothing in the players next turn except cover its ears while defending itself in combat with a -1 modifier to hit on all attacks. Undead and daemons are unaffected.\n\nWyrdstone Sense: Warp Bats unique ability is to sniff out wyrdstone lodes with their warp-sensitive snouts! A Warp Bat must move towards and charge any non-friendly model carrying wyrdstone items.\n\nCave Beast: If a Skaven Hero with the Beastmaster skill has control over the animal when the game ends or when the warband routs then the Warp Bat can be added to the Skaven player's warband roster.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Warp Bat",
+         "6",
+         "4",
+         "0",
+         "2",
+         "2",
+         "1",
+         "5",
+         "1",
+         "4"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "moving sewer monsters",
+     "text": "When a warband encounters creatures in the sewer, another player must deploy the models in vacant spaces next to the first model to enter the unexplored tile. Hazard models must not be deployed where they obstruct movement in the current players turn whenever possible.\n\nAfter the hazards have been deployed the player completes the current movement phase. Charges will have already been declared this turn but any friendly model moving into a space next to a hazard counts as intercepting an additional attacker to give the first model a fighting chance in the combat.\n\nSewer monsters that newly arrived always strike first in the opening round of combat in a players turn. Resolve hazards by each sewer monster surprise attacking the nearest enemy model. This way models that followed up to support a surrounded friendly model can prevent the scouting model from being overwhelmed. Other attacks happen in order of initiative.\n\nAfter each player has taken a turn, there is an additional turn in which sewer hazards will recover before moving and charging.\n\nSewer monsters must always charge the nearest enemy model and will never attack another hazard unless a special rule forces this situation to happen. Warp Bats for instance may only be deployed in combat with a model carrying a wyrdstone item!",
+     "tables": []
+    },
+    {
+     "title": "Burning House chart",
+     "text": "{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1",
+         "Gone Out. The fire has sputtered out of its own accord. Do not make any further rolls on the chart."
+        ],
+        [
+         "2-5",
+         "Rising Flames. Flames and smoke quickly rise. Any model within 2\" and inside the building must take a Toughness test. If they fail, they suffer D3 Strength 2 hits with no armour save possible, as they succumb to smoke inhalation and minor burns. Any model wishing to enter the building must pass a Leadership test to do so."
+        ],
+        [
+         "6",
+         "Raging Inferno. The building is totally ablaze. No model may enter the building and any model within 2\" and inside takes D3 Strength 3 hits from the flames and burning debris. Any model wishing to move out of the building must pass an Initiative test or it will stay trapped within. 7+ Collapse! The building collapses, its timbers finally giving way as the fire engulfs it! Any model inside the building (and not stunned ) must pass an Initiative test to escape. Models knocked down suffer -1 to their Initiative for the purpose of this roll. Any model failing to escape is crushed by the collapsing debris and taken out of action. The building now counts as impassable terrain."
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "ending the game",
+     "text": "If a stairwell has not been discovered when the last tile of the grid is being explored then place a stairwell marker alongside the final floor tile.\n\nThe game ends if the smugglers leave the sewer network with cargo markers using a stairwell or a different cellar to the one they were deployed in. In a multi-player game with more than four warbands the first smuggler gang to deliver their cargo wins.\n\nAny of the other warbands can leave the sewer network with cargo markers using a stairwell or a different cellar to the one they were deployed in. Any model that moves into base contact with the stairwell marker counts as having moved off the board.\n\nWhen a warband routs they abandon any cargo markers they were carrying.\n\nThe game ends if all the warbands except for one have routed. If the last remaining warband is carrying any cargo they get to keep it.\n\nAfter the game the players make rolls on the Cargo Chart to determine the contents of any cargo markers the warbands smuggled off the board.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.",
+     "tables": []
+    },
+    {
+     "title": "Sinking Boat chart",
+     "text": "{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "2D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "2",
+         "All Hands Are Lost! With a terrifying suddenness, the boat dives beneath the waves and is gone! All models aboard are taken out of action."
+        ],
+        [
+         "3-4",
+         "Abandon Ship! The boat tilts to one side and goes down. All models can make a normal move (no running) to leap off the boat and into the water. If they fail to get off or are trapped on a lower deck, the models are taken out of action."
+        ],
+        [
+         "5-10",
+         "Man Overboard! The boat will go down in D3 turns. Each warrior must pass a Leadership test to remain on board and make any further actions. Otherwise, crew will run and fling themselves overboard. The ship is adrift. It cannot move of its own accord."
+        ],
+        [
+         "11-12",
+         "Running Repairs! One of your crewmen with some carpentry skills has patched up the worst of the damage. The hull now has 1 wound and the ship is no longer sinking. The boat suffers a -2\" movement penalty because it has taken on so much water."
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "slug": "burrow-town-collapsing",
+   "name": "Burrow Town Collapsing",
+   "number": "9",
+   "players": "either",
+   "summary": "A fight through the tunnels and sunken rooms beneath a collapsing Burrow Town."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "Riverboats sail the Reik upstream between the trading town of Leydenhoven and the sea, holds filled with sacks of grain from the summer's harvest. Shipments of grain and unscheduled cargos disguised as grain arrive at the docks. Manifests are checked, bribes are paid, before goods are unloaded. Stevedores unload grain from boats onto the dock to be moved to the safety of a fortified depot, where the city's food-stocks are secured in silos. Storage bins and loading ramps both heavily guarded by soldiers.\n\nCandle Wharf is one of the roughest wharves on the South Dock. The slips of this wharf are near the fish docks. There are signs of rioting in low income areas around the quays and warehouses; broken shutters on windows, boarded up shops and burnt out buildings. All of this degradation was before the massacre on South Dock.\n\nIn 2320, Skaven agents in Marienburg burned half the ships in that harbour to the waterline with firepots. Motive for this attack was attributed to dead freight! Freight lost and recoverable by the shippers from the charterer as damages when it's complete cargo was not loaded in accordance with terms of the charter-party.\n\nMurderous mercantile disputes between trade houses lead to desperate acts of sabotage. The kingpin masterminding the plot was a Cathayan merchant supplying enough explosives to sink the boats! The saboteur's agenda was simply undermining their sponsor by tainting food supplies to further their own foul ambitions.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest that an area roughly 4'x4' be used for three or four players. In larger multi-player games an area roughly 6'x4' is recommended.\n\nThe dockside area representing the Candle Wharf must include a section of river, jetties, loading ramps and a line of dilapidated warehouse buildings and other structures on the wharf including the fortified warehouse. Other terrain features can be used as the players see fit but there is only ever one fortified warehouse on the wharf.",
+     "tables": []
+    },
+    {
+     "title": "roles",
+     "text": "This multi-player scenario can be played by three or more players. Each player is assigned a role before the game. Roles can be assigned how players like. If campaign plots are used then it helps to allocate roles in accordance with warband objectives.\n\nCaptain: Player one must have a rowboat, riverboat or barge to fulfil the role of a captain delivering the shipment of grain. The objectives of the captain and crew are to safely deliver the grain to their business partner by helping ensure the dock workers make off with the cargo while defending their boat.\n\nDockers: Player two uses his warband as the longshoremen tasked with receiving the shipment. The objective of dock workers is to transport cargo to a guarded warehouse on the waterfront. If there are two or more captains determine which captain the dockers are unwittingly smuggling on behalf of.\n\nSaboteur: Player three is a saboteur with ambition to disrupt the affair. Followers of Chaos and Skaven warbands always act as saboteurs; infiltrators storming out of drains to poison grain sacks using wyrdstone! In five player games an additional faction threatens the shipments by detonating any incendiaries they have to sink the boats! The second saboteur is the 'Mastermind'.\n\nConstabulary: Player four can optionally join the scenario as a law enforcement agency. The objective of river patrols is to police the docks. This involves putting a stop to unscheduled shipping, smuggling and sabotage on the waterfront.\n\nIn larger multi-player battles try to allocate roles evenly. It is possible for two players to occupy the same role but there is only ever one mastermind.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "Captains deploy their boats against the dockside. Ten cargo objective markers are deployed by each captain. Five markers are placed on the captain's boat. The other five markers should be positioned along the water's edge parallel to the boat. The captain and crew must be deployed on the boat or within 2\" of the boat on the dockside.\n\nDockers deploy within 2\" of the warehouse. Saboteurs deploy in any location where models can be declared hidden and receive three wyrdstone shards each to distribute amongst their Heroes.\n\nConstabularies deploy at the end of turn one, within 3\" of a table edge.\n\nThe mastermind deploys at the end of turn two in any location where models can be declared hidden.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "The saboteur and the captain player rolls a D6. If there is more than one captain and saboteur in the game each player rolls a D6. The highest scoring player takes the first turn, and order of play proceeds based on the next highest roll.\n\nDockers take their turn in the turn following their captain in the partnership.\n\nConstabularies move last. If there is more than one constabulary each player rolls a D6. Order of play proceeds based on the next highest roll.\n\nIf there is more than one saboteur then when the mastermind player deploys his warband, he must announce a partnership with one of the saboteurs.\n\nTeams Turns: When a saboteur and mastermind are targeting the same cargo shipment then provisionally save time by both partners moving and attacking at once as a team. Each smuggling team consists of two partners. A pairing of dockers and captain can move and attack as a team. Constabularies remain in open competition.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Scuppered: If one of the warbands somehow manages to sink a boat then the captain and his crew must rout immediately! Any cargo objective markers that were on the boat are repositioned in the water.\n\nContamination: Cargo objectives can be contaminated by saboteurs unless they are fighting in close combat. If a Hero carrying a wyrdstone shard or any other tainted item moves into contact with a cargo objective marker then he can poison it! If the Hero passes an Initiative test the cargo has been tainted. Poisoning suffers a -3 modifier if the cargo objective is being carried by another model.\n\nLicensed Arrests: Warriors taken out of action in close combat by warriors from a constabulary are placed under arrest whenever an Injury Chart result rolled is a natural 6, unless the warband making the arrest is routed first.\n\nInstead of rolling on the Serious Injury Chart the warrior chooses to go quietly after the battle. Any drugs, poisons, tainted items or Chaos artefacts carried by the warrior are impounded! Items confiscated are removed from roster sheets. Roll on the Conviction Chart to see what sentence the constabulary dishes out.",
+     "tables": []
+    },
+    {
+     "title": "Conviction chart",
+     "text": "{{table:1}}\n\nBusiness Partners: Partnerships can be fragile at the best of times. Business is business after all!\n\nAt the beginning of the turn the mastermind or the captain can choose to dissolve a partnership with their respective business partner.\n\nUnless a partnership is dissolved it is not possible for models to declare a charge or shoot at models in a friendly warband.\n\nWhen a partnership is broken it is not possible for the two players to share any further turns as a team. Players dissolving a partership take their turn before their ex-partner for the remainder of the game.",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1",
+         "Gallows! The guilty verdict means the felon has been transferred to Rijker's Isle pending execution! If the arrest was made by a warband following the 'Guarding the Peace' plot then the other warband can choose to play the special scenario Hangman's Square instead of choosing a core scenario. Otherwise, the felon is never seen or heard of again!"
+        ],
+        [
+         "2",
+         "Sentenced. Punishment fits the crime in Marienburg! Penalties vary wildly depending on the severity of an offence. The warrior misses the next D3 games before being processed for release."
+        ],
+        [
+         "3",
+         "Holding. Troublemakers have to be thrown behind bars to cool off. The warrior misses the next battle."
+        ],
+        [
+         "4",
+         "Bail. The convict has been sentenced but bail has been set for release. The warband can pay an amount in gold crowns to the constabulary equal to the number of experience points the warrior has for him to be released. The warrior misses the next battle before being released, unless the warband pays double the cost to bribe someone high ranking in the constabulary to sign his release papers! If a bribe is paid the warrior is immediately released."
+        ],
+        [
+         "5",
+         "Drunk-Tank. Rabble-rousers spend a night in the clink to cool off! The warrior is released before the next battle but misses the post battle sequence. In addition, the warrior gets an extra +1 Experience point."
+        ],
+        [
+         "6",
+         "Acquittal! After a short spell under lock and key, a legal associate of the warband turns up to make a case for the defence! The warrior is released and the constabulary has to pay 2D6 gold crowns in compensation to the defence!"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "ending the game",
+     "text": "A partnership of captain and dockers win the game if five cargo markers can be secured in the guarded warehouse before being sabotaged. Similarly if the saboteur and any constabularies end up routing then the smugglers win if the cargo has not already been lost or contaminated. In either event the smugglers keep a sack of grain each for themselves. Grain was not all that was being shipped! The partners each get to make a roll on the Booty Chart.\n\nCaptains are always said to go down with the ship! A captain player may not voluntarily rout unless they have a sinking ship. In the event the captain or the dockers rout then the remaining half of the partnership attempts to complete the shipment alone! If they succeed then the player gets to make two rolls on the Booty Chart after the battle!\n\nA saboteur wins if six or more of the cargo objectives have been contaminated. A saboteur who wins keeps any of the wyrdstone shards. When sabotage was masterminded, the winner is the saboteur unless the captain's warband has routed before six cargo objectives were contaminated. In this instance the mastermind is declared the winner!\n\nA constabulary wins if all warbands occupying the other three roles rout. If there is more than one constabulary then the warband with most warriors placed under arrest claims jurisdiction and victory! The constabulary impounds the shipment and skims one sack of quality grain off the top in the process.\n\nProvisions: Grain sacks can be used as provisions to keep warbands fed after the battle. If the warband sells Treasures after the battle, the warband is considered to be one size lower (so a warband with 10-12 members is considered to be comprised of 7-9 members instead).",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband (or warbands) gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n\n+1 Per Cargo Secured. Any Hero or a Henchmen group earns +1 Experience for securing a cargo objective in the warehouse.\n\n+1 Per Cargo Poisoned. Any Hero earns +1 Experience for contaminating a cargo objective.\n\n+3 Per Watercraft Scuppered. Any Hero earns +3 Experience for sinking a riverboat or barge.",
+     "tables": []
+    }
+   ],
+   "slug": "dead-freight",
+   "name": "Dead Freight",
+   "number": "10",
+   "players": "multiplayer",
+   "summary": "Every warband plays a part when sabotaged freight is unloaded on Candle Wharf."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "There are plenty of loathsome drug cartels operating out of encampments based in lawless ghettos around the Estalian, Cathayan, Arab and Indic wards. A sting operation has been co-ordinated to launch a surprise assault on the den of one such licentious enterprise where illegal wares are being processed.\n\nWhether the raid is a sanctioned drug bust to confiscate illict goods and bring criminals to face justice or vindictive assault to seize stock and raze competitors headquarters, the strike follows a stake-out of the premises being used as a hideout.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest that an area restricted to roughly 18\"x18\" be used to represent the site of a disputed property. The area outside the building should be limited to encourage the attacking warband to remain within close proximity at all times.\n\nThe building itself, could be a large tavern, warehouse or temple. Using a dilapidated building roughly 12\"x12\" prevents restricting access when moving models. The building requires doors and windows to be used as access points by the attacking player.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "This scenario is sometimes used to settle a dispute involving property. If the defending player's warband established an encampment (ie, Warehouse, Old Merchant Villa, Tilean Ludus, Auction Hall, Tavern etc) then the outcome will determine the fate of the encampment. If the encampment is a type of tower then disputes should be resolved using Scenario 5: Stockade.\n\nIf one of the warbands owns an encampment in dispute then they are always the defending player.\n\nIf neither or both of the warbands possesses a disputed encampment then the player with the highest warband rating is the attacking player. In the event that the ratings are tied, roll a dice to determine roles.\n\nThe attacking player deploys first. The attacking warband is supplied with 2D3 torches and a fire bomb for the purpose of this scenario. These may be distributed between the Heroes in the warband and can only be used during this game.\n\nEach defending warrior deployed inside the Encampment may attempt to hide in the building. Any warrior passing a Leadership test has detected the approaching warband and is hidden at the start of the game.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "The attacking player takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Jurisdiction: Warriors taken out of action in close combat by a constabulary are placed under arrest whenever an Injury Chart result rolled is a natural 6, unless the warband making the arrest is routed first.\n\nSetting Fires: This scenario uses the 'Fire Rules' in the Border Town Burning supplement (first published in pages 84-89 of the Mordheim Annual and pages 34-39 of Fanatic Magazine 1) with an exception for nasty weather in the port.\n\nA model in base contact with a model may use a Torch or Brazier Iron to set it ablaze of it is neither shooting or engaged in close combat that turn. Flaming missiles can be shot in the Shooting phase to set it on fire. Models may throw a Torch or Brazier Iron up to 6 \" away to light a fire but the item is lost. If the roll to hit is successful then roll to set on fire in every subsequent turn as it smolders.\n\nMarienburg was never renowned for glorious weather. A modifier of –2 for Heavy Rain is applied to attacks being made to set on fire. All buildings count as stone buildings. This means any warriors attacking from outside of the building can only expect to set it on fire with a D6 result of a 6.\n\nBurning Houses: Once a building is lit roll a D6 at the start of the defending player's turn to see if the fire is spreading. Add +1 to the dice roll for each complete turn the fire has been burning. Refer to the Burning House Chart to see what happens.\n\nDock Diving: Warriors set on fire can extinguish the flames by diving off the docks into canals!\n\nCartel: Roll a D6 on the Cartel Chart to see what illicit item each Hero is safeguarding for the cartel.",
+     "tables": []
+    },
+    {
+     "title": "Cartel chart",
+     "text": "{{table:1}}",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1",
+         "Hostage! Slave was taken hostage."
+        ],
+        [
+         "2",
+         "Explosive. The Hero has a smoke bomb."
+        ],
+        [
+         "3",
+         "Firearm. The Hero has a handgun which can be fired at -1 to hit in this scenario if usually unable to use one."
+        ],
+        [
+         "4",
+         "Alcohol. The Hero has Alcoholic Spirits."
+        ],
+        [
+         "5",
+         "Drugs. Roll a D6 to see what drugs are being carried: 1. Mandrake Root 2. Mad Cap Mushrooms 3. Crimson Shade 4. Slaaneshi's Dream 5. Black Dust"
+        ],
+        [
+         "6",
+         "Daemon Dust 6 Tainted Item! Roll on the Tainted Items Chart for a wyrdstone curio."
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "ending the game",
+     "text": "Routs test are not taken by the defending warband but the defenders can voluntarily rout at any time.\n\nThe attacking player wins if the building collapses from a 7+ result on the Burning House Chart. Alternatively a routing warband loses as normal.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.",
+     "tables": []
+    }
+   ],
+   "slug": "the-sting",
+   "name": "The Sting",
+   "number": "11",
+   "players": "1v1",
+   "summary": "A surprise assault on a cartel's den, raided to bust it or to seize it."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "Catastrophe plunges the seaport into turmoil. A massacre engineered by Farrak the necromancer begins with a covertly launched attack. Most of the city becomes a realm of the dead.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "The South dock Massacre is played on the docks or Marienburg we suggest an area of 4’x6’, there should be a board edge with water running along it, many houses and alleys with carts and crates blocking the way. At the centre of the board should be a large sqaure approximately 12”x12” with a house at the centre, and a street coming off from each sides forming a cross roads. At the start of the streets before the should be a barricade blocking each street.",
+     "tables": []
+    },
+    {
+     "title": "warbands",
+     "text": "When the first play reaches 10CP the south dock massacre will be played the next round.\n\nThis scenario is a campaign event and we recommend all players partake. If there are more than 6 players In the campaign, we recommend two matches of the same scenario be played with players divided as evenly as possible.\n\nUnlikely Bed Fellows: All warbands in this scenario start in an alliance.\n\nUp to three players in that alliance may take their turn at the same time.",
+     "tables": []
+    },
+    {
+     "title": "set up",
+     "text": "the player warbands roll on the table below for each member of their warband, henchmen groups count as one roll: D6 Result 1-2 We’re coming: the hero or henchmen group starts off the map and will arrive from a random table edge at the start of the next round. 3-4 Street fighting: the hero or henchmen group starts 18” from the barricade, engaged with a zombie. 5-6 the Warrior or henchmen group starts inside the barricade.\n\nAt the start of the match, for each player spawn D6 Zombies and a roll on the assault and location table.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "A Town in Flames: The building closest to the edge on each side starts the game On Fire, the Weather is always Gale. Desperate Hour: there are two townsfolk for each player placed randomly on the map, at least 15” from the edge of the town square and 6” from each other. Towns folk may be led by any warband back to the town square or off the board. Undead Assault: at the start of each round, roll 2D6 on the table below to simulate the growing horde, adding +1 to the result for each round that has passed. after round 3, roll twice each turn, and after round 5 roll three times each turn. Undead spawned arrive via the second table, except for the dread\n\nfleet grave guard that always arrive on the shore. Please see the second page for stats on the undead. Undead Assault Table. 2D6 Result 2-4 D6 Dire Wolves 5-6 D3 Ghouls 7-8 D6 Zombies 9-10 D3 Dread Fleet Grave Guard 11 Necromancer 12 Bone Giant. 13 Farrak himself + 2 more rolls on this table.\n\nUndead Arrival Table.\n\n{{table:1}}\n\nBarricades: the barracades surrounding the square provide some protection but will only last so long. Warriors may attack over the barricades at a -1 to hit, but may be attacked back.. If there is no other warrior within charge range the undead will attack the barricades first. The barracades count as toughness 4 and have three wounds, they may be lit on fire.",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1",
+         "They won’t stop coming: A random Table edge"
+        ],
+        [
+         "2",
+         "Our dead are theirs now. A Random building"
+        ],
+        [
+         "3",
+         "The Dread Tide. From the sea"
+        ],
+        [
+         "4",
+         "They come from below! From a man hole D6 from the square."
+        ],
+        [
+         "5",
+         "They won’t stay dead! At the barricade"
+        ],
+        [
+         "6",
+         "They’re everywhere! Inside the square."
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "starting the game",
+     "text": "The Players Warbands have the first turn. They may act as one dividing players up into groups of three with the remaining non acting players assisting them with their rolls.",
+     "tables": []
+    },
+    {
+     "title": "ending the game",
+     "text": "The Game ends if there are no zombies in the square after round 8 or if Farrak is killed, or if all warbands Rout.\n\nIf all warbands Rout the Rarity of all items for the next round are at +4 as the city overcomes the massacre.",
+     "tables": []
+    },
+    {
+     "title": "rewards",
+     "text": "Each player gets CP equal to the amount of player warbands still in the game when it ends, up to a maximum of 4.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader/s of the winning warband gains +1 Experience.\n+1 Per Enemy out of action. Any Hero earns +1 experience for each enemy he puts out of action\n+1 Per Townsfolk Rescued. Any hero earns + 1 experience for each townsfolk escorted off the board or to the town square (an extra +1xp if that townsfolk is still alive at the end of the match.)",
+     "tables": []
+    },
+    {
+     "title": "bone goliath",
+     "text": "It takes a vast amount of time, and more importantly, energy for a Liche to construct a giant made of bone. For those who face a Bone Goliath, they see a terrifying giant made of the bones of a hundred fallen, standing twice the height of a man!\nProfile\nM WS BS S T W I A Ld 5 3 0 5 5 3 2 3 6\nWeapons/Armour: Bone Goliaths never carry any weapons or armour and suffer no penalties for this. SPECIAL RULES Cause Fear: Bone Goliaths are gargantuan undead constructs and therefore cause fear. May not run: Bone Goliaths are slow undead creatures and may not run (but may charge normally). Immune to Psychology: A Bone Goliath is not affected by psychology and never leaves combat. Immune to Poison: A Bone Goliath is not affected by poison. Undead Construct: Bone Goliaths ignore any injury rolled on the Injury chart on the roll of a 4+ and continue fighting, so a Bone Goliath has the possibility of taking much more damage than their 3 wounds suggest. This is not an armour save and so it is not modified by the Strength of the attack. This rule is ignored for wounds caused by magic or magic weapons. Assembly: Bone Goliaths are not hired or found, they are instead constructed at great expense to their masters. Constructing a Bone Goliath will cause the Liche to reduce their starting Wound total by D3 wounds to a minimum of 1, in addition to the cost in gold crowns. A warband constructing a Bone Giant may not look for any rare items. A warband that has no Liche to lead it may not construct a Bone Goliath, but if the Liche dies after its construction, the Bone Goliath is unaffected. Warbands starting with a Bone Goliath can ignore this rule, unless of course they make one to replace a fallen Goliath. Large: Bone Goliaths are huge creatures. They count as large targets for missile weapons. No Pain: Bone Goliaths treat stunned results on the injury chart as knocked down. Mindless: Bone Goliaths never gain experience.",
+     "tables": []
+    },
+    {
+     "title": "dire wolves",
+     "text": "Dire Wolves are slavering Undead hounds, the animated remains of the giant wolves of the Worlds Edge Mountains. Their chilling howls can strike fear into the hearts of even the bravest warriors or most ruthless Dwarf mercenaries. They prowl the streets of Marienburg like shadows, and many men have died with the cold jaws of a Dire Wolf around their neck.\nProfile\nM WS BS S T W I A Ld 9 3 0 4 3 1 2 1 4\nWeapons/Armour: None. SPECIAL RULES Charge: Dire Wolves are slavering creatures that overpower their opponents when they charge. Dire Wolves fight with 2 attacks instead of 1 during the turn they charge. May not Run: Dire Wolves are slow to react and may not run (but may charge normally). Cause Fear: Dire Wolves are terrifying Undead creatures and therefore cause fear. Immune to Psychology: Dire Wolves are not affected by psychology and never leave combat. Immune to Poison: Dire Wolves are not affected by any poison. No Pain: Dire Wolves treat a ‘stunned’ result on the Injury chart as ‘knocked down’.",
+     "tables": []
+    },
+    {
+     "title": "farrak the necromancer",
+     "text": "125 gold crowns to hire A Liche is a powerful undead sorcerer. They journey north in a desperate bid to regain their power in the Realm of Chaos after a crippling defeat. Liches are fanatical in their struggle to hang on to their pitiful existence, especially when this close to being forever banished from the realm of the living\nProfile\nM WS BS S T W I A Ld 4 4 3 3 5 6 4 3 8\nWeapons/Armour: Farrak carries an obsidian double handed sword, and wears Chaos armour SPECIAL RULES Master Commander: when Farrak appears, he will arrive on the black ship. Farrak will not charge into combat but will stay on his boat, and cast spells at whoever come in range, if no one is in range he will cast reanimation twice. Wizard: Farrak is a Necromancer and knows all spells form the Necromancy Spell list and will cast a random 2 a turn. Spell of Awakening: Farrak’s Spell of Awakening overrides any present undeads spell. For Heros taken OOA once Farrak is present, roll their serious injuries immediately to see if he has awoken them to his side. Cause Fear: Farrak is a legendary necromancer and even his name causes fear. Immune to Psychology: Farrak has seen things no mortal should is not affected by psychology and never leaves combat. Warrior Wizard: Farrak may wear armour and cast spells.",
+     "tables": []
+    },
+    {
+     "title": "ghouls",
+     "text": "Ghouls are the descendants of evil and insane men who ate the flesh of the dead. When the lean and hungry times of famine come upon the Old World, the most depraved and destitute took to feasting on corpses to survive. Driven by their unspeakable craving for the meat of their fellow men, these creatures have given up their human life and dwell near graveyards, crypts and tombs, digging up the rotting corpses of the recently buried and consuming the cold flesh with their bare teeth and claws.\nProfile\nM WS BS S T W I A Ld 4 2 2 3 4 1 3 2 5\nWeapons/Armour: Ghouls never carry any equipment, apart from a few bones which they use as primitive weapons. SPECIAL RULES Cause Fear: Ghouls are twisted and repulsive creatures and therefore cause fear.",
+     "tables": []
+    },
+    {
+     "title": "grave guards",
+     "text": "Grave Guards were once the finest warriors, hand selected by their masters for their martial skill and bravery, who fell in battle many centuries ago. They are now slaves to their necromantic masters in restless undeath.\nProfile\nM WS BS S T W I A Ld 4 3 2 3 3 1 2 1 6\nWeapons/Armour: Grave Guards are armed with swords and shields and wear heavy armour. SPECIAL RULES Wight Blades: Grave Guards carry weapons laden with evil magic. All close combat ‘to hit’ rolls of a 6 will automatically wound. You may roll ‘to wound’ as normal to determine if it is a ‘critical hit’, but even a failed ‘to wound’ roll will still cause a wound if a 6 was rolled first ‘to hit. Cause Fear: Grave Guards are terrifying undead creatures and so cause fear. Immune to Poison: Grave Guards are not affected by poison. Immune to Psychology: Grave Guards are not affected by psychology and never leave combat. No Pain: Grave Guards treat a stunned result on the injury chart as knocked down. May not Run: Grave Guards are slow undead creatures and may not run (but can charge normally).",
+     "tables": []
+    },
+    {
+     "title": "necromancer",
+     "text": "The Necromancers who travel with Farrak are apprentices to the dark arts of Necromancy. They are the only living thing that Farrak will tolerate in his proximity!\nProfile\nM WS BS S T W I A Ld 4 3 3 3 3 1 3 1 7\nWeapons/Armour: Necromancers are armed with staves and no armour. SPECIAL RULES Wizard: Necromancers are wizards trained in the art of Necromancy and so are able to use Necromantic magic. They know spell of doom and call of vanhel, and may cast both each turn. Spell of Doom - Difficulty 9 The Sorcerer whispers to the sleeping dead to rise up from the ground and seize his enemies. Chose one enemy model within 12”. The model must immediately roll equal to or less than his Strength on a D6 or the dead emerging from the earth will rend him with supernatural power. If he fails, you may roll on the Injury table to see what happens to the unfortunate warrior.\n\nCall of Vanhel - Difficulty 6 The Sorcerer summons the world of the dead to invigorate his Undead servants. A single Zombie, Skeleton, Wight or Grave Guard within 6” of the caster may immediately move again up to its maximum movement distance. If this moves them into base contact with an enemy model then it counts as charging. The targeted Zombie, Skeleton, Wight or Grave Guard will automatically pass Initiative tests needed to be made during this extra movement.",
+     "tables": []
+    },
+    {
+     "title": "zombies",
+     "text": "Zombies are the most common of the undead: creatures animated by the will of their Necromantic masters to be slaves in their undeath.\nProfile\nM WS BS S T W I A Ld 4 2 0 3 3 1 1 1 5\nWeapons/Armour: Zombies may not carry any weapons or wear armour and do not suffer any penalties for this. SPECIAL RULES Cause Fear: Zombies are horrible abominations and so cause fear. May not run: Zombies are slow undead creatures and may not run (but may charge normally). Immune to Psychology: A Zombie is not affected by psychology and never leaves combat. Immune to Poison: A Zombie is not affected by poison. No Pain: Zombies treat stunned results on the injury chart as knocked down.",
+     "tables": []
+    }
+   ],
+   "slug": "south-dock-massacre",
+   "name": "South Dock Massacre",
+   "number": "13",
+   "players": "multiplayer",
+   "summary": "A campaign event: Farrak the necromancer's undead fall on the South Dock, and every warband fights."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "Based on \"King of the Hull\" scenario from the Sartosa Suppliment by Malte Adamson & Dave Joria\n\nThe Rat Rock has been used for centuries by bandits as a hideout and on foggy nights the jagged rocks jutting out from its base make an excellent trap for even the most knowing of sailors. False beacons are lit and then the pirates wait for their victims.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "For players owning Rat Rock this is a Sea setting, The map is mostly water, except for the Rat Rock jutting out from one end, with a path of smaller rocks leading into the middle where the wrecked ship is placed. Each player takes it in turn to place a piece of terrain, either wrecked ships, non-broken ships rocks, reefs, or other similar item.\n\nIf the attacker is the owner of the Bandit Camp, this scenario takes place in an esturary leading into the swamp,\n\nWe suggest that the terrain is set up within an area roughly 4\"x6\". The ship should be placed in the centre of the table, and the objective of the scenario is to take control of this ship, which in both set ups is beached/stuck completely and cannot move during the battle. Connecting the boat to the land edge is one or more wharfs and gangplanks. Distribute 2 rafts amongst the attacking player as well.",
+     "tables": []
+    },
+    {
+     "title": "warbands",
+     "text": "The Attacker is the owner of Rat Rock or the Bandit camp. The defender is the owner of a ship; barge sized or larger. The defender is deployed first inside or within 6\" of the objective ship. Then the attacking warband is set up on the board side with land. (or outside of 18” of the defender in the bandit camp).",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Booty: the defending players warband has just been on a successful mission and is transporting the following equipment back to marienburg, which can be used during the battle, roll once on the below table: D6 Result Swivel Gun mounted on the ship with Auto 2 shots of each kind. (anyone can operate at a -2 to hit roll In this scenario only.) 1 1D3 doses of Manticore Spoor 2 1D3 batches of Superior Gunpowder 3 Cathayan Candle 4 Scrimshaw Bauble 5 Cathayan Silk Cloak 6 1D3 Smoke Bombs",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "The defender takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "ending the game",
+     "text": "Starting with Round 5 and every Round after that, if there is only one Warband with any members on the Ship or within 6” of the Ship, that warband is declared the winner of the Scenario and receives the Booty. If one warband routs, the remaining warband is declared the winner, but cannot claim the Booty unless they have a member on the ship or within 6”.\n\nRouting Defenders LOSE their Ships.",
+     "tables": []
+    },
+    {
+     "title": "rewards",
+     "text": "The winning warband is rewarded with all the items not found on the equipment chart, in addition roll below to see what else the defenders were carting home. Note that you’ll roll for each item separately, apart from gold crowns, which are always found. For example, you will need to roll a 5+ to find the Cathayan long sword, and then roll a 4 plus for the lammelar armour. (Note no one keeps the Swivel gun, and defenders do not keep the boat if it was not already theirs.)\n\nRoll a D6 for each item below. 3D6 gc Automatic Lammellar Armour 4+ Cathayan Long Sword 5+ Jeweled dagger- can be sold for 25gc 4+ 1D3 Doses of Healing Herbs 4+ Treasure Map 5+",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "If a Hero or Henchman group survives the\n+1 Survives. battle they gain +1 Experience.\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n+1 Per Enemy out of action. Any Hero earns +1 experience for each enemy he puts out of action.",
+     "tables": []
+    }
+   ],
+   "slug": "false-beacons",
+   "name": "False Beacons",
+   "number": "14",
+   "players": "1v1",
+   "summary": "Wreckers fight over a ship lured onto the rocks by false lights."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "Any corpses not properly consecrated to the God of the Dead may terrorise the living. Because of the threat of undeath the lands are dotted with sanctified cemeteries known as Gardens of Morr. These unwholesome burial sites contain sepulchres, tombs, mausoleums and the cadavers that rest within them. The reasons why adventurers find themselves visiting old graveyards are rarely honourable.\n\nWoe betides those who approach a shattered Garden, for they might find more life within than they expected. Unscrupulous gangs have no qualms about scouring sunken graves in shattered cemeteries. There are villains who would steal the corpses of those that rest with the intention of selling the bodies to foul necromancers.\n\nThe deep, grim chime of the Mourners Bell booms in the Garden of Morr near the Marsh Gate. Among the tumbledown crypts is a mausoleum that contains the trappings of a wealthy spice merchant. A petty man in life, the enemies he made would clamber over each other to lay claim to the riches he was buried with!",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest that an area roughly 4'x4' be used to represent the Garden of Morr. The mausoleum of the spice merchant should be deployed centrally and surrounded with as many spooky terrain features as you can find; shrines, chapels, crypts, tombs, mausoleums, headstones, monuments, railings, walls and gates. The entrance to the mausoleum building should be clearly marked on the roof. The roof of the tomb should be accessible by stone stairs.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "Each player rolls a D6. A warband starting with a Grave Warden or Grave Robber Hired Sword adds +1 to their result. The highest scoring player deploys his warband first within 3\" of the table edge, followed by the next highest and so on.\n\nAfter all of the warbands have been deployed, each player takes turns deploying three markers anywhere in the Garden of Morr to represent fresh graves.\n\nThis is a multiplayer scenario and uses the rules for alliances from the 'Chaos on the Streets' article (see Mordheim Annual 2002).",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "Each player rolls a D6. A warband with a Grave Warden or Grave Robber adds +1 to their result. The highest scoring player takes the first turn, and order of play proceeds clockwise around the table based on where the players are currently positioned.\n\nAfter each player has taken a turn, there is an additional turn in which denizens of the Garden will recover before moving and charging. Denizens must always charge the nearest enemy model and will neve r attack another denizen unless a special rule forces this situation to happen.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Graveyard Shift: At the start of each player's turn, roll a D6. If the result is 1 then choose the Grave Warden or the Grave Robber to be deployed in the Garden of Morr. Only one of each Hired Sword will ever appear.\n\nThe Creeps: Though they are often entwined with sacred black roses tended to by Priests of Morr, graveyards are disheartening. To represent Gardens of Morr are not wholesome places of growth each warrior must pass a Leadership test at the beginning of their turn. If the warrior fails he may not move, but may shoot as normal. Warriors may benefit from the 'leader' ability, and the creeps do not affect warriors that are immune to or cause fear.\n\nDenizens: At the beginning of each turn D3 zombies rise from randomly determined graves markers for every two warbands. The zombies move during the turn for denizens of the Garden. If no model is within charge range, they move their maximum movement towards the nearest model in line of sight. If no model is in sight they move in a randomly determined direction. Zombies have all the player's characteristics and special rules described in the Mordheim Rulebook.\n\nSlim Pickings: For each grave marker looted by a warrior roll a D6 on the Grave Robbery chart. A grave can only be looted once. In the event that a zombie rises from the grave the zombie strikes first in the opening round of combat during that players turn.",
+     "tables": []
+    },
+    {
+     "title": "Grave Robbery chart",
+     "text": "{{table:1}}\n\nGhoul Pack: The denizens of the mausoleum are creatures twisted by their hunger for flesh! Once a model steps foot on the roof of the mausoleum, the structure becomes surrounded by D3 Ghouls for each warband still in the game. The ghouls move during the turn for denizens of the Garden. Ghouls have all the characteristics and special rules described in the Mordheim Rulebook.\n\nSpice Merchant's Shade: The spice merchant was found dead in his bed with a clove of garlic shoved down his throat. As soon as a model passes within 2\" of the mausoleum entrance the shade of the spice merchant rises and intercepts with a charge to defend his loot. The shade follows all the rules described for denizens of the Garden, apart from he will never wander more than 2\" from the mausoleum building.\n\n{{table:2}}\n\nUndead: Shades are horrifying creatures of Old Night. They cause fear, may not run, they are immune to psychology and poison attacks. Once the shade is reduced to 0 Wounds it is taken out of action.\n\nEthereal: Shades insubstantial bodies are ethereal. They can move through solid objects and therefore suffer no movement penalties for moving over difficult terrain or obstacles. They can move through buildings, but not living creatures. They cannot be harmed in combat except by attacks from magical weapons or Daemons (ie, the Possessed or warrior with the Daemon Soul mutation) and are affected by spells as normal. They can still be driven back in hand-to-hand combat as they cannot bear the touch of iron weapons. If hit by an iron weapon the shade must pass a Leadership test or immediately flee. Move the fleeing shade 2D6\" away from the attacker.\n\nRich Pickings: If the shade is taken out of action or was driven off, any warrior standing next to the mausoleum entrance can attempt to break through it to loot his tomb. Use the rules on page 14 of the Empire in Flames supplement.\n\nThe tomb contains D6x4 + 20 gold crowns, a clove of garlic, two Treasures, and roll twice on the Booty chart to see what else the rascal was trying to take with him!",
+     "tables": [
+      {
+       "columns": [
+        "D6",
+        "Result"
+       ],
+       "rows": [
+        [
+         "1-2",
+         "Zombie! A zombie rises from the grave."
+        ],
+        [
+         "3",
+         "Fresh Corpse. Collect a corpse."
+        ],
+        [
+         "4",
+         "Trinket. 2D6 gold crowns worth of goods."
+        ],
+        [
+         "5",
+         "Drugs. The time honoured tradition of smuggling drugs in bodies. Roll a D6 to see what drugs were sewn into the corpse: 1. Mandrake Root 2. Madcap Mushrooms 3. Crimson Shade 4. Slaaneshi's Dream 5. Black Dust"
+        ],
+        [
+         "6",
+         "Daemon Dust 6 Heirloom! Roll on the Booty Chart."
+        ]
+       ]
+      },
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Shade",
+         "4",
+         "3",
+         "0",
+         "3",
+         "3",
+         "2",
+         "2",
+         "2",
+         "7"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "ending the game",
+     "text": "The last warband standing always wins. If only one warband is left they still have to loot the tomb of the spice merchant to claim the spoils!\n\nUnless the mausoleum has been successfully looted the game continues until all of the warbands have routed. Any player may voluntarily rout if the experience becomes too terrifying!",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n\n+3 Spice Merchant's Shade Out of Action. Any Hero earns +3 Experience for if he puts the Spice Merchant's Shade out of action.",
+     "tables": []
+    },
+    {
+     "title": "Diabolic Prescriptions",
+     "text": "",
+     "tables": []
+    },
+    {
+     "title": "Slaaneshi's Dream",
+     "text": "Availability: Rare 10\n\nSlaneeshi ' s Dream is a drug produced from the mud extract of the Cursed Marshes.\n\nEffect: Slaneeshi's Dream makes a warrior immune to psychology and the effects of poison. Resolve the effects of poison attacks normally but apply the outcome of any attacks after the battle.\n\nThe juice becomes less scarce once a supplier is first found by a Hero – Rare 8 for the warband to locate the next supply. However, on a rarity roll of 2 that suplier has been caught and hanged!\n\nSide effect: After the battle, roll 2D6. On a roll of 2-3 the warrior loses 1 point of Leadership permanantly. On a roll of 12 the warrior becomes immune to psychology permanantly.",
+     "tables": []
+    },
+    {
+     "title": "Black dust",
+     "text": "Availability: Rare 11\n\nThere is a popular new vice among hoodlums and heretics, available only through vile drug dens across the Empire. Black dust is a warpstone derived narcotic, which promotes a warriors resistance to the effects of wyrdstone. Dealers closely guard the secret of their source for dust.\n\nEffect: A warpstone derived narcotic, the dust promotes a warriors resistance to the effects of wyrdstone. Warriors using Black Dust have a natural tolerance for wyrdstone allowing Heroes to re-roll a failed check on the Warp-touch Chart. Skaven may not use Black Dust.\n\nThe snuff becomes less scarce once a supplier is first found by a Hero – Rare 9 for the warband to locate the next supply. However, on a rarity roll of 2 that suplier has been caught and hanged!\n\nSide effect: After the battle, roll 2D6. On a roll of 2-3 the warrior becomes addicted and you must try to buy\n\nhim a new batch of Black Dust before every battle from now on. If you fail to buy any, he does not gain any experience during the next battle.\n\nOn a roll of 12 the warrior overdosed! The corrupting power of Chaos has caused the model to gain a mutation! Roll on the Random Mutation Chart once.\n\nIn the post battle sequence the addicted warrior must search for Black Dust.",
+     "tables": []
+    },
+    {
+     "title": "Daemon dust",
+     "text": "Availability: Rare 12\n\nThe berserkers of Norsca snort a herbal powder, before they go into battle. It takes away their pain, makes them feel stronger, almost invincible. Doses of the expensive dust are preserved in bundles of dried leaves, twisted into balls. Once a leaf-twist is crumbled, a blue powder is pinched from the palm like snuff, shoved up one nostril and sharply inhaled. Exploding in the brain, the dangerous dust burns like liquid fire through the veins, putting off any pain the inhaler should be feeling. A daemon dust rush provides a sudden influx of understanding and vision! The dust-strength in the body gives an edge over the perfect physical specimen. Once the dust wears off, all the pain of the world floods into the user ' s body, causing it to collapse.\n\nThe dust becomes less scarce once a supplier is first found by a Hero – Rare 10 for the warband to locate the next supply. However, on a rarity roll of 2 that suplier has been caught and hanged!\n\nEffect: A warrior snorting Daemon Dust dust receives +1 Strength, +1 Initiative and is subject to frenzy.\n\nSide effects: After the battle, roll 2D6. On a roll of 2-3 the collapsed Hero does nothing in the post battle sequence, this includes missing the exploration phase. Roll onthe Serious Injury chart and apply the result.\n\nOn a roll of 12 the warrior's Strength is increased permanantly by +1.",
+     "tables": []
+    }
+   ],
+   "slug": "midnight-at-the-mausoleum",
+   "name": "Midnight at the Mausoleum",
+   "number": "15",
+   "players": "either",
+   "summary": "Rob a spice merchant's mausoleum in a Garden of Morr at midnight."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "Based on the Kidnapped! scenario from Town Cryer 6\n\nWhen a Witch, or a Warlock in case of males, is brought to justice, there is rarely any other punishment administered than that of death. Lynching, crucifixion, and crushing are just some of the appalling ways of execution, but the most popular is by far the practice of burning at the stake. In this scenario, one warband makes a last ditch attempt to rescue a falsely accused comrade from a pack of fanatical inquisitors\n\nThis Special scenario may be chosen by any warband who has a warrior captured by another warband. The exception to this is warriors under arrest, they will only be executed if the warband following “guarding the peace” rolls a 1 “Gallows” on the arrest chart, if this happens you may attempt to rescue them.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "Starting with the defender each player takes turns placing a piece of scenery, making sure that a suitable place for execution is set up directly in the center of the table. This can be an actual stake, a building wall, tree, or anything else you can think up.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "Place the captured model at the execution point. He or she is considered chained to whatever piece of scenery was chosen for the execution area. This model's equipment has been stripped from him or her and is considered lost (taken by the capturing warband). The attacker is the player who is trying to rescue the captured member of their warband, while the executioner is the player who apprehended the captive. The defender sets up first, and within 8\" of the execution area. The attacker may then set up, within 4\"of the edge, dividing his or her forces among the four table edges however they wish. In multiplayer scenarios it is preferable that each side has an equal number or teams, if this is not possible roll to see who the odd player joins (1-3 Attacker 4-6 Defender)",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Commence the execution: At the beginning of the third turn of play, The leader of the defenders will order the captive to be Hung/Burnt Alive/Sacrificed. A defending model will need to be adjacent to start this.\n\nWhen the process has begun, roll 2d6 and check the result\n\n2; Something has gone wrong! The chains restraining the captive have broken, and they are released. Immediately move the captive 2D6 in a direction decided by the attacker. 3-11; the execution proceeds as normal 12; Snap! The captive is killed immediately as their next snaps/smoke fills their lungs/the blade pierces their heart.\n\nAt the start of each subsequent turn, the chained model takes a hit at a gradually increasing strength starting at one and increasing by +1 each turn as the flames grow in intensity/ the captive hangs from the noose choking/ has been stabbed with a ritual blade whilst the warband chants. For instance, a model who survives the first strength 1 hit will take a strength 2 hit at the start of the next turn, followed by a strength 3 hit, then a 4, and continuing on until he or she succumbs to the flames. If the captive is ever taken Out Of Action by the above action, the warrior is considered quite dead and is forever forgotten. Defenders may obviously not at any time attempt to attack the warrior while he or she is still captive.\n\nBreaking The Chain s: A member of the attacking warband may attempt to break the chains of their captured warrior by charging directly next to the model. Treat this as a charge made against the chains. Hits made in close combat with the chains are made automatically. Treat them as an object with 1 wound and a toughness of 4. Once a wound is scored against them, they are considered shattered and the freed captive may be moved as normal. Keep in mind that the captured warrior has no weapons or equipment, save those that are passed to him or her after they've been cut loose. The freed Witch/Warlock may charge, be charged, move, and fight as normal. As an alternative method of breaking the chains, a warrior may attempt to fire a shot to crack them from a distance. This is risky however, and any hit that lands successfully in this manner has a good chance of hitting the prisoner instead! Roll a d6. On a result of 5-6 the shot hits the chains, and on a roll of 1-4 the hit will mistakenly hit the member of the warband they were trying to save. Roll for wounds and damage as normal.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "The attacker has the first turn.",
+     "tables": []
+    },
+    {
+     "title": "ending the game",
+     "text": "If one of the warbands fails their rout check, the game ends immediately. The only exception to this rule is if the executioners fail their check while the captive is still burning. In this case, they still must save the warrior! If the attacker escorts the captive off the table via any table edge, they win the day. If the captive is successfully burnt at the stake by his or her executioners, the defenders are triumphant. If the captive is taken out of action after he or she is freed, continue the fight as normal until one-side routs. Roll for the warrior on the serious injury table as normal after the battle.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives: If a Hero or Henchman group survives the battle they gain +1 Experience.\n+1 Winning Leader: The leader of the winning warband gains +1 Experience.\n+1 Per Enemy Out Of Action: Any Hero earns +1 experience for each enemy he puts Out Of Action.\n+1 Saving your friend: The leader of the attacking warband that escorts the Witch/Warlock off the table gets 1+ Experience. +1 Roasting the Heathen: The leader of the defending warband gains +1 Experience for burning the Witch/Warlock at the stakesuccessfully.\n\nThis scenario works best for sacrifices/ executions, for warriors rescuing warriors being sold to slavers, may I suggest the Body Trade variant of burrow town collapsing outlined as their 40cp bonus, or the Journey home from BTB, with the slavers trying to escape in the carts. - Dic.\n\nBoarding Action",
+     "tables": []
+    }
+   ],
+   "slug": "hangmans-square",
+   "name": "Hangman's Square",
+   "number": "16",
+   "players": "either",
+   "summary": "Rescue a captured warrior from execution, or carry it out."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "In the hack and slash of shipboard combat, finesse and skill are less useful than muscle and endurance. Like a street-fight a boarding action is no place for the knightly arts. It is a place for getting the bastard down as quickly as possible and putting the boot in as many times as it takes, before moving onto the next scurvy cur!",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest that two enemy ships are set up in contact within a seaborne or riverwards position of centrality, on a table roughly 4'x4' in size representing a stretch of the River Reik, the Reiksmouth Estuary or any harbours of Marienburg. If players fight a boarding action with riverboats or river barges they need to set up additional scenery allowing their warbands to be fully deployed.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "Unless predetermined by the current campaign, each player rolls a D6 to determine which warband has initiated the boarding action. The player rolling highest chooses to be the boarders or defenders. The boarding player rolls a scatter dice to determine the angle in which his ship has come into contact with the enemy vessel. If the angle is less than 45 degrees the boarding action is made alongside. The sides of both ships are touching. If the angle is between 45-90 degrees the boarding action is made headlong. If the boarder's ship has a ram apply any bonuses (see Marketplace) then resolve a collision. See page 26 of Empire in Flames supplement.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "Each player rolls a D6. The player rolling the highest result has the first turn.\n\nAlongside: If fighting an alongside boarding action then the ships are grappled D3+1 times. Refer to the special rules for grappling and cutting loose.\n\nHeadlong: If fighting a headlong boarding action the ships are grappled D3 – 1 times.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Jabbing 'Cross Decks: Any models that are lined up on the gunwale nearest the enemy vessel may strike at any enemy model with 1\" armed with a spear, trident, boat hook, halberd, mancatcher, squig prodder, pike, whip, lasso or other special lunging attacks.\n\nDeck Heights: There are advantages for attacking from an elevated position across deck. If a model is eligible to strike across deck at an enemy model within 1\" then measure the deck height. When one deck is 2\" taller or more than the enemy deck, the models on the higher deck may add +1 to all rolls made to hit.\n\nAquatic Menaces: When River Trolls, Fishmen, Fimir and other aquatic models in the water want to climb up a ship to board it, they may do so on a D6 roll of 4+ instead of the normal Initiative test. Their claws are so strong that they can pull themselves upward a barnacled hull and be on the deck slaughtering crew in no time!\n\nBoarding: Any models may attempt to charge across deck using the rules for leaping or climb up an enemy ship using the climbing rules found in the Mordheim rulebook.\n\nGrappling: As soon as ships touch they are grappled. Grappling hooks and gaffs are thrown to tie the ships together. Ships that are grappled are lashed together and may not move away unless they are cut loose. The boarding player places markers on the enemy gunwale to represent grappled areas of the deck.\n\nCutting Loose: Grappled ships may only disengage if they can be cut loose. Cutting a ship loose involves cutting lots of ropes and casting off all the hooks and gaffs connecting two ships together. In order to cut loose from a grappled area, a warband must meet one of the following three conditions:\n\n1. After a warrior at the gunwale has won a round of combat, he may cut loose a grappled deck area within 2\" on a successful Initiative test. 2. If there are two warriors who are neither engaged in combat nor counting as insignificant to the warband's rout test for any reason, they may cut loose a grappled deck area within 2\" on a D6 roll of 2+. 3. If there are no enemy models within 6\" then a warrior may cut loose any grappled deck areas within 2\".\n\nCast Off: After a ship cuts loose, the ship moves 4\" in a direction nominated by the controlling player.\n\nSpiking the Hull: Models may attack the hull in combat if no enemy models are with 1\". Close combat attacks hit automatically. When the ship loses its final point of damage/wound roll 2D6 on the Sinking Boat Chart.",
+     "tables": []
+    },
+    {
+     "title": "ending the game",
+     "text": "If either warband routs they forfeit their ship and lose the battle. If the boarders spike the hull of the defenders ship causing it to sink they win the game. If the defenders cut loose from being grappled to the boarders and cast off then they escape to win.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n\n+1 Cutting Loose. Any Hero who cuts loose a grappled area of the deck earns +1 Experience.\n\n+D3 Spiking the Hull. Any Hero who damages the hull of an enemy ship earns +D3 Experience.",
+     "tables": []
+    }
+   ],
+   "slug": "all-hands-on-deck",
+   "name": "All Hands on Deck",
+   "number": "17",
+   "players": "1v1",
+   "summary": "A boarding action between two ships."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "It's not safe to ride in or out of Marienburg without an escort, since the marshy outreaches of the Wasteland are populated by bandits, mutants, and some say, weird creatures of legend. Treacherous marshlands surrounding the port must be navigated to reach outlying market towns – Klessen by wagon, Leydenhoven and Kalkaat by boat.\n\nFlea markets are hosted at swamp-villages out in the mire as crude bazaars to trade stolen property to people who will buy or barter over plundered merchandise ranging from shabbiest quality bric-a-brac to bargain priced items of highest quality opulence. Gold-hungry brigands craving precious wares stripped from shipwrecks are not the only difficult customers attracted to the hubbub of a bustling swap meet!",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest that the flea market littered with carts, stalls and cargo is set up within an area roughly 2' x 2'.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "Six villagers are deployed by the trading player roughly 2\" apart. For every two additional warbands used in the scenario another six villagers can be deployed. The trading player sets up his warband inside the boundary of the flea market, with the exception of any warriors who are subject to special rules affecting deployment. The bodysnatching player sets up his warband outside of the boundaries determined for the market.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "The bodysnatching player takes the first turn.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Tradesfolk: Villagers, merchants, servants or any warrior miniatures not currently used in warbands can be used as objective markers to represent peasants and tradesfolk in the market. Use artillery scatter dice for moving market goers D3+1\" in a random direction after each player has taken a turn. If the result on the scatter dice is 'hit', then the peasant will henceforth flee 4\" directly towards the nearest table edge with a handful of bric-a-brac.\n\nRoll a D6 for each peasant being charged. On a roll of 1-5 the model being attacked is a defenceless milkmaid! If a 6 is rolled then a town celebrity has been targeted! Roll a D6 to see what character it is: 1. Crone: Immediately places a hex on the model that charged her! Roll a D6 on the Charms & Hexes spell list to see what curse was used. If the result is 'Cure', the Crone instantly affects all tradesfolk models and all warriors from trading warbands. Crones cannot be taken hostage. 2. Butcher's Boys: Carries two cleavers and strikes first in close combat. Butcher ' s Boys have the characteristics of a Youngblood from the Mercenary warband list. 3. Landlord: Carries a barrel. Place an objective marker. Use the Cargo Chart to determine its contents after battle. 4.Goose Girl: Carries a goose (counts as provisions) and a basket of eggs (counts as improvised projectile missiles!) Any warrior who charged a Goose Girl has an egg thrown at them before they charge at -1 to hit! 5. Merchant: Use characteristics for a Merchant Hired Sword. Merchants are protected. Two bodyguards will intercept the chargers and cannot be taken hostage. 6.Mayor: The town elder of Kalkaat, Seat of the Uniate – Orthodox sect for the Cult of Sigmar is known as the Mayor. Use characteristics for a Warrior-Priest of Sigmar (see page 80 of the Mordheim Rulebook). The Mayor has the special skills Sign of Sigmar, Protection of Sigmar, Righteous Fury and Absolute Faith (see page 83 of the Mordheim Rulebook). The Mayor has 2 wounds and is of equal value to three villagers when totalling points. There can only be one Mayor.\n\n{{table:1}}\n\nIf a milkmaid or other villager is knocked down or stunned then it can be taken hostage! Once taken hostage, the peasant becomes a hostage objective marker. If a villager is taken out of action then remove the model from the battlefield and replace it with a corpse marker.\n\nHostages: Villagers are counted as friendly models by the trading player's warband. Villagers taken hostage are represented with hostage objective markers. The rules for hostage markers are described in Scenario 3: Powder Bridge.\n\nArmistice: In a multi-player game, trading player's warbands count as friendly models until one of the parties declares charges or shoots at another. No experience points or other special benefits can be gained for taking models out of action from another warband defending the market.\n\nBlue Boar: At the start of each players turn, roll a D6. If the result is 1 then a blue boar has charged a randomly determined model in the player's warband. Use the rules for War Boars on page 27 of the Empire in Flames supplement. A surprise encounter with a boar replaces the random happenings found in 'Waterfront Encounters'.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Milkmaid",
+         "4",
+         "2",
+         "2",
+         "2",
+         "2",
+         "1",
+         "2",
+         "1",
+         "6"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "ending the game",
+     "text": "Routing does not apply in this scenario. The warbands are trapped in the market place! Roll a D6 on the third turn and on a 5+ the Marsh-Watch turn up and the game ends. On the fourth turn the Watch arrive on a 4+, on the fifth turn they arrive on a 3+ and every turn after they arrive on a 2+.\n\nA bodysnatching player wins if a greater number of villagers are captured than models in his warband taken out of action by warriors from a trading player's warband.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+1 Winning Leader. The leader of the winning warband gains +1 Experience.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action.\n\n+1 Per Hostage Taken Captive. Any Hero or Henchman earns +1 Experience for each hostage objective marker secured at the end of the battle.\n\n+D3 Mayor Taken Captive. Any Hero or Henchman earns D3 Experience for a hostage marker representing Mayor secured at the end of the battle.\n\n–1 CP Per Hostage Out of Action. A trading player's warband loses 1 Campaign Point for each hostage they put out of action.",
+     "tables": []
+    }
+   ],
+   "slug": "swap-meat",
+   "name": "Swap Meat",
+   "number": "18",
+   "players": "either",
+   "summary": "A fight over the plundered wares of a swamp-village flea market."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "The Pale Sisters are a fairly large mountain range bordering the Forest of Arden and the interior of Bretonnia, the other side of which lies the city of Marienburg. Following the Gisoreux Road south-west through the bleak countryside past the broken signpost that points to Halsdorph, the traveller eventually comes to the foothills of the Pale Sisters and Grey Mountains which bracket the Ois Gap, the main overland route to the land of chivalry and honour. Other than the small mining town of Erlach, the foothills of the grey mountains are only sparsely inhabited by lonely shepherds, hopeful prospectors, religious hermits and ragged outlaws who prey on road traffic. Old exhausted mines are scattered amongst the slopes. Once prosperous, some are still worked by the Dwarfs.\n\nA vast river system runs through the Pale Sisters, linking Bretonnian forts with the city of Couronne to the North, and its surrounding villages. Although some boat commerce still travels through the Sisters via the Grismerie River to the south and the river Sannez to the north, it is considered a dangerous route, as the rocky highlands are occupied by orcs, goblins and other monsters... populating long abandoned dwarfen mines and settlements within the rock. Although there is still much contention on the matter, the Pale Sisters were also for a time hypothesised as one of the major invasion routes the skaven used to mount their attacks on the surface, but few tunnel systems were ever found, and none were ever explored to any success.\n\nA minor footnote in Bretonnian history indicates the Pale Sisters were once the location of a tremendous campaign by the early Bretonnians to purge cults to the vile gods of Chaos, who had until that time built strongholds and large and dangerous covens out of direct view of mankind. Tavern tales abound where the mines and the ruined temples lie, and evidence is not in short supply to state that some of these tales are true, indeed, brave warriors have made fortunes in the caves of the Pale Sisters, and failed adventurers who have lost heart and comrades are quick to trade information for drinks and gold.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "Each player takes it in turn to place a piece of terrain appropriate for the mountain territory; forest, hills, cliff tops, rocks or other similar items. We suggest that the terrain is set up within an area roughly 4' x 4'. In a central location backed by one table edge representing the South, place some buildings to represent the ambushed colony. Along the outside edge of the village place markers to denote six cave entrances to the mines or use special features if your group prefers to customise terrain.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "If a player is using a dwarf warband then he must defend the mining colony. A player following the 'Guardians of the Peace' plot may opt to defend the colony unless a dwarf player objects. Two dwarf warbands should work together in a team game. Roll to see which dwarf warband defends the colony in a two player battle. If none of the warbands described feature in the game then the players decide among themselves who should defend the colony.\n\nIf a player is defending the mining colony then set up defending models within the deployment area specified for the mining village. Models can also be deployed at cave entrances to the mines. The player or team defending the small town will also deploy and direct a number of colonists.\n\nCount the number of players. For every warband participating in the battle there will be six colonists. For example a game involving four warbands will require twenty-four villagers. Colonists can be humans, dwarfs or a mix of both!\n\nEach other player rolls a D6. Each player chooses a table edge to set up on: North, East or West. The players will be aiming to pillage or sabotage the mining colony! The player rolling the highest result has first choice. Warbands must be deployed as near to the table edge as possible.\n\nIf the scenario is being played as a team game then each team chooses a table edge to set up on. Teams should be arranged by pairing players evenly whenever possible unless alliances have been formed preventing it.\n\nSpecial deployment rules for infiltration cannot be used in this scenario.",
+     "tables": []
+    },
+    {
+     "title": "starting the game",
+     "text": "Each player or team rolls a D6. The player or team rolling the highest result has the first turn. Play proceeds based on the next highest roll taking the next turn.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Mines: A Hero may enter a mine by moving into base contact with its cave entrance. The Hero will spend D3 turns exploring the mine. Remove the model from the table in the meantime unless the terrain piece is accessible. When it returns, or if the game ends, roll a D6 on the following chart to see what was found:\n\n1.Sleeping Monster! Roll a D6 to see what has awoken. The Hero flees, to lure the beast from its den, naturally! 1-2: Cave beast, use any one of the great beasts from 'Monster Hunt' on page 33 of the Mordheim Annual. 3-4: Cave troll 5-6: Cave bear 2.Bat Cave: 2D3 giant bats attack the Hero then fly out of the cave mouth – same as giant rats, except they suffer no penalties for terrain upon leaving the shaft. 3. Powder Store: Contains 2D6 powder kegs. Warriors can spend one turn re-entering the mine to recover kegs. 4. Fool's Gold: Temples of Chaos contain cursed gold! D3 warp-touched treasures plus a single tainted nugget of Dwarf gold (see 'Stromfels Heart' from the Shallow Beasts chapter). 5. Gold Rush: Cavern is piled high with a spoil heap. D6 treasures, 2D6 gold nuggets worth 10 gold crowns each, plus a mine cart and mule. 6. Golden Mask! A relic of pure gold! The Hero has recovered the fabled Mask of the Merlord. Roll on the Greater Artefacts Chart if Mask of the Merlord is already in the possession of one of the warbands in your campaign.\n\nIf it hasn't been found already the last available Hero to search a mine finds the greater artefact. If a player rolls 'Sleeping Monster' or 'Greater Artefact' for a second time then re-roll the result until a different outcome is reached.\n\nGreater Artefact: The artefact is represented on the table by using an objective marker to denote the model that is carrying it. If a warband carrying the new objective marker routs then the artefact is dropped. If a model carrying the marker is taken out of action the artefact is dropped.\n\nSleeping Monster: A sleeping monster is deployed at the cave entrance. The fleeing Hero will reappear 2D6\" from the cave. Monsters move in a separate turn after each player has taken their turn.\n\nWanderers: At the start of each players turn, roll a D6. If the result is 1 then a mountain predator has attacked the player's warband. More than one attack can happen in the course of a battle but no two should be the same. If the same result is rolled then roll again until a different wanderer is determined. These surprise encounters replace the random happenings found in 'Waterfront Encounters' for the purpose of this scenario.\n\nRoll a D6 to see what the warband has encountered:\n\n1. Giant! For rules to use a giant refer to page 83 of the Border Town Burning supplement. 2. Hill Goblins: 2D6 goblins. Each armed with a short bow and a club. 3. Mountain Lion: See the Speciality Animals Chart in Marketplace chapter – same as tiger. 4.Wolf Pack: 2D3 giant wolves. 5.Swine Herd: D3 wild pigs – same as giant boars. 6. Robber Knights! D3 Bretonnian knights on a quest of redemption charge your warband. Use the Freelancer Hired Sword from page 150 of the Mordheim Rulebook. The knights will not charge a defending warband. They must charge the next nearest player's warband instead. The players defending the colony control the knights. If the defenders win the game and any knights survive then the Hired Swords swear oaths of fealty. They join the defending warband in a 'Blood Pact'.\n\nColonists: Colonists are treated as friendly models by the defending player's warband. Colonists taken hostage by enemy warbands are represented with hostage objective markers. The rules for hostage markers are described in Scenario 3: Powder Bridge.\n\nIf a colonist is knocked down or stunned then it can be taken hostage! Once taken hostage, the colonist becomes a hostage objective marker. If a colonist is taken out of action then remove the model from the battlefield and replace it with a corpse marker.\n\nColonists are civilians rather than being trained fighters. They will defend their town from being pillaged! Use the characteristics below to represent the different civilians.\n\n{{table:1}}\n\n{{table:2}}\n\nExplosives Charges: Roll a D6 whenever explosives such as powder kegs, Cathayan fire pots, bog fire or a hand-held mortar is being detonated in a cave entrance. On a 4+ the explosion caused the shaft to cave-in! The entrance is blocked until the game ends.",
+     "tables": [
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Human Villager",
+         "4",
+         "2",
+         "2",
+         "2",
+         "2",
+         "1",
+         "2",
+         "1",
+         "6"
+        ]
+       ]
+      },
+      {
+       "columns": [
+        "Profile",
+        "M",
+        "WS",
+        "BS",
+        "S",
+        "T",
+        "W",
+        "I",
+        "A",
+        "Ld"
+       ],
+       "rows": [
+        [
+         "Dwarf Prospector",
+         "3",
+         "2",
+         "2",
+         "2",
+         "3",
+         "1",
+         "2",
+         "1",
+         "7"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "title": "ending the game",
+     "text": "The defenders of the colony cannot voluntarily rout. There are three possible outcomes described below. If the defenders do rout then the game ends immediately.\n\nPillaged: If a model is carrying a greater artefact found in the mines when the defenders warband routs that player is awarded victory.\n\nIf a model carrying a greater artefact found in the mines moves off the table (not the South edge!) the player immediately wins the game. The warband retains the artefact along with the spoils they collected. Any other warbands retain spoils unless they are within charge range of any non-engaged opponents.\n\nIf the artefact has not been located when the defenders rout then a warband with the most gold nuggets is declared the winner. Roll 2D6 for each spoil heap visited from a 'Gold Rush'. If two or more players share the same amount of spoils they can both claim victory.\n\nIf no gold nuggets have been located when the defenders rout then the mining colony counts as being successfully defended and the defenders win!\n\nDefended: If all the warbands raiding the colony are routed then the defenders win. A defender of the colony is awarded a spoil heap from the mines. D6 treasures, 2D6 gold nuggets worth 10 gold crowns each, plus a mine cart and mule to drive the spoils away. A defender cannot collect the greater artefact or any other bounty. Losing warbands only retain spoils if they escaped off the table with them.\n\nSabotaged: Alternatively a warband raiding the colony can claim victory by collapsing all remaining cave entrances before a Greater Artefact has even been found. The winner retains any spoils. Any other warbands retain spoils unless they are within charge range of any non-engaged opponents.",
+     "tables": []
+    },
+    {
+     "title": "experience",
+     "text": "+1 Survives. If a Hero or a Henchman group survives the battle they gain +1 Experience.\n\n+D3 Winning Leader. The leader of the winning warband gains D3 Experience.\n\n–1 Per Colonist Out of Action. A defending player's warband leader loses 1 Experience for each colonist put out of action.\n\n+1 Per Enemy Repelled by Colonist. A defending player's warband leader gains 1 Experience for each enemy that a colonist puts out of action.\n\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action. Villagers taken out of action do not count.\n\n+1 Wounding a Monster. Any Hero or Henchman earns +1 Experience for each wound he inflicts on a Monster with 2 or more Wounds.\n\n+2 Defeating a Monster. The Hero that puts a Monster out of action gets a bonus +2 Experience.\n\n+1 Exploring a Mine. The Hero who enters a cave entrance first earns +1 Experience.\n\n+D3 Collapsing a Mine. The Hero who collapses a mine earns D3 Experience.",
+     "tables": []
+    }
+   ],
+   "slug": "colony-of-plenty",
+   "name": "Colony of Plenty",
+   "number": "19",
+   "players": "multiplayer",
+   "summary": "Every warband fights over a settlement in the foothills of the Pale Sisters."
+  },
+  {
+   "source": "Mutiny in Marienburg",
+   "intro": "Once prosperous, Halsdorph a beautiful town of 2,500 souls is now a depressed community haunted by morbid dreams from the nearby Daemon Swamp! Since the earthshaking Night of Terror when the best fields sank it's a place of decay. The decline of Halsdorph was brought about by clawing monsters from a lost age, led by masters of dark sorcery and daemon lore. Fallen creatures now occupy the mistwreathed ruins at Halsdorph Keep. Townsfolk abandoned their crumbling homes surrounding the eerie stronghold.",
+   "sections": [
+    {
+     "title": "terrain",
+     "text": "We suggest an area roughly 4’ x 6’, with Halsdorp Keep being around 2’x2’ in the centre of the board. Parts of the keep should be more dilapidated than others to give the impression of a fortification in the state of disrepair, most breaches should be shored up with flammable obstacles such as crates, barrels and upturned carts. The surrounding area should be mostly forest and swamp, providing much cover for the approaching warband.",
+     "tables": []
+    },
+    {
+     "title": "warbands",
+     "text": "This is a multiplayer scenario and uses the rules for alliances from the “Chaos in the Streets” article (see Mordheim Annual 2002). This scenario is an important event in the campaign and therefore all participating warbands should take part in it. The warbands are divided into three teams as listed below. THE RIGHTEOUS Rangers & Zealots: all warbands following Drowning the witch, defending the peace and Ten Great Families are part of the righteous. THE FALLEN Brigands & Heretics: all warbands following the Gaze of the Gods and the Body Trade are on the side of the fallen. THE UNDERFOLK Saboteurs & Assassins: all warbands following Poisoning the Well are on the side of the underfolk.\n\nWarbands following the Secret Deal must choose between humanity and Profit. They may choose to be on either the Righteous or the Fallen.\n\nWarbands Following the Price of Power may choose between the Underfolk and the Fallen.",
+     "tables": []
+    },
+    {
+     "title": "set-up",
+     "text": "The Fallen team deploys first, within Halsdorph Keep or upon its battlements. After the Righteous team has deployed anywhere at least 18\" outside the perimeter of the walls to Haldsorph Keep, each side rolls a dice to decide which team take the first turn. The Underfolk may deploy on any table edge on a turn of their choosing after the first turn has taken place.",
+     "tables": []
+    },
+    {
+     "title": "starting the Game",
+     "text": "Each player on the same team takes their turn simultaneously. Close combat may need to be resolved in order of Initiative.",
+     "tables": []
+    },
+    {
+     "title": "Experience",
+     "text": "+1 Survives. If a Hero or a Henchman group Survives the battle they gain +1 Experience.\n+1 Winning Leader. The leader (or leaders) of the winning warband (or warbands) gains +1 Experience.\n+1 Per Enemy Out of Action. Any Hero earns +1 Experience for each enemy he puts out of action. +3 Gate Opened. If a Hero or a Henchman of the attackers side opens the front gate – be it from the inside or with force – they gain +3 Experience +3 Team Captain Out of Action. The warrior who takes a team captain OOA gets an extra +3 Experience.",
+     "tables": []
+    },
+    {
+     "title": "special rules",
+     "text": "Alliances: Warbands in an alliance have their turns at the same time. Warbands on the same team count as friendly models meaning they cannot be attacked by their allies in this battle. If a warband wishes to break from an alliance they must announce it before the start of a turn and then pass a Ld test. If they pass the test, they will split from their team before the turn and will have their turn before their former alliance from now on. If they fail the test they will split from the team, but their turn will take place after their former teams from now on, allowing their once allies to attack them first. Mist-wreathed Stronghold: As a consequence of their shadowy alliance the warbands on the Fallen team will be enveloped in 'Mystic Mist' (like a bound spell from magical items, the spell means missile fire suffers -1 to hit mist-wreathed targets) at the start of the battle. Fimir ambushers roll in their shooting phase to check whether the mist can be maintained by their bronze talismans of blood. Captains: the Righteous and the Fallen must have team captains, for the Righteous first preference should be a Drowning the Witch warband, for the Fallen it should be a Fimir warband or a Gaze of the Gods if no Fimir are present. Each team captain has the benefit of being able to overrule any of the players on his team. In the event that a team captain's warband is routed then the team captain must nominate a new captain. Players must defer to their team captain in all instances! e.g. If a player would like to voluntarily rout then they will need permission from their team captain. Warbands can ignore a captains orders with if the warbands leader successfully passes a Ld test. Defence Walls: The sheer surfaces of the walls surrounding the fortress town are too smooth to be climbed. No model can attempt to climb them unless it has the Wall Runner or Scales Sheer Surfaces skill, or it uses a rope & hook, a ladder or fighting claws. Main Gate: The fortress must have at least one wooden gate. The gate is locked from the inside but can be opened by any model inside the fortress by spending a full turn in base contact with it. From the outside the gate can only be opened through its destruction. A warrior may attack the gate in close combat just like any other enemy model. Treat the gate as Toughness 8, Wounds 4 and being immune to critical hits. Once it is opened the gate remains open. Morbid Dreams: Sorcerous hallucinations lead warriors to despair and to suffer from night terrors and strange visions! After the battle each Hero in the warband must take a Leadership test. Roll on the chart for the Dream Parlour from Infamous Haunts for any Hero failing the test. Undead and daemon models are immune to morbid dreams.",
+     "tables": []
+    },
+    {
+     "title": "ending the game",
+     "text": "The game ends when all of the warbands on either the righteous or the damned have routed. Any warbands on the winning side when the game ends earns 2 Campaign Points for winning the battle and are rewarded with the Magical Artefact Kadon’s whistle (if already found, they are rewarded with a random remaining artefact). The underfolk players earn 2 Campaign Points for surviving the battle if casualties were dealt by his warband to a captains warband on each side, in addition if Underfolk players took out the leaders of a Captains warband on each side they are rewarded with Kadon's Whistle rather than the winning warband. If any alliance cannot agree on who earns Kadon's Whistle, they must continue fighting till a clear winner is determinied.\n\nThis scenario, though not written by Werekin is based on his battle report of the stronghold fight on Liber Malefic - Dic.",
+     "tables": []
+    }
+   ],
+   "slug": "stronghold",
+   "name": "Stronghold",
+   "number": "20",
+   "players": "multiplayer",
+   "summary": "Every warband fights for Halsdorph Keep, in three teams."
+  }
+ ]
+}
