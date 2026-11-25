@@ -13,7 +13,7 @@ from django.db.models import OuterRef, QuerySet
 from apps.core.errors import ApiError
 
 from .constants import ADMIN, OWNER
-from .errors import CampaignArchived
+from .errors import CampaignArchived, WorkshopCampaign
 from .models import CampaignMembership, CampaignMembershipPermission
 
 IMPLICIT_PERMISSION_ROLES = (OWNER, ADMIN)  # these roles hold every campaign permission
@@ -39,23 +39,27 @@ def with_codes(rows: QuerySet[CampaignMembership]) -> QuerySet[CampaignMembershi
 
 
 def get_membership(user, campaign_id):
-    return (
-        with_codes(CampaignMembership.objects.select_related("role")).filter(campaign_id=campaign_id, user=user).first()
-    )
+    """The membership (None for a non-member, and for the owner of a deleted workshop: apps/workshop)."""
+    rows = with_codes(CampaignMembership.objects.select_related("role"))
+    return rows.filter(campaign_id=campaign_id, user=user, campaign__deleted_at__isnull=True).first()
 
 
 def get_membership_with_campaign(user, campaign_id):
     """The membership with its campaign read in the same query (e.g. for its `in_progress`)."""
     rows = with_codes(CampaignMembership.objects.select_related("role", "campaign"))
-    return rows.filter(campaign_id=campaign_id, user=user).first()
+    return rows.filter(campaign_id=campaign_id, user=user, campaign__deleted_at__isnull=True).first()
 
 
 def get_writable_membership(user, campaign_id):
-    """The membership for a write in the campaign, read with its campaign (one query, as above): None for a
-    non-member; CampaignArchived (403 campaign_archived) when the campaign is archived (decision 5)."""
+    """The membership for a campaign write outside the campaign routes (a battle, a reported result, a warband
+    raised), read with its campaign (one query, as above): None for a non-member; CampaignArchived (403
+    campaign_archived) when the campaign is archived (decision 5), WorkshopCampaign (403 workshop_campaign) for a
+    workshop, whose warband is made by apps/workshop and which plays no battles."""
     membership = get_membership_with_campaign(user, campaign_id)
     if membership is not None and membership.campaign.archived_at is not None:
         raise CampaignArchived()
+    if membership is not None and membership.campaign.is_workshop:
+        raise WorkshopCampaign()
     return membership
 
 

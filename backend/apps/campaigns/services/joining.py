@@ -11,7 +11,7 @@ from django.db import IntegrityError, transaction
 
 from ..constants import JOIN_GRANTS, PLAYER
 from ..errors import CampaignArchived, Refused
-from ..models import Campaign, CampaignMembership
+from ..models import CAMPAIGN, Campaign, CampaignMembership
 from . import codes
 
 ALREADY_A_MEMBER = "Already a member"
@@ -23,7 +23,8 @@ def join_campaign(user: Any, join_code: str) -> Campaign:
     try:
         with transaction.atomic():
             rows = Campaign.objects.select_related("settings").select_for_update(of=("self",))
-            campaign = rows.filter(join_code=join_code).first()
+            # a workshop is never joined: its code is not a campaign's (apps/workshop)
+            campaign = rows.filter(join_code=join_code, kind=CAMPAIGN).first()
             if campaign is None:
                 raise Refused("Campaign not found", status=404)
             if campaign.archived_at is not None:  # read-only, members included (decision 5)

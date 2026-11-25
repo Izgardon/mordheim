@@ -7,7 +7,7 @@ from apps.warbands.services import ledger
 
 from .roster_support import HENCHMEN, HERO, HIRELING, RosterTestCase, make_unit
 
-ALL_FLAGS = ("edit", "level_up", "manage_items", "edit_backstory", "delete", "edit_catalogue", "trade")
+ALL_FLAGS = ("edit", "level_up", "manage_items", "edit_backstory", "delete", "edit_catalogue", "trade", "workshop")
 
 
 def flags(*granted: str) -> dict[str, bool]:
@@ -56,6 +56,7 @@ class WarbandSheetTests(RosterTestCase):
                 "plot",  # the plot it follows and its ladder (apps/plots); null here: it follows none
                 "item_names",
                 "encampments",  # what it holds while the campaign has Encampments on; [] here: they are off
+                "workshop",  # a workshop's warband's cost, budget and code (apps/workshop); null here
                 "heroes",
                 "henchmen_groups",
                 "hirelings",

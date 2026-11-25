@@ -13,7 +13,7 @@ from typing import Any
 from rest_framework.request import Request
 
 from .constants import OWNER, PERMISSION_CODES
-from .models import Campaign, CampaignMembership, CampaignSettings
+from .models import HOLDS_LIST, Campaign, CampaignMembership, CampaignSettings
 from .permissions import IMPLICIT_PERMISSION_ROLES, with_codes
 
 
@@ -49,6 +49,11 @@ class CampaignAccess:
         return self.campaign.archived_at is not None
 
     @property
+    def workshop(self) -> bool:
+        """The campaign is a workshop (apps/workshop): its owner's alone, holding one warband or one list."""
+        return self.campaign.is_workshop
+
+    @property
     def is_staff(self) -> bool:
         return self.role in IMPLICIT_PERMISSION_ROLES
 
@@ -76,7 +81,8 @@ def load_campaign_access(request: Request, campaign_id: int) -> CampaignAccess |
     if campaign_id not in cache:
         rows = with_codes(CampaignMembership.objects.select_related("role", "campaign", "campaign__settings"))
         user: Any = request.user  # authenticated by now (IsAuthenticated runs first)
-        membership = rows.filter(campaign_id=campaign_id, user=user).first()
+        # a deleted workshop is gone for its owner too (apps/workshop)
+        membership = rows.filter(campaign_id=campaign_id, user=user, campaign__deleted_at__isnull=True).first()
         cache[campaign_id] = CampaignAccess(membership) if membership else None
     return cache[campaign_id]
 
@@ -166,10 +172,16 @@ CAMPAIGN_RULES: Mapping[str, Rule] = {
 CAPABILITIES: tuple[str, ...] = (*ROLE_RULES, *CODE_RULES)  # the flags: every rule but view and object rules
 # what an archived campaign still lets its members do (everything else answers 403 campaign_archived)
 KEPT_WHEN_ARCHIVED = frozenset({"view_members", "restore", "delete"})
+# what a list workshop's owner may do: write its list in the template editor (apps/workshop); a warband workshop none
+KEPT_IN_LIST_WORKSHOP = frozenset({"edit_catalogue"})
 
 
 def campaign_capabilities(access: CampaignAccess) -> dict[str, bool]:
-    """Flags for the campaign payload, from the loaded access: no query."""
+    """Flags for the campaign payload, from the loaded access: no query. A workshop's are all off but a list
+    workshop's `edit_catalogue` (its template editor), as `CampaignScopedView` refuses the rest."""
+    if access.workshop:
+        kept = KEPT_IN_LIST_WORKSHOP if access.campaign.holds == HOLDS_LIST else frozenset()
+        return {name: name in kept for name in CAPABILITIES}
     return {
         name: CAMPAIGN_RULES[name](access, None) and (not access.archived or name in KEPT_WHEN_ARCHIVED)
         for name in CAPABILITIES

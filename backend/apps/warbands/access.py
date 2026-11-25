@@ -53,9 +53,16 @@ def check_backstory_change(
         raise RosterError(message, "backstory_owner_only", {"backstory": [message]}, status_code=403)
 
 
+# what a workshop's warband never offers (apps/workshop): its workshop is deleted instead, it trades with nobody and its
+# catalogue is the book's ("nothing custom")
+OFF_IN_WORKSHOP = ("delete", "edit_catalogue", "trade")
+
+
 def warband_capabilities(user: Any, warband: Warband, membership: CampaignMembership) -> dict[str, bool]:
     """Flags for a member of the warband's campaign; costs at most two queries, none for owners and admins. All
-    false while the campaign is archived (decision 5: read-only)."""
+    false while the campaign is archived (decision 5: read-only). `workshop`: the warband is a workshop's (apps/
+    workshop), whose page shows its roster, backstory and cost, and no treasury, log, resources, campaign points,
+    battles, trades, encampments, visits or bounties; the flags a workshop never offers are off."""
     can_edit = can_edit_warband(user, warband, membership)
     flags = {
         "edit": can_edit,  # warband and unit writes
@@ -65,7 +72,10 @@ def warband_capabilities(user: Any, warband: Warband, membership: CampaignMember
         "delete": owns_warband(user, warband, membership),  # warband DELETE: its owner only
         "edit_catalogue": has_campaign_permission(membership, "edit_catalogue"),  # add and edit catalogue entries
         "trade": owns_warband(user, warband, membership),  # player trades: its owner only (pass 2 decision 10)
+        "workshop": warband.campaign.is_workshop,
     }
     if warband.campaign.archived_at is not None:
         return dict.fromkeys(flags, False)
+    if warband.campaign.is_workshop:
+        flags.update(dict.fromkeys(OFF_IN_WORKSHOP, False))
     return flags

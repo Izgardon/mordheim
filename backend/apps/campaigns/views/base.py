@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..access import CAMPAIGN_RULES, CampaignAccess, campaign_capabilities, load_campaign_access
-from ..errors import CampaignArchived, CampaignError, Refused
+from ..errors import CampaignArchived, CampaignError, Refused, WorkshopCampaign
 
 
 class AnswersRefusals(APIView):
@@ -29,8 +29,9 @@ class CampaignScopedView(AnswersRefusals):
 
     Answers as the hand-written checks did: anonymous 401 (and throttles) first, then a non-member 404 "Not found",
     a feature switched off 404 "Not found" (`feature_flag`), any write to an archived campaign 403
-    `campaign_archived` (but the methods in `allow_archived`: restore, delete), a member without the right 403
-    "Forbidden". `rules`
+    `campaign_archived` (but the methods in `allow_archived`: restore, delete), any write to a workshop 403
+    `workshop_campaign` (but in a workshop holding one of `workshop_writes`: a list's template editor), a member
+    without the right 403 "Forbidden". `rules`
     maps each method the view handles to a rule of `access.CAMPAIGN_RULES`; a handled method it doesn't list is
     refused (deny by default). Methods the view doesn't handle, and OPTIONS, are left to DRF (405, metadata).
     Object rules (a note's author) are checked in the handler with `check_rule(name, obj)`. Campaign routes name
@@ -41,6 +42,7 @@ class CampaignScopedView(AnswersRefusals):
     rules: Mapping[str, str] = {"GET": "view"}
     feature_flag: str | None = None
     allow_archived: frozenset[str] = frozenset()  # writes an archived campaign still takes (decision 5)
+    workshop_writes: frozenset[str] = frozenset()  # the workshops (by what they hold) whose writes it takes
 
     access: CampaignAccess
 
@@ -58,8 +60,9 @@ class CampaignScopedView(AnswersRefusals):
         self.check_rule(self.rules.get(method))
 
     def enter_campaign(self, method: str, campaign_id: int) -> None:
-        """Load the caller's access: a non-member 404, a feature switched off 404, a write to an archived campaign
-        403 `campaign_archived` (but the methods in `allow_archived`)."""
+        """Load the caller's access: a non-member 404 (a deleted workshop's owner too), a feature switched off 404, a
+        write to an archived campaign 403 `campaign_archived` (but the methods in `allow_archived`), a write to a
+        workshop 403 `workshop_campaign` (but one holding what `workshop_writes` names)."""
         access = load_campaign_access(self.request, campaign_id)
         if access is None:
             raise NotFound("Not found")
@@ -68,6 +71,8 @@ class CampaignScopedView(AnswersRefusals):
             raise NotFound("Not found")
         if method != "GET" and access.archived and method not in self.allow_archived:
             raise CampaignArchived()
+        if method != "GET" and access.workshop and access.campaign.holds not in self.workshop_writes:
+            raise WorkshopCampaign()
 
     def check_rule(self, name: str | None, obj: Any = None) -> None:
         """403 "Forbidden" unless the caller passes the rule (for `obj`, for an object rule)."""

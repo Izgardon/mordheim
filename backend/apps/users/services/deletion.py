@@ -10,7 +10,8 @@ check and its archiving (joining takes the same lock). The user row stays, so yo
 they hold), battles and ledger keep their owner as retired records. It is anonymised: the name "Former player" (on your chat messages
 too), the username `deleted-<id>` and no email, so the address can sign up again, an unusable
 password, inactive, and a new session key, so every device is signed out. Your own notifications are deleted;
-notifications already sent to others keep your old name. It can't be undone.
+notifications already sent to others keep your old name. Your workshops (apps/workshop: custom warbands and lists)
+are deleted as their own Delete does, so their codes stop working; copies made from them stay. It can't be undone.
 """
 
 from typing import Any
@@ -21,7 +22,7 @@ from django.utils import timezone
 
 from apps.battles.models import BattleParticipant
 from apps.campaigns.constants import OWNER
-from apps.campaigns.models import Campaign, CampaignMembership
+from apps.campaigns.models import CAMPAIGN, WORKSHOP, Campaign, CampaignMembership
 from apps.campaigns.services import archive, removal, removal_battles
 from apps.campaigns.services.authors import restamp_author_names
 from apps.notifications.models import Notification
@@ -47,10 +48,12 @@ class HandOverFirst(Exception):
 
 
 def _memberships(user: Any) -> list[CampaignMembership]:
-    """The user's memberships with their campaigns and roles, each knowing whether anyone else is in its campaign
-    (`has_company`), by campaign name (1 query)."""
+    """The user's memberships of campaigns (never a workshop) with their campaigns and roles, each knowing whether
+    anyone else is in its campaign (`has_company`), by campaign name (1 query)."""
     others = CampaignMembership.objects.filter(campaign_id=OuterRef("campaign_id")).exclude(user_id=user.id)
-    rows = CampaignMembership.objects.filter(user_id=user.id).select_related("campaign", "role")
+    rows = CampaignMembership.objects.filter(user_id=user.id, campaign__kind=CAMPAIGN).select_related(
+        "campaign", "role"
+    )
     return list(rows.annotate(has_company=Exists(others)).order_by("campaign__name", "campaign_id"))
 
 
@@ -113,6 +116,9 @@ def delete_account(user: Any) -> None:
         if blocking:
             raise HandOverFirst([{"id": row.campaign_id, "name": row.campaign.name} for row in blocking])
         _anonymise(user)  # first, so everything written from here on names him "Former player"
+        Campaign.objects.filter(kind=WORKSHOP, memberships__user_id=user.id, deleted_at__isnull=True).update(
+            deleted_at=timezone.now()
+        )
         for membership in memberships:
             if _outcome(membership) == LEFT:
                 removal.take_out(membership.campaign_id, user.id, user, mode=removal_battles.LEAVE_MODE)

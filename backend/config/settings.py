@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     "apps.plots.apps.PlotsConfig",
     "apps.scenarios.apps.ScenariosConfig",
     "apps.campaign_presets.apps.CampaignPresetsConfig",
+    "apps.workshop.apps.WorkshopConfig",
 ]
 
 MIDDLEWARE = [

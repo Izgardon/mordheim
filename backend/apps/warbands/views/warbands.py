@@ -6,6 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.campaigns.models import CAMPAIGN
 from apps.campaigns.permissions import get_writable_membership, parse_campaign_id
 from apps.warband_templates.services.raising import raise_warband, settle_variant
 from apps.warband_templates.services.rule_swap import RuleSwap, swap_rules
@@ -32,7 +33,9 @@ class WarbandListCreateView(APIView):
         warbands = Warband.objects.filter(user=request.user).select_related("campaign", "campaign__settings")
 
         if campaign_id is not None:
-            warbands = warbands.filter(campaign_id=campaign_id)
+            warbands = warbands.filter(campaign_id=campaign_id, campaign__deleted_at__isnull=True)
+        else:  # his campaigns' warbands: a workshop's are listed by apps/workshop
+            warbands = warbands.filter(campaign__kind=CAMPAIGN)
 
         rows = list(warbands.order_by("created_at"))
         load_types(rows)  # their types, for all of them in one query
@@ -72,6 +75,7 @@ def rules_changed(swap: RuleSwap | None) -> dict[str, Any] | None:
 
 class WarbandDetailView(WarbandScopedView):
     rules = {**WarbandScopedView.rules, "DELETE": "delete"}  # only the warband's owner may delete it
+    workshop_refused = frozenset({"DELETE"})  # a workshop's warband goes with its workshop (apps/workshop)
 
     def get(self, request: Request, warband_id: int) -> Response:
         return Response(WarbandSerializer(self.warband).data)

@@ -18,6 +18,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
+from apps.campaigns.errors import WorkshopCampaign
+from apps.campaigns.models import HOLDS_LIST
 from apps.core.catalogue import names, versions
 from apps.core.catalogue.hooks import CampaignRequired
 from apps.core.catalogue.kinds import WARBAND_TEMPLATES
@@ -61,13 +63,21 @@ class TemplateWhoCanView(TemplateReadView):
 
 
 class TemplateSectionView(CatalogueEntryView):
-    """A section's save: the house version first for a book template, then the write, in one transaction."""
+    """A section's save: the house version first for a book template, then the write, in one transaction. A list
+    workshop (apps/workshop) writes its own list here and nothing else: never a book template, which would make the
+    workshop a second, house version."""
 
     kind = WARBAND_TEMPLATES
     rules = {"PUT": EDIT, "POST": EDIT, "DELETE": EDIT}
     book_methods = frozenset({"PUT", "POST", "DELETE"})
     actions = {"PUT": "edit", "POST": "edit", "DELETE": "edit"}
     reads_detail = False
+    workshop_writes = frozenset({HOLDS_LIST})
+
+    def load_scope(self, method: str, **kwargs: Any) -> None:
+        super().load_scope(method, **kwargs)
+        if self.access.workshop and self.entry.campaign_id != self.campaign_id:
+            raise WorkshopCampaign()
 
     def body(self, serializer: type[Serializer[Any]]) -> Any:
         sent = serializer(data=self.request.data, context={"campaign_id": self.campaign_id})

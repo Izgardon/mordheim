@@ -28,7 +28,7 @@ from apps.users.names import display_name
 from apps.warbands.models import Henchman, Hero, Hireling, Warband
 from apps.warbands.services.summary import load_warband_units
 
-from .models import Campaign, CampaignMembership, CampaignMembershipPermission, CampaignMessage, PivotalMoment
+from .models import CAMPAIGN, Campaign, CampaignMembership, CampaignMembershipPermission, CampaignMessage, PivotalMoment
 
 
 def campaigns_for_user(user: Any) -> QuerySet[Campaign]:
@@ -44,12 +44,17 @@ def campaigns_for_user(user: Any) -> QuerySet[Campaign]:
 
 def campaign_list_for_user(user: Any) -> QuerySet[Campaign]:
     """The campaigns list: `campaigns_for_user` with the user's own warband in each (`my_warband_id`, `_name` and
-    `_type`, its type's name; None without one), read in the same query."""
+    `_type`, its type's name; None without one), read in the same query. His workshops are never listed here
+    (apps/workshop lists them)."""
     mine = Warband.objects.filter(campaign_id=OuterRef("pk"), user=user)
-    return campaigns_for_user(user).annotate(
-        my_warband_id=Subquery(mine.values("id")[:1]),
-        my_warband_name=Subquery(mine.values("name")[:1]),
-        my_warband_type=Subquery(mine.values("warband_type__name")[:1]),
+    return (
+        campaigns_for_user(user)
+        .filter(kind=CAMPAIGN)
+        .annotate(
+            my_warband_id=Subquery(mine.values("id")[:1]),
+            my_warband_name=Subquery(mine.values("name")[:1]),
+            my_warband_type=Subquery(mine.values("warband_type__name")[:1]),
+        )
     )
 
 

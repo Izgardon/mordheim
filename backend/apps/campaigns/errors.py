@@ -24,6 +24,25 @@ class CampaignArchived(APIException):
         super().__init__({"detail": ARCHIVED_DETAIL, "code": "campaign_archived", "fields": {}})
 
 
+WORKSHOP_DETAIL = (
+    "This is a workshop, not a campaign: it holds one warband or warband list, and has no battles, trades, members"
+    " or campaign pages."
+)
+
+
+class WorkshopCampaign(APIException):
+    """403 `workshop_campaign` in the standard body: what a workshop never does (apps/workshop: battles, trades,
+    joining, members, the campaign's pages and settings, and every catalogue write but its list's editor).
+
+    A DRF exception, as `CampaignArchived` is, so any view answers it."""
+
+    status_code = 403
+    default_code = "workshop_campaign"
+
+    def __init__(self, detail: str = WORKSHOP_DETAIL) -> None:
+        super().__init__({"detail": detail, "code": "workshop_campaign", "fields": {}})
+
+
 class CampaignError(Exception):
     def __init__(
         self,

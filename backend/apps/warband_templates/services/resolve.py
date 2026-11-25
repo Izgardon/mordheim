@@ -57,6 +57,49 @@ def template_for_type(campaign_id: int, warband_type_id: int | None) -> WarbandT
     return templates_for_type(campaign_id, warband_type_id).first()
 
 
+def templates_for_warbands(warbands: Iterable[Warband]) -> dict[int, WarbandTemplate | None]:
+    """Each warband's template, as `template_for_type` finds it in its own campaign (the campaign's own, oldest first,
+    else the book's it hasn't replaced or removed; never an archived one), each with its type's `preset_variant`, for
+    many warbands of many campaigns at once (three queries, whatever their number)."""
+    rows = [warband for warband in warbands if warband.warband_type_id is not None]
+    found: dict[int, WarbandTemplate | None] = dict.fromkeys((warband.pk for warband in warbands), None)
+    if not rows:
+        return found
+    campaign_ids = {warband.campaign_id for warband in rows}
+    type_ids = {warband.warband_type_id for warband in rows}
+    links = list(
+        WarbandTemplateType.objects.filter(
+            Q(template__campaign_id__in=campaign_ids) | Q(template__campaign__isnull=True),
+            template__archived_at__isnull=True,
+            warband_type_id__in=type_ids,
+        ).select_related("template")
+    )
+    hidden = set(
+        WarbandTemplate.objects.filter(campaign_id__in=campaign_ids, replaces__isnull=False).values_list(
+            "campaign_id", "replaces_id"
+        )
+    )
+    hidden |= set(
+        CatalogueRemoval.objects.filter(campaign_id__in=campaign_ids, kind=KIND).values_list("campaign_id", "entry_id")
+    )  # the book's templates each campaign replaced or removed
+    for warband in rows:
+        serving = [
+            link
+            for link in links
+            if link.warband_type_id == warband.warband_type_id
+            and (
+                link.template.campaign_id == warband.campaign_id
+                or (link.template.campaign_id is None and (warband.campaign_id, link.template_id) not in hidden)
+            )
+        ]
+        serving.sort(key=lambda link: (link.template.campaign_id is None, link.template_id))
+        if serving:
+            template = serving[0].template
+            template.preset_variant = serving[0].variant  # type: ignore[attr-defined]
+            found[warband.pk] = template
+    return found
+
+
 def template_id_for(warband: Warband) -> Subquery:
     """The warband's template's id as a subquery, for a read that wants its rows in the same query."""
     rows = templates_for_type(warband.campaign_id, warband.warband_type_id)

@@ -22,6 +22,7 @@ from apps.warbands.serializers import (
     WarbandSummarySerializer,
 )
 from apps.warbands.services.loadouts import group_mount_rating_of
+from apps.warbands.services.roster_cost import roster_value
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.companions import mount_bonuses
 from apps.warbands.units.kinds import HENCHMEN_GROUP, HERO, HIRELING, KINDS
@@ -81,6 +82,15 @@ def _encampments(warband: Warband) -> list[dict[str, Any]]:
     return held_by(warband) if settings is not None and settings.enable_encampments else []
 
 
+def workshop_facts(warband: Warband) -> dict[str, Any] | None:
+    """A workshop's warband's cost against its budget and its workshop's code (two queries: roster_cost.py); null
+    for a campaign's warband."""
+    if not warband.campaign.is_workshop:
+        return None
+    value = roster_value(warband)
+    return {"cost": value.cost, "budget": value.budget, "share_code": warband.campaign.share_code}
+
+
 def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, Any]:
     # Each kind's roster with its loadout (summary prefetch), then the item details once for all of them.
     rosters: dict[str, list[Any]] = {key: list(kind.roster(warband, detail=False)) for key, kind in KINDS.items()}
@@ -104,6 +114,8 @@ def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, 
         "item_names": template_item_names(warband),
         # what it holds while the campaign has Encampments on (one query); [] while they are off
         "encampments": _encampments(warband),
+        # a workshop's warband (apps/workshop): {cost, budget, share_code}; null for a campaign's
+        "workshop": workshop_facts(warband),
         **{kind.collection: UNIT_SERIALIZERS[key].detail(rosters[key], many=True).data for key, kind in KINDS.items()},
     }
 

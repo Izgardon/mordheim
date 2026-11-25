@@ -10,7 +10,7 @@ from apps.campaigns.services.locations import visitable
 from apps.warbands.services.location_visits import VisitRefused, visit_location
 from apps.warbands.units.errors import RosterError, validation_error
 
-from .base import WarbandScopedView
+from .base import WORKSHOP_WRITES, WarbandScopedView
 
 
 class LocationVisitSerializer(serializers.Serializer):
@@ -21,6 +21,8 @@ class LocationVisitSerializer(serializers.Serializer):
 class WarbandLocationVisitView(WarbandScopedView):
     """The heroes' trading actions spent where the location takes them, one log line, and the warnings (too few or
     too many heroes, an action already spent); nothing else is applied."""
+
+    workshop_refused = WORKSHOP_WRITES
 
     def post(self, request: Request, warband_id: int) -> Response:
         body = LocationVisitSerializer(data=request.data)

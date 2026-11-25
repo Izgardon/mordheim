@@ -25,7 +25,7 @@ from apps.warbands.services.ledger_reads import action_filter, log_features, log
 from apps.warbands.services.pagination import newest_first, paginate, requested_page
 from apps.warbands.services.resources import ResourceShortage, change_resource, sell_resource
 
-from .base import WarbandScopedView
+from .base import WORKSHOP_WRITES, WarbandScopedView
 
 NOT_FOUND = {"detail": "Not found"}
 NOT_EDITABLE = {
@@ -63,6 +63,8 @@ class WarbandLogListView(WarbandScopedView):
 
 
 class WarbandResourceListCreateView(WarbandScopedView):
+    workshop_refused = WORKSHOP_WRITES  # a workshop's warband has no treasury or resources
+
     def get(self, request: Request, warband_id: int) -> Response:
         resources = WarbandResource.objects.filter(warband=self.warband).order_by("-is_default", "name")
         return Response(WarbandResourceSerializer(resources, many=True).data)
@@ -78,6 +80,8 @@ class WarbandResourceListCreateView(WarbandScopedView):
 
 
 class WarbandResourceDetailView(WarbandScopedView):
+    workshop_refused = WORKSHOP_WRITES  # a workshop's warband has no treasury or resources
+
     def patch(self, request: Request, warband_id: int, resource_id: int) -> Response:
         serializer = WarbandResourceUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -112,6 +116,8 @@ class WarbandResourceDetailView(WarbandScopedView):
 class WarbandResourceSaleView(WarbandScopedView):
     """POST resources/<id>/sell/ {quantity, price}: the resource change and its "Sell" ledger row together."""
 
+    workshop_refused = WORKSHOP_WRITES  # a workshop's warband has no treasury or resources
+
     def post(self, request: Request, warband_id: int, resource_id: int) -> Response:
         serializer = WarbandResourceSaleSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -134,6 +140,8 @@ class WarbandTradeListCreateView(WarbandScopedView):
     """GET trades/[?action=Buy,Sell][&limit=&cursor=]: top-level rows with their nested rows, whole or in cursor
     pages (services/pagination.py)."""
 
+    workshop_refused = WORKSHOP_WRITES  # a workshop's warband has no treasury or resources
+
     def get(self, request: Request, warband_id: int) -> Response:
         actions = action_filter(request.query_params.getlist("action"))
         trades = treasury_top_rows(self.warband, actions)
@@ -155,6 +163,8 @@ class WarbandTradeListCreateView(WarbandScopedView):
 class WarbandTradeDetailView(WarbandScopedView):
     """PATCH trades/<id>/: a hand-entered row's description and notes. History is append-only (decision 5):
     amounts change through adjustments, and no row is deleted."""
+
+    workshop_refused = WORKSHOP_WRITES  # a workshop's warband has no treasury or resources
 
     def patch(self, request: Request, warband_id: int, trade_id: int) -> Response:
         serializer = WarbandTradeEditSerializer(data=request.data)

@@ -22,4 +22,5 @@ urlpatterns = [
     path("api/", include("apps.plots.urls")),
     path("api/", include("apps.scenarios.urls")),
     path("api/", include("apps.campaign_presets.urls")),
+    path("api/", include("apps.workshop.urls")),
 ]

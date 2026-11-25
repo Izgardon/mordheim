@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from apps.campaigns.errors import WorkshopCampaign
 from apps.warbands.models import Henchman, HenchmanItemGap, not_dismissed, on_roster
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandItemSummarySerializer, WarbandSummarySerializer
 from apps.warbands.serializers.beasts import BackToItemSerializer
@@ -204,6 +205,9 @@ class UnitBatchView(UnitView):
         return Response(payload)
 
 
+CUSTOM_HIRE_IN_WORKSHOP = "A workshop's warband hires from the book: a hired sword can't be typed in by hand here."
+
+
 # The bestiary rewrite: a hired sword or dramatis persona copied from the catalogue, or one typed by hand (`custom`),
 # paying what the request says (the fees and skill lists step; hirelings only). No docstring: DRF serves it on OPTIONS.
 class UnitHireView(UnitView):
@@ -212,6 +216,8 @@ class UnitHireView(UnitView):
         if not body.is_valid():
             raise validation_error(body.errors)
         sent, campaign_id = body.validated_data, self.warband.campaign_id
+        if sent["source"] == "custom" and self.warband.campaign.is_workshop:  # nothing custom (apps/workshop)
+            raise WorkshopCampaign(CUSTOM_HIRE_IN_WORKSHOP)
         entry = None if sent["source"] == "custom" else catalogue_entry(sent["source"], sent["id"], campaign_id)
         if entry is None:
             terms = hire_terms(sent, {}, sent.get("name") or sent.get("unit_type") or "")

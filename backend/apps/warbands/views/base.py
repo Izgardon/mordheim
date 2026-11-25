@@ -8,7 +8,7 @@ from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
-from apps.campaigns.errors import CampaignArchived
+from apps.campaigns.errors import CampaignArchived, WorkshopCampaign
 from apps.campaigns.models import CampaignMembership
 from apps.campaigns.permissions import get_membership
 from apps.realtime.services import send_warband_changed, sender_socket_id
@@ -16,19 +16,26 @@ from apps.warbands.access import WARBAND_RULES, warband_capabilities
 from apps.warbands.models import Warband
 
 WRITES = ("POST", "PUT", "PATCH", "DELETE")
+WORKSHOP_WRITES = frozenset(WRITES)  # what a workshop's warband refuses of a view it has no part of
+WORKSHOP_WARBAND = (
+    "A workshop's warband is its roster and backstory: it has no treasury, log, resources or visits, and its"
+    " workshop is deleted rather than the warband."
+)
 
 
 class WarbandScopedView(APIView):
     """Loads the warband and the viewer's membership once and checks the method's rule before the handler.
 
     Answers as the hand-written checks did: anonymous 401, an unknown warband or a non-member 404 "Not
-    found", a write to a warband of an archived campaign 403 `campaign_archived` (decision 5), a member without
-    the right 403 "Forbidden", all before the handler looks anything else up.
+    found", a write to a warband of an archived campaign 403 `campaign_archived` (decision 5), a method in
+    `workshop_refused` on a workshop's warband 403 `workshop_campaign` (it has no treasury, log or resources: apps/workshop),
+    a member without the right 403 "Forbidden", all before the handler looks anything else up.
     Methods the view doesn't handle, and OPTIONS, are left to DRF (405 and the metadata), as before.
     """
 
     permission_classes = [permissions.IsAuthenticated]
     rules: Mapping[str, str] = {"GET": "view", "POST": "edit", "PUT": "edit", "PATCH": "edit", "DELETE": "edit"}
+    workshop_refused: frozenset[str] = frozenset()  # the methods a workshop's warband doesn't take (apps/workshop)
 
     warband: Warband
     membership: CampaignMembership
@@ -49,6 +56,8 @@ class WarbandScopedView(APIView):
         self.warband, self.membership = warband, membership
         if method != "GET" and warband.campaign.archived_at is not None:
             raise CampaignArchived()
+        if method in self.workshop_refused and warband.campaign.is_workshop:
+            raise WorkshopCampaign(WORKSHOP_WARBAND)
         if not WARBAND_RULES[self.rules[method]](request.user, warband, membership):
             raise PermissionDenied("Forbidden")
 

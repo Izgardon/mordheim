@@ -101,6 +101,10 @@ class CampaignSerializer(serializers.ModelSerializer):
             "preset_id",
             "in_progress",
             "archived_at",
+            # a workshop (apps/workshop): kind "workshop", what it holds ("warband" or "list") and its code
+            "kind",
+            "holds",
+            "share_code",
             "player_count",
             "role",
             "created_at",
@@ -108,6 +112,9 @@ class CampaignSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             "join_code",
+            "kind",
+            "holds",
+            "share_code",
             "archived_at",
             "player_count",
             "role",
