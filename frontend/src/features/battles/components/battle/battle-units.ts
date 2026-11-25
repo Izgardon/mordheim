@@ -292,6 +292,15 @@ export type VictimOption = {
 };
 
 /**
+ * A henchmen group of animals, as the warband page's paw marks it: recruited from a creature, or
+ * carrying the Animal rule (its members carry the group's rules).
+ */
+const animalGroup = (group: HenchmenGroupRoster, member: PrebattleUnit) =>
+  group.sourceBeastId != null ||
+  Boolean(group.beastKind) ||
+  (member.specials ?? []).some((rule) => rule.name.trim().toLowerCase() === "animal");
+
+/**
  * Who a kill can take out on one side (design E): its heroes, hired swords, pets and temporary
  * units, a henchmen group as one row by its name, its henchman type under it, that takes its first
  * standing member, or a neutral group's creatures. Models already out of action are left out.
@@ -335,7 +344,7 @@ export function victimOptions(
                 distinctType({ unitType: group.unitType, displayName: group.name }) || "Henchmen",
                 `${up.length} of ${members.length} standing`,
               ].join(" · "),
-              marker: group.beastKind ? ("animal" as const) : ("henchmen" as const),
+              marker: animalGroup(group, up[0].unit) ? ("animal" as const) : ("henchmen" as const),
               unitKey: up[0].unit.key,
             },
           ]

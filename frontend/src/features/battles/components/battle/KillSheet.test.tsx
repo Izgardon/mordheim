@@ -17,7 +17,7 @@ import {
 } from "@/test/battle-fixtures";
 import { setupUser } from "@/test/user-event";
 
-import { battleSections, battleSides } from "./battle-units";
+import { battleSections, battleSides, victimOptions } from "./battle-units";
 import KillSheet from "./KillSheet";
 
 const VERMIN: BattleNeutralGroup = {
@@ -97,5 +97,19 @@ describe("the kill sheet's victims", () => {
       ["animal", "Giant RatGiant Rat · standing"],
       ["animal", "Rat OgreRat Ogre · knocked down"],
     ]);
+  });
+});
+
+describe("an animal group's mark", () => {
+  it("is the paw, as on the warband page: from a creature, or with the Animal rule", () => {
+    const raw = battleRosters();
+    const group = raw[String(ME.id)].henchmenGroups[0];
+    group.members[0] = { ...group.members[0], specials: [{ id: 3, name: "Animal" }] };
+    const rosters = toParticipantRosters(raw);
+    const side = battleSides([myParticipant()], rosters, [], OPPONENT.id)[0];
+
+    expect(victimOptions(side, rosters).find((row) => row.name === "Youngbloods")?.marker).toBe(
+      "animal"
+    );
   });
 });
