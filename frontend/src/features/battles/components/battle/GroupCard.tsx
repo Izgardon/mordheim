@@ -158,7 +158,7 @@ export default function GroupCard({ entry, recentKeys, onOpen, actions }: GroupC
                 />
               ) : (
                 <span className="block text-center font-mono text-[11px] font-bold text-ink">
-                  {member.wounds}/{member.maxWounds}
+                  W {member.wounds}/{member.maxWounds}
                 </span>
               )}
             </div>

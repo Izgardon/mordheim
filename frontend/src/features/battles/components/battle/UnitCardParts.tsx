@@ -106,7 +106,7 @@ export function WoundsControl({
   max: number;
   disabled?: boolean;
   onChange: (delta: number) => void;
-  /** A henchman's tile: smaller steps either side of the bare count ("1/1"), across the tile. */
+  /** A henchman's tile: smaller steps either side of the count ("W 1/1"), across the tile. */
   compact?: boolean;
 }) {
   const step = cn(
@@ -134,7 +134,7 @@ export function WoundsControl({
           compact ? "text-[11px]" : "min-w-11 text-[13px]"
         )}
       >
-        {compact ? `${wounds}/${max}` : `W ${wounds}/${max}`}
+        W {wounds}/{max}
       </span>
       <button
         type="button"
