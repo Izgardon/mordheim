@@ -1,6 +1,6 @@
 /**
- * Search everything finds the Boons & Banes the reference lists, each linking to its row on the
- * Boons & Banes page (William, 5 Nov 2026), and the warband types, shared wargear rules and skill
+ * Search everything finds the Specials the reference lists, each linking to its row on the
+ * Specials page (William, 5 Nov 2026), and the warband types, shared wargear rules and skill
  * groups (William, 8 Nov 2026: "the reference search doesnt search warbands yet, might be other
  * new things as well it doesnt search").
  */
@@ -49,7 +49,7 @@ const special = (overrides: Partial<Special> & Pick<Special, "id" | "name">): Sp
   ...overrides,
 });
 
-describe("Search everything's Boons & Banes", () => {
+describe("Search everything's Specials", () => {
   it("are the ones the reference lists, each opening its row", () => {
     const specials = referenceSpecials([
       special({ id: 1, name: "Spiked Tail", description: "A tail with spikes." }),
@@ -67,7 +67,7 @@ describe("Search everything's Boons & Banes", () => {
 
     const groups = searchEverything("tail", { ...nothing, specials });
 
-    expect(groups.map((group) => group.label)).toEqual(["Boons & Banes"]);
+    expect(groups.map((group) => group.label)).toEqual(["Specials"]);
     expect(groups[0].hits.map((hit) => [hit.title, hit.meta, hit.to])).toEqual([
       ["Scorpion Tail", "Mutation", "boons-banes?open=2"],
       ["Spiked Tail", "Mutation", "boons-banes?open=1"],

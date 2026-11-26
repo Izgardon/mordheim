@@ -93,7 +93,7 @@ export function RuleBlock({
   children,
 }: {
   name: ReactNode;
-  /** A special's Boons & Banes kind. */
+  /** A special's kind (boon, bane or trait). */
   kind?: SpecialKind;
   /** A special's category (an aura when it has none). */
   category?: SpecialCategory;

@@ -19,7 +19,7 @@ import type { Spell } from "@/features/spells/types/spell-types";
  * The searchable select's rows for the catalogue (William: "titles and subtitles with skill
  * category, spell school as subtitles"): a skill's group, a spell's lore and difficulty, a
  * special's type and price ("35 gc", a mutation's), a race's maximums. Skills carry their group's
- * icon and specials their category's in their kind's colour (Boons & Banes); spells none. Rows
+ * icon and specials their category's in their kind's colour (Specials); spells none. Rows
  * outside the campaign or the unit's skill groups carry a warning and stay pickable.
  */
 

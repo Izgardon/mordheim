@@ -125,7 +125,7 @@ describe("the Reference sheet", () => {
       "Wargear",
       "Skills",
       "Spells",
-      "Boons & Banes",
+      "Specials",
       "Bestiary",
       "Hired swords",
       "Dramatis personae",

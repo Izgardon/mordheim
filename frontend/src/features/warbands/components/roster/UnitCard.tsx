@@ -221,7 +221,7 @@ export default function UnitCard(props: UnitCardProps) {
           highlighted={stats.highlighted}
           notes={open ? (unit.notes ?? "") : undefined}
         />
-        {/* closed: his items, skills, spells and boons & banes, a line each, and his XP */}
+        {/* closed: his items, skills, spells and specials, a line each, and his XP */}
         {open ? null : (
           <UnitLines
             entry={entry}

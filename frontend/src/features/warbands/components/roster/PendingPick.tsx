@@ -15,7 +15,7 @@ import { boonBaneOptions } from "./boon-bane-options";
 import SpellPicker, { type SpellChoice } from "./advance/SpellPicker";
 import type { PendingList, RosterUnit } from "./unit-view";
 
-const NOUN = { skills: "skill", spells: "spell", specials: "boon or bane" } as const;
+const NOUN = { skills: "skill", spells: "spell", specials: "special" } as const;
 
 /** The pick a spell choice makes: rolled on a lore, or picked by hand. */
 const spellPick = (choice: SpellChoice): AdvancePick =>
@@ -26,7 +26,7 @@ const spellPick = (choice: SpellChoice): AdvancePick =>
 /**
  * A pick an advance left for later ("Skill to choose"), made from the card with the advance's
  * guided pickers: a skill from his lists (the rest behind "Show all", with a warning), a spell
- * rolled on one of his lores (one he knows gets 1 easier) or picked by hand, a boon or bane from
+ * rolled on one of his lores (one he knows gets 1 easier) or picked by hand, a special from
  * the search. The line above Confirm says only what this pick gives. The server makes the pick
  * (`pick/`).
  */
@@ -85,9 +85,9 @@ export default function PendingPick({
         <SearchCombobox
           inline
           autoFocus
-          label="Search boons and banes"
-          placeholder="Search boons and banes"
-          emptyText="No boon or bane matches."
+          label="Search specials"
+          placeholder="Search specials"
+          emptyText="No special matches."
           options={boonBaneOptions(specials ?? [], settings, unit.specials ?? [])}
           onPick={(option) => onPick({ list: "specials", id: Number(option.id) })}
           onDismiss={onClose}

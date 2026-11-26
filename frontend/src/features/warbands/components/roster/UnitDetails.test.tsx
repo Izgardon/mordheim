@@ -1,5 +1,5 @@
 /**
- * An open card shows a unit's injuries in his one Boons & Banes row, each with its category's icon
+ * An open card shows a unit's injuries in his one Specials row, each with its category's icon
  * (William, 5 Nov 2026): there is no Injuries row; a skill's box opens to its rule text.
  */
 import { MemoryRouter } from "react-router-dom";
@@ -43,7 +43,7 @@ const konrad = makeHero({
   ],
 });
 
-describe("An open card's Boons & Banes", () => {
+describe("An open card's Specials", () => {
   beforeEach(() => {
     fakeApi.reset();
     fakeApi.on("GET /warbands/9/template/", {
@@ -82,7 +82,7 @@ describe("An open card's Boons & Banes", () => {
     expect(screen.getByRole("button", { name: "Add item" })).toBeInTheDocument();
   });
 
-  it("lists his injuries with his other boons and banes", async () => {
+  it("lists his injuries with his other specials", async () => {
     renderWithQueryClient(
       <MemoryRouter initialEntries={["/campaigns/1/warband"]}>
         <RosterSections
@@ -104,7 +104,7 @@ describe("An open card's Boons & Banes", () => {
     const user = setupUser();
     await user.click(screen.getByRole("button", { name: "Open Konrad Adler" }));
 
-    const row = screen.getByText("Boons & Banes").closest("div") as HTMLElement;
+    const row = screen.getByText("Specials").closest("div") as HTMLElement;
     expect(
       within(row)
         .getAllByRole("button")
@@ -125,7 +125,7 @@ describe("An open card's skills", () => {
   });
 
   // William, 5 Nov 2026: "on unit profiles, the skills dont show a description"
-  it("open to their rule text, as his boons and banes do", async () => {
+  it("open to their rule text, as his specials do", async () => {
     const strike = { id: 7, name: "Strike to Injure", description: "Add +1 to all injury rolls." };
     renderWithQueryClient(
       <MemoryRouter initialEntries={["/campaigns/1/warband"]}>
@@ -410,7 +410,7 @@ describe("An open card's boxes", () => {
   });
 
   // William, 22 Nov 2026: "they just need to show their Subtype not their other rules in their
-  // subtitles": an item's subtype, a skill's group, a spell's lore, a boon or bane's type
+  // subtitles": an item's subtype, a skill's group, a spell's lore, a special's type
   it("show what each is under its name, and nothing more", async () => {
     renderDetails();
 
@@ -600,7 +600,7 @@ describe("An open card's beasts and panels", () => {
     const icon = (label: string) => screen.getByText(label).querySelector("svg");
     expect(icon("Items")).toHaveClass("text-kind-item");
     expect(icon("Skills")).toHaveClass("text-kind-skill");
-    expect(icon("Boons & Banes")).toHaveClass("text-kind-special");
+    expect(icon("Specials")).toHaveClass("text-kind-special");
     expect(icon("Spells")).toHaveClass("text-kind-spell");
   });
 

@@ -24,7 +24,7 @@ const heading = (label: string, icon: GameIconName) => (
 );
 
 /**
- * The edit form's lists as a 2 × 2 grid (William): Items, Skills, Boons & Banes (his injuries
+ * The edit form's lists as a 2 × 2 grid (William): Items, Skills, Specials (his injuries
  * among them), then Spells for a caster (or one who has some). One column on a phone.
  */
 export default function EditLists({
@@ -117,9 +117,9 @@ export default function EditLists({
         {...picks("pending_skills")}
       />
       <EditPickList
-        title={heading("Boons & Banes", "specials")}
-        noun="boon or bane"
-        plural="boons and banes"
+        title={heading("Specials", "specials")}
+        noun="special"
+        plural="specials"
         entries={lists.specials}
         options={boonBaneOptions(specials, settings)}
         known={heldSpecials}

@@ -18,7 +18,7 @@ const renderPanel = (detail: BoxDetail) =>
     </MemoryRouter>
   );
 
-describe("A unit's boon or bane", () => {
+describe("A unit's special", () => {
   it("links its psychology rule's part of the Rules page", () => {
     renderPanel({
       name: "Stupidity",

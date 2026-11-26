@@ -28,8 +28,8 @@ import { specialCost } from "../special-cost";
 const COLUMNS = [{ label: "Type", className: "w-[200px] shrink-0" }];
 
 /**
- * Boons & Banes (William, 5 Nov 2026: "having a page could be helpful"): the general rules and the
- * warbands' in play in the campaign, as the Boons & Banes pickers offer them (a hired sword's and a
+ * Specials (William, 5 Nov 2026: "having a page could be helpful"): the general rules and the
+ * warbands' in play in the campaign, as the Specials pickers offer them (a hired sword's and a
  * dramatis persona's own show with them), each with its category's icon in its kind's colour and
  * its type, searched by name, type or rules and filtered by category and setting. A row opens to
  * its price where a list sells it, its setting and its rules (a psychology special's with its
@@ -62,7 +62,7 @@ export default function BoonsBanes() {
 
   return (
     <ReferencePage
-      title="Boons & Banes"
+      title="Specials"
       section="boons-banes"
       actions={
         canAdd ? (
@@ -85,8 +85,8 @@ export default function BoonsBanes() {
             <ReferenceSearch
               value={params.query}
               onChange={params.setQuery}
-              placeholder="Search boons and banes"
-              label="Search boons and banes"
+              placeholder="Search specials"
+              label="Search specials"
               isMobile={isMobile}
             />
           </FilterRow>
@@ -109,9 +109,7 @@ export default function BoonsBanes() {
         </>
       }
       summary={
-        isMobile
-          ? undefined
-          : `${rows.length} ${rows.length === 1 ? "boon or bane" : "boons and banes"} shown`
+        isMobile ? undefined : `${rows.length} ${rows.length === 1 ? "special" : "specials"} shown`
       }
     >
       {specials.error ? <p className="m-0 text-sm text-danger">{specials.error}</p> : null}
@@ -119,7 +117,7 @@ export default function BoonsBanes() {
         nameLabel="Name"
         columns={isMobile ? undefined : COLUMNS}
         isEmpty={!specials.isLoading && rows.length === 0}
-        empty="No boons or banes match."
+        empty="No specials match."
       >
         {specials.isLoading ? <ReferenceRowBones cells={1} /> : null}
         {shown.rows.map((special) => {

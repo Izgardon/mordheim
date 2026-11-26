@@ -4,7 +4,7 @@ export type Choice<T extends string> = { value: T; label: string };
 
 /**
  * A dropdown for a result with more than one outcome (William: "options with multiple should just
- * have a dropdown as well even if rolling"): S or A, WS or BS, a skill, a spell or a boon or bane.
+ * have a dropdown as well even if rolling"): S or A, WS or BS, a skill, a spell or a special.
  * A roll presets it; it can always be changed.
  */
 export default function ChoiceSelect<T extends string>({

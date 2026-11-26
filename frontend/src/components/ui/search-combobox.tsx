@@ -65,7 +65,7 @@ export type SearchComboboxProps = {
   /** A pick closes the list (a single pick: the field stays for the next, closed). */
   closeOnPick?: boolean;
   /**
-   * A pick leaves the field (William, 20 Nov 2026, of a unit's skills, spells and Boons & Banes:
+   * A pick leaves the field (William, 20 Nov 2026, of a unit's skills, spells and Specials:
    * "whenever one is added the input should be unfocused"); on a list you add to several times
    * over (a unit's items) the field keeps the focus for the next.
    */

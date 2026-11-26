@@ -35,7 +35,7 @@ const valuesOf = (special: Special | null): SpecialFormValues => ({
 });
 
 /**
- * Boons & Banes' Add new and Edit (William, 22 Nov 2026: "We also need a way to add a special"):
+ * Specials' Add new and Edit (William, 22 Nov 2026: "We also need a way to add a special"):
  * a special's name, kind (boon, bane or trait: its icon's colour), category (its icon), price
  * where a list sells it, pre-battle roll and rules, saved into the cached list. A book special's
  * first edit makes the campaign's version of it, which Revert takes back; Delete is the catalogue's.
@@ -65,7 +65,7 @@ export function useSpecialForm({
     kind: "specials",
     campaignId,
     entry: special,
-    noun: "boon or bane",
+    noun: "special",
     onDeleted,
   });
   const revert = useCatalogueRevert({
@@ -109,7 +109,7 @@ export function useSpecialForm({
       setFormError(
         fieldErrors.take(
           errorResponse,
-          special ? "Unable to save the boon or bane" : "Unable to add the boon or bane"
+          special ? "Unable to save the special" : "Unable to add the special"
         )
       );
     } finally {

@@ -1,5 +1,5 @@
 /**
- * The Boons & Banes page (William, 5 Nov 2026: "having a page could be helpful"), on the real
+ * The Specials page (William, 5 Nov 2026: "having a page could be helpful"), on the real
  * routes over the fake API server: the general rules and the warbands' in play, each with its
  * icon, type, price and setting, searched and filtered by category; a row opens to its rules;
  * `?open=` lands on one, scrolled into view.
@@ -113,7 +113,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("The Boons & Banes page", () => {
+describe("The Specials page", () => {
   it("lists the general rules in play with their type, an open row showing its price and setting", async () => {
     const user = setupUser();
     renderApp(PAGE);
@@ -121,7 +121,7 @@ describe("The Boons & Banes page", () => {
     // William, 7 Nov 2026: "Boons and Banes drop setting and price"
     expect(await row("Spiked Tail")).toHaveTextContent("Spiked TailMutation");
     expect(names()).toEqual(["FearPsychology", "Old Battle WoundInjury", "Spiked TailMutation"]);
-    expect(screen.getByText("3 boons and banes shown")).toBeInTheDocument();
+    expect(screen.getByText("3 specials shown")).toBeInTheDocument();
     expect(screen.queryByText("Crazed")).toBeNull();
     expect(screen.queryByText("Attacks (Giant)")).toBeNull();
     expect(screen.queryByRole("button", { name: "Add" })).toBeNull();
@@ -143,7 +143,7 @@ describe("The Boons & Banes page", () => {
     const user = setupUser();
     renderApp(PAGE);
     await row("Fear");
-    const search = screen.getByRole("searchbox", { name: "Search boons and banes" });
+    const search = screen.getByRole("searchbox", { name: "Search specials" });
 
     await user.type(search, "battle");
     expect(names()).toEqual(["Old Battle WoundInjury"]);
@@ -223,7 +223,7 @@ describe("The Boons & Banes page", () => {
 });
 
 // William, 22 Nov 2026: "We also need a way to add a special (boon and bane)"
-describe("Adding a boon or bane", () => {
+describe("Adding a special", () => {
   it("adds the campaign's own, opened in the list", async () => {
     const added = special({
       id: 9,
@@ -239,7 +239,7 @@ describe("Adding a boon or bane", () => {
     const user = setupUser();
     renderApp(PAGE);
     await user.click(await screen.findByRole("button", { name: "Add new" }));
-    const form = await screen.findByRole("dialog", { name: "Add a boon or bane" });
+    const form = await screen.findByRole("dialog", { name: "Add a special" });
 
     await user.type(within(form).getByLabelText("Name"), "Iron Will");
     await user.click(within(form).getByRole("button", { name: "Boon" }));
@@ -271,7 +271,7 @@ describe("Adding a boon or bane", () => {
     const user = setupUser();
     renderApp(PAGE);
     await user.click(await screen.findByRole("button", { name: "Add new" }));
-    const form = await screen.findByRole("dialog", { name: "Add a boon or bane" });
+    const form = await screen.findByRole("dialog", { name: "Add a special" });
     expect(within(form).queryByLabelText("Type")).toBeNull();
     await user.type(within(form).getByRole("textbox", { name: "Name" }), "Iron Will");
     await user.click(within(form).getByRole("button", { name: "Add" }));
@@ -292,7 +292,7 @@ describe("Adding a boon or bane", () => {
     const user = setupUser();
     renderApp(`${PAGE}?open=${wound.id}`);
     await user.click(await screen.findByRole("button", { name: "Edit" }));
-    const form = await screen.findByRole("dialog", { name: "Edit boon or bane" });
+    const form = await screen.findByRole("dialog", { name: "Edit special" });
 
     expect(within(form).getByRole("textbox", { name: "Name" })).toHaveValue("Old Battle Wound");
     expect(within(form).getByRole("button", { name: "Bane" })).toHaveAttribute(

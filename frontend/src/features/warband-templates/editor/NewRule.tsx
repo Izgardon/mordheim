@@ -24,7 +24,7 @@ const CATEGORIES: { value: SpecialCategory; label: string }[] = [
 const SELECT = "h-9 border border-strong bg-page px-2 text-sm text-ink";
 
 /**
- * A new rule's name, Boons & Banes kind, category (an aura unless picked; the icon it will have
+ * A new rule's name, Specials kind, category (an aura unless picked; the icon it will have
  * shows beside the name) and text: the template's own once saved.
  */
 export default function NewRule({

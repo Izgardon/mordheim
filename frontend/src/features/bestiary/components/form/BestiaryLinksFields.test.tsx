@@ -28,8 +28,8 @@ const created = (body: Record<string, unknown>) => ({ id: 90, ...body });
 async function newRule(name: string) {
   const user = setupUser();
   renderWithQueryClient(<Harness />);
-  await user.click(screen.getByRole("button", { name: "Add boon or bane" }));
-  await user.type(screen.getByRole("combobox", { name: "Add boon or bane" }), `${name}{Enter}`);
+  await user.click(screen.getByRole("button", { name: "Add special" }));
+  await user.type(screen.getByRole("combobox", { name: "Add special" }), `${name}{Enter}`);
   return user;
 }
 

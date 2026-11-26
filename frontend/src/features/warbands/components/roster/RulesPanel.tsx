@@ -21,7 +21,7 @@ export type BoxDetail = {
   /** An Animal item's beast's profile (its specials are among `rules`). */
   profile?: CatalogueProfile | null;
   item?: Item;
-  /** A boon or bane: a psychology one links its part of the Rules page ("Fear in the rules"). */
+  /** A special: a psychology one links its part of the Rules page ("Fear in the rules"). */
   special?: boolean;
   /** Its box's kind, whose colour the panel's border takes. */
   boxKind?: BoxTileKind;

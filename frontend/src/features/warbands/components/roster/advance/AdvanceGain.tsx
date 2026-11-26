@@ -16,7 +16,7 @@ const LABEL = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
 const KINDS: Choice<PickKind>[] = [
   { value: "Skill", label: "Skill" },
   { value: "Spell", label: "Spell" },
-  { value: "Special", label: "Boon or bane" },
+  { value: "Special", label: "Special" },
 ];
 const SPECIAL_NOUN: Record<string, string> = { boon: "boon", bane: "bane", trait: "trait" };
 
@@ -48,7 +48,7 @@ export function gainLine(
     return { text: `A ${resolveAdvanceLabel(advance).toLowerCase()} to choose later` };
   if (flow.list === "skills" && flow.skill) return { text: `New skill: ${flow.skill.name}` };
   if (flow.list === "specials" && flow.special) {
-    const noun = SPECIAL_NOUN[flow.special.kind ?? ""] ?? "boon or bane";
+    const noun = SPECIAL_NOUN[flow.special.kind ?? ""] ?? "special";
     return { text: `New ${noun}: ${flow.special.name}` };
   }
   const spell = flow.spell;
@@ -61,7 +61,7 @@ export function gainLine(
 /**
  * What a new skill row gives (William: "new skill can also mean new spell or special so we need a
  * dropdown for that"): a skill from his lists, a spell rolled on a lore (a warning for one who isn't
- * a caster) or a general boon or bane, each with its own picker, or "Choose later".
+ * a caster) or a general special, each with its own picker, or "Choose later".
  */
 export default function AdvanceGain({
   flow,

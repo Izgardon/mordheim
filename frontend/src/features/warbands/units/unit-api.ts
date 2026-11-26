@@ -40,7 +40,7 @@ export type UnitBatchResult<K extends UnitKindKey> = {
   warnings?: PurchaseWarning[];
 };
 
-/** A skill, spell or boon or bane an advance gives: the entry, or for a spell a lore and the D6 roll on its table. */
+/** A skill, spell or special an advance gives: the entry, or for a spell a lore and the D6 roll on its table. */
 export type AdvancePick =
   | { list: "skills" | "spells" | "specials"; id: number }
   | { list: "spells"; lore: string; roll: number };

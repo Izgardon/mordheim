@@ -57,14 +57,14 @@ const wizard = makeHero({
 });
 
 describe("A closed card's lines", () => {
-  it("list a hero's items, skills, spells and boons & banes, his XP on the first", () => {
+  it("list a hero's items, skills, spells and specials, his XP on the first", () => {
     renderCard({ kind: "hero", unit: wizard });
 
     expect(lines()).toEqual([
       ["Items", "Sword, Dagger"],
       ["Skills", "Strike to Injure, Resilient"],
       ["Spells", "The Fires of U'Zhul"],
-      ["Boons & Banes", "Hatred, Old Battle Wound"],
+      ["Specials", "Hatred, Old Battle Wound"],
     ]);
     const first = screen.getByText("Items").closest("p")?.parentElement;
     expect(first).toHaveTextContent(/XP 2 \/ \d+$/);
@@ -79,13 +79,13 @@ describe("A closed card's lines", () => {
     expect(icon("Items")).toHaveClass("text-kind-item");
     expect(icon("Skills")).toHaveClass("text-kind-skill");
     expect(icon("Spells")).toHaveClass("text-kind-spell");
-    expect(icon("Boons & Banes")).toHaveClass("text-kind-special");
+    expect(icon("Specials")).toHaveClass("text-kind-special");
   });
 
   it("leave out a kind he has none of", () => {
     renderCard({ kind: "hero", unit: { ...wizard, skills: [], spells: [] } });
 
-    expect(lines().map(([label]) => label)).toEqual(["Items", "Boons & Banes"]);
+    expect(lines().map(([label]) => label)).toEqual(["Items", "Specials"]);
   });
 
   // William, 8 Nov 2026: "can remove the loadout line on henchmen cards and dont need to write
@@ -96,7 +96,7 @@ describe("A closed card's lines", () => {
     expect(lines()).toEqual([
       ["Items", "Club, Club, Club, Dagger, Dagger, Dagger"],
       ["Skills", "Resilient"],
-      ["Boons & Banes", "Animosity"],
+      ["Specials", "Animosity"],
     ]);
     expect(screen.queryByText(/Each carries/)).toBeNull();
     expect(screen.queryByText(/^Loadout /)).toBeNull();
@@ -107,7 +107,7 @@ describe("A closed card's lines", () => {
     const grukk = { ...wizard, id: 3, name: "Grukk", spells: [] } as WarbandHireling;
     renderCard({ kind: "hireling", unit: grukk });
 
-    expect(lines().map(([label]) => label)).toEqual(["Items", "Skills", "Boons & Banes"]);
+    expect(lines().map(([label]) => label)).toEqual(["Items", "Skills", "Specials"]);
   });
 
   it("keep his XP when he has nothing to list", () => {
@@ -127,7 +127,7 @@ describe("A closed card's lines", () => {
       "Items",
       "Skills",
       "Spells",
-      "Boons & Banes",
+      "Specials",
     ]);
     for (const caption of captions) {
       expect(caption.querySelector("svg")).not.toBeNull();
@@ -138,6 +138,6 @@ describe("A closed card's lines", () => {
   it("aren't on an open card", () => {
     renderCard({ kind: "hero", unit: wizard }, true);
 
-    expect(screen.queryByText("Boons & Banes", { selector: "p span" })).toBeNull();
+    expect(screen.queryByText("Specials", { selector: "p span" })).toBeNull();
   });
 });

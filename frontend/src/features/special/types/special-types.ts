@@ -3,7 +3,7 @@ import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-
 
 /**
  * Whose rule it is: a hired sword's, dramatis persona's, warband template's or beast's own (shown
- * only with them) or a general one, which the Boons & Banes pickers offer.
+ * only with them) or a general one, which the Specials pickers offer.
  */
 export type SpecialOwnerKind = "general" | "hired_sword" | "dramatis_persona" | "warband" | "beast";
 
@@ -11,7 +11,7 @@ export type Special = CatalogueBadgeFields & {
   id: number;
   name: string;
   type?: string | null;
-  /** Boons & Banes: boon, bane or trait (its icon's colour). */
+  /** Specials: boon, bane or trait (its icon's colour). */
   kind?: SpecialKind;
   /** Injury, mutation, aura or body (its icon). */
   category?: SpecialCategory;

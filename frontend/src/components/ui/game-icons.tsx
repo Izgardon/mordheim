@@ -66,7 +66,7 @@ export const GAME_ICONS = {
   items: GiKnapsack,
   loadout: GiLightBackpack,
   skills: GiRuneStone, // the special lists' icon (William: "match the special skill icon in the pills")
-  specials: GiYinYang, // Boons & Banes: good and bad
+  specials: GiYinYang, // Specials: good and bad
   spells: GiSpellBook,
   // the info lines: the warband's (Rating, Gold, Units, Record) and the overview's stats
   rating: GiLaurels,
@@ -122,7 +122,7 @@ export const SKILL_LIST_ICONS: Record<SkillList, IconType> = {
   special: GiRuneStone,
 };
 
-/** Boons & Banes: whether a special helps the unit, holds it back or neither (the server's `kind`). */
+/** Specials: whether a special helps the unit, holds it back or neither (the server's `kind`). */
 export type SpecialKind = "boon" | "bane" | "trait";
 
 /** What a special is (the server's `category`), which picks its icon. */

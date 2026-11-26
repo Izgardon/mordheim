@@ -130,7 +130,7 @@ describe("statValues", () => {
 });
 
 describe("boxRows", () => {
-  it("keeps his injuries in his one Boons & Banes list, in their order", () => {
+  it("keeps his injuries in his one Specials list, in their order", () => {
     const hero = makeHero({
       specials: [
         { id: 1, name: "Hatred", type: "Psychology", kind: "boon", category: "aura" },

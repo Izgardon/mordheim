@@ -73,12 +73,12 @@ function LinkPicker<T extends Linked>({
   );
 }
 
-/** The lists a form shows: its rules (boons and banes), skills, spells and equipment. */
+/** The lists a form shows: its rules (specials), skills, spells and equipment. */
 export type LinkPart = "rules" | "skills" | "spells" | "equipment";
 const ALL_PARTS: LinkPart[] = ["rules", "skills", "spells", "equipment"];
 
 /**
- * An entry's boons and banes, skills, spells and equipment (with quantities); `parts` picks
+ * An entry's specials, skills, spells and equipment (with quantities); `parts` picks
  * which, for a form that sets them out in its own sections (a hired sword's).
  */
 export default function BestiaryLinksFields({
@@ -94,8 +94,8 @@ export default function BestiaryLinksFields({
         <NewSpecialRule links={links} />
       ) : (
         <LinkPicker
-          label="Boons & Banes"
-          noun="boon or bane"
+          label="Specials"
+          noun="special"
           items={links.available.specials}
           selected={links.specials}
           onSelect={links.addSpecial}

@@ -39,7 +39,7 @@ const CATEGORIES: [SpecialCategory, string][] = [
   ["body", "Physical"],
 ];
 
-/** Boons & Banes' Add new, and its Edit (Revert, Delete): a boon, bane or trait. */
+/** Specials' Add new, and its Edit (Revert, Delete): a boon, bane or trait. */
 export default function SpecialFormDialog({
   campaignId,
   special = null,
@@ -76,8 +76,8 @@ export default function SpecialFormDialog({
       form={form}
       dialog={dialog}
       editing={special}
-      title={special ? "Edit boon or bane" : "Add a boon or bane"}
-      noun="boon or bane"
+      title={special ? "Edit special" : "Add a special"}
+      noun="special"
       trigger={trigger}
       defaultTrigger={<Button>{special ? "Edit" : "Add new"}</Button>}
       submitLabel={special ? "Save changes" : "Add"}

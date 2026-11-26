@@ -30,7 +30,7 @@ export const CATEGORY_FILTERS: { id: CategoryFilter; label: string }[] = [
 export const categoryOf = (special: Special): SpecialCategory => special.category ?? "aura";
 
 /**
- * The Boons & Banes the reference lists: the general rules in play in the campaign, as the pickers
+ * The Specials the reference lists: the general rules in play in the campaign, as the pickers
  * offer. A warband's, hired sword's, dramatis persona's or beast's own rules show with them (the
  * Warbands page, the hired swords, the Bestiary; William, 7 Nov 2026: "keep bestiary rules from
  * displaying on the boons and banes page, show on beast for sure").
@@ -48,7 +48,7 @@ type BoonBaneFilters = {
 };
 
 /**
- * The Boons & Banes page's rows by name, searched by name, type or rules and filtered by category
+ * The Specials page's rows by name, searched by name, type or rules and filtered by category
  * and setting (Mordheim's grades and its ungraded book rows as one), with each category's count
  * and the settings the rows hold.
  */

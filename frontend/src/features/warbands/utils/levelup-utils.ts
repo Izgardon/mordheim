@@ -7,7 +7,7 @@ export const HERO_SELECTABLE_STATS = ["M", "WS", "BS", "S", "T", "W", "I", "A", 
 export const OTHER_OPTIONS = [
   { id: "Skill", label: "Skill" },
   { id: "Spell", label: "Spell" },
-  { id: "Special", label: "Boon or bane" },
+  { id: "Special", label: "Special" },
 ] as const;
 
 export const STAT_NAME_MAP: Record<string, string> = {
@@ -22,7 +22,7 @@ export const STAT_NAME_MAP: Record<string, string> = {
   Ld: "Leadership",
   Skill: "Skill",
   Spell: "Spell",
-  Special: "Boon or bane",
+  Special: "Special",
 };
 
 export const resolveAdvanceLabel = (value: string): string => STAT_NAME_MAP[value] ?? value;

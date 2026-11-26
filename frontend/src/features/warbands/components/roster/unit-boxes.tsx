@@ -48,7 +48,7 @@ export type Entry = {
 const NOUN: Record<PendingList, string> = {
   skills: "Skill",
   spells: "Spell",
-  specials: "Boon or bane",
+  specials: "Special",
 };
 const BOX_KIND: Record<PendingList, BoxTileKind> = {
   skills: "skill",

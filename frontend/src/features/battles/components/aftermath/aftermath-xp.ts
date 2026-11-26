@@ -168,7 +168,7 @@ export const awaitsFollowUp = (advance: BattlePostbattleAdvance) => advance.id =
 /** How an advance reads: "+1 Toughness", "New skill", "The lad's got talent". */
 export function advanceLabel(id: string) {
   if (id === "LGT") return "The lad's got talent";
-  if (id === "Special") return "New boon or bane";
+  if (id === "Special") return "New special";
   if (id === "Skill" || id === "Spell") return `New ${id.toLowerCase()}`;
   return `+1 ${resolveAdvanceLabel(id)}`;
 }

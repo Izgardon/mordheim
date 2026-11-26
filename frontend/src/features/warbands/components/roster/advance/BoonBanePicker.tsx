@@ -7,7 +7,7 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 import { boonBaneOptions } from "../boon-bane-options";
 
 /**
- * A new boon or bane, as a skill is picked: the campaign's general boons, banes and traits in the
+ * A new special, as a skill is picked: the campaign's general boons, banes and traits in the
  * search (a hired sword's or dramatis persona's own and those he has are left out), and the pick
  * with its rules.
  */
@@ -53,9 +53,9 @@ export default function BoonBanePicker({
   return (
     <SearchCombobox
       inline
-      label="Search boons and banes"
-      placeholder="Search boons and banes"
-      emptyText="No boon or bane matches."
+      label="Search specials"
+      placeholder="Search specials"
+      emptyText="No special matches."
       options={boonBaneOptions(specials, settings, held)}
       onPick={(option) =>
         onChange(specials.find((special) => special.id === Number(option.id)) ?? null)

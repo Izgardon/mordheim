@@ -207,7 +207,7 @@ describe("SearchMultiSelect", () => {
     expect(screen.queryByText("Mighty Blow")).not.toBeInTheDocument();
   });
 
-  // William, 20 Nov 2026, of a unit's skills, spells and Boons & Banes: "whenever one is added
+  // William, 20 Nov 2026, of a unit's skills, spells and Specials: "whenever one is added
   // the input should be unfocused". Leaving the field puts the Add button back.
   it("leaves the field after a pick with blurOnPick", async () => {
     const user = setupUser();

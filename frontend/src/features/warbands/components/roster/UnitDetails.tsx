@@ -85,7 +85,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
     },
     {
       key: "specials",
-      label: "Boons & Banes",
+      label: "Specials",
       icon: "specials" as const,
       boxes: entryBoxes(entry, "specials", lists.specials),
     },

@@ -17,7 +17,7 @@ describe("the unit card's box icons", () => {
     expect(container.querySelector("svg")).not.toBeNull();
   });
 
-  it("keeps a boon's icon its own gold, not the boons and banes stripe colour", () => {
+  it("keeps a boon's icon its own gold, not the specials stripe colour", () => {
     expect(SPECIAL_KIND_COLOURS.boon).toBe("text-boon");
   });
 });

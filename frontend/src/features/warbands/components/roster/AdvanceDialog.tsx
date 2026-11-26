@@ -27,7 +27,7 @@ const plusOne = (stat: StatCode) => ({ value: stat, label: `+1 ${resolveAdvanceL
 /**
  * An advance, step by step in one dialog (William): roll 2D6, type the roll or click a row of the
  * unit's advance table, as if the dice had shown it; a row with two outcomes picks one from a
- * dropdown (its D6 presets it); a new skill row gives a skill, a spell or a boon or bane, picked
+ * dropdown (its D6 presets it); a new skill row gives a skill, a spell or a special, picked
  * here, or "Choose later"; then what he gains and Confirm. A henchmen 10–12 is the lad's got talent:
  * a henchman picked and promoted, then the same table again for the rest of the group's roll,
  * where the talent can't come up a second time (William, 3 Nov 2026).

@@ -31,7 +31,7 @@ export type SearchSources = {
   /** The campaign's skill groups: a skill's hit names the groups holding it. */
   skillGroups: SkillGroup[];
   spells: Spell[];
-  /** The Boons & Banes the reference lists (`referenceSpecials`). */
+  /** The Specials the reference lists (`referenceSpecials`). */
   specials: Special[];
   beasts: BestiaryEntrySummary[];
   hiredSwords: HirelingProfile[];
@@ -50,7 +50,7 @@ export type SearchSources = {
 
 /**
  * Search everything: one search over the reference (items and their shared rules, skills and
- * skill groups, spells, Boons & Banes, beasts, hired swords, dramatis personae, warband types), the
+ * skill groups, spells, Specials, beasts, hired swords, dramatis personae, warband types), the
  * rulebook's text, the house rules, the campaign's rules and charts, and this campaign's warbands, units
  * and locations; grouped by kind in the reference nav's order, empty groups left out.
  */
@@ -132,7 +132,7 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
     },
     {
       id: "boons-banes",
-      label: "Boons & Banes",
+      label: "Specials",
       hits: ranked(
         sources.specials.map((special) => ({
           entry: special,

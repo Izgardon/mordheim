@@ -20,7 +20,7 @@ export function unitLines(entry: RosterUnit, itemName: (item: Item) => string): 
     { label: "Skills", icon: "skills", names: lists.skills.map((skill) => skill.name) },
     { label: "Spells", icon: "spells", names: lists.spells.map((spell) => spell.name) },
     {
-      label: "Boons & Banes",
+      label: "Specials",
       icon: "specials",
       names: lists.specials.map((special) => special.name),
     },

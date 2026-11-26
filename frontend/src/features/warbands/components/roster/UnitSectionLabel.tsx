@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * A section's icon in its kind's colour, as its boxes' icons are (William, 25 Nov 2026): items
- * bronze, skills green, boons & banes gold, spells blue; any other section the accent.
+ * bronze, skills green, specials gold, spells blue; any other section the accent.
  */
 const SECTION_COLOURS: Partial<Record<GameIconName, string>> = {
   items: "text-kind-item",

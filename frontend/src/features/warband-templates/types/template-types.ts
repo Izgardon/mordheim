@@ -126,7 +126,7 @@ export type TemplateList = {
   lines: TemplateLine[];
 };
 
-/** A rule a fighter has: the special's name, its Boons & Banes kind and category (its icon), its text. */
+/** A rule a fighter has: the special's name, its Specials kind and category (its icon), its text. */
 export type TemplateSpecial = {
   id: number;
   name: string;
@@ -185,7 +185,7 @@ export type TemplateFighter = Omit<CatalogueProfile, "armour_save"> & {
 export type TemplateUpgrade = {
   id: number;
   group: string;
-  /** The special it gives: its id, name, text, Boons & Banes kind and category (its icon). */
+  /** The special it gives: its id, name, text, Specials kind and category (its icon). */
   special_id: number;
   name: string;
   description: string;

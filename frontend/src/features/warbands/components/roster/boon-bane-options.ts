@@ -7,7 +7,7 @@ export const isGeneralRule = (special: Pick<Special, "owner_kind">) =>
   !special.owner_kind || special.owner_kind === "general";
 
 /**
- * What a Boons & Banes picker offers (William: "can we not show the hired swords/dramatis ones
+ * What a Specials picker offers (William: "can we not show the hired swords/dramatis ones
  * here"): the campaign's general boons, banes and traits, its injuries among them, the greyed rows
  * last; those he has (`held`, by id) are left out, as the Edit form's list leaves them.
  */

@@ -3,7 +3,7 @@
  * it doesnt allow things to be chosen within that modal which is the entire point"), and has no "by
  * hand" mode ("just let the table always be clickable"): a row clicked is taken as if the dice had
  * shown it, a row with two outcomes picks one from a dropdown that its D6 presets, a new skill row
- * gives a skill, a spell or a boon or bane, and the Gains line alone says what he gets.
+ * gives a skill, a spell or a special, and the Gains line alone says what he gets.
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -124,7 +124,7 @@ describe("The advance dialog", () => {
     });
   });
 
-  it("offers a skill, a spell or a general boon or bane for a new skill, each with its picker", async () => {
+  it("offers a skill, a spell or a general special for a new skill, each with its picker", async () => {
     fakeApi.on("GET /special/?campaign_id=1", [
       { id: 80, name: "Hatred", type: "Psychology", kind: "boon", description: "Hates." },
       { id: 82, name: "Spy", type: "Hired Sword - Freelance Knight", owner_kind: "hired_sword" },

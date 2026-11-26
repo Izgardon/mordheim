@@ -60,7 +60,7 @@ function CategorySelect({ links }: { links: BestiaryLinks }) {
 export default function NewSpecialRule({ links }: { links: BestiaryLinks }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <Label>Boons & Banes</Label>
+      <Label>Specials</Label>
       <div className="flex flex-col gap-2 border border-border bg-surface p-3">
         <Input
           value={links.newSpecialName}

@@ -85,7 +85,7 @@ function ResultGroup({
 
 /**
  * Search everything (`/campaigns/:id/search?q=`): one field over the reference (warband types,
- * items and their shared rules, skills and skill groups, spells, Boons & Banes, beasts, hired
+ * items and their shared rules, skills and skill groups, spells, Specials, beasts, hired
  * swords, dramatis personae), the rulebook's text, the house rules and the campaign rules,
  * searched here from the lists the pages already load (`useSearchSources`), and this campaign's
  * warbands and units (the server's `search/`) and locations. Results are grouped by kind with

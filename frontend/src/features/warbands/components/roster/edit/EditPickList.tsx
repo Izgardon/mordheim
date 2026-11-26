@@ -27,7 +27,7 @@ export default function EditPickList({
   title: ReactNode;
   /** "skill", "spell", "special". */
   noun: string;
-  /** "boons and banes": when adding "s" won't do. */
+  /** "specials": when adding "s" won't do. */
   plural?: string;
   entries: Named[];
   /** What Add offers. */

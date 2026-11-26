@@ -2,7 +2,7 @@
  * A pick an advance left, made from the card (William: "text here stays, should not mention the new
  * spell as i am selecting a skill ... i also shouldnt see skills that arent part of my campaign"):
  * the line above Confirm says only what this pick gives, and the skill picker offers only the
- * campaign's skills, "Show all" included. A boon or bane is a general rule (William: "can we not
+ * campaign's skills, "Show all" included. A special is a general rule (William: "can we not
  * show the hired swords/dramatis ones here").
  */
 import { screen, within } from "@testing-library/react";
@@ -82,7 +82,7 @@ describe("A pick left for later", () => {
     expect(screen.queryByRole("option", { name: /Sand Walker/ })).not.toBeInTheDocument();
   });
 
-  it("offers general boons and banes with the injuries, not a hired sword's, dramatis persona's or template fighter's own", async () => {
+  it("offers general specials with the injuries, not a hired sword's, dramatis persona's or template fighter's own", async () => {
     fakeApi.on("GET /special/?campaign_id=1", [
       { id: 80, name: "Hatred", type: "Psychology", kind: "boon", owner_kind: "general" },
       { id: 81, name: "Stupid", type: "Animal", kind: "bane" },
