@@ -20,6 +20,7 @@ from rest_framework.serializers import BaseSerializer
 
 from apps.bestiary import writes as bestiary_writes
 from apps.bestiary.selectors import entry_details, with_items
+from apps.campaigns.in_play import InPlayScope
 from apps.hirelings import selectors as hireling_selectors
 from apps.hirelings import writes as hireling_writes
 from apps.hirelings.models import HirelingProfile
@@ -65,11 +66,16 @@ class CatalogueHooks:
         return rows.select_related(*badge_joins()) if kind.versioned else rows
 
     def listed(
-        self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
+        self,
+        kind: "CatalogueKindSpec",
+        rows: QuerySet[Any],
+        campaign_id: int | None,
+        params: QueryDict,
+        in_play: InPlayScope | None = None,
     ) -> QuerySet[Any]:
         """The filtered rows a list shows, in order: the book's, or the campaign's with the book entries it hasn't
         replaced or removed, archived and removed ones too with `?archived=1` (merge.py; a kind without versions,
-        by its name)."""
+        by its name). `in_play`: what a row's links say is in play by (the campaign, or a shared body's settings)."""
         if campaign_id is None:
             return merge.book_rows(rows).order_by(*kind.order)
         if kind.versioned:
@@ -233,9 +239,14 @@ class SkillGroupHooks(CatalogueHooks):
     list's campaign's current entries (one query each); they write through skills/writes.py."""
 
     def listed(
-        self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
+        self,
+        kind: "CatalogueKindSpec",
+        rows: QuerySet[Any],
+        campaign_id: int | None,
+        params: QueryDict,
+        in_play: InPlayScope | None = None,
     ) -> QuerySet[Any]:
-        listed = in_group_order(super().listed(kind, rows, campaign_id, params))
+        listed = in_group_order(super().listed(kind, rows, campaign_id, params, in_play))
         return listed.prefetch_related(group_learners(), group_skills(campaign_id))
 
     def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
@@ -281,9 +292,15 @@ class WarbandTemplateHooks(CatalogueHooks):
     uses it."""
 
     def listed(
-        self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
+        self,
+        kind: "CatalogueKindSpec",
+        rows: QuerySet[Any],
+        campaign_id: int | None,
+        params: QueryDict,
+        in_play: InPlayScope | None = None,
     ) -> QuerySet[Any]:
-        return template_rows(super().listed(kind, rows, campaign_id, params), campaign_id)
+        listed = super().listed(kind, rows, campaign_id, params, in_play)
+        return template_rows(listed, in_play if in_play is not None else campaign_id)
 
     def row_serializer(self, kind: "CatalogueKindSpec", params: QueryDict) -> type[Serializer]:
         """`?view=search`: each row with its fighters', rules' and upgrades' names; any other view is the default."""
@@ -305,7 +322,12 @@ class WarbandTemplateHooks(CatalogueHooks):
 
 class ItemRuleHooks(CatalogueHooks):
     def listed(
-        self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
+        self,
+        kind: "CatalogueKindSpec",
+        rows: QuerySet[Any],
+        campaign_id: int | None,
+        params: QueryDict,
+        in_play: InPlayScope | None = None,
     ) -> QuerySet[Any]:
         """The book's shared rules and the campaign's side by side: a campaign's rule overrides nothing."""
         scope = (

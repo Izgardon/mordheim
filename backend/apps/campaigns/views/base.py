@@ -59,11 +59,15 @@ class CampaignScopedView(AnswersRefusals):
         self.enter_campaign(method, kwargs["campaign_id"])
         self.check_rule(self.rules.get(method))
 
+    def access_extras(self, method: str) -> Mapping[str, Any] | None:
+        """More of the campaign to read with the caller's access, in its one query (a catalogue list's)."""
+        return None
+
     def enter_campaign(self, method: str, campaign_id: int) -> None:
         """Load the caller's access: a non-member 404 (a deleted workshop's owner too), a feature switched off 404, a
         write to an archived campaign 403 `campaign_archived` (but the methods in `allow_archived`), a write to a
         workshop 403 `workshop_campaign` (but in a view taking `workshop_writes`)."""
-        access = load_campaign_access(self.request, campaign_id)
+        access = load_campaign_access(self.request, campaign_id, self.access_extras(method))
         if access is None:
             raise NotFound("Not found")
         self.access = access

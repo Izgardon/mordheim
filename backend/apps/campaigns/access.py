@@ -75,16 +75,22 @@ class CampaignAccess:
         return bool(self.settings and getattr(self.settings, flag, False))
 
 
-def load_campaign_access(request: Request, campaign_id: int) -> CampaignAccess | None:
-    """The caller's access to the campaign, None for a non-member; one query, cached on the request."""
-    cache: dict[int, CampaignAccess | None] = request.__dict__.setdefault("_campaign_access", {})
-    if campaign_id not in cache:
+def load_campaign_access(
+    request: Request, campaign_id: int, extras: Mapping[str, Any] | None = None
+) -> CampaignAccess | None:
+    """The caller's access to the campaign, None for a non-member; one query, cached on the request. `extras`: more
+    of the campaign read in the same query as annotations on the membership (a catalogue list's: cache.py)."""
+    cache: dict[Any, CampaignAccess | None] = request.__dict__.setdefault("_campaign_access", {})
+    key = (campaign_id, tuple(sorted(extras or {})))
+    if key not in cache:
         rows = with_codes(CampaignMembership.objects.select_related("role", "campaign", "campaign__settings"))
+        if extras:
+            rows = rows.annotate(**extras)
         user: Any = request.user  # authenticated by now (IsAuthenticated runs first)
         # a deleted workshop is gone for its owner too (apps/workshop)
         membership = rows.filter(campaign_id=campaign_id, user=user, campaign__deleted_at__isnull=True).first()
-        cache[campaign_id] = CampaignAccess(membership) if membership else None
-    return cache[campaign_id]
+        cache[key] = CampaignAccess(membership) if membership else None
+    return cache[key]
 
 
 Rule = Callable[[CampaignAccess, Any], bool]  # (access, the object acted on or None) -> allowed

@@ -11,6 +11,7 @@ creating, editing, reverting and restoring `edit_catalogue`; deleting `delete_ca
 method a view handles but `rules` doesn't name is refused (deny by default).
 """
 
+from collections.abc import Mapping
 from typing import Any, ClassVar
 
 from django.db.models import Model
@@ -22,12 +23,12 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
-from apps.campaigns.in_play import in_play_rows
+from apps.campaigns.in_play import InPlayScope, Ticked, in_play_rows
 from apps.campaigns.permissions import parse_campaign_id
 from apps.campaigns.views.base import CampaignScopedView
 from apps.realtime.services import sender_socket_id
 
-from . import archive, cache, names, versions
+from . import archive, cache, names, sharing, versions
 from .hooks import CampaignRequired
 from .kinds import CatalogueKindSpec
 from .usage import count_usage
@@ -82,6 +83,10 @@ class CatalogueScopedView(CampaignScopedView):
 class CatalogueCollectionView(CatalogueScopedView):
     """A kind's list (GET) and create (POST)."""
 
+    def access_extras(self, method: str) -> Mapping[str, Any] | None:
+        """A list reads whether it may be the shared body with the caller's access (sharing.py)."""
+        return sharing.shared_reads(self.kind) if method == "GET" else None
+
     def load_scope(self, method: str, **kwargs: Any) -> None:
         source = self.request.query_params if method == "GET" else self.request.data
         campaign_id = parse_campaign_id(source.get("campaign_id"))  # garbage is a 400 (BUG-79)
@@ -92,28 +97,36 @@ class CatalogueCollectionView(CatalogueScopedView):
 
     def list(self, request: Request) -> HttpResponseBase:
         """The kind's rows, filtered, then the book's or the campaign's (merge.py); answered from the cache
-        while neither catalogue has changed (PERF-13)."""
-        campaign_settings = self.access.settings if self.campaign_id is not None else None
-        version = campaign_settings.catalogue_version if campaign_settings else None
-        key = cache.list_key(self.kind.key, self.campaign_id, version, request)
+        while neither catalogue has changed (PERF-13). A campaign holding nothing of its own for the kind reads the
+        body shared by every such campaign with its settings (sharing.py)."""
+        shared = sharing.shared_scope(self.access) if self.campaign_id is not None else None
+        if shared is not None:
+            key = cache.shared_key(self.kind.key, shared[0].key, shared[1], request)
+        else:
+            campaign_settings = self.access.settings if self.campaign_id is not None else None
+            version = campaign_settings.catalogue_version if campaign_settings else None
+            key = cache.list_key(self.kind.key, self.campaign_id, version, request)
         hit = cache.cached_response(key) if key else None
         if hit is not None:
             return hit
-        response = Response(self.list_data(request))
+        response = Response(self.list_data(request, shared[0] if shared else None))
         if key:
             response.add_post_render_callback(cache.remembered(key))
         return response
 
-    def list_data(self, request: Request) -> Any:
+    def list_data(self, request: Request, shared: Ticked | None = None) -> Any:
+        """The list's body; `shared`: a plain campaign's, computed from the book and those settings alone."""
         kind = self.kind
         rows = kind.hooks.rows(kind)
         for param, keeps in kind.filters.items():
             value = request.query_params.get(param)
             if value:
                 rows = rows.filter(keeps(value.strip()))
-        listed = kind.hooks.listed(kind, rows, self.campaign_id, request.query_params)
-        if self.campaign_id is not None and kind.versioned:  # whether each row is in play (grading phase 1)
-            listed = in_play_rows(kind.model, listed, self.campaign_id)
+        campaign_id = None if shared is not None else self.campaign_id
+        scope: InPlayScope | None = shared if shared is not None else campaign_id
+        listed = kind.hooks.listed(kind, rows, campaign_id, request.query_params, scope)
+        if scope is not None and kind.versioned:  # whether each row is in play (grading phase 1)
+            listed = in_play_rows(kind.model, listed, scope)
         serializer = kind.hooks.row_serializer(kind, request.query_params)
         return serializer(kind.hooks.read(listed, request.query_params), many=True).data
 

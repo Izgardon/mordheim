@@ -11,6 +11,10 @@ membership read alone and no serialisation, and ConditionalGetMiddleware still t
 
 The "catalogue" cache is each gunicorn worker's own memory. That is enough because the versions are read from the
 database: a worker never serves a body another worker's write retired, it only fills its own cache.
+
+A campaign holding nothing of its own for a list reads the body shared by every such campaign ticking the same
+settings, every workshop alike (`shared_key`, keyed by the settings and the book's version: sharing.py), so the cache
+holds a few dozen bodies whatever the number of campaigns.
 """
 
 import hashlib
@@ -57,9 +61,22 @@ def list_key(kind: str, campaign_id: int | None, campaign_version: uuid.UUID | N
     version = campaign_version if campaign_id is not None else book_version()
     if version is None:
         return None
-    query = urlencode(sorted(request.query_params.lists()), doseq=True)
-    digest = hashlib.md5(f"{request.accepted_media_type}?{query}".encode(), usedforsecurity=False).hexdigest()
-    return f"catalogue:{kind}:{campaign_id or 'book'}:{version}:{digest}"
+    return f"catalogue:{kind}:{campaign_id or 'book'}:{version}:{_query_digest(request)}"
+
+
+def shared_key(kind: str, settings_key: str, book: uuid.UUID, request: Request) -> str | None:
+    """The cache key of a list request whose body is shared by every campaign holding nothing of its own for it and
+    ticking the same settings (`settings_key`: in_play.Ticked.key); None for the browsable API's HTML."""
+    if request.accepted_renderer.format != "json":
+        return None
+    return f"catalogue:{kind}:shared:{settings_key}:{book}:{_query_digest(request, shared=True)}"
+
+
+def _query_digest(request: Request, shared: bool = False) -> str:
+    """The request's media type and query; a shared body's without the campaign it was asked for."""
+    params = [(name, values) for name, values in request.query_params.lists() if not shared or name != "campaign_id"]
+    query = urlencode(sorted(params), doseq=True)
+    return hashlib.md5(f"{request.accepted_media_type}?{query}".encode(), usedforsecurity=False).hexdigest()
 
 
 def book_version() -> uuid.UUID | None:

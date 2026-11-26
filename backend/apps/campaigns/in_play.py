@@ -16,10 +16,15 @@ campaign stores no grade, so there is nothing to reset. A new campaign starts on
 A workshop (apps/workshop) ticks nothing and has **every setting in play**, computed here and never stored, so a
 setting seeded later is in play in every workshop without a backfill: each rule below reads "or the campaign is a
 workshop" in the same query.
+
+The rule can also be read for a fixed set of settings rather than a campaign (`Ticked`): what the shared catalogue
+cache's bodies are computed by (apps/core/catalogue/sharing.py), the same for every campaign ticking those settings.
 """
 
+import hashlib
 import re
 from collections.abc import Iterable
+from dataclasses import dataclass
 from typing import Any
 
 from django.db.models import BooleanField, Exists, ExpressionWrapper, OuterRef, Q, QuerySet, Value
@@ -54,6 +59,25 @@ def presets(settings: Iterable[CampaignType]) -> list[dict[str, Any]]:
     ]
 
 
+@dataclass(frozen=True)
+class Ticked:
+    """A set of settings in play, not a campaign's: `ids` the settings ticked (the always-on ones are in play
+    anyway), None for every setting (a workshop's)."""
+
+    ids: frozenset[int] | None
+
+    @property
+    def key(self) -> str:
+        """The same for every campaign ticking the same settings: "all", or a digest of the ids."""
+        if self.ids is None:
+            return "all"
+        listed = ",".join(str(pk) for pk in sorted(self.ids))
+        return hashlib.md5(listed.encode(), usedforsecurity=False).hexdigest()
+
+
+InPlayScope = int | Ticked  # a campaign's id, or a fixed set of settings
+
+
 def is_workshop(campaign_id: int) -> Exists:
     """The campaign is a workshop, which has every setting in play (a subquery of the caller's query)."""
     return Exists(Campaign.objects.filter(pk=campaign_id, kind=WORKSHOP))
@@ -65,12 +89,16 @@ def ticked(campaign_id: int, setting_id: str = "campaign_type_id") -> Q:
     return Q(Exists(chosen)) | Q(is_workshop(campaign_id))
 
 
-def in_play(campaign_id: int, setting: str = "campaign_type") -> Q:
+def in_play(scope: InPlayScope, setting: str = "campaign_type") -> Q:
     """The visibility rule as a filter on rows whose setting is the `setting` foreign key: no setting (custom, or
-    Mordheim's by default), an always-on setting, or one the campaign ticked (every one in a workshop)."""
-    return (
-        Q(**{f"{setting}__isnull": True}) | Q(**{f"{setting}__always_on": True}) | ticked(campaign_id, f"{setting}_id")
-    )
+    Mordheim's by default), an always-on setting, or one the campaign ticked (every one in a workshop); for `Ticked`,
+    one of its ids (every one for None)."""
+    if isinstance(scope, Ticked) and scope.ids is None:
+        return Q(pk__isnull=False)
+    rule = Q(**{f"{setting}__isnull": True}) | Q(**{f"{setting}__always_on": True})
+    if isinstance(scope, Ticked):
+        return rule | Q(**{f"{setting}_id__in": sorted(scope.ids)}) if scope.ids else rule
+    return rule | ticked(scope, f"{setting}_id")
 
 
 def settings_in_play(campaign_id: int) -> set[int]:
@@ -80,9 +108,9 @@ def settings_in_play(campaign_id: int) -> set[int]:
     return set(rows.values_list("pk", flat=True))
 
 
-def with_in_play[RowsT: QuerySet[Any]](rows: RowsT, campaign_id: int, setting: str = "campaign_type") -> RowsT:
-    """`rows` with `in_play` annotated (same query): whether each is in play in the campaign."""
-    annotated: RowsT = rows.annotate(in_play=ExpressionWrapper(in_play(campaign_id, setting), BooleanField()))
+def with_in_play[RowsT: QuerySet[Any]](rows: RowsT, scope: InPlayScope, setting: str = "campaign_type") -> RowsT:
+    """`rows` with `in_play` annotated (same query): whether each is in play in the campaign (or `Ticked`)."""
+    annotated: RowsT = rows.annotate(in_play=ExpressionWrapper(in_play(scope, setting), BooleanField()))
     return annotated
 
 
@@ -91,10 +119,10 @@ def has_setting(model: type[Any]) -> bool:
     return any(field.name == "campaign_type" for field in model._meta.get_fields())
 
 
-def in_play_rows[RowsT: QuerySet[Any]](model: type[Any], rows: RowsT, campaign_id: int) -> RowsT:
+def in_play_rows[RowsT: QuerySet[Any]](model: type[Any], rows: RowsT, scope: InPlayScope) -> RowsT:
     """A catalogue list's rows with `in_play`: by the rule where they have a setting, else always (Mordheim's)."""
     if has_setting(model):
-        return with_in_play(rows, campaign_id)
+        return with_in_play(rows, scope)
     annotated: RowsT = rows.annotate(in_play=Value(True, output_field=BooleanField()))
     return annotated
 

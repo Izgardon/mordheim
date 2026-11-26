@@ -240,6 +240,7 @@ SKILL_GROUPS = CatalogueKindSpec(  # skill groups (phase 1a): units name them in
     filters={"search": NAME_AND_TYPE["search"]},
     reread=True,
     lists=("skill_groups", "skills"),
+    reads_campaign=(Skill,),  # its skills as the list's campaign's versions of them (skills/selectors.group_skills)
     children=("skill_links", "warband_links"),  # its skills and who learns from it
     hooks=SkillGroupHooks(),
 )

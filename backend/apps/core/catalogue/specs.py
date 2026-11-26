@@ -76,6 +76,9 @@ class CatalogueKindSpec:
     order: tuple[str, ...] = ("name", "id")  # each part of a list (the campaign's rows, then the book's)
     reread: bool = False  # a write's answer is read again with the detail's prefetch (its links)
     lists: tuple[str, ...] = ()  # the lists a write changes (`catalogue.changed` kinds); default: `(key,)`
+    # other entry tables whose campaign rows its list reads (a skill group's skills as the campaign's versions): a
+    # campaign holding any shows its own list rather than the shared one (sharing.py)
+    reads_campaign: tuple[type[Model], ...] = ()
     children: tuple[str, ...] = ()  # rows an entry carries (CASCADE), parents first; what a version copies
     holders: tuple[Holder, ...] = ()
     followers: tuple[Move, ...] = ()
