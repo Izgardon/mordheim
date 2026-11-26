@@ -18,7 +18,6 @@ import {
 import {
   battleSections,
   battleSides,
-  type BattleUnitView,
   type UnitStatus,
 } from "@/features/battles/components/battle/battle-units";
 import { useActiveConfigSave } from "@/features/battles/hooks/useActiveConfigSave";
@@ -121,16 +120,15 @@ export function useBattleScreen() {
     [battleId, campaignId, write]
   );
 
-  /** Standing → Knocked down → Stunned → Out of action → Standing, one tap at a time. */
+  /** A unit's status from `from` to `next`: the taps of a cycle sent as one (useBufferedStatus). */
   const setStatus = useCallback(
-    async (view: BattleUnitView, next: UnitStatus) => {
-      const key = view.unit.key;
+    async (key: string, from: UnitStatus, next: UnitStatus) => {
       if (next === "out_of_action") {
         await setOutOfAction(key, true);
         return;
       }
-      if (view.status === "out_of_action" && !(await setOutOfAction(key, false))) return;
-      if (next !== "standing" || (view.status !== "out_of_action" && view.status !== "standing")) {
+      if (from === "out_of_action" && !(await setOutOfAction(key, false))) return;
+      if (next !== "standing" || (from !== "out_of_action" && from !== "standing")) {
         await config
           .saveUnitStatus(key, next === "standing" ? null : next)
           .catch((error) => toast.error(getErrorMessage(error, "Couldn't change that.")));

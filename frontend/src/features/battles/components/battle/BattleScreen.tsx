@@ -8,6 +8,11 @@ import { IconButton } from "@/components/ui/icon-button";
 import BattleNotesSheet from "@/features/battles/components/shared/BattleNotesSheet";
 import type { PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
 import type { BattleScreen as Screen } from "@/features/battles/hooks/useBattleScreen";
+import {
+  groupShowing,
+  sectionsShowing,
+  useBufferedStatus,
+} from "@/features/battles/hooks/useBufferedStatus";
 import { battleNumberLabel } from "@/features/battles/utils/battle-number";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
@@ -33,7 +38,7 @@ import WarbandUnits, { type WarbandUnitActions } from "./WarbandUnits";
 import AddNeutralGroupSheet from "./AddNeutralGroupSheet";
 import AddUnitSheet from "./AddUnitSheet";
 import { EditStatsSheet, type EditableUnit } from "./UnitSheets";
-import { nextStatus, sideId, type BattleUnitView } from "./battle-units";
+import { sideId, type BattleUnitView } from "./battle-units";
 
 type Panel = "menu" | "rules" | "notes" | "edit" | "add" | "neutral" | "cancel" | "end";
 
@@ -164,12 +169,16 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
     })),
   }));
 
+  const unitStatus = useBufferedStatus((key, from, to) => screen.setStatus(key, from, to));
+  const creatureStatus = useBufferedStatus((key, _from, to) =>
+    screen.changeCreature(key, { status: to })
+  );
   const killerFor = (name: string, models: BattleUnitView[]) => setKiller({ name, models });
   const myActions: WarbandUnitActions = {
     canAct,
     savingKeys: config.savingUnitKeys,
     onKill: killerFor,
-    onStatus: (view) => void screen.setStatus(view, nextStatus(view.status)),
+    onStatus: (view) => unitStatus.cycle(view.unit.key, view.status),
     onWounds: (unit, delta) => void config.adjustUnitWounds(unit, delta),
     onDismount: (key, dismounted) => void screen.setDismounted(key, dismounted),
     onNote: (view, name) => openNote(view, name),
@@ -183,7 +192,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
 
   const mine = sections ? (
     <WarbandUnits
-      sections={sections}
+      sections={sectionsShowing(sections, unitStatus.statusOf)}
       isMobile={isMobile}
       onOpen={(unit, tab) => openGear(unit, tab)}
       actions={myActions}
@@ -194,9 +203,14 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
 
   const shown = !side ? null : side.kind === "neutral" ? (
     <NeutralGroupUnits
-      group={side.group}
+      group={groupShowing(side.group, creatureStatus.statusOf)}
       canAct={canAct}
-      onCycle={(key, next) => void screen.changeCreature(key, { status: next })}
+      onCycle={(key) =>
+        creatureStatus.cycle(
+          key,
+          side.group.creatures.find((creature) => creature.key === key)?.status ?? "standing"
+        )
+      }
       onWounds={(key, wounds) => void screen.changeCreature(key, { wounds })}
       onAdd={() => {
         setAddGroupKey(side.group.key);
