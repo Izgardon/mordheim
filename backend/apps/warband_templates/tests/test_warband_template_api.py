@@ -154,7 +154,10 @@ class WarbandTemplateEndpointTests(CatalogueTestCase):
         body = self.get_as(self.rival, f"/api/warbands/{self.rival_warband.id}/template/").json()
         self.assertEqual(body["template"]["name"], "Mercenaries")  # Rats are Mercenaries too
         self.made.template.type_links.all().delete()
-        self.assertEqual(self.read(), {"template": None, "variant": "", "list_prices_open": True, "missing_rules": 0})
+        self.assertEqual(
+            self.read(),
+            {"template": None, "variant": "", "list_prices_open": True, "missing_rules": 0, "no_list": False},
+        )
         self.assertEqual(self.get_as(self.outsider, self.endpoint).status_code, 404)
 
     def test_it_reads_in_the_same_queries_however_big_the_roster_and_the_template(self) -> None:

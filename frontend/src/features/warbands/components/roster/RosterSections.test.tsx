@@ -182,6 +182,13 @@ describe("Make a template for a type with none (the templates plan, phase 4)", (
     ).toBeInTheDocument();
   });
 
+  it("isn't offered for a workshop warband made with no list", async () => {
+    fakeApi.on("GET /warbands/9/template/", { ...NO_TEMPLATE, no_list: true });
+    renderRoster();
+    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/template/")).toBe(1));
+    expect(screen.queryByRole("button", { name: /^Make a template/ })).toBeNull();
+  });
+
   it("isn't there once the type has one", async () => {
     fakeApi.on("GET /warbands/9/template/", makeTemplateAnswer());
     renderRoster();

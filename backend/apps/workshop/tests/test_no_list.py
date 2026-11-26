@@ -63,8 +63,8 @@ class ReadingTests(NoListTestCase):
         self.assertEqual(list_item_ids(warband), frozenset())  # the store sells from the general catalogue
         body = self.get_as(self.player, f"/api/warbands/{row['id']}/template/").data
         self.assertEqual(
-            {key: body[key] for key in ("template", "variant", "missing_rules")},
-            {"template": None, "variant": "", "missing_rules": 0},
+            {key: body[key] for key in ("template", "variant", "missing_rules", "no_list")},
+            {"template": None, "variant": "", "missing_rules": 0, "no_list": True},
         )
         sheet = self.get_as(self.player, f"/api/warbands/{row['id']}/sheet/").data
         self.assertEqual(

@@ -114,7 +114,7 @@ warband-or-list shape are gone.
   variant is blank and it gets no rules. It stores its budget (`Warband.budget`, migration `warbands/0028`; set means
   "no list", `Warband.no_list`, and a warband with a budget names no list: `warband_no_list_names_none`) and reads
   **no template at all**, whatever its type: `resolve.templates_for_warband`, `templates_for_warbands` and
-  `template_for_new_type` answer none, so `GET warbands/<id>/template/` is `{template: null, ...}` (Recruit as offers
+  `template_for_new_type` answer none, so `GET warbands/<id>/template/` is `{template: null, no_list: true, ...}` (no Make a template; Recruit as offers
   only units made by hand; a `fighter_key` is refused), the store sells from the general catalogue (no list lines),
   and its cost is against its budget. Its Starting Gold row is its budget. With `list_id` or `list_code` too: 400 on
   `no_list`; `budget` without `no_list`: 400 on `budget` ("Only a warband with no list sets its own budget: a list's

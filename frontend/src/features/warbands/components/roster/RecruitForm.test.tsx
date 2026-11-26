@@ -99,6 +99,7 @@ const answer = (open: boolean): WarbandTemplateAnswer => ({
   variant: "reikland",
   list_prices_open: open,
   missing_rules: 0,
+  no_list: false,
   template: {
     id: 1,
     campaign_id: null,

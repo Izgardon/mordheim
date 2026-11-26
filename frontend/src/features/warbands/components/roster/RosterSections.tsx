@@ -127,14 +127,15 @@ export default function RosterSections(props: RosterSectionsProps) {
 
   const maxHeroes = campaign?.max_heroes;
   // beside Add hero while the type has no template (the templates plan, phase 4); kept mounted once
-  // made, so the editor it opened stays open
+  // made, so the editor it opened stays open; never for a workshop warband made with no list
   const type = props.warbandType;
   const makeTemplate =
     canEdit &&
     type &&
     campaign &&
     campaignCapabilities(campaign).edit_catalogue &&
-    hireTemplate.data ? (
+    hireTemplate.data &&
+    !hireTemplate.data.no_list ? (
       <MakeTemplateForWarband
         campaignId={campaign.id}
         warbandType={type}

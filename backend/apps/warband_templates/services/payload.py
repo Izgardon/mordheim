@@ -64,8 +64,9 @@ def missing_rules(warband: Warband, template: WarbandTemplate | None, variant: s
 
 
 def warband_template(warband: Warband) -> dict[str, Any]:
-    """The warband's template with its variant applied, whether list prices are still open, and how many rules Add
-    missing rules would copy (fourteen queries with a template, three without; one more with a preset)."""
+    """The warband's template with its variant applied, whether list prices are still open, how many rules Add
+    missing rules would copy, and whether it reads no list by choice (a workshop's made with no list: no Make a
+    template offered for its type) (fourteen queries with a template, three without; one more with a preset)."""
     open_now = list_prices_open(warband.id)
     template = hire_details(templates_for_warband(warband)).first()
     if template is None:
@@ -74,6 +75,7 @@ def warband_template(warband: Warband) -> dict[str, Any]:
             "variant": warband.template_variant,
             "list_prices_open": open_now,
             "missing_rules": missing_rules(warband, None, ""),
+            "no_list": warband.no_list,
         }
     variant = warband_variant(warband, template)
     lines = {row.pk: variant_lines(row.lines.all(), variant) for row in template.lists.all()}
@@ -89,7 +91,13 @@ def warband_template(warband: Warband) -> dict[str, Any]:
     }
     body = WarbandTemplateHireSerializer(template, context=context).data
     missing = missing_rules(warband, template, variant)
-    return {"template": body, "variant": variant, "list_prices_open": open_now, "missing_rules": missing}
+    return {
+        "template": body,
+        "variant": variant,
+        "list_prices_open": open_now,
+        "missing_rules": missing,
+        "no_list": False,
+    }
 
 
 def raise_gold(campaign_gold: int, template: WarbandTemplate | None, variant: str) -> int:
