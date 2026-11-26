@@ -80,7 +80,7 @@ export function settingShortName(
   return settingKeyLabel(settingFilterKey(settingId, settings), settings);
 }
 
-type SettingRow = {
+export type SettingRow = {
   setting_id?: number | null;
   campaign_id?: number | null;
   replaces?: number | null;

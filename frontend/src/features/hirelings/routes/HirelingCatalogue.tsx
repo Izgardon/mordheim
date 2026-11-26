@@ -13,6 +13,7 @@ import { BuyableToggle, FilterRow, ReferenceSearch } from "@/features/reference/
 import { ReferenceList, ShowMore, useShownRows } from "@/features/reference/ReferenceList";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
+import { useSettingFilter } from "@/features/reference/useSettingFilter";
 import { recruitedLink } from "@/features/warbands/components/roster/useRosterCards";
 import { useWarbandSheet } from "@/features/warbands/hooks/warband/useWarbandSheet";
 import { useCatalogue } from "@/lib/catalogue-queries";
@@ -42,7 +43,7 @@ const SECTION: Record<HirelingCatalogueKind, { path: string; title: string }> = 
  * and rating; a row opens to the profile, the terms, who can hire him and his rules, with Hire
  * from here (today's hire for your warband). Opened for a warband (`?warband=`, every entry), it
  * hires for it: "Who it can hire" is on, those it can usually hire first (the server's who-can/),
- * the rest behind Show all with the reason. Entries are added and edited as today; one added here
+ * the rest behind Show all with the reason. The Setting dropdown narrows either. Entries are added and edited as today; one added here
  * is only saved, never hired (William, 8 Nov 2026: "but only from that page", the warband page).
  */
 export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKind }) {
@@ -94,10 +95,12 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
       ),
     [access, entries.data, forWarband, order]
   );
+  const bySetting = useSettingFilter(sorted, params, isMobile);
   const rows = sorted.filter(
     (entry) =>
       String(entry.id) === params.openId ||
       ((!warband || !onlyMine || !warningOf(entry)) &&
+        bySetting.matches(entry) &&
         matchesSearchQuery(params.query, entry.name, hirelingRace(entry), entry.description))
   );
   const shown = useShownRows(
@@ -151,7 +154,9 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
               />
             ) : null}
           </FilterRow>
-          <FilterLine isMobile={isMobile} sort={sort.menu} />
+          <FilterLine isMobile={isMobile} sort={sort.menu}>
+            {bySetting.select}
+          </FilterLine>
         </>
       }
       summary={isMobile ? undefined : `${rows.length} ${noun(rows.length)} shown`}

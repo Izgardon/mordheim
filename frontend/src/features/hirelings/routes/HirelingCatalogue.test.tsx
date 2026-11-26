@@ -16,6 +16,7 @@ import { CAMPAIGN_ID, campaignSummary } from "@/test/campaign-fixtures";
 import { hiredSword } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
+import { pickOption } from "@/test/select";
 import { setupUser } from "@/test/user-event";
 
 import type { HirelingProfileDetail } from "../types/hireling-catalogue-types";
@@ -62,13 +63,13 @@ const whoCan = {
   materials: [],
 } as WhoCan;
 
-function renderPage() {
+function renderPage(entries = [ogre]) {
   const queryClient = createTestQueryClient();
   for (const kind of ["races", "skills", "specials", "spells", "items"] as const) {
     queryClient.setQueryData(catalogueListKey(CAMPAIGN_ID, kind), []);
   }
   queryClient.setQueryData(queryKeys.campaign.resources(CAMPAIGN_ID), []);
-  queryClient.setQueryData(catalogueListKey(CAMPAIGN_ID, "hired-swords"), [ogre]);
+  queryClient.setQueryData(catalogueListKey(CAMPAIGN_ID, "hired-swords"), entries);
   queryClient.setQueryData(queryKeys.campaign.warbandSheet(CAMPAIGN_ID, WARBAND), sheet);
   queryClient.setQueryData(queryKeys.campaign.warbandWhoCan(CAMPAIGN_ID, WARBAND), whoCan);
   renderWithQueryClient(
@@ -106,5 +107,37 @@ describe("Hired swords opened for a warband", () => {
     expect(await screen.findByRole("button", { name: "Hire from here" })).toBeInTheDocument();
     expect(screen.queryByRole("dialog", { name: "Tilean Duellist" })).not.toBeInTheDocument();
     expect(fakeApi.countOf(HIRE)).toBe(0);
+  });
+
+  it("filters by setting once the entries come from two, Mordheim's grades as one", async () => {
+    const setting = (id: number, slug: string, name: string) => ({
+      id,
+      slug,
+      name,
+      grade: "1a",
+      grade_label: "Official",
+      sort_order: id,
+      always_on: id === 1,
+      warband_types: 0,
+    });
+    fakeApi.on("GET /settings/", {
+      settings: [
+        setting(1, "mordheim", "Mordheim 1a"),
+        setting(11, "mutiny-in-marienburg", "Mutiny in Marienburg"),
+      ],
+      presets: [],
+    });
+    const pirate = hiredSword({ id: 18, name: "Pirate Captain", setting_id: 11 });
+    const user = setupUser();
+    renderPage([ogre, pirate]);
+
+    expect(await screen.findByText("Pirate Captain")).toBeInTheDocument();
+    const filter = await screen.findByRole("combobox", { name: "Setting" });
+    await pickOption(user, filter, "Mutiny in Marienburg");
+    expect(screen.queryByText("Ogre Bodyguard")).not.toBeInTheDocument();
+    expect(screen.getByText("Pirate Captain")).toBeInTheDocument();
+    await pickOption(user, filter, "Mordheim");
+    expect(screen.getByText("Ogre Bodyguard")).toBeInTheDocument();
+    expect(screen.queryByText("Pirate Captain")).not.toBeInTheDocument();
   });
 });
