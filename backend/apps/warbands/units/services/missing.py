@@ -57,10 +57,6 @@ def missing_members(**where: Any) -> QuerySet[Henchman]:
     return on_roster(rows)
 
 
-def member_name(group: HenchmenGroup, member: Henchman) -> str:
-    return member.name or group.unit_type or "Henchman"
-
-
 def member_missing_logs(
     group: HenchmenGroup, changed: list[Henchman], before: Mapping[Any, tuple[int, str]], sent: dict[int, set[str]]
 ) -> list[LogEntry]:
@@ -75,7 +71,7 @@ def member_missing_logs(
         sent[member.id] |= {"missing_games", "missing_reason"}
         if member.dead:
             continue  # dead, not back
-        entry = missing_change_log(member_name(group, member), before[member.id], after)
+        entry = missing_change_log(member.name, before[member.id], after)
         if entry is not None:
             logs.append(entry)
     return logs

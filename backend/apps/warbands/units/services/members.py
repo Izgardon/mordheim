@@ -31,10 +31,6 @@ GROUP = HENCHMEN_GROUP.key
 FILL_ACTIONS = ("buy", "stash", "leave")
 
 
-def member_name(member: Henchman) -> str:
-    return member.name.strip() or "Unnamed Henchman"
-
-
 def _group_end(group: HenchmenGroup) -> tuple[str, str | None]:
     return GROUP, economy_log.unit_name(GROUP, group)
 
@@ -80,7 +76,7 @@ def take_kit(warband: Warband, group: HenchmenGroup, member: Henchman) -> list[i
     out the next battle by default until re-equipped or dismissed); the item ids moved. 400 when he carries nothing."""
     rows = carried_rows(member)
     if not rows:
-        message = f"{member_name(member)} carries nothing of the group's loadout."
+        message = f"{member.name} carries nothing of the group's loadout."
         raise RosterError(message, "nothing_carried", {"member": [message]})
     moved = _to_stash(warband, group, rows)
     gap_rows(rows, [member.pk], HenchmanItemGap.KIT_TAKEN)
@@ -143,7 +139,7 @@ def fill_gap(warband: Warband, group: HenchmenGroup, gap: HenchmanItemGap, body:
     if body["action"] == "buy":
         data = {**body, "quantity": 1, "is_buying": True, "material": row.material}
         price = price_line(warband, row.item, data) if _priced(body) else _current_or_row(warband, row)
-        description = f"{name} for {member_name(member)}"
+        description = f"{name} for {member.name}"
         ledger.record(warband, LedgerAction.BUY, -int(price or 0), description)
         payload = {"hero": economy_log.unit_name(GROUP, group), "item": name, "price": int(price or 0)}
         economy_log.write(warband, "loadout", "henchmen_item", payload)

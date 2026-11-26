@@ -15,6 +15,11 @@ from rest_framework.settings import api_settings
 FieldErrors = dict[str, list[str]]
 
 
+# A recruit, a henchman joining a group and a member renamed must each have a name (William, 26 Nov 2026: "Block it,
+# needs a name"; a member too)
+NAME_NEEDED = "Name is needed."
+
+
 class RosterError(APIException):
     status_code: int = status.HTTP_400_BAD_REQUEST
 

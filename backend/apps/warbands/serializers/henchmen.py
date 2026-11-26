@@ -12,6 +12,7 @@ from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.loadouts import lacking_by_row, loadout_totals
 from apps.warbands.units.companions import group_mount_warnings, mount_kinds, mount_payload, unit_name
 from apps.warbands.units.create_serializer import UnitCreateSerializer
+from apps.warbands.units.errors import NAME_NEEDED
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
@@ -69,12 +70,16 @@ class HenchmanSerializer(serializers.ModelSerializer):
 class HenchmanEntrySerializer(serializers.ModelSerializer):
     """One member entry in a group create or PATCH.
 
-    Bad values are a 400 here instead of a database error (BUG-90), and ids come out as ints, so
+    A member needs a name (William, 26 Nov 2026): a new one (no id) is refused without one, and any entry naming him
+    blank, or spaces alone, is refused, "Name is needed." Bad values are a 400 here instead of a database error (BUG-90), and ids come out as ints, so
     "12" names the same member as 12 (BUG-93). `cost` and `item_notes` are passed through as sent;
     the view parses them for the recruit trade.
     """
 
     id = serializers.IntegerField(required=False, allow_null=True)
+    name = serializers.CharField(
+        max_length=120, required=False, error_messages={"blank": NAME_NEEDED, "null": NAME_NEEDED}
+    )
     cost = serializers.JSONField(required=False, allow_null=True)
     item_notes = serializers.JSONField(required=False, allow_null=True)
     # henchmen loadouts: a living member sent with `dismiss` leaves, his share to the stash or with him; a new member
@@ -101,7 +106,11 @@ class HenchmanEntrySerializer(serializers.ModelSerializer):
             "from_stash",
             "without",
         )
-        extra_kwargs = {"name": {"required": False, "allow_blank": True, "trim_whitespace": False}}
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        if attrs.get("id") is None and "name" not in attrs:
+            raise serializers.ValidationError({"name": [NAME_NEEDED]})
+        return attrs
 
     def validate_cost(self, value: Any) -> Any:
         """A numeric cost must fit the ledger's price column (BUG-96).

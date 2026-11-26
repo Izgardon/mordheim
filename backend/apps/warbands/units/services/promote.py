@@ -42,11 +42,6 @@ def _field_error(field: str, message: str) -> RosterError:
     return RosterError(message, "invalid", {field: [message]})
 
 
-def _promoted_name(henchman: Henchman, living: list[Henchman]) -> str:
-    """The henchman's name, or "Henchman N" by his place in the group, as the dialog labelled him."""
-    return henchman.name.strip() or f"Henchman {living.index(henchman) + 1}"
-
-
 def _hero_fields(warband: Warband, group: HenchmenGroup, name: str, items: list[HenchmenGroupItem]) -> dict[str, Any]:
     """The new hero's create body: the group's profile, XP, skills and specials, his items, one advance to take."""
     specials = list(group.henchmen_group_specials.select_related("special").order_by("id"))
@@ -111,7 +106,7 @@ def promote_henchman(warband: Warband, group: HenchmenGroup, request: dict[str, 
             raise _field_error("henchman_id", "Not a living member of this group.")
         _take_the_talent(group)
         _make_room(warband, request.get("dismiss_hero_id"))
-        name = _promoted_name(henchman, living)
+        name = henchman.name
         items = carried_rows(henchman)  # his share: a copy of each row, still riding what he rode
         fields = _hero_fields(warband, group, name, items)
         check_cap(HERO, warband, fields, locked=True)

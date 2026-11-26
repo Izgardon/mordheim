@@ -64,7 +64,8 @@ export default function VeteransDialog({
   const price =
     cost ?? String(group ? (group.hire_cost ?? group.price ?? 0) : (fighter?.cost ?? 25));
   const label = (index: number) =>
-    recruits[index] || `${group?.unit_type || fighter?.name || type || "Recruit"} ${index + 1}`;
+    recruits[index]?.trim() ||
+    `${group?.unit_type || fighter?.name || type || "Recruit"} ${index + 1}`;
   const warnings = fighter
     ? [overCount(fighter, recruits.length), overGroup(fighter, recruits.length)].filter(Boolean)
     : [];
@@ -82,7 +83,7 @@ export default function VeteransDialog({
                 id: group.id,
                 updated_at: group.updated_at,
                 henchmen: [
-                  ...living.map(({ id, name: member }) => ({ id, name: member ?? "" })),
+                  ...living.map(({ id }) => ({ id })),
                   ...names.map((recruitName) => ({ name: recruitName, cost: gc })),
                 ] as never,
               },

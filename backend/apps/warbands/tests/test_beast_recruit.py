@@ -51,7 +51,8 @@ class RecruitNewGroupTests(RecruitTestCase):
         fields = ("name", "unit_type", "price", "race_id", "no_level_ups", "source_beast_id", "beast_kind", "max_size")
         self.assertEqual({key: group[key] for key in fields}, {"name": "Kennel", "unit_type": "Wardogs", "price": 30, "race_id": None, "no_level_ups": True, "source_beast_id": self.beast.id, "beast_kind": "creature", "max_size": 5})  # fmt: skip
         self.assertEqual({key: group[key] for key in DOG_PROFILE}, DOG_PROFILE)
-        self.assertEqual(len(group["henchmen"]), 2)
+        # every member has a name (William, 26 Nov 2026): the beast's and his number
+        self.assertEqual([member["name"] for member in group["henchmen"]], ["Wardogs 1", "Wardogs 2"])
         self.assertEqual([skill["id"] for skill in group["skills"]], [self.skills[0].id])
         self.assertEqual([special["id"] for special in group["specials"]], [self.specials[0].id])
         answer = (response.data["source"], response.data["stash_item"], response.data["removed_stash_item_id"])
@@ -131,7 +132,9 @@ class RecruitJoinTests(RecruitTestCase):
         response = self.recruit(2, target={"group_id": group.id})
 
         self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual((response.data["group"]["id"], len(response.data["group"]["henchmen"])), (group.id, 3))
+        self.assertEqual(response.data["group"]["id"], group.id)
+        names = [member["name"] for member in response.data["group"]["henchmen"]]
+        self.assertEqual(names, ["Rex", "Wardogs 2", "Wardogs 3"])
         self.assertEqual(response.data["group"]["price"], 30)  # the group's price stays
         self.assertEqual([row[1] for row in log_rows(self.warband)], ["moved"])
 

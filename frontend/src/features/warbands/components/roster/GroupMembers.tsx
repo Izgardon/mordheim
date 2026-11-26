@@ -10,7 +10,7 @@ import { isMissing, missingGamesOf, missingLabel } from "../../units/missing-gam
 import { isCreatureGroup } from "../../utils/companions";
 import type { HenchmenGroup } from "../../types/warband-types";
 import UnitKills from "./UnitKills";
-import { liveMembers, memberName } from "./unit-view";
+import { liveMembers } from "./unit-view";
 
 type GroupMembersProps = {
   group: HenchmenGroup;
@@ -74,14 +74,14 @@ export default function GroupMembers({ group, campaignId, warbandId, canEdit }: 
         return (
           <div key={member.id} className="flex flex-col gap-1.5 border-t border-line pt-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-bold text-ink">{memberName(group, member)}</span>
+              <span className="font-bold text-ink">{member.name}</span>
               {/* the group's kills live here, a member's own count opening their own kills */}
               <UnitKills
                 campaignId={campaignId}
                 warbandId={warbandId}
                 entry={{ kind: "henchmen_group", unit: group }}
                 align="start"
-                member={{ name: memberName(group, member), kills: member.kills ?? 0 }}
+                member={{ name: member.name, kills: member.kills ?? 0 }}
               />
               {isMissing(member) ? (
                 <ChipLabel tone="danger" title={member.missing_reason || undefined}>
@@ -118,9 +118,7 @@ export default function GroupMembers({ group, campaignId, warbandId, canEdit }: 
                 className="flex flex-col gap-1.5 border border-dashed border-danger-line px-2.5 py-2 text-[13px]"
               >
                 <span className={gap.left ? "text-text2" : "text-danger"}>
-                  {gap.left
-                    ? `${member.name || "This member"} goes without ${gap.row.name}.`
-                    : gapLine(member, gap)}
+                  {gap.left ? `${member.name} goes without ${gap.row.name}.` : gapLine(member, gap)}
                 </span>
                 {canEdit ? gapActions(gap) : null}
               </div>

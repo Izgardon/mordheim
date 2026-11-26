@@ -747,7 +747,7 @@ export type HenchmenGroupFormEntry = {
   id?: number;
   /** A recruit queued in this edit session (no id yet): keys its queued purchases. */
   draftKey?: string;
-  /** Recruited from a creature: it has no race and unnamed members by design (read only). */
+  /** Recruited from a creature: it has no race by design, its members named "Wardogs 1" (read only). */
   source_beast_id?: number | null;
   name: string;
   unit_type: string;

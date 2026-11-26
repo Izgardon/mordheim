@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
+import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
 
 import type { HenchmenGroup } from "../../../types/warband-types";
@@ -28,7 +29,7 @@ export default function EditGroupModels({
   form: UnitEditDraft;
   unitType: string;
 }) {
-  const { members, setMembers, setDismissed } = form;
+  const { members, setMembers, setDismissed, memberNameError } = form;
   const [asking, setAsking] = useState<number | null>(null);
   const [missingOpen, setMissingOpen] = useState<number | null>(null);
   const rows = group.items;
@@ -72,6 +73,7 @@ export default function EditGroupModels({
             <Input
               inputSize="sm"
               aria-label={`Model ${index + 1} name`}
+              aria-invalid={memberNameError(index) ? true : undefined}
               value={member.name ?? ""}
               onChange={(event) => setMember(index, { name: event.target.value })}
             />
@@ -104,6 +106,7 @@ export default function EditGroupModels({
               </>
             )}
           </div>
+          <FieldError message={memberNameError(index)} className="mt-0" />
           {member.id !== undefined && missingOpen === member.id ? (
             <MissingGamesFields
               label={`Model ${index + 1}`}

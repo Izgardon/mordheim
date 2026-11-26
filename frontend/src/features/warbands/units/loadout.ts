@@ -34,7 +34,7 @@ export function memberGaps(group: Pick<HenchmenGroup, "items">, member: Henchman
 
 /** "Skritt has no Horse (lost after the last battle)." */
 export const gapLine = (member: Pick<Henchman, "name">, gap: MemberGap) =>
-  `${member.name || "This member"} has no ${gap.row.name} (${gap.why}).`;
+  `${member.name} has no ${gap.row.name} (${gap.why}).`;
 
 /** Why the next battle leaves him out at first: his kit went to the stash (null when it didn't). */
 export function sitsOut(group: Pick<HenchmenGroup, "items">, member: Henchman) {

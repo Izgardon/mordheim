@@ -83,3 +83,38 @@ describe("A group's models in the Edit form", () => {
     ]);
   });
 });
+
+// William, 26 Nov 2026: a henchman needs a name too
+describe("A model's name in the Edit form", () => {
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on(BATCH, { units: [], summary: {} });
+  });
+
+  it("won't save a model left without a name, and says so under it", async () => {
+    const user = setupUser();
+    renderGroup();
+
+    await user.clear(screen.getByRole("textbox", { name: "Model 2 name" }));
+    await user.click(screen.getByRole("button", { name: "Add a model" }));
+    await user.clear(screen.getByRole("textbox", { name: "Model 4 name" }));
+    await user.type(screen.getByRole("textbox", { name: "Model 4 name" }), "   ");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(screen.getAllByText("Name is needed.")).toHaveLength(2);
+    expect(fakeApi.countOf(BATCH)).toBe(0);
+    await user.type(screen.getByRole("textbox", { name: "Model 2 name" }), "Blade Deux");
+    await user.clear(screen.getByRole("textbox", { name: "Model 4 name" }));
+    await user.type(screen.getByRole("textbox", { name: "Model 4 name" }), "Blade Four");
+    expect(screen.queryByText("Name is needed.")).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    const members = (fakeApi.bodyOf(BATCH) as Batch).update[0].henchmen as { name?: string }[];
+    expect(members.map((member) => member.name)).toEqual([
+      "Blade One",
+      "Blade Deux",
+      "Blade Three",
+      "Blade Four",
+    ]);
+  });
+});

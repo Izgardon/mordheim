@@ -173,5 +173,5 @@ export const resolveHenchmanFromGroup = (group: HenchmenGroup, selectedHenchmanI
 export const buildHenchmenOptions = (group: HenchmenGroup) =>
   (group.henchmen ?? []).map((henchman, index) => ({
     id: String(henchman.id ?? index),
-    label: henchman.name?.trim() || `Henchman ${index + 1}`,
+    label: henchman.name,
   }));

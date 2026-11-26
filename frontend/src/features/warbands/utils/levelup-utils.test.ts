@@ -94,17 +94,13 @@ describe("buildLevelUpPayload", () => {
 describe("Lad's Got Talent helpers", () => {
   const group = makeVeteranHenchmenGroup();
 
-  it("offers every member by id, falling back to a numbered label", () => {
-    const options = buildHenchmenOptions({
-      ...group,
-      henchmen: [...group.henchmen, { id: 64, name: " ", kills: 0, dead: false }],
-    });
+  it("offers every member by id and name", () => {
+    const options = buildHenchmenOptions(group);
 
     expect(options).toEqual([
       { id: "61", label: "Blade One" },
       { id: "62", label: "Blade Two" },
       { id: "63", label: "Blade Three" },
-      { id: "64", label: "Henchman 4" },
     ]);
     expect(resolveHenchmanFromGroup(group, "62")).toMatchObject({
       index: 1,

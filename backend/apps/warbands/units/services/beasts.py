@@ -82,6 +82,12 @@ def lock_group(group: HenchmenGroup, key: str) -> None:
         raise RosterError("Henchmen group not found.", "not_found", {key: ["Not found."]}, status_code=404)
 
 
+def beast_names(beast: BestiaryEntry, before: int, quantity: int) -> list[str]:
+    """Each copy's name, the beast's and his number in the group ("Warhound 3"), after the `before` it holds: every
+    member has a name (William, 26 Nov 2026), a creature's too."""
+    return [f"{beast.name[:110]} {before + n}" for n in range(1, quantity + 1)]
+
+
 def _group_body(beast: BestiaryEntry, target: Target, price: int, quantity: int) -> dict[str, Any]:
     """The henchmen group create body the beast makes (the generic create serializer maps its ids to the campaign's
     current entries and checks the race)."""
@@ -98,7 +104,7 @@ def _group_body(beast: BestiaryEntry, target: Target, price: int, quantity: int)
         "armour_save": beast.armour_save,
         "skill_ids": list(skills),
         "special_ids": list(specials.values_list("special_id", flat=True)),
-        "henchmen": [{"name": ""} for _ in range(quantity)],
+        "henchmen": [{"name": name} for name in beast_names(beast, 0, quantity)],
     }
 
 
@@ -135,7 +141,8 @@ def recruit_copies(
     if target.group is not None:
         group = target.group
         lock_group(group, f"{target.field}.group_id")
-        Henchman.objects.bulk_create(Henchman(group=group, name="") for _ in costs)
+        named = beast_names(beast, group.henchmen.count(), len(costs))
+        Henchman.objects.bulk_create(Henchman(group=group, name=name) for name in named)
         touch_unit(HENCHMEN_GROUP.key, group)
     else:
         group = _new_group(warband, beast, item, costs, target)

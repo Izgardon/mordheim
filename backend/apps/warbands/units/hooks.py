@@ -16,6 +16,7 @@ from apps.warbands.models import Henchman, HenchmenGroup, LedgerAction, RosterUn
 from apps.warbands.services import ledger
 from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
 
+from .errors import NAME_NEEDED, RosterError
 from .services.hire_cost import henchman_hire_cost
 from .services.missing import LogEntry, member_missing_logs, missing_state
 
@@ -172,11 +173,11 @@ def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberSync:
         by_fields.setdefault(tuple(sorted(sent[member_id])), []).append(members[member_id])
     for field_names, rows in by_fields.items():
         Henchman.objects.bulk_update(rows, list(field_names))
+    if any("name" not in entry for entry in new_entries):  # an id not of this group's is a new member: named too
+        raise RosterError(NAME_NEEDED, "invalid", {"henchmen": [NAME_NEEDED]})
     created = Henchman.objects.bulk_create(
         [
-            Henchman(
-                group=group, name=entry.get("name", ""), kills=entry.get("kills", 0), dead=entry.get("dead", False)
-            )
+            Henchman(group=group, name=entry["name"], kills=entry.get("kills", 0), dead=entry.get("dead", False))
             for entry in new_entries
         ]
     )
@@ -220,7 +221,7 @@ class HenchmenHooks(UnitHooks):
 
     def after_create(self, unit: RosterUnit, members: MemberEntries | None) -> None:
         group = cast(HenchmenGroup, unit)
-        Henchman.objects.bulk_create([Henchman(group=group, name=entry.get("name", "")) for entry in members or []])
+        Henchman.objects.bulk_create([Henchman(group=group, name=entry["name"]) for entry in members or []])
 
     def before_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> None:
         """A members list may recruit, and recruits are charged: the warband (the ledger's balance) is locked before
@@ -259,7 +260,7 @@ class HenchmenHooks(UnitHooks):
                 warband.id,
                 "personnel",
                 "new_henchman",
-                {"name": member.name or "Unnamed Henchman", "group": group_name},
+                {"name": member.name, "group": group_name},
                 parent_id=log_header.id if log_header else None,
             )
         if group.price and group.price > 0:
@@ -269,7 +270,7 @@ class HenchmenHooks(UnitHooks):
                     warband,
                     kind.recruit.trade_action,
                     -group.price,
-                    f"{member.name or 'Unnamed Henchman'} into {group_name}",
+                    f"{member.name} into {group_name}",
                     item_notes,
                     trade_header,
                 )
@@ -291,7 +292,7 @@ class HenchmenHooks(UnitHooks):
         charges = []
         for recruit in recruits:
             entry, default_cost = recruit.entry, recruit.default_cost
-            henchman_name = entry.get("name") or "Unnamed Henchman"
+            henchman_name = entry["name"]
             entry_cost = _parse_henchman_cost(entry.get("cost"))
             log_warband_event(
                 warband.id,

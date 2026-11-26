@@ -3,9 +3,8 @@ it, needs a name"). A PATCH keeps the write body's name, so a write that doesn't
 
 from rest_framework import serializers
 
+from .errors import NAME_NEEDED
 from .serializers import UnitWriteSerializer
-
-NAME_NEEDED = "Name is needed."
 
 
 class UnitCreateSerializer(UnitWriteSerializer):

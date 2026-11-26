@@ -19,7 +19,6 @@ import {
   isGroup,
   KIND_TRIM,
   liveMembers,
-  memberName,
   statValues,
   unitDomId,
   unitName,
@@ -206,7 +205,7 @@ export default function UnitCard(props: UnitCardProps) {
                   key={member.id}
                   className="inline-flex min-h-[30px] items-center gap-1.5 border border-border bg-raised px-2.5 text-xs font-bold text-ink"
                 >
-                  {isGroup(entry) ? memberName(entry.unit, member) : member.name}
+                  {member.name}
                   {member.gaps?.length ? (
                     <span className="font-medium text-danger">lacks {member.gaps.length}</span>
                   ) : null}

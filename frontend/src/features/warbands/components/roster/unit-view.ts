@@ -103,15 +103,6 @@ export const liveMembers = (group: HenchmenGroup) =>
   group.henchmen.filter((member) => !member.dead);
 
 /**
- * A henchman's name, else his group's type and his number among its living members ("Wardogs 2"),
- * as the battle calls him: creature groups' members have no names.
- */
-export function memberName(group: HenchmenGroup, member: { id: number; name?: string | null }) {
-  const number = liveMembers(group).findIndex((entry) => entry.id === member.id) + 1;
-  return member.name?.trim() || `${group.unit_type?.trim() || "Henchman"} ${number || ""}`.trim();
-}
-
-/**
  * The profile for the stat strip: a written stat as the book writes it ("2(2)", "D6"), and M as the
  * ridden mount makes it (then highlighted). Sv is the unit's own: mounting and armour write it.
  */

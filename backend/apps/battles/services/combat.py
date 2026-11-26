@@ -71,7 +71,7 @@ def read_unit(participant: BattleParticipant, unit: dict) -> tuple[dict, dict[st
         )
         if henchman is None:
             return payload, {}
-        payload["name"] = henchman.name or None
+        payload["name"] = henchman.name
         payload["type_name"] = henchman.group.unit_type or None
         payload["is_large"] = bool(getattr(henchman.group, "large", False))
         return payload, {"henchman": henchman.id, "group": henchman.group_id}

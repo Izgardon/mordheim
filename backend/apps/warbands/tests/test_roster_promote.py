@@ -137,12 +137,6 @@ class PromoteTests(RosterTestCase):
         self.assertIsNotNone(self.group.dismissed_at)
         self.assertEqual(log_rows(self.warband)[-1][:2], ("personnel", "remove_henchmen_group"))
 
-    def test_an_unnamed_henchman_is_named_by_his_place(self):
-        Henchman.objects.filter(id=self.beta.id).update(name="  ")
-        response = self._promote({"henchman_id": self.beta.id})
-        self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual(response.json()["hero"]["name"], "Henchman 2")
-
     def test_at_the_hero_cap_it_is_refused_unless_a_hero_is_dismissed_to_make_room(self):
         self.campaign_settings.max_heroes = 1
         self.campaign_settings.save()

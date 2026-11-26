@@ -21,7 +21,7 @@ def logs() -> list[tuple[str, dict[str, Any]]]:
 class HenchmanMissingGamesTests(RosterTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.group = make_unit(HENCHMEN, self.warband, name="Swords", unit_type="Swordsman", members=("Hans", ""))
+        self.group = make_unit(HENCHMEN, self.warband, name="Swords", unit_type="Swordsman", members=("Hans", "Otto"))
         self.hans, self.other = Henchman.objects.filter(group=self.group).order_by("id")
 
     def save(self, *members: dict[str, Any]) -> Any:
@@ -35,7 +35,7 @@ class HenchmanMissingGamesTests(RosterTestCase):
     def test_a_member_is_set_missing_on_his_own_and_it_is_logged(self):
         response = self.save(
             {"id": self.hans.id, "name": "Hans", "missing_games": 2, "missing_reason": "Captured"},
-            {"id": self.other.id, "name": ""},
+            {"id": self.other.id, "name": "Otto"},
         )
 
         self.assertEqual(response.status_code, 200, response.data)
@@ -44,13 +44,13 @@ class HenchmanMissingGamesTests(RosterTestCase):
         self.assertEqual(shown[self.hans.id], (2, "Captured"))
         self.assertEqual(logs(), [("unit_missing", {"name": "Hans", "games": 2, "reason": "Captured"})])
 
-    def test_clearing_brings_him_back_and_an_unnamed_member_is_logged_by_his_groups_type(self):
+    def test_clearing_brings_him_back_and_it_is_logged(self):
         Henchman.objects.filter(id=self.other.id).update(missing_games=1, missing_reason="Lost")
 
         self.assertEqual(self.save({"id": self.other.id, "missing_games": 0}, {"id": self.hans.id}).status_code, 200)
 
         self.assertEqual(self.member(self.other), (0, ""))
-        self.assertEqual(logs(), [("unit_returns", {"name": "Swordsman"})])
+        self.assertEqual(logs(), [("unit_returns", {"name": "Otto"})])
 
     def test_a_member_who_dies_misses_no_more_and_the_count_is_bounded(self):
         Henchman.objects.filter(id=self.hans.id).update(missing_games=2, missing_reason="Captured")

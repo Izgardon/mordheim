@@ -154,7 +154,7 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         )
 
     def test_adding_several_members_writes_a_trade_and_log_header(self):
-        self._patch({"henchmen": [{"name": "Ana", "cost": 20, "item_notes": "club"}, {"cost": 20}]})
+        self._patch({"henchmen": [{"name": "Ana", "cost": 20, "item_notes": "club"}, {"name": "Bo", "cost": 20}]})
 
         header = "Recruited 2 into Zealots"
         trades = trade_rows(self.warband)
@@ -163,7 +163,7 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
             sorted(trades[1:]),
             [
                 ("Recruit", "Ana into Zealots", -20, header),
-                ("Recruit", "Unnamed Henchman into Zealots", -20, header),
+                ("Recruit", "Bo into Zealots", -20, header),
             ],
         )
         self.assertEqual(self.warband.trades.get(description="Ana into Zealots").notes, "club")
@@ -187,6 +187,32 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         self._patch({"henchmen": [{"id": 999999, "name": "Ghost", "cost": 5}]})
         self.assertEqual(self._members(), [("Ghost", 0, False)])
         self.assertEqual(trade_rows(self.warband), [("Recruit", "Ghost into Zealots", -5, None)])
+
+    def test_a_member_needs_a_name(self):
+        # William, 26 Nov 2026: a henchman needs a name, joining a group or renamed in it
+        def save(*entries: dict[str, Any]) -> Any:
+            update = {"id": self.group.id, "henchmen": list(entries)}
+            url = unit_url(HENCHMEN, self.warband.id, suffix="batch/")
+            return self.client.post(url, {"update": [update]}, format="json")
+
+        alpha, beta = {"id": self.alpha.id}, {"id": self.beta.id}
+        cases: list[tuple[dict[str, Any], str]] = [
+            ({"cost": 20}, "update.0.henchmen.2.name"),
+            ({"name": "", "cost": 20}, "update.0.henchmen.2.name"),
+            ({"name": "   ", "cost": 20}, "update.0.henchmen.2.name"),
+            ({"id": 999999, "cost": 20}, "henchmen"),  # an id not of this group's is a new member
+        ]
+        for entry, field in cases:
+            with self.subTest(entry=entry):
+                response = save(alpha, beta, entry)
+                self.assertEqual(response.status_code, 400)
+                self.assertEqual(response.json()["fields"], {field: ["Name is needed."]})
+        renamed = save({"id": self.alpha.id, "name": " "}, beta)
+        self.assertEqual(renamed.json()["fields"], {"update.0.henchmen.0.name": ["Name is needed."]})
+        kept = self._patch({"henchmen": [{"id": self.alpha.id, "kills": 1}, beta]})
+        self.assertEqual(kept.status_code, 200, kept.data)  # a member sent without his name keeps it
+        self.assertEqual(self._members(), [("Alpha", 1, False), ("Beta", 0, False)])
+        self.assertEqual(trade_rows(self.warband), [])
 
     def test_invalid_member_entries_are_rejected_and_change_nothing(self):
         # BUG-90: the bad values used to reach the database and return 500 after the group fields

@@ -90,7 +90,7 @@ class RosterCreateCharacterisationTests(RosterTestCase):
         minimal: list[tuple[Kind, dict[str, Any]]] = [
             (HERO, named),
             (HIRELING, named),
-            (HENCHMEN, {**named, "henchmen": [{}]}),
+            (HENCHMEN, {**named, "henchmen": [{"name": "Bo"}]}),
         ]
         for kind, payload in minimal:
             with self.subTest(kind=kind.key):
@@ -101,8 +101,7 @@ class RosterCreateCharacterisationTests(RosterTestCase):
                 body = response.json()
                 self.assertEqual((body["name"], body["unit_type"], body["price"], body["xp"]), ("Ana", "", 0, 0.0))
                 self.assertEqual(log_rows(self.warband)[0][2], {"name": "Ana", "type": "Unknown"})
-        # a member's own name may still be left out (stored as "", shown as "Unnamed Henchman")
-        self.assertEqual(list(Henchman.objects.values_list("name", flat=True)), [""])
+        self.assertEqual(list(Henchman.objects.values_list("name", flat=True)), ["Bo"])
 
     def test_a_recruit_needs_a_name(self):
         # William, 26 Nov 2026: "Block it, needs a name"
@@ -323,7 +322,7 @@ class HenchmenCreateCharacterisationTests(RosterTestCase):
             price=25,
             xp=4,
             items=[{"id": self.sword.id}],
-            henchmen=[{"name": "Ana"}, {"name": ""}, {"name": "Cy"}],
+            henchmen=[{"name": "Ana"}, {"name": "Bo"}, {"name": "Cy"}],
             item_notes="with clubs",
         )
         response = self.client.post(unit_url(HENCHMEN, self.warband.id), payload, format="json")
@@ -337,8 +336,8 @@ class HenchmenCreateCharacterisationTests(RosterTestCase):
             sorted(trades[1:]),
             [
                 ("Recruit", "Ana into Zealots", -25, header),
+                ("Recruit", "Bo into Zealots", -25, header),
                 ("Recruit", "Cy into Zealots", -25, header),
-                ("Recruit", "Unnamed Henchman into Zealots", -25, header),
             ],
         )
         self.assertEqual(
@@ -357,17 +356,17 @@ class HenchmenCreateCharacterisationTests(RosterTestCase):
             sorted(logs[2:], key=lambda row: row[2]["name"]),
             [
                 ("personnel", "new_henchman", {"name": "Ana", "group": "Zealots"}, batch),
+                ("personnel", "new_henchman", {"name": "Bo", "group": "Zealots"}, batch),
                 ("personnel", "new_henchman", {"name": "Cy", "group": "Zealots"}, batch),
-                ("personnel", "new_henchman", {"name": "Unnamed Henchman", "group": "Zealots"}, batch),
             ],
         )
         group = HenchmenGroup.objects.get(id=response.json()["id"])
-        self.assertEqual(list(group.henchmen.order_by("id").values_list("name", flat=True)), ["Ana", "", "Cy"])
+        self.assertEqual(list(group.henchmen.order_by("id").values_list("name", flat=True)), ["Ana", "Bo", "Cy"])
 
     def test_invalid_member_entries_are_rejected_before_anything_is_written(self):
         # BUG-90: these used to reach the database and return 500 after the group row was created.
-        # A member's omitted name is still fine (stored as "", shown as "Unnamed Henchman").
-        for entry in ({"name": None}, {"name": "x" * 121}):
+        # A member's name is needed too (William, 26 Nov 2026).
+        for entry in ({"name": None}, {"name": "x" * 121}, {}, {"name": " "}):
             with self.subTest(entry=entry):
                 payload = create_payload(HENCHMEN, henchmen=[entry])
                 response = self.client.post(unit_url(HENCHMEN, self.warband.id), payload, format="json")

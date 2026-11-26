@@ -15,6 +15,7 @@ import type { UnitKindKey } from "../../../types/units";
 import type { ShareChoice } from "../../../hooks/units/useGroupLoadout";
 import type { Henchman } from "../../../types/warband-types";
 import { buildAvailableSkillsPayload, parseAvailableSkills } from "../../../utils/warband-utils";
+import { NAME_NEEDED } from "../../recruit/RecruitNameField";
 import { LIST_KEY, isGroup, type RosterUnit } from "../unit-view";
 
 export const STAT_FIELDS = {
@@ -139,6 +140,14 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
   // members the form removed, and where each one's share of the loadout goes (henchmen loadouts)
   const [dismissed, setDismissed] = useState<Record<number, ShareChoice>>({});
   const [saving, setSaving] = useState(false);
+  // every member needs a name (William, 26 Nov 2026): a save with one blank says so under it first
+  const [namesTried, setNamesTried] = useState(false);
+  const memberNameError = (index: number) =>
+    namesTried && !members[index]?.name?.trim() ? NAME_NEEDED : null;
+  const named = () => {
+    setNamesTried(true);
+    return members.every((member) => member.name?.trim());
+  };
   const set = (key: string, value: unknown) =>
     setDraft((current) => ({ ...current, [key]: value }));
 
@@ -161,7 +170,7 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
             henchmen: [
               ...members.map(({ id, name, kills, dead, kit, missing_games, missing_reason }) => ({
                 id,
-                name: name ?? "",
+                name,
                 kills,
                 dead,
                 ...(id === undefined
@@ -203,15 +212,15 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
     }
   };
 
-  const save = () => run({ update: [{ id: unit.id, updated_at: unit.updated_at, ...payload() }] });
-  const duplicate = () =>
+  const save = async () =>
+    named() && run({ update: [{ id: unit.id, updated_at: unit.updated_at, ...payload() }] });
+  const duplicate = async () =>
+    named() &&
     run({
       create: [
         {
           ...payload(),
-          ...(isGroup(entry)
-            ? { henchmen: members.map(({ name }) => ({ name: name ?? "" })) }
-            : {}),
+          ...(isGroup(entry) ? { henchmen: members.map(({ name }) => ({ name })) } : {}),
           name: `${draft.name || draft.unit_type} (copy)`,
         },
       ],
@@ -227,6 +236,7 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
     setMembers,
     dismissed,
     setDismissed,
+    memberNameError,
     saving,
     save,
     duplicate,
