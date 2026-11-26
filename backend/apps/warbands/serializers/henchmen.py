@@ -11,6 +11,7 @@ from apps.warbands.prefetches import gap_entries, members_with_gaps
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.loadouts import lacking_by_row, loadout_totals
 from apps.warbands.units.companions import group_mount_warnings, mount_kinds, mount_payload, unit_name
+from apps.warbands.units.create_serializer import UnitCreateSerializer
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
@@ -278,7 +279,7 @@ class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
         )
 
 
-class HenchmenGroupCreateSerializer(UnitWriteSerializer):
+class HenchmenGroupCreateSerializer(UnitCreateSerializer):
     kind = HENCHMEN_GROUP
 
     henchmen = serializers.ListField(child=HenchmanEntrySerializer(), write_only=True, required=True)

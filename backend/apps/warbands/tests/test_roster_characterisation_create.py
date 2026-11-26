@@ -86,7 +86,12 @@ class RosterCreateCharacterisationTests(RosterTestCase):
                 self.assertEqual(log_rows(self.warband)[0][1], kind.log_new)
 
     def test_minimal_payloads(self):
-        minimal: list[tuple[Kind, dict[str, Any]]] = [(HERO, {}), (HIRELING, {}), (HENCHMEN, {"henchmen": [{}]})]
+        named = {"name": "Ana"}
+        minimal: list[tuple[Kind, dict[str, Any]]] = [
+            (HERO, named),
+            (HIRELING, named),
+            (HENCHMEN, {**named, "henchmen": [{}]}),
+        ]
         for kind, payload in minimal:
             with self.subTest(kind=kind.key):
                 self.warband.logs.all().delete()
@@ -94,9 +99,36 @@ class RosterCreateCharacterisationTests(RosterTestCase):
 
                 self.assertEqual(response.status_code, 201)
                 body = response.json()
-                self.assertEqual((body["name"], body["unit_type"], body["price"], body["xp"]), ("", "", 0, 0.0))
-                self.assertEqual(log_rows(self.warband)[0][2], {"name": "Unknown", "type": "Unknown"})
+                self.assertEqual((body["name"], body["unit_type"], body["price"], body["xp"]), ("Ana", "", 0, 0.0))
+                self.assertEqual(log_rows(self.warband)[0][2], {"name": "Ana", "type": "Unknown"})
+        # a member's own name may still be left out (stored as "", shown as "Unnamed Henchman")
         self.assertEqual(list(Henchman.objects.values_list("name", flat=True)), [""])
+
+    def test_a_recruit_needs_a_name(self):
+        # William, 26 Nov 2026: "Block it, needs a name"
+        for kind in KINDS:
+            for name in (None, "", "   ", "omitted"):
+                with self.subTest(kind=kind.key, name=name):
+                    payload = create_payload(kind, name=name)
+                    if name == "omitted":
+                        del payload["name"]
+                    response = self.client.post(unit_url(kind, self.warband.id), payload, format="json")
+                    self.assertEqual((response.status_code, response.json()), (400, {"name": ["Name is needed."]}))
+                    batch = self.client.post(
+                        unit_url(kind, self.warband.id, suffix="batch/"), {"create": [payload]}, format="json"
+                    )
+                    self.assertEqual(batch.status_code, 400)
+                    self.assertEqual(batch.json()["fields"], {"create.0.name": ["Name is needed."]})
+        self.assertFalse(any(kind.model.objects.exists() for kind in KINDS))
+        self.assertEqual((trade_rows(self.warband), log_rows(self.warband)), ([], []))
+
+    def test_a_patch_without_a_name_keeps_his_name(self):
+        for kind in KINDS:
+            with self.subTest(kind=kind.key):
+                unit = make_unit(kind, self.warband, name="Kept")
+                response = self.client.patch(unit_url(kind, self.warband.id, unit.id), {"xp": 2}, format="json")
+                self.assertEqual(response.status_code, 200, response.data)
+                self.assertEqual(kind.model.objects.get(id=unit.id).name, "Kept")
 
     def test_invalid_payloads_are_rejected_with_field_errors_and_write_nothing(self):
         common: list[tuple[dict[str, Any], str]] = [
@@ -105,7 +137,7 @@ class RosterCreateCharacterisationTests(RosterTestCase):
             ({"race": 999999}, "race"),
             ({"xp": "1.25"}, "xp"),
             ({"armour_save": "4++"}, "armour_save"),
-            ({"name": ""}, "name"),  # omitted is fine (stored as ""), blank is not
+            ({"name": ""}, "name"),
             ({"unit_type": ""}, "unit_type"),
         ]
         cases = {
@@ -286,6 +318,7 @@ class HenchmenCreateCharacterisationTests(RosterTestCase):
     def test_each_member_is_charged_the_group_price_under_a_group_header(self):
         payload = create_payload(
             HENCHMEN,
+            name="Zealots",
             unit_type="Zealots",
             price=25,
             xp=4,
@@ -293,7 +326,6 @@ class HenchmenCreateCharacterisationTests(RosterTestCase):
             henchmen=[{"name": "Ana"}, {"name": ""}, {"name": "Cy"}],
             item_notes="with clubs",
         )
-        del payload["name"]  # an omitted name is stored as "" (a blank one is a 400)
         response = self.client.post(unit_url(HENCHMEN, self.warband.id), payload, format="json")
 
         self.assertEqual(response.status_code, 201)
@@ -317,7 +349,7 @@ class HenchmenCreateCharacterisationTests(RosterTestCase):
         self.assertEqual(
             logs[:2],
             [
-                ("personnel", "new_henchmen_group", {"name": "Unknown", "type": "Zealots"}, None),
+                ("personnel", "new_henchmen_group", {"name": "Zealots", "type": "Zealots"}, None),
                 ("personnel", batch, {"name": "Zealots", "count": 3}, None),
             ],
         )
@@ -334,7 +366,7 @@ class HenchmenCreateCharacterisationTests(RosterTestCase):
 
     def test_invalid_member_entries_are_rejected_before_anything_is_written(self):
         # BUG-90: these used to reach the database and return 500 after the group row was created.
-        # An omitted name is still fine (stored as "", shown as "Unnamed Henchman").
+        # A member's omitted name is still fine (stored as "", shown as "Unnamed Henchman").
         for entry in ({"name": None}, {"name": "x" * 121}):
             with self.subTest(entry=entry):
                 payload = create_payload(HENCHMEN, henchmen=[entry])

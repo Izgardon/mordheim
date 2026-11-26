@@ -10,10 +10,11 @@ import { getErrorMessage } from "@/lib/get-error-message";
 
 import { isWarbandQuery, useWarbandCacheUpdate } from "../../api/warband-cache";
 import { useWarbandHireTemplate } from "../../api/warband-template-queries";
-import { typedFields } from "../../hooks/units/useRecruit";
+import { typedType } from "../../hooks/units/useRecruit";
 import { unitApi } from "../../units/unit-api";
 import { isCreatureGroup } from "../../utils/companions";
 import HireTally from "../recruit/HireTally";
+import { useRecruitName } from "../recruit/RecruitNameField";
 import { overCount, overGroup } from "../recruit/hire-draft";
 import { newUnitId, useOpenInEdit } from "../roster/useRosterCards";
 import CampNewGroup from "./CampNewGroup";
@@ -42,7 +43,7 @@ export default function VeteransDialog({
   const openInEdit = useOpenInEdit();
   const groups = camp.groups.filter((group) => !isCreatureGroup(group));
   const [into, setInto] = useState<string>(NEW);
-  const [name, setName] = useState("");
+  const name = useRecruitName();
   const [type, setType] = useState("");
   const [xpEach, setXpEach] = useState(0);
   const [recruits, setRecruits] = useState<string[]>(["", ""]);
@@ -69,6 +70,7 @@ export default function VeteransDialog({
     : [];
 
   const recruit = async () => {
+    if (!group && !name.ready()) return;
     setSaving(true);
     const names = recruits.map((_, index) => label(index));
     const gc = Number(price) || 0;
@@ -91,11 +93,8 @@ export default function VeteransDialog({
               {
                 // from the template, the server fills his type, race, profile and rules
                 ...(fighter
-                  ? {
-                      ...typedFields({ name: name.trim() || fighter.plural }),
-                      fighter_key: fighter.key,
-                    }
-                  : { ...typedFields({ name, unit_type: type }), race: null }),
+                  ? { name: name.name.trim(), fighter_key: fighter.key }
+                  : { name: name.name.trim(), ...typedType(type), race: null }),
                 price: gc,
                 xp: xpEach,
                 henchmen: names.map((recruitName) => ({ name: recruitName })),
@@ -104,9 +103,7 @@ export default function VeteransDialog({
           });
       updateCache(camp.warbandId, { henchmenGroups: result.units, summary: result.summary });
       void queryClient.invalidateQueries({ predicate: isWarbandQuery(camp.warbandId, "template") });
-      const groupName = group
-        ? group.name || group.unit_type || "Henchmen"
-        : name.trim() || fighter?.plural || type.trim() || "Henchmen";
+      const groupName = group ? group.name || group.unit_type || "Henchmen" : name.name.trim();
       await camp.save({
         ...camp.draft,
         camp: {
@@ -182,7 +179,6 @@ export default function VeteransDialog({
             setCost(null);
           }}
           name={name}
-          onName={setName}
           type={type}
           onType={setType}
         />

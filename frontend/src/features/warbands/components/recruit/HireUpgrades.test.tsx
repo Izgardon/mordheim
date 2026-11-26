@@ -104,10 +104,11 @@ describe("Upgrades in the hire dialog", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Gold 200 → 100 gc")).toBeInTheDocument();
 
+    await user.type(screen.getByLabelText("Name"), "Kurt");
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/9/heroes/batch/")).toEqual({
-        create: [{ fighter_key: "chieftain", price: 50 }],
+        create: [{ fighter_key: "chieftain", name: "Kurt", price: 50 }],
         upgrades: [
           { create_index: 0, upgrade_id: 1, price: 50 },
           { create_index: 0, upgrade_id: 3, price: 0 },

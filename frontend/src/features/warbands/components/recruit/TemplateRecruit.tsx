@@ -1,7 +1,6 @@
 import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
 
 import type {
@@ -12,6 +11,7 @@ import type {
 import HireKit from "./HireKit";
 import HireTally from "./HireTally";
 import HireUpgrades from "./HireUpgrades";
+import RecruitNameField, { useRecruitName } from "./RecruitNameField";
 import {
   fighterLines,
   kitPurchases,
@@ -66,7 +66,7 @@ export default function TemplateRecruit({
 }) {
   const group = fighter.kind === "henchman";
   const lines = fighterLines(fighter, lists);
-  const [name, setName] = useState("");
+  const name = useRecruitName();
   const [models, setModels] = useState(String(fighter.group_min || 1));
   const ids = useId();
   const [cost, setCost] = useState(String(fighter.cost));
@@ -98,9 +98,10 @@ export default function TemplateRecruit({
       className="flex flex-col gap-3"
       onSubmit={(event) => {
         event.preventDefault();
+        if (!name.ready()) return;
         onRecruit({
           fighter,
-          name,
+          name: name.name,
           models: count,
           cost,
           purchases: kitPurchases(picks, prices, lines),
@@ -109,16 +110,7 @@ export default function TemplateRecruit({
       }}
     >
       <div className="grid grid-cols-[1fr_auto] gap-2">
-        <label htmlFor={`${ids}-name`} className={LABEL}>
-          Name
-          <Input
-            id={`${ids}-name`}
-            inputSize="sm"
-            autoFocus
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
-        </label>
+        <RecruitNameField field={name} className={LABEL} inputSize="sm" autoFocus />
         {group ? (
           <label htmlFor={`${ids}-models`} className={LABEL}>
             Models

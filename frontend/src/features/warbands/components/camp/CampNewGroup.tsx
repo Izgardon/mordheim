@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import type { TemplateFighter, TemplateList } from "../../types/hire-template-types";
 import HireKit from "../recruit/HireKit";
 import RecruitAsPicker, { BY_HAND } from "../recruit/RecruitAsPicker";
+import RecruitNameField, { type RecruitName } from "../recruit/RecruitNameField";
 import { fighterLines, listNames } from "../recruit/hire-draft";
 
 const fieldLabel = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
@@ -19,7 +20,6 @@ export default function CampNewGroup({
   as,
   onAs,
   name,
-  onName,
   type,
   onType,
 }: {
@@ -29,8 +29,8 @@ export default function CampNewGroup({
   /** The picked fighter's key, BY_HAND, or "" before a pick. */
   as: string;
   onAs: (key: string) => void;
-  name: string;
-  onName: (name: string) => void;
+  /** The group's name, which it must have. */
+  name: RecruitName;
   type: string;
   onType: (type: string) => void;
 }) {
@@ -43,10 +43,7 @@ export default function CampNewGroup({
       ) : null}
       {fighter || byHand ? (
         <div className="grid grid-cols-2 gap-2.5">
-          <label className={fieldLabel}>
-            Group name
-            <Input value={name} onChange={(e) => onName(e.target.value)} />
-          </label>
+          <RecruitNameField field={name} label="Group name" className={fieldLabel} />
           {fighter ? null : (
             <label className={fieldLabel}>
               Type

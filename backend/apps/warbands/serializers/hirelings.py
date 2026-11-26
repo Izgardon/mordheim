@@ -9,6 +9,7 @@ from rest_framework import serializers
 
 from apps.hirelings.fees import FeeField
 from apps.warbands.models import Hireling
+from apps.warbands.units.create_serializer import UnitCreateSerializer
 from apps.warbands.units.kinds import HIRELING
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
@@ -170,7 +171,7 @@ class HirelingDetailSerializer(BloodPactMixin, UnitDetailSerializer):
         )
 
 
-class HirelingCreateSerializer(UnitWriteSerializer):
+class HirelingCreateSerializer(UnitCreateSerializer):
     kind = HIRELING
     hire_fee = FeeField(required=False)
     upkeep_fee = FeeField(required=False)

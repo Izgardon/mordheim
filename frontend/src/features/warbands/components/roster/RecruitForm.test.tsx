@@ -227,6 +227,7 @@ describe("Recruiting from the warband's template", () => {
 
     const tally = screen.getByRole("list", { name: "Tally" });
     expect(within(tally).getByLabelText("Price for Gromril Sword")).toHaveValue(30);
+    await user.type(screen.getByLabelText("Name"), "Ulrich");
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/9/heroes/batch/")).toMatchObject({
@@ -251,13 +252,30 @@ describe("Recruiting from the warband's template", () => {
     await user.click(await screen.findByRole("radio", { name: /Champion/ }));
     expect(screen.getByText("Their lists · Mercenary list")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Sword 10 gc" })).toBeNull();
+    await user.type(screen.getByLabelText("Name"), "Ulrich");
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/9/heroes/batch/")).toEqual({
-        // never `name: null`, which the server refuses: unnamed, his card reads his type
-        create: [{ fighter_key: "champions", price: 35 }],
+        create: [{ fighter_key: "champions", name: "Ulrich", price: 35 }],
       })
     );
+  });
+
+  // William, 26 Nov 2026: "Block it, needs a name"
+  it("won't recruit a fighter from the template without a name", async () => {
+    fakeApi.on("GET /warbands/9/template/", answer(false));
+    const onCreated = renderForm();
+    const user = setupUser();
+    await user.click(await screen.findByRole("radio", { name: /Champion/ }));
+    await user.click(screen.getByRole("button", { name: "Recruit" }));
+
+    expect(screen.getByText("Name is needed.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Name")).toHaveFocus();
+    expect(fakeApi.countOf("POST /warbands/9/heroes/batch/")).toBe(0);
+    await user.type(screen.getByLabelText("Name"), "Ulrich");
+    expect(screen.queryByText("Name is needed.")).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Recruit" }));
+    await waitFor(() => expect(onCreated).toHaveBeenCalledWith("hero-6"));
   });
 
   it("gives one of each item his lists mark 1st free, and charges for none", async () => {
@@ -433,25 +451,46 @@ describe("The hand-typed recruit's creature search", () => {
     await user.click(screen.getByRole("option", { name: /Warhound/ }));
 
     expect(screen.getByText(/Bought in the store, Warhound comes with its profile/)).toBeTruthy();
+    await user.type(screen.getByLabelText("Name"), "The Pack");
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/")).toMatchObject({
-        create: [{ unit_type: "Warhound", henchmen: [{ name: "Warhound 1" }] }],
+        create: [{ name: "The Pack", unit_type: "Warhound", henchmen: [{ name: "Warhound 1" }] }],
       })
     );
   });
 
-  // William, 26 Nov 2026: "Couldn't recruit. Create.0.name: This field may not be null."
-  it("sends no name or type for a recruit left without them, never null", async () => {
+  // William, 26 Nov 2026: "Block it, needs a name"
+  it("won't recruit without a name, and sends no type left out, never null", async () => {
+    const user = setupUser();
+    const onCreated = renderByHand();
+
+    await user.click(await screen.findByRole("button", { name: "Recruit" }));
+    expect(screen.getByText("Name is needed.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Name")).toHaveFocus();
+    expect(fakeApi.countOf("POST /warbands/9/henchmen-groups/batch/")).toBe(0);
+
+    await user.type(screen.getByLabelText("Name"), "  Bravos ");
+    expect(screen.queryByText("Name is needed.")).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Recruit" }));
+    await waitFor(() =>
+      expect(fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/")).toEqual({
+        create: [
+          { name: "Bravos", race: null, price: 0, xp: 0, henchmen: [{ name: "Henchman 1" }] },
+        ],
+      })
+    );
+    expect(onCreated).toHaveBeenCalledWith("henchmen_group-3");
+  });
+
+  it("refuses a name of spaces alone", async () => {
     const user = setupUser();
     renderByHand();
 
-    await user.click(await screen.findByRole("button", { name: "Recruit" }));
-    await waitFor(() =>
-      expect(fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/")).toEqual({
-        create: [{ race: null, price: 0, xp: 0, henchmen: [{ name: "Henchman 1" }] }],
-      })
-    );
+    await user.type(await screen.findByLabelText("Name"), "   ");
+    await user.click(screen.getByRole("button", { name: "Recruit" }));
+    expect(screen.getByText("Name is needed.")).toBeInTheDocument();
+    expect(fakeApi.countOf("POST /warbands/9/henchmen-groups/batch/")).toBe(0);
   });
 
   it("offers creatures only, and takes a type of its own as typed", async () => {
@@ -463,6 +502,7 @@ describe("The hand-typed recruit's creature search", () => {
     await user.click(screen.getByRole("option", { name: /Use “War” as the type/ }));
 
     expect(screen.queryByText(/Bought in the store/)).toBeNull();
+    await user.type(screen.getByLabelText("Name"), "Wolves");
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/")).toMatchObject({

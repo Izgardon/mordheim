@@ -3,6 +3,7 @@
 from rest_framework import serializers
 
 from apps.warbands.models import Hero
+from apps.warbands.units.create_serializer import UnitCreateSerializer
 from apps.warbands.units.kinds import HERO
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
@@ -112,7 +113,7 @@ class HeroDetailSerializer(UnitDetailSerializer):
         )
 
 
-class HeroCreateSerializer(UnitWriteSerializer):
+class HeroCreateSerializer(UnitCreateSerializer):
     kind = HERO
 
     class Meta:

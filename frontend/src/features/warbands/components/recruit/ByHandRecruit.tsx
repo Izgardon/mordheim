@@ -1,7 +1,6 @@
 import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
 import { SearchSelect, type SearchOption } from "@/components/ui/search-select";
 import { beastOption } from "@/features/catalogue/search-options";
@@ -14,6 +13,7 @@ import {
   type RecruitDraft,
   type RecruitKind,
 } from "../../hooks/units/useRecruit";
+import RecruitNameField, { useRecruitName } from "./RecruitNameField";
 
 const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 // the race's label line too (RaceField), so the fields line up
@@ -50,23 +50,12 @@ export default function ByHandRecruit({
   const [beastId, setBeastId] = useState<number | null>(null);
   const ids = useId();
   const { recruit, saving } = useRecruit(kind, warbandId, existingIds);
+  const name = useRecruitName();
   const set = (change: Partial<RecruitDraft>) => setDraft((current) => ({ ...current, ...change }));
   const creatures = useCatalogue("bestiary", campaignId).data.filter(
     (entry) => entry.kind === "creature"
   );
   const beast = creatures.find((entry) => entry.id === beastId);
-  const text = (label: string, key: "name") => (
-    <label htmlFor={`${ids}-${key}`} className={LABEL}>
-      <span className={LABEL_TEXT}>{label}</span>
-      <Input
-        id={`${ids}-${key}`}
-        inputSize="sm"
-        autoFocus={key === "name"}
-        value={draft[key]}
-        onChange={(event) => set({ [key]: event.target.value })}
-      />
-    </label>
-  );
   const typeField = (
     <div className={LABEL}>
       <span className={LABEL_TEXT}>Type</span>
@@ -125,11 +114,20 @@ export default function ByHandRecruit({
       className="flex flex-col gap-3"
       onSubmit={(event) => {
         event.preventDefault();
-        void recruit(draft).then((key) => (key ? onCreated(key) : undefined));
+        if (!name.ready()) return;
+        void recruit({ ...draft, name: name.name }).then((key) =>
+          key ? onCreated(key) : undefined
+        );
       }}
     >
       <div className="grid grid-cols-2 gap-2 min-[720px]:grid-cols-[1fr_1fr_1.3fr_0.6fr_0.6fr]">
-        {text("Name", "name")}
+        <RecruitNameField
+          field={name}
+          className={LABEL}
+          labelClassName={LABEL_TEXT}
+          inputSize="sm"
+          autoFocus
+        />
         {typeField}
         <RaceField
           campaignId={campaignId}
