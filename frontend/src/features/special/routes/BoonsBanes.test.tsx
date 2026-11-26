@@ -13,6 +13,7 @@ import { cleanupApps, renderApp } from "@/test/app-routes";
 import { CAMPAIGN_ID, campaignSummary } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
+import { pickOption } from "@/test/select";
 import { setupUser } from "@/test/user-event";
 
 // The campaign's routes load on demand; importing them first lets each lazy() resolve at once.
@@ -152,17 +153,21 @@ describe("The Specials page", () => {
     expect(names()).toEqual(["FearPsychology"]);
     await user.clear(search);
 
-    const categories = screen.getByRole("group", { name: "Category" });
-    expect(within(categories).getByRole("button", { name: /Mutation/ })).toHaveTextContent(
-      "Mutation1"
-    );
+    // William, 26 Nov 2026: the category a dropdown, the sort's button ending its line
+    const categories = screen.getByRole("combobox", { name: "Category" });
+    expect(categories).toHaveTextContent("All categories");
+    expect(screen.getByRole("button", { name: "Sorted by Name" })).toBeInTheDocument();
+    await user.click(categories);
+    expect(screen.getByRole("option", { name: /Mutation/ })).toHaveTextContent("Mutation1");
     // William, 22 Nov 2026: "rename the body type to Physical everywhere for boons and banes"
-    expect(within(categories).getByRole("button", { name: /Physical/ })).toBeInTheDocument();
-    expect(within(categories).queryByRole("button", { name: /Body/ })).toBeNull();
-    await user.click(within(categories).getByRole("button", { name: /Injury/ }));
+    expect(screen.getByRole("option", { name: /Physical/ })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: /Body/ })).toBeNull();
+    await user.keyboard("{Escape}");
+    await pickOption(user, categories, /Injury/);
     expect(names()).toEqual(["Old Battle WoundInjury"]);
+    expect(categories).toHaveTextContent("Injury");
     // one setting in play: no Setting filter
-    expect(screen.queryByRole("group", { name: "Setting" })).toBeNull();
+    expect(screen.queryByRole("combobox", { name: "Setting" })).toBeNull();
   });
 
   it("filters by setting once the rows hold two, Mordheim's grades as one", async () => {
@@ -195,8 +200,7 @@ describe("The Specials page", () => {
     await user.click(await row("Beak"));
     expect(fact("Setting")).toBe("SettingMutiny in Marienburg");
     await user.click(await row("Beak")); // an open row stays whatever the filters
-    const settings = await screen.findByRole("group", { name: "Setting" });
-    await user.click(within(settings).getByRole("button", { name: "Mordheim" }));
+    await pickOption(user, await screen.findByRole("combobox", { name: "Setting" }), "Mordheim");
     expect(names()).toEqual(["Old Battle WoundInjury", "Spiked TailMutation"]);
   });
 

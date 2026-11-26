@@ -2,29 +2,38 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ArrowDownUp, Check } from "lucide-react";
 
 import { IconButton } from "@/components/ui/icon-button";
+import { cn } from "@/lib/utils";
 
 const ITEM =
   "flex min-h-10 cursor-pointer items-center gap-2 px-3 text-sm text-ink outline-none data-[highlighted]:bg-raised data-[highlighted]:text-head";
 
+export type SortOption<T extends string> = { id: T; label: string };
+
 /**
- * A phone's sort: an arrows button that opens the orders to pick from, the current one ticked, so it
+ * A list's sort: an arrows button that opens the orders to pick from, the current one ticked, so it
  * never reads as one more filter (William, 24 Nov 2026: "Can the sort here be more obviously a
- * sort as it seems like a filter"). The web sorts from its column headings.
+ * sort as it seems like a filter"). It ends the filter line, a page's column headings sorting too.
  */
 export default function SortMenu<T extends string>({
   options,
   value,
   onChange,
+  className,
 }: {
-  options: ReadonlyArray<{ id: T; label: string }>;
+  options: ReadonlyArray<SortOption<T>>;
   value: T;
   onChange: (value: T) => void;
+  /** The button's size, where the line it ends wants another. */
+  className?: string;
 }) {
   const current = options.find((option) => option.id === value)?.label ?? "";
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <IconButton aria-label={`Sort by ${current}`} className="h-[34px] w-10 border-strong">
+        <IconButton
+          aria-label={`Sorted by ${current}`}
+          className={cn("h-[34px] w-10 border-strong", className)}
+        >
           <ArrowDownUp aria-hidden="true" />
         </IconButton>
       </DropdownMenu.Trigger>

@@ -9,7 +9,8 @@ import { ALL_SETTINGS, inPlayOnly } from "@/features/reference/in-play";
 import { useOwnWords } from "@/features/reference/own-words";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
-import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import { FilterLine, FilterSelect } from "@/features/reference/FilterLine";
+import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import { ReferenceList, ReferenceRow } from "@/features/reference/ReferenceList";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useCatalogue } from "@/lib/catalogue-queries";
@@ -20,6 +21,7 @@ import SkillFormDialog from "../components/SkillFormDialog";
 import SkillGroupFormDialog from "../components/SkillGroupFormDialog";
 import SkillsAddNew from "../components/SkillsAddNew";
 import {
+  GROUP_ORDER,
   NO_GROUP_KEY,
   openRowOf,
   skillGroupRows,
@@ -137,15 +139,17 @@ export default function Skills() {
               isMobile={isMobile}
             />
           </FilterRow>
-          {settingOptions.length > 2 ? (
-            <ReferenceChips
-              label="Setting"
-              options={settingOptions}
-              value={setting}
-              onChange={(next) => params.set({ setting: next === ALL_SETTINGS ? null : next })}
-              isMobile={isMobile}
-            />
-          ) : null}
+          <FilterLine isMobile={isMobile} sort={GROUP_ORDER}>
+            {settingOptions.length > 2 ? (
+              <FilterSelect
+                label="Setting"
+                options={settingOptions}
+                value={setting}
+                onChange={(next) => params.set({ setting: next === ALL_SETTINGS ? null : next })}
+                isMobile={isMobile}
+              />
+            ) : null}
+          </FilterLine>
         </>
       }
       summary={

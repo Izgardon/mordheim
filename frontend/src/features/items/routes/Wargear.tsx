@@ -6,13 +6,9 @@ import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { campaignCapabilities, canEditEntry } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { ALL_SETTINGS } from "@/features/reference/in-play";
+import { BY_NAME_ONLY, FilterLine, FilterSelect } from "@/features/reference/FilterLine";
 import ReferencePage from "@/features/reference/ReferencePage";
-import {
-  BuyableToggle,
-  FilterRow,
-  ReferenceChips,
-  ReferenceSearch,
-} from "@/features/reference/ReferenceFilters";
+import { BuyableToggle, FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import { ReferenceList, ShowMore, useShownRows } from "@/features/reference/ReferenceList";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
@@ -116,20 +112,23 @@ export default function Wargear() {
               />
             ) : null}
           </FilterRow>
-          <ReferenceChips
-            label="Type"
-            options={counts}
-            value={category}
-            onChange={setCategory}
-            isMobile={isMobile}
-          />
-          <ReferenceChips
-            label="Setting"
-            options={settingOptions}
-            value={setting}
-            onChange={setSetting}
-            isMobile={isMobile}
-          />
+          <FilterLine isMobile={isMobile} sort={BY_NAME_ONLY}>
+            <FilterSelect
+              label="Type"
+              allLabel="All types"
+              options={counts}
+              value={category}
+              onChange={setCategory}
+              isMobile={isMobile}
+            />
+            <FilterSelect
+              label="Setting"
+              options={settingOptions}
+              value={setting}
+              onChange={setSetting}
+              isMobile={isMobile}
+            />
+          </FilterLine>
         </>
       }
       summary={isMobile ? undefined : summary}

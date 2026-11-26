@@ -132,7 +132,9 @@ describe("my workshop's catalogue", () => {
 
     await user.click(await row("Night Eyes"));
     expect(await screen.findByRole("definition")).toHaveTextContent("Your workshop");
-    expect(screen.getByRole("button", { name: "Your workshop" })).toBeInTheDocument();
+    await user.click(screen.getByRole("combobox", { name: "Setting" }));
+    expect(await screen.findByRole("option", { name: "Your workshop" })).toBeInTheDocument();
+    await user.keyboard("{Escape}");
     expect(screen.queryByText("This campaign")).toBeNull();
     cleanupApps();
 

@@ -12,6 +12,7 @@ import { cleanupApps, renderApp } from "@/test/app-routes";
 import { CAMPAIGN_ID, campaignSummary } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
+import { pickOption } from "@/test/select";
 import { setupUser } from "@/test/user-event";
 
 import type { WarbandTemplate } from "../types/template-types";
@@ -277,11 +278,18 @@ describe("The Warbands page", () => {
     expect(rowNames()).toEqual(["Reiklanders", "Middenheimers", "Lizardmen"]);
     await user.click(screen.getByRole("button", { name: "Sort by Warband" }));
 
-    const settings = screen.getByRole("group", { name: "Setting" });
-    await user.click(within(settings).getByRole("button", { name: "Lustria" }));
+    // the sort's button beside the setting's dropdown sorts the same way
+    await user.click(screen.getByRole("button", { name: "Sorted by Name" }));
+    await user.click(await screen.findByRole("menuitemradio", { name: "Setting" }));
+    expect(rowNames()).toEqual(["Middenheimers", "Reiklanders", "Lizardmen"]);
+    expect(param(app, "sort")).toBe("setting");
+    await user.click(screen.getByRole("button", { name: "Sort by Warband" }));
+
+    const settings = screen.getByRole("combobox", { name: "Setting" });
+    await pickOption(user, settings, "Lustria");
     expect(rowNames()).toEqual(["Lizardmen"]);
     expect(screen.getByText("1 warband type")).toBeInTheDocument();
-    await user.click(within(settings).getByRole("button", { name: "Mordheim" }));
+    await pickOption(user, settings, "Mordheim");
     expect(rowNames()).toEqual(["Middenheimers", "Reiklanders"]);
   });
 

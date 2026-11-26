@@ -16,7 +16,7 @@ describe("SortMenu", () => {
     const onChange = vi.fn();
     render(<SortMenu options={OPTIONS} value="setting" onChange={onChange} />);
 
-    await userEvent.click(screen.getByRole("button", { name: "Sort by Setting" }));
+    await userEvent.click(screen.getByRole("button", { name: "Sorted by Setting" }));
 
     const orders = await screen.findAllByRole("menuitemradio");
     expect(orders.map((order) => order.textContent)).toEqual(["Name", "Setting", "Grade"]);

@@ -7,8 +7,8 @@ import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
 import { ALL_SETTINGS } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
-import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
-import SortMenu from "@/features/reference/SortMenu";
+import { FilterLine, FilterSelect } from "@/features/reference/FilterLine";
+import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import { ReferenceList, ReferenceRow, type ColumnSort } from "@/features/reference/ReferenceList";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useWarbandTypes } from "@/features/warbands/api/warband-types-queries";
@@ -86,14 +86,6 @@ export default function WarbandTemplates() {
   const settingOptions = warbandSettingOptions(rows, settings);
   const shown = shownWarbandRows(rows, { query: params.query, setting, sort, settings });
   const sortBy = (key: WarbandSortKey) => params.set({ sort: sortParam(nextSort(sort, key)) });
-  // a phone's sort, at the end of the settings row; the web sorts from the column headings
-  const sortMenu = isMobile ? (
-    <SortMenu
-      options={SORT_OPTIONS}
-      value={sort.key}
-      onChange={(key) => params.set({ sort: sortParam({ key, descending: false }) })}
-    />
-  ) : null;
   const sorting = (key: WarbandSortKey): ColumnSort => ({
     direction: sort.key === key ? (sort.descending ? "desc" : "asc") : null,
     onSort: () => sortBy(key),
@@ -131,18 +123,24 @@ export default function WarbandTemplates() {
               isMobile={isMobile}
             />
           </FilterRow>
-          {settingOptions.length > 2 ? (
-            <ReferenceChips
-              label="Setting"
-              options={settingOptions}
-              value={setting}
-              onChange={(next) => params.set({ setting: next === ALL_SETTINGS ? null : next })}
-              isMobile={isMobile}
-              end={sortMenu}
-            />
-          ) : isMobile ? (
-            <div className="flex justify-end">{sortMenu}</div>
-          ) : null}
+          <FilterLine
+            isMobile={isMobile}
+            sort={{
+              options: SORT_OPTIONS,
+              value: sort.key,
+              onChange: (key) => params.set({ sort: sortParam({ key, descending: false }) }),
+            }}
+          >
+            {settingOptions.length > 2 ? (
+              <FilterSelect
+                label="Setting"
+                options={settingOptions}
+                value={setting}
+                onChange={(next) => params.set({ setting: next === ALL_SETTINGS ? null : next })}
+                isMobile={isMobile}
+              />
+            ) : null}
+          </FilterLine>
         </>
       }
       summary={isMobile ? undefined : counted(shown.length)}

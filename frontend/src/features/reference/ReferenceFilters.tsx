@@ -135,34 +135,9 @@ type ReferenceChipsProps<T extends string> = {
   end?: ReactNode;
 };
 
-/** More than this many choices read better as a picker than as rows of chips (35 spell lores). */
-const MAX_CHIPS = 9;
-
-/**
- * One-of-many chips (a type, a lore, a section), each with its count when given; a long list of
- * choices becomes a captioned picker instead.
- */
+/** One-of-many chips (a section, a kind), each with its count when given. */
 export function ReferenceChips<T extends string>(props: ReferenceChipsProps<T>) {
   const { isMobile } = props;
-  if (props.options.length > MAX_CHIPS) {
-    return (
-      <FilterField label={props.label} isMobile={isMobile} className="self-start">
-        <select
-          aria-label={props.label}
-          value={props.value}
-          onChange={(event) => props.onChange(event.target.value as T)}
-          className="min-h-11 min-w-[240px] border border-strong bg-rail px-2.5 text-sm text-ink"
-        >
-          {props.options.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label}
-              {option.count !== undefined ? ` (${option.count})` : ""}
-            </option>
-          ))}
-        </select>
-      </FilterField>
-    );
-  }
   const pinned = isMobile && props.end;
   const chips = (
     <div

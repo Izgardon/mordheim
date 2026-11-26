@@ -28,6 +28,13 @@ type SkillGroupFilters = {
   openId: string | null;
 };
 
+/** The rows' one order, the server's (`skillGroupRows`), as the sort button shows it. */
+export const GROUP_ORDER = {
+  options: [{ id: "book", label: "Core groups, then name" }],
+  value: "book",
+  onChange: () => {},
+};
+
 const byName = (a: Skill, b: Skill) => a.name.localeCompare(b.name);
 
 /**

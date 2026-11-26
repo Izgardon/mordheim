@@ -7,7 +7,8 @@ import { canEditEntry, useCampaignCapabilities } from "@/features/campaigns/capa
 import { ALL_SETTINGS, entrySettingName } from "@/features/reference/in-play";
 import { FactLine, ReferenceDetail } from "@/features/reference/ReferenceDetail";
 import { useOwnWords } from "@/features/reference/own-words";
-import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import { BY_NAME_ONLY, FilterLine, FilterSelect } from "@/features/reference/FilterLine";
+import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import {
   ReferenceList,
   ReferenceRow,
@@ -93,22 +94,25 @@ export default function BoonsBanes() {
               isMobile={isMobile}
             />
           </FilterRow>
-          <ReferenceChips
-            label="Category"
-            options={counts}
-            value={category}
-            onChange={(next) => params.set({ category: next === "all" ? null : next })}
-            isMobile={isMobile}
-          />
-          {settingOptions.length > 2 ? (
-            <ReferenceChips
-              label="Setting"
-              options={settingOptions}
-              value={setting}
-              onChange={(next) => params.set({ setting: next === ALL_SETTINGS ? null : next })}
+          <FilterLine isMobile={isMobile} sort={BY_NAME_ONLY}>
+            <FilterSelect
+              label="Category"
+              allLabel="All categories"
+              options={counts}
+              value={category}
+              onChange={(next) => params.set({ category: next === "all" ? null : next })}
               isMobile={isMobile}
             />
-          ) : null}
+            {settingOptions.length > 2 ? (
+              <FilterSelect
+                label="Setting"
+                options={settingOptions}
+                value={setting}
+                onChange={(next) => params.set({ setting: next === ALL_SETTINGS ? null : next })}
+                isMobile={isMobile}
+              />
+            ) : null}
+          </FilterLine>
         </>
       }
       summary={
