@@ -7,7 +7,7 @@ import MakeHenchmenSheet from "../roster/MakeHenchmenSheet";
 import type { RosterUnit } from "../roster/unit-view";
 import type { WarbandItemSummary } from "../../types/warband-types";
 
-/** A creature in the stash: Make henchmen of its copies (the stash's newest first). */
+/** A creature in the stash: Recruit its copies as henchmen (the stash's newest first). */
 export default function StashMakeHenchmen({
   warbandId,
   row,
@@ -26,7 +26,7 @@ export default function StashMakeHenchmen({
   return (
     <div className="flex flex-wrap items-center gap-1.5">
       <Button size="sm" className="h-8 px-2.5" onClick={() => setMaking(true)}>
-        Make henchmen
+        Recruit
       </Button>
       {making ? (
         <MakeHenchmenSheet

@@ -17,7 +17,7 @@ type ItemInfoProps = {
   /** The price row whose cost and rarity it shows (the one the warband sees). */
   availability: ItemAvailability | null;
   onClose: () => void;
-  /** What the warband can do with the copy it holds, above the details (Make henchmen). */
+  /** What the warband can do with the copy it holds, above the details (Recruit). */
   actions?: ReactNode;
 };
 

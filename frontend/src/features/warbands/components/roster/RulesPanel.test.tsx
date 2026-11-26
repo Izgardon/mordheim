@@ -56,7 +56,7 @@ describe("An opened box's panel", () => {
 
 describe("An opened item's actions", () => {
   // William, 25 Nov 2026: one row above the rules, the item's own action first
-  it("put a creature's Make henchmen first, before Move to, Stash, Sell and Buy again", () => {
+  it("put a creature's Recruit first, before Move to, Stash, Sell and Buy again", () => {
     render(
       <RulesPanel
         detail={{
@@ -79,7 +79,7 @@ describe("An opened item's actions", () => {
     );
 
     const row = screen.getByTestId("item-actions");
-    expect(row.firstElementChild).toHaveTextContent("Make henchmen");
+    expect(row.firstElementChild).toHaveTextContent("Recruit");
     expect(row.querySelectorAll("button")).toHaveLength(5);
     const text = screen.getByText("A hound of war.");
     expect(row.compareDocumentPosition(text) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

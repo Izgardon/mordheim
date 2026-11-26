@@ -40,7 +40,7 @@ export const sameBeastGroups = (units: RosterUnit[], beastId: number | null) =>
 
 const NEW = "new";
 
-/** Make henchmen (the bestiary rewrite): how many copies, and a new group or one of the same beast. */
+/** Recruit (the bestiary rewrite): how many copies, and a new group or one of the same beast. */
 export default function MakeHenchmenSheet(props: MakeHenchmenSheetProps) {
   const { copies } = props;
   const groups = sameBeastGroups(props.units, copies.beastId);
@@ -69,7 +69,7 @@ export default function MakeHenchmenSheet(props: MakeHenchmenSheetProps) {
       open={props.open}
       onOpenChange={props.onOpenChange}
       kicker={copies.itemName}
-      title="Make henchmen"
+      title="Recruit"
       footer={
         <div className="grid grid-cols-[1fr_2fr] gap-2">
           <Button
@@ -81,8 +81,8 @@ export default function MakeHenchmenSheet(props: MakeHenchmenSheetProps) {
           </Button>
           <Button className="min-h-12 text-[15px]" disabled={recruit.isPending} onClick={submit}>
             {recruit.isPending
-              ? "Making…"
-              : `Make ${quantity} ${quantity === 1 ? "henchman" : "henchmen"}`}
+              ? "Recruiting…"
+              : `Recruit ${quantity} ${quantity === 1 ? "henchman" : "henchmen"}`}
           </Button>
         </div>
       }
@@ -119,7 +119,7 @@ export default function MakeHenchmenSheet(props: MakeHenchmenSheetProps) {
       </div>
       {recruit.error ? (
         <p role="alert" className="m-0 text-sm text-danger">
-          {getErrorMessage(recruit.error, "Couldn't make the henchmen.")}
+          {getErrorMessage(recruit.error, "Couldn't recruit the henchmen.")}
         </p>
       ) : null}
     </ModalSheet>

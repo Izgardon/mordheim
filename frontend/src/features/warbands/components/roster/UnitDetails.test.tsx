@@ -638,7 +638,7 @@ describe("An open card's beasts and panels", () => {
     expect(onRide).toHaveBeenCalledWith(31, true);
   });
 
-  it("make henchmen of a creature's copies, joining a group of the same beast", async () => {
+  it("recruit henchmen from a creature's copies, joining a group of the same beast", async () => {
     fakeApi.on("POST /warbands/9/beasts/recruit/", {
       group: dogs.unit,
       source: hero.unit,
@@ -650,11 +650,11 @@ describe("An open card's beasts and panels", () => {
     const user = setupUser();
     renderDetails();
     await user.click(screen.getAllByRole("button", { name: /^Wardog/ })[0]);
-    await user.click(screen.getByRole("button", { name: "Make henchmen" }));
+    await user.click(screen.getByRole("button", { name: "Recruit" }));
 
-    const sheet = await screen.findByRole("dialog", { name: "Make henchmen" });
+    const sheet = await screen.findByRole("dialog", { name: "Recruit" });
     await user.click(within(sheet).getByRole("button", { name: "Hounds ×1" }));
-    await user.click(within(sheet).getByRole("button", { name: "Make 2 henchmen" }));
+    await user.click(within(sheet).getByRole("button", { name: "Recruit 2 henchmen" }));
 
     expect(fakeApi.bodyOf("POST /warbands/9/beasts/recruit/")).toEqual({
       source: { type: "hero", id: 5, item_id: 202 },

@@ -8,7 +8,7 @@ import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { placeOf, unitSections } from "./unit-sections";
 import type { RosterUnit } from "./unit-view";
 
-/** An opened item's actions: its own first (Ride for a mount, Make henchmen for a creature), then the rest. */
+/** An opened item's actions: its own first (Ride for a mount, Recruit for a creature), then the rest. */
 export type ItemActions = {
   targets: RosterUnit[];
   onMove: (to: ItemPlace) => void;
@@ -53,7 +53,7 @@ export default function ItemActionRow({
       ) : null}
       {actions.onMakeHenchmen ? (
         <Button size="sm" className={SMALL} onClick={actions.onMakeHenchmen}>
-          Make henchmen
+          Recruit
         </Button>
       ) : null}
       <SectionedSelect

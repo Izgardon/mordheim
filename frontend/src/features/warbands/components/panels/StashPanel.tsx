@@ -160,7 +160,7 @@ export function StashList({
 
 /**
  * The details of the item a panel's row shows, at the foot of the panel; null for none. A creature
- * in the stash offers Make henchmen above them.
+ * in the stash offers Recruit above them.
  */
 export function ShownItemDock({
   campaignId,

@@ -27,7 +27,7 @@ export function recruitUpdate(body: RecruitBody, answer: RecruitAnswer): Warband
   return update;
 }
 
-/** Make henchmen: copies of a creature's item, from a unit or the stash, become a group's members. */
+/** Recruit: copies of a creature's item, from a unit or the stash, become a group's members. */
 export function useRecruitBeasts(warbandId: number) {
   const updateCache = useWarbandCacheUpdate();
   return useMutation({

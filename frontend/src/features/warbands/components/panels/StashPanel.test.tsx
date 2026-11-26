@@ -223,12 +223,12 @@ describe("A creature in the stash", () => {
     const user = setupUser();
 
     await user.click(screen.getByRole("button", { name: /^Wardog/ }));
-    await user.click(screen.getByRole("button", { name: "Make henchmen" }));
-    const sheet = await screen.findByRole("dialog", { name: "Make henchmen" });
+    await user.click(screen.getByRole("button", { name: "Recruit" }));
+    const sheet = await screen.findByRole("dialog", { name: "Recruit" });
     // only a group of the same beast can take them in
     expect(within(sheet).getByRole("button", { name: /^Hounds/ })).toBeInTheDocument();
     expect(within(sheet).queryByRole("button", { name: /Verminkin/ })).not.toBeInTheDocument();
-    await user.click(within(sheet).getByRole("button", { name: "Make 3 henchmen" }));
+    await user.click(within(sheet).getByRole("button", { name: "Recruit 3 henchmen" }));
 
     expect(fakeApi.bodyOf(`POST /warbands/${WARBAND}/beasts/recruit/`)).toEqual({
       source: { type: "stash", item_id: 210 },
