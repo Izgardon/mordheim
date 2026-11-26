@@ -136,11 +136,9 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
     await user.click(submitButton());
 
     // Was "Name: This field may not be blank." under the form, under a field labelled "Display
-    // name" (BUG-171)
-    expect(await screen.findByRole("alert")).toHaveTextContent(/^This field may not be blank\.$/);
-    expect(screen.getByLabelText("Display name")).toHaveAccessibleDescription(
-      "This field may not be blank."
-    );
+    // name" (BUG-171); DRF's stock words read plainly under it
+    expect(await screen.findByRole("alert")).toHaveTextContent(/^This is needed\.$/);
+    expect(screen.getByLabelText("Display name")).toHaveAccessibleDescription("This is needed.");
     expect(screen.queryByText(/Name:/)).toBeNull();
     expect(registerBody()).toMatchObject({ name: "   " });
   });

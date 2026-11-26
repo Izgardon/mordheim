@@ -1,4 +1,5 @@
 import { ApiError, SERVER_UNAVAILABLE_MESSAGE } from "./api-client";
+import { flattenFieldErrors, labelledMessages } from "./error-words";
 
 export const DEFAULT_ERROR_MESSAGE = "Something went wrong. Please try again.";
 export const SERVER_ERROR_MESSAGE = "The server ran into a problem. Please try again.";
@@ -6,11 +7,6 @@ export const SESSION_EXPIRED_MESSAGE = "Your session has expired. Please sign in
 
 /** What fetch rejects with when the request never reached the server (Chrome, Firefox, Safari). */
 const NETWORK_ERROR_PATTERN = /failed to fetch|networkerror|load failed|network request failed/i;
-
-const humanizeField = (field: string) => {
-  const words = field.replace(/_/g, " ").trim();
-  return words.charAt(0).toUpperCase() + words.slice(1);
-};
 
 const toMessages = (value: unknown): string[] => {
   if (typeof value === "string") {
@@ -22,16 +18,14 @@ const toMessages = (value: unknown): string[] => {
   return [];
 };
 
-/** "name: [msg]" maps (DRF validation errors, or the `fields` of the standard error shape). */
+/**
+ * "name: [msg]" maps (DRF validation errors, or the `fields` of the standard error shape), nested
+ * rows too, each field in words (error-words.ts): "create.0.name" not null reads "Name is needed."
+ */
 const fieldMessages = (fields: Record<string, unknown>) =>
-  Object.entries(fields).flatMap(([field, value]) => {
-    const messages = toMessages(value);
-    if (messages.length === 0) {
-      return [];
-    }
-    const isGeneral = field === "non_field_errors" || field === "detail" || field === "error";
-    return isGeneral ? messages : [`${humanizeField(field)}: ${messages.join(" ")}`];
-  });
+  Object.entries(flattenFieldErrors(fields)).map(([path, messages]) =>
+    labelledMessages(path, messages)
+  );
 
 /** The readable message in an API error body, whichever of the backend's shapes it uses. */
 function messageFromBody(data: unknown): string | null {

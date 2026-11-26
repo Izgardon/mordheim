@@ -111,9 +111,9 @@ describe("the display name (AUTH-NEW-02)", () => {
     await user.click(within(section("Display name")).getByRole("button", { name: "Save name" }));
 
     expect(await within(section("Display name")).findByRole("alert")).toHaveTextContent(
-      /^Ensure this field has no more than 40 characters\.$/
+      /^40 characters at most\.$/
     );
-    expect(field).toHaveAccessibleDescription("Ensure this field has no more than 40 characters.");
+    expect(field).toHaveAccessibleDescription("40 characters at most.");
   });
 });
 

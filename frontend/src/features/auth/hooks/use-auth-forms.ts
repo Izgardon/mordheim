@@ -44,8 +44,8 @@ const REGISTER_FIELDS = ["name", "email", "password"] as const;
 
 /**
  * Sign-up: a display name (decision 2), the email and a password. A refusal of one of them shows
- * under its field, in the server's words, so a blank name reads "This field may not be blank."
- * under "Display name" rather than "Name: ..." under the form (BUG-171).
+ * under its field, so a blank name reads "This is needed." under "Display name" rather than
+ * "Name: ..." under the form (BUG-171).
  */
 export function useRegisterForm(showError: ShowMessage) {
   const { signUp, isSubmitting } = useAuth();

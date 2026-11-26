@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 
 import { ApiError } from "./api-client";
+import { flattenFieldErrors, labelledMessages, plainFieldMessage } from "./error-words";
 import { getRefusalMessage } from "./get-error-message";
 
 /** One message per field path: "name", "property_ids", "availabilities.0.cost". */
@@ -35,31 +36,8 @@ export function nameMatchesOf(error: unknown): NameMatch[] {
 
 const GENERAL_KEYS = new Set(["detail", "code", "error", "non_field_errors", "usage", "matches"]);
 
-function flatten(value: unknown, path: string, into: Record<string, string>) {
-  if (typeof value === "string") {
-    if (value.trim() && !into[path]) into[path] = value.trim();
-    return;
-  }
-  if (Array.isArray(value)) {
-    const messages = value.filter((entry): entry is string => typeof entry === "string");
-    if (messages.length > 0) {
-      into[path] = messages.join(" ");
-      return;
-    }
-    // A nested list's errors, one object per row: {"availabilities": [{"cost": [...]}, {}]}.
-    value.forEach((entry, index) => flatten(entry, `${path}.${index}`, into));
-    return;
-  }
-  if (value && typeof value === "object") {
-    Object.entries(value).forEach(([key, entry]) => flatten(entry, `${path}.${key}`, into));
-  }
-}
-
-/**
- * The field messages of a 400: the standard body's `fields` (e.g. 400 `name_taken` on
- * `name`), or DRF's own `{field: [msg]}` shape with nested rows flattened to paths.
- */
-export function fieldErrorsOf(error: unknown): FieldErrors {
+/** A 400's messages by field path, nested rows under their index: "availabilities.0.cost". */
+function messagesOf(error: unknown): Record<string, string[]> {
   if (!(error instanceof ApiError) || error.status !== 400) return {};
   const body = error.data;
   if (!body || typeof body !== "object" || Array.isArray(body)) return {};
@@ -68,18 +46,22 @@ export function fieldErrorsOf(error: unknown): FieldErrors {
     record.fields && typeof record.fields === "object"
       ? (record.fields as Record<string, unknown>)
       : Object.fromEntries(Object.entries(record).filter(([key]) => !GENERAL_KEYS.has(key)));
-  const into: Record<string, string> = {};
-  Object.entries(source).forEach(([key, value]) => flatten(value, key, into));
-  return into;
+  return flattenFieldErrors(source);
 }
 
-const humanize = (path: string) => {
-  const words = path
-    .split(".")[0]
-    .replace(/_ids?$/, "")
-    .replace(/_/g, " ");
-  return words.charAt(0).toUpperCase() + words.slice(1);
-};
+/**
+ * The field messages of a 400, for under their fields: the standard body's `fields` (e.g. 400
+ * `name_taken` on `name`), or DRF's own `{field: [msg]}` shape with nested rows flattened to
+ * paths, DRF's stock messages in plain words ("This is needed.").
+ */
+export function fieldErrorsOf(error: unknown): FieldErrors {
+  return Object.fromEntries(
+    Object.entries(messagesOf(error)).map(([path, messages]) => [
+      path,
+      messages.map(plainFieldMessage).join(" "),
+    ])
+  );
+}
 
 /** Whether a form shows this path by a field: an exact name, or a pattern like "rows.*.cost". */
 const matches = (pattern: string, path: string) =>
@@ -91,14 +73,14 @@ const matches = (pattern: string, path: string) =>
  * no field at all.
  */
 export function formRefusal(error: unknown, shown: readonly string[], fallback: string) {
-  const all = fieldErrorsOf(error);
+  const all = messagesOf(error);
   const fields: Record<string, string> = {};
   let message = "";
-  for (const [path, text] of Object.entries(all)) {
+  for (const [path, messages] of Object.entries(all)) {
     if (shown.some((pattern) => matches(pattern, path))) {
-      fields[path] = text;
+      fields[path] = messages.map(plainFieldMessage).join(" ");
     } else if (!message) {
-      message = `${humanize(path)}: ${text}`;
+      message = labelledMessages(path, messages);
     }
   }
   if (Object.keys(all).length === 0) {

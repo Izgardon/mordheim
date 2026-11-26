@@ -21,15 +21,39 @@ describe("getErrorMessage", () => {
     );
   });
 
-  it("joins field errors per field, with general errors unprefixed", () => {
+  it("joins field errors per field in words, with general errors unprefixed", () => {
     const data = {
       non_field_errors: ["Campaign is full."],
       max_players: ["Ensure this value is less than or equal to 16."],
       name: ["This field is required.", "Too short."],
     };
     expect(getErrorMessage(apiError(400, data))).toBe(
-      "Campaign is full. Max players: Ensure this value is less than or equal to 16. Name: This field is required. Too short."
+      "Campaign is full. Max players must be 16 or less. Name is needed. Too short."
     );
+  });
+
+  // William, 26 Nov 2026: "Couldn't recruit. Create.0.name: This field may not be null."
+  it("names a batch entry's field by its label, never its path", () => {
+    const data = {
+      detail: "Some of the changes are invalid; nothing was saved.",
+      code: "invalid",
+      fields: { "create.0.name": ["This field may not be null."] },
+    };
+    expect(getErrorMessage(apiError(400, data))).toBe("Name is needed.");
+  });
+
+  it("reads DRF's nested rows by the field's label", () => {
+    const data = { create: [{ unit_type: ["This field may not be blank."] }, {}] };
+    expect(getErrorMessage(apiError(400, data))).toBe("Type is needed.");
+  });
+
+  it("gives an entry's own refusal without a name", () => {
+    const data = {
+      detail: "Some of the changes are invalid; nothing was saved.",
+      code: "invalid",
+      fields: { "create.0": ["The warband already has 6 heroes."] },
+    };
+    expect(getErrorMessage(apiError(400, data))).toBe("The warband already has 6 heroes.");
   });
 
   it("reads the standard { detail, code, fields } shape, preferring the field messages", () => {

@@ -30,10 +30,10 @@ describe("fieldErrorsOf", () => {
     expect(fieldErrorsOf(duplicate)).toEqual({ name: DUPLICATE });
   });
 
-  it("reads DRF's shape, with a nested row's errors under its index", () => {
+  it("reads DRF's shape, with a nested row's errors under its index, in plain words", () => {
     expect(fieldErrorsOf(nested)).toEqual({
-      "availabilities.0.cost": "Ensure this value is greater than or equal to 0.",
-      property_ids: 'Invalid pk "12" - object does not exist.',
+      "availabilities.0.cost": "Must be 0 or more.",
+      property_ids: "Not found.",
     });
   });
 
@@ -60,8 +60,8 @@ describe("formRefusal", () => {
   it("puts the messages on the fields a form shows, rows matched by pattern", () => {
     expect(formRefusal(nested, ["availabilities.*.cost", "property_ids"], "x")).toEqual({
       fields: {
-        "availabilities.0.cost": "Ensure this value is greater than or equal to 0.",
-        property_ids: 'Invalid pk "12" - object does not exist.',
+        "availabilities.0.cost": "Must be 0 or more.",
+        property_ids: "Not found.",
       },
       message: "",
     });
@@ -70,7 +70,7 @@ describe("formRefusal", () => {
   it("names the first field the form doesn't show in the line under the form", () => {
     expect(formRefusal(nested, ["name"], "x")).toEqual({
       fields: {},
-      message: "Availabilities: Ensure this value is greater than or equal to 0.",
+      message: "Cost must be 0 or more.",
     });
   });
 
