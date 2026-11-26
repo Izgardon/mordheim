@@ -13,7 +13,7 @@ from typing import Any
 from rest_framework.request import Request
 
 from .constants import OWNER, PERMISSION_CODES
-from .models import HOLDS_LIST, Campaign, CampaignMembership, CampaignSettings
+from .models import Campaign, CampaignMembership, CampaignSettings
 from .permissions import IMPLICIT_PERMISSION_ROLES, with_codes
 
 
@@ -50,7 +50,7 @@ class CampaignAccess:
 
     @property
     def workshop(self) -> bool:
-        """The campaign is a workshop (apps/workshop): its owner's alone, holding one warband or one list."""
+        """The campaign is a workshop (apps/workshop): one player's custom warbands, lists and catalogue entries."""
         return self.campaign.is_workshop
 
     @property
@@ -172,16 +172,15 @@ CAMPAIGN_RULES: Mapping[str, Rule] = {
 CAPABILITIES: tuple[str, ...] = (*ROLE_RULES, *CODE_RULES)  # the flags: every rule but view and object rules
 # what an archived campaign still lets its members do (everything else answers 403 campaign_archived)
 KEPT_WHEN_ARCHIVED = frozenset({"view_members", "restore", "delete"})
-# what a list workshop's owner may do: write its list in the template editor (apps/workshop); a warband workshop none
-KEPT_IN_LIST_WORKSHOP = frozenset({"edit_catalogue"})
+# what a workshop's player may do there (apps/workshop): write his own catalogue entries and lists, and delete them
+KEPT_IN_WORKSHOP = frozenset({"edit_catalogue", "delete_catalogue"})
 
 
 def campaign_capabilities(access: CampaignAccess) -> dict[str, bool]:
-    """Flags for the campaign payload, from the loaded access: no query. A workshop's are all off but a list
-    workshop's `edit_catalogue` (its template editor), as `CampaignScopedView` refuses the rest."""
+    """Flags for the campaign payload, from the loaded access: no query. A workshop's are all off but its catalogue's
+    (`edit_catalogue`, `delete_catalogue`), as `CampaignScopedView` refuses the rest."""
     if access.workshop:
-        kept = KEPT_IN_LIST_WORKSHOP if access.campaign.holds == HOLDS_LIST else frozenset()
-        return {name: name in kept for name in CAPABILITIES}
+        return {name: name in KEPT_IN_WORKSHOP and CAMPAIGN_RULES[name](access, None) for name in CAPABILITIES}
     return {
         name: CAMPAIGN_RULES[name](access, None) and (not access.archived or name in KEPT_WHEN_ARCHIVED)
         for name in CAPABILITIES

@@ -11,6 +11,7 @@ each campaign. Raising and hiring from a template come later; nothing on a roste
 from django.db import models
 
 from apps.core.models import CatalogueEntry, version_constraints
+from apps.core.share_codes import SHARE_CODE_LENGTH
 from apps.items.materials import MAX_MATERIAL
 from apps.warbands.models.shared import WrittenStatBlock, stat_constraints
 from apps.warbands.models.warband import MAX_RULE_TEXT
@@ -46,6 +47,8 @@ class WarbandTemplate(CatalogueEntry):
     copied_from = models.ForeignKey(  # a campaign's own template made as a copy (the editor, phase 4)
         "self", related_name="+", null=True, blank=True, on_delete=models.SET_NULL
     )
+    # a workshop's list's code (apps/workshop), which anyone signed in copies it by; null for any other template
+    share_code = models.CharField(max_length=SHARE_CODE_LENGTH, unique=True, null=True, blank=True)
 
     class Meta:
         db_table = "warband_template"

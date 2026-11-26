@@ -23,7 +23,7 @@ from apps.warbands.units.errors import FieldErrors
 from apps.warbands.utils.stats import stat_inputs
 
 from ..models import HENCHMAN, HERO, TemplateFighter, TemplateFighterSkill, TemplateFighterSpecial, TemplateListItem
-from .resolve import apply_variant, start_skills, templates_for_type, warband_variant
+from .resolve import apply_variant, start_skills, templates_for_warband, warband_variant
 from .who import allows
 
 if TYPE_CHECKING:
@@ -101,7 +101,7 @@ def fill_from_template(
         return {}
     specials = Prefetch("special_links", queryset=TemplateFighterSpecial.objects.order_by("position", "id"))
     skills = Prefetch("skill_links", queryset=TemplateFighterSkill.objects.order_by("position", "id"))
-    rows = templates_for_type(warband.campaign_id, warband.warband_type_id)
+    rows = templates_for_warband(warband)
     template = rows.prefetch_related(
         Prefetch("fighters", queryset=TemplateFighter.objects.prefetch_related(specials, skills))
     )

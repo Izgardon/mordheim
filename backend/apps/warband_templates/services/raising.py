@@ -26,7 +26,15 @@ from apps.warbands.services.plot_rules import sync_plot_rules
 
 from ..models import WarbandTemplate
 from .payload import raise_gold
-from .resolve import template_for_type, template_size, variant_keys, variant_rules, warband_variant
+from .resolve import (
+    template_for_new_type,
+    template_for_warband,
+    template_size,
+    templates_for_type,
+    variant_keys,
+    variant_rules,
+    warband_variant,
+)
 
 UNKNOWN_VARIANT = "Not one of this warband type's variants."
 NO_VARIANT = "Pick one of this warband type's variants."
@@ -51,13 +59,18 @@ def picked_variant(template: WarbandTemplate | None, sent: str) -> str:
 
 def settle_variant(warband: Warband, validated: MutableMapping[str, Any]) -> None:
     """An edit's variant (Settings): one sent must be one of the template's (blank: none); a new type that sends none
-    takes the new type's preset, else keeps the variant if the new template has it (one query, only then)."""
+    takes the new type's preset, else keeps the variant if the new template has it (one query, only then). A
+    workshop's warband names the list its new type reads (`template_for_new_type`)."""
     sent_type = validated.get("warband_type")
     type_changed = sent_type is not None and sent_type.pk != warband.warband_type_id
     if "template_variant" not in validated and not type_changed:
         return
-    type_id = sent_type.pk if sent_type is not None else warband.warband_type_id
-    template = template_for_type(warband.campaign_id, type_id)
+    if sent_type is not None and type_changed:
+        template = template_for_new_type(warband, sent_type.pk)
+    else:
+        template = template_for_warband(warband)
+    if type_changed and warband.in_workshop:  # a workshop's warband names the list serving its new type there
+        validated["template"] = template
     if "template_variant" in validated:
         sent = validated["template_variant"]
         if sent and (template is None or sent not in variant_keys(template)):
@@ -88,7 +101,7 @@ def add_template_rules(warband: Warband) -> int:
     """Add missing rules (the rules modal): the warband's template's rules for its variant whose title it
     lacks, then its campaign's preset's warband rules for it whose title it still lacks (William, 23 Nov 2026). How
     many were copied."""
-    template = template_for_type(warband.campaign_id, warband.warband_type_id)
+    template = template_for_warband(warband)
     added = 0
     if template is not None:
         added = copy_rules(warband, template, warband_variant(warband, template), missing_only=True)
@@ -98,8 +111,10 @@ def add_template_rules(warband: Warband) -> int:
 def raise_warband(campaign_id: int, user: Any, fields: dict[str, Any], counts_as: Iterable[WarbandType]) -> Warband:
     """Raise the user's warband in the campaign from validated fields (its `warband_type` found, its plot checked),
     all or nothing: its type's template gives its variant, most warriors, gold and rules (`open_treasury`), then its
-    preset's rules for its type or race and the plot rungs it has reached."""
-    template = template_for_type(campaign_id, fields["warband_type"].pk)
+    preset's rules for its type or race and the plot rungs it has reached. A workshop's warband names the list it is
+    raised from (`template`, which a workshop's caller sends: apps/workshop), else its type's."""
+    named = fields.get("template")
+    template = templates_for_type(campaign_id, fields["warband_type"].pk, named.pk if named else None).first()
     variant = picked_variant(template, fields.pop("template_variant", ""))
     if template is not None:
         fields.setdefault("max_units", template_size(template, variant))

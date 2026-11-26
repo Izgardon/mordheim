@@ -82,11 +82,11 @@ def _encampments(warband: Warband) -> list[dict[str, Any]]:
 
 
 def workshop_facts(warband: Warband, summary: dict[str, Any]) -> dict[str, Any] | None:
-    """A workshop's warband's cost against its budget (its summary's: roster_cost.py) and its workshop's code; null
+    """A workshop's warband's cost against its budget (its summary's: roster_cost.py) and its code; null
     for a campaign's warband."""
     if not warband.campaign.is_workshop or summary.get("workshop") is None:
         return None
-    return {**summary["workshop"], "share_code": warband.campaign.share_code}
+    return {**summary["workshop"], "share_code": warband.share_code}
 
 
 def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, Any]:

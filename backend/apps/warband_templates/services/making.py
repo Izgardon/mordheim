@@ -15,10 +15,16 @@ from ..models import WarbandTemplate, WarbandTemplateType
 
 
 def make_template(
-    campaign_id: int, name: str, type_ids: list[int], source: WarbandTemplate | None, user: Any
+    campaign_id: int,
+    name: str,
+    type_ids: list[int],
+    source: WarbandTemplate | None,
+    user: Any,
+    share_code: str | None = None,
 ) -> WarbandTemplate:
-    """The new template, serving `type_ids` (none preset a variant: picked when raising)."""
-    stamp = {"updated_by_id": user.pk, "updated_at": timezone.now()}
+    """The new template, serving `type_ids` (none preset a variant: picked when raising); `share_code`, a workshop's
+    list's code (apps/workshop)."""
+    stamp = {"updated_by_id": user.pk, "updated_at": timezone.now(), "share_code": share_code}
     if source is None:
         template = WarbandTemplate.objects.create(campaign_id=campaign_id, name=name, **stamp)
     else:

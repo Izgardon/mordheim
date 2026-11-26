@@ -10,8 +10,8 @@ check and its archiving (joining takes the same lock). The user row stays, so yo
 they hold), battles and ledger keep their owner as retired records. It is anonymised: the name "Former player" (on your chat messages
 too), the username `deleted-<id>` and no email, so the address can sign up again, an unusable
 password, inactive, and a new session key, so every device is signed out. Your own notifications are deleted;
-notifications already sent to others keep your old name. Your workshops (apps/workshop: custom warbands and lists)
-are deleted as their own Delete does, so their codes stop working; copies made from them stay. It can't be undone.
+notifications already sent to others keep your old name. Your workshop (apps/workshop: your custom warbands, lists
+and content) is deleted, so their codes stop working; copies made from them stay. It can't be undone.
 """
 
 from typing import Any
@@ -116,7 +116,7 @@ def delete_account(user: Any) -> None:
         if blocking:
             raise HandOverFirst([{"id": row.campaign_id, "name": row.campaign.name} for row in blocking])
         _anonymise(user)  # first, so everything written from here on names him "Former player"
-        Campaign.objects.filter(kind=WORKSHOP, memberships__user_id=user.id, deleted_at__isnull=True).update(
+        Campaign.objects.filter(kind=WORKSHOP, workshop_owner_id=user.id, deleted_at__isnull=True).update(
             deleted_at=timezone.now()
         )
         for membership in memberships:

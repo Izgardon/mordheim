@@ -1,5 +1,5 @@
 """Copying a warband list (a warband template) into another campaign as that campaign's own (the workshop plan's
-imports): a list imported into a campaign, a list or a warband's list copied into a workshop.
+imports): a list imported into a campaign, a list or a warband's list copied into a workshop (with its own code).
 
 The copy is the template editor's copy (`versions.copy_entry` with `version` off: every child row, its fighters' keys,
 the types it serves), made across campaigns: the rules the source campaign wrote for it (its own specials, typed
@@ -111,9 +111,11 @@ def _relink_children(template: Any, relinker: Relinker) -> None:
             model._default_manager.filter(pk__in=[row.pk for row in dropped]).delete()
 
 
-def copy_list(source: WarbandTemplate, campaign_id: int, user: Any, name: str | None = None) -> CopiedList:
+def copy_list(
+    source: WarbandTemplate, campaign_id: int, user: Any, name: str | None = None, share_code: str | None = None
+) -> CopiedList:
     """The source list as the campaign's own template, with its own specials, in the caller's transaction; the
-    campaign's catalogue lists are bumped (templates and specials)."""
+    campaign's catalogue lists are bumped (templates and specials). `share_code`: a workshop's copy's code."""
     copy_name = free_name(campaign_id, (name or source.name).strip()[:MAX_NAME])
     specials = _copy_specials(source, copy_name, campaign_id)
     made = copy_entry(
@@ -123,6 +125,7 @@ def copy_list(source: WarbandTemplate, campaign_id: int, user: Any, name: str | 
         version=False,
         name=copy_name,
         slug="",
+        share_code=share_code,
         copied_from_id=source.pk,
         updated_by_id=user.pk,
         updated_at=timezone.now(),

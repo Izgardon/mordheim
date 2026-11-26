@@ -1,5 +1,6 @@
-"""Importing by code (the workshop plan, phase 2): a warband into a campaign, paid in one ledger row; a list into a
-campaign's own templates; either into my own workshop. The copy is the roster in its exact state."""
+"""Importing by code (the workshop plan): a warband into a campaign, paid in one ledger row; a list into a campaign's
+own templates; either into my own workshop, as my campaign warband and a campaign's list I can see are. The copy is
+the roster in its exact state."""
 
 from typing import Any
 
@@ -84,7 +85,7 @@ def roster(warband: Warband) -> dict[str, list[dict[str, Any]]]:
 
 class ImportTestCase(WorkshopTestCase):
     def kitted(self, user: Any = None, **body: Any) -> dict[str, Any]:
-        row = self.make_warband_workshop(user=user, template_variant="reikland", **body)
+        row = self.make_warband(user=user, template_variant="reikland", **body)
         warband = self.warband_of(row)
         kit: dict[str, Any] = {
             "axe": self.book_axe,
@@ -156,15 +157,15 @@ class CampaignWarbandImportTests(ImportTestCase):
         has = self.import_warband(self.player, row["share_code"])
         self.assertEqual((has.status_code, has.data["code"]), (409, "has_warband"))
         self.assertEqual(self.import_warband(self.outsider, row["share_code"]).status_code, 404)  # not a member
-        listed = self.make_list_workshop()
+        listed = self.make_list()
         wrong = self.import_warband(self.admin, listed["share_code"])
         self.assertEqual((wrong.status_code, wrong.data["code"]), (400, "not_a_warband"))
         unknown = self.import_warband(self.admin, "QQQQQQQQ")
         self.assertEqual((unknown.status_code, unknown.data["code"]), (404, "code_not_found"))
-        workshop = Campaign.objects.get(pk=row["id"])
+        workshop = self.workshop(row)
         into_workshop = self.import_warband(self.player, row["share_code"], workshop)
         self.assertEqual((into_workshop.status_code, into_workshop.data["code"]), (403, "workshop_campaign"))
-        self.delete_as(self.player, f"/api/workshop/{row['id']}/")
+        self.delete_as(self.player, f"/api/warbands/{row['id']}/")
         self.assertEqual(self.import_warband(self.admin, row["share_code"]).status_code, 404)
         self.assertFalse(Warband.objects.filter(campaign=self.campaign, user=self.admin).exists())
 
@@ -180,10 +181,10 @@ class CampaignWarbandImportTests(ImportTestCase):
         for index in range(3):
             kit_out(large, human=self.human, spell=self.lifestealer[1], stash_cost=20 + index, **kit)
         with self.assertNumQueries(COPY_QUERIES):
-            copy_warband(small, self.elsewhere.id, self.outsider)
+            copy_warband(small, self.elsewhere, self.outsider)
         Warband.objects.filter(campaign=self.elsewhere).delete()
         with self.assertNumQueries(COPY_QUERIES):
-            copy_warband(large, self.elsewhere.id, self.outsider)
+            copy_warband(large, self.elsewhere, self.outsider)
 
 
 COPY_QUERIES = 54  # each table read once and written once, each kind of entry resolved once
@@ -191,17 +192,17 @@ COPY_QUERIES = 54  # each table read once and written once, each kind of entry r
 
 class ListComesWithItTests(ImportTestCase):
     def test_a_warband_raised_from_a_custom_list_brings_the_list_and_its_own_rules(self) -> None:
-        listed = self.make_list_workshop(user=self.rival, name="Watch", copy_of_template_id=self.made.template.id)
+        listed = self.make_list(user=self.rival, name="Watch", copy_of_template_id=self.made.template.id)
         rules = [{"name": "Watchful", "description": "Never surprised."}]
         fighter = {"name": "Sergeant", "kind": "hero", "cost": 35, "race_id": self.human.id, "max_count": 1}
         added = self.post_as(
             self.rival,
-            f"/api/warband-templates/{listed['template_id']}/fighters/",
+            f"/api/warband-templates/{listed['id']}/fighters/",
             {**fighter, **PROFILE, "rules": rules},
         )
         self.assertEqual(added.status_code, 201, added.data)
         row = self.kitted(list_code=listed["share_code"])
-        workshop_rule = Special.objects.get(campaign_id=row["id"], name="Watchful")
+        workshop_rule = Special.objects.get(campaign_id=row["campaign_id"], name="Watchful", type="Warband - Watch")
         self.assertEqual(workshop_rule.type, "Warband - Watch")
         HeroSpecial.objects.create(hero=self.warband_of(row).heroes.get(dead=False), special=workshop_rule)
         response = self.import_warband(self.admin, row["share_code"])
@@ -217,7 +218,7 @@ class ListComesWithItTests(ImportTestCase):
         self.assertEqual(list(held.values_list("special_id", flat=True)), [campaign_rule.id])
 
     def test_a_player_who_cant_edit_the_catalogue_brings_the_list_serving_no_type(self) -> None:
-        listed = self.make_list_workshop(user=self.rival, name="Watch", copy_of_template_id=self.made.template.id)
+        listed = self.make_list(user=self.rival, name="Watch", copy_of_template_id=self.made.template.id)
         row = self.kitted(list_code=listed["share_code"])
         self.assertEqual(self.join(self.outsider).status_code, 201)
         self.revoke(self.outsider, "edit_catalogue")
@@ -231,7 +232,7 @@ class ListComesWithItTests(ImportTestCase):
 
 class ListImportTests(ImportTestCase):
     def test_a_list_becomes_the_campaigns_own_with_its_own_rules_numbered_when_its_name_is_taken(self) -> None:
-        listed = self.make_list_workshop(user=self.outsider, name="Watch", copy_of_template_id=self.made.template.id)
+        listed = self.make_list(user=self.outsider, name="Watch", copy_of_template_id=self.made.template.id)
         url = self.url("warband-templates/import/")
         first = self.post_as(self.player, url, {"code": listed["share_code"]})
         self.assertEqual(first.status_code, 201, first.data)
@@ -239,30 +240,79 @@ class ListImportTests(ImportTestCase):
         second = self.post_as(self.player, url, {"code": listed["share_code"]})
         self.assertEqual(second.data["name"], "Watch (2)")
         template = WarbandTemplate.objects.get(pk=second.data["template_id"])
-        self.assertEqual((template.campaign_id, template.copied_from_id), (self.campaign.id, listed["template_id"]))
+        self.assertEqual((template.campaign_id, template.copied_from_id), (self.campaign.id, listed["id"]))
         self.assertEqual(template.fighters.count(), 2)
         self.revoke(self.rival, "edit_catalogue")
         self.assertEqual(self.post_as(self.rival, url, {"code": listed["share_code"]}).status_code, 403)
-        warband_code = self.make_warband_workshop()["share_code"]
+        warband_code = self.make_warband()["share_code"]
         wrong = self.post_as(self.player, url, {"code": warband_code})
         self.assertEqual((wrong.status_code, wrong.data["code"]), (400, "not_a_list"))
 
 
 class IntoMyWorkshopTests(ImportTestCase):
-    def test_a_warband_or_a_list_is_copied_into_a_new_workshop_of_mine(self) -> None:
+    def test_a_warband_or_a_list_is_copied_into_my_workshop(self) -> None:
         row = self.kitted()
         copied = self.post_as(self.outsider, "/api/workshop/import/", {"code": row["share_code"]})
         self.assertEqual(copied.status_code, 201, copied.data)
         self.assertEqual((copied.data["kind"], copied.data["cost"], copied.data["budget"]), ("warband", KIT_COST, 500))
         self.assertNotEqual(copied.data["share_code"], row["share_code"])
-        copy = Warband.objects.get(pk=copied.data["warband_id"])
-        self.assertEqual(copy.user_id, self.outsider.id)
+        copy = Warband.objects.get(pk=copied.data["id"])
+        self.assertEqual(
+            (copy.user_id, copy.in_workshop, copy.template_id), (self.outsider.id, True, self.made.template.id)
+        )
         self.assertEqual(roster(copy), roster(self.warband_of(row)))
-        listed = self.make_list_workshop(copy_of_template_id=self.made.template.id)
+        listed = self.make_list(copy_of_template_id=self.made.template.id)
         list_copy = self.post_as(self.outsider, "/api/workshop/import/", {"code": listed["share_code"]})
         self.assertEqual((list_copy.status_code, list_copy.data["kind"]), (201, "list"))
+        self.assertEqual(list_copy.data["campaign_id"], copied.data["campaign_id"])  # one workshop
         mine = self.get_as(self.outsider, "/api/workshop/").data
         self.assertEqual(
             ([w["id"] for w in mine["warbands"]], [w["id"] for w in mine["lists"]]),
             ([copied.data["id"]], [list_copy.data["id"]]),
         )
+
+    def test_a_warband_from_a_list_brings_the_list_and_names_it(self) -> None:
+        listed = self.make_list(user=self.rival, name="Watch", copy_of_template_id=self.made.template.id)
+        row = self.kitted(list_code=listed["share_code"])
+        copied = self.post_as(self.outsider, "/api/workshop/import/", {"code": row["share_code"]}).data
+        copy = Warband.objects.get(pk=copied["id"])
+        assert copy.template is not None
+        template = copy.template
+        self.assertEqual((template.campaign_id, template.name), (copied["campaign_id"], "Watch"))
+        self.assertEqual(template.type_links.count(), 1)  # it keeps serving its type: the warband names it
+        self.assertEqual(len(template.share_code or ""), 8)
+
+    def test_my_campaign_warband_copies_into_my_workshop(self) -> None:
+        kit_out(
+            self.warband,
+            human=self.human,
+            axe=self.book_axe,
+            sword=self.book_sword,
+            skill=self.infiltration[0],
+            special=self.large,
+            spell=self.lifestealer[0],
+        )
+        url = f"/api/warbands/{self.warband.id}/to-workshop/"
+        self.assertEqual(self.post_as(self.rival, url).status_code, 404)  # not his
+        self.assertEqual(self.post_as(self.owner, url).status_code, 404)  # a manager is not its player
+        copied = self.post_as(self.player, url)
+        self.assertEqual(copied.status_code, 201, copied.data)
+        copy = Warband.objects.get(pk=copied.data["id"])
+        self.assertEqual((copy.user_id, copy.in_workshop, copy.campaign.kind), (self.player.id, True, "workshop"))
+        self.assertEqual(roster(copy), roster(self.warband))
+        self.assertEqual(len(copied.data["share_code"]), 8)
+        again = self.post_as(self.player, f"/api/warbands/{copied.data['id']}/to-workshop/")
+        self.assertEqual(again.status_code, 404)  # a workshop's is copied by its code
+
+    def test_a_campaigns_own_list_copies_into_the_lists_of_a_member(self) -> None:
+        made = self.post_as(self.player, "/api/warband-templates/", {"name": "Wolves", "campaign_id": self.campaign.id})
+        self.assertEqual(made.status_code, 201, made.data)
+        template_id = made.data["template"]["id"]
+        url = f"/api/warband-templates/{template_id}/to-workshop/"
+        self.assertEqual(self.post_as(self.outsider, url).status_code, 404)  # not a member
+        copied = self.post_as(self.rival, url)
+        self.assertEqual(copied.status_code, 201, copied.data)
+        self.assertEqual((copied.data["kind"], copied.data["name"]), ("list", "Wolves"))
+        self.assertEqual(self.workshop(copied.data).workshop_owner_id, self.rival.id)
+        book = self.post_as(self.rival, f"/api/warband-templates/{self.made.template.id}/to-workshop/")
+        self.assertEqual(book.status_code, 404)  # the book's is copied by Make a list

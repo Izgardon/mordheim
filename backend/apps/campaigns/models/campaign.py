@@ -31,15 +31,10 @@ HERO_DEATH_ROLL_CHOICES = [
 DEFAULT_RESOURCE_NAME = "Wyrdstone"  # every warband's default resource, until the campaign renames it
 
 # What a campaign row is (the workshop plan, docs/plans/workshop.md): a campaign people play, or a workshop, the hidden
-# campaign of one custom warband or one custom warband list, made outside any campaign and shared by its code
+# campaign of one player holding his custom warbands, his warband lists and his own catalogue entries
 CAMPAIGN = "campaign"
 WORKSHOP = "workshop"
 CAMPAIGN_KINDS = ((CAMPAIGN, "Campaign"), (WORKSHOP, "Workshop"))
-# what a workshop holds: one warband (its builder) or one warband template (a list); blank for a campaign
-HOLDS_WARBAND = "warband"
-HOLDS_LIST = "list"
-WORKSHOP_HOLDS = ((HOLDS_WARBAND, "Warband"), (HOLDS_LIST, "Warband list"))
-SHARE_CODE_LENGTH = 8
 
 
 def get_default_hero_level_thresholds():
@@ -69,22 +64,29 @@ class Campaign(models.Model):
     campaign_types: models.ManyToManyField = models.ManyToManyField(
         "CampaignType", through="CampaignCampaignType", related_name="campaigns", blank=True
     )
-    # a campaign, or a workshop (apps/workshop): one owner, every setting ticked, never listed, joined or played in
+    # a campaign, or a workshop (apps/workshop): one player's, made on his first use, never listed, joined or played in
     kind = models.CharField(max_length=10, choices=CAMPAIGN_KINDS, default=CAMPAIGN)
-    holds = models.CharField(max_length=10, choices=WORKSHOP_HOLDS, blank=True, default="")  # a workshop's only
-    # a workshop's code, which anyone signed in imports it by; null for a campaign
-    share_code = models.CharField(max_length=SHARE_CODE_LENGTH, unique=True, null=True, blank=True)
-    # a workshop its owner deleted: hidden and unreadable, its code no longer found; copies made from it stay
+    # a workshop's player, its only member: one live workshop each; null for a campaign
+    workshop_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="+", null=True, blank=True, on_delete=models.CASCADE
+    )
+    # a workshop whose player deleted his account: hidden and unreadable, its codes no longer found; copies stay
     deleted_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "campaign"
         constraints = [
             models.CheckConstraint(
-                check=(models.Q(kind=CAMPAIGN, holds="", share_code__isnull=True, deleted_at__isnull=True))
-                | (models.Q(kind=WORKSHOP, holds__in=(HOLDS_WARBAND, HOLDS_LIST), share_code__isnull=False)),
+                check=models.Q(kind=CAMPAIGN, workshop_owner__isnull=True, deleted_at__isnull=True)
+                | (
+                    models.Q(kind=WORKSHOP)
+                    & (models.Q(workshop_owner__isnull=False) | models.Q(deleted_at__isnull=False))
+                ),
                 name="campaign_kind_fields",
-            )
+            ),
+            models.UniqueConstraint(
+                fields=["workshop_owner"], condition=models.Q(deleted_at__isnull=True), name="one_workshop_per_player"
+            ),
         ]
 
     def __str__(self):

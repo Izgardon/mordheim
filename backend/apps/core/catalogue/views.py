@@ -47,6 +47,7 @@ ACTIONS = {"PUT": "edit", "PATCH": "edit", "DELETE": "delete"}
 class CatalogueScopedView(CampaignScopedView):
     kind: ClassVar[CatalogueKindSpec]
     rules = CATALOGUE_RULES
+    workshop_writes = True  # a workshop's player writes his own entries here as any campaign's editor does
     campaign_id: int | None = None  # None: the book
 
     def enter(self, method: str, campaign_id: int) -> None:

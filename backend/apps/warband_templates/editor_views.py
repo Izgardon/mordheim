@@ -19,7 +19,6 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
 from apps.campaigns.errors import WorkshopCampaign
-from apps.campaigns.models import HOLDS_LIST
 from apps.core.catalogue import names, versions
 from apps.core.catalogue.hooks import CampaignRequired
 from apps.core.catalogue.kinds import WARBAND_TEMPLATES
@@ -63,16 +62,15 @@ class TemplateWhoCanView(TemplateReadView):
 
 
 class TemplateSectionView(CatalogueEntryView):
-    """A section's save: the house version first for a book template, then the write, in one transaction. A list
-    workshop (apps/workshop) writes its own list here and nothing else: never a book template, which would make the
-    workshop a second, house version."""
+    """A section's save: the house version first for a book template, then the write, in one transaction. A workshop
+    (apps/workshop) writes its own lists here and never a book template, which would make a house version serving
+    every warband of its type there: a book list is copied into the workshop as a list of its own instead."""
 
     kind = WARBAND_TEMPLATES
     rules = {"PUT": EDIT, "POST": EDIT, "DELETE": EDIT}
     book_methods = frozenset({"PUT", "POST", "DELETE"})
     actions = {"PUT": "edit", "POST": "edit", "DELETE": "edit"}
     reads_detail = False
-    workshop_writes = frozenset({HOLDS_LIST})
 
     def load_scope(self, method: str, **kwargs: Any) -> None:
         super().load_scope(method, **kwargs)

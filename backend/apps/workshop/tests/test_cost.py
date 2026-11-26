@@ -1,5 +1,4 @@
-"""A workshop warband's cost against its budget (the workshop plan, phase 1): read live, warned above, never
-blocked."""
+"""A workshop warband's cost against its budget (the workshop plan): read live, warned above, never blocked."""
 
 from typing import Any
 
@@ -12,7 +11,7 @@ from .support import KIT_COST, WorkshopTestCase, kit_out
 
 class CostTests(WorkshopTestCase):
     def kitted(self) -> Any:
-        row = self.make_warband_workshop(template_variant="reikland")
+        row = self.make_warband(template_variant="reikland")
         kit_out(
             self.warband_of(row),
             human=self.human,
@@ -35,25 +34,25 @@ class CostTests(WorkshopTestCase):
         template = self.made.template
         template.variants = [{"key": "reikland", "name": "Reikland", "starting_gold": 600}]
         template.save()
-        warband = self.warband_of(self.make_warband_workshop(template_variant="reikland"))
+        warband = self.warband_of(self.make_warband(template_variant="reikland"))
         self.assertEqual(roster_value(warband).budget, 600)
 
     def test_buying_above_the_budget_warns_of_the_budget_and_goes_ahead(self) -> None:
         row = self.kitted()
         body = {"item_id": self.heavy_armour.id, "target_type": "stash", "quantity": 6, "price": 50}
-        response = self.post_as(self.player, f"/api/warbands/{row['warband_id']}/purchases/", body)
+        response = self.post_as(self.player, f"/api/warbands/{row['id']}/purchases/", body)
         self.assertEqual(response.status_code, 201, response.data)
         codes = [warning["code"] for warning in response.data["warnings"]]
         self.assertEqual(codes, [OVER_BUDGET])
         warning = response.data["warnings"][0]
         self.assertEqual((warning["cost"], warning["budget"]), (KIT_COST + 300, 500))
-        sheet = self.get_as(self.player, f"/api/warbands/{row['warband_id']}/sheet/").data
+        sheet = self.get_as(self.player, f"/api/warbands/{row['id']}/sheet/").data
         self.assertEqual(sheet["workshop"]["cost"], KIT_COST + 300)
 
     def test_every_writes_summary_carries_the_cost_after_it(self) -> None:
         # the page's "Cost 455 / 500 gc" follows each write from its answer's summary, as the gold does
         row = self.kitted()
-        base = f"/api/warbands/{row['warband_id']}/"
+        base = f"/api/warbands/{row['id']}/"
         summary = self.get_as(self.player, f"{base}summary/").data
         self.assertEqual(summary["workshop"], {"cost": KIT_COST, "budget": 500})
         body = {"item_id": self.heavy_armour.id, "target_type": "stash", "quantity": 1, "price": 50}

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.validators import RegexValidator
 from django.db import models
 
+from apps.core.share_codes import SHARE_CODE_LENGTH
 from apps.items.materials import MAX_MATERIAL, MAX_SHOWN_AS
 
 DEFAULT_DICE_COLOR = "#2e8555"
@@ -47,6 +48,18 @@ class Warband(models.Model):
     show_loadout_on_mobile = models.BooleanField(default=False)
     # The sum of the ledger, changed only by services/ledger.py in the same transaction as each row (decision 4).
     gold = models.BigIntegerField(default=0, db_default=0)
+    # a workshop's warband (apps/workshop), set when it is made and never changed: a player may hold many in his
+    # workshop, one in a campaign (the unique constraint reads it), and only a workshop's has a code, a list or a delete
+    in_workshop = models.BooleanField(default=False)
+    # its code, which anyone signed in copies it by; null for a campaign's warband
+    share_code = models.CharField(max_length=SHARE_CODE_LENGTH, unique=True, null=True, blank=True)
+    # the warband list it reads in its workshop (raised from it, or copied with it): a workshop holds many lists, so
+    # its type alone can't say which; null in a campaign, where its type's template serves it
+    template = models.ForeignKey(
+        "warband_templates.WarbandTemplate", related_name="+", null=True, blank=True, on_delete=models.SET_NULL
+    )
+    # a workshop warband its player deleted: hidden and unreadable, its code no longer found; copies made stay
+    deleted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -59,7 +72,16 @@ class Warband(models.Model):
 
     class Meta:
         db_table = "warband"
-        constraints = [models.UniqueConstraint(fields=["campaign", "user"], name="unique_campaign_warband")]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["campaign", "user"], condition=models.Q(in_workshop=False), name="unique_campaign_warband"
+            ),
+            models.CheckConstraint(
+                check=models.Q(in_workshop=True)
+                | models.Q(share_code__isnull=True, template__isnull=True, deleted_at__isnull=True),
+                name="warband_workshop_fields",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.campaign_id}:{self.user_id})"

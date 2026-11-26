@@ -44,22 +44,24 @@ class WorkshopTestCase(CatalogueTestCase):
 
     # Requests
 
-    def make_warband_workshop(self, user: Any = None, **body: Any) -> Any:
+    def make_warband(self, user: Any = None, **body: Any) -> Any:
+        """A warband in the user's workshop (made on his first use), as `POST workshop/warbands/` answers it."""
         sent = {"name": "The Gilded Wagon", "warband_type_id": self.mercenaries.id, **body}
         response = self.post_as(user or self.player, "/api/workshop/warbands/", sent)
         self.assertEqual(response.status_code, 201, response.data)
         return response.data
 
-    def make_list_workshop(self, user: Any = None, **body: Any) -> Any:
+    def make_list(self, user: Any = None, **body: Any) -> Any:
+        """A list in the user's workshop, as `POST workshop/lists/` answers it."""
         response = self.post_as(user or self.player, "/api/workshop/lists/", {"name": "Night Watch", **body})
         self.assertEqual(response.status_code, 201, response.data)
         return response.data
 
     def workshop(self, row: dict[str, Any]) -> Campaign:
-        return Campaign.objects.get(pk=row["id"])
+        return Campaign.objects.get(pk=row["campaign_id"])
 
     def warband_of(self, row: dict[str, Any]) -> Warband:
-        return Warband.objects.select_related("campaign", "campaign__settings").get(pk=row["warband_id"])
+        return Warband.objects.select_related("campaign", "campaign__settings").get(pk=row["id"])
 
 
 def kit_out(

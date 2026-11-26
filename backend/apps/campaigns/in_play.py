@@ -12,6 +12,10 @@ block.
 
 Picking a grade is a preset: "Up to 1c" ticks every setting at or below 1c, then the owner adjusts by hand. The
 campaign stores no grade, so there is nothing to reset. A new campaign starts on `DEFAULT_PRESET`.
+
+A workshop (apps/workshop) ticks nothing and has **every setting in play**, computed here and never stored, so a
+setting seeded later is in play in every workshop without a backfill: each rule below reads "or the campaign is a
+workshop" in the same query.
 """
 
 import re
@@ -20,7 +24,7 @@ from typing import Any
 
 from django.db.models import BooleanField, Exists, ExpressionWrapper, OuterRef, Q, QuerySet, Value
 
-from .models import GRADE_LABELS, GRADES, Campaign, CampaignCampaignType, CampaignType
+from .models import GRADE_LABELS, GRADES, WORKSHOP, Campaign, CampaignCampaignType, CampaignType
 
 DEFAULT_PRESET = "1c"  # the plan's suggestion for a new campaign
 
@@ -50,11 +54,30 @@ def presets(settings: Iterable[CampaignType]) -> list[dict[str, Any]]:
     ]
 
 
+def is_workshop(campaign_id: int) -> Exists:
+    """The campaign is a workshop, which has every setting in play (a subquery of the caller's query)."""
+    return Exists(Campaign.objects.filter(pk=campaign_id, kind=WORKSHOP))
+
+
+def ticked(campaign_id: int, setting_id: str = "campaign_type_id") -> Q:
+    """The setting (the outer row's `setting_id` column) is one the campaign ticked, or the campaign is a workshop."""
+    chosen = CampaignCampaignType.objects.filter(campaign_id=campaign_id, campaign_type_id=OuterRef(setting_id))
+    return Q(Exists(chosen)) | Q(is_workshop(campaign_id))
+
+
 def in_play(campaign_id: int, setting: str = "campaign_type") -> Q:
     """The visibility rule as a filter on rows whose setting is the `setting` foreign key: no setting (custom, or
-    Mordheim's by default), an always-on setting, or one the campaign ticked."""
-    ticked = CampaignCampaignType.objects.filter(campaign_id=campaign_id, campaign_type_id=OuterRef(f"{setting}_id"))
-    return Q(**{f"{setting}__isnull": True}) | Q(**{f"{setting}__always_on": True}) | Q(Exists(ticked))
+    Mordheim's by default), an always-on setting, or one the campaign ticked (every one in a workshop)."""
+    return (
+        Q(**{f"{setting}__isnull": True}) | Q(**{f"{setting}__always_on": True}) | ticked(campaign_id, f"{setting}_id")
+    )
+
+
+def settings_in_play(campaign_id: int) -> set[int]:
+    """The ids of the settings in play in the campaign: the always-on ones and those it ticked, every one in a
+    workshop (one query)."""
+    rows = CampaignType.objects.filter(Q(always_on=True) | ticked(campaign_id, "pk"))
+    return set(rows.values_list("pk", flat=True))
 
 
 def with_in_play[RowsT: QuerySet[Any]](rows: RowsT, campaign_id: int, setting: str = "campaign_type") -> RowsT:

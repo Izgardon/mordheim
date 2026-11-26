@@ -17,9 +17,10 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import BooleanField, ExpressionWrapper, Q
 
-from apps.campaigns.models import CampaignCampaignType, CampaignType
+from apps.campaigns.in_play import ticked
+from apps.campaigns.models import CampaignType
 from apps.items.materials import MATERIALS, Material
 from apps.warbands.models import WarbandGroup, WarbandType
 
@@ -89,10 +90,11 @@ def read_catalogue(campaign_id: int) -> Catalogue:
     )
     groups = dict(WarbandGroup.objects.filter(slug__in=_slugs("excluded_groups")).values_list("slug", "id"))
     wanted = {material.setting for material in MATERIALS.values()}
-    chosen = CampaignCampaignType.objects.filter(campaign_id=campaign_id, campaign_type_id=OuterRef("id"))
-    settings = CampaignType.objects.filter(slug__in=wanted).annotate(ticked=Exists(chosen))
+    settings = CampaignType.objects.filter(slug__in=wanted).annotate(
+        ticked=ExpressionWrapper(ticked(campaign_id, "id"), BooleanField())
+    )
     rows = list(settings.values_list("slug", "name", "always_on", "ticked"))
-    in_play = {slug for slug, _name, always_on, ticked in rows if always_on or ticked}
+    in_play = {slug for slug, _name, always_on, chosen in rows if always_on or chosen}
     names = {slug: name for slug, name, _always, _ticked in rows}
     return Catalogue(types, groups, in_play, names, sold_to(campaign_id))
 

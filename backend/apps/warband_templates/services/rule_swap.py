@@ -48,9 +48,9 @@ def _counted(added: int, removed: int) -> str:
     return f"Added {_plural(added)}." if added else f"Removed {_plural(removed)}."
 
 
-def _template(campaign_id: int, warband_type_id: int | None) -> WarbandTemplate | None:
-    """The type's template with its rules (two queries; none without a type)."""
-    return templates_for_type(campaign_id, warband_type_id).prefetch_related("rules").first()
+def _template(campaign_id: int, warband_type_id: int | None, named_id: int | None) -> WarbandTemplate | None:
+    """The type's template (a workshop warband's named list) with its rules (two queries; none without either)."""
+    return templates_for_type(campaign_id, warband_type_id, named_id).prefetch_related("rules").first()
 
 
 def given_rules(
@@ -65,16 +65,19 @@ def given_rules(
     return [(title.strip(), text.strip()) for title, text in found]
 
 
-def swap_rules(warband: Warband, old_type_id: int | None, old_variant: str) -> RuleSwap | None:
-    """Swap the old type's and variant's rules for the new ones (the warband saved with its new type and variant);
-    None when neither changed. A fixed number of queries, whatever the rules' number."""
+def swap_rules(
+    warband: Warband, old_type_id: int | None, old_variant: str, old_list_id: int | None = None
+) -> RuleSwap | None:
+    """Swap the old type's and variant's rules for the new ones (the warband saved with its new type and variant, and
+    a workshop's its new list: `old_list_id` the one it named before); None when neither changed. A fixed number of
+    queries, whatever the rules' number."""
     new_type_id = warband.warband_type_id
     if new_type_id == old_type_id and warband.template_variant == old_variant:
         return None
     preset_id = warband.campaign.preset_id
-    old_template = _template(warband.campaign_id, old_type_id)
-    same_type = new_type_id == old_type_id
-    new_template = old_template if same_type else _template(warband.campaign_id, new_type_id)
+    old_template = _template(warband.campaign_id, old_type_id, old_list_id)
+    same = new_type_id == old_type_id and warband.template_id == old_list_id
+    new_template = old_template if same else _template(warband.campaign_id, new_type_id, warband.template_id)
     before = given_rules(old_template, old_variant, old_type_id, preset_id)
     after = given_rules(new_template, warband.template_variant, new_type_id, preset_id)
     return _apply(warband, before, after)

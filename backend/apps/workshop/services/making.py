@@ -1,51 +1,51 @@
-"""Making a workshop (the workshop plan, docs/plans/workshop.md): the hidden campaign of one custom warband or one
-custom warband list, owned by its maker, never listed, joined or played in.
+"""A player's workshop (the workshop plan, docs/plans/workshop.md, version 2): the one hidden campaign holding all his
+custom warbands, his warband lists and his own catalogue entries, made on his first use and never before.
 
 It is made as a campaign is (`campaigns/services/campaigns.py`): the campaign row, its settings row on the app's
-defaults (500 gc, Mordheim's exploration chart) and its owner's membership, all or nothing. It differs where a
-workshop must: **every setting is ticked**, so everything in the book is in play; no preset, so no rules, charts,
-locations or encampments; no scenarios and no plots; and a share code, eight capitals and digits without the
-lookalikes 0, O, 1, I and L, that anyone signed in imports it by.
+defaults (500 gc, Mordheim's exploration chart) and his owner's membership. It differs where a workshop must: it ticks
+no settings, because every setting is in play in a workshop (apps/campaigns/in_play.py computes it), and it gets no
+preset, scenarios, rules, charts, locations, encampments or plots. One live workshop per player is the database's
+rule (`one_workshop_per_player`), so two first uses at once make one.
 """
 
-import secrets
 from typing import Any
 
+from django.db import IntegrityError, transaction
+
 from apps.campaigns.constants import OWNER
-from apps.campaigns.in_play import set_settings
-from apps.campaigns.models import (
-    SHARE_CODE_LENGTH,
-    WORKSHOP,
-    Campaign,
-    CampaignMembership,
-    CampaignSettings,
-    CampaignType,
-)
+from apps.campaigns.models import WORKSHOP, Campaign, CampaignMembership, CampaignSettings
 from apps.campaigns.services import codes
 from apps.campaigns.services.campaigns import settings_at_creation, unique_join_code
 
-SHARE_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"  # no 0/O, 1/I/L
+WORKSHOP_NAME = "Workshop"
 
 
-def new_share_code() -> str:
-    return "".join(secrets.choice(SHARE_CODE_ALPHABET) for _ in range(SHARE_CODE_LENGTH))
+def live_workshops() -> Any:
+    return Campaign.objects.filter(kind=WORKSHOP, deleted_at__isnull=True)
 
 
-def unique_share_code() -> str:
-    """A code no workshop uses, deleted ones included (the unique column has the last word)."""
-    for _ in range(20):
-        code = new_share_code()
-        if not Campaign.objects.filter(share_code=code).exists():
-            return code
-    return new_share_code()
+def workshop_of(user: Any) -> Campaign | None:
+    """The player's workshop, or None before his first use (one query)."""
+    found: Campaign | None = live_workshops().select_related("settings").filter(workshop_owner=user).first()
+    return found
 
 
-def make_workshop(owner: Any, holds: str, name: str) -> Campaign:
-    """A new workshop holding `holds` (a warband or a list), in the caller's transaction."""
-    workshop = Campaign.objects.create(
-        name=name, join_code=unique_join_code(), kind=WORKSHOP, holds=holds, share_code=unique_share_code()
-    )
-    CampaignSettings.objects.create(campaign=workshop, **settings_at_creation({}, None))
-    set_settings(workshop, CampaignType.objects.values_list("id", flat=True))  # everything in the book is in play
-    CampaignMembership.objects.create(campaign=workshop, user=owner, role_id=codes.role_ref(OWNER))
+def workshop_for(user: Any) -> Campaign:
+    """The player's workshop, made now if he has none (one query when he has; five when it is made)."""
+    found = workshop_of(user)
+    if found is not None:
+        return found
+    try:
+        with transaction.atomic():
+            workshop = Campaign.objects.create(
+                name=WORKSHOP_NAME, join_code=unique_join_code(), kind=WORKSHOP, workshop_owner=user
+            )
+            CampaignSettings.objects.create(campaign=workshop, **settings_at_creation({}, None))
+            CampaignMembership.objects.create(campaign=workshop, user=user, role_id=codes.role_ref(OWNER))
+    except IntegrityError as error:  # his first use twice at once: the other request made it
+        if "one_workshop_per_player" not in str(error):
+            raise
+        made = workshop_of(user)
+        assert made is not None
+        return made
     return workshop

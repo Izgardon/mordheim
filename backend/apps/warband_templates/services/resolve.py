@@ -5,12 +5,17 @@ Otherwise the book's template for the type, unless the campaign replaced or remo
 is typed by hand as before. Archived templates serve nobody. The types a warband counts as never pick one. The
 variant is the warband's (`template_variant`): its type's preset, else picked when raising, changeable in Settings.
 A variant reads its own rules and list lines besides every variant's, and its changes to each fighter.
+
+A workshop's warband (apps/workshop) reads the list it names (`Warband.template`, archived or not), because one
+workshop holds many lists, several of which may serve its type; a new type in Settings names the list serving it
+there (the one it named, if that one serves it too: `template_for_new_type`).
 """
 
 from collections.abc import Iterable, Mapping
+from copy import copy
 from typing import Any
 
-from django.db.models import Exists, F, OuterRef, Q, QuerySet, Subquery
+from django.db.models import Case, Exists, F, OuterRef, Prefetch, Q, QuerySet, Subquery, Value, When
 
 from apps.core.models import CatalogueRemoval
 from apps.warbands.models import Warband
@@ -38,12 +43,19 @@ def in_campaign(campaign_id: int) -> QuerySet[WarbandTemplate]:
     return rows.order_by(F("campaign_id").asc(nulls_last=True), "id")
 
 
-def templates_for_type(campaign_id: int, warband_type_id: int | None) -> QuerySet[WarbandTemplate]:
+def templates_for_type(
+    campaign_id: int, warband_type_id: int | None, named_id: int | None = None
+) -> QuerySet[WarbandTemplate]:
     """The templates serving the type in the campaign, the campaign's own first, each with the variant the type
-    presets (`preset_variant`, blank: picked when raising). One query when read."""
+    presets (`preset_variant`, blank: picked when raising); `named_id`, a workshop warband's list, alone. One query
+    when read."""
+    preset = WarbandTemplateType.objects.filter(template_id=OuterRef("pk"), warband_type_id=warband_type_id)
+    if named_id is not None:
+        return WarbandTemplate.objects.filter(pk=named_id).annotate(
+            preset_variant=Subquery(preset.values("variant")[:1])
+        )
     if warband_type_id is None:
         return WarbandTemplate.objects.none()
-    preset = WarbandTemplateType.objects.filter(template_id=OuterRef("pk"), warband_type_id=warband_type_id)
     found: QuerySet[WarbandTemplate] = (
         in_campaign(campaign_id)
         .filter(type_links__warband_type_id=warband_type_id)
@@ -57,12 +69,35 @@ def template_for_type(campaign_id: int, warband_type_id: int | None) -> WarbandT
     return templates_for_type(campaign_id, warband_type_id).first()
 
 
+def templates_for_warband(warband: Warband) -> QuerySet[WarbandTemplate]:
+    """`templates_for_type` for the warband: the list it names (a workshop's), else its type's in its campaign."""
+    return templates_for_type(warband.campaign_id, warband.warband_type_id, warband.template_id)
+
+
+def template_for_warband(warband: Warband) -> WarbandTemplate | None:
+    """The template the warband uses, or None (one query)."""
+    return templates_for_warband(warband).first()
+
+
+def template_for_new_type(warband: Warband, warband_type_id: int | None) -> WarbandTemplate | None:
+    """The template a warband reads once its type changes: its type's in its campaign, and in a workshop the list it
+    named while that one serves the new type too, before the workshop's other lists (one query)."""
+    rows = templates_for_type(warband.campaign_id, warband_type_id)
+    if warband.template_id is not None:
+        named_first = Case(When(pk=warband.template_id, then=Value(0)), default=Value(1))
+        rows = rows.order_by(named_first, F("campaign_id").asc(nulls_last=True), "id")
+    return rows.first()
+
+
 def templates_for_warbands(warbands: Iterable[Warband]) -> dict[int, WarbandTemplate | None]:
-    """Each warband's template, as `template_for_type` finds it in its own campaign (the campaign's own, oldest first,
-    else the book's it hasn't replaced or removed; never an archived one), each with its type's `preset_variant`, for
-    many warbands of many campaigns at once (three queries, whatever their number)."""
-    rows = [warband for warband in warbands if warband.warband_type_id is not None]
+    """Each warband's template, as `template_for_warband` finds it in its own campaign (the list a workshop's names,
+    else the campaign's own, oldest first, else the book's it hasn't replaced or removed; never an archived one),
+    each with its type's `preset_variant`, for many warbands of many campaigns at once (three queries, whatever their
+    number, and one more when a workshop's warband names its list)."""
     found: dict[int, WarbandTemplate | None] = dict.fromkeys((warband.pk for warband in warbands), None)
+    named = [warband for warband in warbands if warband.template_id is not None]
+    found.update(_named_templates(named))
+    rows = [warband for warband in warbands if warband.warband_type_id is not None and warband.template_id is None]
     if not rows:
         return found
     campaign_ids = {warband.campaign_id for warband in rows}
@@ -100,9 +135,31 @@ def templates_for_warbands(warbands: Iterable[Warband]) -> dict[int, WarbandTemp
     return found
 
 
+def _named_templates(warbands: list[Warband]) -> dict[int, WarbandTemplate | None]:
+    """The lists workshop warbands name, each with its warband's type's preset variant (one query, none for none)."""
+    if not warbands:
+        return {}
+    links = Prefetch("type_links", queryset=WarbandTemplateType.objects.all())
+    templates = {
+        row.pk: row
+        for row in WarbandTemplate.objects.filter(pk__in={w.template_id for w in warbands}).prefetch_related(links)
+    }
+    found: dict[int, WarbandTemplate | None] = {}
+    for warband in warbands:
+        template = templates.get(warband.template_id or 0)
+        if template is not None:
+            presets = [
+                link.variant for link in template.type_links.all() if link.warband_type_id == warband.warband_type_id
+            ]
+            template = copy(template)
+            template.preset_variant = presets[0] if presets else ""  # type: ignore[attr-defined]
+        found[warband.pk] = template
+    return found
+
+
 def template_id_for(warband: Warband) -> Subquery:
     """The warband's template's id as a subquery, for a read that wants its rows in the same query."""
-    rows = templates_for_type(warband.campaign_id, warband.warband_type_id)
+    rows = templates_for_warband(warband)
     return Subquery(rows.values("pk")[:1])
 
 
@@ -116,9 +173,9 @@ def list_item_ids(warband: Warband) -> frozenset[int]:
     """The items the warband's own template lists sell in its variant (two queries, whatever the lists' size): what
     `warbands/services/who_can.py` reads as permission to buy. A line only in another variant is not one of them;
     a warband with no type or no template sells nothing."""
-    if warband.warband_type_id is None:
+    if warband.warband_type_id is None and warband.template_id is None:
         return frozenset()
-    template = templates_for_type(warband.campaign_id, warband.warband_type_id).only("id").first()
+    template = templates_for_warband(warband).only("id").first()
     if template is None:
         return frozenset()
     variant = warband_variant(warband, template)

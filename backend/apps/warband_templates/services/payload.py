@@ -27,6 +27,7 @@ from .resolve import (
     template_gold,
     template_size,
     templates_for_type,
+    templates_for_warband,
     variant_keys,
     variant_lines,
     variant_rules,
@@ -66,7 +67,7 @@ def warband_template(warband: Warband) -> dict[str, Any]:
     """The warband's template with its variant applied, whether list prices are still open, and how many rules Add
     missing rules would copy (fourteen queries with a template, three without; one more with a preset)."""
     open_now = list_prices_open(warband.id)
-    template = hire_details(templates_for_type(warband.campaign_id, warband.warband_type_id)).first()
+    template = hire_details(templates_for_warband(warband)).first()
     if template is None:
         return {
             "template": None,
@@ -100,11 +101,17 @@ def raise_gold(campaign_gold: int, template: WarbandTemplate | None, variant: st
     return max(campaign_gold + template_gold(template, variant) - 500, 0)
 
 
-def raise_outline(campaign_id: int, warband_type_id: int, variant: str, gold: int) -> dict[str, Any]:
+def raise_outline(
+    campaign_id: int, warband_type_id: int, variant: str, gold: int, list_id: int | None = None
+) -> dict[str, Any]:
     """The template a warband of the type would be raised from, in outline: the gold it gets, its most warriors, its
     variants and the type's preset, its rules for the variant (the preset, else the one asked) and the type, the
-    book's gold for the variant, and each fighter's cost and counts (three queries with a template). `gold`: the campaign's starting gold."""
-    template = templates_for_type(campaign_id, warband_type_id).prefetch_related("rules", "fighters").first()
+    book's gold for the variant, and each fighter's cost and counts (three queries with a template). `gold`: the campaign's
+    starting gold; `list_id`: one of a workshop's lists to raise from instead of the type's (one it holds, else none)."""
+    rows = templates_for_type(campaign_id, warband_type_id, list_id)
+    if list_id is not None:
+        rows = rows.filter(campaign_id=campaign_id)
+    template = rows.prefetch_related("rules", "fighters").first()
     if template is None:
         return {"template": None, "gold": gold, "campaign_gold": gold, "most_warriors": 15}
     preset = getattr(template, "preset_variant", "") or ""

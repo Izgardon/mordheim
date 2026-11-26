@@ -1,5 +1,6 @@
-"""The warband deep copy (the workshop plan's imports): a workshop's warband copied whole into another campaign (a
-campaign it is imported into, or the importer's own workshop), owned by the importer, in its exact state.
+"""The warband deep copy (the workshop plan's imports): a warband copied whole into another campaign (a workshop's
+imported into a campaign or another player's workshop, or a campaign's copied into its owner's workshop), owned by
+the importer, in its exact state.
 
 Copied: the warband's own fields (name, type and what it counts as, variant, dice colour, backstory, link, most
 warriors, the mobile loadout switch), its rules (not a plot's: those are written from the plot it follows), its stash,
@@ -8,9 +9,10 @@ everything each holds: kit (a mount or pet switched on stays so), a group's load
 skills, spells (and how much easier each has got), specials, pending picks, XP, level-ups and their history, fighter
 keys, notes and deeds. A dead or dismissed unit or member has left the roster and stays behind. Not copied: the ledger
 and the log, resources, campaign points and the plot, battles, wins and losses, encampments and bounties. Every
-catalogue link becomes the target's current entry (`relink.py`). When the warband was raised from its workshop's own
-list, that list comes too as the target's own template (`copy_list.py`) and the warband's rules from it point at
-the copy's.
+catalogue link becomes the target's current entry (`relink.py`). When the warband reads its campaign's own list (a
+workshop's list it names, or a campaign's own or house template for its type), that list comes too as the target's
+own template (`copy_list.py`). In a workshop the copy is a workshop's warband: its own code, and the list it names
+(that copy, else the book's template it read).
 
 A fixed number of queries whatever the roster's size: each table is read once and written in one INSERT.
 """
@@ -21,10 +23,11 @@ from typing import Any
 
 from django.db.models import Model
 
+from apps.campaigns.models import Campaign
 from apps.special.models import Special
 from apps.warband_templates.models import WarbandTemplate
 from apps.warband_templates.services.raising import open_treasury
-from apps.warband_templates.services.resolve import template_for_type, warband_variant
+from apps.warband_templates.services.resolve import template_for_type, template_for_warband, warband_variant
 from apps.warbands.models import (
     Henchman,
     HenchmanItemGap,
@@ -47,6 +50,7 @@ from apps.warbands.models import (
     WarbandRule,
 )
 
+from .codes import unique_share_code
 from .copy_list import copy_list
 from .relink import Relinker, Warning
 
@@ -147,35 +151,54 @@ def _write(rows: dict[type[Model], list[Model]], source: Warband, warband: Warba
         copied[table.model] = {old.pk: new.pk for old, new in zip(originals, made, strict=True)}
 
 
-def _own_list(source: Warband) -> WarbandTemplate | None:
-    """The source's template when it is its campaign's own (raised from a custom list), else None (one query)."""
-    template = template_for_type(source.campaign_id, source.warband_type_id)
-    return template if template is not None and template.campaign_id == source.campaign_id else None
+def _list_for(source_template: WarbandTemplate | None, source: Warband, target: Campaign, user: Any) -> Any:
+    """The source's own list copied into the target (its campaign's own or house template, a workshop's list), or
+    None for a book template or none; a workshop's copy gets its own code."""
+    if source_template is None or source_template.campaign_id != source.campaign_id:
+        return None
+    code = unique_share_code() if target.is_workshop else None
+    return copy_list(source_template, target.pk, user, share_code=code)
 
 
-def copy_warband(source: Warband, campaign_id: int, user: Any, serve_types: bool = True) -> CopiedWarband:
+def _named(target: Campaign, copied: WarbandTemplate | None, read: WarbandTemplate | None) -> WarbandTemplate | None:
+    """The list a copy names in a workshop: the copy of its own, else the book's template it read; none elsewhere."""
+    if not target.is_workshop:
+        return None
+    if copied is not None:
+        return copied
+    return read if read is not None and read.campaign_id is None else None
+
+
+def copy_warband(source: Warband, target: Campaign, user: Any, serve_types: bool = True) -> CopiedWarband:
     """The copy, in the caller's transaction, with its Starting Gold row (`raising.open_treasury`: the target's gold
     and the copy's template) and nothing paid yet; the warnings in the server's words.
 
-    A list that comes with it serves its types in the target only with `serve_types` (an importer who may edit the
-    campaign's catalogue, or his own workshop), because a campaign's own template serves its type for every warband
-    there; otherwise it arrives serving none, so the copy keeps its list's rules and nobody else's list changes."""
-    own_list = _own_list(source)
-    listed = copy_list(own_list, campaign_id, user) if own_list is not None else None
-    if listed is not None and not serve_types:
+    A list that comes with it serves its types in a campaign only with `serve_types` (an importer who may edit the
+    campaign's catalogue), because a campaign's own template serves its type for every warband there; otherwise it
+    arrives serving none, so the copy keeps its list's rules and nobody else's list changes. In a workshop the copy
+    names its list, so the list keeps the types it serves."""
+    source_template = template_for_warband(source)  # its named list, else its type's in its campaign
+    listed = _list_for(source_template, source, target, user)
+    if listed is not None and not serve_types and not target.is_workshop:
         listed.template.type_links.all().delete()
         name = listed.template.name
         listed.warnings.append({"code": "list_serves_none", "message": SERVES_NONE.format(name=name), "names": [name]})
     rows = _read(source)
-    relinker = Relinker(campaign_id, {Special: listed.specials} if listed else {})
+    relinker = Relinker(target.pk, {Special: listed.specials} if listed else {})
     relinker.prepare(rows)
     if source.warband_type is not None:
         relinker.note(source.warband_type)
+    named = _named(target, listed.template if listed else None, source_template)
     warband = Warband.objects.create(
-        campaign_id=campaign_id, user=user, **{name: getattr(source, name) for name in WARBAND_FIELDS}
+        campaign=target,
+        user=user,
+        in_workshop=target.is_workshop,
+        share_code=unique_share_code() if target.is_workshop else None,
+        template=named,
+        **{name: getattr(source, name) for name in WARBAND_FIELDS},
     )
     warband.counts_as.set(source.counts_as.all())
-    template = listed.template if listed else template_for_type(campaign_id, warband.warband_type_id)
+    template = named or (listed.template if listed else template_for_type(target.pk, warband.warband_type_id))
     open_treasury(warband, template, warband_variant(warband, template) if template is not None else "")
     _write(rows, source, warband, relinker)
     warnings = [*(listed.warnings if listed else []), *relinker.warnings()]

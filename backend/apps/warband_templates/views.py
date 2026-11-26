@@ -7,7 +7,8 @@ routes are editor_views.py.
 
 Raising and hiring (phase 2): `GET warbands/<id>/template/` is the warband's template with its variant applied, what
 it has of each fighter and whether list prices are open; `GET campaigns/<id>/warband-types/<type>/template/` the
-template a warband of the type would be raised from, in outline (`?variant=` for a type that presets none)."""
+template a warband of the type would be raised from, in outline (`?variant=` for a type that presets none; in a workshop
+`?list_id=` one of its lists)."""
 
 from typing import Any
 
@@ -21,6 +22,7 @@ from apps.core.catalogue.kinds import WARBAND_TEMPLATES
 from apps.core.catalogue.views import CatalogueCollectionView, CatalogueEntryView
 from apps.core.catalogue.writes import catalogue_write
 from apps.warbands.views.base import WarbandScopedView
+from apps.workshop.services.codes import unique_share_code
 
 from .editor_serializers import CreateTemplateSerializer
 from .models import DEFAULT_STARTING_GOLD
@@ -45,8 +47,11 @@ class WarbandTemplateListView(CatalogueCollectionView):
         sent.is_valid(raise_exception=True)
         data = sent.validated_data
         names.check_create(self.kind, campaign_id, data["name"])
+        code = unique_share_code() if self.access.workshop else None  # a workshop's list is shared by its code
         with catalogue_write(self.kind, campaign_id, data["name"], socket_id=self.socket_id()):
-            template = make_template(campaign_id, data["name"], data["type_ids"], data.get("source"), request.user)
+            template = make_template(
+                campaign_id, data["name"], data["type_ids"], data.get("source"), request.user, code
+            )
         body = editor_payload(template.pk, campaign_id, self.access.settings)
         return Response(body, status=status.HTTP_201_CREATED)
 
@@ -74,6 +79,8 @@ class WarbandTypeTemplateView(CampaignScopedView):
 
     def get(self, request: Request, campaign_id: int, warband_type_id: int) -> Response:
         variant = str(request.query_params.get("variant") or "")[:40]
+        sent = str(request.query_params.get("list_id") or "").strip()
+        list_id = int(sent) if sent.isdigit() else None  # one of a workshop's lists (apps/workshop)
         settings = self.access.settings
         gold = settings.starting_gold if settings is not None else DEFAULT_STARTING_GOLD
-        return Response(raise_outline(campaign_id, warband_type_id, variant, gold))
+        return Response(raise_outline(campaign_id, warband_type_id, variant, gold, list_id))

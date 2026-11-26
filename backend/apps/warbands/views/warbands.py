@@ -1,6 +1,7 @@
 from typing import Any
 
 from django.db import transaction
+from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -32,8 +33,10 @@ class WarbandListCreateView(APIView):
         campaign_id = parse_campaign_id(request.query_params.get("campaign_id"))  # garbage is a 400 (BUG-152)
         warbands = Warband.objects.filter(user=request.user).select_related("campaign", "campaign__settings")
 
-        if campaign_id is not None:
-            warbands = warbands.filter(campaign_id=campaign_id, campaign__deleted_at__isnull=True)
+        if campaign_id is not None:  # a workshop's too, but those deleted
+            warbands = warbands.filter(
+                campaign_id=campaign_id, campaign__deleted_at__isnull=True, deleted_at__isnull=True
+            )
         else:  # his campaigns' warbands: a workshop's are listed by apps/workshop
             warbands = warbands.filter(campaign__kind=CAMPAIGN)
 
@@ -75,7 +78,6 @@ def rules_changed(swap: RuleSwap | None) -> dict[str, Any] | None:
 
 class WarbandDetailView(WarbandScopedView):
     rules = {**WarbandScopedView.rules, "DELETE": "delete"}  # only the warband's owner may delete it
-    workshop_refused = frozenset({"DELETE"})  # a workshop's warband goes with its workshop (apps/workshop)
 
     def get(self, request: Request, warband_id: int) -> Response:
         return Response(WarbandSerializer(self.warband).data)
@@ -88,7 +90,7 @@ class WarbandDetailView(WarbandScopedView):
         check_plot(self.warband.campaign_id, serializer.validated_data)
         check_backstory_change(request.user, self.warband, self.membership, serializer.validated_data)
         plotted = {"plot_id", "campaign_points"} & set(serializer.validated_data)
-        was = (self.warband.warband_type_id, self.warband.template_variant)
+        was = (self.warband.warband_type_id, self.warband.template_variant, self.warband.template_id)
         with transaction.atomic():
             serializer.save()
             if counts_as is not None:
@@ -100,7 +102,10 @@ class WarbandDetailView(WarbandScopedView):
         return Response({**WarbandSerializer(self.warband).data, "rules_changed": rules_changed(swapped)})
 
     def delete(self, request: Request, warband_id: int) -> Response:
-        self.warband.delete()
+        if self.warband.in_workshop:  # soft deleted (apps/workshop): its code stops working, copies made stay
+            Warband.objects.filter(pk=self.warband.pk).update(deleted_at=timezone.now())
+        else:
+            self.warband.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

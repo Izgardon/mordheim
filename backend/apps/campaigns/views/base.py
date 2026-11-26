@@ -30,7 +30,7 @@ class CampaignScopedView(AnswersRefusals):
     Answers as the hand-written checks did: anonymous 401 (and throttles) first, then a non-member 404 "Not found",
     a feature switched off 404 "Not found" (`feature_flag`), any write to an archived campaign 403
     `campaign_archived` (but the methods in `allow_archived`: restore, delete), any write to a workshop 403
-    `workshop_campaign` (but in a workshop holding one of `workshop_writes`: a list's template editor), a member
+    `workshop_campaign` (but a view taking `workshop_writes`: the catalogue's and the template editor's), a member
     without the right 403 "Forbidden". `rules`
     maps each method the view handles to a rule of `access.CAMPAIGN_RULES`; a handled method it doesn't list is
     refused (deny by default). Methods the view doesn't handle, and OPTIONS, are left to DRF (405, metadata).
@@ -42,7 +42,7 @@ class CampaignScopedView(AnswersRefusals):
     rules: Mapping[str, str] = {"GET": "view"}
     feature_flag: str | None = None
     allow_archived: frozenset[str] = frozenset()  # writes an archived campaign still takes (decision 5)
-    workshop_writes: frozenset[str] = frozenset()  # the workshops (by what they hold) whose writes it takes
+    workshop_writes: bool = False  # it takes a workshop's writes (the catalogue's write path: apps/workshop)
 
     access: CampaignAccess
 
@@ -62,7 +62,7 @@ class CampaignScopedView(AnswersRefusals):
     def enter_campaign(self, method: str, campaign_id: int) -> None:
         """Load the caller's access: a non-member 404 (a deleted workshop's owner too), a feature switched off 404, a
         write to an archived campaign 403 `campaign_archived` (but the methods in `allow_archived`), a write to a
-        workshop 403 `workshop_campaign` (but one holding what `workshop_writes` names)."""
+        workshop 403 `workshop_campaign` (but in a view taking `workshop_writes`)."""
         access = load_campaign_access(self.request, campaign_id)
         if access is None:
             raise NotFound("Not found")
@@ -71,7 +71,7 @@ class CampaignScopedView(AnswersRefusals):
             raise NotFound("Not found")
         if method != "GET" and access.archived and method not in self.allow_archived:
             raise CampaignArchived()
-        if method != "GET" and access.workshop and access.campaign.holds not in self.workshop_writes:
+        if method != "GET" and access.workshop and not self.workshop_writes:
             raise WorkshopCampaign()
 
     def check_rule(self, name: str | None, obj: Any = None) -> None:

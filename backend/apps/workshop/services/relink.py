@@ -11,9 +11,9 @@ warns too and links it all the same: restrictions warn, they never block.
 from collections.abc import Iterable, Mapping
 from typing import Any
 
-from django.db.models import Model, Q
+from django.db.models import Model
 
-from apps.campaigns.models import CampaignCampaignType, CampaignType
+from apps.campaigns.in_play import settings_in_play
 from apps.core.catalogue.current import current_rows, is_entry_table
 
 Warning = dict[str, Any]
@@ -98,12 +98,7 @@ class Relinker:
     def warnings(self) -> list[Warning]:
         """Entries not in play in the target, and entries left out, in the server's words (one query)."""
         warnings: list[Warning] = []
-        in_play = set(
-            CampaignType.objects.filter(
-                Q(always_on=True)
-                | Q(pk__in=CampaignCampaignType.objects.filter(campaign_id=self.campaign_id).values("campaign_type_id"))
-            ).values_list("pk", flat=True)
-        )
+        in_play = settings_in_play(self.campaign_id)
         off = sorted(
             {
                 str(row.name)

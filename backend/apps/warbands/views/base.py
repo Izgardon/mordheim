@@ -17,16 +17,13 @@ from apps.warbands.models import Warband
 
 WRITES = ("POST", "PUT", "PATCH", "DELETE")
 WORKSHOP_WRITES = frozenset(WRITES)  # what a workshop's warband refuses of a view it has no part of
-WORKSHOP_WARBAND = (
-    "A workshop's warband is its roster and backstory: it has no treasury, log, resources or visits, and its"
-    " workshop is deleted rather than the warband."
-)
+WORKSHOP_WARBAND = "A workshop's warband is its roster and backstory: it has no treasury, log, resources or visits."
 
 
 class WarbandScopedView(APIView):
     """Loads the warband and the viewer's membership once and checks the method's rule before the handler.
 
-    Answers as the hand-written checks did: anonymous 401, an unknown warband or a non-member 404 "Not
+    Answers as the hand-written checks did: anonymous 401, an unknown (or deleted) warband or a non-member 404 "Not
     found", a write to a warband of an archived campaign 403 `campaign_archived` (decision 5), a method in
     `workshop_refused` on a workshop's warband 403 `workshop_campaign` (it has no treasury, log or resources: apps/workshop),
     a member without the right 403 "Forbidden", all before the handler looks anything else up.
@@ -46,7 +43,9 @@ class WarbandScopedView(APIView):
         if method == "OPTIONS" or not hasattr(self, method.lower()):
             return
         warband = (
-            Warband.objects.select_related("campaign", "campaign__settings").filter(id=kwargs["warband_id"]).first()
+            Warband.objects.select_related("campaign", "campaign__settings")
+            .filter(id=kwargs["warband_id"], deleted_at__isnull=True)  # a workshop warband deleted is gone
+            .first()
         )
         if warband is None:
             raise NotFound("Not found")

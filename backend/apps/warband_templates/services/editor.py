@@ -8,7 +8,7 @@ copied from, and how many of the campaign's warbands use it (those of its types 
 
 from typing import Any
 
-from django.db.models import OuterRef, Subquery
+from django.db.models import Case, F, OuterRef, Subquery, When
 
 from apps.campaigns.models import CampaignSettings
 from apps.core.catalogue.kinds import WARBAND_TEMPLATES
@@ -22,11 +22,12 @@ from .resolve import in_campaign
 
 
 def users(template: WarbandTemplate, campaign_id: int) -> int:
-    """How many of the campaign's warbands use the template: those of a type it serves for which it is the first
-    template (one query)."""
+    """How many of the campaign's warbands use the template: those naming it (a workshop's, not deleted), and those
+    of a type it serves for which it is the first template (one query)."""
     first = in_campaign(campaign_id).filter(type_links__warband_type_id=OuterRef("warband_type_id")).values("pk")
-    rows = Warband.objects.filter(campaign_id=campaign_id, warband_type__template_links__template=template)
-    return rows.annotate(uses=Subquery(first[:1])).filter(uses=template.pk).count()
+    rows = Warband.objects.filter(campaign_id=campaign_id, deleted_at__isnull=True)
+    uses = Case(When(template__isnull=False, then=F("template_id")), default=Subquery(first[:1]))
+    return rows.annotate(uses=uses).filter(uses=template.pk).count()
 
 
 def source(template: WarbandTemplate) -> str:
