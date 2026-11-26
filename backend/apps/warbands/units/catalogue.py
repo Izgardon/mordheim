@@ -25,7 +25,7 @@ class ItemSummarySerializer(serializers.Serializer):
     row_id = serializers.IntegerField(source="pk")  # this copy: what the companion switch names
     companion = serializers.BooleanField()
     material = serializers.CharField()  # what this copy is made of (weapon materials); "" plain
-    shown_as = serializers.CharField()  # the name it was given ("Hammer" for our Club, Mace or Hammer); "" its own
+    shown_as = serializers.CharField()  # the name it was given ("Jambiya" for our Dagger); "" its own
     material_name = serializers.SerializerMethodField()  # "Gromril Hammer"
     beast_kind = serializers.SerializerMethodField()  # mount, pet or creature for an Animal item
 

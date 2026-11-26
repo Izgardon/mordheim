@@ -233,7 +233,7 @@
         "quantity": 1
       },
       {
-        "item": "Club, Mace or Hammer",
+        "item": "Club",
         "quantity": 1
       },
       {
@@ -407,7 +407,7 @@
     "spells": [],
     "equipment": [
       {
-        "item": "Club, Mace or Hammer",
+        "item": "Club",
         "quantity": 1
       }
     ]

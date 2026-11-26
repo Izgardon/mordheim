@@ -155,8 +155,8 @@ def _cost() -> serializers.IntegerField:
 
 class KitInputSerializer(EquipmentInputSerializer):
     """One kit line a write sends: the item and how many, plus what it is made of (weapon materials) and the name
-    this kit gives it, so a save keeps the Runesmith Journeyman's hammer gromril and still called a "Hammer". The
-    bestiary's equipment keeps the plain shape: its rows hold neither."""
+    this kit gives it, so a save keeps the Runesmith Journeyman's hammer gromril and a kit's own name for an item.
+    The bestiary's equipment keeps the plain shape: its rows hold neither."""
 
     material = serializers.ChoiceField(choices=SLUGS, allow_blank=True, required=False, default="")
     shown_as = serializers.CharField(max_length=MAX_SHOWN_AS, allow_blank=True, required=False, default="")

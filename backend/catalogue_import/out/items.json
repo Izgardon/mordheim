@@ -5212,8 +5212,8 @@
     ]
   },
   {
-    "slug": "club-mace-or-hammer",
-    "name": "Club, Mace or Hammer",
+    "slug": "club",
+    "name": "Club",
     "variant": "",
     "origin": "mordheimer",
     "type": "Weapon",
@@ -5222,15 +5222,89 @@
     "source": "Mordheim Rulebook",
     "link_url": "https://mordheimer.net/docs/weapons-armour/close-combat#club,-mace-or-hammer",
     "tags": [
-      "staff/club/mace",
-      "hammer",
-      "hammers",
-      "staff",
-      "mace",
-      "maces",
       "club",
       "clubs",
-      "hammer, staff, mace or club"
+      "staff"
+    ],
+    "flavour": "Perhaps the simplest type of weapon, these brutal, bludgeoning instruments range from primitive wooden clubs to elaborately forged Dwarf hammers made from the finest steel. A blow from a mace can easily crush a skull or knock a man unconscious.",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "concussion"
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 3,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": true,
+        "warbands": [],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "mace",
+    "name": "Mace",
+    "variant": "",
+    "origin": "mordheimer",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mordheim",
+    "source": "Mordheim Rulebook",
+    "link_url": "https://mordheimer.net/docs/weapons-armour/close-combat#club,-mace-or-hammer",
+    "tags": [
+      "mace",
+      "maces"
+    ],
+    "flavour": "Perhaps the simplest type of weapon, these brutal, bludgeoning instruments range from primitive wooden clubs to elaborately forged Dwarf hammers made from the finest steel. A blow from a mace can easily crush a skull or knock a man unconscious.",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "concussion"
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 3,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": true,
+        "warbands": [],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "hammer",
+    "name": "Hammer",
+    "variant": "",
+    "origin": "mordheimer",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mordheim",
+    "source": "Mordheim Rulebook",
+    "link_url": "https://mordheimer.net/docs/weapons-armour/close-combat#club,-mace-or-hammer",
+    "tags": [
+      "hammer",
+      "hammers"
     ],
     "flavour": "Perhaps the simplest type of weapon, these brutal, bludgeoning instruments range from primitive wooden clubs to elaborately forged Dwarf hammers made from the finest steel. A blow from a mace can easily crush a skull or knock a man unconscious.",
     "range": "Close Combat",

@@ -95,7 +95,7 @@ class SeedAllTests(TestCase):
                 # five fewer than before: Gromril Weapon, Ithilmar Weapon, Obsidian Weapon, Silver Weapons and
                 # the Dark Elf Blade are weapon materials now, not items (19 and 20 Nov 2026), so seed_items
                 # skips them
-                "Item": 569,  # the import's 445 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey; the Cardinal of Contagion's Pox Staff is one more, with no price row, so nobody buys it (William, 13 Nov 2026); ten Mutiny in Marienburg stubs that duplicate an item of ours are merged away, their prices carried onto it, and the Border Town Burning bear and Marienburg's wild dogs join ours, two Animal items fewer (William, 15 Nov 2026); Marienburg's boar mount is our War Boar, one Animal item fewer (William, 16 Nov 2026); the Karak Azgal Map is one more (William, 21 Nov 2026); Athel Loren's seven shop items are left out again, since none has rules (William, 21 Nov 2026: "if not rules then dont import"); Relics of the Crusades brings 21 items more and its Arabian Steed one more Animal item (William, 21 Nov 2026); the Marienburg Annual's ten beasts (eight daemons, the Great Eagle and the Great Stag) bring 10 Animal items more and its Howdah one more (23 Nov 2026)
+                "Item": 571,  # the import's 445 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey; the Cardinal of Contagion's Pox Staff is one more, with no price row, so nobody buys it (William, 13 Nov 2026); ten Mutiny in Marienburg stubs that duplicate an item of ours are merged away, their prices carried onto it, and the Border Town Burning bear and Marienburg's wild dogs join ours, two Animal items fewer (William, 15 Nov 2026); Marienburg's boar mount is our War Boar, one Animal item fewer (William, 16 Nov 2026); the Karak Azgal Map is one more (William, 21 Nov 2026); Athel Loren's seven shop items are left out again, since none has rules (William, 21 Nov 2026: "if not rules then dont import"); Relics of the Crusades brings 21 items more and its Arabian Steed one more Animal item (William, 21 Nov 2026); the Marienburg Annual's ten beasts (eight daemons, the Great Eagle and the Great Stag) bring 10 Animal items more and its Howdah one more (23 Nov 2026); Club, Mace or Hammer is split into a Club, a Mace and a Hammer, two more (William, 26 Nov 2026)
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 572,  # the import's 530 (one per name, the Marienburg Annual's nine (eight new Strength and Combat skills and Resilience (Annual)), Relics of the Crusades' ten Holy skills and its Smith (Academic), Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 42 hired swords' own skills the book lacks (the Runesmith's Rune Use and Durable are his rules, William, 21 Nov 2026), 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 142,  # the import's 111 (Athel Loren's three, Relics of the Crusades' Holy) + a group of his own for each of 27 hired swords, 9 of them broheim's hireling sections'
@@ -308,8 +308,9 @@ class SeedAllTests(TestCase):
                 "TemplateList": 367,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
                 # with the Kurgan's two bow lines and the Hung's warhorse (phase 3); the 27 lines that sold an
                 # item a weapon material replaced name the material instead (20 Nov 2026), the Druchii's as
-                # darksteel and the Dark Elves' as the Dark Elf Blade
-                "TemplateListItem": 4047,
+                # darksteel and the Dark Elves' as the Dark Elf Blade; a list that sold Club, Mace or Hammer twice (as a
+                # Mace and a Hammer) sells the one item chosen for it once, 54 lines fewer (William, 26 Nov 2026)
+                "TemplateListItem": 3993,
                 "TemplateRule": 512,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
                 # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
                 # Cult's other 6, the Court's 3, the Beastmen's 15, the Marauders' 15 and 6 Blessings, Clan Moulder's 9 (Twistkin),
@@ -806,13 +807,13 @@ class SeedAllTests(TestCase):
 
     def test_the_runesmith_journeymans_hammer_is_gromril(self):
         # weapon materials (19 Nov 2026): the only weapon-material kit row in the catalogue. His "Gromril Hammer" is
-        # our Club, Mace or Hammer made of gromril; before this it seeded as a plain hammer and the gromril was lost
+        # our Hammer made of gromril; before this it seeded as a plain hammer and the gromril was lost
         runesmith = HiredSword.objects.get(name="Runesmith Journeyman", campaign__isnull=True)
         lines = runesmith.item_links.exclude(material="").values_list("item__name", "material", "shown_as")
 
         held = list(lines)
-        self.assertEqual(held, [("Club, Mace or Hammer", "gromril", "Hammer")])
-        # his kit's nickname for the item, so his card reads "Gromril Hammer", not the item's whole name
+        self.assertEqual(held, [("Hammer", "gromril", "")])
+        # the item's own name, so his card reads "Gromril Hammer"
         item_name, material, shown_as = held[0]
         self.assertEqual(copy_name(material, shown_as, item_name), "Gromril Hammer")
 

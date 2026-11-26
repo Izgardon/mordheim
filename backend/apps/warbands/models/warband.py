@@ -104,7 +104,7 @@ class WarbandItem(models.Model):
     cost = models.PositiveIntegerField(null=True, blank=True)
     # What the weapon is made of (apps/items/materials.py; blank: plain): a Gromril Sword is its own row
     material = models.CharField(max_length=MAX_MATERIAL, blank=True, default="")
-    # The name it was given (the kit that armed him calls our Club, Mace or Hammer a "Hammer"); blank: its own name
+    # The name it was given (the list that armed him calls our Dagger a "Jambiya"); blank: its own name
     shown_as = models.CharField(max_length=MAX_SHOWN_AS, blank=True, default="")
     quantity = models.PositiveIntegerField(default=1)
 

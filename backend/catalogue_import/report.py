@@ -357,7 +357,7 @@ def _dropped(data: ReportData) -> list[str]:
         lines.append(f"mordheimer items dropped in overrides.json: {', '.join(data.item_log.dropped)}.")
     if data.item_log.hidden:
         lines.append(
-            f'mordheimer items it hides as aliases of "Club, Mace or Hammer" (their names are its tags), not imported: {", ".join(data.item_log.hidden)}. List any in `keep_hidden_items` to import it.'
+            f'mordheimer items it hides as aliases of "Club, Mace or Hammer" (their names are its tags), not imported: {", ".join(data.item_log.hidden)}. List any in `keep_hidden_items` to import it. Our Club, Mace and Hammer are that item split (`item_splits`), not these.'
         )
     for item, field_name, text in data.item_log.shortened:
         lines.append(f'{item}\'s {field_name} "{text}" is cut to the part before "when"; its rules already say when.')

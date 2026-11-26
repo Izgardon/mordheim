@@ -26,7 +26,8 @@ PLAYERS: dict[str, tuple[str, str]] = {
 }
 OWNER_EMAIL = PLAYERS["owner"][0]
 
-CLUB = "Club, Mace or Hammer"
+# each warband list sells one of the three (catalogue_import/overrides.json item_splits)
+MACE, HAMMER = "Mace", "Hammer"
 
 STEEL_VIGIL = WarbandSpec(
     player="owner",
@@ -37,11 +38,11 @@ STEEL_VIGIL = WarbandSpec(
     heroes=(
         HeroSpec("owner.captain", "Anna Steel", "mercenary-captain", (("Sword", 10), ("Light Armour", 20))),
         HeroSpec("owner.champion", "Bert Vogel", "champions", (("Halberd", 10),)),
-        HeroSpec("owner.young", "Cuno Falk", "youngbloods", ((CLUB, 3),)),
+        HeroSpec("owner.young", "Cuno Falk", "youngbloods", ((MACE, 3),)),
     ),
     groups=(
         GroupSpec("owner.bowmen", "Vigil Bowmen", "marksmen", ("Dorn", "Emil"), (("Bow", 10),)),
-        GroupSpec("owner.guard", "Vigil Guard", "warriors", ("Falk", "Gerd"), ((CLUB, 3), ("Shield", 5))),
+        GroupSpec("owner.guard", "Vigil Guard", "warriors", ("Falk", "Gerd"), ((MACE, 3), ("Shield", 5))),
     ),
     hires=(HireSpec("owner.ogre", "Ogre Bodyguard", "Grust"),),
     stash=(("Lantern", 10),),
@@ -55,10 +56,10 @@ ASH_CHOIR = WarbandSpec(
     dice_color="#b8860b",
     heroes=(
         HeroSpec("player.captain", "Hedda Ruhl", "witch-hunter-captain", (("Sword", 10),)),
-        HeroSpec("player.priest", "Ivo Kessel", "warrior-priest", ((CLUB, 3),)),
+        HeroSpec("player.priest", "Ivo Kessel", "warrior-priest", ((HAMMER, 3),)),
         HeroSpec("player.hunter", "Jorg Lenz", "witch-hunters", (("Axe", 5),)),
     ),
-    groups=(GroupSpec("player.zealots", "Ash Zealots", "zealots", ("Kurt", "Lotte"), ((CLUB, 3),)),),
+    groups=(GroupSpec("player.zealots", "Ash Zealots", "zealots", ("Kurt", "Lotte"), ((HAMMER, 3),)),),
 )
 
 GRAVE_TIDE = WarbandSpec(
@@ -69,7 +70,7 @@ GRAVE_TIDE = WarbandSpec(
     dice_color="#6b0f1a",
     heroes=(
         HeroSpec("rival.count", "Count Mara", "vampire", (("Sword", 10),)),
-        HeroSpec("rival.dreg", "Nedd", "dregs", ((CLUB, 3),)),
+        HeroSpec("rival.dreg", "Nedd", "dregs", ((MACE, 3),)),
     ),
     groups=(GroupSpec("rival.zombies", "Grave Shamblers", "zombies", ("Olf", "Pita")),),
 )

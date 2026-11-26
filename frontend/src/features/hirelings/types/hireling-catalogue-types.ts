@@ -56,13 +56,13 @@ export type HirelingProfile = CatalogueBadgeFields & {
 
 /**
  * One kit line: the item, how many, and what the book makes it of (weapon materials; "" plain),
- * with the name the copy reads under, "Gromril Club, Mace or Hammer".
+ * with the name the copy reads under, "Gromril Hammer".
  */
 export type HirelingEquipment = {
   item: Item;
   quantity: number;
   material?: string;
-  /** The name this kit gives the item ("Hammer" for our Club, Mace or Hammer); "" its own. */
+  /** The name this kit gives the item ("Jambiya" for our Dagger); "" its own. */
   shown_as?: string;
   material_name?: string;
 };

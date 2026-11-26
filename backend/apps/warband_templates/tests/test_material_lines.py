@@ -77,7 +77,7 @@ class MaterialLineEndpointTests(CatalogueTestCase):
         )
 
     def test_the_same_weapon_sold_twice_is_one_choice(self) -> None:
-        # the Dwarf list sells our Club, Mace or Hammer as a Mace and as a Hammer: a gromril one is one choice
+        # the Savage Orcs' list sells our Club as a Stone Hammer and as a Wooden Club: a gromril one is one choice
         TemplateListItem.objects.create(
             equipment_list=self.made.kit, item=self.book_sword, cost=10, shown_as="Longsword"
         )

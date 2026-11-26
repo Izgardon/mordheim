@@ -64,8 +64,8 @@ def line_material(line: Any) -> Material | None:
 
 def weapon_lines(lines: Iterable[Any]) -> list[Any]:
     """The melee weapons a list sells, which a material line on it may be made into: one line per item, the first
-    naming it (the Dwarf list sells our Club, Mace or Hammer twice, as a Mace and as a Hammer, and a gromril one of
-    it is one choice), named as the item itself is, which is what the copy bought will read."""
+    naming it (the Savage Orcs' list sells our Club twice, as a Stone Hammer and as a Wooden Club, and a gromril one
+    of it is one choice), named as the item itself is, which is what the copy bought will read."""
     found: dict[int, Any] = {}
     for line in lines:
         if line.item_id and is_melee(line.item):

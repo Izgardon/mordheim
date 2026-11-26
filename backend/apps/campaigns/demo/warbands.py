@@ -4,7 +4,8 @@ reads as its Reikland variant: their Marksmen have BS 4."""
 
 from .cast import GroupSpec, HeroSpec, HireSpec, WarbandSpec
 
-CLUB = "Club, Mace or Hammer"
+# each warband list sells one of the three (catalogue_import/overrides.json item_splits)
+CLUB, MACE, HAMMER = "Club", "Mace", "Hammer"
 
 REIKLANDERS = WarbandSpec(
     player="cap",
@@ -23,7 +24,7 @@ REIKLANDERS = WarbandSpec(
         ),
         HeroSpec("cap.dieter", "Dieter Brandt", "champions", (("Halberd", 10), ("Helmet", 10))),
         HeroSpec("cap.ott", "Ott the Red", "champions", (("Sword", 10), ("Bow", 10))),
-        HeroSpec("cap.felix", "Felix Hartmann", "youngbloods", ((CLUB, 3),)),
+        HeroSpec("cap.felix", "Felix Hartmann", "youngbloods", ((MACE, 3),)),
     ),
     groups=(
         GroupSpec("cap.bowmen", "Reikland Bowmen", "marksmen", ("Hans", "Jorg"), (("Bow", 10),)),
@@ -32,7 +33,7 @@ REIKLANDERS = WarbandSpec(
             "Eagle Guard",
             "warriors",
             ("Bruno", "Lukas"),
-            ((CLUB, 3), ("Shield", 5)),
+            ((MACE, 3), ("Shield", 5)),
             late_member="Wilhelm",
         ),
     ),
@@ -89,7 +90,7 @@ UNDEAD = WarbandSpec(
             (("Sword", 10),),
             spells=(("Lifestealer", "Necromancy"),),
         ),
-        HeroSpec("ilsabet.grub", "Grub", "dregs", ((CLUB, 3),)),
+        HeroSpec("ilsabet.grub", "Grub", "dregs", ((MACE, 3),)),
         HeroSpec("ilsabet.hobb", "Hobb", "dregs", (("Bow", 10),)),
     ),
     groups=(
@@ -117,7 +118,7 @@ WITCH_HUNTERS = WarbandSpec(
             "ulric.albrecht",
             "Father Albrecht",
             "warrior-priest",
-            ((CLUB, 3), ("Light Armour", 20)),
+            ((HAMMER, 3), ("Light Armour", 20)),
             spells=(("Soulfire", "Prayers of Sigmar"),),
         ),
         HeroSpec("ulric.hanna", "Hanna Brenner", "witch-hunters", (("Sword", 10),)),
@@ -129,7 +130,7 @@ WITCH_HUNTERS = WarbandSpec(
             "Zealots of the Flame",
             "zealots",
             ("Matthias", "Greta", "Udo"),
-            ((CLUB, 3),),
+            ((HAMMER, 3),),
             late_member="Lene",
         ),
         GroupSpec("ulric.flagellants", "Penitents", "flagellants", ("Konstantin", "Erich"), (("Flail", 15),)),

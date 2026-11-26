@@ -4461,7 +4461,7 @@
   },
   {
     "name": "The Dark Jester in Mordheim",
-    "description": "Also carries: club.",
+    "description": "",
     "movement": 4,
     "weapon_skill": 3,
     "ballistic_skill": 3,
@@ -4493,6 +4493,10 @@
     ],
     "spells": [],
     "equipment": [
+      {
+        "item": "Club",
+        "quantity": 1
+      },
       {
         "item": "Morning Star",
         "quantity": 1

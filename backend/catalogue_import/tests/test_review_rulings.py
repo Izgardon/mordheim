@@ -142,9 +142,10 @@ class MergesAndSeparationsTests(ReviewCase):
 
     def test_the_altdorf_quarterstaff_is_just_a_mace(self) -> None:
         # William, 12 Nov 2026: 3 gc with Concussion is our Club, Mace or Hammer, so the item goes and the Wizard
-        # list buys ours under the page's name. Our Quarter Staff (15 gc, Balanced and Freestyle) is untouched.
+        # list buys ours under the page's name; since that item's split (26 Nov 2026) the list's one is the Mace.
+        # Our Quarter Staff (15 gc, Balanced and Freestyle) is untouched.
         self.assertNotIn("Quarterstaff (Altdorf Expeditionary Party)", self.items)
-        mace = self.items["Club, Mace or Hammer"]
+        mace = self.items["Mace"]
         self.assertEqual([rule["rule"] for rule in mace["rules"]], ["concussion"])
         [row] = mace["availabilities"]
         self.assertEqual((row["cost"], row["for_everyone"]), (3, True))
@@ -152,7 +153,7 @@ class MergesAndSeparationsTests(ReviewCase):
             (line["shown_as"], line["cost"])
             for row in self.templates["altdorf-expeditionary-party"]["lists"]
             for line in row["lines"]
-            if line["item"]["name"] == "Club, Mace or Hammer"
+            if line["item"]["name"] == "Mace"
         }
         self.assertIn(("Quarterstaff", 3), shown)
         self.assertEqual([row["cost"] for row in self.items["Quarter Staff"]["availabilities"]], [15])
@@ -204,8 +205,8 @@ class MergesAndSeparationsTests(ReviewCase):
 
     def test_no_template_list_holds_one_item_on_two_lines_that_say_the_same_thing(self) -> None:
         # William, 12 Nov 2026, of the Druchii Sea Dragon Cloak: "collapse it". No list anywhere holds a line twice
-        # over: a repeated item on one list is always told apart by what it is shown as, or by its price (the books
-        # printing "Mace" and "Hammer" for our one Club, Mace or Hammer; the Pit Fighters (old) Spiked Gauntlet at
+        # over: a repeated item on one list is always told apart by what it is shown as, or by its price (the
+        # Altdorf Wizard list's Mace and its Mace shown as Quarterstaff; the Pit Fighters (old) Spiked Gauntlet at
         # 15 and 20 gc). This guards that, so a real duplicate cannot creep in unnoticed.
         same = [
             (row["slug"], equipment["key"], line)

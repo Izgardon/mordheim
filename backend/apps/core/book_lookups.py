@@ -53,15 +53,13 @@ EQUIPMENT_NAME_ALIASES = {
     "mining pick": "double-handed weapon",
     "pick": "double-handed weapon",
     "pickaxe": "double-handed weapon",
-    "hammer": "club, mace or hammer",
-    "club": "club, mace or hammer",
     "hunter's cloak": "forest cloak",
     "whip": "barbed whip",
     "scimitar": "sword",
     "longbow": "long bow",
     "shortbow": "short bow",
     "healing herb": "healing herbs",  # the catalogue import's name
-    "gromril hammer": "club, mace or hammer",  # what it is made of is in EQUIPMENT_MATERIALS
+    "gromril hammer": "hammer",  # what it is made of is in EQUIPMENT_MATERIALS: his copy reads "Gromril Hammer"
     "hammer of sigmar": "sigmarite warhammer",
     "holy water": "blessed water",
     "wolf cloak": "wolfcloak",
@@ -74,7 +72,7 @@ EQUIPMENT_NAME_ALIASES = {
 }
 
 # What the book makes a kit line of (weapon materials; `EQUIPMENT_NAME_ALIASES` stays a name-to-name map): the
-# Runesmith Journeyman's gromril hammer is our Club, Mace or Hammer made of gromril, and the Dark Elves' blade is
+# Runesmith Journeyman's gromril hammer is our Hammer made of gromril, and the Dark Elves' blade is
 # our Sword made of the Dark Elf Blade. Every other material line (the Dwarf Treasure Hunter's, Aenur's, Bertha's,
 # Dalla's, Leonardo's, Okrinok's) names Gromril Armour or Ithilmar Armour, which are items of their own.
 EQUIPMENT_MATERIALS = {
@@ -84,21 +82,10 @@ EQUIPMENT_MATERIALS = {
     "dark elf blade": "dark-elf-blade",
 }
 
-# The name a kit gives the item, as a warband template's list line does (`TemplateListItem.shown_as`): his kit calls
-# our Club, Mace or Hammer a "Hammer", so his copy reads "Gromril Hammer" and not "Gromril Club, Mace or Hammer".
-EQUIPMENT_SHOWN_AS = {
-    "gromril hammer": "Hammer",
-}
-
 
 def equipment_material(line):
     """What the book makes an equipment line of: a material's slug, "" for a plain copy."""
     return EQUIPMENT_MATERIALS.get(lookup_key(line.get("item", "")), "")
-
-
-def equipment_shown_as(line):
-    """The name the kit gives the item, "" where it uses the item's own."""
-    return EQUIPMENT_SHOWN_AS.get(lookup_key(line.get("item", "")), "")
 
 
 def lookup_key(value):
@@ -158,13 +145,11 @@ def shared_names(
 
 @dataclass(frozen=True)
 class KitLine:
-    """One line of a seeded entry's kit: how many copies, what the book makes it of (weapon materials; "" plain,
-    which every line but the Runesmith Journeyman's gromril hammer is), and the name the kit gives the item
-    (`shown_as`; "" where it uses the item's own)."""
+    """One line of a seeded entry's kit: how many copies and what the book makes it of (weapon materials; "" plain,
+    which every line but the Runesmith Journeyman's gromril hammer and the Dark Elves' blade is)."""
 
     quantity: int
     material: str = ""
-    shown_as: str = ""
 
 
 @dataclass
@@ -325,8 +310,7 @@ class BookLookups:
             item = self.equipment(line, owner)
             if item:  # an item listed twice keeps its last quantity
                 quantity = parse_int(line.get("quantity"), 1)
-                extras = (equipment_material(line), equipment_shown_as(line))
-                links.equipment[item.id] = KitLine(quantity, *extras)
+                links.equipment[item.id] = KitLine(quantity, equipment_material(line))
         return links
 
     def _special(self, name: str, description: str, owner: str) -> Special:

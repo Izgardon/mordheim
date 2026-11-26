@@ -42,7 +42,7 @@
         "lines": [
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
             "shown_as": "Staff",
@@ -124,7 +124,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
             "shown_as": "",
@@ -341,7 +341,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
             "shown_as": "",
@@ -752,7 +752,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
             "shown_as": "",
@@ -1383,10 +1383,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -1816,10 +1816,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Wand/Staff/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -1831,7 +1831,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
             "shown_as": "Quarterstaff",
@@ -2003,10 +2003,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -2603,10 +2603,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -2820,10 +2820,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -2977,10 +2977,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -3410,10 +3410,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -3582,10 +3582,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -3709,10 +3709,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -4110,10 +4110,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -4327,10 +4327,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -4770,10 +4770,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace or hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -5002,10 +5002,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace or hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -5446,10 +5446,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -5710,10 +5710,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -5942,10 +5942,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -6369,10 +6369,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -6661,10 +6661,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -7065,10 +7065,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -7576,10 +7576,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -7888,10 +7888,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -8370,25 +8370,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -8550,25 +8535,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -8782,25 +8752,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -10099,25 +10054,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -10271,25 +10211,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -11127,25 +11052,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -11386,10 +11296,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -12628,25 +12538,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -12853,25 +12748,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -13607,10 +13487,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -13936,10 +13816,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -14425,10 +14305,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -14689,10 +14569,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -14846,10 +14726,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -15446,10 +15326,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -15712,10 +15592,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -15918,10 +15798,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -16430,10 +16310,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -16677,10 +16557,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -17424,10 +17304,10 @@
         "lines": [
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace/Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -17611,10 +17491,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -17904,10 +17784,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -18106,10 +17986,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -18293,10 +18173,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -18867,10 +18747,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -19709,25 +19589,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -20891,10 +20756,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace/Staff",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -21513,10 +21378,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -21745,10 +21610,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -22341,10 +22206,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer/Staff",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -22508,10 +22373,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -22635,10 +22500,10 @@
         "lines": [
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -23310,10 +23175,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -23533,10 +23398,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -24175,25 +24040,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -24377,25 +24227,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -25154,25 +24989,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -26986,10 +26806,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace/Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -27188,10 +27008,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -27838,25 +27658,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -28149,25 +27954,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -28853,10 +28643,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Hammer or club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -30836,10 +30626,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -31083,10 +30873,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -31693,25 +31483,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -31940,25 +31715,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -32439,25 +32199,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -32686,25 +32431,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -33249,10 +32979,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace/Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -33376,10 +33106,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace/Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -33518,10 +33248,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace/Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -34126,25 +33856,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -34373,25 +34088,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -35190,25 +34890,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -35437,25 +35122,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -35994,10 +35664,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -36076,10 +35746,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -36801,10 +36471,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -37080,10 +36750,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -37237,10 +36907,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -37904,10 +37574,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -40101,10 +39771,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -40399,10 +40069,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -40451,10 +40121,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -41069,10 +40739,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -41886,10 +41556,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace/Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -42118,10 +41788,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace/Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -42617,10 +42287,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -43270,10 +42940,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -43577,10 +43247,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -44203,10 +43873,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace/Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -44615,10 +44285,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace/Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -44787,10 +44457,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace/Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -46120,10 +45790,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -46733,10 +46403,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -46920,10 +46590,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -47349,10 +47019,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -48261,25 +47931,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -48508,25 +48163,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -49018,10 +48658,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -49265,10 +48905,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -49775,10 +49415,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -50397,10 +50037,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -51155,25 +50795,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -51462,25 +51087,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -52148,10 +51758,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -52365,10 +51975,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -52552,10 +52162,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -53183,25 +52793,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -54024,7 +53619,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "Stone Axe",
@@ -54181,7 +53776,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "Stone Axe",
@@ -54808,7 +54403,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "Stone Axe",
@@ -54965,7 +54560,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "Stone Axe",
@@ -55687,10 +55282,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace/Staff",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -55926,10 +55521,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -57718,10 +57313,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -58441,10 +58036,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -58748,10 +58343,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -59429,7 +59024,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
             "shown_as": "Staff",
@@ -60723,10 +60318,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -60970,10 +60565,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -62146,10 +61741,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -62333,10 +61928,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -62889,10 +62484,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -63121,10 +62716,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -63338,10 +62933,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -63978,25 +63573,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -64270,25 +63850,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -64817,10 +64382,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -65019,10 +64584,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -65191,10 +64756,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -65683,7 +65248,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "Wrench",
@@ -65938,7 +65503,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "Wrench",
@@ -66459,10 +66024,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Club/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -66796,10 +66361,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Club/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -67338,10 +66903,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -67795,10 +67360,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -67967,10 +67532,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -68400,10 +67965,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace, Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -68617,10 +68182,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace, Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -69372,10 +68937,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -69559,10 +69124,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -70173,10 +69738,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -70405,10 +69970,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -71107,10 +70672,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -71339,10 +70904,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -71354,7 +70919,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
             "shown_as": "Staff",
@@ -71839,10 +71404,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -72523,10 +72088,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -73151,10 +72716,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -73413,10 +72978,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -75555,10 +75120,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -75712,10 +75277,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -75869,10 +75434,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -76506,10 +76071,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -77155,10 +76720,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -77357,10 +76922,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -77748,10 +77313,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -77964,10 +77529,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -78106,10 +77671,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -79046,10 +78611,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -79343,10 +78908,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -79523,10 +79088,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -80006,10 +79571,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -80645,25 +80210,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -80847,25 +80397,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -81161,10 +80696,10 @@
         "lines": [
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -81632,10 +81167,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Staff/Club/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -82156,25 +81691,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -82707,25 +82227,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -82956,25 +82461,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -83128,25 +82618,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -83756,10 +83231,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -84112,10 +83587,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -84254,10 +83729,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -85351,25 +84826,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -85493,25 +84953,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -85992,25 +85437,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -86303,25 +85733,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -86917,10 +86332,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -87661,10 +87076,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -87925,10 +87340,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -88082,10 +87497,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -88685,10 +88100,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -88822,10 +88237,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -89395,7 +88810,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "Stone Hammer",
@@ -89410,7 +88825,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "Wooden Club",
@@ -91396,10 +90811,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club/Mace/Staff",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -91707,10 +91122,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -92735,10 +92150,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -93190,25 +92605,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -93909,10 +93309,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -94618,10 +94018,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -95156,10 +94556,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Mace/Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -95398,10 +94798,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -96110,10 +95510,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -96297,10 +95697,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -96836,7 +96236,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "Staff",
@@ -96978,10 +96378,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club/Staff",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -97433,7 +96833,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "Staff",
@@ -97635,10 +97035,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club/Staff",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -98079,10 +97479,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -98251,10 +97651,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -98987,10 +98387,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -99804,10 +99204,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -100469,10 +99869,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -100983,10 +100383,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -101662,10 +101062,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -101883,10 +101283,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -102072,10 +101472,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -102638,10 +102038,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -102820,10 +102220,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -102932,10 +102332,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -103587,10 +102987,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -104211,26 +103611,11 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
-            "cost": 5,
             "cost_note": "",
             "first_free": false,
             "brace_cost": null,
@@ -105120,10 +104505,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -105352,10 +104737,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -105935,10 +105320,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -106382,10 +105767,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -106671,25 +106056,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -107555,10 +106925,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer or mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -108090,7 +107460,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "",
@@ -108217,7 +107587,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
             "shown_as": "",
@@ -108891,10 +108261,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -109018,10 +108388,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -109418,25 +108788,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -110204,25 +109559,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -110391,10 +109731,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -110974,25 +110314,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -111251,25 +110576,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace/Club",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -111528,25 +110838,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -111760,25 +111055,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace/Club",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -112423,25 +111703,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -112715,25 +111980,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -113283,10 +112533,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -113508,10 +112758,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -113523,7 +112773,7 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
             "shown_as": "Staff",
@@ -113967,25 +113217,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -114586,10 +113821,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -115677,10 +114912,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -115968,10 +115203,10 @@
         "lines": [
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -116020,10 +115255,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -116454,10 +115689,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -116718,10 +115953,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -116875,10 +116110,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Hammer/Mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -117505,10 +116740,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -117835,10 +117070,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Mace/Staff",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -118311,10 +117546,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club/mace",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -118858,25 +118093,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -119127,25 +118347,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Hammer",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -120095,10 +119300,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -120312,10 +119517,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -121077,10 +120282,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Club",
               "variant": ""
             },
-            "shown_as": "Club",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,
@@ -122649,25 +121854,10 @@
           },
           {
             "item": {
-              "name": "Club, Mace or Hammer",
+              "name": "Mace",
               "variant": ""
             },
-            "shown_as": "Mace",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Hammer",
+            "shown_as": "",
             "cost": 3,
             "cost_note": "",
             "first_free": false,

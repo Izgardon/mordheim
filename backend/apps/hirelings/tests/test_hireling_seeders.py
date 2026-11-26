@@ -58,7 +58,7 @@ SPECIALIST = {
     },
 }
 # the Runesmith Journeyman's shape (hired-swords.json): his hammer is gromril, the only weapon-material kit row in
-# the catalogue (weapon materials). "Gromril Hammer" is our Club, Mace or Hammer made of gromril.
+# the catalogue (weapon materials). "Gromril Hammer" is our Hammer made of gromril.
 RUNESMITH = {
     "name": "Runesmith Journeyman",
     **STATS,
@@ -86,7 +86,7 @@ class HirelingSeederTests(TestCase):
         cls.ogre_race = Race.objects.create(name="Ogre", **STATS)
         cls.sword = Item.objects.create(name="Sword", type="Weapon")
         cls.axe = Item.objects.create(name="Axe", type="Weapon")
-        cls.hammer = Item.objects.create(name="Club, Mace or Hammer", type="Weapon")
+        cls.hammer = Item.objects.create(name="Hammer", type="Weapon")
         cls.heavy_armour = Item.objects.create(name="Heavy Armour", type="Armour")
         cls.sprint = Skill.objects.create(name="Sprint")
         cls.fear = Special.objects.create(name="Fear", type="Psychology")  # shared: seed_spells_and_special seeds it

@@ -10,7 +10,7 @@ from .resolve import template_id_for
 
 def template_item_names(warband: Warband) -> dict[str, dict[str, str]]:
     """Fighter key -> item id -> the name his lists give it, where they give it one other name (one query). A fighter
-    whose lists name an item two ways (the Mace and the Hammer of "Club, Mace or Hammer") gets neither."""
+    whose lists name an item two ways (the Savage Orcs' Club, as a Stone Hammer and a Wooden Club) gets neither."""
     if warband.warband_type_id is None:
         return {}
     rows = (

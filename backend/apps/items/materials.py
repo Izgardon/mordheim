@@ -276,8 +276,8 @@ def named(slug: str, item_name: str) -> str:
 
 def copy_name(slug: str, shown_as: str, item_name: str) -> str:
     """What a copy of an item reads as: its material in front of the name it was given (`shown_as`, the nickname the
-    list that gave it uses for the item, as a warband template's list line does: the Runesmith Journeyman's kit calls
-    our Club, Mace or Hammer a "Hammer", so his copy reads "Gromril Hammer"), else the item's own name."""
+    list that gave it uses for the item, as a warband template's list line does: a gromril copy of a list's Jambiya,
+    our Dagger, reads "Gromril Jambiya"), else the item's own name ("Gromril Hammer")."""
     return named(slug, shown_as or item_name)
 
 

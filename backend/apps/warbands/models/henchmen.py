@@ -84,7 +84,7 @@ class HenchmenGroupItem(models.Model):
     )  # a mount the group rides, or a pet switched on (units/companions.py)
     # What the weapon is made of (apps/items/materials.py; blank: plain): the row's own, never the item's
     material = models.CharField(max_length=MAX_MATERIAL, blank=True, default="")
-    # The name it was given (the kit that armed him calls our Club, Mace or Hammer a "Hammer"); blank: its own name
+    # The name it was given (the list that armed him calls our Dagger a "Jambiya"); blank: its own name
     shown_as = models.CharField(max_length=MAX_SHOWN_AS, blank=True, default="")
 
     class Meta:

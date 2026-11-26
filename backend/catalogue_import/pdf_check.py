@@ -19,6 +19,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from catalogue_import.common import load_json, loose_key, norm_name, slugify
+from catalogue_import.item_splits import printed_items
 from catalogue_import.pdf_shapes import (
     ALIAS,
     COST,
@@ -50,7 +51,7 @@ from catalogue_import.pdf_shapes import (
     VARIANT_OF as VARIANT_OF_SHAPE,
 )
 from catalogue_import.pdf_warbands import ORIGIN, SHARED, VARIANT_OF, lines_of, put_aliases_right
-from catalogue_import.sources import OUT
+from catalogue_import.sources import OUT, PACKAGE
 from catalogue_import.template_fighters import STATS, FighterLog, race_of
 from catalogue_import.template_lists import Fighter, ItemIndex, plain, read_note
 
@@ -89,8 +90,9 @@ def load_catalogue(pages: dict[str, dict[str, Any]], races: set[str], lores: set
         for row in rows
         if "description" in row
     }
+    splits = load_json(PACKAGE / "overrides.json").get("item_splits", {})  # the pages name the item before its split
     return Catalogue(
-        ItemIndex(item for item in load_json(OUT / "items.json") if item.get("origin") != ORIGIN),
+        ItemIndex(printed_items([row for row in load_json(OUT / "items.json") if row.get("origin") != ORIGIN], splits)),
         {
             row["name"]: set(row["skills"])
             for row in load_json(OUT / "skill-groups.json")

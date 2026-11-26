@@ -169,7 +169,7 @@ class HirelingWriteBoundsTests(CatalogueTestCase):
 class KitMaterialWriteTests(CatalogueTestCase):
     """What a kit line holds beside its item survives a write (weapon materials): a save of a book entry through the
     catalogue form used to drop the material and the name its kit gives the item, so editing the Runesmith Journeyman
-    turned his gromril hammer into a plain Club, Mace or Hammer."""
+    turned his gromril hammer into a plain one."""
 
     def _kit(self, entry: Any) -> list[tuple[int, int, str, str]]:
         rows = entry.item_links.order_by("id")

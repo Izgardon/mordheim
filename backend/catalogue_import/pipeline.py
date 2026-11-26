@@ -14,6 +14,7 @@ from catalogue_import.groups import build_groups
 from catalogue_import.hiring import HiringLog, build_who_can
 from catalogue_import.injuries import build_serious_injuries
 from catalogue_import.item_saves import set_saves
+from catalogue_import.item_splits import as_printed, choose_items, read_splits, render_splits, split_rows
 from catalogue_import.item_subtypes import merge_subtypes
 from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimLog, MimReader, merge_duplicates, mim_item
@@ -291,6 +292,8 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     set_saves(everything, overrides.get("item_saves", {}))  # what equipping it does to the save (18 Nov 2026)
     set_single_use(everything, overrides.get("single_use_items", []))  # what a battle uses up (26 Nov 2026)
     merge_subtypes(everything, overrides.get("item_subtypes", {}))  # one subtype per kind (25 Nov 2026)
+    splits = read_splits(everything, overrides.get("item_splits", {}))  # Club, Mace or Hammer as three (26 Nov 2026)
+    items, everything = split_rows(items, splits), split_rows(everything, splits)
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
     names_we_have = Catalogue(
         [item["name"] for item in everything],
@@ -311,7 +314,9 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     add_pages(snapshot.pages, pdf_pages)
     template_log = TemplateLog()
     one_rule = load_shared()  # the shared specials (William, 5 Nov 2026)
-    templates = build_templates(snapshot, types, resolver, everything, *our_races_and_lores(), template_log, one_rule)
+    printed = as_printed(everything, splits)  # the lists find the original by its names, then sell one choice
+    templates = build_templates(snapshot, types, resolver, printed, *our_races_and_lores(), template_log, one_rule)
+    choose_items(templates, splits)
     check_answers(templates, sources.our_personae)
     pointers = resolve_pointers(templates, sources.our_personae, grouped.skills)  # the skill he starts with (7 Nov)
     shared_specials = build_shared(one_rule, sources.our_hired_swords, sources.our_personae, snapshot.injuries)
@@ -350,7 +355,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         mim,
         mim_log,
         item_log,
-        seed_changes(sources.seed_names, everything, item_log.dropped),
+        seed_changes(sources.seed_names, everything, item_log.dropped + [split.original["name"] for split in splits]),
         shared,
         evidence.odd_grades,
         names,
@@ -381,18 +386,16 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "shared-specials.json": dump_json(shared_specials),
         "random-mutations.json": dump_json(random_mutations),
         "scenarios.json": dump_json(scenarios),
-        "import-report.md": render_report(report)
-        + "\n"
-        + render_templates(templates, template_log, grouped.groups, groups)
-        + "\n"
-        + render_shared(one_rule)
-        + own.render()
-        + "\n"
-        + render_random(random_mutations, one_rule)
-        + "\n"
-        + render_pdf(pdf_pages, stubs, folded)
-        + "\n"
-        + render_pointers(pointers)
-        + "\n"
-        + render_scenarios(scenarios),
+        "import-report.md": "\n".join(
+            [
+                render_report(report),
+                render_templates(templates, template_log, grouped.groups, groups),
+                render_splits(splits),
+                render_shared(one_rule) + own.render(),
+                render_random(random_mutations, one_rule),
+                render_pdf(pdf_pages, stubs, folded),
+                render_pointers(pointers),
+                render_scenarios(scenarios),
+            ]
+        ),
     }

@@ -23,10 +23,10 @@ Answers go into `overrides.json`; the next build applies them.
 | warband types | 160 |
 | warband groups | 20 |
 | shared item rules | 54 |
-| items (mordheimer) | 242 |
+| items (mordheimer) | 244 |
 | items (MiM) | 51 |
 | items (warband templates) | 42 |
-| price rows | 612 |
+| price rows | 614 |
 | skills | 530 |
 | skill groups | 115 |
 | skill group links | 680 |
@@ -942,7 +942,7 @@ Restrictions that name no warband type or group, kept as notes on a row open to 
 In our current seed but on neither mordheimer nor the MiM list: Ladders.
 In our current seed under another name (not dropped): Healing Herb -> Healing Herbs; Mad Cap Mushroom -> Mad Cap Mushrooms.
 mordheimer items dropped in overrides.json: Pike (Tileans).
-mordheimer items it hides as aliases of "Club, Mace or Hammer" (their names are its tags), not imported: Club, Mace, Hammer, Staff. List any in `keep_hidden_items` to import it.
+mordheimer items it hides as aliases of "Club, Mace or Hammer" (their names are its tags), not imported: Club, Mace, Hammer, Staff. List any in `keep_hidden_items` to import it. Our Club, Mace and Hammer are that item split (`item_splits`), not these.
 Lance's strength "As user +2 when charging on horseback" is cut to the part before "when"; its rules already say when.
 
 ## Warband templates
@@ -959,7 +959,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | henchmen that gain no XP | 134 |
 | henchmen that can't be promoted | 165 |
 | equipment lists | 367 |
-| list lines | 4047 |
+| list lines | 3993 |
 | warband rules | 512 |
 | upgrades | 179 |
 | the templates' own specials | 1119 |
@@ -1302,6 +1302,153 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 - Mercenaries: the Ostermarkers pick one of the three cities' skill tables.
 - mercenaries: 'Ostermarker Special rules' (heading Ostermark) is for the ostermarkers type only.
 - A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); orc-mob: Movement (Sea Squig); orc-mob: Minderz (Sea Squig); orc-mob: Not Orcs (Sea Squig); orc-mob: Dumb Monster (Sea Troll); orc-mob: Always Hungry (Sea Troll); orc-mob: Not Orcs (Forest Goblin); orc-mob: Runts (Forest Goblin); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); albion-barbarians: Lad's Got Talent (Warrior); bretonnian-grail-companions: Lord's Boon (Knight of the Realm); clockworkers: In-built equipment (Clockwork fiend); disciples-of-maldred: His Master's Gift (Questing Knight); drowned-dead: No Brain (Jolly Boat); dwarf-slayers: No Missiles or Armour (Slayer); dwarf-troll-slayers: Monster-killer (Dragon Slayer); dwarf-troll-slayers: Doomed (Giant Slayer); dwarf-troll-slayers: Monster-killer (Giant Slayer); dwarf-troll-slayers: Doomed (Goblin Slayer); dwarf-troll-slayers: Monster-killer (Goblin Slayer); dwarf-troll-slayers: Doomed (Skaven Slayer); dwarf-troll-slayers: Monster-killer (Troll Slayer); dwarf-troll-slayers: Doomed (Troll Slayer); dwarf-troll-slayers: Monster-killer (Squig Slayer); dwarf-troll-slayers: Doomed (Squig Slayer); lahmian: Devoted (Thrall); savage-orcs-ath: Animosity (Forest Goblin); skaven-of-clan-moulder: Experience (Rat Ogre); snotlings: Teamwork (Snotling Mob); strigoi: Living (Bat).
+
+## Club, Mace or Hammer
+
+Split into Club, Mace, Hammer (overrides.json `item_splits`): William, 26 Nov 2026: "Split into 3 items and go through the warband lists that had the original and only give them 1 appropriate option." Each is the original under its own name (3 gc, Concussion, for everyone). A list sells the one chosen for its warband: Hammer for Dwarfs and Sigmarites, Club for greenskins, Skaven and beasts, Mace otherwise, and the one its list prints where it prints only one. The original's staff tag goes to the Club
+
+- Club: tags club, clubs, staff
+- Mace: tags mace, maces
+- Hammer: tags hammer, hammers
+
+134 templates sold it; each now sells one: Club 41, Mace 65, Hammer 28. The default is Mace; a reason marks each exception.
+
+| Template | Sells | Why | Its lines printed | Names kept | Lines folded into another |
+| --- | --- | --- | --- | --- | --- |
+| Adventurers | Mace |  | Staff, Club, Mace or Hammer | Staff |  |
+| Albion Barbarians | Club | barbarians, and the list prints Club | Club |  |  |
+| Altdorf Expeditionary Party | Mace |  | Wand/Staff/Mace, Quarterstaff, Hammer/Mace | Quarterstaff |  |
+| Amazons (Lustria) | Club | the lists print Club | Club |  |  |
+| Amazons (Mordheim) | Club | the lists print Club | Club |  |  |
+| Arabian Tomb Raiders | Mace |  | Mace, Club |  |  |
+| Arabian Tribes | Mace |  | Mace or hammer |  |  |
+| Araby Smugglers | Mace |  | Hammer/Mace |  |  |
+| Arabyan Nomads | Mace |  | Mace, Club |  |  |
+| Arabyan Thieves | Mace |  | Mace |  |  |
+| Assassin Squad, Knives from the Dark | Club | the lists print Club | Club |  |  |
+| Averlander Mercenaries | Mace |  | Mace, Hammer |  | Hammer 3 gc, Hammer 3 gc, Hammer 3 gc |
+| Beastmen Raiders | Club | Beastmen: a club | Mace, Hammer |  | Hammer 3 gc, Hammer 3 gc |
+| Black Dwarfs | Hammer | Dwarfs: a hammer | Mace, Hammer |  | Mace 3 gc |
+| Blood Dragons | Mace |  | Mace, Hammer |  | Hammer 3 gc, Hammer 3 gc |
+| Bretonnian Brigands | Club | the lists print Club | Club |  |  |
+| Bretonnian Buccaneers | Mace |  | Hammer/Mace |  |  |
+| Bretonnian Chapel Guard | Mace |  | Mace, Hammer |  |  |
+| Bretonnian Grail Companions | Mace |  | Mace |  |  |
+| Bretonnian Knights-Errant | Mace |  | Mace/Hammer, Mace |  |  |
+| Bretonnians | Mace |  | Mace, Hammer |  |  |
+| Call of the Night Haint | Hammer | the list prints Hammer | Hammer |  |  |
+| Carnival of Chaos | Mace |  | Mace, Hammer |  | Hammer 3 gc |
+| Channel Rats | Mace |  | Mace/Staff |  |  |
+| Circus Extraordinaire | Mace |  | Hammer/Mace |  |  |
+| Clockworkers | Hammer | the lists print Hammer (Hammer/Staff, Hammer, Hammer/Mace) | Hammer/Staff, Hammer, Hammer/Mace |  |  |
+| Court of the Profane Pleasures | Mace |  | Mace |  |  |
+| Cult of the Possessed | Mace |  | Mace, Hammer |  | Hammer 3 gc, Hammer 3 gc |
+| Cursed Dwarves | Hammer | Dwarfs: a hammer | Mace, Hammer |  | Mace 3 gc |
+| Disciples of Maldred | Mace |  | Mace/Hammer, Mace |  |  |
+| Dreamwalkers, Cult Of Morr | Mace |  | Mace, Hammer |  | Hammer 3 gc, Hammer 3 gc |
+| Drowned Dead | Club | a mob of drowned dead (the list prints Hammer or club) | Hammer or club |  |  |
+| Dwarf Grudgebearers | Hammer | Dwarfs: a hammer | Hammer |  |  |
+| Dwarf Guildsmen | Hammer | Dwarfs: a hammer | Mace, Hammer |  | Mace 3 gc, Mace 3 gc |
+| Dwarf Rangers | Hammer | Dwarfs: a hammer | Mace, Hammer |  | Mace 3 gc, Mace 3 gc |
+| Dwarf Slayer Cult | Hammer | Dwarfs: a hammer | Mace/Hammer |  |  |
+| Dwarf Slayers | Hammer | Dwarfs: a hammer | Mace, Hammer |  | Mace 3 gc, Mace 3 gc |
+| Dwarf Treasure Hunters | Hammer | Dwarfs: a hammer | Mace, Hammer |  | Mace 3 gc, Mace 3 gc |
+| Dwarf Troll Slayers | Hammer | Dwarfs: a hammer | Hammer |  |  |
+| Estalian Corsairs | Mace |  | Hammer/Mace |  |  |
+| Fen Guard | Hammer | the list prints Hammer | Hammer |  |  |
+| Ghost Pirates | Mace |  | Hammer/Mace |  |  |
+| Goblin Raiders | Club | greenskins: a club | Club |  |  |
+| Grave Robbers | Mace |  | Mace/Hammer |  |  |
+| Guild of Disgraced Engineers | Hammer | Dwarf engineers, and the list prints Hammer | Hammer |  |  |
+| Gunnery School of Nuln | Mace |  | Mace |  |  |
+| Halflings | Mace |  | Mace/Hammer |  |  |
+| Hobgoblin Horde | Club | greenskins: a club | Club |  |  |
+| Hobgoblins | Mace |  | Mace |  |  |
+| Hochland Bandits | Hammer | the list prints Hammer | Hammer |  |  |
+| Horned Hunters | Mace |  | Mace, Hammer |  | Hammer 3 gc, Hammer 3 gc |
+| House Guard | Mace |  | Mace |  |  |
+| Imperial Outriders | Hammer | the list prints Hammer | Hammer |  |  |
+| Khorne Raiders | Mace |  | Hammer/Mace |  |  |
+| Kislevites | Mace |  | Mace, Hammer |  | Hammer 3 gc, Hammer 3 gc |
+| Knights of the Bitter Moors | Mace |  | Mace, Hammer |  |  |
+| Lahmian | Mace |  | Mace, Hammer |  | Hammer 3 gc |
+| Lizardmen | Club | the Stone Axe "counts as a club" | Stone Axe | Stone Axe |  |
+| Lizardmen (Lustria) | Club | the Stone Axe "counts as a club" | Stone Axe | Stone Axe |  |
+| Lords of the Marsh | Mace |  | Mace/Staff, Mace |  |  |
+| Low Kings | Club | street gangs (the list prints Club/Mace) | Club/Mace |  |  |
+| Lustrian Reavers | Mace |  | Mace, Hammer |  |  |
+| Mages | Mace |  | Staff | Staff |  |
+| Marauders of Chaos | Hammer | the lists print Hammer | Hammer |  |  |
+| Masters of Horror | Mace |  | Mace |  |  |
+| Mazzalupo | Mace |  | Mace |  |  |
+| Mercenaries | Mace |  | Mace, Hammer |  | Hammer 3 gc, Hammer 3 gc |
+| Merchant Caravans | Hammer | the Hero and Henchman lists print Hammer (the Cathayans' Club) | Hammer, Club |  |  |
+| Metal Mongers | Club | Skaven, and the Wrench "counts as club" | Wrench | Wrench |  |
+| Militant Mootlanders | Mace |  | Club/Mace |  |  |
+| Mootlanders | Mace |  | Mace |  |  |
+| Mordheimers' Fanatics | Club | the lists print Club | Club |  |  |
+| Necrarchs | Mace |  | Mace, Hammer |  |  |
+| Necrarchs, the Soul Stealers | Mace |  | Mace |  |  |
+| Necromancer | Mace |  | Mace |  |  |
+| Nehekhara Tomb Guards | Mace |  | Mace, Staff | Staff |  |
+| Night Goblins | Club | greenskins: a club | Club |  |  |
+| Night Goblins (Karak Azgal) | Club | greenskins: a club | Club |  |  |
+| Night Goblins (web) | Club | greenskins: a club | Club |  |  |
+| Norse Explorers | Hammer | the lists print Hammer | Hammer |  |  |
+| Ogre Hunting Party | Club | Ogres and Gnoblars, and the list prints Club | Club |  |  |
+| Orc Mob | Club | greenskins: a club | Club |  |  |
+| Order of the Mare | Mace |  | Mace |  |  |
+| Ostermark Roadwardens | Hammer | the list prints Hammer | Hammer |  |  |
+| Ostlander Mercenaries | Mace |  | Mace, Hammer, Club |  | Hammer 3 gc, Hammer 3 gc |
+| Outlaws of Stirwood Forest | Mace |  | Staff/Club/Mace |  |  |
+| Outlaws of Stirwood Forest, Redux | Mace |  | Mace, Hammer |  | Hammer 3 gc |
+| Pirates | Mace |  | Hammer, Mace |  | Hammer 3 gc, Hammer 3 gc, Hammer 3 gc |
+| Pirates of the Cathayan Sea | Mace |  | Hammer/Mace |  |  |
+| Pit Fighters | Mace |  | Mace, Hammer |  | Hammer 3 gc, Hammer 3 gc |
+| Pit Fighters (old) | Mace |  | Mace, Hammer |  | Hammer 3 gc, Hammer 3 gc |
+| Protectorate Of Sigmar | Hammer | Sigmarites, and the list prints Hammer | Hammer |  |  |
+| Sartosan Pirates | Mace |  | Hammer/Mace |  |  |
+| Savage Orcs (Athel Loren) | Club | greenskins: a club | Club, Mace |  |  |
+| Savage Orcs (Karak Azgal) | Club | greenskins: a club (the list's Stone Hammer and Wooden Club keep their names) | Stone Hammer, Wooden Club | Stone Hammer, Wooden Club |  |
+| Shallows Beasts | Club | beasts of the shallows (the lists print Club/Mace) | Club/Mace/Staff, Club/Mace |  |  |
+| Silent Brotherhood | Club | the list prints Club | Club |  |  |
+| Sisters of Sigmar | Hammer | Sigmarites: the hammer of Sigmar | Mace, Hammer |  | Mace 3 gc |
+| Skaven | Club | Skaven, and the lists print Club | Club |  |  |
+| Skaven of Clan Mors | Club | Skaven, and the lists print Club | Club |  |  |
+| Skaven of Clan Moulder | Club | Skaven, and the lists print Club | Mace/Club, Club |  |  |
+| Skaven of Clan Pestilens | Club | Skaven, and the lists print Club | Club |  |  |
+| Skaven of Clan Pestilens (Lustria) | Club | Skaven, and the lists print Club/Staff | Staff, Club/Staff | Staff |  |
+| Skaven of Clan Pestilens (Mousillon) | Club | Skaven, and the lists print Club/Staff | Staff, Club/Staff | Staff |  |
+| Skaven of Clan Pristekk | Club | Skaven, and the lists print Club | Club |  |  |
+| Skaven of Clan Skryre (Athel Loren) | Club | Skaven, and the lists print Club | Club |  |  |
+| Skaven of Clan Skryre (Karak Azgal) | Club | Skaven, and the lists print Club | Club |  |  |
+| Skaven of Clan Skryre (Relics of the Crusades) | Mace |  | Mace |  |  |
+| Slavers | Hammer | the list prints Hammer | Hammer |  |  |
+| Slayer Pirates | Hammer | Dwarf Slayers: a hammer | Hammer/Mace |  |  |
+| Snotlings | Club | greenskins: a club | Club |  |  |
+| Sorcerous Society | Hammer | the list prints Hammer | Hammer |  |  |
+| Strigoi | Mace |  | Mace, Hammer |  | Hammer 5 gc |
+| Survivors of Strigos | Mace |  | Mace |  |  |
+| The Brood of Ghurash | Club | the list prints Club | Club |  |  |
+| The Cursed Cavalcade | Hammer | the Heroes' list prints Hammer only, the Thralls' Mace and Hammer | Hammer, Mace |  | Mace 3 gc |
+| The Fallen | Mace |  | Hammer or mace |  |  |
+| The Innocents | Club | orphans and apprentices: a club | Club, Mace or Hammer |  |  |
+| The Lost | Club | the lists print Club | Club |  |  |
+| The Restless Dead | Mace |  | Mace, Hammer |  | Hammer 3 gc |
+| The Sons of Hashut | Hammer | Chaos Dwarfs: a hammer | Mace, Hammer |  | Mace 3 gc |
+| Tilean Thespian Troupe | Mace |  | Mace, Hammer, Mace/Club |  | Hammer 3 gc, Hammer 3 gc, Hammer 3 gc, Hammer 3 gc |
+| Tileans | Mace |  | Mace, Hammer |  | Hammer 3 gc, Hammer 3 gc |
+| Tomb Guardians | Mace |  | Mace, Staff | Staff |  |
+| Undead | Mace |  | Mace, Hammer |  | Hammer 3 gc |
+| Underworld Alliance | Club | greenskins, and the list prints Club | Club |  |  |
+| Vampire Hunters of Sylvania | Hammer | witch hunting, and the Vampire Hunters' list prints Hammer | Hammer, Mace |  |  |
+| Wasteland Privateers | Mace |  | Hammer/Mace |  |  |
+| Watchmen | Club | the Watchmen's list prints Club | Club, Mace/Staff |  |  |
+| Werewolf Hunting Pack | Club | werewolves (the list prints Club/mace) | Club/mace |  |  |
+| Witch Hunters | Hammer | Sigmarite witch hunters, whose zealots are "hammer-wielding" | Mace, Hammer |  | Mace 3 gc, Mace 3 gc |
+| Wood Elves of Arden | Club | the lists print Club | Club |  |  |
+| Wood Elves of Athel Loren | Club | the list prints Club | Club |  |  |
+| Woodsmen de Artois | Mace |  | Mace, Hammer |  | Hammer 3 gc |
 
 ## Shared specials
 

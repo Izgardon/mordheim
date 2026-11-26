@@ -144,8 +144,8 @@ class ItemLink(Link):
     # What the book makes his weapon of (apps/items/materials.py; blank: plain): the Runesmith Journeyman's hammer
     # is gromril. Hiring copies it onto the owned row, which carries the same column.
     material = models.CharField(max_length=MAX_MATERIAL, blank=True, default="")
-    # The name this kit gives the item, as a warband template's list line does (`TemplateListItem.shown_as`): the
-    # Runesmith Journeyman's hammer is our "Club, Mace or Hammer", so his reads "Gromril Hammer". Blank: its own name
+    # The name this kit gives the item, as a warband template's list line does (`TemplateListItem.shown_as`: the
+    # Militant Mootlanders' list calls our Helmet a "Cooking pot"), kept through a catalogue write. Blank: its own name
     shown_as = models.CharField(max_length=MAX_SHOWN_AS, blank=True, default="")
 
     class Meta:

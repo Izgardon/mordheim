@@ -72,7 +72,7 @@ class HeroItem(models.Model):
     companion = models.BooleanField(default=False)  # a mount or pet switched on for him (units/companions.py)
     # What the weapon is made of (apps/items/materials.py; blank: plain): the copy's own, never the item's
     material = models.CharField(max_length=MAX_MATERIAL, blank=True, default="")
-    # The name it was given (the kit that armed him calls our Club, Mace or Hammer a "Hammer"); blank: its own name
+    # The name it was given (the list that armed him calls our Dagger a "Jambiya"); blank: its own name
     shown_as = models.CharField(max_length=MAX_SHOWN_AS, blank=True, default="")
 
     class Meta:
