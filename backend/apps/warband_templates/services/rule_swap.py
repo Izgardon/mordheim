@@ -75,9 +75,12 @@ def swap_rules(
     if new_type_id == old_type_id and warband.template_variant == old_variant:
         return None
     preset_id = warband.campaign.preset_id
-    old_template = _template(warband.campaign_id, old_type_id, old_list_id)
-    same = new_type_id == old_type_id and warband.template_id == old_list_id
-    new_template = old_template if same else _template(warband.campaign_id, new_type_id, warband.template_id)
+    old_template: WarbandTemplate | None = None
+    new_template: WarbandTemplate | None = None
+    if not warband.no_list:  # a workshop's made with no list reads none, before or after (resolve.py)
+        old_template = _template(warband.campaign_id, old_type_id, old_list_id)
+        same = new_type_id == old_type_id and warband.template_id == old_list_id
+        new_template = old_template if same else _template(warband.campaign_id, new_type_id, warband.template_id)
     before = given_rules(old_template, old_variant, old_type_id, preset_id)
     after = given_rules(new_template, warband.template_variant, new_type_id, preset_id)
     return _apply(warband, before, after)

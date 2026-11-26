@@ -3,7 +3,8 @@ version 2), each all or nothing. The workshop is made on his first use (`making.
 
 - A warband is raised through the campaign path (`raising.raise_warband`), naming the list it reads there: one of his
   lists (`list_id`), a shared list's code (copied in as a list of his own first, unless it is his already), else the
-  book's list for its type, never one of his (William, 26 Nov 2026). Everything in a workshop carries a code.
+  book's list for its type, never one of his (William, 26 Nov 2026); or no list at all (`no_list`: a budget and most
+  warriors of his own, every unit made by hand). Everything in a workshop carries a code.
 - A list is one template of his own, blank or a copy of one he can see there (the book's or one of his).
 - A code copies into his workshop: a warband (paid for against its budget, its list with it) or a list.
 - A warband's code imports it into a campaign for a member with no warband there: the copy starts on the gold raising
@@ -102,10 +103,12 @@ def _type_served(template: WarbandTemplate, type_id: int | None) -> int:
 
 def make_warband(user: Any, data: dict[str, Any]) -> Made:
     """A warband in the player's workshop, raised from the list it names (`_list_to_raise_from`), else the book's
-    list for its type (a workshop's type template: resolve.py)."""
+    list for its type (a workshop's type template: resolve.py), or from none (`no_list`): its type picked all the
+    same, its budget and most warriors its player's, and recruiting by hand."""
+    no_list = data["no_list"]
     with transaction.atomic():
         workshop = workshop_for(user)
-        template, warnings = _list_to_raise_from(workshop, user, data)
+        template, warnings = (None, []) if no_list else _list_to_raise_from(workshop, user, data)
         type_id = data.get("warband_type_id")
         if template is not None:
             type_id = _type_served(template, type_id)
@@ -117,8 +120,11 @@ def make_warband(user: Any, data: dict[str, Any]) -> Made:
             "template_variant": data.get("template_variant", ""),
         }
         picked_types(workshop.pk, fields)  # its type as a Warband type row (a 400 for an unknown one)
-        named = template or templates_for_type(workshop.pk, type_id).first()
-        fields.update(in_workshop=True, share_code=unique_share_code(), template=named)
+        if no_list:  # it reads no list (Warband.no_list), so it names none
+            fields.update(budget=data["budget"], max_units=data["max_units"], template_variant="", template=None)
+        else:
+            fields["template"] = template or templates_for_type(workshop.pk, type_id).first()
+        fields.update(in_workshop=True, share_code=unique_share_code())
         warband = raise_warband(workshop.pk, user, fields, [])
     return Made(warband=warband, template=template, warnings=warnings)
 

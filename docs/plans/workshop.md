@@ -83,7 +83,7 @@ warband-or-list shape are gone.
 | --- | --- | --- |
 | `GET workshop/` | | `{id, warbands: [WarbandRow], lists: [ListRow]}`, newest first; `id` null before first use (7 queries, 1 with no workshop) |
 | `POST workshop/` | | 200, the same, the workshop made if he has none (for My content before any warband or list) |
-| `POST workshop/warbands/` | `{name, warband_type_id?, template_variant?, list_id?, list_code?}` | 201 `WarbandRow` + `kind: "warband"`, `warnings` |
+| `POST workshop/warbands/` | `{name, warband_type_id?, template_variant?, list_id?, list_code?}` or `{name, warband_type_id, no_list: true, budget?, max_units?}` | 201 `WarbandRow` + `kind: "warband"`, `warnings` |
 | `POST workshop/lists/` | `{name, copy_of_template_id?, warband_type_ids?}` | 201 `ListRow` + `kind: "list"`, `warnings` |
 | `POST workshop/import/` | `{code}` | 201 the copy in my workshop: `WarbandRow` or `ListRow`, with `kind` and `warnings` |
 | `GET workshop/shared/<code>/` | | `Preview` (anyone signed in) |
@@ -107,19 +107,34 @@ warband-or-list shape are gone.
   serving none is 400 `list_serves_no_type`. Without one, `warband_type_id` is required (400 `invalid`, "Pick a
   warband type."). A type that presets no variant needs `template_variant` (400 on `template_variant`, as raising
   answers). All or nothing.
+- **No list** (William, 26 Nov 2026: "You should be able to make a warband without using a list in workshop"):
+  `no_list: true` raises it from no list at all. Its type is still required (400 `invalid`, "Pick a warband type.":
+  a warband always has a type, which who-can reads for what the general store calls usually available, and the
+  pages show), `budget` (0 to 1,000,000 gc, default 500) and `max_units` (1 to 999, default 15) are its own, its
+  variant is blank and it gets no rules. It stores its budget (`Warband.budget`, migration `warbands/0028`; set means
+  "no list", `Warband.no_list`, and a warband with a budget names no list: `warband_no_list_names_none`) and reads
+  **no template at all**, whatever its type: `resolve.templates_for_warband`, `templates_for_warbands` and
+  `template_for_new_type` answer none, so `GET warbands/<id>/template/` is `{template: null, ...}` (Recruit as offers
+  only units made by hand; a `fighter_key` is refused), the store sells from the general catalogue (no list lines),
+  and its cost is against its budget. Its Starting Gold row is its budget. With `list_id` or `list_code` too: 400 on
+  `no_list`; `budget` without `no_list`: 400 on `budget` ("Only a warband with no list sets its own budget: a list's
+  gold is its budget.").
 - `POST workshop/lists/`: `copy_of_template_id` a book template or one of my lists (anyone else's reads as an unknown
   id, 400); `warband_type_ids` book types, left out: the copy's source's, each with the variant its source presets,
   none for a blank list. A name my lists or the book use: 400 `name_taken` (with `matches`), as the editor's Make a
   template answers. The list is then edited with the template editor's routes (`warband-templates/<id>/...`).
 - Into my workshop (`import/`, `to-workshop/`): a warband's copy is paid for against its budget in one Buy row
   (hidden), names its list (the copy of its own list, which keeps serving its types, else the book's template it
-  read) and gets its own code; a list's copy gets its own code. Custom content comes live (below).
+  read; one with no list stays so, its budget with it, and into a campaign reads its type's template) and gets its
+  own code; a list's copy gets its own code. Custom content comes live (below).
 
 ### Inside a workshop: the usual routes
 
 - **Warbands**: every warband route as in a campaign. `DELETE warbands/<id>/` soft deletes a workshop's warband
   (204; its code stops working, copies stay; the warband then reads as 404). The sheet's `workshop: {cost, budget,
-  share_code}` (null in a campaign); `capabilities.workshop` true, `trade` false, `delete` and `edit_catalogue` true.
+  share_code, no_list}` (null in a campaign); `capabilities.workshop` true, `trade` false, `delete` and `edit_catalogue` true.
+  The warband PATCH takes `budget` for one with no list only (any other warband: 400 on `budget`); a new type there
+  keeps it without a list (no rules swapped in, no template named), and a variant is refused as it has none.
   Refused there (403 `workshop_campaign`): ledger writes, resource writes and sales, location visits, `POST
   warbands/` naming a workshop. A hire (`hirelings/hire/`, `source: custom` too) warns `over_budget` when the cost
   after it is above the budget, as purchases and roster saves do.

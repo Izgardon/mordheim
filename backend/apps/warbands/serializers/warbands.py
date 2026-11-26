@@ -21,6 +21,8 @@ from .purchases import MaterialField
 from .types import WarbandTypeBriefSerializer
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+MOST_BUDGET = 1_000_000
+BUDGET_WITH_LIST = "Only a warband with no list sets its own budget: a list's gold is its budget."
 
 
 class WarbandSerializer(serializers.ModelSerializer):
@@ -217,6 +219,8 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
     # its plot (apps/plots): changed for nothing, as often as the player likes (William: "editable for free"); null
     # follows none. Its campaign point total is typed, and nothing but the player changes it
     plot_id = serializers.IntegerField(min_value=1, required=False, allow_null=True)
+    # a workshop warband made with no list sets its own budget (never cleared: a list is what would replace it)
+    budget = serializers.IntegerField(min_value=0, max_value=MOST_BUDGET, required=False)
 
     class Meta:
         model = Warband
@@ -224,6 +228,7 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
             "name",
             "warband_type_id",
             "counts_as_ids",
+            "budget",
             "wins",
             "losses",
             "backstory",
@@ -241,6 +246,11 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
         if not cleaned:
             raise serializers.ValidationError("Name is required")
         return cleaned
+
+    def validate_budget(self, value: int) -> int:
+        if self.instance is None or not self.instance.no_list:
+            raise serializers.ValidationError(BUDGET_WITH_LIST)
+        return value
 
 
 class WarbandResourceSerializer(serializers.ModelSerializer):

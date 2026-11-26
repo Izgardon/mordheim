@@ -9,7 +9,7 @@ roster's size or the number of warbands.
 
 The budget is the gold the warband is raised with in its campaign: the campaign's starting gold plus its template's
 difference from 500 in its variant (`payload.raise_gold`), so a Marienburg variant's 600 follows a variant changed in
-Settings.
+Settings. A workshop's warband made with no list has the budget its player set.
 """
 
 from collections.abc import Iterable
@@ -93,6 +93,9 @@ def roster_budgets(warbands: Iterable[Warband]) -> dict[int, int]:
     templates = templates_for_warbands(rows)
     budgets = {}
     for warband in rows:
+        if warband.budget is not None:  # made with no list: its own
+            budgets[warband.pk] = warband.budget
+            continue
         settings = getattr(warband.campaign, "settings", None)
         campaign_gold = abs(settings.starting_gold) if settings is not None else DEFAULT_GOLD
         template = templates[warband.pk]

@@ -112,9 +112,12 @@ def raise_warband(campaign_id: int, user: Any, fields: dict[str, Any], counts_as
     """Raise the user's warband in the campaign from validated fields (its `warband_type` found, its plot checked),
     all or nothing: its type's template gives its variant, most warriors, gold and rules (`open_treasury`), then its
     preset's rules for its type or race and the plot rungs it has reached. A workshop's warband names the list it is
-    raised from (`template`, which a workshop's caller sends: apps/workshop), else its type's."""
+    raised from (`template`, which a workshop's caller sends: apps/workshop), else its type's; one made with no list
+    (`budget`) reads none."""
     named = fields.get("template")
-    template = templates_for_type(campaign_id, fields["warband_type"].pk, named.pk if named else None).first()
+    template = None
+    if fields.get("budget") is None:
+        template = templates_for_type(campaign_id, fields["warband_type"].pk, named.pk if named else None).first()
     variant = picked_variant(template, fields.pop("template_variant", ""))
     if template is not None:
         fields.setdefault("max_units", template_size(template, variant))
@@ -133,8 +136,8 @@ def raise_warband(campaign_id: int, user: Any, fields: dict[str, Any], counts_as
 def open_treasury(warband: Warband, template: WarbandTemplate | None, variant: str) -> CampaignPreset | None:
     """What a new warband starts with, in the caller's transaction: its default resource (named as the campaign
     names it), its campaign's preset's fixed counters and its Starting Gold ledger row (the campaign's gold plus the
-    template's difference from 500); a raised warband and an imported one alike (apps/workshop). Its campaign's
-    preset, for the caller's rules."""
+    template's difference from 500; a workshop's with no list, its budget); a raised warband and an imported one alike
+    (apps/workshop). Its campaign's preset, for the caller's rules."""
     # locked: a rename of the default resource reaches this warband too, before or after (one at a time)
     settings = CampaignSettings.objects.select_for_update().filter(campaign_id=warband.campaign_id).first()
     # the one everyone starts with (William, 3 Nov 2026), named as the campaign names it
@@ -144,5 +147,7 @@ def open_treasury(warband: Warband, template: WarbandTemplate | None, variant: s
     preset = CampaignPreset.objects.filter(campaigns__id=warband.campaign_id).first()
     give_fixed([warband], other_resources(preset))
     starting_gold = raise_gold(abs(settings.starting_gold) if settings else 500, template, variant)
+    if warband.budget is not None:
+        starting_gold = warband.budget
     ledger.record(warband, LedgerAction.STARTING_GOLD, starting_gold, "Starting Gold")
     return preset

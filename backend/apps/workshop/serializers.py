@@ -7,6 +7,7 @@ from rest_framework import serializers
 from apps.core.share_codes import SHARE_CODE_LENGTH
 from apps.warband_templates.models import WarbandTemplate
 from apps.warbands.models import WarbandType
+from apps.warbands.serializers.warbands import BUDGET_WITH_LIST, MOST_BUDGET
 
 CODE_LENGTH = SHARE_CODE_LENGTH + 4  # room for the spaces or dashes a pasted code may carry
 
@@ -18,19 +19,38 @@ def _name(value: Any) -> str:
     return cleaned
 
 
+DEFAULT_BUDGET = 500  # a new warband with no list: the gold a campaign starts a warband on
+DEFAULT_MOST_WARRIORS = 15
+BOTH = "A warband with no list is raised from no list: leave the list out."
+
+
 class WarbandWorkshopSerializer(serializers.Serializer):
     """`POST workshop/warbands/`: a name and a type, the variant for a type that presets none, and the list to raise
     it from: one of mine (`list_id`) or a shared one's code (its type one the list serves: the first when none is
-    sent)."""
+    sent); or none (`no_list`, William, 26 Nov 2026), with its own budget and most warriors."""
 
     name = serializers.CharField(max_length=120)
     warband_type_id = serializers.IntegerField(min_value=1, required=False, allow_null=True)
     template_variant = serializers.CharField(max_length=40, required=False, allow_blank=True)
     list_id = serializers.IntegerField(min_value=1, required=False, allow_null=True)
     list_code = serializers.CharField(max_length=CODE_LENGTH, required=False, allow_blank=True)
+    no_list = serializers.BooleanField(required=False, default=False)
+    budget = serializers.IntegerField(min_value=0, max_value=MOST_BUDGET, required=False)
+    max_units = serializers.IntegerField(min_value=1, max_value=999, required=False)
 
     def validate_name(self, value: Any) -> str:
         return _name(value)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        if not attrs["no_list"]:
+            if "budget" in attrs:
+                raise serializers.ValidationError({"budget": [BUDGET_WITH_LIST]})
+            return attrs
+        if attrs.get("list_id") or attrs.get("list_code"):
+            raise serializers.ValidationError({"no_list": [BOTH]})
+        attrs.setdefault("budget", DEFAULT_BUDGET)
+        attrs.setdefault("max_units", DEFAULT_MOST_WARRIORS)
+        return attrs
 
 
 class ListWorkshopSerializer(serializers.Serializer):

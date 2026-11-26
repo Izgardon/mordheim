@@ -8,7 +8,8 @@ A variant reads its own rules and list lines besides every variant's, and its ch
 
 A workshop's warband (apps/workshop) reads the list it names (`Warband.template`, archived or not), because one
 workshop holds many lists, several of which may serve its type; a new type in Settings names the list serving it
-there (the one it named, if that one serves it too: `template_for_new_type`).
+there (the one it named, if that one serves it too: `template_for_new_type`). One made with no list (`Warband.no_list`,
+William, 26 Nov 2026) reads none at all, whatever its type.
 """
 
 from collections.abc import Iterable, Mapping
@@ -74,7 +75,10 @@ def template_for_type(campaign_id: int, warband_type_id: int | None) -> WarbandT
 
 
 def templates_for_warband(warband: Warband) -> QuerySet[WarbandTemplate]:
-    """`templates_for_type` for the warband: the list it names (a workshop's), else its type's in its campaign."""
+    """`templates_for_type` for the warband: the list it names (a workshop's), else its type's in its campaign; none
+    for a workshop's made with no list."""
+    if warband.no_list:
+        return WarbandTemplate.objects.none()
     return templates_for_type(warband.campaign_id, warband.warband_type_id, warband.template_id)
 
 
@@ -85,7 +89,10 @@ def template_for_warband(warband: Warband) -> WarbandTemplate | None:
 
 def template_for_new_type(warband: Warband, warband_type_id: int | None) -> WarbandTemplate | None:
     """The template a warband reads once its type changes: its type's in its campaign, and in a workshop the list it
-    named while that one serves the new type too, else the book's (one query)."""
+    named while that one serves the new type too, else the book's (one query); none for one with no list, which stays
+    without (no query)."""
+    if warband.no_list:
+        return None
     rows = templates_for_type(warband.campaign_id, warband_type_id, keep_id=warband.template_id)
     if warband.template_id is not None:
         named_first = Case(When(pk=warband.template_id, then=Value(0)), default=Value(1))
@@ -97,11 +104,16 @@ def templates_for_warbands(warbands: Iterable[Warband]) -> dict[int, WarbandTemp
     """Each warband's template, as `template_for_warband` finds it in its own campaign (the list a workshop's names,
     else the campaign's own, oldest first, else the book's it hasn't replaced or removed; never an archived one),
     each with its type's `preset_variant`, for many warbands of many campaigns at once (three queries, whatever their
-    number, and one more when a workshop's warband names its list; one naming none reads the book's)."""
+    number, and one more when a workshop's warband names its list; one naming none reads the book's, and one made with
+    no list none)."""
     found: dict[int, WarbandTemplate | None] = dict.fromkeys((warband.pk for warband in warbands), None)
     named = [warband for warband in warbands if warband.template_id is not None]
     found.update(_named_templates(named))
-    rows = [warband for warband in warbands if warband.warband_type_id is not None and warband.template_id is None]
+    rows = [
+        warband
+        for warband in warbands
+        if warband.warband_type_id is not None and warband.template_id is None and not warband.no_list
+    ]
     if not rows:
         return found
     campaign_ids = {warband.campaign_id for warband in rows}
