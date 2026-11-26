@@ -67,7 +67,7 @@ function PlotRowView({
  * Settings → Plots, shown while Plots and CP is on: which plots the campaign plays
  * with, from every setting, each marked with where it comes from. A plot whose setting isn't
  * ticked is greyed and still pickable, with the warning beside it once picked. Switching Plots on
- * gave the campaign the plots of the settings it has in play; from then on this list is the list.
+ * gave the campaign its preset's plots; from then on this list is the list.
  */
 export default function PlotsSection({ campaign }: { campaign: CampaignSummary }) {
   const offered = usePlotCatalogue(campaign.id);

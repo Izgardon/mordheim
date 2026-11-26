@@ -12,8 +12,8 @@ greying: it is a sentence the player decides on.
 
 A plot is a catalogue entry (`CatalogueEntry`), so a campaign's house version replaces the book's through `replaces`
 with its own copies of its lines (apps/core/catalogue). A campaign holds the plots it plays with as `CampaignPlot`
-rows (a many-to-many, not the one chart `CampaignSettings.exploration_chart` holds): a campaign may mix settings
-freely, and the plots of its settings in play are what it is given when Plots is switched on (selectors.py).
+rows (a many-to-many, not the one chart `CampaignSettings.exploration_chart` holds), which its preset gives while
+Plots is on (apps/campaign_presets/services/preset_lists.py), whatever settings it ticks for content.
 """
 
 from django.db import models

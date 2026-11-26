@@ -5,12 +5,11 @@ from typing import Any
 from django.db import transaction
 
 from apps.campaign_presets.services import apply as presets_apply
+from apps.campaign_presets.services.preset_lists import give_plots, swap_lists
 from apps.campaign_presets.services.resources import apply_resources
 from apps.campaign_presets.services.skill_wordings import apply_skill_wordings
 from apps.campaign_presets.services.swap import swap_rules
 from apps.core.catalogue.cache import bump
-from apps.plots.writes import give_default_plots
-from apps.scenarios.services.campaign_list import add_setting_scenarios
 
 from ..errors import Refused
 from ..in_play import set_settings
@@ -62,6 +61,7 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
     # settings it guides towards are ticked on top of the campaign's own, and its rules and charts are swapped in
     # there and then (William, 20 Nov 2026: "When changing campaign it should swap the rules then and there")
     preset = validated.get("preset_id") if "preset_id" in validated else None
+    old_preset_id = campaign.preset_id
     if preset is not None:
         settings_updates = {**presets_apply.settings_values(preset), **settings_updates}
         picked_ids = presets_apply.ticked_with(campaign.pk, preset, picked_ids)
@@ -79,11 +79,10 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
             campaign.name = validated["name"]
             campaign.save(update_fields=["name"])
         if picked_ids is not None:  # the settings in play (grading phase 1): every list's in_play changes
-            # a setting ticked adds its scenarios; one unticked takes none away (William, 24 Nov 2026)
-            add_setting_scenarios(campaign.id, set_settings(campaign, picked_ids))
+            set_settings(campaign, picked_ids)  # content only: no scenario or plot comes or goes (William, 26 Nov 2026)
             bump(campaign.id)  # no catalogue.changed: the pages read the lists again on campaign.updated
         if not settings_updates:
-            _settle_preset(campaign, validated, preset)
+            _settle_preset(campaign, validated, preset, old_preset_id)
             return []
         # locked: a warband raised meanwhile gets the default resource's name and its campaign points either way
         settings, _ = CampaignSettings.objects.select_for_update().get_or_create(campaign=campaign)
@@ -94,20 +93,22 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
         settings.save(update_fields=list(settings_updates))
         if old_gold is not None and validated.get(starting_gold.ADJUST_FLAG):
             starting_gold.adjust_warbands(campaign, old_gold, settings_updates["starting_gold"])
-        if settings_updates.get("enable_campaign_points"):  # on: the campaign is given its settings' plots
-            give_default_plots(campaign.id)
+        if settings_updates.get("enable_campaign_points"):  # on: the campaign is given its preset's plots
+            give_plots(campaign.id, campaign.preset_id)
         if "exploration_chart_id" in settings_updates and settings_updates["exploration_chart_id"] != old_chart:
             bump(campaign.id, "exploration_charts")  # the campaign's cached chart body is another chart now
         renamed = settings_updates.get("default_resource_name", old_resource)
         warnings = rename_default_resources(campaign, renamed) if renamed != old_resource else []
-        _settle_preset(campaign, validated, preset)
+        _settle_preset(campaign, validated, preset, old_preset_id)
         return warnings
 
 
-def _settle_preset(campaign: Campaign, validated: dict[str, Any], preset: Any) -> None:
+def _settle_preset(campaign: Campaign, validated: dict[str, Any], preset: Any, old_preset_id: int | None) -> None:
     """A preset taken up (or cleared): its other resources become every warband's fixed counters, once the default
-    resource carries its main resource's name, so a warband's old default is never taken for one of them; and the
-    campaign gets its version of each skill the preset words its own way."""
+    resource carries its main resource's name, so a warband's old default is never taken for one of them; the
+    campaign gets its version of each skill the preset words its own way; and the old preset's scenarios and plots
+    give way to the new one's, once campaign points are settled (preset_lists.py)."""
     if "preset_id" in validated:
+        swap_lists(campaign.pk, old_preset_id, campaign.preset_id)
         apply_resources(campaign.pk, preset)
         apply_skill_wordings(campaign.pk, preset)

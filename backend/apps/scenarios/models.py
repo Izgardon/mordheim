@@ -3,10 +3,10 @@
 Every Mordheim scenario follows one pattern: its opening lines, then its sections in order (Terrain, Warbands or
 Set-up, Starting the game, Special rules, Ending the game, Experience, sometimes Wyrdstone, and a longer one's own
 headings between them). Nothing in a battle changes because of it. A scenario carries no setting and no grade: none
-is ever hidden ("settings will pick the ones needed and they are all viable"). A setting adds its scenarios to a
-campaign through `SettingScenario` (Mordheim 1a's: the rulebook's nine and Chaos on the Streets' seven, weighted
-from their 2D6 tables), and the campaign's own list is its `CampaignScenario` rows, each with a weight the random
-draw reads (0: listed and picked by hand, never drawn).
+is ever hidden ("settings will pick the ones needed and they are all viable"). A setting's scenarios are its
+`SettingScenario` rows (Mordheim 1a's: the rulebook's nine, weighted from its 2D6 table), which a preset naming the
+setting gives a campaign (apps/campaign_presets/services/preset_lists.py); the campaign's own list is its
+`CampaignScenario` rows, each with a weight the random draw reads (0: listed and picked by hand, never drawn).
 
 A scenario is a catalogue entry (`CatalogueEntry`): a campaign's version replaces the book's through `replaces`, and
 the campaign's list rows and battles follow it there and back (apps/core/catalogue/kinds.py `followers`).
@@ -68,7 +68,7 @@ class Scenario(CatalogueEntry):
 
 
 class SettingScenario(models.Model):
-    """A scenario a setting adds to a campaign that ticks it, at the weight its table gives it."""
+    """A scenario of a setting, at the weight its table gives it: a campaign whose preset names the setting gets it."""
 
     setting = models.ForeignKey("campaigns.CampaignType", related_name="scenario_links", on_delete=models.CASCADE)
     scenario = models.ForeignKey(Scenario, related_name="setting_links", on_delete=models.CASCADE)

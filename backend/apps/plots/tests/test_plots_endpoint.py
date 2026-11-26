@@ -1,7 +1,8 @@
-"""`campaigns/<id>/plots/`: the plots a campaign plays with, and the list it is given when Plots is switched on."""
+"""`campaigns/<id>/plots/`: the plots a campaign plays with, and its preset's, given when Plots is switched on."""
 
 from typing import Any
 
+from apps.campaign_presets.models import CampaignPreset
 from apps.campaigns.models import Campaign, CampaignCampaignType, CampaignType
 from apps.core.catalogue.kinds import PLOTS
 from apps.core.catalogue.versions import editable
@@ -47,22 +48,25 @@ class CampaignPlotsTests(RosterTestCase):
     def test_a_campaign_that_has_picked_nothing_plays_with_nothing(self):
         self.assertEqual(self.read(), [])
 
-    def test_switching_plots_on_gives_the_plots_of_the_settings_in_play(self):
-        self.switch_plots_on()
-
-        body = self.read()
-
-        self.assertEqual([plot["name"] for plot in body], ["The Shards"])  # Marienburg isn't ticked
-        self.assertEqual([line["text"] for line in body[0]["scoring"]][0], "Playing a scenario.")
-        self.assertEqual([rung["points"] for rung in body[0]["achievements"]], [5, 10, 15, 20, 25, 35, 40])
-        self.assertTrue(body[0]["in_play"])
-
-    def test_a_ticked_setting_brings_its_plots_into_the_default(self):
+    def test_switching_plots_on_without_a_preset_gives_none_whatever_is_ticked(self):
         CampaignCampaignType.objects.create(campaign=self.campaign, campaign_type=self.marienburg)
 
         self.switch_plots_on()
 
-        self.assertEqual([plot["name"] for plot in self.read()], ["Drowning the Witch", "The Shards"])
+        self.assertEqual(self.read(), [])
+
+    def test_switching_plots_on_gives_the_presets_plots(self):
+        preset = CampaignPreset.objects.create(slug="mutiny", name="Mutiny in Marienburg")
+        preset.settings.set([self.marienburg])
+        Campaign.objects.filter(pk=self.campaign.pk).update(preset=preset)
+
+        self.switch_plots_on()
+
+        body = self.read()
+        self.assertEqual([plot["name"] for plot in body], ["Drowning the Witch"])  # The Shards has no setting
+        self.assertEqual([line["text"] for line in body[0]["scoring"]][0], "Playing a scenario.")
+        self.assertEqual([rung["points"] for rung in body[0]["achievements"]], [5, 10, 15, 20, 25, 35, 40])
+        self.assertFalse(body[0]["in_play"])  # Marienburg isn't ticked: content is the owner's
 
     def test_switching_it_on_again_leaves_the_list_the_campaign_picked(self):
         self.switch_plots_on()

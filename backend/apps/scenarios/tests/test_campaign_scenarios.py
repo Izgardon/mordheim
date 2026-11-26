@@ -1,6 +1,6 @@
-"""A campaign's list of scenarios (William, 24 Nov 2026): Mordheim 1a's nine (the rulebook's) from its creation, a ticked setting's
-added and an unticked one's kept, read by every member in a fixed number of queries, and added to, weighted and
-taken from by `manage_scenarios` holders only (owners and admins), never in an archived campaign."""
+"""A campaign's list of scenarios (William, 24 Nov 2026): Mordheim 1a's nine (the rulebook's) from its creation with no
+preset, never touched by ticking or unticking a setting, read by every member in a fixed number of queries, and added
+to, weighted and taken from by `manage_scenarios` holders only (owners and admins), never in an archived campaign."""
 
 from decimal import Decimal
 from unittest.mock import patch
@@ -49,17 +49,16 @@ class CampaignListTests(ScenarioTestCase):
             response = self.client.get(self.url("scenarios/"))
         self.assertEqual(len(response.json()), Scenario.objects.filter(campaign=None).count())
 
-    def test_ticking_a_setting_adds_its_scenarios_and_unticking_removes_none(self) -> None:
+    def test_ticking_a_setting_adds_none_of_its_scenarios_and_unticking_removes_none(self) -> None:
         khemri = CampaignType.objects.create(slug="khemri", name="Khemri 1b", grade="1b")
         SettingScenario.objects.create(setting=khemri, scenario=self.book("the-mummy"), weight=Decimal("1.5"))
-        SettingScenario.objects.create(setting=khemri, scenario=self.book("skirmish"), weight=Decimal(1))
 
         ticked = self.patch_as(self.owner, self.url(), {"setting_ids": [khemri.id]})
         self.assertEqual(ticked.status_code, 200, ticked.data)
-        self.assertEqual(self.listed(), {**MORDHEIMS, "the-mummy": 1.5})  # Skirmish keeps its weight
+        self.assertEqual(self.listed(), MORDHEIMS)  # content only (William, 26 Nov 2026)
 
         self.patch_as(self.owner, self.url(), {"setting_ids": []})
-        self.assertEqual(self.listed(), {**MORDHEIMS, "the-mummy": 1.5})
+        self.assertEqual(self.listed(), MORDHEIMS)
 
     def test_a_setting_still_ticked_adds_nothing_back(self) -> None:
         self.row("skirmish").delete()
