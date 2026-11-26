@@ -1,10 +1,12 @@
 /**
- * Home's Warbands and Warband lists (the workshop): each card's cost and code, Delete saying the
- * copies stay, Import by code (read first, then imported and opened), and a new warband from a
- * book type with its variant.
+ * Home's workshop: its warbands and lists (each card's cost, code and page), Delete saying the
+ * copies stay, My content (making the workshop on its first use), Import by code (read first,
+ * imported with the server's warnings, opened), and a new warband from a book type, a list code or
+ * one of my lists, with the type and variant each asks for.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { toast } from "sonner";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/api-client";
@@ -12,7 +14,7 @@ import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 
-import type { WorkshopRows } from "../types/workshop-types";
+import type { Workshop } from "../types/workshop-types";
 import WorkshopSections from "./WorkshopSections";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
@@ -20,25 +22,28 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
 
-const ROWS: WorkshopRows = {
+vi.mock("sonner", () => ({ toast: Object.assign(vi.fn(), { warning: vi.fn(), error: vi.fn() }) }));
+
+const ROWS: Workshop = {
+  id: 9,
   warbands: [
     {
-      id: 11,
-      campaign_id: 11,
-      warband_id: 40,
+      id: 40,
+      campaign_id: 9,
       name: "The Gilded Wagon",
       warband_type: { id: 3, name: "Reiklanders" },
+      template_id: 5,
       cost: 455,
       budget: 500,
       share_code: "WAGN2345",
       updated_at: "2026-11-25T10:00:00Z",
     },
     {
-      id: 12,
-      campaign_id: 12,
-      warband_id: 41,
+      id: 41,
+      campaign_id: 9,
       name: "Overspent",
       warband_type: { id: 4, name: "Middenheimers" },
+      template_id: 5,
       cost: 620,
       budget: 500,
       share_code: "OVER2345",
@@ -47,11 +52,17 @@ const ROWS: WorkshopRows = {
   ],
   lists: [
     {
-      id: 13,
-      campaign_id: 13,
-      template_id: 90,
+      id: 90,
+      campaign_id: 9,
       name: "Night Watch",
-      warband_types: [{ id: 3, name: "Reiklanders" }],
+      warband_types: [
+        { id: 3, name: "Reiklanders", variant: "" },
+        { id: 7, name: "Mercenaries", variant: "" },
+      ],
+      variants: [
+        { key: "reikland", name: "Reikland" },
+        { key: "middenheim", name: "Middenheim" },
+      ],
       share_code: "WTCH2345",
       updated_at: "2026-11-25T10:00:00Z",
     },
@@ -65,7 +76,7 @@ function renderHome() {
     <MemoryRouter initialEntries={["/campaigns"]}>
       <Routes>
         <Route path="/campaigns" element={<WorkshopSections />} />
-        <Route path="/workshop/:id" element={<p>Workshop page</p>} />
+        <Route path="/workshop/:id/*" element={<p>Workshop page</p>} />
       </Routes>
     </MemoryRouter>
   );
@@ -86,16 +97,23 @@ describe("Home's workshop sections", () => {
     );
     expect(card("The Gilded Wagon")).toHaveTextContent("WAGN2345");
     expect(within(card("Overspent")).getByText("620 / 500 gc")).toHaveClass("text-danger");
-    expect(card("Night Watch")).toHaveTextContent("Reiklanders");
+    expect(card("Night Watch")).toHaveTextContent("Reiklanders, Mercenaries");
+    expect(
+      within(card("The Gilded Wagon")).getByRole("link", { name: "The Gilded Wagon" })
+    ).toHaveAttribute("href", "/workshop/9/warbands/40");
     expect(within(card("Night Watch")).getByRole("link", { name: "Night Watch" })).toHaveAttribute(
       "href",
-      "/workshop/13"
+      "/workshop/9/lists/90"
+    );
+    expect(screen.getByRole("link", { name: "Items" })).toHaveAttribute(
+      "href",
+      "/workshop/9/items"
     );
   });
 
-  it("deletes one after saying the copies elsewhere stay, and reads the list again", async () => {
+  it("deletes a warband after saying the copies elsewhere stay, and reads the workshop again", async () => {
     const user = setupUser();
-    fakeApi.on("DELETE /workshop/11/", undefined);
+    fakeApi.on("DELETE /warbands/40/", undefined);
     renderHome();
     await screen.findByRole("article", { name: "The Gilded Wagon" });
 
@@ -107,7 +125,35 @@ describe("Home's workshop sections", () => {
     await user.click(within(dialog).getByRole("button", { name: "Delete" }));
 
     await waitFor(() => expect(fakeApi.countOf("GET /workshop/")).toBe(2));
-    expect(fakeApi.calls()).toContain("DELETE /workshop/11/");
+    expect(fakeApi.calls()).toContain("DELETE /warbands/40/");
+  });
+
+  it("deletes a list through the catalogue's Delete", async () => {
+    const user = setupUser();
+    fakeApi.on("DELETE /warband-templates/90/", undefined);
+    renderHome();
+    await screen.findByRole("article", { name: "Night Watch" });
+
+    await user.click(
+      within(card("Night Watch")).getByRole("button", { name: "Delete Night Watch" })
+    );
+    await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Delete" }));
+
+    await waitFor(() => expect(fakeApi.countOf("GET /workshop/")).toBe(2));
+    expect(fakeApi.calls()).toContain("DELETE /warband-templates/90/");
+  });
+
+  it("makes my workshop on its first use, when My content opens before anything else", async () => {
+    const user = setupUser();
+    fakeApi.on("GET /workshop/", { id: null, warbands: [], lists: [] });
+    fakeApi.on("POST /workshop/", { id: 9, warbands: [], lists: [] });
+    renderHome();
+    expect(await screen.findByText("No custom warbands yet.")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Skills" }));
+
+    expect(await screen.findByText("Workshop page")).toBeInTheDocument();
+    expect(fakeApi.calls()).toContain("POST /workshop/");
   });
 
   it("imports by code once the code is read, then opens what it made", async () => {
@@ -128,7 +174,9 @@ describe("Home's workshop sections", () => {
       ...ROWS.warbands[0],
       id: 20,
       kind: "warband",
-      warnings: [],
+      warnings: [
+        { code: "custom_content_added", message: "Added: Lucky Charm.", names: ["Lucky Charm"] },
+      ],
     });
     renderHome();
     await screen.findByRole("article", { name: "The Gilded Wagon" });
@@ -144,6 +192,9 @@ describe("Home's workshop sections", () => {
 
     expect(await screen.findByText("Workshop page")).toBeInTheDocument();
     expect(fakeApi.bodyOf("POST /workshop/import/")).toEqual({ code: "ABCD2345" });
+    expect(toast.warning).toHaveBeenCalledWith("Added: Lucky Charm.", {
+      id: "server-warning-custom_content_added",
+    });
   });
 
   it("shows the server's word on a code nobody has, and imports nothing", async () => {
@@ -255,6 +306,37 @@ describe("Home's workshop sections", () => {
       list_code: "WTCH2345",
       warband_type_id: 7,
       template_variant: "middenheim",
+    });
+  });
+
+  it("makes a warband from one of my lists, with the type and the variant it asks for", async () => {
+    const user = setupUser();
+    fakeApi.on("GET /warband-templates/", []);
+    fakeApi.on("POST /workshop/warbands/", {
+      ...ROWS.warbands[0],
+      id: 23,
+      kind: "warband",
+      warnings: [],
+    });
+    renderHome();
+    await screen.findByRole("article", { name: "The Gilded Wagon" });
+
+    await user.click(screen.getByRole("button", { name: "New warband" }));
+    const dialog = screen.getByRole("dialog", { name: "New warband" });
+    await user.type(within(dialog).getByLabelText("Name"), "Lamplighters");
+    await user.click(within(dialog).getByRole("button", { name: "One of my lists" }));
+    await user.click(within(dialog).getByRole("combobox", { name: "List" }));
+    await user.click(await screen.findByRole("option", { name: /Night Watch/ }));
+    await user.click(within(dialog).getByRole("button", { name: "Mercenaries" }));
+    await user.click(within(dialog).getByRole("button", { name: "Reikland" }));
+    await user.click(within(dialog).getByRole("button", { name: "Make the warband" }));
+
+    expect(await screen.findByText("Workshop page")).toBeInTheDocument();
+    expect(fakeApi.bodyOf("POST /workshop/warbands/")).toEqual({
+      name: "Lamplighters",
+      list_id: 90,
+      warband_type_id: 7,
+      template_variant: "reikland",
     });
   });
 });

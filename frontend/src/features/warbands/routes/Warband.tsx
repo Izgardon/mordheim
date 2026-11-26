@@ -6,6 +6,7 @@ import { CopyCode } from "@/components/ui/copy-code";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import type { StoreOpening } from "@/features/items/store/StorePanel";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
+import { useCopyToWorkshop } from "@/features/workshop/api/useCopyToWorkshop";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { warbandStashQuery } from "../api/economy-queries";
@@ -45,6 +46,7 @@ export default function Warband() {
   const [store, setStore] = useState<StoreOpening>({});
   const warbandId = warband?.id ?? 0;
   const actions = useUnitActions(warbandId);
+  const copying = useCopyToWorkshop();
   const stash = useQuery({
     ...warbandStashQuery(campaignId, warbandId),
     enabled: Boolean(warband),
@@ -133,6 +135,16 @@ export default function Warband() {
               ? [{ label: "Warband sheet", href: warband.warband_link }]
               : []),
             { label: "Rating breakdown", onSelect: () => setBreakdownOpen(true) },
+            // my own warband in a campaign (archived too) copies into my workshop
+            ...(mine && !workshop
+              ? [
+                  {
+                    label: "Copy to my workshop",
+                    onSelect: () => copying.copyWarband(warbandId),
+                    disabled: copying.isCopying,
+                  },
+                ]
+              : []),
           ]}
         />
         {capabilities.trade ? (

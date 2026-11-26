@@ -4,34 +4,46 @@ import type { WarbandTemplateSummary } from "@/features/warband-templates/types/
 import type {
   ImportedList,
   ImportedWarband,
-  MadeWorkshop,
+  MadeInWorkshop,
   MakeListBody,
   MakeWarbandBody,
   SharedPreview,
-  WorkshopRows,
+  Workshop,
 } from "../types/workshop-types";
 
-/** `GET workshop/`: my custom warbands and warband lists, newest first. */
-export function listWorkshops(signal?: AbortSignal) {
-  return apiRequest<WorkshopRows>("/workshop/", { signal });
+/** `GET workshop/`: my workshop's id (null before my first use), my warbands and lists. */
+export function getWorkshop(signal?: AbortSignal) {
+  return apiRequest<Workshop>("/workshop/", { signal });
 }
 
-export function makeWarbandWorkshop(body: MakeWarbandBody) {
-  return apiRequest<MadeWorkshop>("/workshop/warbands/", { method: "POST", body });
+/** `POST workshop/`: my workshop, made now if I have none (for My content before anything else). */
+export function openWorkshop() {
+  return apiRequest<Workshop>("/workshop/", { method: "POST" });
 }
 
-export function makeListWorkshop(body: MakeListBody) {
-  return apiRequest<MadeWorkshop>("/workshop/lists/", { method: "POST", body });
+export function makeWorkshopWarband(body: MakeWarbandBody) {
+  return apiRequest<MadeInWorkshop>("/workshop/warbands/", { method: "POST", body });
 }
 
-/** A shared warband or list copied into a new workshop of my own. */
+export function makeWorkshopList(body: MakeListBody) {
+  return apiRequest<MadeInWorkshop>("/workshop/lists/", { method: "POST", body });
+}
+
+/** A shared warband or list copied into my workshop, with the custom content it uses. */
 export function importIntoWorkshop(code: string) {
-  return apiRequest<MadeWorkshop>("/workshop/import/", { method: "POST", body: { code } });
+  return apiRequest<MadeInWorkshop>("/workshop/import/", { method: "POST", body: { code } });
 }
 
-/** Soft deletes my workshop: its code stops working, copies made from it stay. */
-export function deleteWorkshop(workshopId: number) {
-  return apiRequest<void>(`/workshop/${workshopId}/`, { method: "DELETE" });
+/** My warband in a campaign, copied into my workshop. */
+export function warbandToWorkshop(warbandId: number) {
+  return apiRequest<MadeInWorkshop>(`/warbands/${warbandId}/to-workshop/`, { method: "POST" });
+}
+
+/** A campaign's own list (or its house version of the book's), copied into my lists. */
+export function listToWorkshop(templateId: number) {
+  return apiRequest<MadeInWorkshop>(`/warband-templates/${templateId}/to-workshop/`, {
+    method: "POST",
+  });
 }
 
 /** What a code shares (404 `code_not_found` in the server's words). */

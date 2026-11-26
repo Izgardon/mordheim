@@ -12,7 +12,7 @@ import { getRefusalMessage } from "@/lib/get-error-message";
 
 import { useBookTemplates, useMakeList } from "../api/workshop-queries";
 import { templateOption } from "./book-types";
-import { workshopPath } from "./WorkshopCard";
+import { madePath } from "../paths";
 
 /**
  * New warband list (the workshop): a name, and the book list it starts as a copy of (none: a
@@ -59,7 +59,7 @@ export default function NewListDialog({
         onSuccess: (made) => {
           toastServerWarnings(made.warnings);
           change(false);
-          navigate(workshopPath(made.id));
+          navigate(madePath(made));
         },
         onError: (refused) => setError(getRefusalMessage(refused, "Couldn't make the list.")),
       }

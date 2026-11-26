@@ -51,7 +51,13 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
   const entries = useCatalogue(kind, campaignId);
   // The roster's Hire opens this page for its warband (?warband=): the hire picker
   const forWarband = Number(useSearchParams()[0].get("warband")) || null;
-  const sheet = useWarbandSheet({ campaignId, hasCampaignId: Boolean(id), warbandId: forWarband });
+  // a workshop holds several warbands and none is "yours": its page only reads and writes entries
+  const inWorkshop = campaign?.kind === "workshop" && forWarband === null;
+  const sheet = useWarbandSheet({
+    campaignId,
+    hasCampaignId: Boolean(id) && !inWorkshop,
+    warbandId: forWarband,
+  });
   const { warband } = sheet;
   const params = useReferenceParams(!entries.isLoading);
   const capabilities = campaignCapabilities(campaign);

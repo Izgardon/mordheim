@@ -58,7 +58,7 @@ export default function CampaignLayout() {
   const { id } = useParams();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const { user } = useAuth();
   const campaignId = Number(id);
   const campaignQuery = useCampaignQuery(campaignId);
@@ -125,9 +125,10 @@ export default function CampaignLayout() {
     );
   }
 
-  // a workshop is never a campaign (apps/workshop): its warband or list has a page of its own
+  // a workshop is never a campaign (apps/workshop): the same page in the workshop's frame
   if (campaign.kind === "workshop") {
-    return <Navigate to={`/workshop/${campaign.id}`} replace />;
+    const inWorkshop = pathname.replace(/^\/campaigns\/\d+/, `/workshop/${campaign.id}`);
+    return <Navigate to={`${inWorkshop}${search}`} replace />;
   }
 
   const userName = user?.name?.trim() || "You";

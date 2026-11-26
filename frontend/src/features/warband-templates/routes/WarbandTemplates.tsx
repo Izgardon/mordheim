@@ -18,6 +18,7 @@ import { useWarbandTemplates } from "../api/template-queries";
 import MakeTemplateDialog from "../components/MakeTemplateDialog";
 import TemplateDetail from "../components/TemplateDetail";
 import TemplateEditor from "../editor/TemplateEditor";
+import { useCopyToWorkshop } from "@/features/workshop/api/useCopyToWorkshop";
 import ImportListButton from "@/features/workshop/components/ImportListButton";
 import { typeRows, type TemplateTypeRow } from "../template-view";
 import {
@@ -76,6 +77,7 @@ export default function WarbandTemplates() {
   const params = useReferenceParams(!templates.isLoading);
   const [editing, setEditing] = useState<number | null>(null);
   const [making, setMaking] = useState<Making>(null);
+  const copying = useCopyToWorkshop();
   const canEdit = capabilities.edit_catalogue;
 
   const rows = useMemo(() => typeRows(templates.data, types.data), [templates.data, types.data]);
@@ -190,6 +192,7 @@ export default function WarbandTemplates() {
                 typeId={row.typeId}
                 isMobile={isMobile}
                 onEdit={canEdit ? () => setEditing(row.template?.id ?? null) : undefined}
+                onCopy={() => row.template && copying.copyList(row.template.id)}
               />
             ) : canEdit && row.typeId !== null ? (
               <NoTemplate

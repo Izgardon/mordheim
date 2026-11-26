@@ -25,6 +25,8 @@ type TemplateDetailProps = {
   isMobile: boolean;
   /** Opens the template editor (those who edit the catalogue). */
   onEdit?: () => void;
+  /** Copy to my lists: offered on a campaign's own list (or its house version of the book's). */
+  onCopy?: () => void;
   /** Its page already names it (a workshop's list): the detail leaves its name out. */
   untitled?: boolean;
 };
@@ -41,6 +43,7 @@ export default function TemplateDetail({
   typeId,
   isMobile,
   onEdit,
+  onCopy,
   untitled = false,
 }: TemplateDetailProps) {
   const query = useWarbandTemplate(campaignId, templateId);
@@ -57,11 +60,22 @@ export default function TemplateDetail({
 
   const variant = picked ?? (preset || template.variants[0]?.key || "");
   // on the web at the top of the right-hand column; on a phone above the figures, not under the lists
-  const editButton = (
-    <Button variant="secondary" className="min-h-10 self-start" onClick={onEdit}>
-      Edit template
-    </Button>
-  );
+  const copy = onCopy && template.campaign_id === campaignId ? onCopy : undefined;
+  const editButton =
+    onEdit || copy ? (
+      <div className="flex flex-wrap gap-2">
+        {onEdit ? (
+          <Button variant="secondary" className="min-h-10" onClick={onEdit}>
+            Edit template
+          </Button>
+        ) : null}
+        {copy ? (
+          <Button variant="secondary" className="min-h-10" onClick={copy}>
+            Copy to my lists
+          </Button>
+        ) : null}
+      </div>
+    ) : null;
   const terms = termsFor(template, variant);
   const shown = fightersFor(template.fighters, variant);
   const heroes = shown.filter((fighter) => fighter.kind === "hero");
@@ -77,13 +91,13 @@ export default function TemplateDetail({
       isMobile={isMobile}
       aside={
         <>
-          {onEdit && !isMobile ? editButton : null}
+          {isMobile ? null : editButton}
           <TemplateLists lists={template.lists} variant={variant} isMobile={isMobile} />
           <TemplateUpgrades upgrades={template.upgrades} />
         </>
       }
     >
-      {onEdit && isMobile ? editButton : null}
+      {isMobile ? editButton : null}
       <FactLine
         facts={[
           { label: "Starting gold", value: `${terms.gold} gc` },

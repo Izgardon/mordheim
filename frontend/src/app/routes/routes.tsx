@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 
 // routing
-import { Outlet, type RouteObject } from "react-router-dom";
+import { Navigate, Outlet, useParams, type RouteObject } from "react-router-dom";
 
 // components
 import ScrollToTop from "../../components/ScrollToTop";
@@ -42,7 +42,15 @@ const Encampments = lazy(() => import("../../features/campaigns/routes/Encampmen
 const Locations = lazy(() => import("../../features/campaigns/routes/Locations"));
 const Scenarios = lazy(() => import("../../features/scenarios/routes/Scenarios"));
 const WorkshopLayout = lazy(() => import("../../features/workshop/routes/WorkshopLayout"));
-const WorkshopPage = lazy(() => import("../../features/workshop/routes/WorkshopPage"));
+const WorkshopWarbands = lazy(() => import("../../features/workshop/components/WarbandsSection"));
+const WorkshopLists = lazy(() => import("../../features/workshop/components/ListsSection"));
+const WorkshopList = lazy(() => import("../../features/workshop/components/WorkshopList"));
+
+/** A path the workshop has no page for: its warbands. */
+function ToWorkshop() {
+  const { id } = useParams();
+  return <Navigate to={`/workshop/${id}`} replace />;
+}
 
 function RootLayout() {
   return (
@@ -86,13 +94,33 @@ export const routes: RouteObject[] = [
             element: <Account />,
           },
           {
-            // A workshop's warband or list on its own (apps/workshop): Home's frame, no campaign shell.
+            // My workshop (apps/workshop): its warbands, lists and My content (the catalogue
+            // pages, the workshop as their campaign), in Home's frame with no campaign shell.
             path: "/workshop/:id",
             element: <WorkshopLayout />,
             children: [
               {
                 errorElement: <RouteError variant="inline" />,
-                children: [{ index: true, element: <WorkshopPage /> }],
+                children: [
+                  { index: true, element: <WorkshopWarbands /> },
+                  { path: "warbands/:warbandId", element: <Warband /> },
+                  { path: "lists", element: <WorkshopLists /> },
+                  { path: "lists/:templateId", element: <WorkshopList /> },
+                  { path: "items", element: <Wargear /> },
+                  { path: "skills", element: <Skills /> },
+                  { path: "spells", element: <Spells /> },
+                  { path: "boons-banes", element: <BoonsBanes /> },
+                  { path: "bestiary", element: <Bestiary /> },
+                  {
+                    path: "hired-swords",
+                    element: <HirelingCatalogue key="hired-swords" kind="hired-swords" />,
+                  },
+                  {
+                    path: "dramatis-personae",
+                    element: <HirelingCatalogue key="dramatis-personae" kind="dramatis-personae" />,
+                  },
+                  { path: "*", element: <ToWorkshop /> },
+                ],
               },
             ],
           },

@@ -9,30 +9,46 @@ import { CopyCode } from "@/components/ui/copy-code";
 import { IconButton } from "@/components/ui/icon-button";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-import { useDeleteWorkshop } from "../api/workshop-queries";
-
 type WorkshopCardProps = {
-  id: number;
+  /** Its page in the workshop. */
+  to: string;
   name: string;
   /** What it is: a warband's type, or the types a list serves. */
   kicker: string;
   /** The line under the name: a warband's cost against its budget. */
   facts?: ReactNode;
   shareCode: string;
+  /** Deletes it (the confirm stays open, showing why, on a refusal). */
+  onDelete: () => Promise<unknown>;
 };
 
-/** The workshop's own page: its warband, or its list. */
-export const workshopPath = (id: number) => `/workshop/${id}`;
-
 /**
- * A custom warband or warband list on the Home page: what it is, its name (the card's link, to
- * its page), its cost where it is a warband, its share code with Copy, and Delete, which says
- * that copies imported elsewhere stay.
+ * A warband or warband list in my workshop: what it is, its name (the card's link, to its page),
+ * its cost where it is a warband, its share code with Copy, and Delete, which says that copies
+ * imported elsewhere stay.
  */
-export default function WorkshopCard({ id, name, kicker, facts, shareCode }: WorkshopCardProps) {
+export default function WorkshopCard({
+  to,
+  name,
+  kicker,
+  facts,
+  shareCode,
+  onDelete,
+}: WorkshopCardProps) {
   const titleId = useId();
   const [confirming, setConfirming] = useState(false);
-  const remove = useDeleteWorkshop();
+  const [deleting, setDeleting] = useState(false);
+  const remove = async () => {
+    setDeleting(true);
+    try {
+      await onDelete();
+      setConfirming(false);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <Card
@@ -61,7 +77,7 @@ export default function WorkshopCard({ id, name, kicker, facts, shareCode }: Wor
         className="m-0 break-words font-display text-2xl font-semibold leading-tight text-head max-[960px]:text-[22px]"
       >
         <Link
-          to={workshopPath(id)}
+          to={to}
           className="outline-none after:absolute after:inset-0 after:z-[1] after:content-[''] hover:text-accent-hi focus-visible:underline"
         >
           {name}
@@ -74,13 +90,8 @@ export default function WorkshopCard({ id, name, kicker, facts, shareCode }: Wor
         title={`Delete ${name}?`}
         description="Its code stops working. Copies already imported into campaigns or other workshops stay."
         confirmText="Delete"
-        isConfirming={remove.isPending}
-        onConfirm={() =>
-          remove.mutate(id, {
-            onSuccess: () => setConfirming(false),
-            onError: (error) => toast.error(getErrorMessage(error)),
-          })
-        }
+        isConfirming={deleting}
+        onConfirm={() => void remove()}
       />
     </Card>
   );

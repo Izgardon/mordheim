@@ -9,9 +9,11 @@ import WarbandSkeleton from "@/features/warbands/components/page/WarbandSkeleton
 import SitePage from "@/layouts/shell/SitePage";
 import { getErrorMessage } from "@/lib/get-error-message";
 
+import WorkshopNav from "../components/WorkshopNav";
+
 const NOTHING = () => undefined;
 
-/** Back to Home, where the workshop's warbands and lists are listed. */
+/** Back to Home, where the workshop's warbands, lists and content are listed too. */
 function BackHome() {
   return (
     <Link
@@ -25,9 +27,10 @@ function BackHome() {
 }
 
 /**
- * A workshop's page (apps/workshop): its warband or its list on its own, in Home's frame, with no
- * campaign shell (no rail, battles, notices or tools). The pages inside read the workshop as their
- * campaign, as a campaign's pages do; a campaign's id here goes back to the campaign.
+ * My workshop (apps/workshop): its warbands, its lists and My content, each page in Home's frame
+ * with the workshop's nav and no campaign shell (no rail, battles, notices or tools). The pages
+ * inside read the workshop as their campaign, as a campaign's pages do; a campaign's id here goes
+ * back to the campaign.
  */
 export default function WorkshopLayout() {
   const { id } = useParams();
@@ -59,7 +62,7 @@ export default function WorkshopLayout() {
         message={
           query.error
             ? getErrorMessage(query.error, "Unable to load it")
-            : "No record of that warband or list."
+            : "No record of that workshop."
         }
         onRetry={isCampaignId(workshopId) ? () => void query.refetch() : undefined}
       />
@@ -71,6 +74,7 @@ export default function WorkshopLayout() {
   return (
     <SitePage>
       <BackHome />
+      <WorkshopNav workshopId={workshop.id} />
       <Suspense fallback={<WarbandSkeleton />}>
         <Outlet context={context} />
       </Suspense>

@@ -1,6 +1,6 @@
 /**
- * A workshop's page (apps/workshop): its list on its own in Home's frame, with its code and Edit
- * list, no campaign shell; and a workshop never opens as a campaign.
+ * My workshop's pages (apps/workshop): a list in Home's frame with its code and Edit list, the
+ * workshop's nav and no campaign shell; and a workshop never opens as a campaign.
  */
 import { screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -13,7 +13,8 @@ import { fakeRealtime } from "@/test/fake-realtime";
 // The routes load on demand; importing them first lets each lazy() resolve at once.
 import "@/features/campaigns/routes/CampaignLayout";
 import "./WorkshopLayout";
-import "./WorkshopPage";
+import "../components/WarbandsSection";
+import "../components/WorkshopList";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
@@ -24,10 +25,8 @@ vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
 
 const WORKSHOP = campaignSummary({
   id: 13,
-  name: "Night Watch",
+  name: "Workshop",
   kind: "workshop",
-  holds: "list",
-  share_code: "WTCH2345",
   join_code: "",
   capabilities: { edit_catalogue: true },
 });
@@ -74,14 +73,15 @@ beforeEach(() => {
   fakeApi.on("GET /notifications/", []);
   fakeApi.on("GET /campaigns/13/", WORKSHOP);
   fakeApi.on("GET /workshop/", {
+    id: 13,
     warbands: [],
     lists: [
       {
-        id: 13,
+        id: 90,
         campaign_id: 13,
-        template_id: 90,
         name: "Night Watch",
-        warband_types: [{ id: 10, name: "Reiklanders" }],
+        warband_types: [{ id: 10, name: "Reiklanders", variant: "" }],
+        variants: [],
         share_code: "WTCH2345",
         updated_at: "2026-11-25T10:00:00Z",
       },
@@ -94,9 +94,9 @@ afterEach(() => {
   cleanupApps();
 });
 
-describe("a workshop's page", () => {
-  it("shows a list on its own, with its code and Edit list, and the way back Home", async () => {
-    renderApp("/workshop/13");
+describe("my workshop's pages", () => {
+  it("shows a list on its own, with its code and Edit list, the nav and the way back Home", async () => {
+    renderApp("/workshop/13/lists/90");
 
     const heading = await screen.findByRole("heading", { name: "Night Watch", level: 1 });
     const header = heading.closest("header") as HTMLElement;
@@ -105,15 +105,24 @@ describe("a workshop's page", () => {
     expect(within(header).getByRole("button", { name: "Edit list" })).toBeInTheDocument();
     expect(await screen.findByRole("button", { name: "Watchmen" })).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Home" })[0]).toHaveAttribute("href", "/campaigns");
+    const nav = screen.getByRole("navigation", { name: "Workshop" });
+    expect(within(nav).getByRole("link", { name: "Lists" })).toHaveAttribute(
+      "aria-current",
+      "page"
+    );
+    expect(within(nav).getByRole("link", { name: "Specials" })).toHaveAttribute(
+      "href",
+      "/workshop/13/boons-banes"
+    );
     // no campaign shell: no rail, no battles
     expect(screen.queryByRole("navigation", { name: "Campaign" })).toBeNull();
     expect(screen.queryByText("Battles")).toBeNull();
   });
 
-  it("never opens as a campaign: its campaign page goes to the workshop's", async () => {
+  it("never opens as a campaign: a campaign page of it goes to the workshop's own", async () => {
     const app = renderApp("/campaigns/13/battles");
 
-    await screen.findByRole("heading", { name: "Night Watch", level: 1 });
+    expect(await screen.findByRole("heading", { name: "Warbands" })).toBeInTheDocument();
     expect(app.location().pathname).toBe("/workshop/13");
   });
 });

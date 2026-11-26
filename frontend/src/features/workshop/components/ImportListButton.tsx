@@ -6,12 +6,14 @@ import { templatesChanged } from "@/features/warband-templates/api/editor-querie
 import { toastServerWarnings } from "@/features/warbands/utils/server-warnings";
 
 import { importListIntoCampaign } from "../api/workshop-api";
+import { contentArrived } from "../api/content-arrived";
 import { cleanCode } from "../api/workshop-queries";
 import ImportCodeDialog from "./ImportCodeDialog";
 
 /**
  * Import a list (the workshop), on the Warbands page for those who edit the catalogue: a shared
- * list's code, read first, then copied as the campaign's own template.
+ * list's code, read first, then copied as the campaign's own template with the custom content
+ * it uses (the server's warnings say what came, and whether it came archived).
  */
 export default function ImportListButton({
   campaignId,
@@ -26,6 +28,7 @@ export default function ImportListButton({
     const answer = await importListIntoCampaign(campaignId, cleanCode(code));
     toastServerWarnings(answer.warnings);
     templatesChanged(queryClient, campaignId);
+    contentArrived(queryClient, campaignId, answer.warnings);
   };
   return (
     <>

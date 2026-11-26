@@ -28,7 +28,7 @@ const NO_CAMPAIGNS: CampaignSummary[] = [];
 
 /**
  * Home (William, 25 Nov 2026: the campaigns page retitled): your campaigns (join or create one,
- * open one), then the workshop's custom warbands and warband lists, and the feedback card.
+ * open one), then my workshop (its warbands, lists and My content), and the feedback card.
  */
 export default function Campaigns() {
   const { user } = useAuth();

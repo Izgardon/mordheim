@@ -451,4 +451,40 @@ describe("Making and editing templates on the Warbands page", () => {
       code: "WTCH2345",
     });
   });
+
+  it("copies the campaign's own list into my lists, opening it in my workshop with the server's warnings", async () => {
+    const own = {
+      ...MERCENARIES,
+      id: 8,
+      campaign_id: CAMPAIGN_ID,
+      name: "Night Watch",
+      types: [type(13, "Watchmen", "reikland")],
+    };
+    fakeApi.on(`GET /warband-templates/?campaign_id=${CAMPAIGN_ID}`, [MERCENARIES, own]);
+    fakeApi.on("GET /warband-templates/8/", own);
+    fakeApi.on("POST /warband-templates/8/to-workshop/", {
+      id: 61,
+      campaign_id: 90,
+      name: "Night Watch",
+      warband_types: [],
+      variants: [],
+      share_code: "WTCH2345",
+      updated_at: "2026-11-26T10:00:00Z",
+      kind: "list",
+      warnings: [],
+    });
+    fakeApi.on("GET /campaigns/90/", campaignSummary({ id: 90, kind: "workshop" }));
+    fakeApi.on("GET /workshop/", { id: 90, warbands: [], lists: [] });
+    const user = setupUser();
+    const app = renderApp(PAGE);
+
+    await user.click(await row("Reiklanders"));
+    expect(await screen.findByText("Reiklander drill")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Copy to my lists" })).toBeNull(); // the book's
+    await user.click(await row("Watchmen"));
+    await user.click(await screen.findByRole("button", { name: "Copy to my lists" }));
+
+    await waitFor(() => expect(app.location().pathname).toBe("/workshop/90/lists/61"));
+    expect(fakeApi.calls()).toContain("POST /warband-templates/8/to-workshop/");
+  });
 });

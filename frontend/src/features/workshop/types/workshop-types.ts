@@ -1,37 +1,48 @@
+import type { TemplateVariant } from "@/features/warband-templates/types/template-types";
+
 /** A warband type as the workshop names it. */
 export type WorkshopType = { id: number; name: string };
 
-/** One of the server's warnings, in its words (`list_serves_none`, `not_in_play`, `over_budget`...). */
-export type WorkshopWarning = { code: string; message: string };
+/**
+ * One of the server's warnings, in its words (`custom_content_added`, `custom_content_archived`,
+ * `not_in_play`, `left_out`, `over_budget`, `list_serves_none`...), with the names it is about.
+ */
+export type WorkshopWarning = { code: string; message: string; names?: string[] };
 
-/** `GET workshop/`: a custom warband of mine (its workshop's id is its campaign's). */
+/** `GET workshop/`: a warband in my workshop (its id the warband's, `campaign_id` the workshop's). */
 export type WorkshopWarbandRow = {
   id: number;
   campaign_id: number;
-  warband_id: number | null;
   name: string;
   warband_type: WorkshopType | null;
+  /** The list it reads (one of my lists, or the book's template). */
+  template_id: number | null;
   cost: number;
   budget: number;
   share_code: string;
   updated_at: string;
 };
 
-/** `GET workshop/`: a custom warband list of mine (a template in its own workshop). */
+/** `GET workshop/`: a warband list in my workshop (its id the template's). */
 export type WorkshopListRow = {
   id: number;
   campaign_id: number;
-  template_id: number | null;
   name: string;
-  warband_types: WorkshopType[];
+  warband_types: (WorkshopType & { variant: string })[];
+  variants: TemplateVariant[];
   share_code: string;
   updated_at: string;
 };
 
-export type WorkshopRows = { warbands: WorkshopWarbandRow[]; lists: WorkshopListRow[] };
+/** `GET workshop/`: my workshop (its id null before my first use), its warbands and lists. */
+export type Workshop = {
+  id: number | null;
+  warbands: WorkshopWarbandRow[];
+  lists: WorkshopListRow[];
+};
 
-/** A new workshop of mine (made, or a copy imported by code), with what its making warned of. */
-export type MadeWorkshop =
+/** A warband or list made in my workshop, or copied into it, with what its making warned of. */
+export type MadeInWorkshop =
   | (WorkshopWarbandRow & { kind: "warband"; warnings: WorkshopWarning[] })
   | (WorkshopListRow & { kind: "list"; warnings: WorkshopWarning[] });
 
@@ -62,6 +73,7 @@ export type MakeWarbandBody = {
   name: string;
   warband_type_id?: number;
   template_variant?: string;
+  list_id?: number;
   list_code?: string;
 };
 
@@ -77,6 +89,3 @@ export type ImportedWarband = {
 
 /** `POST campaigns/<id>/warband-templates/import/`: the campaign's own copy of the list. */
 export type ImportedList = { template_id: number; name: string; warnings: WorkshopWarning[] };
-
-/** A workshop warband's cost against its budget, from its sheet (null for a campaign's warband). */
-export type WorkshopFacts = { cost: number; budget: number; share_code?: string };

@@ -42,7 +42,13 @@ export default function Wargear() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const items = useCatalogue("items", campaignId);
   const settings = useSettingsById();
-  const sheet = useWarbandSheet({ campaignId, hasCampaignId: Boolean(id), warbandId: null });
+  // a workshop holds several warbands and none is "yours": its page only reads and writes items
+  const inWorkshop = campaign?.kind === "workshop";
+  const sheet = useWarbandSheet({
+    campaignId,
+    hasCampaignId: Boolean(id) && !inWorkshop,
+    warbandId: null,
+  });
   const { warband } = sheet;
   const whoCan = useWhoCan(campaignId, warband?.id);
   // The list waits for your warband's offers too, so restricted items never flash in first.

@@ -1,45 +1,48 @@
 import { useState } from "react";
+import { useOutletContext, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { CopyCode } from "@/components/ui/copy-code";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
-import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
+import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { useWarbandTemplate } from "@/features/warband-templates/api/template-queries";
 import TemplateDetail from "@/features/warband-templates/components/TemplateDetail";
 import TemplateEditor from "@/features/warband-templates/editor/TemplateEditor";
 import { queryKeys } from "@/lib/query-keys";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-import { useWorkshops } from "../api/workshop-queries";
+import { useWorkshop } from "../api/workshop-queries";
 
 /**
- * A custom warband list (the workshop): its name and the types it serves, its share code with
- * Copy, then the list as Reference → Warbands shows it, and Edit list, the template editor on the
- * workshop's own template.
+ * A warband list in my workshop (`/workshop/:id/lists/:templateId`): its name and the types it
+ * serves, its share code with Copy, then the list as Reference → Warbands shows it, and Edit
+ * list, the template editor on it.
  */
-export default function WorkshopList({ workshop }: { workshop: CampaignSummary }) {
+export default function WorkshopList() {
+  const { campaign: workshop } = useOutletContext<CampaignLayoutContext>();
+  const workshopId = workshop?.id ?? 0;
   const isMobile = useMediaQuery("(max-width: 960px)");
   const queryClient = useQueryClient();
-  const workshops = useWorkshops();
-  const row = workshops.data?.lists.find((entry) => entry.id === workshop.id);
-  const templateId = row?.template_id ?? null;
-  const template = useWarbandTemplate(workshop.id, templateId ?? 0);
+  const listed = useWorkshop();
   const [editing, setEditing] = useState<number | null>(null);
+  const templateId = Number(useParams().templateId);
+  const row = listed.data?.lists.find((entry) => entry.id === templateId);
+  const template = useWarbandTemplate(workshopId, row ? templateId : 0);
   const canEdit = campaignCapabilities(workshop).edit_catalogue;
   const type = template.data?.types[0];
 
-  if (!row || templateId === null) {
+  if (!row) {
     return (
       <p className="m-0 text-sm text-text2">
-        {workshops.isPending ? "Loading…" : "No record of that list."}
+        {listed.isPending ? "Loading…" : "No record of that list."}
       </p>
     );
   }
   const types = (template.data?.types ?? row.warband_types).map((entry) => entry.name);
   const close = () => {
     setEditing(null);
-    // its name and the types it serves are Home's too
+    // its name and the types it serves are my workshop's rows too
     void queryClient.invalidateQueries({ queryKey: queryKeys.workshop() });
   };
 
@@ -70,7 +73,7 @@ export default function WorkshopList({ workshop }: { workshop: CampaignSummary }
       </header>
       <div className={isMobile ? undefined : "border border-line"}>
         <TemplateDetail
-          campaignId={workshop.id}
+          campaignId={workshopId}
           templateId={templateId}
           preset={type?.variant ?? ""}
           typeId={type?.id ?? null}
@@ -79,7 +82,7 @@ export default function WorkshopList({ workshop }: { workshop: CampaignSummary }
         />
       </div>
       <TemplateEditor
-        campaignId={workshop.id}
+        campaignId={workshopId}
         templateId={editing}
         onTemplateChange={setEditing}
         onClose={close}

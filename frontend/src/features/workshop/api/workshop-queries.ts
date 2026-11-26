@@ -1,18 +1,29 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { deleteTemplate } from "@/features/warband-templates/api/editor-api";
+import { templatesChanged } from "@/features/warband-templates/api/editor-queries";
+import { deleteWarband } from "@/features/warbands/api/warbands-core";
 import { CATALOGUE_STALE_TIME_MS } from "@/lib/catalogue-queries";
 import { queryKeys } from "@/lib/query-keys";
 
 import {
-  deleteWorkshop,
+  getWorkshop,
   importIntoWorkshop,
   listBookTemplates,
-  listWorkshops,
-  makeListWorkshop,
-  makeWarbandWorkshop,
+  listToWorkshop,
+  makeWorkshopList,
+  makeWorkshopWarband,
+  openWorkshop,
   previewSharedCode,
+  warbandToWorkshop,
 } from "./workshop-api";
-import type { MakeListBody, MakeWarbandBody } from "../types/workshop-types";
+import type {
+  MadeInWorkshop,
+  MakeListBody,
+  MakeWarbandBody,
+  WorkshopListRow,
+} from "../types/workshop-types";
+import { contentArrived } from "./content-arrived";
 
 /** A code as the server reads it: case-blind, spaces and dashes ignored. */
 export const cleanCode = (typed: string) => typed.toUpperCase().replace(/[\s-]/g, "");
@@ -20,11 +31,11 @@ export const cleanCode = (typed: string) => typed.toUpperCase().replace(/[\s-]/g
 /** Codes are 8 characters: a preview is read once one is typed in full. */
 export const CODE_LENGTH = 8;
 
-/** My custom warbands and warband lists (the Home page), read on every visit. */
-export function useWorkshops() {
+/** My workshop (Home and the workshop's pages), read on every visit. */
+export function useWorkshop() {
   return useQuery({
     queryKey: queryKeys.workshop(),
-    queryFn: ({ signal }) => listWorkshops(signal),
+    queryFn: ({ signal }) => getWorkshop(signal),
     staleTime: 0,
   });
 }
@@ -51,19 +62,52 @@ export function useBookTemplates(enabled = true) {
   });
 }
 
-/** Every workshop write reads my workshops again, and nothing else. */
+/** Every write into my workshop reads my workshop again (and its catalogue where content came). */
 function useWorkshopMutation<T, R>(write: (body: T) => Promise<R>) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: write,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.workshop() }),
+    onSuccess: (answer) => {
+      const made = answer as Partial<MadeInWorkshop> | undefined;
+      if (made?.campaign_id) contentArrived(queryClient, made.campaign_id, made.warnings);
+      return queryClient.invalidateQueries({ queryKey: queryKeys.workshop() });
+    },
+  });
+}
+
+/** My workshop, made on its first use (My content before any warband or list): its answer cached. */
+export function useOpenWorkshop() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => openWorkshop(),
+    onSuccess: (workshop) => queryClient.setQueryData(queryKeys.workshop(), workshop),
   });
 }
 
 export const useMakeWarband = () =>
-  useWorkshopMutation((body: MakeWarbandBody) => makeWarbandWorkshop(body));
+  useWorkshopMutation((body: MakeWarbandBody) => makeWorkshopWarband(body));
 export const useMakeList = () =>
-  useWorkshopMutation((body: MakeListBody) => makeListWorkshop(body));
+  useWorkshopMutation((body: MakeListBody) => makeWorkshopList(body));
 export const useImportIntoWorkshop = () =>
   useWorkshopMutation((code: string) => importIntoWorkshop(cleanCode(code)));
-export const useDeleteWorkshop = () => useWorkshopMutation((id: number) => deleteWorkshop(id));
+/** Copy to my workshop: my warband in a campaign. */
+export const useWarbandToWorkshop = () =>
+  useWorkshopMutation((warbandId: number) => warbandToWorkshop(warbandId));
+/** Copy to my lists: a campaign's own list. */
+export const useListToWorkshop = () =>
+  useWorkshopMutation((templateId: number) => listToWorkshop(templateId));
+/** A workshop warband's Delete (soft: its code stops working, copies stay). */
+export const useDeleteWorkshopWarband = () =>
+  useWorkshopMutation((warbandId: number) => deleteWarband(warbandId));
+
+/** A list's Delete is the catalogue's (archived while a warband reads it); its code stops working. */
+export function useDeleteWorkshopList() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (row: WorkshopListRow) => deleteTemplate(row, row.campaign_id),
+    onSuccess: (_answer, row) => {
+      templatesChanged(queryClient, row.campaign_id);
+      return queryClient.invalidateQueries({ queryKey: queryKeys.workshop() });
+    },
+  });
+}
