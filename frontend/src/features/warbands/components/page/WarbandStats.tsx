@@ -126,7 +126,7 @@ export default function WarbandStats(props: WarbandStatsProps) {
   ];
   const { workshop } = props;
   // a workshop's warband (apps/workshop) shows what it costs against its budget, never its gold
-  // or a record: it plays no battles
+  // or a record, and its rating plain, with no breakdown: it plays no battles
   const shownTotals = workshop
     ? [
         {
@@ -137,7 +137,7 @@ export default function WarbandStats(props: WarbandStatsProps) {
           hint: "",
           warn: workshop.cost > workshop.budget,
         },
-        totals[0],
+        { ...totals[0], onClick: undefined },
         totals[2],
       ]
     : totals;
@@ -158,13 +158,15 @@ export default function WarbandStats(props: WarbandStatsProps) {
           </div>
         ))}
       </dl>
-      <RatingWindow
-        open={breakdownOpen}
-        onOpenChange={setBreakdownOpen}
-        warbandName={warband.name}
-        rating={rating}
-        rows={rows}
-      />
+      {workshop ? null : (
+        <RatingWindow
+          open={breakdownOpen}
+          onOpenChange={setBreakdownOpen}
+          warbandName={warband.name}
+          rating={rating}
+          rows={rows}
+        />
+      )}
       <GoldWindow
         open={shown === "gold"}
         onOpenChange={opener("gold")}

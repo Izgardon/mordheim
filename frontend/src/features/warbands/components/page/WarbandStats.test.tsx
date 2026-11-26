@@ -1,7 +1,8 @@
 /**
  * The header's four totals each open a window (William, 22 Nov 2026): the rating unit by unit,
  * the last trades with the way to the Treasury, every unit by kind with its level, and the last
- * battles, each linking to its record.
+ * battles, each linking to its record. A workshop's warband shows its cost and a plain rating,
+ * with no breakdown (it plays no battles).
  */
 import { useState } from "react";
 import { MemoryRouter } from "react-router-dom";
@@ -74,19 +75,28 @@ const trade = (id: number, description: string, price: number): WarbandTrade => 
   updated_at: "2026-11-05T10:00:00Z",
 });
 
-function renderStats(onTreasury = vi.fn()) {
+type Workshop = { cost: number; budget: number } | null;
+
+function renderStats(onTreasury = vi.fn(), workshop: Workshop = null) {
   renderWithQueryClient(
     <MemoryRouter>
-      <WarbandStatsHost onTreasury={onTreasury} />
+      <WarbandStatsHost onTreasury={onTreasury} workshop={workshop} />
     </MemoryRouter>
   );
   return { user: setupUser(), onTreasury };
 }
 
-function WarbandStatsHost({ onTreasury }: { onTreasury: () => void }) {
+function WarbandStatsHost({
+  onTreasury,
+  workshop,
+}: {
+  onTreasury: () => void;
+  workshop: Workshop;
+}) {
   const [open, setOpen] = useState(false);
   return (
     <WarbandStats
+      workshop={workshop}
       campaignId={7}
       warband={warband}
       heroes={[]}
@@ -172,5 +182,14 @@ describe("The header's windows", () => {
     expect(first).toHaveTextContent("Won");
     expect(first).toHaveAttribute("href", "/campaigns/7/battles?battle=31");
     expect(second).toHaveTextContent("No winner");
+  });
+
+  it("shows a workshop warband's rating plain, with no breakdown to open", () => {
+    renderStats(vi.fn(), { cost: 455, budget: 500 });
+
+    expect(screen.getByText("455 / 500")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Rating/ })).toBeNull();
+    expect(screen.getByText("51.5")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Gold/ })).toBeNull();
   });
 });
