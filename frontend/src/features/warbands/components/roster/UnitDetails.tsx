@@ -20,7 +20,16 @@ import UnitBoxDetail, { type OpenBox } from "./UnitBoxDetail";
 import UnitBoxRow, { PILL } from "./UnitBoxRow";
 import UnitXp from "./UnitXp";
 import { entryBoxes, type Row } from "./unit-boxes";
-import { boxRows, buysItems, isCreature, isGroup, itemBoxKind, type RosterUnit } from "./unit-view";
+import { spellSections, usePrays } from "./spell-sections";
+import {
+  boxRows,
+  buysItems,
+  isCreature,
+  isGroup,
+  itemBoxKind,
+  pendingPicks,
+  type RosterUnit,
+} from "./unit-view";
 
 type UnitDetailsProps = {
   entry: RosterUnit;
@@ -52,6 +61,8 @@ export default function UnitDetails(props: UnitDetailsProps) {
   // the web's columns are too narrow for it, so it sits under them all
   const inSection = useMediaQuery("(max-width: 960px)");
   const lists = boxRows(entry);
+  const prays = usePrays(entry, props.campaignId);
+  const picks = pendingPicks(entry, "spells");
   const itemLabel = useItemLabel(props.campaignId, props.warbandId);
   const groups = useSkillGroups(props.campaignId);
   const access = "available_skills" in entry.unit ? entry.unit.available_skills : undefined;
@@ -89,12 +100,15 @@ export default function UnitDetails(props: UnitDetailsProps) {
       icon: "specials" as const,
       boxes: entryBoxes(entry, "specials", lists.specials),
     },
-    {
-      key: "spells",
-      label: "Spells",
+    ...spellSections(lists.spells, picks, prays).map((section) => ({
+      key: section.key,
+      label: section.label,
       icon: "spells" as const,
-      boxes: entryBoxes(entry, "spells", lists.spells),
-    },
+      boxes: entryBoxes(entry, "spells", section.spells, {
+        count: section.picks ? picks : 0,
+        noun: section.key === "prayers" ? "Prayer" : "Spell",
+      }),
+    })),
   ].filter((row) => row.boxes.length > 0);
   const all = [itemsRow, ...skillRows];
   const selectedRow = all.find((row) => row.key === open?.row);

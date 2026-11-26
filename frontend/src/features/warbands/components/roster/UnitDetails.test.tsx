@@ -680,3 +680,56 @@ describe("An open card's beasts and panels", () => {
     expect(after[next - 1]).toHaveTextContent(/^Add item/);
   });
 });
+
+describe("A caster's spells section", () => {
+  const sigmar = "Prayers of Sigmar";
+  const soulfire = spell({ id: 401, name: "Soulfire", type: sigmar, dc: 9, is_prayer: true });
+  const fires = spell({ id: 301, name: "Fires of U'Zhul", type: "Lesser Magic", dc: 7 });
+  const renderCaster = (unit: Parameters<typeof makeHero>[0]) =>
+    renderWithQueryClient(
+      <MemoryRouter>
+        <UnitDetails
+          entry={{ kind: "hero", unit: makeHero({ id: 6, name: "Brother Ansgar", ...unit }) }}
+          campaign={{ id: 1 } as CampaignSummary}
+          canEdit
+          others={[]}
+          onXp={vi.fn()}
+          onMoveItem={vi.fn()}
+          onSellItem={vi.fn()}
+          onBuyAgain={vi.fn()}
+          onRide={vi.fn()}
+          onLoadout={vi.fn()}
+          campaignId={1}
+          warbandId={9}
+          onPick={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /skill-groups/?campaign_id=1", []);
+    fakeApi.on("GET /spells/?campaign_id=1", [soulfire, fires]);
+  });
+
+  // William, 26 Nov 2026: a prayer list's caster reads "Prayers"
+  it("reads Prayers for a priest yet to pick his first, from his lore", async () => {
+    renderCaster({ spells: [], pending_spells: 1, available_spell_types: [sigmar] });
+
+    expect(await screen.findByText("Prayers")).toBeInTheDocument();
+    expect(screen.getByText("Prayer to choose")).toBeInTheDocument();
+    expect(screen.queryByText("Spells")).toBeNull();
+  });
+
+  it("reads Spells for a wizard, and both for one who has each", () => {
+    renderCaster({ spells: [fires], pending_spells: 1, available_spell_types: ["Lesser Magic"] });
+    expect(screen.getByText("Spells")).toBeInTheDocument();
+    expect(screen.getByText("Spell to choose")).toBeInTheDocument();
+    expect(screen.queryByText("Prayers")).toBeNull();
+  });
+
+  it("heads his prayers Prayers and his spells Spells when he has each", () => {
+    renderCaster({ spells: [soulfire, fires] });
+    expect(screen.getByText("Prayers")).toBeInTheDocument();
+    expect(screen.getByText("Spells")).toBeInTheDocument();
+  });
+});

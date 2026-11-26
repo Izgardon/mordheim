@@ -1,6 +1,9 @@
-"""Mutiny in Marienburg's prayer lists (the Miracle Workers chapter, William, 26 Nov 2026: "get those prayers in from
-the priest section in MiM"): each a book lore of six on its D6 table, in that setting. Its Taal and Ulric lists differ
-from ours, so they stand apart under the book's name; Sigmar's it only points to, so ours serves."""
+"""Prayers (William, 26 Nov 2026). Mutiny in Marienburg's prayer lists (the Miracle Workers chapter: "get those
+prayers in from the priest section in MiM"): each a book lore of six on its D6 table, in that setting. Its Taal and
+Ulric lists differ from ours, so they stand apart under the book's name; Sigmar's it only points to, so ours serves.
+
+A lore is a prayer list or spells: the book's prayer lists are named in data/prayer-lores.json and every book spell is
+marked by its lore (`is_prayer`), a campaign's own spell taking its lore's answer unless its write says."""
 
 import json
 from io import StringIO
@@ -10,9 +13,14 @@ from django.core.management import call_command
 from django.test import SimpleTestCase, TestCase
 
 from apps.campaigns.models import CampaignType
+from apps.core.book_lookups import BookLookups
 from apps.spells.models import Spell
+from apps.spells.prayers import PRAYER_LORES_PATH, is_prayer_lore
+from apps.warbands.tests.roster_support import RosterTestCase
+from apps.warbands.units.catalogue import SpellDetailSerializer
 
 SPELLS = Path(__file__).resolve().parents[1] / "data" / "spells.json"
+HIRED_SWORDS = Path(__file__).resolve().parents[2] / "hirelings" / "data" / "hired-swords.json"
 MIM_LISTS = (
     "Prayers of Manann",
     "Prayers of Morr",
@@ -60,3 +68,88 @@ class MimPrayerSeedTests(TestCase):
         self.assertEqual(set(verena.values_list("campaign_type_id", flat=True)), {mim.id})
         trial = verena.get(name="Trial by Fire")
         self.assertEqual((trial.dc, trial.roll), ("10", 6))
+
+
+class PrayerLoreTests(SimpleTestCase):
+    def test_every_prayer_list_named_is_a_lore_we_hold(self) -> None:
+        lores = {row["type"] for row in book_rows()}
+        swords = json.loads(HIRED_SWORDS.read_text(encoding="utf-8"))
+        lores |= {f"Hired Sword - {sword['name']}" for sword in swords if sword.get("spells")}
+        named = json.loads(PRAYER_LORES_PATH.read_text(encoding="utf-8"))
+        self.assertEqual([name for name in named if name not in lores], [])
+        self.assertTrue(set(MIM_LISTS) <= set(named))
+
+    def test_williams_spell_lists_are_not_prayers(self) -> None:
+        for lore in (
+            "Prayers of Sigmar",
+            "Funerary Rites",
+            "Prophetic Rants",
+            "Blessings of the Mare",
+            " lady's prayers",
+        ):
+            self.assertTrue(is_prayer_lore(lore), lore)
+        spells = ("Rituals of Hashut", "Lore of Light", "Light and Silence", "Werewolf Runes", "Lizardmen Magic")
+        for lore in (*spells, "Laws of Construction", "Commands (Mazzalupo)", "Lesser Magic"):
+            self.assertFalse(is_prayer_lore(lore), lore)
+
+
+class PrayerMarkTests(TestCase):
+    def test_the_seeder_marks_each_book_spell_by_its_lore(self) -> None:
+        stale = Spell.objects.create(name="Wrongly marked", type="Rituals of Hashut", is_prayer=True)
+        call_command("seed_spells_and_special", stdout=StringIO())
+        book = Spell.objects.filter(campaign=None)
+        self.assertTrue(book.filter(type="Prayers of Manann").exists())
+        self.assertFalse(book.filter(type="Prayers of Manann", is_prayer=False).exists())
+        self.assertFalse(book.filter(type="Lore of Light", is_prayer=True).exists())
+        stale.refresh_from_db()
+        self.assertFalse(stale.is_prayer)
+
+    def test_a_hired_swords_own_spell_is_made_as_his_lore_is(self) -> None:
+        lookups = BookLookups()
+        rite = lookups.spell(
+            {"name": "5 - Presence of Morr", "description": "Difficulty: 7"}, "Priest of Morr (Mousillon)"
+        )
+        mage = lookups.spell({"name": "1 - Shade Step", "description": "Difficulty: 7"}, "Dark Mage")
+        assert rite is not None and mage is not None
+        self.assertEqual((rite.type, rite.is_prayer), ("Hired Sword - Priest of Morr (Mousillon)", True))
+        self.assertFalse(mage.is_prayer)
+
+
+class CampaignPrayerTests(RosterTestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.client.force_authenticate(user=self.campaign_owner)
+
+    def _write(self, **body: object) -> dict:
+        made = self.client.post("/api/spells/", {"campaign_id": self.campaign.id, "dc": "7", **body}, format="json")
+        self.assertEqual(made.status_code, 201, made.data)
+        found: dict = made.json()
+        return found
+
+    def test_a_custom_spell_takes_its_lores_answer_unless_it_says(self) -> None:
+        Spell.objects.create(name="Healing Hand", type="Prayers of Sigmar", is_prayer=True)
+        self.assertTrue(self._write(name="Sigmar's Wrath", type="prayers of sigmar")["is_prayer"])
+        self.assertFalse(self._write(name="Hex", type="House lore")["is_prayer"])
+        self.assertTrue(self._write(name="Grungni's Gift", type="Prayers of Grungni", is_prayer=True)["is_prayer"])
+        self.assertTrue(self._write(name="Grungni's Hammer", type="Prayers of Grungni")["is_prayer"])
+
+        listed = self.client.get(f"/api/spells/?campaign_id={self.campaign.id}").json()
+        self.assertTrue({row["name"]: row["is_prayer"] for row in listed}["Healing Hand"])
+
+    def test_an_edit_moving_a_spell_to_another_lore_takes_that_lores_answer(self) -> None:
+        Spell.objects.create(name="Healing Hand", type="Prayers of Sigmar", is_prayer=True)
+        made = self._write(name="Hex", type="House lore")
+        moved = self.client.patch(
+            f"/api/spells/{made['id']}/", {"campaign_id": self.campaign.id, "type": "Prayers of Sigmar"}, format="json"
+        )
+        self.assertEqual(moved.status_code, 200, moved.data)
+        self.assertTrue(moved.json()["is_prayer"])
+        renamed = self.client.patch(
+            f"/api/spells/{made['id']}/", {"campaign_id": self.campaign.id, "name": "Blessing"}, format="json"
+        )
+        self.assertTrue(renamed.json()["is_prayer"])
+
+    def test_a_units_spell_says_whether_it_is_a_prayer(self) -> None:
+        prayer = Spell.objects.create(name="Soulfire", type="Prayers of Sigmar", is_prayer=True)
+        self.assertTrue(SpellDetailSerializer(prayer).data["is_prayer"])
+        self.assertFalse(SpellDetailSerializer(self.spells[0]).data["is_prayer"])

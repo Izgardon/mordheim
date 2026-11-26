@@ -30,6 +30,7 @@ from apps.plots import checks as plot_checks
 from apps.plots import writes as plot_writes
 from apps.skills import writes as skill_writes
 from apps.skills.selectors import group_learners, group_skills, in_group_order
+from apps.spells import prayers as spell_prayers
 from apps.spells import rolls as spell_rolls
 from apps.warband_templates.selectors import template_contents, template_details, template_rows
 
@@ -194,17 +195,28 @@ class HirelingProfileHooks(CatalogueHooks):
 
 class SpellHooks(CatalogueHooks):
     """A roll another spell of its lore holds in the campaign is saved as none, and the answer says so: a lore has one
-    spell on each roll (spells/rolls.py)."""
+    spell on each roll (spells/rolls.py). A write that doesn't say whether it is a prayer takes its lore's answer, a
+    new spell's or one moved to another lore (spells/prayers.py)."""
 
     def create(self, serializer: Serializer, campaign_id: int) -> Model:
         warnings = self._free_roll(serializer, campaign_id, None)
+        self._prayer(serializer, campaign_id, None)
         entry = super().create(serializer, campaign_id)
         entry.write_warnings = warnings  # type: ignore[attr-defined]  # the answer's (views.answer)
         return entry
 
     def update(self, entry: Any, serializer: Serializer) -> None:
         entry.write_warnings = self._free_roll(serializer, entry.campaign_id, entry)
+        self._prayer(serializer, entry.campaign_id, entry)
         super().update(entry, serializer)
+
+    @staticmethod
+    def _prayer(serializer: Serializer, campaign_id: int, editing: Any) -> None:
+        data = serializer.validated_data
+        lore = data.get("type", getattr(editing, "type", ""))
+        moved = editing is None or lore.strip().casefold() != editing.type.strip().casefold()
+        if "is_prayer" not in data and moved:
+            data["is_prayer"] = spell_prayers.campaign_lore_is_prayer(campaign_id, lore, editing)
 
     def _free_roll(self, serializer: Serializer, campaign_id: int, editing: Any) -> list[str]:
         data = serializer.validated_data

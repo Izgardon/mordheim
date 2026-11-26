@@ -100,7 +100,7 @@ class SpellSummarySerializer(serializers.ModelSerializer):
 class SpellDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Spell
-        fields = ("id", "name", "type", "dc", "description")
+        fields = ("id", "name", "type", "dc", "description", "is_prayer")
 
 
 class RaceSummarySerializer(serializers.Serializer):

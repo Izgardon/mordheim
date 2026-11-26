@@ -58,6 +58,7 @@ export default function SpellPicker({
     .filter((spell) => lore && fold(spell.type) === fold(lore))
     .sort((a, b) => (a.roll ?? 99) - (b.roll ?? 99) || a.name.localeCompare(b.name));
   const roll = value?.mode === "roll" ? value.roll : null;
+  const prayers = table.some((spell) => spell.is_prayer);
 
   const rolled = (next: number | null) => {
     const result = lore && next !== null ? spellRollResult(table, known, next) : null;
@@ -134,7 +135,8 @@ export default function SpellPicker({
         <>
           <RollField dice={1} value={roll} onChange={rolled} />
           <DiceTable
-            label={`${lore} spells`}
+            label={`${lore} ${prayers ? "prayers" : "spells"}`}
+            columns={["D6", prayers ? "Prayer" : "Spell", "Difficulty"]}
             current={value ? String(value.spell.id) : undefined}
             onPick={(key) => {
               const spell = table.find((entry) => String(entry.id) === key);

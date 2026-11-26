@@ -7,6 +7,8 @@ export type Spell = CatalogueBadgeFields & {
   description?: string | null;
   dc?: string | number | null;
   roll?: number | null;
+  /** Its lore is a prayer list (William, 26 Nov 2026), else spells: the server marks every spell. */
+  is_prayer?: boolean;
   campaign_id?: number | null;
   /** A unit's spell only: how much easier it is for him (-1 each time he rolled it again). */
   dc_change?: number;

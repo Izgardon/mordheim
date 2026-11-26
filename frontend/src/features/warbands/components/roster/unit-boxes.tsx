@@ -76,9 +76,15 @@ export const pillType = (type: string | null | undefined) =>
 /**
  * One list's boxes on an open card: each entry with what it is (a skill's group, a spell's lore)
  * and its panel's line (a spell's lore and his difficulty, "Difficulty 7 → 6" once he rolled it
- * again), then the picks an advance left for later, each picked from its box.
+ * again), then the picks an advance left for later, each picked from its box (`picks`: how many
+ * and what they are, "Prayer"; by default all of the list's).
  */
-export function entryBoxes(unit: RosterUnit, list: PendingList, entries: Entry[]): Box[] {
+export function entryBoxes(
+  unit: RosterUnit,
+  list: PendingList,
+  entries: Entry[],
+  picks: { count: number; noun: string } = { count: pendingPicks(unit, list), noun: NOUN[list] }
+): Box[] {
   return [
     ...entries.map((entry) => {
       const difficulty = spellDifficulty(entry.dc, entry.dc_change);
@@ -95,8 +101,8 @@ export function entryBoxes(unit: RosterUnit, list: PendingList, entries: Entry[]
         icon: entryIcon(list, entry),
       };
     }),
-    ...Array.from({ length: pendingPicks(unit, list) }, () => ({
-      name: `${NOUN[list]} to choose`,
+    ...Array.from({ length: picks.count }, () => ({
+      name: `${picks.noun} to choose`,
       subtitle: "Pick one",
       kind: "Pick one",
       boxKind: "pending" as BoxTileKind,

@@ -13,6 +13,7 @@ import type { AdvancePick } from "../../units/unit-api";
 import SkillPicker from "./advance/SkillPicker";
 import { boonBaneOptions } from "./boon-bane-options";
 import SpellPicker, { type SpellChoice } from "./advance/SpellPicker";
+import { usePrays } from "./spell-sections";
 import type { PendingList, RosterUnit } from "./unit-view";
 
 const NOUN = { skills: "skill", spells: "spell", specials: "special" } as const;
@@ -48,6 +49,8 @@ export default function PendingPick({
   const settings = useSettingsById();
   const [skill, setSkill] = useState<Skill | null>(null);
   const [spell, setSpell] = useState<SpellChoice | null>(null);
+  const prays = usePrays(entry, campaignId);
+  const noun = list === "spells" && prays ? "prayer" : NOUN[list];
   const pick =
     list === "skills" && skill
       ? ({ list, id: skill.id } as const)
@@ -58,9 +61,7 @@ export default function PendingPick({
   return (
     <div className="flex flex-col gap-2.5 border border-accent-line bg-panel p-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="font-display text-lg font-semibold text-head">
-          Pick a new {NOUN[list]}
-        </span>
+        <span className="font-display text-lg font-semibold text-head">Pick a new {noun}</span>
         <IconButton aria-label="Close" className="h-9 w-9" onClick={onClose}>
           <X aria-hidden="true" />
         </IconButton>
@@ -99,7 +100,7 @@ export default function PendingPick({
             <span className="text-sm font-semibold text-head">
               {spell.known
                 ? `${spell.spell.name} gets easier: Difficulty ${spell.difficulty}`
-                : `New spell: ${spell.spell.name}`}
+                : `New ${spell.spell.is_prayer ? "prayer" : "spell"}: ${spell.spell.name}`}
             </span>
           ) : null}
           <Button className="ml-auto" disabled={!pick} onClick={() => pick && onPick(pick)}>

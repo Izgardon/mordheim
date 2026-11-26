@@ -5,6 +5,15 @@ import type { Spell } from "./types/spell-types";
 /** A spell's lore as the pages name it: its type, underscores as spaces. */
 export const loreOf = (spell: Spell) => (spell.type ?? "").replace(/_/g, " ") || "No lore";
 
+/** What a lore's entries are called: "Prayers" for a prayer list, else "Spells". */
+export const loreNoun = (prayers: boolean) => (prayers ? "Prayers" : "Spells");
+
+const fold = (text?: string | null) => (text ?? "").trim().toLowerCase();
+
+/** Whether any of the lores named is a prayer list, by the spells of it the server marks (`is_prayer`). */
+export const praysFrom = (lores: string[], spells: Spell[]) =>
+  lores.some((lore) => spells.some((spell) => spell.is_prayer && fold(spell.type) === fold(lore)));
+
 /** A spell's difficulty as its cell shows it: "7", "Auto", or "" for none. */
 export const difficultyOf = (spell: Spell) =>
   spell.dc === null || spell.dc === undefined ? "" : String(spell.dc).trim();
@@ -26,6 +35,8 @@ export const loreRowId = (name: string) =>
 
 export type SpellLore = {
   name: string;
+  /** A prayer list (its spells are prayers), else spells. */
+  prayers: boolean;
   /** The spells it shows, by roll (none last), then name: all, or while searching the matches. */
   spells: Spell[];
   /** How many of its spells match the search (all of them with none). */
@@ -56,6 +67,7 @@ export function spellLores(spells: Spell[], query: string, openId: string | null
       );
       return {
         name,
+        prayers: sorted.some((spell) => spell.is_prayer),
         spells: sorted.filter((spell) => matching.includes(spell) || String(spell.id) === openId),
         matches: matching.length,
         total: sorted.length,

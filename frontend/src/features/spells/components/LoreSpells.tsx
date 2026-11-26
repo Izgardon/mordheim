@@ -4,7 +4,7 @@ import { rowDomId } from "@/features/reference/ReferenceList";
 import DiceTable from "@/features/warbands/components/roster/advance/DiceTable";
 import RulesPanel from "@/features/warbands/components/roster/RulesPanel";
 
-import { difficultyLabel, difficultyOf, loreOf, type SpellLore } from "../spell-lores";
+import { difficultyLabel, difficultyOf, loreNoun, loreOf, type SpellLore } from "../spell-lores";
 import type { Spell } from "../types/spell-types";
 import SpellFormDialog from "./SpellFormDialog";
 
@@ -76,8 +76,8 @@ export default function LoreSpells({
     <ReferenceDetail isMobile={props.isMobile}>
       <FactLine facts={[{ label: "Setting", value: settingNames.join(", ") }]} />
       <DiceTable
-        label={`${lore.name} spells`}
-        columns={["D6", "Spell", "Difficulty"]}
+        label={`${lore.name} ${loreNoun(lore.prayers).toLowerCase()}`}
+        columns={["D6", lore.prayers ? "Prayer" : "Spell", "Difficulty"]}
         current={openId ?? undefined}
         onPick={props.onPick}
         rows={lore.spells.map((spell) => {

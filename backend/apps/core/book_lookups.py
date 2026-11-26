@@ -25,6 +25,7 @@ from apps.special.kinds import GENERAL, INJURY, WARBAND, book_kind, owner_kind_o
 from apps.special.models import Special
 from apps.special.shared import read_shared
 from apps.spells.models import Spell
+from apps.spells.prayers import is_prayer_lore
 from apps.spells.rolls import book_roll_taken
 
 SKILL_NAME_ALIASES = {  # the Ninja's and the Knight of the White Wolf's skills under their book names (BUG-54)
@@ -277,7 +278,7 @@ class BookLookups:
                     f"  Spell '{name}' ({spell_type}): roll {fields['roll']} is taken, saved with none"
                 )
                 fields["roll"] = None
-            spell = Spell.objects.create(name=name, type=spell_type, **fields)
+            spell = Spell.objects.create(name=name, type=spell_type, is_prayer=is_prayer_lore(spell_type), **fields)
             self.spells[lookup_key(name)] = spell
             self.lore_spells[(spell_type, lookup_key(name))] = spell
             self.warnings.append(f"  Created spell '{name}' ({spell_type}) for '{owner}'")

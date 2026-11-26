@@ -2,6 +2,7 @@ import { GameIcon, type GameIconName } from "@/components/ui/game-icons";
 import { cn } from "@/lib/utils";
 import type { Item } from "@/features/items/types/item-types";
 
+import { spellSections } from "./spell-sections";
 import { sectionIconColour } from "./UnitSectionLabel";
 import { boxRows, type RosterUnit } from "./unit-view";
 
@@ -18,7 +19,11 @@ export function unitLines(entry: RosterUnit, itemName: (item: Item) => string): 
   const lines: UnitLine[] = [
     { label: "Items", icon: "items", names: lists.items.map(itemName) },
     { label: "Skills", icon: "skills", names: lists.skills.map((skill) => skill.name) },
-    { label: "Spells", icon: "spells", names: lists.spells.map((spell) => spell.name) },
+    ...spellSections(lists.spells, 0, false).map((section) => ({
+      label: section.label,
+      icon: "spells" as const,
+      names: section.spells.map((spell) => spell.name),
+    })),
     {
       label: "Specials",
       icon: "specials",

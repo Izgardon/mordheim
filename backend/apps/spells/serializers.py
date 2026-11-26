@@ -9,12 +9,13 @@ class SpellSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Spell
-        fields = ("id", "campaign_id", "setting_id", "name", "type", "description", "dc", "roll")
+        fields = ("id", "campaign_id", "setting_id", "name", "type", "description", "dc", "roll", "is_prayer")
 
 
 class SpellCreateSerializer(serializers.ModelSerializer):
-    """A custom spell's create or edit; the campaign is never an input (the view saves the create in its campaign)."""
+    """A custom spell's create or edit; the campaign is never an input (the view saves the create in its campaign).
+    `is_prayer` left out takes its lore's (the catalogue's SpellHooks)."""
 
     class Meta:
         model = Spell
-        fields = ("name", "type", "description", "dc", "roll")
+        fields = ("name", "type", "description", "dc", "roll", "is_prayer")

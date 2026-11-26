@@ -132,7 +132,15 @@ SKILL_DETAIL = {"id": "int", "name": "str", "description": "str"}  # its groups:
 SPECIAL_SUMMARY = {"id": "int", "name": "str", "kind": "str", "category": "str"}  # Boons & Banes, its icon
 SPECIAL_DETAIL = {"id": "int", "name": "str", "type": "str", "kind": "str", "category": "str", "description": "str"}
 SPELL_SUMMARY = {"id": "int", "name": "str", "dc_change": "int"}  # dc_change: his own, from the advance flow
-SPELL_DETAIL = {"id": "int", "name": "str", "type": "str", "dc": "str", "description": "str", "dc_change": "int"}
+SPELL_DETAIL = {
+    "id": "int",
+    "name": "str",
+    "type": "str",
+    "dc": "str",
+    "description": "str",
+    "is_prayer": "bool",
+    "dc_change": "int",
+}
 MISSING = {"missing_games": "int", "missing_reason": "str"}  # missing games: how many and why (edit mode)
 # gaps: the loadout rows he lacks; a member misses games on his own, a group none (William, 25 Nov 2026)
 MEMBER = {"id": "int", "name": "str", "kills": "int", "dead": "bool", **MISSING, "gaps": []}

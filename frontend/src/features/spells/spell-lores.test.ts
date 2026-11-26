@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 
 import { spell } from "@/test/catalogue-fixtures";
 
-import { loreRowId, spellLores } from "./spell-lores";
+import { loreRowId, praysFrom, spellLores } from "./spell-lores";
 
 const LESSER = "Lesser Magic";
 const DEAD = "Necromancy (Restless Dead)";
@@ -65,5 +65,28 @@ describe("the lores", () => {
 describe("a lore's row", () => {
   it("has a DOM key apart from the spells' ids", () => {
     expect(loreRowId(DEAD)).toBe("lore-necromancy-restless-dead");
+  });
+});
+
+describe("prayers", () => {
+  const rite = spell({
+    id: 9,
+    name: "Soulfire",
+    type: "Prayers of Sigmar",
+    roll: 3,
+    is_prayer: true,
+  });
+
+  it("make their lore a prayer list, any other lore spells", () => {
+    expect(spellLores([fires, rite], "", null).map((lore) => [lore.name, lore.prayers])).toEqual([
+      [LESSER, false],
+      ["Prayers of Sigmar", true],
+    ]);
+  });
+
+  it("say whether a lore named is a prayer list, whatever its case", () => {
+    expect(praysFrom([" prayers of sigmar"], [fires, rite])).toBe(true);
+    expect(praysFrom([LESSER], [fires, rite])).toBe(false);
+    expect(praysFrom([], [rite])).toBe(false);
   });
 });

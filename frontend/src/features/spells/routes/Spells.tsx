@@ -17,7 +17,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import LoreSpells from "../components/LoreSpells";
 import SpellFormDialog from "../components/SpellFormDialog";
-import { loreOf, loreRowId, spellLores, type SpellLore } from "../spell-lores";
+import { loreNoun, loreOf, loreRowId, spellLores, type SpellLore } from "../spell-lores";
 
 const counted = (count: number, noun: string) => `${count} ${noun}${count === 1 ? "" : "s"}`;
 
@@ -121,6 +121,7 @@ export default function Spells() {
             open={openLore === lore.name}
             onToggle={() => toggleLore(lore.name)}
             name={lore.name}
+            sub={loreNoun(lore.prayers)}
             cells={isMobile ? undefined : []}
           >
             <LoreSpells

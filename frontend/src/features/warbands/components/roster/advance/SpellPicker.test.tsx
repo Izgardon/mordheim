@@ -35,8 +35,10 @@ describe("The spell picker", () => {
     );
     const user = setupUser();
     const table = await screen.findByRole("table", { name: `${LORE} spells` });
-    const rows = await within(table).findAllByRole("row");
+    await within(table).findByText("Living Horror");
+    const rows = within(table).getAllByRole("row");
     expect(rows.map((row) => row.textContent)).toEqual([
+      "D6SpellDifficulty",
       "1Spell of AwakeningAuto",
       "6Deathly Visage6",
       "–Living Horror8",
@@ -50,6 +52,32 @@ describe("The spell picker", () => {
     expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({ mode: "roll", roll: 6, spell: visage })
     );
+  });
+});
+
+describe("A prayer list", () => {
+  it("heads its table Prayer", async () => {
+    const rite: Spell = {
+      id: 81,
+      name: "Soulfire",
+      type: "Prayers of Sigmar",
+      dc: "9",
+      roll: 3,
+      is_prayer: true,
+    };
+    fakeApi.reset();
+    fakeApi.on("GET /spells/?campaign_id=1", [rite]);
+    renderWithQueryClient(
+      <SpellPicker
+        campaignId={1}
+        known={[]}
+        lores={["Prayers of Sigmar"]}
+        value={null}
+        onChange={vi.fn()}
+      />
+    );
+    const table = await screen.findByRole("table", { name: "Prayers of Sigmar prayers" });
+    expect(within(table).getAllByRole("row")[0]).toHaveTextContent("D6PrayerDifficulty");
   });
 });
 

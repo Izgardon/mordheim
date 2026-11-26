@@ -21,6 +21,7 @@ class Spell(CatalogueEntry):
     description = models.TextField(blank=True, default="")
     dc = models.CharField(max_length=40, blank=True, default="")
     roll = models.PositiveSmallIntegerField(null=True, blank=True)
+    is_prayer = models.BooleanField(default=False)  # its lore is a prayer list, else spells (spells/prayers.py)
 
     class Meta:
         db_table = "spell"

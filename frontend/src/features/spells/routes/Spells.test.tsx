@@ -94,8 +94,9 @@ describe("The Spells page", () => {
 
     const lesser = await loreRow(LESSER);
     // William, 7 Nov 2026: "Spells - drop spells and difficulty column"
-    expect(lesser.textContent).toBe(LESSER);
-    expect((await loreRow(DEAD)).textContent).toBe(DEAD);
+    // each lore says whether it is prayers or spells (William, 26 Nov 2026)
+    expect(lesser.textContent).toBe(`${LESSER}Spells`);
+    expect((await loreRow(DEAD)).textContent).toBe(`${DEAD}Spells`);
     expect(screen.queryByText("Difficulty")).toBeNull();
     expect(queryLoreRow("Spells of the Djedhi")).toBeNull();
     expect(screen.getByText("2 lores, 6 spells")).toBeInTheDocument();
@@ -129,6 +130,30 @@ describe("The Spells page", () => {
     expect(app.location().search).toBe("");
   });
 
+  it("marks a prayer list Prayers, its table headed Prayer", async () => {
+    const soulfire = spell({
+      id: 8,
+      name: "Soulfire",
+      type: "Prayers of Sigmar",
+      roll: 3,
+      dc: 9,
+      is_prayer: true,
+    });
+    fakeApi.on(SPELLS, [fires, soulfire]);
+    const user = setupUser();
+    renderApp(PAGE);
+
+    expect((await loreRow("Prayers of Sigmar")).textContent).toBe("Prayers of SigmarPrayers");
+    expect((await loreRow(LESSER)).textContent).toBe(`${LESSER}Spells`);
+    await user.click(await loreRow("Prayers of Sigmar"));
+    const table = screen.getByRole("table", { name: "Prayers of Sigmar prayers" });
+    expect(
+      within(table)
+        .getAllByRole("row")
+        .map((row) => row.textContent)
+    ).toEqual(["D6PrayerDifficulty", "3Soulfire9"]);
+  });
+
   it("searches names, lores and rules, keeping the lores with a match and their matches", async () => {
     const user = setupUser();
     renderApp(PAGE);
@@ -136,7 +161,7 @@ describe("The Spells page", () => {
     const search = screen.getByRole("searchbox", { name: "Search spells" });
 
     await user.type(search, "fires");
-    expect((await loreRow(LESSER)).textContent).toBe(LESSER);
+    expect((await loreRow(LESSER)).textContent).toBe(`${LESSER}Spells`);
     expect(queryLoreRow(DEAD)).toBeNull();
     expect(screen.getByText("1 spell in 1 lore")).toBeInTheDocument();
     await user.click(await loreRow(LESSER));
@@ -148,7 +173,7 @@ describe("The Spells page", () => {
 
     await user.clear(search);
     await user.type(search, "restless");
-    expect((await loreRow(DEAD)).textContent).toBe(DEAD);
+    expect((await loreRow(DEAD)).textContent).toBe(`${DEAD}Spells`);
     expect(queryLoreRow(LESSER)).toBeNull();
 
     await user.type(search, " nothing");

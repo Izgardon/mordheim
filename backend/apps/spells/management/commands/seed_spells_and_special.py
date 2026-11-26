@@ -1,7 +1,8 @@
 """Seed the book's spells and specials from JSON (`apps/spells/data/spells.json`, `apps/special/data/special.json`),
 the specials the serious injury tables grant by name, typed "Injury", with the book's rule text (the catalogue
 import's `out/serious-injuries.json`), and the shared specials (Fear, Stupidity, the mutations: the import's
-`out/shared-specials.json`, special/shared.py), archiving the copies of them seeded before.
+`out/shared-specials.json`, special/shared.py), archiving the copies of them seeded before. Each book spell is marked
+a prayer or a spell by its lore (spells/prayers.py).
 
 Rows are matched by name and type in the book only (BUG-17); the run is all or nothing; there is no --truncate
 (BUG-16: it deleted campaign rows and every copy of them). A lore keeps the first spell on each roll: a later one on
@@ -25,6 +26,7 @@ from apps.special.models import Special
 from apps.special.prebattle import SPECIAL, mark_book_rolls
 from apps.special.shared import read_shared
 from apps.spells.models import Spell
+from apps.spells.prayers import mark_book_prayers
 from apps.spells.rolls import first_on_each_roll
 
 SPELLS_JSON_PATH = Path("apps/spells/data/spells.json")
@@ -43,6 +45,7 @@ class Command(BaseCommand):
             injury_created, injury_updated = self._seed_injury_specials()
             shared_created, shared_updated, copies = self._seed_shared_specials()
             mark_book_rolls(Special, SPECIAL)  # their pre-battle rolls (special/prebattle.py)
+            mark_book_prayers()  # each lore a prayer list or spells (spells/prayers.py)
             bump(None)  # every cached catalogue list shows the book (PERF-13)
 
         self.stdout.write(
