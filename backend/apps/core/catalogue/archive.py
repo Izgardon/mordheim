@@ -8,6 +8,10 @@ runs in one transaction that bumps the campaign's catalogue version (cache.py), 
 with the usage the page shows ("Used by 3 units in 2 warbands"). An entry's twin (a beast's Animal item, kinds.py)
 goes the same way: deleted with it (its CASCADE; a held twin keeps both, archived), archived, removed and restored
 with it.
+
+A workshop (apps/workshop) keeps no archive (William, 26 Nov 2026): its player's entry that something still holds is
+archived all the same, so it leaves his lists and pickers while every warband, list or beast holding it keeps it, but
+the answer's outcome is `hidden`, and nothing there lists or restores it (catalogue/views.py).
 """
 
 from typing import TYPE_CHECKING, Any
@@ -28,9 +32,16 @@ USE_REVERT = "This entry is (or has) the campaign's version of a book entry: rev
 
 
 def delete_entry(
-    kind: "CatalogueKindSpec", entry: Any, campaign_id: int, user: Any, socket_id: str | None = None
+    kind: "CatalogueKindSpec",
+    entry: Any,
+    campaign_id: int,
+    user: Any,
+    socket_id: str | None = None,
+    *,
+    workshop: bool = False,
 ) -> dict[str, Any] | None:
-    """Delete, archive or remove the entry for the campaign; the answer's body, None when it was deleted."""
+    """Delete, archive or remove the entry for the campaign (`workshop`: an archive is said `hidden`); the answer's
+    body, None when it was deleted."""
     is_version = entry.campaign_id is not None and entry.replaces_id is not None
     manager = kind.model._default_manager
     has_version = entry.campaign_id is None and manager.filter(campaign_id=campaign_id, replaces=entry).exists()
@@ -56,7 +67,8 @@ def delete_entry(
         bump(campaign_id, *kind.changed_lists, socket_id=socket_id)
     if outcome == "deleted":
         return None
-    return {"outcome": outcome, "usage": count_usage(kind, entry.pk, campaign_id)}
+    said = "hidden" if workshop and outcome == "archived" else outcome
+    return {"outcome": said, "usage": count_usage(kind, entry.pk, campaign_id)}
 
 
 def _with_twin(kind: "CatalogueKindSpec", entry: Any, twin: Any) -> list[tuple["CatalogueKindSpec", Any]]:

@@ -32,7 +32,8 @@ WORKSHOP_DETAIL = (
 
 class WorkshopCampaign(APIException):
     """403 `workshop_campaign` in the standard body: what a workshop never does (apps/workshop: battles, trades,
-    joining, members, the campaign's pages and settings; its catalogue is written as any campaign's is).
+    joining, members, the campaign's pages and settings, and the catalogue kinds that only matter in a campaign:
+    scenarios, plots, exploration charts; the kinds a warband's units use are written there: catalogue/specs.py).
 
     A DRF exception, as `CampaignArchived` is, so any view answers it."""
 
@@ -41,6 +42,34 @@ class WorkshopCampaign(APIException):
 
     def __init__(self, detail: str = WORKSHOP_DETAIL) -> None:
         super().__init__({"detail": detail, "code": "workshop_campaign", "fields": {}})
+
+
+BOOK_ENTRY_DETAIL = "The book's entries are read only in your workshop: add one of your own instead."
+NO_ARCHIVE_DETAIL = "Your workshop keeps no archive: a deleted entry stays only on what still uses it."
+
+
+class WorkshopBookEntry(APIException):
+    """403 `workshop_book_entry` (William, 26 Nov 2026: "New + edit own"): in a workshop the book's entries are read
+    only, so nothing makes, changes, removes or reverts the workshop's version of one. `field`: the input that named
+    it (a skill's `group_ids`), else none."""
+
+    status_code = 403
+    default_code = "workshop_book_entry"
+
+    def __init__(self, detail: str = BOOK_ENTRY_DETAIL, field: str | None = None) -> None:
+        fields = {field: [detail]} if field else {}
+        super().__init__({"detail": detail, "code": "workshop_book_entry", "fields": fields})
+
+
+class WorkshopNoArchive(APIException):
+    """403 `workshop_no_archive` (William, 26 Nov 2026): a workshop has no archive to list or restore from; a deleted
+    entry something still holds is only hidden from its lists and pickers (core/catalogue/archive.py)."""
+
+    status_code = 403
+    default_code = "workshop_no_archive"
+
+    def __init__(self) -> None:
+        super().__init__({"detail": NO_ARCHIVE_DETAIL, "code": "workshop_no_archive", "fields": {}})
 
 
 class CampaignError(Exception):

@@ -5,6 +5,10 @@ of the campaign's (archived ones included, which Restore brings back) or one of 
 or not). A create of a taken name answers 400 `name_taken` with every match, so the page can offer "Edit this
 instead"; an edit may keep its own name, or take back the name of the book entry it replaces. Two creates of one exact name at once meet the database's constraint, which answers the same
 way (the 400 `duplicate_entry` of PR A is retired: every duplicate it caught is a taken name).
+
+Each match says what the form may offer on it: `editable` ("Edit this instead") and `restorable` (Restore, for an
+archived one). In a workshop (William, 26 Nov 2026) a book entry is never editable and nothing is restored, so a name
+taken only there answers "Pick another name."
 """
 
 from collections.abc import Iterable
@@ -13,6 +17,7 @@ from typing import TYPE_CHECKING, Any, NoReturn
 from django.db.models import Exists, F, OuterRef, Q
 from django.db.models.functions import Lower, Trim
 
+from apps.campaigns.in_play import is_workshop
 from apps.core.errors import ApiError
 from apps.core.models import CatalogueRemoval
 
@@ -24,27 +29,32 @@ def matches(
     kind: "CatalogueKindSpec", campaign_id: int, name: str, allowed: Iterable[Any] = ()
 ) -> list[dict[str, Any]]:
     """The book's and the campaign's entries of the kind named `name` (trimmed, any case), but `allowed` (entry
-    ids), as `{kind, id, name, type, source, archived}`: one query."""
+    ids), as `{kind, id, name, type, source, archived, editable, restorable}`: one query."""
     rows = kind.model._default_manager.annotate(folded=Lower(Trim("name"))).filter(
         Q(campaign__isnull=True) | Q(campaign_id=campaign_id), folded=name.strip().lower()
     )
     removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind=kind.key, entry_id=OuterRef("pk"))
     allowed = list(allowed)  # and the campaign's version of an allowed book entry
-    rows = rows.exclude(pk__in=allowed).exclude(replaces_id__in=allowed).annotate(removed=Exists(removed))
+    rows = rows.exclude(pk__in=allowed).exclude(replaces_id__in=allowed)
+    rows = rows.annotate(removed=Exists(removed), workshop=is_workshop(campaign_id))
     has_type = any(field.name == "type" for field in kind.model._meta.fields)
-    columns = ["id", "name", "campaign_id", "archived_at", "removed", *(["type"] if has_type else [])]
+    columns = ["id", "name", "campaign_id", "archived_at", "removed", "workshop", *(["type"] if has_type else [])]
     found = rows.order_by(F("campaign_id").asc(nulls_last=True), "name", "id").values(*columns)
     return [_match(kind.key, row) for row in found]
 
 
 def _match(key: str, row: dict[str, Any]) -> dict[str, Any]:
+    archived = bool(row["archived_at"] or row["removed"])  # archived, or a book entry removed for the campaign
+    book = row["campaign_id"] is None
     return {
         "kind": key,
         "id": row["id"],
         "name": row["name"],
         "type": row.get("type"),
-        "source": "book" if row["campaign_id"] is None else "campaign",
-        "archived": bool(row["archived_at"] or row["removed"]),  # archived, or a book entry removed for the campaign
+        "source": "book" if book else "campaign",
+        "archived": archived,
+        "editable": not archived and not (book and row["workshop"]),
+        "restorable": archived and not row["workshop"],
     }
 
 
@@ -53,7 +63,12 @@ def refuse(kind: "CatalogueKindSpec", name: str, found: list[dict[str, Any]]) ->
     labels = [match["type"] or match["source"] for match in found[:2]]
     more = f" and {len(found) - 2} more" if len(found) > 2 else ""
     listed = f": {', '.join(labels)}{more}" if labels else ""
-    detail = f"{name.strip()} is already in the catalogue{listed}. Edit {'it' if len(found) < 2 else 'one'} instead."
+    if found and not any(match["editable"] or match["restorable"] for match in found):
+        detail = f"{name.strip()} is already in the catalogue{listed}. Pick another name."
+    else:
+        detail = (
+            f"{name.strip()} is already in the catalogue{listed}. Edit {'it' if len(found) < 2 else 'one'} instead."
+        )
     raise ApiError(detail, code="name_taken", fields={"name": [detail]}, matches=found)
 
 

@@ -102,13 +102,13 @@ class ArchiveRestoreTests(ArchiveTestCase):
         self.assertIsNotNone(listed[self.campaign.id])
         self.assertEqual(self.get_as(self.outsider, self.url()).status_code, 404)
 
-    def test_capabilities_in_an_archived_campaign_are_restore_delete_and_reading_members(self):
+    def test_capabilities_in_an_archived_campaign_are_restore_delete_and_reading_members_and_the_archive(self):
         self.archive(self.owner)
 
         for actor, held in (
-            (self.owner, {"restore", "delete", "view_members"}),
-            (self.admin, {"view_members"}),
-            (self.player, set()),
+            (self.owner, {"restore", "delete", "view_members", "archived_catalogue"}),
+            (self.admin, {"view_members", "archived_catalogue"}),
+            (self.player, {"archived_catalogue"}),
         ):
             with self.subTest(actor=actor.first_name):
                 capabilities = self.get_as(actor, self.url()).json()["capabilities"]

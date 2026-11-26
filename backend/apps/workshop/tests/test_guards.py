@@ -114,7 +114,9 @@ class ListGuardTests(WorkshopTestCase):
         self.assertEqual(added.status_code, 201, added.data)  # with a written rule, the list's own special
         book = f"/api/warband-templates/{self.made.template.id}/rules/"
         refused = self.put_as(self.player, book, body)
-        self.assertEqual((refused.status_code, refused.data["code"]), (403, WORKSHOP_REFUSED))  # never a house version
+        self.assertEqual(
+            (refused.status_code, refused.data["code"]), (403, "workshop_book_entry")
+        )  # never a house version
         self.assertEqual(WarbandTemplate.objects.filter(campaign_id=row["campaign_id"]).count(), 1)
         self.assertEqual(self.put_as(self.rival, rules, body).status_code, 404)
 

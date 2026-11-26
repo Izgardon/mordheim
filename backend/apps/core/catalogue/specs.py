@@ -71,6 +71,9 @@ class CatalogueKindSpec:
     write_serializer: type[BaseSerializer[Any]] | None = None  # None: nothing writes the kind through the API
     named: bool = False  # a create's name may not be taken in the campaign or the book (names.py)
     versioned: bool = False  # book entries get campaign versions, archive and removal (versions.py, archive.py)
+    # written in a workshop (William, 26 Nov 2026: only what affects a warband and its units): its player's own
+    # entries; the rest (scenarios, plots, exploration charts) answer 403 workshop_campaign there
+    in_workshop: bool = False
     filters: Mapping[str, Filter] = field(default_factory=dict)  # list query parameter -> filter, before the merge
     name_field: str = "name"  # what the name rule compares (names.py)
     order: tuple[str, ...] = ("name", "id")  # each part of a list (the campaign's rows, then the book's)

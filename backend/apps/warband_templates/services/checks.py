@@ -2,7 +2,9 @@
 otherwise get wrong, each a warning by section (and by fighter or list key), never a refusal.
 
 - Basics: it serves no warband type, so no warband uses it; a type another template in the campaign serves too (the
-  campaign's own come first, the oldest first, so one of them isn't used for that type).
+  campaign's own come first, the oldest first, so one of them isn't used for that type). Not in a workshop (William,
+  26 Nov 2026): a workshop's warband names the list it reads (`Warband.template`), so which list serves a type there
+  doesn't matter.
 - Fighters: no leader; a fighter with no list and no fixed kit; more heroes than the campaign's hero cap.
 - Lists: a list nobody buys from.
 - Rules: a rule for a type it doesn't serve (a copy keeps its source's, a type taken out leaves its own): nobody reads it.
@@ -12,8 +14,6 @@ from collections import defaultdict
 from typing import Any
 
 from django.db.models import F
-
-from apps.campaigns.models import WORKSHOP
 
 from ..models import HERO, WarbandTemplate, WarbandTemplateType
 from .resolve import in_campaign
@@ -25,29 +25,25 @@ def _warning(section: str, text: str, key: str = "") -> dict[str, str]:
     return {"section": section, "key": key, "text": text}
 
 
-def _shared_types(template: WarbandTemplate, campaign_id: int) -> list[dict[str, str]]:
-    """Each type the template serves that another template in the campaign serves too (one query)."""
+def _shared_types(template: WarbandTemplate, campaign_id: int, workshop: bool) -> list[dict[str, str]]:
+    """Each type the template serves that another template in the campaign serves too (one query; none in a
+    workshop)."""
     type_ids = [link.warband_type_id for link in template.type_links.all()]
     if not type_ids:
         return [_warning("basics", "It serves no warband type, so no warband uses it.")]
+    if workshop:
+        return []
     links = (
         WarbandTemplateType.objects.filter(warband_type_id__in=type_ids, template__in=in_campaign(campaign_id))
-        .select_related("template__campaign", "warband_type")
+        .select_related("template", "warband_type")
         .order_by(F("template__campaign_id").asc(nulls_last=True), "template_id")
     )
     serving: dict[int, list[WarbandTemplateType]] = defaultdict(list)
     for link in links:
         serving[link.warband_type_id].append(link)
-    # a workshop's own list always comes before the book's: saying so is noise there
-    own = next((link for rows in serving.values() for link in rows if link.template_id == template.pk), None)
-    workshop = own is not None and own.template.campaign is not None and own.template.campaign.kind == WORKSHOP
     found = []
     for rows in serving.values():
-        others = [
-            row.template
-            for row in rows
-            if row.template_id != template.pk and not (workshop and row.template.campaign_id is None)
-        ]
+        others = [row.template for row in rows if row.template_id != template.pk]
         if len(rows) < 2 or not others:
             continue
         first, kind = rows[0].template, rows[0].warband_type.name
@@ -78,10 +74,13 @@ def _heroes(template: WarbandTemplate, hero_cap: int | None) -> list[dict[str, s
     return []
 
 
-def template_warnings(template: WarbandTemplate, campaign_id: int, hero_cap: int | None) -> list[dict[str, str]]:
-    """The template's warnings (its fighters, their lists and its lists prefetched: one more query, for the types)."""
+def template_warnings(
+    template: WarbandTemplate, campaign_id: int, hero_cap: int | None, *, workshop: bool = False
+) -> list[dict[str, str]]:
+    """The template's warnings (its fighters, their lists and its lists prefetched: one more query, for the types,
+    none in a `workshop`)."""
     fighters = list(template.fighters.all())
-    found: list[dict[str, Any]] = _shared_types(template, campaign_id)
+    found: list[dict[str, Any]] = _shared_types(template, campaign_id, workshop)
     if fighters and not any(fighter.is_leader for fighter in fighters):
         found.append(_warning("fighters", "No fighter is the leader."))
     found += _heroes(template, hero_cap)

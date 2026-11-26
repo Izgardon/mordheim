@@ -3,7 +3,8 @@
 A group's write replaces each list it sends: who learns from it (`warbands`) and its skills (`skill_ids`, already the
 campaign's current entries: CatalogueIdsField). A skill's write may send the groups that should hold it (`group_ids`,
 the campaign's current groups): a group gaining or losing it is written like any edit of it, so a book group gets the
-campaign's version first (versions.editable) and the book and every other campaign keep theirs. A campaign's version
+campaign's version first (versions.editable) and the book and every other campaign keep theirs; in a workshop, whose
+book entries are read only (William, 26 Nov 2026), it joins and leaves only its own groups. A campaign's version
 of a skill stands in for the book skill in every group (a link to either is the skill's), so the links read and
 removed are those to the skill or to the book skill it replaces.
 """
@@ -13,9 +14,12 @@ from typing import Any
 
 from django.db.models import Q
 
+from apps.campaigns.errors import WorkshopBookEntry
+
 from .models import Skill, SkillGroup, SkillGroupSkill, SkillGroupWarband
 
 LISTS = ("warbands", "skill_ids")
+BOOK_GROUP = "In your workshop a skill joins only your own skill groups: the book's are read only."
 LINE_FIELDS = ("warband_type_id", "warband_group_id", "excluded")
 
 
@@ -62,6 +66,7 @@ def _links_of(skill: Skill) -> Q:
 def set_skill_groups(skill: Skill, group_ids: list[int], campaign_id: int) -> None:
     """The campaign's groups holding the skill become `group_ids` (current groups): each group it joins or leaves is
     the campaign's own, or its version of a book group made by this write."""
+    from apps.campaigns.models import WORKSHOP, Campaign
     from apps.core.catalogue.kinds import SKILL_GROUPS  # the registry imports this app's serializers
     from apps.core.catalogue.merge import campaign_list
     from apps.core.catalogue.versions import editable
@@ -71,7 +76,10 @@ def set_skill_groups(skill: Skill, group_ids: list[int], campaign_id: int) -> No
         SkillGroupSkill.objects.filter(_links_of(skill), group__in=current).values_list("group_id", flat=True)
     )
     wanted = set(group_ids)
-    changed = SkillGroup.objects.filter(pk__in=(wanted ^ holding)).order_by("pk")
+    changed = list(SkillGroup.objects.filter(pk__in=(wanted ^ holding)).order_by("pk"))
+    book = any(group.campaign_id is None for group in changed)
+    if book and Campaign.objects.filter(pk=campaign_id, kind=WORKSHOP).exists():
+        raise WorkshopBookEntry(BOOK_GROUP, field="group_ids")
     for group in changed:
         written = editable(SKILL_GROUPS, group, campaign_id)
         if group.pk in wanted:

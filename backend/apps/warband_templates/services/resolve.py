@@ -17,6 +17,7 @@ from typing import Any
 
 from django.db.models import Case, Exists, F, OuterRef, Prefetch, Q, QuerySet, Subquery, Value, When
 
+from apps.campaigns.in_play import is_workshop
 from apps.core.models import CatalogueRemoval
 from apps.warbands.models import Warband
 from apps.warbands.models.shared import STAT_FIELDS
@@ -44,11 +45,11 @@ def in_campaign(campaign_id: int) -> QuerySet[WarbandTemplate]:
 
 
 def templates_for_type(
-    campaign_id: int, warband_type_id: int | None, named_id: int | None = None
+    campaign_id: int, warband_type_id: int | None, named_id: int | None = None, keep_id: int | None = None
 ) -> QuerySet[WarbandTemplate]:
-    """The templates serving the type in the campaign, the campaign's own first, each with the variant the type
-    presets (`preset_variant`, blank: picked when raising); `named_id`, a workshop warband's list, alone. One query
-    when read."""
+    """The templates serving the type in the campaign, the campaign's own first (none of a workshop's but `keep_id`),
+    each with the variant the type presets (`preset_variant`, blank: picked when raising); `named_id`, a workshop
+    warband's list, alone. One query when read."""
     preset = WarbandTemplateType.objects.filter(template_id=OuterRef("pk"), warband_type_id=warband_type_id)
     if named_id is not None:
         return WarbandTemplate.objects.filter(pk=named_id).annotate(
@@ -56,9 +57,12 @@ def templates_for_type(
         )
     if warband_type_id is None:
         return WarbandTemplate.objects.none()
+    serving = Q(campaign__isnull=True) | ~Q(is_workshop(campaign_id))
+    if keep_id is not None:
+        serving |= Q(pk=keep_id)
     found: QuerySet[WarbandTemplate] = (
         in_campaign(campaign_id)
-        .filter(type_links__warband_type_id=warband_type_id)
+        .filter(serving, type_links__warband_type_id=warband_type_id)
         .annotate(preset_variant=Subquery(preset.values("variant")[:1]))
     )
     return found
@@ -81,8 +85,8 @@ def template_for_warband(warband: Warband) -> WarbandTemplate | None:
 
 def template_for_new_type(warband: Warband, warband_type_id: int | None) -> WarbandTemplate | None:
     """The template a warband reads once its type changes: its type's in its campaign, and in a workshop the list it
-    named while that one serves the new type too, before the workshop's other lists (one query)."""
-    rows = templates_for_type(warband.campaign_id, warband_type_id)
+    named while that one serves the new type too, else the book's (one query)."""
+    rows = templates_for_type(warband.campaign_id, warband_type_id, keep_id=warband.template_id)
     if warband.template_id is not None:
         named_first = Case(When(pk=warband.template_id, then=Value(0)), default=Value(1))
         rows = rows.order_by(named_first, F("campaign_id").asc(nulls_last=True), "id")
@@ -93,7 +97,7 @@ def templates_for_warbands(warbands: Iterable[Warband]) -> dict[int, WarbandTemp
     """Each warband's template, as `template_for_warband` finds it in its own campaign (the list a workshop's names,
     else the campaign's own, oldest first, else the book's it hasn't replaced or removed; never an archived one),
     each with its type's `preset_variant`, for many warbands of many campaigns at once (three queries, whatever their
-    number, and one more when a workshop's warband names its list)."""
+    number, and one more when a workshop's warband names its list; one naming none reads the book's)."""
     found: dict[int, WarbandTemplate | None] = dict.fromkeys((warband.pk for warband in warbands), None)
     named = [warband for warband in warbands if warband.template_id is not None]
     found.update(_named_templates(named))
@@ -123,7 +127,7 @@ def templates_for_warbands(warbands: Iterable[Warband]) -> dict[int, WarbandTemp
             for link in links
             if link.warband_type_id == warband.warband_type_id
             and (
-                link.template.campaign_id == warband.campaign_id
+                (link.template.campaign_id == warband.campaign_id and not warband.in_workshop)
                 or (link.template.campaign_id is None and (warband.campaign_id, link.template_id) not in hidden)
             )
         ]

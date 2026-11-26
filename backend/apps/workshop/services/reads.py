@@ -34,7 +34,7 @@ def live_warbands() -> QuerySet[Warband]:
 def live_lists() -> QuerySet[WarbandTemplate]:
     """Lists in live workshops (a workshop's own templates), not archived, read with the types they serve."""
     types = Prefetch("type_links", WarbandTemplateType.objects.select_related("warband_type").order_by("id"))
-    rows = WarbandTemplate.objects.filter(archived_at__isnull=True, replaces__isnull=True, **LIVE_WORKSHOP)
+    rows = WarbandTemplate.objects.filter(archived_at__isnull=True, **LIVE_WORKSHOP)
     return rows.select_related("campaign__workshop_owner").prefetch_related(types)
 
 
@@ -147,6 +147,4 @@ def _counts(warband: Warband) -> dict[str, int]:
 
 def my_list(workshop: Campaign, template_id: Any) -> WarbandTemplate | None:
     """One of the workshop's live lists by id, or None (one query)."""
-    return WarbandTemplate.objects.filter(
-        pk=template_id, campaign=workshop, archived_at__isnull=True, replaces__isnull=True
-    ).first()
+    return WarbandTemplate.objects.filter(pk=template_id, campaign=workshop, archived_at__isnull=True).first()

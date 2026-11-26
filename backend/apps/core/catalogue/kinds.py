@@ -186,6 +186,7 @@ NAME_AND_TYPE: Mapping[str, Filter] = {
 
 ITEMS = CatalogueKindSpec(
     key="items",
+    in_workshop=True,
     noun="item",
     model=Item,
     url_kwarg="item_id",
@@ -208,6 +209,7 @@ ITEMS = CatalogueKindSpec(
 )
 SKILLS = CatalogueKindSpec(
     key="skills",
+    in_workshop=True,
     noun="skill",
     model=Skill,
     url_kwarg="skill_id",
@@ -229,6 +231,7 @@ SKILLS = CatalogueKindSpec(
 )
 SKILL_GROUPS = CatalogueKindSpec(  # skill groups (phase 1a): units name them in their skill access, nothing holds one
     key="skill_groups",
+    in_workshop=True,
     noun="skill group",
     model=SkillGroup,
     url_kwarg="group_id",
@@ -246,6 +249,7 @@ SKILL_GROUPS = CatalogueKindSpec(  # skill groups (phase 1a): units name them in
 )
 SPELLS = CatalogueKindSpec(
     key="spells",
+    in_workshop=True,
     noun="spell",
     model=Spell,
     url_kwarg="spell_id",
@@ -260,6 +264,7 @@ SPELLS = CatalogueKindSpec(
 )
 SPECIALS = CatalogueKindSpec(
     key="specials",
+    in_workshop=True,
     noun="special",
     model=Special,
     url_kwarg="special_id",
@@ -279,6 +284,7 @@ SPECIALS = CatalogueKindSpec(
 )
 RACES = CatalogueKindSpec(
     key="races",
+    in_workshop=True,
     noun="race",
     model=Race,
     url_kwarg="race_id",
@@ -307,6 +313,7 @@ RACES = CatalogueKindSpec(
 )
 BESTIARY = CatalogueKindSpec(
     key="bestiary",
+    in_workshop=True,
     noun="bestiary entry",
     model=BestiaryEntry,
     url_kwarg="entry_id",
@@ -326,6 +333,7 @@ BESTIARY = CatalogueKindSpec(
 HIRELING_LINKS = ("skill_links", "special_links", "spell_links", "item_links", "warband_links")
 HIRED_SWORDS = CatalogueKindSpec(
     key="hired_swords",
+    in_workshop=True,
     noun="hired sword",
     model=HiredSword,
     url_kwarg="hired_sword_id",
@@ -341,6 +349,7 @@ HIRED_SWORDS = CatalogueKindSpec(
 )
 DRAMATIS_PERSONAE = CatalogueKindSpec(
     key="dramatis_personae",
+    in_workshop=True,
     noun="dramatis persona",
     model=DramatisPersona,
     url_kwarg="dramatis_persona_id",
@@ -356,6 +365,7 @@ DRAMATIS_PERSONAE = CatalogueKindSpec(
 )
 WARBAND_TEMPLATES = CatalogueKindSpec(  # written by the template editor's own routes (the templates plan, phase 4)
     key="warband_templates",
+    in_workshop=True,
     noun="warband template",
     model=WarbandTemplate,
     url_kwarg="template_id",
@@ -427,6 +437,7 @@ SCENARIOS = CatalogueKindSpec(  # what a battle is played as (William, 24 Nov 20
 )
 ITEM_RULES = CatalogueKindSpec(  # the shared rules: added, never edited or deleted
     key="item_rules",
+    in_workshop=True,
     noun="item rule",
     model=ItemRule,
     url_kwarg="rule_id",

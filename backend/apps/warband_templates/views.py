@@ -52,7 +52,7 @@ class WarbandTemplateListView(CatalogueCollectionView):
             template = make_template(
                 campaign_id, data["name"], data["type_ids"], data.get("source"), request.user, code
             )
-        body = editor_payload(template.pk, campaign_id, self.access.settings)
+        body = editor_payload(template.pk, campaign_id, self.access.settings, workshop=self.access.workshop)
         return Response(body, status=status.HTTP_201_CREATED)
 
 

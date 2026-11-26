@@ -168,17 +168,40 @@ CODE_RULES: Mapping[str, Rule] = {
     "manage_encampments": with_feature("enable_encampments", "manage_encampments"),
     "manage_locations": with_feature("enable_locations", "manage_locations"),
 }
+
+
+def campaign_only(code: str | None = None) -> Rule:
+    """Never in a workshop; in a campaign, held with `code` (every member without one)."""
+
+    def outside_workshop(access: CampaignAccess, obj: Any = None) -> bool:
+        return not access.workshop and (code is None or access.has(code))
+
+    return outside_workshop
+
+
+# what the catalogue does only in a campaign (William, 26 Nov 2026: a workshop is "New + edit own", with no archive):
+# the views refuse them in a workshop in their own words (core/catalogue/views.py), and the flags tell the pages
+CATALOGUE_PLACE_RULES: Mapping[str, Rule] = {
+    "edit_book_catalogue": campaign_only("edit_catalogue"),  # edit, remove or revert a book entry for the campaign
+    "archived_catalogue": campaign_only(),  # Show archived (and Restore, with edit_catalogue)
+}
 CAMPAIGN_RULES: Mapping[str, Rule] = {
     "view": member,
     **ROLE_RULES,
     **CODE_RULES,
+    **CATALOGUE_PLACE_RULES,
     "take_encampment": takes_for,  # for a warband (object rule)
     "change_holding": holds_or_manages,  # raze it or give it up (object rule)
 }
-CAPABILITIES: tuple[str, ...] = (*ROLE_RULES, *CODE_RULES)  # the flags: every rule but view and object rules
+CAPABILITIES: tuple[str, ...] = (
+    *ROLE_RULES,
+    *CODE_RULES,
+    *CATALOGUE_PLACE_RULES,
+)  # the flags: every rule but view and object rules
 # what an archived campaign still lets its members do (everything else answers 403 campaign_archived)
-KEPT_WHEN_ARCHIVED = frozenset({"view_members", "restore", "delete"})
-# what a workshop's player may do there (apps/workshop): write his own catalogue entries and lists, and delete them
+KEPT_WHEN_ARCHIVED = frozenset({"view_members", "restore", "delete", "archived_catalogue"})
+# what a workshop's player may do there (apps/workshop): write his own catalogue entries and lists, and delete them;
+# never a book entry, and no archive (CATALOGUE_PLACE_RULES)
 KEPT_IN_WORKSHOP = frozenset({"edit_catalogue", "delete_catalogue"})
 
 

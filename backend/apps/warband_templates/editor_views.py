@@ -18,7 +18,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
-from apps.campaigns.errors import WorkshopCampaign
 from apps.core.catalogue import names, versions
 from apps.core.catalogue.hooks import CampaignRequired
 from apps.core.catalogue.kinds import WARBAND_TEMPLATES
@@ -53,7 +52,7 @@ class TemplateEditorView(TemplateReadView):
     def get(self, request: Request, **kwargs: Any) -> Response:
         campaign_id = self.campaign()
         template = current_template(self.entry, campaign_id)
-        return Response(editor_payload(template.pk, campaign_id, self.access.settings))
+        return Response(editor_payload(template.pk, campaign_id, self.access.settings, workshop=self.access.workshop))
 
 
 class TemplateWhoCanView(TemplateReadView):
@@ -63,19 +62,14 @@ class TemplateWhoCanView(TemplateReadView):
 
 class TemplateSectionView(CatalogueEntryView):
     """A section's save: the house version first for a book template, then the write, in one transaction. A workshop
-    (apps/workshop) writes its own lists here and never a book template, which would make a house version serving
-    every warband of its type there: a book list is copied into the workshop as a list of its own instead."""
+    (apps/workshop) writes its own lists here and never a book template (403 `workshop_book_entry`, the catalogue's
+    entry view): a book list is copied into the workshop as a list of its own instead."""
 
     kind = WARBAND_TEMPLATES
     rules = {"PUT": EDIT, "POST": EDIT, "DELETE": EDIT}
     book_methods = frozenset({"PUT", "POST", "DELETE"})
     actions = {"PUT": "edit", "POST": "edit", "DELETE": "edit"}
     reads_detail = False
-
-    def load_scope(self, method: str, **kwargs: Any) -> None:
-        super().load_scope(method, **kwargs)
-        if self.access.workshop and self.entry.campaign_id != self.campaign_id:
-            raise WorkshopCampaign()
 
     def body(self, serializer: type[Serializer[Any]]) -> Any:
         sent = serializer(data=self.request.data, context={"campaign_id": self.campaign_id})
@@ -93,7 +87,7 @@ class TemplateSectionView(CatalogueEntryView):
             WarbandTemplate.objects.filter(pk=template.pk).update(
                 updated_by=self.request.user, updated_at=timezone.now()
             )
-        body = editor_payload(template.pk, campaign_id, self.access.settings)
+        body = editor_payload(template.pk, campaign_id, self.access.settings, workshop=self.access.workshop)
         return Response(body, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
@@ -104,7 +98,9 @@ class BasicsView(TemplateSectionView):
         assert campaign_id is not None  # load_scope found it
         template = current_template(self.entry, campaign_id)
         if edit_basics.unchanged(template, data):  # no change, no house version: answered as a read
-            return Response(editor_payload(template.pk, campaign_id, self.access.settings))
+            return Response(
+                editor_payload(template.pk, campaign_id, self.access.settings, workshop=self.access.workshop)
+            )
         return self.save(lambda template: edit_basics.write_basics(template, data), name=data["name"])
 
 

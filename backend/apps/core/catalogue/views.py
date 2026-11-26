@@ -9,6 +9,11 @@ where an edit makes or changes the campaign's version of it (versions.py) and a 
 an archived campaign 403 `campaign_archived`, then the method's rule: reading and `usage/` take membership;
 creating, editing, reverting and restoring `edit_catalogue`; deleting `delete_catalogue` (decisions 4 and 5). A
 method a view handles but `rules` doesn't name is refused (deny by default).
+
+A workshop (apps/workshop; William, 26 Nov 2026: "New + edit own") writes only the kinds a warband's units use
+(`in_workshop`), and there only its player's own entries: a write to a book entry (an edit, a removal, a Revert)
+answers 403 `workshop_book_entry`, and it keeps no archive (`?archived=1` and Restore: 403 `workshop_no_archive`). The
+campaign payload's `edit_book_catalogue` and `archived_catalogue` flags say the same (campaigns/access.py).
 """
 
 from collections.abc import Mapping
@@ -23,6 +28,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
+from apps.campaigns.errors import WorkshopBookEntry, WorkshopNoArchive
 from apps.campaigns.in_play import InPlayScope, Ticked, in_play_rows
 from apps.campaigns.permissions import parse_campaign_id
 from apps.campaigns.views.base import CampaignScopedView
@@ -48,8 +54,11 @@ ACTIONS = {"PUT": "edit", "PATCH": "edit", "DELETE": "delete"}
 class CatalogueScopedView(CampaignScopedView):
     kind: ClassVar[CatalogueKindSpec]
     rules = CATALOGUE_RULES
-    workshop_writes = True  # a workshop's player writes his own entries here as any campaign's editor does
     campaign_id: int | None = None  # None: the book
+
+    def takes_workshop_writes(self) -> bool:
+        """A workshop's player writes his own entries of the kinds his units use, as a campaign's editor does."""
+        return self.kind.in_workshop
 
     def enter(self, method: str, campaign_id: int) -> None:
         """The caller's access to the campaign, then the method's rule."""
@@ -92,6 +101,8 @@ class CatalogueCollectionView(CatalogueScopedView):
         campaign_id = parse_campaign_id(source.get("campaign_id"))  # garbage is a 400 (BUG-79)
         if campaign_id is not None:
             self.enter(method, campaign_id)
+            if method == "GET" and self.access.workshop and source.get("archived") in ("1", "true"):
+                raise WorkshopNoArchive()
         elif method != "GET":
             self.kind.hooks.missing_campaign()
 
@@ -183,9 +194,19 @@ class CatalogueEntryView(CatalogueScopedView):
             kind.hooks.check_edit_body(self.request, entry)
         self.campaign_id = campaign_id
         self.enter_campaign(method, campaign_id)
+        if self.access.workshop and method in self.actions:
+            self.refuse_in_workshop(entry, self.actions[method])
         if method in self.actions:  # a book entry's too: a beast's Animal item is never written here
             kind.hooks.refuse_write(entry, self.actions[method])
         self.check_rule(self.rules.get(method))
+
+    def refuse_in_workshop(self, entry: Any, action: str) -> None:
+        """A workshop writes its player's own entries only, never reverts one to the book, and keeps no archive
+        (William, 26 Nov 2026)."""
+        if action == "restore":
+            raise WorkshopNoArchive()
+        if action == "revert" or entry.campaign_id is None or entry.replaces_id is not None:
+            raise WorkshopBookEntry()
 
     def read(self) -> Response:
         return Response(self.kind.entry_serializer(self.entry).data)
@@ -208,10 +229,13 @@ class CatalogueEntryView(CatalogueScopedView):
         return Response(self.answer(entry))
 
     def destroy(self) -> Response:
-        """A custom entry is deleted, or archived while something holds it; a book entry is removed for the campaign;
-        a version is refused (409 use_revert): CAT-TWEAK-04, CAT-NEW-05."""
+        """A custom entry is deleted, or archived while something holds it (hidden, in a workshop); a book entry is
+        removed for the campaign; a version is refused (409 use_revert): CAT-TWEAK-04, CAT-NEW-05."""
         assert self.campaign_id is not None
-        body = archive.delete_entry(self.kind, self.entry, self.campaign_id, self.request.user, self.socket_id())
+        user, socket = self.request.user, self.socket_id()
+        body = archive.delete_entry(
+            self.kind, self.entry, self.campaign_id, user, socket, workshop=self.access.workshop
+        )
         return Response(status=status.HTTP_204_NO_CONTENT) if body is None else Response(body)
 
 

@@ -91,8 +91,8 @@ class MakingTests(WorkshopTestCase):
         self.assertEqual(made.status_code, 201, made.data)
         self.assertEqual(len(WarbandTemplate.objects.get(pk=made.data["template"]["id"]).share_code or ""), 8)
 
-    def test_a_warband_raised_from_one_of_my_lists_names_it_whatever_else_serves_its_type(self) -> None:
-        first = self.make_list(name="Caravans A", copy_of_template_id=self.made.template.id)
+    def test_a_warband_raised_from_one_of_my_lists_names_it_and_one_raised_by_type_the_books(self) -> None:
+        self.make_list(name="Caravans A", copy_of_template_id=self.made.template.id)
         second = self.make_list(name="Caravans B", copy_of_template_id=self.made.template.id)
         WarbandTemplate.objects.filter(pk=second["id"]).update(starting_gold=700)
         row = self.make_warband(list_id=second["id"], warband_type_id=None)
@@ -101,8 +101,13 @@ class MakingTests(WorkshopTestCase):
         self.assertEqual((row["budget"], warband.gold), (700, 700))
         sheet = self.get_as(self.player, f"/api/warbands/{row['id']}/template/").data
         self.assertEqual(sheet["template"]["id"], second["id"])
+        # William, 26 Nov 2026: a type uses the book's list, never one of mine ("One of my lists" is how I use those)
         by_type = self.make_warband(name="By type", template_variant="reikland")
-        self.assertEqual(by_type["template_id"], first["id"])  # the workshop's own list first, the oldest
+        self.assertEqual(by_type["template_id"], self.made.template.id)
+        outline = self.get_as(
+            self.player, f"/api/campaigns/{row['campaign_id']}/warband-types/{self.mercenaries.id}/template/"
+        )
+        self.assertEqual(outline.data["template"]["id"], self.made.template.id)
         rivals = self.make_list(user=self.rival, name="Rival List")
         foreign = self.post_as(self.player, "/api/workshop/warbands/", {"name": "X", "list_id": rivals["id"]})
         self.assertEqual(foreign.status_code, 400)
@@ -128,17 +133,22 @@ class MakingTests(WorkshopTestCase):
         none = self.post_as(self.player, "/api/workshop/warbands/", {"name": "X", "list_id": blank["id"]})
         self.assertEqual((none.status_code, none.data["code"]), (400, "list_serves_no_type"))
 
-    def test_a_new_type_in_settings_names_the_list_serving_it(self) -> None:
-        listed = self.make_list(name="Caravans B", copy_of_template_id=self.made.template.id)
-        row = self.make_warband(list_id=listed["id"])
-        changed = self.patch_as(
-            self.player, f"/api/warbands/{row['id']}/", {"warband_type_id": book_warband_type("Outlaws").id}
-        )
+    def test_a_new_type_in_settings_keeps_my_list_serving_it_else_reads_the_books(self) -> None:
+        outlaws = book_warband_type("Outlaws")
+        both = [self.mercenaries.id, outlaws.id]
+        listed = self.make_list(name="Caravans B", copy_of_template_id=self.made.template.id, warband_type_ids=both)
+        row = self.make_warband(list_id=listed["id"], template_variant="reikland")
+        to_outlaws = {"warband_type_id": outlaws.id, "template_variant": "reikland"}
+        changed = self.patch_as(self.player, f"/api/warbands/{row['id']}/", to_outlaws)
         self.assertEqual(changed.status_code, 200, changed.data)
-        self.assertIsNone(self.warband_of(row).template_id)  # nothing serves the new type here
-        back = self.patch_as(self.player, f"/api/warbands/{row['id']}/", {"warband_type_id": self.mercenaries.id})
+        self.assertEqual(self.warband_of(row).template_id, listed["id"])  # the list it named serves it too
+        by_type = self.make_warband(name="By type", template_variant="reikland")
+        moved = self.patch_as(self.player, f"/api/warbands/{by_type['id']}/", {"warband_type_id": outlaws.id})
+        self.assertEqual(moved.status_code, 200, moved.data)
+        self.assertIsNone(self.warband_of(by_type).template_id)  # the book has none for it; my list is never picked
+        back = self.patch_as(self.player, f"/api/warbands/{by_type['id']}/", {"warband_type_id": self.mercenaries.id})
         self.assertEqual(back.status_code, 200, back.data)
-        self.assertEqual(self.warband_of(row).template_id, listed["id"])
+        self.assertEqual(self.warband_of(by_type).template_id, self.made.template.id)
 
 
 class ListingTests(WorkshopTestCase):

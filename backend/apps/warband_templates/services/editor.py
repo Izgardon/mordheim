@@ -36,8 +36,11 @@ def source(template: WarbandTemplate) -> str:
     return "house" if template.replaces_id is not None else "custom"
 
 
-def editor_payload(template_id: int, campaign_id: int, settings: CampaignSettings | None) -> dict[str, Any]:
-    """The template (its detail's prefetch, one query each), the facts (one query) and the warnings (one query)."""
+def editor_payload(
+    template_id: int, campaign_id: int, settings: CampaignSettings | None, *, workshop: bool = False
+) -> dict[str, Any]:
+    """The template (its detail's prefetch, one query each), the facts (one query) and the warnings (one query, none
+    in a workshop: `workshop`)."""
     rows = WarbandTemplate.objects.select_related(*badge_joins(), "copied_from")
     template = template_details(rows).get(pk=template_id)
     copied = template.copied_from
@@ -50,7 +53,7 @@ def editor_payload(template_id: int, campaign_id: int, settings: CampaignSetting
     return {
         "template": WARBAND_TEMPLATES.entry_serializer(template).data,
         "facts": facts,
-        "warnings": template_warnings(template, campaign_id, hero_cap),
+        "warnings": template_warnings(template, campaign_id, hero_cap, workshop=workshop),
     }
 
 

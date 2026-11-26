@@ -123,6 +123,8 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "remove_posts": ("DELETE", "messages/{message}/", None),
     "edit_catalogue": ("POST", "/api/skills/", {"campaign_id": "{campaign}", "name": "Dodge"}),
     "delete_catalogue": ("DELETE", "/api/items/{item}/", None),  # an item nothing holds
+    "edit_book_catalogue": ("PATCH", "/api/items/{book_item}/", {"campaign_id": "{campaign}", "name": "Long Rope"}),
+    "archived_catalogue": ("GET", "/api/items/?campaign_id={campaign}&archived=1", None),
     "manage_rules": ("POST", "rules/", {"title": "No running"}),
     "manage_warbands": ("PATCH", "/api/warbands/{rival_warband}/", {"name": "Rats"}),
     "manage_encampments": ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}),
@@ -178,6 +180,7 @@ class CampaignAccessFixture(CampaignTestCase):
             "rule": CampaignHouseRule.objects.create(campaign=campaign, title="Old rule").id,
             "campaign_rule": CampaignRule.objects.create(campaign=campaign, title="Old ruling").id,
             "item": Item.objects.create(campaign=campaign, name="Lucky Charm", type="Miscellaneous").id,
+            "book_item": Item.objects.create(name="Rope", type="Miscellaneous").id,
             "scenario": other.id,
             "scenario_row": CampaignScenario.objects.create(campaign=campaign, scenario=scenario).id,
         }

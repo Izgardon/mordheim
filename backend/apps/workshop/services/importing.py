@@ -2,8 +2,8 @@
 version 2), each all or nothing. The workshop is made on his first use (`making.workshop_for`).
 
 - A warband is raised through the campaign path (`raising.raise_warband`), naming the list it reads there: one of his
-  lists (`list_id`), a shared list's code (copied in as a list of his own first, unless it is his already), else its
-  type's template there. Everything in a workshop carries a code.
+  lists (`list_id`), a shared list's code (copied in as a list of his own first, unless it is his already), else the
+  book's list for its type, never one of his (William, 26 Nov 2026). Everything in a workshop carries a code.
 - A list is one template of his own, blank or a copy of one he can see there (the book's or one of his).
 - A code copies into his workshop: a warband (paid for against its budget, its list with it) or a list.
 - A warband's code imports it into a campaign for a member with no warband there: the copy starts on the gold raising
@@ -101,8 +101,8 @@ def _type_served(template: WarbandTemplate, type_id: int | None) -> int:
 
 
 def make_warband(user: Any, data: dict[str, Any]) -> Made:
-    """A warband in the player's workshop, raised from the list it names (`_list_to_raise_from`), else its type's
-    template there (one of his lists serving it, else the book's)."""
+    """A warband in the player's workshop, raised from the list it names (`_list_to_raise_from`), else the book's
+    list for its type (a workshop's type template: resolve.py)."""
     with transaction.atomic():
         workshop = workshop_for(user)
         template, warnings = _list_to_raise_from(workshop, user, data)
