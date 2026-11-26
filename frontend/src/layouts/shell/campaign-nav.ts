@@ -1,5 +1,19 @@
 import type { LucideIcon } from "lucide-react";
 import { BookOpenText, LayoutGrid, Map, Shield, Swords, Tent } from "lucide-react";
+import type { IconType } from "react-icons";
+import {
+  GiBattleGear,
+  GiCheckedShield,
+  GiCrownCoin,
+  GiDramaMasks,
+  GiPawPrint,
+  GiQuillInk,
+  GiRuleBook,
+  GiRuneStone,
+  GiScrollUnfurled,
+  GiSpellBook,
+  GiYinYang,
+} from "react-icons/gi";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
@@ -9,30 +23,31 @@ export type NavLink = {
   label: string;
   /** Below `/campaigns/:id`; "" is the overview. */
   path: string;
-  icon?: LucideIcon;
+  icon?: LucideIcon | IconType;
 };
 
 /**
  * The References section (William, 7 Nov 2026: "split references section into references and
  * rules"): the catalogue's pages, in the rail's order (design E), Warbands last (William, 23 Nov
- * 2026: "move warbands reference nav item to the bottom of its section").
+ * 2026: "move warbands reference nav item to the bottom of its section"), each with its game icon
+ * (William, 26 Nov 2026: his picks from a sheet of options).
  */
 export const REFERENCE_LINKS: NavLink[] = [
-  { label: "Wargear", path: "items" },
-  { label: "Skills", path: "skills" },
-  { label: "Spells", path: "spells" },
-  { label: "Specials", path: "boons-banes" },
-  { label: "Bestiary", path: "bestiary" },
-  { label: "Hired swords", path: "hired-swords" },
-  { label: "Dramatis personae", path: "dramatis-personae" },
-  { label: "Warbands", path: "warband-templates" },
+  { label: "Wargear", path: "items", icon: GiBattleGear },
+  { label: "Skills", path: "skills", icon: GiRuneStone },
+  { label: "Spells", path: "spells", icon: GiSpellBook },
+  { label: "Specials", path: "boons-banes", icon: GiYinYang },
+  { label: "Bestiary", path: "bestiary", icon: GiPawPrint },
+  { label: "Hired swords", path: "hired-swords", icon: GiCrownCoin },
+  { label: "Dramatis personae", path: "dramatis-personae", icon: GiDramaMasks },
+  { label: "Warbands", path: "warband-templates", icon: GiCheckedShield },
 ];
 
 /** The Rules section: the rulebook, the campaign's house rules and its own campaign rules. */
 export const RULES_LINKS: NavLink[] = [
-  { label: "Rules", path: "rules" },
-  { label: "House rules", path: "house-rules" },
-  { label: "Campaign rules", path: "campaign-rules" },
+  { label: "Rules", path: "rules", icon: GiRuleBook },
+  { label: "House rules", path: "house-rules", icon: GiQuillInk },
+  { label: "Campaign rules", path: "campaign-rules", icon: GiScrollUnfurled },
 ];
 
 /**

@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import type { LucideIcon } from "lucide-react";
 import { Settings, UserRound } from "lucide-react";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
@@ -37,19 +36,17 @@ function RailLink({
   label,
   icon: Icon,
   current,
-  indent = false,
 }: {
   to: string;
   label: string;
-  icon?: LucideIcon;
+  icon?: NavLink["icon"];
   current: boolean;
-  indent?: boolean;
 }) {
   return (
     <Link
       to={to}
       aria-current={current ? "page" : undefined}
-      className={cn(ROW, current ? CURRENT : IDLE, indent && "pl-9")}
+      className={cn(ROW, current ? CURRENT : IDLE)}
     >
       {Icon ? <Icon className="h-4 w-4 shrink-0" aria-hidden="true" /> : null}
       {label}
@@ -155,8 +152,8 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
               key={link.path}
               to={to(link)}
               label={link.label}
+              icon={link.icon}
               current={isCurrent(link.path)}
-              indent
             />
           ))}
         </RailSection>
