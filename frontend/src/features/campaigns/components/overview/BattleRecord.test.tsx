@@ -108,7 +108,10 @@ describe("The Battles page's open battle", () => {
     expect(turn1).toHaveTextContent("Snik out of action · Rats");
     expect(turn1).toHaveTextContent("First Blood");
     const turn2 = screen.getByText("Turn 2").parentElement as HTMLElement;
-    expect(turn2).toHaveTextContent("Zombie 1 taken out by Hans · Neutral");
+    // a creature belongs to no warband: no suffix (William, 26 Nov 2026: "drop all mention of neutral")
+    expect(within(turn2).getByText("Zombie 1").closest("li")).toHaveTextContent(
+      /^Zombie 1 taken out by Hans$/
+    );
     const after = screen.getByText("After").parentElement as HTMLElement;
     expect(within(after).getByText("Rats")).toBeInTheDocument();
     expect(after).toHaveTextContent("Tisk: Nervous Condition");

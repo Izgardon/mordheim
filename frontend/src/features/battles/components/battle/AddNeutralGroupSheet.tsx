@@ -6,7 +6,7 @@ import { ModalSheet } from "@/components/ui/modal-sheet";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 /**
- * Add a neutral group (William, 25 Nov 2026: "just a named group where I can add whatever unit to
+ * Add a creature group (William, 25 Nov 2026: "just a named group where I can add whatever unit to
  * it in whatever amounts"): its name alone. It starts empty; Add a unit fills it.
  */
 export default function AddNeutralGroupSheet({
@@ -51,7 +51,7 @@ export default function AddNeutralGroupSheet({
       open={open}
       onOpenChange={onOpenChange}
       kicker="Monsters or bystanders"
-      title="Add a neutral group"
+      title="Add a creature group"
       footer={
         <div className="grid grid-cols-[1fr_2fr] gap-2">
           <Button variant="secondary" className="min-h-12" onClick={() => onOpenChange(false)}>

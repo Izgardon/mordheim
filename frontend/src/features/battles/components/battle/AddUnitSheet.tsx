@@ -123,7 +123,7 @@ export default function AddUnitSheet({
             pressed={target === entry.key}
             onClick={() => pickTarget(entry.key)}
           >
-            {entry.name} · neutral
+            {entry.name}
           </Chip>
         ))}
       </div>

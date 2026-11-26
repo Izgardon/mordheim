@@ -73,6 +73,7 @@ describe("battleFeed and the rounds", () => {
       }),
       event(9, "neutral_creature_added", { group_name: "Vermin", creature_type: "Rat Ogre" }),
       event(10, "participant_finished_battle"),
+      event(11, "neutral_group_added", { round: 2 }),
     ]);
     expect(lines.map((line) => line.text)).toEqual([
       "Battle started",
@@ -84,6 +85,7 @@ describe("battleFeed and the rounds", () => {
       "Giant Rat ×3 joined Vermin",
       "Rat Ogre joined Vermin",
       "Cap finished their battle",
+      "A creature group joined the fight",
     ]);
     expect(lines.filter((line) => line.kill)).toHaveLength(1);
   });

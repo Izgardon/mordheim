@@ -1,13 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import type { BattleNeutralGroup } from "@/features/battles/types/battle-types";
 import { ME, myParticipant, OPPONENT, opponentParticipant } from "@/test/battle-fixtures";
 
 import RoundSheet from "./RoundSheet";
 
 const request = { round: 2, asked_by: ME.id, agreed: [ME.id] };
 
-function renderAsked(canForce: boolean) {
+function renderAsked(canForce: boolean, neutralGroups: BattleNeutralGroup[] = []) {
   const onAction = vi.fn().mockResolvedValue(undefined);
   render(
     <RoundSheet
@@ -18,7 +19,7 @@ function renderAsked(canForce: boolean) {
         myParticipant({ status: "in_battle" }),
         opponentParticipant({ status: "in_battle" }),
       ]}
-      neutralGroups={[]}
+      neutralGroups={neutralGroups}
       userId={ME.id}
       canForce={canForce}
       onOpenChange={vi.fn()}
@@ -43,5 +44,11 @@ describe("RoundSheet", () => {
     expect(screen.queryByRole("button", { name: "Start anyway" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Keep waiting" })).toBeInTheDocument();
     expect(screen.getByText(/creator or a battle manager can start it anyway/)).toBeInTheDocument();
+  });
+
+  it("lists a creature group by its name, with no vote", () => {
+    renderAsked(true, [{ key: "n1", name: "Graveyard", creatures: [] }]);
+
+    expect(screen.getByText("Graveyard").closest("li")).toHaveTextContent(/^GraveyardNo vote$/);
   });
 });

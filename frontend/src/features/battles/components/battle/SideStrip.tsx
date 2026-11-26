@@ -59,7 +59,7 @@ export default function SideStrip({
             )}
           >
             <span className={cn("truncate text-xs font-bold", on ? "text-head" : "text-text2")}>
-              {side.kind === "neutral" ? `${side.name} · neutral` : side.name}
+              {side.name}
             </span>
             <span className="text-[11px] text-muted-foreground">{sideLine(side)}</span>
             <span aria-hidden="true" className="h-[3px] bg-line">

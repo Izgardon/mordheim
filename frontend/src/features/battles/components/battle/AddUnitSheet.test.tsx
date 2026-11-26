@@ -1,5 +1,5 @@
 /**
- * Add a unit, this battle only (William, 25 Nov 2026): a neutral group takes a creature from the
+ * Add a unit, this battle only (William, 25 Nov 2026): a creature group takes a creature from the
  * bestiary (profile and all) or a typed type, in whatever amount, so it can hold several kinds;
  * your warband takes a bestiary creature, which fills the temporary unit's form, or the form
  * typed in whole. The creature is picked on the app's searchable select (William, 12 Nov 2026).
@@ -56,10 +56,11 @@ function show(initialGroup?: string) {
   return { onAddCreatures, onAddToWarband };
 }
 
-describe("Add a unit to a neutral group", () => {
+describe("Add a unit to a creature group", () => {
   it("adds a bestiary creature, profile and all, in whatever amount", async () => {
     const user = setupUser();
     const { onAddCreatures } = show("n1");
+    expect(screen.getByRole("group", { name: "Add to" })).toHaveTextContent(/^My warbandVermin$/);
 
     await user.type(screen.getByRole("combobox", { name: "Creature" }), "hound");
     await user.click(screen.getByRole("option", { name: /Warhound/ }));

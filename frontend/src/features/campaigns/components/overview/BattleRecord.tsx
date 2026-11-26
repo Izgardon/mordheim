@@ -25,7 +25,9 @@ function OutLine({ out }: { out: BattleRecordOut }) {
       ) : (
         " out of action"
       )}
-      <span className="text-muted-foreground"> · {out.warband_name || "Neutral"}</span>
+      {out.warband_name ? (
+        <span className="text-muted-foreground"> · {out.warband_name}</span>
+      ) : null}
     </li>
   );
 }

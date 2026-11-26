@@ -67,27 +67,24 @@ export function NeutralGroupUnits({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between gap-2.5">
-        <span className="text-xs text-muted-foreground">Neutral group</span>
-        {canAct ? (
-          <div className="flex gap-1.5">
-            <button
-              type="button"
-              onClick={onRemove}
-              className="min-h-10 px-3 text-xs font-bold text-danger"
-            >
-              Remove group
-            </button>
-            <button
-              type="button"
-              onClick={onAdd}
-              className="min-h-10 border border-dashed border-strong px-3 text-xs font-bold text-accent-text"
-            >
-              Add a unit
-            </button>
-          </div>
-        ) : null}
-      </div>
+      {canAct ? (
+        <div className="flex justify-end gap-1.5">
+          <button
+            type="button"
+            onClick={onRemove}
+            className="min-h-10 px-3 text-xs font-bold text-danger"
+          >
+            Remove group
+          </button>
+          <button
+            type="button"
+            onClick={onAdd}
+            className="min-h-10 border border-dashed border-strong px-3 text-xs font-bold text-accent-text"
+          >
+            Add a unit
+          </button>
+        </div>
+      ) : null}
       {group.creatures.map((creature) => (
         <div
           key={creature.key}

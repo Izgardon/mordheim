@@ -67,7 +67,7 @@ export default function RoundSheet({
     })),
     ...neutralGroups.map((group) => ({
       key: `n${group.key}`,
-      name: `${group.name} · neutral`,
+      name: group.name,
       label: "No vote",
       tone: "text-faint",
     })),

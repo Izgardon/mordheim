@@ -22,7 +22,7 @@ STANDING, OUT_OF_ACTION = "standing", "out_of_action"
 CREATURE_STATUSES = (STANDING, KNOCKED_DOWN, STUNNED, OUT_OF_ACTION)
 MAX_GROUPS = 12
 MAX_CREATURES = 30
-NOT_FOUND = "No such neutral group or creature in this battle."
+NOT_FOUND = "No such group or creature in this battle."
 
 
 def _text(data: Any, field: str, limit: int) -> str:
@@ -91,7 +91,7 @@ def add_group(battle: Battle, request: dict[str, Any], actor) -> dict:
     """Add an empty group by its name; its creatures come through `add_creatures`."""
     groups = neutral_groups(battle)
     if len(groups) >= MAX_GROUPS:
-        raise Refused(f"A battle holds at most {MAX_GROUPS} neutral groups.", code="too_many_groups")
+        raise Refused(f"A battle holds at most {MAX_GROUPS} creature groups.", code="too_many_groups")
     key = f"n{max((_index(str(group.get('key', ''))) for group in groups), default=0) + 1}"
     battle.neutral_groups_json = [*groups, {"key": key, "name": request["name"], "creatures": []}]
     battle.save(update_fields=["neutral_groups_json"])
@@ -114,7 +114,7 @@ def add_creatures(battle: Battle, group_key: str, request: dict[str, Any], actor
     creatures = creatures_of(group)
     count, kind = request["count"], request["creature_type"]
     if len(creatures) + count > MAX_CREATURES:
-        raise Refused(f"A neutral group holds at most {MAX_CREATURES} creatures.", code="too_many_creatures")
+        raise Refused(f"A group holds at most {MAX_CREATURES} creatures.", code="too_many_creatures")
     same = [creature for creature in creatures if creature_type(group, creature) == kind]
     if len(same) == 1 and same[0].get("name") == kind:
         same[0]["name"] = f"{kind} 1"

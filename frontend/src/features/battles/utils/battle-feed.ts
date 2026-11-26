@@ -137,7 +137,7 @@ export function battleFeed(
         break;
       case "neutral_group_added":
         // a group is made empty (William, 25 Nov 2026); its creatures join it on their own lines
-        line(`${text(payload.name) || "A neutral group"} joined the fight`);
+        line(`${text(payload.name) || "A creature group"} joined the fight`);
         break;
       case "neutral_creature_added": {
         const count = Number(payload.count) || 1;

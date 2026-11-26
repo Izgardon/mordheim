@@ -1,4 +1,4 @@
-/** Add a neutral group: its name alone (William, 25 Nov 2026: "name only, then add"). */
+/** Add a creature group: its name alone (William, 25 Nov 2026: "name only, then add"). */
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
@@ -13,11 +13,12 @@ function show() {
   return { onAdd, onOpenChange };
 }
 
-describe("Add a neutral group", () => {
+describe("Add a creature group", () => {
   it("asks only for a name", async () => {
     const user = setupUser();
     const { onAdd, onOpenChange } = show();
 
+    expect(screen.getByRole("dialog", { name: "Add a creature group" })).toBeInTheDocument();
     expect(screen.queryByRole("combobox")).toBeNull();
     expect(screen.queryByLabelText("How many")).toBeNull();
     await user.type(screen.getByLabelText("Group name"), "  The Restless Dead ");

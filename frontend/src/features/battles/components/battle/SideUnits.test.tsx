@@ -106,7 +106,8 @@ describe("NeutralGroupUnits", () => {
       />
     );
 
-    expect(screen.getByText("Neutral group")).toBeInTheDocument();
+    // no "neutral" anywhere (William, 26 Nov 2026)
+    expect(screen.queryByText(/neutral/i)).not.toBeInTheDocument();
     // the name, then the type beside it
     expect(screen.getAllByText("Ghoul")).toHaveLength(2);
     expect(screen.getByText("Zombie 1")).toBeInTheDocument();

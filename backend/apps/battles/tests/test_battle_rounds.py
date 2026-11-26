@@ -158,12 +158,24 @@ class NeutralGroupTests(FightCase):
         self.ok(self.add("", 1), 400)
         self.ok(self.add("Zombie", 31), 400)
         self.ok(self.add("Zombie", 30), 201)
-        self.assertEqual(self.add("Zombie", 1).status_code, 400)
+        full = self.add("Zombie", 1)
+        self.assertEqual(full.status_code, 400)
+        self.assertEqual(full.data["detail"], "A group holds at most 30 creatures.")
         self.ok(self.post_as(self.viewer, self.url(self.battle_id, "neutral-groups/n1"), {"add": True}), 400)
         missing = self.post_as(
             self.viewer, self.url(self.battle_id, "neutral-groups/n9"), {"add": {"creature_type": "Rat"}}
         )
         self.assertEqual(missing.status_code, 404)
+        self.assertEqual(missing.data["detail"], "No such group or creature in this battle.")
+
+    def test_a_battle_holds_at_most_twelve_groups(self):
+        for number in range(12):
+            self.add_group(f"Group {number}")
+
+        refused = self.ok(self.post_as(self.viewer, self.url(self.battle_id, "neutral-groups"), {"name": "More"}), 400)
+        self.assertEqual(
+            refused.data, {"detail": "A battle holds at most 12 creature groups.", "code": "too_many_groups"}
+        )
 
     def test_a_group_stored_with_one_type_for_all_is_still_read(self):
         battle = self.battle(self.battle_id)
