@@ -4,7 +4,6 @@ import { getRefusalMessage } from "@/lib/get-error-message";
 
 import { CODE_LENGTH, cleanCode, useSharedPreview } from "../api/workshop-queries";
 import type { SharedPreview } from "../types/workshop-types";
-import { CostLine } from "./WorkshopCard";
 
 const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`;
 
@@ -84,5 +83,17 @@ export default function CodePreview({
       ) : null}
       {preview.data ? <PreviewSummary preview={preview.data} /> : null}
     </div>
+  );
+}
+
+/** "Cost 455 / 500 gc", in the danger colour above the budget. */
+function CostLine({ cost, budget }: { cost: number; budget: number }) {
+  return (
+    <p className="m-0 text-sm text-text2">
+      Cost{" "}
+      <span className={cost > budget ? "font-bold text-danger" : "font-bold text-head"}>
+        {cost} / {budget} gc
+      </span>
+    </p>
   );
 }

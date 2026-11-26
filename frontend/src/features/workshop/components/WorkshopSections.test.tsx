@@ -1,6 +1,6 @@
 /**
- * Home's workshop: its warbands and lists (each card's cost, code and page), Delete saying the
- * copies stay, My content (making the workshop on its first use), Import by code (read first,
+ * Home's workshop: its warbands and lists (each card's name, a warband's type under it, its code
+ * and page), Delete saying campaigns keep their copy, My content (making the workshop on its first use), Import by code (read first,
  * imported with the server's warnings, opened), and a new warband from a book type, a list code,
  * one of my lists, with the type and variant each asks for, or no list (a type, a budget and most
  * warriors).
@@ -118,18 +118,19 @@ beforeEach(() => {
 });
 
 describe("Home's workshop sections", () => {
-  it("lists my warbands with their cost against the budget and my lists, each with its code", async () => {
+  it("lists my warbands with their type under the name and my lists, each with its code", async () => {
     renderHome();
 
-    expect(await screen.findByRole("article", { name: "The Gilded Wagon" })).toHaveTextContent(
-      "Cost 455 / 500 gc"
-    );
-    expect(card("The Gilded Wagon")).toHaveTextContent("WAGN2345");
-    expect(within(card("Overspent")).getByText("620 / 500 gc")).toHaveClass("text-danger");
-    // William, 26 Nov 2026: a list's card names no types ("not important")
+    const wagon = await screen.findByRole("article", { name: "The Gilded Wagon" });
+    expect(wagon).toHaveTextContent("WAGN2345");
+    // William, 26 Nov 2026: no cost on a card, the type under the name, and a list names no types
+    expect(wagon).not.toHaveTextContent("Cost");
+    expect(card("Overspent")).not.toHaveTextContent("620");
+    const type = within(card("Overspent")).getByText("Middenheimers · No list");
+    const title = within(card("Overspent")).getByRole("heading", { name: "Overspent" });
+    expect(title.compareDocumentPosition(type) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(card("Night Watch")).not.toHaveTextContent("Reiklanders");
     expect(card("Night Watch")).toHaveTextContent("WTCH2345");
-    expect(card("Overspent")).toHaveTextContent("Middenheimers · No list"); // William, 26 Nov 2026
     expect(card("The Gilded Wagon")).not.toHaveTextContent("No list");
     expect(
       within(card("The Gilded Wagon")).getByRole("link", { name: "The Gilded Wagon" })
@@ -144,7 +145,7 @@ describe("Home's workshop sections", () => {
     );
   });
 
-  it("deletes a warband after saying the copies elsewhere stay, and reads the workshop again", async () => {
+  it("deletes a warband after saying campaigns keep their copy, and reads the workshop again", async () => {
     const user = setupUser();
     fakeApi.on("DELETE /warbands/40/", undefined);
     renderHome();
@@ -154,7 +155,7 @@ describe("Home's workshop sections", () => {
       within(card("The Gilded Wagon")).getByRole("button", { name: "Delete The Gilded Wagon" })
     );
     const dialog = screen.getByRole("dialog");
-    expect(dialog).toHaveTextContent("Copies already imported into campaigns");
+    expect(dialog).toHaveTextContent("It's deleted for good. Campaigns it's in keep their copy.");
     await user.click(within(dialog).getByRole("button", { name: "Delete" }));
 
     await waitFor(() => expect(fakeApi.countOf("GET /workshop/")).toBe(2));

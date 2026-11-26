@@ -7,9 +7,9 @@ import { workshopWarbandPath } from "../paths";
 import HomeSection, { SECTION_BUTTON, workshopState } from "./HomeSection";
 import ImportIntoWorkshop from "./ImportIntoWorkshop";
 import NewWarbandDialog from "./NewWarbandDialog";
-import WorkshopCard, { CostLine } from "./WorkshopCard";
+import WorkshopCard from "./WorkshopCard";
 
-/** My workshop's warbands: each with its cost against its budget and its code; New, Import by code. */
+/** My workshop's warbands: each with its type and its code; New, Import by code. */
 export default function WarbandsSection() {
   const workshop = useWorkshop();
   const remove = useDeleteWorkshopWarband();
@@ -41,11 +41,10 @@ export default function WarbandsSection() {
           key={row.id}
           to={workshopWarbandPath(row.campaign_id, row.id)}
           name={row.name}
-          kicker={[row.warband_type?.name ?? "Warband", row.no_list && "No list"]
+          kind={[row.warband_type?.name ?? "Warband", row.no_list && "No list"]
             .filter(Boolean)
             .join(" · ")}
           shareCode={row.share_code}
-          facts={<CostLine cost={row.cost} budget={row.budget} />}
           onDelete={() => remove.mutateAsync(row.id)}
         />
       ))}
