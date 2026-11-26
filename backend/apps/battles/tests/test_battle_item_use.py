@@ -118,16 +118,32 @@ class BattleItemUseTests(BattleTestCase):
                 self.assertEqual((response.status_code, response.data), (400, {"detail": "Unsupported event type"}))
 
 
-class BattleSkipItemTests(BattleTestCase):
-    def test_a_skipped_postbattle_uses_up_the_items_used_in_battle(self):
-        # BUG-72: a skip kept every used single-use item; it now removes one copy per use, like finalise
+class BattleFinishItemTests(BattleTestCase):
+    """William, 26 Nov 2026: a used single-use item "should get removed as soon as the battle finishes", never
+    waiting on the post-game."""
+
+    def potion_on_a_hero(self) -> tuple[Any, Any]:
         potion = catalogue_item("Healing Draught", 10, single_use=True)
         hero = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch")
         for _ in range(2):
             HeroItem.objects.create(hero=hero, item=potion, cost=10)
+        return potion, hero
+
+    def test_finishing_his_battle_uses_up_what_he_used(self):
+        potion, hero = self.potion_on_a_hero()
+        battle_id = self.to_active({self.player: [f"hero:{hero.id}"], self.viewer: []})
+        self.ok(self.use_item(self.player, battle_id, {"unit_key": f"hero:{hero.id}", "item_id": potion.id}), 201)
+
+        self.ok(self.finish_mine(self.player, battle_id))
+
+        self.assertEqual(HeroItem.objects.filter(hero=hero, item=potion).count(), 1)
+
+    def test_a_managers_end_uses_them_up_and_a_skipped_postbattle_takes_nothing_more(self):
+        potion, hero = self.potion_on_a_hero()
         battle_id = self.to_active({self.player: [f"hero:{hero.id}"], self.viewer: []})
         self.ok(self.use_item(self.player, battle_id, {"unit_key": f"hero:{hero.id}", "item_id": potion.id}), 201)
         self.finish(battle_id, [self.warband])
+        self.assertEqual(HeroItem.objects.filter(hero=hero, item=potion).count(), 1)
 
         data = self.ok(self.post_as(self.player, self.url(battle_id, "skip-postbattle"))).data
 

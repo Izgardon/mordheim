@@ -104,7 +104,12 @@ class BattleQueryBudgetTests(BattleTestCase):
                 {"type": "item_used", "payload_json": {"unit_key": h, "item_id": self.rope.id}},
                 9,
             ),
-            ("finish_mine", "finish-mine", {"result": "won"}, 18),  # End was 16, without the suggestions
+            (
+                "finish_mine",
+                "finish-mine",
+                {"result": "won"},
+                20,
+            ),  # End was 16, without the suggestions; +2: items used up
         ]
         for name, action, body, budget in cases:
             with self.subTest(write=name):
@@ -121,12 +126,12 @@ class BattleQueryBudgetTests(BattleTestCase):
         battle_id = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r]})
         self.ok(self.finish_mine(self.player, battle_id, "won"))
         last, _ = self.count(self.viewer, "post", self.url(battle_id, "finish-mine"), {"result": "lost"})
-        self.within("finish_mine_last", last, 20)
+        self.within("finish_mine_last", last, 21)  # +1: the items he used are used up at his finish
         results, _ = self.count(self.viewer, "post", self.url(battle_id, "results"), {"winners": [self.warband.id]})
         self.within("results", results, 16)
         manager_end = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r]})
         end, _ = self.count(self.campaign_owner, "post", self.url(manager_end, "finish"), {"winners": []})
-        self.within("finish_manager", end, 20)
+        self.within("finish_manager", end, 21)  # +1: every player's item uses read at once
 
     def test_writes_leave_presence_alone(self):
         # PERF-35: no write updates the writer's presence (an UPDATE each); only reads do, at most once a minute

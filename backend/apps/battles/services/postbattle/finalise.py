@@ -41,7 +41,6 @@ from ..warnings import Warning
 from . import steps as aftermath
 from .advances import apply_advances
 from .context import FinaliseContext, campaign_settings, load_context
-from .items import consume_single_use_items
 from .logs import write_battle_logs
 from .missing import apply_missing_games
 from .mounts import lose_mounts
@@ -135,8 +134,6 @@ def _apply(context: FinaliseContext, draft: dict, parts: frozenset[str], *, fina
     units.warnings += finds.warnings  # an upkeep resource paid short, or by no counter
     if final:  # after upkeep, which reads who was missing for this battle; then the injuries' new counts
         units.missing_logs = apply_missing_games(context, draft["unit_results"])
-    if INJURIES in parts:
-        consume_single_use_items(context.battle, context.participant, context.item_uses)
     unusual = unusual_value_warnings(draft, context.chart) if final else []
     write_battle_logs(context.battle, context.participant, draft["exploration"], explored, finds, units, unusual)
     received = (

@@ -112,8 +112,8 @@ class BattleLockOrderTests(BattleTestCase):
 
         transactions = self.locks(self.player, "finalize-postbattle", battle_id, body)
 
-        units = ["hero", "hireling", "henchman", "henchmen_group"]
-        self.assertEqual(transactions, [["battle_participant", "warband", *units, "hero_item"], ["battle"]])
+        units = ["hero", "hireling", "henchman", "henchmen_group"]  # the potion went at the battle's finish
+        self.assertEqual(transactions, [["battle_participant", "warband", *units], ["battle"]])
 
     def test_an_aftermath_step_holds_the_players_rows_and_never_the_battle_row(self):
         # William, 18 Nov 2026: Next applies the step. It takes the locks the first half of Ready does, so it can't

@@ -28,7 +28,7 @@ from apps.warbands.models import (
 )
 from apps.warbands.units.services.missing import missing_members
 
-from ...models import Battle, BattleEvent, BattleParticipant
+from ...models import Battle, BattleParticipant
 from ...validation.unit_keys import parse_unit_key
 from ..kills import count_killers, live_killers
 from ..locks import locked
@@ -51,7 +51,6 @@ class FinaliseContext:
     henchmen: list[Henchman]  # every member of the groups the draft names
     groups: dict[int, HenchmenGroup]
     kills: dict[str, int] = field(default_factory=dict)  # live kills per unit key of the warband (decision 5)
-    item_uses: list[Any] = field(default_factory=list)  # the player's live item_used payloads (BUG-72)
 
     def hero(self, unit_id: int) -> Hero | None:
         """A hero of the results, unless he was dismissed since the battle started (BUG-73)."""
@@ -127,9 +126,6 @@ def load_context(battle: Battle, participant: BattleParticipant, draft: dict, ch
         HenchmenGroup.objects.filter(id__in=group_ids, warband_id=participant.warband_id, dismissed_at__isnull=True)
     )
     locked_groups = {group.id: group for group in groups}
-    item_uses = BattleEvent.objects.filter(
-        battle_id=battle.id, voided_at__isnull=True, type=BattleEvent.TYPE_ITEM_USED, actor_user_id=participant.user_id
-    )
     return FinaliseContext(
         battle=battle,
         participant=participant,
@@ -145,5 +141,4 @@ def load_context(battle: Battle, participant: BattleParticipant, draft: dict, ch
         henchmen=henchmen,
         groups=locked_groups,
         kills=dict(count_killers(getattr(warband, "killers", None))),
-        item_uses=list(item_uses.values_list("payload_json", flat=True)),
     )

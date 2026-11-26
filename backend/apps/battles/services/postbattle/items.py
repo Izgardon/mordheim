@@ -1,4 +1,5 @@
-"""Single-use items used in battle are used up when the player finalises or skips postbattle (BUG-72).
+"""Single-use items used in battle are used up when the player's battle finishes (BUG-72; William, 26 Nov 2026: "It
+should get removed as soon as the battle finishes"): `finishing.finish_player`, or a manager's `end_fight`.
 
 Each live `item_used` event of the player's removes one copy of the item from the unit that used it, or gives a
 henchman a gap on his group's row of it (he used his copy: henchmen loadouts); an undone use keeps the item (decision 5). Item rows are locked before they are deleted. An item
@@ -69,6 +70,25 @@ def _single_use(battle: Battle, usage: Usage) -> dict[int, int]:
         Item.objects.only("id", "campaign_id", "replaces_id", "single_use"), "items", used, battle.campaign_id
     )
     return {item_id: item.id for item_id, item in current.items() if item.single_use}
+
+
+def consume_for_all(battle: Battle, participants: Iterable[BattleParticipant]) -> None:
+    """Every listed player's items used up at once (a manager's end): their uses read in one query, and nothing more
+    for a player who used none."""
+    by_user = {participant.user_id: participant for participant in participants}
+    if not by_user:
+        return
+    uses = BattleEvent.objects.filter(
+        battle_id=battle.id,
+        actor_user_id__in=list(by_user),
+        type=BattleEvent.TYPE_ITEM_USED,
+        voided_at__isnull=True,
+    ).values_list("actor_user_id", "payload_json")
+    payloads: dict[int, list[object]] = {}
+    for user_id, payload in uses:
+        payloads.setdefault(user_id, []).append(payload)
+    for user_id, used in payloads.items():
+        consume_single_use_items(battle, by_user[user_id], used)
 
 
 def consume_single_use_items(

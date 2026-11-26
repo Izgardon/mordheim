@@ -2,7 +2,8 @@
 
 - `finish_player` (`finish-mine/`): the player declares won, lost or undecided and goes straight to his own
   postbattle while the others play on (he can finalise it straight away); his heroes get their trading actions back,
-  once, at his finish (BUG-122).
+  once, at his finish (BUG-122), and the single-use items he used are used up then (William, 26 Nov 2026: "It
+  should get removed as soon as the battle finishes"), never waiting on the post-game.
 - When nobody is left fighting, the fight ends (`end_fight`): the battle enters postbattle for 72 hours (decision 2)
   with the declared winners, and the last player to finish is asked to confirm the results (`results_pending`).
 - `confirm_results` (`results/`): the winners from the Confirm results modal; every other warband still in the
@@ -25,6 +26,7 @@ from .errors import field_error
 from .events import append_event
 from .lifecycle import all_finished, end_battle, reset_trading_for, still_in
 from .locks import locked
+from .postbattle.items import consume_for_all, consume_single_use_items
 from .timing import postbattle_deadline
 
 
@@ -42,6 +44,7 @@ def finish_player(battle: Battle, participant: BattleParticipant, declared: str,
     participant.declared_result = declared
     participant.save(update_fields=["status", "finished_at", "declared_result", "updated_at"])
     reset_trading_for([participant.warband_id])
+    consume_single_use_items(battle, participant)
     payload = {
         "participant_user_id": participant.user_id,
         "warband_id": participant.warband_id,
@@ -82,6 +85,7 @@ def end_fight(
         entry.finished_at = entry.finished_at or now
         entry.save(update_fields=["status", "finished_at", "updated_at"])
     reset_trading_for([entry.warband_id for entry in fighting])
+    consume_for_all(battle, fighting)  # a manager's end finishes their battles, so their items go now too
     battle.status = Battle.STATUS_POSTBATTLE
     battle.winner_warband_ids_json = winner_ids
     battle.closes_at = postbattle_deadline(now)  # 72 hours of postbattle (decision 2)

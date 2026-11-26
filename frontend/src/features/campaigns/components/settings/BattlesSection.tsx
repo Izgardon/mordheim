@@ -312,7 +312,7 @@ export default function BattlesSection({ campaignId }: { campaignId: number }) {
           <div className="flex flex-col gap-2">
             <p className="m-0 text-ink">
               {unfinished.length
-                ? `${ends} These players haven't finished, so they are skipped: nothing from their post-game is applied, and single-use items they used are still used up:`
+                ? `${ends} These players haven't finished, so they are skipped: nothing from their post-game is applied:`
                 : `Everyone has finished. ${ends}`}
             </p>
             {unfinished.length ? (
