@@ -13,7 +13,7 @@ from apps.races.models import Race
 from apps.skills.models import Skill, SkillGroup, SkillGroupSkill
 from apps.special.models import Special
 from apps.spells.models import Spell
-from apps.warband_templates.models import TemplateListItem
+from apps.warband_templates.models import TemplateFighter, TemplateListItem
 from apps.warbands.models import (
     HenchmenGroup,
     HenchmenGroupItem,
@@ -161,6 +161,18 @@ class CarriedTests(ContentTestCase):
         self.assertEqual(held["access"], {"Thieving (2)": True})
         copy = SkillGroup.objects.get(campaign=self.campaign, name="Thieving (2)")
         self.assertIn(held["skill"].id, copy.skill_links.values_list("skill_id", flat=True))
+
+    def test_a_skill_group_a_fighters_variant_names_comes_under_its_new_name(self) -> None:
+        listed = self.make_list(name="Thieves", copy_of_template_id=self.made.template.id)
+        fighters = TemplateFighter.objects.filter(template_id=listed["id"])
+        fighters.update(variant_changes={"reikland": {"skill_types": ["Thieving", "Combat"]}})
+        SkillGroup.objects.create(campaign=self.campaign, name="Thieving", large_only=True)
+        response = self.post_as(self.admin, self.url("warband-templates/import/"), {"code": listed["share_code"]})
+        self.assertEqual(response.status_code, 201, response.data)
+        copied = TemplateFighter.objects.filter(template_id=response.data["template_id"])
+        named = {str(fighter.variant_changes["reikland"]["skill_types"][0]) for fighter in copied}
+        self.assertEqual(named, {"Thieving (2)"})
+        self.assertTrue(SkillGroup.objects.filter(campaign=self.campaign, name="Thieving (2)").exists())
 
     def test_a_workshops_version_of_a_book_entry_comes_as_an_entry_of_its_own(self) -> None:
         version = Item.objects.create(

@@ -76,13 +76,25 @@ def _linked(rows: Rows) -> dict[type[Model], set[int]]:
     return found
 
 
+def variant_group_names(row: Any) -> list[str]:
+    """The skill groups a fighter's variants name in his `variant_changes` (none for any other row)."""
+    changes = getattr(row, "variant_changes", None)
+    if not isinstance(changes, dict):
+        return []
+    return [
+        str(name) for change in changes.values() if isinstance(change, dict) for name in change.get("skill_types") or ()
+    ]
+
+
 def access_names(rows: Rows) -> set[str]:
-    """The skill groups the rows' skill access names: a unit's `available_skills`, a fighter's `skill_types`."""
+    """The skill groups the rows' skill access names: a unit's `available_skills`, a fighter's `skill_types` and
+    those his variants name."""
     names: set[str] = set()
     for listed in rows.values():
         for row in listed:
             held = getattr(row, "available_skills", None) or getattr(row, "skill_types", None) or ()
             names.update(str(name) for name in held)
+            names.update(variant_group_names(row))
     return names
 
 

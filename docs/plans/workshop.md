@@ -161,7 +161,7 @@ own item and their profile's skills, specials, spells and kit). Each is **linked
 target holds one (its own, archived ones too, or a book entry it hasn't replaced) of the same name and effect (every
 field but the catalogue's bookkeeping, every child row, a link compared by its entry's name); else **copied** as the
 target's own, a taken name numbered ("Lucky Charm (2)", a version of the book's Axe "Axe (2)"); a skill group copied
-under a new name is the one the copied units and fighters name. Hired swords and dramatis personae never travel as
+under a new name is the one the copied units and fighters name (a fighter's variant changes too). Hired swords and dramatis personae never travel as
 entries: a hireling copied his profile when hired, so nothing links one. A line naming another campaign's own warband
 type is dropped, and so is a copied list's type of that kind and a warband's (`left_out`).
 
@@ -204,8 +204,6 @@ there opens by its own id; import into my workshop no longer makes a workshop pe
   usual `?archived=1` view.
 - A version of a book entry in a workshop (edited there) travels as an entry of its own, "Axe (2)", rather than as
   the target's version of the book's Axe, which would change the Axe for everyone there. Right?
-- A custom skill group copied under a new name ("Thieving (2)", because the campaign has its own Thieving) is what
-  the copied units name; a fighter's variant changes still name the old one. Worth more than that?
 
 ---
 

@@ -106,6 +106,14 @@ def _children(template: Any) -> dict[type[Model], list[Model]]:
     return rows
 
 
+def _rename_groups(fighter: Any, renamed: dict[str, str]) -> None:
+    """A fighter's skill groups, his own and each variant's, named as their copies are ("Thieving (2)")."""
+    fighter.skill_types = [renamed.get(str(name), name) for name in fighter.skill_types]
+    for change in fighter.variant_changes.values():
+        if isinstance(change, dict) and change.get("skill_types"):
+            change["skill_types"] = [renamed.get(str(name), name) for name in change["skill_types"]]
+
+
 def _relink_children(rows: dict[type[Model], list[Model]], relinker: Relinker, renamed: dict[str, str]) -> None:
     """Point the copy's child rows at the target's entries (a fighter's skill groups at their copies' names); a row
     that can't do without a link it lost goes."""
@@ -118,8 +126,8 @@ def _relink_children(rows: dict[type[Model], list[Model]], relinker: Relinker, r
         fields = [attname for attname, _, _ in entry_links(model)]
         if model is TemplateFighter and renamed:
             for fighter in kept:
-                fighter.skill_types = [renamed.get(str(name), name) for name in fighter.skill_types]  # type: ignore[attr-defined]
-            fields.append("skill_types")
+                _rename_groups(fighter, renamed)
+            fields += ["skill_types", "variant_changes"]
         if kept:
             model._default_manager.bulk_update(kept, fields)
         if dropped:
