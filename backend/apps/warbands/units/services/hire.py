@@ -199,9 +199,13 @@ def _kit(unit: Hireling, entry: Any, campaign_id: int) -> bool:
 def _first_spell(unit: Hireling, entry: Any) -> None:
     """A Wizard or Priest hired knowing no spell picks one from his card, free (William, 22 Nov 2026: "when hired
     with a lore (wizard or priest) ... they start with a free spell"); his profile's spells, where it lists them, are
-    the ones he knows. One query, only for such a caster."""
-    if entry.caster in CASTERS and not unit.pending_spells and not entry.spell_links.all():
-        Hireling.objects.filter(pk=unit.pk).update(pending_spells=1)
+    the ones he knows. One who starts with several picks as many as his `spell_picks` says, whatever he casts as
+    (William, 26 Nov 2026: "there are a few hired swords that start with multiple"). One query, only for such a
+    hire."""
+    usual = 1 if entry.caster in CASTERS and not entry.spell_links.all() else 0
+    picks = usual if entry.spell_picks is None else entry.spell_picks
+    if picks and not unit.pending_spells:
+        Hireling.objects.filter(pk=unit.pk).update(pending_spells=picks)
 
 
 def hire(warband: Warband, writer: Any, source: str, entry: Any, terms: HireTerms) -> Hired:

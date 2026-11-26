@@ -137,6 +137,13 @@ class HiringFromTheTemplateTests(CatalogueTestCase):
         self.assertEqual(hero.pending_spells, 1)
         self.assertFalse(Hero.objects.get(warband=self.warband, name="Typed").hero_spells.exists())
 
+    def test_a_hire_who_starts_with_several_spells_has_that_many_to_pick(self) -> None:
+        # William, 26 Nov 2026, of the Altdorf Arch-Mage's "one spell of your choice and one chosen at random":
+        # "can give him 2 levels sure"
+        TemplateFighter.objects.filter(pk=self.made.captain.pk).update(spell_picks=2)
+        self.assertEqual(self.batch("heroes", {"create": [{"fighter_key": "captain", "name": "Ada"}]}).status_code, 200)
+        self.assertEqual(Hero.objects.get(warband=self.warband, name="Ada").pending_spells, 2)
+
     def test_a_group_buys_one_loadout_and_every_member_gets_the_dagger(self) -> None:
         create = {"fighter_key": "warriors", "name": "Lads", "henchmen": [{"name": "A"}, {"name": "B"}]}
         purchase = {"create_index": 0, "item_id": self.book_axe.id, "price": 5}

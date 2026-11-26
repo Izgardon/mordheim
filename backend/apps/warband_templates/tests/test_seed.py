@@ -193,6 +193,10 @@ class SeedWarbandTemplatesTests(TestCase):
         with self.assertRaisesRegex(CommandError, "Captain: spell \('Lesser Magic', 'Fireball'\) isn't seeded"):
             seed(template(fighters=[fighter(spells=[{"lore": "Lesser Magic", "name": "Fireball"}])]))
 
+    def test_a_fighter_keeps_how_many_spells_he_picks_at_hire(self) -> None:
+        seed(template(fighters=[fighter(spell_picks=2), fighter(key="mage", name="Mage")]))
+        self.assertEqual(dict(TemplateFighter.objects.values_list("key", "spell_picks")), {"captain": 2, "mage": None})
+
     def test_a_reseed_writes_the_child_rows_afresh_and_archives_what_went(self) -> None:
         seed(template(), template(slug="skaven", name="Skaven", types=[], lists=[], fighters=[], upgrades=[]))
         first = TemplateFighter.objects.get().pk

@@ -118,7 +118,8 @@ class HeroCreateSerializer(UnitCreateSerializer):
 
     class Meta:
         model = Hero
-        fields = (*WRITE_FIELDS, "fighter_key", "skill_ids", "special_ids", "spell_ids")
+        # pending_spells: the picks his template fighter starts him with (warband_templates/services/hiring.py)
+        fields = (*WRITE_FIELDS, "fighter_key", "skill_ids", "special_ids", "spell_ids", "pending_spells")
 
 
 class HeroUpdateSerializer(UnitWriteSerializer):

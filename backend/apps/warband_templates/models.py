@@ -158,6 +158,9 @@ class TemplateFighter(WrittenStatBlock):
     promotable = models.BooleanField(default=True)
     is_leader = models.BooleanField(default=False)
     caster = models.CharField(max_length=20, choices=CASTERS, default="No")
+    # how many spells a hire of his picks (William, 26 Nov 2026: the Altdorf Arch-Mage's two); null: the usual one
+    # for a caster with a lore (units/services/create.py)
+    spell_picks = models.PositiveSmallIntegerField(null=True, blank=True)
     large = models.BooleanField(default=False)
     variant_changes = models.JSONField(default=dict, blank=True)
     fixed_kit = models.TextField(max_length=1000, blank=True, default="")  # "None. Plague Bearers have huge claws …"

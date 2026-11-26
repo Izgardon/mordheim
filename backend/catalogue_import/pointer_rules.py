@@ -19,7 +19,9 @@ one we can't resolve stays as it is, listed in the report. The hired swords' rul
 
 A rule that says he starts with a spell of his lore is William's call too (`STARTS_WITH_SPELLS`): the rule goes and
 the spell is in his `spells` (by lore and name, ours in apps/spells/data/spells.json), which every hire of his has as
-a real spell, a caster's first pick still to make beside it.
+a real spell, a caster's first pick still to make beside it. One whose rule says he starts with several spells to
+choose or roll picks that many at hire (`SPELL_PICKS`, `PERSONAE_SPELL_PICKS`: his `spell_picks`; the hired swords'
+are in their own data); his rule keeps its text.
 """
 
 import re
@@ -104,6 +106,13 @@ ALSO_STARTS_WITH: dict[str, dict[str, dict[str, list[str]]]] = {
 STARTS_WITH_SPELLS: dict[str, dict[str, dict[str, list[tuple[str, str]]]]] = {
     "Black Dwarfs": {"Sorcerer": {"Priest": [("Rituals of Hashut", "Sacrificial Ritual")]}},
 }
+# A fighter whose rule says he starts with several spells, chosen or rolled: template -> fighter -> how many he picks
+# at hire (William, 26 Nov 2026, of the Arch-Mage's "one Common Magic spell of your choice and one Common Magic spell
+# chosen at random": "can give him 2 levels sure").
+SPELL_PICKS: dict[str, dict[str, int]] = {"Altdorf Expeditionary Party": {"Arch-Mage": 2}}
+# The same for a dramatis persona: "knows four randomly determined spells of the Lore of Darkness", "three ... of the
+# Lore of Light". Khar-mel's D3 and the Grandmother's four, rolled again each battle, stay their rules.
+PERSONAE_SPELL_PICKS: dict[str, int] = {"Dark Emissary": 4, "Truthsayer": 3}
 # The same for a dramatis persona: name -> rule -> our skills, the rule keeping its text ("Note that Ippan Shu also
 # has the Dodge skill.", in his Parry Missiles)
 PERSONAE_ALSO_START_WITH: dict[str, dict[str, list[str]]] = {
@@ -235,10 +244,10 @@ def _fighter_spells(
 def check_answers(templates: list[dict[str, Any]], personae: list[dict[str, Any]]) -> None:
     """Every template, fighter and persona William's answers name is one the build has (a renamed one stops it)."""
     fighters = {(template["name"], fighter["name"]) for template in templates for fighter in template["fighters"]}
-    tables = (STARTS_WITH, ALSO_STARTS_WITH, STARTS_WITH_SPELLS)
+    tables = (STARTS_WITH, ALSO_STARTS_WITH, STARTS_WITH_SPELLS, SPELL_PICKS)
     named = {(name, fighter) for table in tables for name in table for fighter in table[name]}
     missing = [f"{name}: {fighter}" for name, fighter in sorted(named - fighters)]
-    missing += sorted(set(PERSONAE_ALSO_START_WITH) - {persona["name"] for persona in personae})
+    missing += sorted({*PERSONAE_ALSO_START_WITH, *PERSONAE_SPELL_PICKS} - {persona["name"] for persona in personae})
     if missing:
         raise ValueError(f"pointer_rules.py names fighters the build lacks: {'; '.join(missing)}")
 
@@ -256,8 +265,12 @@ def resolve_pointers(
             fighter.setdefault("skills", [])
             _fighter_rules(template, fighter, skills, log)
             _fighter_spells(template, fighter, spells, log)
+            if picks := SPELL_PICKS.get(template["name"], {}).get(fighter["name"]):
+                fighter["spell_picks"] = picks
     for persona in personae:
         _persona_rules(persona, skills, log)
+        if picks := PERSONAE_SPELL_PICKS.get(persona["name"]):
+            persona["spell_picks"] = picks
     return log
 
 

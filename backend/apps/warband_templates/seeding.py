@@ -248,6 +248,7 @@ def write_fighters(
             key=row["key"],
             position=n,
             race_id=book.race(row["race"], f"{owner}, {row['name']}"),
+            spell_picks=row.get("spell_picks"),  # how many a hire of his picks; none: the usual one
             **{field: row[field] for field in FIGHTER_FIELDS},
             variant_changes=book.variant_changes(row["variant_changes"], f"{owner}, {row['name']}"),
             **stats_of(row["stats"], f"{owner}, {row['name']}"),

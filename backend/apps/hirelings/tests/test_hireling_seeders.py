@@ -8,6 +8,9 @@ dramatis persona's terms add `stays` and `payment_note`. A run is all or nothing
 The committed data's full run is in apps/items/tests/test_catalogue_characterisation_seeding.py.
 """
 
+import json
+from pathlib import Path
+
 from django.core.management.base import CommandError
 from django.test import TestCase
 
@@ -113,6 +116,28 @@ class HirelingSeederTests(TestCase):
         self.assertFalse(Special.objects.filter(type="Hired Sword - Ogre Bodyguard").exists())
         # the warband types aren't seeded: his own fees, everyone may hire him, and his "unique to" is the note
         self.assertEqual((ogre.for_everyone, ogre.hire_note, ogre.warband_links.count()), (True, "Mercenaries only", 0))
+
+    def test_one_who_starts_with_several_spells_keeps_how_many_he_picks(self):
+        with data_file([{**OGRE, "caster": "Wizard", "spell_picks": 2}, RUNESMITH]) as path:
+            run("seed_hired_swords", json_paths=[path])
+        picks = dict(HiredSword.objects.values_list("name", "spell_picks"))
+        self.assertEqual(picks, {"Ogre Bodyguard": 2, "Runesmith Journeyman": None})
+
+    def test_the_hired_swords_who_start_with_several_spells_pick_that_many(self):
+        rows = json.loads(Path("apps/hirelings/data/hired-swords.json").read_text(encoding="utf-8"))
+        picks = {row["name"]: row["spell_picks"] for row in rows if row.get("spell_picks")}
+        self.assertEqual(
+            picks,
+            {
+                "Warlock": 2,  # "two spells generated at random from the Lesser Magic list"
+                "Elf Mage": 3,
+                "Norse Shaman": 2,  # two Runes
+                "Witch": 2,
+                "Dark Elf Sorceress (Dark Elf Corsairs)": 2,
+                "Trancas Quendalmanliye": 2,
+                "Alchemist": 2,  # two potion recipes
+            },
+        )
 
     def test_a_kit_line_the_book_makes_of_a_material_keeps_it(self):
         # weapon materials: his gromril hammer used to seed as a plain hammer, so the gromril was lost

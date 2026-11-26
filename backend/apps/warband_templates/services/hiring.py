@@ -6,8 +6,10 @@ his type (the fighter's name), race, profile (written values as written), skill 
 leader, rules (his specials), the skills he starts with (the Senior Gunnery Officer's Hunter; William, 7 Nov 2026:
 "yes please do that") and those his variant gives him (the Hung's heroes' Ride [Animal]) as real skills, a group's
 for every member, a hero's starting spells as real spells (the Black Dwarfs' Sorcerer's Sacrificial Ritual; William,
-26 Nov 2026), his first spell still his to pick as any caster's is (units/services/create.py), starting XP, and for a
-group its size, gains-XP (no level-ups) and promotable. The unit remembers the key; nothing links it to the template after, so a later template edit touches nothing on the roster.
+26 Nov 2026), his first spell still his to pick as any caster's is (units/services/create.py), or as many as his
+`spell_picks` says (the Altdorf Arch-Mage's two), starting XP, and for a group its size, gains-XP (no level-ups) and
+promotable. The unit remembers the key; nothing links it to the template after, so a later template edit touches
+nothing on the roster.
 
 Every hire of a fighter gets one of each item his lists mark "1st free" at no cost, each item once (William, 6 Nov 2026:
 the Dagger, and the Gnoblars' Sharp Stuff too), before and after the first battle (a group: every member, as its
@@ -56,6 +58,7 @@ def unit_body(kind_key: str, fighter: TemplateFighter) -> dict[str, Any]:
         return {
             **body,
             **({"spell_ids": spells} if spells else {}),
+            **({"pending_spells": fighter.spell_picks} if fighter.spell_picks else {}),
             "is_leader": fighter.is_leader,
             "caster": fighter.caster,
             "available_skills": list(fighter.skill_types or []),

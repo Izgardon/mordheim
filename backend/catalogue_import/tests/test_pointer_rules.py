@@ -147,6 +147,14 @@ class PointerTests(SimpleTestCase):
         with self.assertRaisesRegex(ValueError, "Black Dwarfs: Sorcerer: no rule Priest"):
             resolve_pointers([renamed], [], SKILLS)
 
+    def test_williams_answers_say_how_many_spells_one_picks_at_hire(self):
+        mage = fighter("Arch-Mage", "Arch-Mages")
+        altdorf: dict[str, Any] = {"name": "Altdorf Expeditionary Party", "fighters": [mage, fighter("Hunter", "")]}
+        emissary: dict[str, Any] = {"name": "Dark Emissary", "specials": []}
+        resolve_pointers([altdorf], [emissary], SKILLS)
+        self.assertEqual((mage["spell_picks"], "spell_picks" in altdorf["fighters"][1]), (2, False))
+        self.assertEqual(emissary["spell_picks"], 4)
+
 
 class CommittedPointerTests(SimpleTestCase):
     """The committed output (test_build checks it is up to date)."""
@@ -203,3 +211,8 @@ class CommittedPointerTests(SimpleTestCase):
         self.assertEqual([(rule["name"], rule["type"]) for rule in sorcerer["specials"][1:]], [("Wizard", "Caster")])
         self.assertEqual(sorcerer["spells"], [{"lore": "Rituals of Hashut", "name": "Sacrificial Ritual"}])
         self.assertEqual([lore["name"] for lore in sorcerer["spell_types"]], ["Rituals of Hashut"])
+
+    def test_the_arch_mage_and_the_personae_who_know_several_spells_pick_that_many(self):
+        self.assertEqual(self.fighters[("Altdorf Expeditionary Party", "Arch-Mage")]["spell_picks"], 2)
+        picks = {name: row.get("spell_picks") for name, row in self.personae.items() if row.get("spell_picks")}
+        self.assertEqual(picks, {"Dark Emissary": 4, "Truthsayer": 3})

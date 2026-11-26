@@ -770,6 +770,7 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_picks": 2,
     "specials": [
       {
         "name": "Wizard",
@@ -1512,6 +1513,7 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_picks": 3,
     "specials": [
       {
         "name": "Fey",
@@ -1952,6 +1954,7 @@
     "armour_save": null,
     "large": false,
     "caster": "Priest",
+    "spell_picks": 2,
     "specials": [
       {
         "name": "Norse Runes",
@@ -2573,6 +2576,7 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_picks": 2,
     "specials": [
       {
         "name": "Wizard",
@@ -4624,6 +4628,7 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_picks": 2,
     "specials": [
       {
         "name": "Dark Magic",
@@ -5705,6 +5710,7 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_picks": 2,
     "specials": [
       {
         "name": "Wizard",
@@ -6814,6 +6820,7 @@
     "armour_save": null,
     "large": false,
     "caster": "Priest",
+    "spell_picks": 2,
     "specials": [
       {
         "name": "Alchemist",

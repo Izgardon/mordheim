@@ -2398,7 +2398,8 @@
             "description": "The Arch-Mage starts with one Common Magic spell of your choice and one Common Magic spell chosen at random."
           }
         ],
-        "skills": []
+        "skills": [],
+        "spell_picks": 2
       },
       {
         "key": "man-at-arms",

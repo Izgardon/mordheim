@@ -53,6 +53,9 @@ class HirelingProfile(WrittenStatBlock, CatalogueEntry):
     armour_save = models.SmallIntegerField(null=True, blank=True)
     large = models.BooleanField(default=False)
     caster = models.CharField(max_length=20, default="No", choices=CASTERS)
+    # how many spells he picks at hire (William, 26 Nov 2026: the Warlock's two random spells); null: the usual one
+    # for a Wizard or Priest who knows none (units/services/hire.py)
+    spell_picks = models.PositiveSmallIntegerField(null=True, blank=True)
     race_label = models.CharField(max_length=60, blank=True, default="")
     hire_fee = models.JSONField(default=no_fee)
     upkeep_fee = models.JSONField(default=no_fee)

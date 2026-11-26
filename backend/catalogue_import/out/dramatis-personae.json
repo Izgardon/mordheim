@@ -795,7 +795,8 @@
       "unique_to": "Dark Emissaries are evil wizards and as such will only fight alongside Possessed, Undead, Skaven and other evilly aligned warbands.",
       "stays": "always",
       "payment_note": ""
-    }
+    },
+    "spell_picks": 4
   },
   {
     "name": "Dashing Swordsman",
@@ -5051,7 +5052,8 @@
       "unique_to": "Truthsayers are benevolent wizards and as such they will only aid Sisters of Sigmar, Witch Hunters, Mercenaries and any other 'good' aligned warbands.",
       "stays": "always",
       "payment_note": ""
-    }
+    },
+    "spell_picks": 3
   },
   {
     "name": "Ulli & Marquand",

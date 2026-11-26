@@ -127,6 +127,7 @@ class _Run:
             "armour_save": parse_armour_save(data.get("armour_save")),
             "large": bool(data.get("large", False)),
             "caster": data.get("caster") or "No",
+            "spell_picks": data.get("spell_picks"),  # how many he picks at hire; none: the usual one
             **read_stats(data, label),  # fail loudly (BUG-54)
             "rating": parse_int(terms["rating"]) if terms.get("rating") is not None else None,
             "grade": clean(terms.get("grade")),
