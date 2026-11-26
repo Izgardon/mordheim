@@ -6,6 +6,7 @@ import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { canEditEntry, useCampaignCapabilities } from "@/features/campaigns/capabilities";
 import { ALL_SETTINGS, entrySettingName } from "@/features/reference/in-play";
 import { FactLine, ReferenceDetail } from "@/features/reference/ReferenceDetail";
+import { useOwnWords } from "@/features/reference/own-words";
 import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import {
   ReferenceList,
@@ -43,6 +44,7 @@ export default function BoonsBanes() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const specials = useCatalogue("specials", campaignId);
   const settings = useSettingsById();
+  const own = useOwnWords().Place;
   const capabilities = useCampaignCapabilities(campaignId);
   const canAdd = capabilities.edit_catalogue;
   const params = useReferenceParams(!specials.isLoading);
@@ -53,6 +55,7 @@ export default function BoonsBanes() {
     category,
     setting,
     settings,
+    own,
     openId: params.openId,
   });
   const shown = useShownRows(
@@ -145,7 +148,7 @@ export default function BoonsBanes() {
                 <FactLine
                   facts={[
                     ...(price ? [{ label: "Price", value: price }] : []),
-                    { label: "Setting", value: entrySettingName(special, settings) },
+                    { label: "Setting", value: entrySettingName(special, settings, own) },
                   ]}
                 />
                 {special.description ? (

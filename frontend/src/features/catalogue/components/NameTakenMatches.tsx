@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { useOwnWords, type OwnWords } from "@/features/reference/own-words";
 import { getRefusalMessage } from "@/lib/get-error-message";
 import type { NameMatch } from "@/lib/field-errors";
 
@@ -9,10 +10,11 @@ const label = (match: NameMatch) => (match.type ? `${match.name} (${match.type})
 
 /**
  * A match as its buttons name it for screen readers, with where it comes from, as its line says:
- * "the book Warhorse", "this campaign's Warhorse" (a book entry and its version share a name).
+ * "the book Warhorse", "this campaign's Warhorse" (a book entry and its version share a name), or
+ * in a workshop "your Warhorse".
  */
-const named = (match: NameMatch) =>
-  `${match.source === "book" ? "the book" : "this campaign's"} ${label(match)}`;
+const named = (match: NameMatch, words: OwnWords) =>
+  `${match.source === "book" ? "the book" : words.whose} ${label(match)}`;
 
 const LINK_CLASS =
   "text-xs text-accent-text underline underline-offset-2 hover:text-accent-hi disabled:opacity-50";
@@ -31,6 +33,7 @@ const state = (match: NameMatch) => {
 export function NameTakenMatches({ id, nameTaken }: { id: string; nameTaken: NameTakenState }) {
   const [restoring, setRestoring] = useState<number | null>(null);
   const [error, setError] = useState("");
+  const words = useOwnWords();
   if (nameTaken.matches.length === 0) {
     return null;
   }
@@ -53,14 +56,14 @@ export function NameTakenMatches({ id, nameTaken }: { id: string; nameTaken: Nam
         {nameTaken.matches.map((match) => (
           <li key={`${match.kind}-${match.id}`} className="flex flex-wrap items-center gap-x-2">
             <span>
-              {label(match)} · {match.source === "book" ? "book" : "this campaign"}
+              {label(match)} · {match.source === "book" ? "book" : words.tag}
               {state(match)}
             </span>
             {match.restorable ? (
               <button
                 type="button"
                 className={LINK_CLASS}
-                aria-label={`Restore ${named(match)}`}
+                aria-label={`Restore ${named(match, words)}`}
                 disabled={restoring !== null}
                 onClick={() => void restore(match)}
               >
@@ -70,7 +73,7 @@ export function NameTakenMatches({ id, nameTaken }: { id: string; nameTaken: Nam
               <button
                 type="button"
                 className={LINK_CLASS}
-                aria-label={`Edit ${named(match)} instead`}
+                aria-label={`Edit ${named(match, words)} instead`}
                 onClick={() => nameTaken.onEdit?.(match)}
               >
                 Edit this instead

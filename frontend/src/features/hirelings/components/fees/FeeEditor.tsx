@@ -7,6 +7,7 @@ import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
 import type { CampaignResource } from "@/features/campaigns/api/campaign-resources";
+import { useOwnWords } from "@/features/reference/own-words";
 
 import { FEE_KINDS, feeReads, formatFee, matchCounter, type FeeKind } from "../../fees";
 import { feeFromDraft, replaceKept, type FeeDraft } from "./fee-draft";
@@ -107,6 +108,7 @@ function AddResource({ props }: { props: FeeEditorProps }) {
 /** The fee's one resource: its amount, its name, and × (which brings Add resource back). */
 function ResourceLine({ props }: { props: FeeEditorProps }) {
   const { value, resources } = props;
+  const words = useOwnWords();
   const line = value.resources[0];
   // one of the campaign's resources by name (campaign points among them: no counter holds those)
   const named = (resources ?? []).some(
@@ -138,7 +140,7 @@ function ResourceLine({ props }: { props: FeeEditorProps }) {
       </IconButton>
       {known ? null : (
         <span className="basis-full text-xs font-semibold text-danger">
-          {`${line.resource} isn't one of this campaign's resources.`}
+          {`${line.resource} isn't one of ${words.whose} resources.`}
         </span>
       )}
     </span>

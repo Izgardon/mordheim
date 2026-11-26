@@ -74,11 +74,16 @@ export function skillGroupRows(
   return rows.filter((entry) => entry.skills.length > 0 || (!filtering && entry.group));
 }
 
-/** The Setting filter's options for the skills in play. */
-export const skillSettingOptions = (skills: Skill[], settings: Map<number, Setting>) =>
+/** The Setting filter's options for the skills in play, the campaign's own named `own`. */
+export const skillSettingOptions = (
+  skills: Skill[],
+  settings: Map<number, Setting>,
+  own?: string
+) =>
   settingKeyOptions(
     skills.map((skill) => entrySettingKey(skill, settings)),
-    settings
+    settings,
+    own
   );
 
 /**

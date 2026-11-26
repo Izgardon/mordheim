@@ -128,10 +128,11 @@ const MAXIMUMS = [
 export const raceMaximums = (race: Race) =>
   MAXIMUMS.map(([key, field]) => `${key}${race[field]}`).join(" ");
 
-export const raceOption = (race: Race, settings: Settings): SearchOption => ({
+/** A race on the picker: its maximums, and `own` ("This campaign", "Your workshop") for its own. */
+export const raceOption = (race: Race, settings: Settings, own: string): SearchOption => ({
   id: race.id,
   title: race.name,
-  subtitle: joined(raceMaximums(race), Boolean(race.campaign_id) && "This campaign"),
+  subtitle: joined(raceMaximums(race), Boolean(race.campaign_id) && own),
   warning: outOfPlay(race, settings),
 });
 

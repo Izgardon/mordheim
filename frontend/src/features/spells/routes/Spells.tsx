@@ -6,6 +6,7 @@ import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { campaignCapabilities, canEditEntry } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { entrySettingName, inPlayOnly } from "@/features/reference/in-play";
+import { useOwnWords } from "@/features/reference/own-words";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
@@ -34,6 +35,7 @@ export default function Spells() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const spells = useCatalogue("spells", campaignId);
   const settings = useSettingsById();
+  const own = useOwnWords().Place;
   const params = useReferenceParams(!spells.isLoading);
   const capabilities = campaignCapabilities(campaign);
 
@@ -58,7 +60,7 @@ export default function Spells() {
   // its spells' settings, named in its open row (William, 7 Nov 2026: "others should exist in the
   // expanded part")
   const loreSettings = (lore: SpellLore) => [
-    ...new Set(lore.spells.map((spell) => entrySettingName(spell, settings))),
+    ...new Set(lore.spells.map((spell) => entrySettingName(spell, settings, own))),
   ];
 
   const addButton = capabilities.edit_catalogue ? (

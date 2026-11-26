@@ -3,6 +3,7 @@
  * Setting filter offers Mordheim's grades as one "Mordheim", only for the settings in play.
  */
 import { renderHook } from "@testing-library/react";
+import { createElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 
 import { settingsById } from "@/features/campaigns/api/settings-queries";
@@ -14,6 +15,7 @@ import { makeItem } from "@/test/warband-fixtures";
 import {
   ALL_SETTINGS,
   entrySettingKey,
+  entrySettingName,
   inPlayOnly,
   settingFilterKey,
   settingFilterOptions,
@@ -21,6 +23,7 @@ import {
   settingKeyOptions,
   settingShortName,
 } from "./in-play";
+import { OwnWordsContext, WORKSHOP_WORDS } from "./own-words";
 
 const setting = (id: number, slug: string, name: string, sort_order: number): Setting => ({
   id,
@@ -72,6 +75,18 @@ describe("the reference's scope", () => {
       { id: "mordheim", label: "Mordheim" },
       { id: "5", label: "Empire in Flames" },
       { id: "own", label: "This campaign" },
+    ]);
+  });
+
+  it("names the campaign's own 'Your workshop' in a workshop (William, 26 Nov 2026)", () => {
+    const own = { setting_id: null, campaign_id: 9, replaces: null };
+
+    expect(entrySettingName(own, settings)).toBe("This campaign");
+    expect(entrySettingName(own, settings, WORKSHOP_WORDS.Place)).toBe("Your workshop");
+    expect(settingFilterOptions([null, 1], settings, WORKSHOP_WORDS.Place)).toEqual([
+      { id: ALL_SETTINGS, label: "All settings" },
+      { id: "mordheim", label: "Mordheim" },
+      { id: "own", label: "Your workshop" },
     ]);
   });
 
@@ -130,6 +145,22 @@ describe("Wargear's rows", () => {
       "All settings",
       "Mordheim",
       "Empire in Flames",
+    ]);
+  });
+
+  it("offer a workshop's own items as 'Your workshop'", () => {
+    const own = [item(1, 1, true), item(2, null, true)];
+    const wrapper = ({ children }: { children: ReactNode }) =>
+      createElement(OwnWordsContext.Provider, { value: WORKSHOP_WORDS }, children);
+    const { result } = renderHook(
+      () => useWargearRows({ ...filters, items: own, setting: "all" }),
+      { wrapper }
+    );
+
+    expect(result.current.settingOptions.map((option) => option.label)).toEqual([
+      "All settings",
+      "Mordheim",
+      "Your workshop",
     ]);
   });
 

@@ -10,6 +10,7 @@ import { StatBoxes } from "@/components/ui/stat-boxes";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { raceOption, warnedLast } from "@/features/catalogue/search-options";
 import { STAT_FIELDS, type StatKey } from "@/features/catalogue/utils/statblock";
+import { useOwnWords } from "@/features/reference/own-words";
 import { useCatalogue, useCatalogueCache } from "@/lib/catalogue-queries";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
@@ -56,7 +57,8 @@ export default function RaceField({
 }: RaceFieldProps) {
   const races = useCatalogue("races", campaignId).data ?? [];
   const settings = useSettingsById();
-  const options = warnedLast(races.map((race) => raceOption(race, settings)));
+  const own = useOwnWords().Place;
+  const options = warnedLast(races.map((race) => raceOption(race, settings, own)));
   const current = races.find((race) => race.id === value);
   const cache = useCatalogueCache();
   const [custom, setCustom] = useState<{ name: string; max: Maximums } | null>(null);
@@ -105,7 +107,7 @@ export default function RaceField({
             placeholder="Search races"
             emptyText="No race matches."
             options={options}
-            value={current ? raceOption(current, settings) : null}
+            value={current ? raceOption(current, settings, own) : null}
             clearLabel="No race"
             onChange={(option) => {
               setCustom(null);

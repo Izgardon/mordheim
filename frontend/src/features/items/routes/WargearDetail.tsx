@@ -8,6 +8,7 @@ import {
   Flavour,
   ReferenceDetail,
 } from "@/features/reference/ReferenceDetail";
+import { useOwnWords } from "@/features/reference/own-words";
 
 import ItemFormDialog from "../components/ItemFormDialog";
 import ItemRules, { itemFacts } from "../components/ItemRules";
@@ -21,8 +22,8 @@ import { beastEditLink, beastOf, isSold } from "../utils/item-listing";
  * The item's setting, Mordheim's grades as one: "Khemri" (William, 11 Nov 2026: "just say Khemri").
  * Who may buy it is not repeated here - the price rows above already say it.
  */
-export function sourceLine(item: Item, settingName: string) {
-  return settingName || (item.campaign_id ? "This campaign's own" : "");
+export function sourceLine(item: Item, settingName: string, own: string) {
+  return settingName || (item.campaign_id ? own : "");
 }
 
 function PriceRow({ row, chosen }: { row: ItemAvailability; chosen: boolean }) {
@@ -76,7 +77,7 @@ export default function WargearDetail(props: WargearDetailProps) {
   const beast = beastOf(item);
   const rows = item.availabilities ?? [];
   const chosen = rows.find((row) => row.id === offer?.availability_id) ?? rows[0] ?? null;
-  const source = sourceLine(item, props.settingName);
+  const source = sourceLine(item, props.settingName, useOwnWords().own);
   let edit: ReactNode = null;
   if (props.canEdit && beast) {
     edit = (

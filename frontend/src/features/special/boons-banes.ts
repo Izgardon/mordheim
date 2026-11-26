@@ -43,6 +43,8 @@ type BoonBaneFilters = {
   category: CategoryFilter;
   setting: string;
   settings: Map<number, Setting>;
+  /** The campaign's own as the Setting filter names it (`useOwnWords().Place`). */
+  own?: string;
   /** The row a link opened (`?open=`): it stays whatever the filters. */
   openId: string | null;
 };
@@ -53,7 +55,7 @@ type BoonBaneFilters = {
  * and the settings the rows hold.
  */
 export function boonBaneRows(specials: Special[], filters: BoonBaneFilters) {
-  const { query, category, setting, settings, openId } = filters;
+  const { query, category, setting, settings, own, openId } = filters;
   const all = referenceSpecials(specials).sort((a, b) => a.name.localeCompare(b.name));
   const searched = all.filter(
     (special) =>
@@ -74,7 +76,8 @@ export function boonBaneRows(specials: Special[], filters: BoonBaneFilters) {
   }));
   const settingOptions = settingKeyOptions(
     all.map((special) => entrySettingKey(special, settings)),
-    settings
+    settings,
+    own
   );
   return { rows, counts, settingOptions };
 }

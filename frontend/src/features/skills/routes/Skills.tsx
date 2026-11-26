@@ -6,6 +6,7 @@ import { campaignCapabilities, canEditEntry } from "@/features/campaigns/capabil
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { whoLine } from "@/features/items/utils/item-prices";
 import { ALL_SETTINGS, inPlayOnly } from "@/features/reference/in-play";
+import { useOwnWords } from "@/features/reference/own-words";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
@@ -55,6 +56,7 @@ export default function Skills() {
   const skills = useCatalogue("skills", campaignId);
   const groups = useSkillGroups(campaignId);
   const settings = useSettingsById();
+  const words = useOwnWords();
   const loading = skills.isLoading || groups.isLoading;
   const params = useReferenceParams(!loading, (get) => rowKeyOf(get("group")));
   const capabilities = campaignCapabilities(campaign);
@@ -66,7 +68,7 @@ export default function Skills() {
   const [editingGroup, setEditingGroup] = useState<SkillGroup | null>(null);
 
   const inPlay = useMemo(() => inPlayOnly(skills.data), [skills.data]);
-  const settingOptions = skillSettingOptions(inPlay, settings);
+  const settingOptions = skillSettingOptions(inPlay, settings, words.Place);
   const rows = skillGroupRows(inPlayOnly(groups.groups), inPlay, {
     query: params.query,
     setting,

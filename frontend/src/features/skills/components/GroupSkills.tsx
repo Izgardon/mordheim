@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { entrySettingName } from "@/features/reference/in-play";
 import { ReferenceDetail } from "@/features/reference/ReferenceDetail";
+import { useOwnWords } from "@/features/reference/own-words";
 import { rowDomId } from "@/features/reference/ReferenceList";
 import { cn } from "@/lib/utils";
 
@@ -32,6 +33,7 @@ export default function GroupSkills({
   isMobile,
 }: GroupSkillsProps) {
   const settings = useSettingsById();
+  const own = useOwnWords().Place;
   const { group } = row;
   return (
     <ReferenceDetail isMobile={isMobile}>
@@ -66,7 +68,7 @@ export default function GroupSkills({
                   <div className="flex flex-wrap items-baseline gap-x-2.5 pt-1">
                     <h3 className="m-0 text-[15px] font-bold text-head">{skill.name}</h3>
                     <span className="text-xs text-muted-foreground">
-                      {entrySettingName(skill, settings)}
+                      {entrySettingName(skill, settings, own)}
                     </span>
                   </div>
                   {canEdit(skill) ? (

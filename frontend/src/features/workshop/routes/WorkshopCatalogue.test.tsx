@@ -123,6 +123,24 @@ describe("my workshop's catalogue", () => {
     expect(await screen.findByRole("button", { name: "Edit" })).toBeInTheDocument();
   });
 
+  it("names my own special's setting my workshop, where a campaign names it the campaign", async () => {
+    fakeApi.on(`GET /special/?campaign_id=${CAMPAIGN_ID}`, [
+      special({ id: 6, name: "Night Eyes", type: "Ability", campaign_id: CAMPAIGN_ID }),
+    ]);
+    const user = setupUser();
+    renderApp(`/workshop/${WORKSHOP_ID}/boons-banes`);
+
+    await user.click(await row("Night Eyes"));
+    expect(await screen.findByRole("definition")).toHaveTextContent("Your workshop");
+    expect(screen.getByRole("button", { name: "Your workshop" })).toBeInTheDocument();
+    expect(screen.queryByText("This campaign")).toBeNull();
+    cleanupApps();
+
+    renderApp(`/campaigns/${CAMPAIGN_ID}/boons-banes`);
+    await user.click(await row("Night Eyes"));
+    expect(await screen.findByRole("definition")).toHaveTextContent("This campaign");
+  });
+
   it("has no campaign-only page: a path to one goes to the workshop's warbands", async () => {
     for (const page of [
       "locations",

@@ -5,6 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import CampaignLoadError from "@/features/campaigns/components/layout/CampaignLoadError";
 import { isCampaignId, useCampaignQuery } from "@/features/campaigns/hooks/useCampaignQuery";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
+import { OwnWordsContext, WORKSHOP_WORDS } from "@/features/reference/own-words";
 import WarbandSkeleton from "@/features/warbands/components/page/WarbandSkeleton";
 import SitePage from "@/layouts/shell/SitePage";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -29,8 +30,8 @@ function BackHome() {
 /**
  * My workshop (apps/workshop): its warbands, its lists and My content, each page in Home's frame
  * with the workshop's nav and no campaign shell (no rail, battles, notices or tools). The pages
- * inside read the workshop as their campaign, as a campaign's pages do; a campaign's id here goes
- * back to the campaign.
+ * inside read the workshop as their campaign, as a campaign's pages do, naming its own entries the
+ * player's (`WORKSHOP_WORDS`); a campaign's id here goes back to the campaign.
  */
 export default function WorkshopLayout() {
   const { id } = useParams();
@@ -75,9 +76,11 @@ export default function WorkshopLayout() {
     <SitePage>
       <BackHome />
       <WorkshopNav workshopId={workshop.id} />
-      <Suspense fallback={<WarbandSkeleton />}>
-        <Outlet context={context} />
-      </Suspense>
+      <OwnWordsContext.Provider value={WORKSHOP_WORDS}>
+        <Suspense fallback={<WarbandSkeleton />}>
+          <Outlet context={context} />
+        </Suspense>
+      </OwnWordsContext.Provider>
     </SitePage>
   );
 }

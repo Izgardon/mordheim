@@ -8,6 +8,7 @@ import {
   settingFilterOptions,
   settingShortName,
 } from "@/features/reference/in-play";
+import { useOwnWords } from "@/features/reference/own-words";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 
 import {
@@ -51,6 +52,7 @@ type WargearFilters = {
  */
 export function useWargearRows(filters: WargearFilters) {
   const { items, settings, offers, onlyMine, query, category, setting, openId } = filters;
+  const words = useOwnWords();
   const all = useMemo<WargearRowData[]>(
     () =>
       inPlayOnly(items)
@@ -87,7 +89,8 @@ export function useWargearRows(filters: WargearFilters) {
   }));
   const settingOptions = settingFilterOptions(
     all.map(({ item }) => item.setting_id),
-    settings
+    settings,
+    words.Place
   );
   const restricted = rows.filter((row) => row.warning).length;
   const name = filters.warbandName;

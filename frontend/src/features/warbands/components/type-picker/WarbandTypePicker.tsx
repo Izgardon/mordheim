@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 
 import { SearchSelect, type SearchOption } from "@/components/ui/search-select";
+import { useOwnWords } from "@/features/reference/own-words";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 
@@ -35,14 +36,15 @@ function GradeBadge({ type, dim }: { type: WarbandTypeBrief; dim?: boolean }) {
   );
 }
 
-function typeOption(type: WarbandTypeBrief, row?: WarbandTypeRow): SearchOption {
+/** A type on the picker, under "In this campaign" or "Outside this campaign" (`place`). */
+function typeOption(type: WarbandTypeBrief, place: string, row?: WarbandTypeRow): SearchOption {
   const warning = row ? typeWarning(row) : "";
   return {
     id: type.id,
     title: type.name,
     subtitle: typeMeta(type),
     warning,
-    group: row?.in_play === false ? "Outside this campaign" : "In this campaign",
+    group: `${row?.in_play === false ? "Outside" : "In"} ${place}`,
     keywords: row ? [row.race, row.setting?.name ?? "", row.source_code].join(" ") : undefined,
     aside: <GradeBadge type={type} dim={Boolean(warning)} />,
   };
@@ -57,9 +59,10 @@ export default function WarbandTypePicker(props: WarbandTypePickerProps) {
   const { campaignId, value, onPick } = props;
   const { data: types, isLoading } = useWarbandTypes(campaignId);
   const addType = useAddWarbandType(campaignId);
+  const { place } = useOwnWords();
   const all = types ?? [];
   const rows = pickerRows(all, "", props.hidden);
-  const options = [...rows.inPlay, ...rows.outside].map((type) => typeOption(type, type));
+  const options = [...rows.inPlay, ...rows.outside].map((type) => typeOption(type, place, type));
   const current = value ? all.find((type) => type.id === value.id) : undefined;
 
   const addCustom = async (name: string) => {
@@ -78,7 +81,7 @@ export default function WarbandTypePicker(props: WarbandTypePickerProps) {
       emptyText="No warband type matches."
       loading={isLoading}
       options={options}
-      value={value ? typeOption(value, current) : null}
+      value={value ? typeOption(value, place, current) : null}
       onChange={(option) => {
         const picked = all.find((type) => type.id === option?.id);
         if (picked) onPick(picked);

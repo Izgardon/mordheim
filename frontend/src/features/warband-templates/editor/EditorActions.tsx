@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useOwnWords } from "@/features/reference/own-words";
 import { deleteTemplate, revertTemplate } from "../api/editor-api";
 import { templatesChanged } from "../api/editor-queries";
 import { getRefusalMessage } from "@/lib/get-error-message";
@@ -35,6 +36,7 @@ export default function EditorActions({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const { template, facts } = answer;
+  const words = useOwnWords();
   const warbands = facts.warbands
     ? ` ${facts.warbands === 1 ? "Its warband recruits" : `Its ${facts.warbands} warbands recruit`} by hand from then on.`
     : "";
@@ -81,7 +83,7 @@ export default function EditorActions({
         description={
           asking === "revert"
             ? `${template.name} goes back to the book's in this campaign: every change made here goes. Units already on rosters keep what they have.`
-            : `${template.name} goes from this campaign.${warbands}`
+            : `${template.name} goes from ${words.place}.${warbands}`
         }
         confirmText={busy ? "Working..." : asking === "revert" ? "Revert" : "Delete"}
         confirmVariant={asking === "revert" ? "primary" : "danger"}

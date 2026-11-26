@@ -1,5 +1,7 @@
 import type { Setting } from "@/features/campaigns/types/campaign-types";
 
+import { CAMPAIGN_WORDS } from "./own-words";
+
 /**
  * The reference pages and Search everything list only what is in play in the campaign (William,
  * 1 Nov 2026): entries of its ticked and always-on settings, and its own. The server marks the
@@ -94,9 +96,12 @@ export function entrySettingKey(row: SettingRow, settings: Map<number, Setting>)
   return row.campaign_id != null && row.replaces == null ? OWN : MORDHEIM;
 }
 
-/** A Setting filter key's name: "Mordheim", "Khemri", "This campaign". */
-function settingKeyOption(key: string, settings: Map<number, Setting>) {
-  if (key === OWN) return { id: key, label: "This campaign", order: Infinity };
+/**
+ * A Setting filter key's name: "Mordheim", "Khemri", or `own` for the campaign's own ("This
+ * campaign", a workshop's "Your workshop": `useOwnWords().Place`).
+ */
+function settingKeyOption(key: string, settings: Map<number, Setting>, own = CAMPAIGN_WORDS.Place) {
+  if (key === OWN) return { id: key, label: own, order: Infinity };
   const family = [...settingFamilies(settings).values()].find((row) => row.key === key);
   if (family) return { id: key, ...family };
   // a book entry not graded yet counts as Mordheim's, whether or not Mordheim is split here
@@ -105,24 +110,25 @@ function settingKeyOption(key: string, settings: Map<number, Setting>) {
   return { id: key, label: setting?.name ?? "Unknown", order: setting?.sort_order ?? 998 };
 }
 
-export const settingKeyLabel = (key: string, settings: Map<number, Setting>) =>
-  settingKeyOption(key, settings).label;
+export const settingKeyLabel = (key: string, settings: Map<number, Setting>, own?: string) =>
+  settingKeyOption(key, settings, own).label;
 
 /**
  * A row's setting as an open row or the Warbands page's column names it: the setting's own name
- * ("Mordheim 1b", "Lustria"), else "Mordheim" (a book entry not graded yet) or "This campaign".
+ * ("Mordheim 1b", "Lustria"), else "Mordheim" (a book entry not graded yet) or `own`.
  */
-export function entrySettingName(row: SettingRow, settings: Map<number, Setting>) {
+export function entrySettingName(row: SettingRow, settings: Map<number, Setting>, own?: string) {
   const setting = row.setting_id != null ? settings.get(row.setting_id) : undefined;
-  return setting?.name ?? settingKeyLabel(entrySettingKey(row, settings), settings);
+  return setting?.name ?? settingKeyLabel(entrySettingKey(row, settings), settings, own);
 }
 
 /**
  * The Setting filter's options for these Setting filter keys: All settings, then each one once in
- * the book's order (Mordheim first, a split setting's grades as one), the campaign's own last.
+ * the book's order (Mordheim first, a split setting's grades as one), the campaign's own last,
+ * named `own`.
  */
-export function settingKeyOptions(keys: string[], settings: Map<number, Setting>) {
-  const options = [...new Set(keys)].map((key) => settingKeyOption(key, settings));
+export function settingKeyOptions(keys: string[], settings: Map<number, Setting>, own?: string) {
+  const options = [...new Set(keys)].map((key) => settingKeyOption(key, settings, own));
   return [
     { id: ALL_SETTINGS, label: "All settings" },
     ...options.sort((a, b) => a.order - b.order).map(({ id, label }) => ({ id, label })),
@@ -132,10 +138,12 @@ export function settingKeyOptions(keys: string[], settings: Map<number, Setting>
 /** The Setting filter's options for these rows' settings (`settingKeyOptions`). */
 export function settingFilterOptions(
   settingIds: (number | null | undefined)[],
-  settings: Map<number, Setting>
+  settings: Map<number, Setting>,
+  own?: string
 ) {
   return settingKeyOptions(
     settingIds.map((id) => settingFilterKey(id, settings)),
-    settings
+    settings,
+    own
   );
 }
