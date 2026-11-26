@@ -132,10 +132,8 @@ class TemplateItemsBuildTests(SimpleTestCase):
                 "Gunners only; max one per warband",
             ),
         )
-        shots = [name for name, item in self.items.items() if item.get("single_use")]
-        self.assertEqual(
-            sorted(shots), ["Swivel Gun - Ball Shot", "Swivel Gun - Chain Shot", "Swivel Gun - Grape Shot"]
-        )
+        shots = {name for name, item in self.items.items() if item.get("single_use") and name.startswith("Swivel")}
+        self.assertEqual(shots, {"Swivel Gun - Ball Shot", "Swivel Gun - Chain Shot", "Swivel Gun - Grape Shot"})
 
     def test_the_cavalcade_joins_the_nightmares_row_and_gets_its_own_misericordia(self) -> None:
         [row] = self.items["Nightmare"]["availabilities"]

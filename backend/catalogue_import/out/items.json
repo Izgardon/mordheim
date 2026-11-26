@@ -8059,7 +8059,8 @@
         ],
         "note": "Skink Heroes only, on missile weapons"
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "blessed-stag-hide",
@@ -8190,7 +8191,8 @@
         ],
         "note": "The Priest has ready access"
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "book-of-the-dead",
@@ -8388,7 +8390,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "caltrops",
@@ -8431,7 +8434,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "cathayan-silk-clothes",
@@ -8738,7 +8742,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "dark-venom",
@@ -9054,7 +9059,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "engine-of-chaos",
@@ -9277,7 +9283,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "fire-bomb",
@@ -9434,7 +9441,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "flash-powder",
@@ -9476,7 +9484,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "fog-enhancing-warpstone-shards",
@@ -9620,7 +9629,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "halfling-cookbook",
@@ -9843,7 +9853,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "holy-unholy-relic",
@@ -10999,7 +11010,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "manticore-spoor",
@@ -11859,7 +11871,8 @@
         ],
         "note": "Skink Henchmen only, on missile weapons"
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "rickshaw",
@@ -13136,7 +13149,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "sword-gnoblar",
@@ -13282,7 +13296,8 @@
         ],
         "note": "Not available to Possessed or Undead models"
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "telescope",
@@ -13420,7 +13435,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "trade-wagon",
@@ -13912,7 +13928,8 @@
         ],
         "note": "Heroes only"
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "wagon-stagecoach",
@@ -16976,7 +16993,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "daemon-dust",
@@ -17022,7 +17040,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "slaaneshis-dream",
@@ -17068,7 +17087,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "albion-cloth",
@@ -17148,7 +17168,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "burnished-circlet",
@@ -17234,7 +17255,8 @@
         "warbands": [],
         "note": "Wizards only"
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "falconry-glove",
@@ -17521,7 +17543,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "ice-gem",
@@ -18297,7 +18320,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "steam-engine",
@@ -19252,7 +19276,8 @@
         "warbands": [],
         "note": "Heroes only"
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "khufa-beans",
@@ -19294,7 +19319,8 @@
         "warbands": [],
         "note": "Khalibon: 20+2D6 dinars, Rare 8."
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "dwarf-helm",
@@ -25989,7 +26015,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "kumfy-gear",
@@ -28987,7 +29014,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "skavenbrew",
@@ -29044,7 +29072,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "poison-wind-globe-athel-loren",
@@ -29680,7 +29709,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "enchanted-acorns",

@@ -38,6 +38,7 @@ from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules, reword_shared, word_item_rules
 from catalogue_import.scenario_build import build_scenarios, render_scenarios
 from catalogue_import.shared_specials import build_shared, load_shared, render_shared
+from catalogue_import.single_use import set_single_use
 from catalogue_import.skill_lists import SkillLists
 from catalogue_import.snapshot import SNAPSHOT, load_snapshot
 from catalogue_import.sources import ITEM_DATA, PACKAGE, Sources, load_sources
@@ -288,6 +289,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     add_notes(everything, overrides.get("item_notes", {}))
     set_own_rules(everything, overrides.get("item_own_rules", {}))
     set_saves(everything, overrides.get("item_saves", {}))  # what equipping it does to the save (18 Nov 2026)
+    set_single_use(everything, overrides.get("single_use_items", []))  # what a battle uses up (26 Nov 2026)
     merge_subtypes(everything, overrides.get("item_subtypes", {}))  # one subtype per kind (25 Nov 2026)
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
     names_we_have = Catalogue(
