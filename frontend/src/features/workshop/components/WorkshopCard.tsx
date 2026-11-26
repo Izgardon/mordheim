@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { CopyCode } from "@/components/ui/copy-code";
-import { IconButton } from "@/components/ui/icon-button";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 type WorkshopCardProps = {
@@ -22,7 +22,7 @@ type WorkshopCardProps = {
 
 /**
  * A warband or warband list in my workshop: its name (the card's link, to its page), a warband's
- * type under it, its share code with Copy, and Delete.
+ * type under it, its share code with Copy, and Delete at the bottom right.
  */
 export default function WorkshopCard({ to, name, kind, shareCode, onDelete }: WorkshopCardProps) {
   const titleId = useId();
@@ -58,23 +58,27 @@ export default function WorkshopCard({ to, name, kind, shareCode, onDelete }: Wo
             {name}
           </Link>
         </h3>
-        <div className="relative z-[2] flex shrink-0 items-center gap-1.5">
-          {shareCode ? <CopyCode code={shareCode} label="share code" /> : null}
-          <IconButton
-            look="plain"
-            aria-label={`Delete ${name}`}
-            className="h-9 w-9 text-danger"
-            onClick={() => setConfirming(true)}
-          >
-            <Trash2 aria-hidden="true" />
-          </IconButton>
-        </div>
+        {shareCode ? (
+          <div className="relative z-[2] shrink-0">
+            <CopyCode code={shareCode} label="share code" />
+          </div>
+        ) : null}
       </div>
-      {kind ? (
-        <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-faint">
+      <div className="flex items-end justify-between gap-2">
+        <p className="m-0 min-w-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-faint">
           {kind}
         </p>
-      ) : null}
+        <Button
+          variant="danger"
+          size="sm"
+          aria-label={`Delete ${name}`}
+          className="relative z-[2] shrink-0"
+          onClick={() => setConfirming(true)}
+        >
+          <Trash2 aria-hidden="true" />
+          Delete
+        </Button>
+      </div>
       <ConfirmDialog
         open={confirming}
         onOpenChange={setConfirming}
