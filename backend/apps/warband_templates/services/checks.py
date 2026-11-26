@@ -13,6 +13,8 @@ from typing import Any
 
 from django.db.models import F
 
+from apps.campaigns.models import WORKSHOP
+
 from ..models import HERO, WarbandTemplate, WarbandTemplateType
 from .resolve import in_campaign
 
@@ -30,15 +32,22 @@ def _shared_types(template: WarbandTemplate, campaign_id: int) -> list[dict[str,
         return [_warning("basics", "It serves no warband type, so no warband uses it.")]
     links = (
         WarbandTemplateType.objects.filter(warband_type_id__in=type_ids, template__in=in_campaign(campaign_id))
-        .select_related("template", "warband_type")
+        .select_related("template__campaign", "warband_type")
         .order_by(F("template__campaign_id").asc(nulls_last=True), "template_id")
     )
     serving: dict[int, list[WarbandTemplateType]] = defaultdict(list)
     for link in links:
         serving[link.warband_type_id].append(link)
+    # a workshop's own list always comes before the book's: saying so is noise there
+    own = next((link for rows in serving.values() for link in rows if link.template_id == template.pk), None)
+    workshop = own is not None and own.template.campaign is not None and own.template.campaign.kind == WORKSHOP
     found = []
     for rows in serving.values():
-        others = [row.template for row in rows if row.template_id != template.pk]
+        others = [
+            row.template
+            for row in rows
+            if row.template_id != template.pk and not (workshop and row.template.campaign_id is None)
+        ]
         if len(rows) < 2 or not others:
             continue
         first, kind = rows[0].template, rows[0].warband_type.name

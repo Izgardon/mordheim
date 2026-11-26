@@ -54,7 +54,8 @@ export type SharedPreview =
       share_code: string;
       maker: string;
       name: string;
-      warband_types: WorkshopType[];
+      warband_types: (WorkshopType & { variant: string })[];
+      variants: { key: string; name: string }[];
     };
 
 export type MakeWarbandBody = {

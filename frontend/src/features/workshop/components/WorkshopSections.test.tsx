@@ -218,4 +218,43 @@ describe("Home's workshop sections", () => {
       template_variant: "marienburg",
     });
   });
+  it("makes a warband from a list code, asking for the variant its type doesn't preset", async () => {
+    const user = setupUser();
+    fakeApi.on("GET /warband-templates/", []);
+    fakeApi.on("GET /workshop/shared/WTCH2345/", {
+      kind: "list",
+      share_code: "WTCH2345",
+      maker: "Pia",
+      name: "Night Watch",
+      warband_types: [{ id: 7, name: "Mercenaries", variant: "" }],
+      variants: [
+        { key: "reikland", name: "Reikland" },
+        { key: "middenheim", name: "Middenheim" },
+      ],
+    });
+    fakeApi.on("POST /workshop/warbands/", {
+      ...ROWS.warbands[0],
+      id: 22,
+      kind: "warband",
+      warnings: [],
+    });
+    renderHome();
+    await screen.findByRole("article", { name: "The Gilded Wagon" });
+
+    await user.click(screen.getByRole("button", { name: "New warband" }));
+    const dialog = screen.getByRole("dialog", { name: "New warband" });
+    await user.type(within(dialog).getByLabelText("Name"), "Watchmen");
+    await user.click(within(dialog).getByRole("button", { name: "A list code" }));
+    await user.type(within(dialog).getByLabelText("List code"), "WTCH2345");
+    await user.click(await within(dialog).findByRole("button", { name: "Middenheim" }));
+    await user.click(within(dialog).getByRole("button", { name: "Make the warband" }));
+
+    expect(await screen.findByText("Workshop page")).toBeInTheDocument();
+    expect(fakeApi.bodyOf("POST /workshop/warbands/")).toEqual({
+      name: "Watchmen",
+      list_code: "WTCH2345",
+      warband_type_id: 7,
+      template_variant: "middenheim",
+    });
+  });
 });

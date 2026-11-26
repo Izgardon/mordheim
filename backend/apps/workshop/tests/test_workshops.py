@@ -37,10 +37,29 @@ class MakingTests(WorkshopTestCase):
         copy = self.make_list_workshop(name="My Caravans", copy_of_template_id=self.made.template.id)
         template = WarbandTemplate.objects.get(pk=copy["template_id"])
         self.assertEqual((template.campaign_id, template.copied_from_id), (copy["id"], self.made.template.id))
-        self.assertEqual(copy["warband_types"], [{"id": self.mercenaries.id, "name": "Mercenaries"}])
+        self.assertEqual(
+            copy["warband_types"], [{"id": self.mercenaries.id, "name": "Mercenaries", "variant": "reikland"}]
+        )
         self.assertEqual(template.fighters.count(), 2)
         refused = self.post_as(self.player, "/api/workshop/lists/", {"name": "X", "copy_of_template_id": 0})
         self.assertEqual(refused.status_code, 400)
+
+    def test_a_lists_preview_carries_its_variants_and_each_types_preset(self) -> None:
+        listed = self.make_list_workshop(name="My Caravans", copy_of_template_id=self.made.template.id)
+        preview = self.get_as(self.outsider, f"/api/workshop/shared/{listed['share_code']}/").data
+        self.assertEqual(
+            (preview["warband_types"], preview["variants"]),
+            (
+                [{"id": self.mercenaries.id, "name": "Mercenaries", "variant": "reikland"}],
+                [{"key": "reikland", "name": "Reikland"}, {"key": "middenheim", "name": "Middenheim"}],
+            ),
+        )
+
+    def test_a_list_workshops_editor_doesnt_warn_that_the_book_serves_its_type_too(self) -> None:
+        listed = self.make_list_workshop(name="My Caravans", copy_of_template_id=self.made.template.id)
+        editor = self.get_as(self.player, f"/api/warband-templates/{listed['template_id']}/editor/")
+        self.assertEqual(editor.status_code, 200, editor.data)
+        self.assertFalse([w for w in editor.data["warnings"] if "serves it too" in w["text"]], editor.data["warnings"])
 
     def test_a_warband_raised_from_a_shared_list_code_uses_a_copy_of_it(self) -> None:
         listed = self.make_list_workshop(user=self.rival, name="Caravans+", copy_of_template_id=self.made.template.id)

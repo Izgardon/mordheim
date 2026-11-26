@@ -65,7 +65,10 @@ def held(workshops: list[Campaign]) -> Held:
 
 
 def type_names(template: WarbandTemplate) -> list[dict[str, Any]]:
-    return [{"id": link.warband_type_id, "name": link.warband_type.name} for link in template.type_links.all()]
+    return [
+        {"id": link.warband_type_id, "name": link.warband_type.name, "variant": link.variant}
+        for link in template.type_links.all()
+    ]
 
 
 def warband_row(workshop: Campaign, warband: Warband | None, value: Any) -> dict[str, Any]:
@@ -128,7 +131,8 @@ def preview(code: Any) -> dict[str, Any]:
     if workshop.holds == HOLDS_LIST:
         template = found.lists.get(workshop.pk)
         row = list_row(workshop, template)
-        return {**body, "name": row["name"], "warband_types": row["warband_types"]}
+        variants = list(template.variants) if template else []
+        return {**body, "name": row["name"], "warband_types": row["warband_types"], "variants": variants}
     warband = found.warbands.get(workshop.pk)
     value = roster_values([warband])[warband.pk] if warband else None
     row = warband_row(workshop, warband, value)

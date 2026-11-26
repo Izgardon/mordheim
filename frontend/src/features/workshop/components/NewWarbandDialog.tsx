@@ -74,11 +74,13 @@ export default function NewWarbandDialog({
   const variants = variantsToPick(picked);
   const listTypes = preview.data?.kind === "list" ? preview.data.warband_types : [];
   const listType = typeId ?? listTypes[0]?.id ?? null;
+  const listPreset = listTypes.find((type) => type.id === listType)?.variant ?? "";
+  const listVariants = preview.data?.kind === "list" && !listPreset ? preview.data.variants : [];
   const ready =
     Boolean(name.trim()) &&
     (source === "book"
       ? Boolean(picked) && (!variants.length || Boolean(variant))
-      : !!preview.data);
+      : !!preview.data && (!listVariants.length || Boolean(variant)));
 
   const change = (next: boolean) => {
     onOpenChange(next);
@@ -101,6 +103,7 @@ export default function NewWarbandDialog({
           name: name.trim(),
           list_code: cleanCode(code),
           ...(listType ? { warband_type_id: listType } : {}),
+          ...(variant && listVariants.length ? { template_variant: variant } : {}),
         };
   const submit = (event?: FormEvent) => {
     event?.preventDefault();
@@ -192,7 +195,18 @@ export default function NewWarbandDialog({
                 label="Warband type"
                 options={listTypes.map((type) => ({ key: type.id, name: type.name }))}
                 value={listType}
-                onChange={setTypeId}
+                onChange={(next) => {
+                  setTypeId(next);
+                  setVariant("");
+                }}
+              />
+            ) : null}
+            {listVariants.length ? (
+              <ChipPick
+                label="Variant"
+                options={listVariants}
+                value={variant || null}
+                onChange={setVariant}
               />
             ) : null}
           </>
