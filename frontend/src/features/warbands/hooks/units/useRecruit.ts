@@ -42,6 +42,18 @@ export const blankRecruit = (): RecruitDraft => ({
 const whole = (value: string) => Math.max(0, Math.trunc(Number(value) || 0));
 
 /**
+ * A recruit's name and type as sent: each only when typed. The server stores one left out as ""
+ * (an unnamed card reads his type, "Champion"), and refuses null.
+ */
+export function typedFields(fields: { name?: string; unit_type?: string }) {
+  return Object.fromEntries(
+    Object.entries(fields)
+      .map(([key, value]) => [key, value?.trim() ?? ""] as const)
+      .filter(([, value]) => value)
+  ) as { name?: string; unit_type?: string };
+}
+
+/**
  * Recruits a hero or a group (one batch create; from the template, the fighter's key with the
  * kit's purchases) and answers the new card's key so it can open in Edit.
  */
@@ -54,8 +66,7 @@ export function useRecruit(kind: RecruitKind, warbandId: number, existingIds: nu
     const type = draft.type.trim();
     const models = Math.max(1, Math.min(20, whole(draft.count) || 1));
     const body = {
-      name: draft.name.trim() || null,
-      unit_type: type || null,
+      ...typedFields({ name: draft.name, unit_type: type }),
       race: draft.race,
       price: whole(draft.cost),
       xp: whole(draft.xp),
@@ -82,7 +93,9 @@ export function useRecruit(kind: RecruitKind, warbandId: number, existingIds: nu
     const body = {
       fighter_key: fighter.key,
       // a group not named reads as his plural ("Zombies")
-      name: hire.name.trim() || (kind === "henchmen_group" ? fighter.plural || null : null),
+      ...typedFields({
+        name: hire.name.trim() || (kind === "henchmen_group" ? fighter.plural : ""),
+      }),
       price: whole(hire.cost),
       ...(kind === "henchmen_group"
         ? {

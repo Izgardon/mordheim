@@ -254,7 +254,8 @@ describe("Recruiting from the warband's template", () => {
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/9/heroes/batch/")).toEqual({
-        create: [{ fighter_key: "champions", name: null, price: 35 }],
+        // never `name: null`, which the server refuses: unnamed, his card reads his type
+        create: [{ fighter_key: "champions", price: 35 }],
       })
     );
   });
@@ -436,6 +437,19 @@ describe("The hand-typed recruit's creature search", () => {
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/")).toMatchObject({
         create: [{ unit_type: "Warhound", henchmen: [{ name: "Warhound 1" }] }],
+      })
+    );
+  });
+
+  // William, 26 Nov 2026: "Couldn't recruit. Create.0.name: This field may not be null."
+  it("sends no name or type for a recruit left without them, never null", async () => {
+    const user = setupUser();
+    renderByHand();
+
+    await user.click(await screen.findByRole("button", { name: "Recruit" }));
+    await waitFor(() =>
+      expect(fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/")).toEqual({
+        create: [{ race: null, price: 0, xp: 0, henchmen: [{ name: "Henchman 1" }] }],
       })
     );
   });

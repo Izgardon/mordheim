@@ -10,6 +10,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 
 import { isWarbandQuery, useWarbandCacheUpdate } from "../../api/warband-cache";
 import { useWarbandHireTemplate } from "../../api/warband-template-queries";
+import { typedFields } from "../../hooks/units/useRecruit";
 import { unitApi } from "../../units/unit-api";
 import { isCreatureGroup } from "../../utils/companions";
 import HireTally from "../recruit/HireTally";
@@ -88,11 +89,13 @@ export default function VeteransDialog({
         : await unitApi("henchmen_group").batch(camp.warbandId, {
             create: [
               {
-                name: name.trim() || fighter?.plural || null,
                 // from the template, the server fills his type, race, profile and rules
                 ...(fighter
-                  ? { fighter_key: fighter.key }
-                  : { unit_type: type.trim() || null, race: null }),
+                  ? {
+                      ...typedFields({ name: name.trim() || fighter.plural }),
+                      fighter_key: fighter.key,
+                    }
+                  : { ...typedFields({ name, unit_type: type }), race: null }),
                 price: gc,
                 xp: xpEach,
                 henchmen: names.map((recruitName) => ({ name: recruitName })),

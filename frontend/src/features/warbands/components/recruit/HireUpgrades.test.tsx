@@ -107,7 +107,7 @@ describe("Upgrades in the hire dialog", () => {
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/9/heroes/batch/")).toEqual({
-        create: [{ fighter_key: "chieftain", name: null, price: 50 }],
+        create: [{ fighter_key: "chieftain", price: 50 }],
         upgrades: [
           { create_index: 0, upgrade_id: 1, price: 50 },
           { create_index: 0, upgrade_id: 3, price: 0 },
