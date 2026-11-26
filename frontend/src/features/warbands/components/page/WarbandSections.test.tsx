@@ -122,7 +122,8 @@ describe("the warband page's sections", () => {
       "Roster",
       "Backstory",
     ]);
-    expect(screen.getByText("620 / 500")).toHaveClass("text-danger");
+    expect(screen.getByText("/ 500 gc").parentElement).toHaveClass("text-danger");
+    expect(screen.getByText("/ 500 gc").parentElement).toHaveTextContent(/^620 \/ 500 gc$/);
     expect(screen.queryByText("Gold")).toBeNull();
     expect(screen.queryByText("Record")).toBeNull();
     expect(screen.queryByRole("region", { name: "Resources" })).toBeNull();

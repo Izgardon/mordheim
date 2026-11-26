@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { GameIcon, type GameIconName } from "@/components/ui/game-icons";
-import { useFitText } from "@/lib/use-fit-text";
+import { FIT_VALUE, useFitRow } from "@/lib/use-fit-row";
 import { cn } from "@/lib/utils";
 
 import GoldWindow from "../header/GoldWindow";
@@ -36,6 +36,7 @@ type Total = {
   label: string;
   icon: GameIconName;
   value: string | number;
+  /** The smaller part after the value: "gc", "of 15", a workshop's "/ 500 gc". */
   unit?: string;
   hint: string;
   /** Opens its window; a total with none (a workshop's cost) is plain text. */
@@ -45,12 +46,11 @@ type Total = {
 };
 
 /**
- * A total's value, opening its window: on one line, its text shrinking to fit a narrow column
- * (William, 22 Nov 2026: "I would rather the text shrank ... data should try and stay on one line").
+ * A total's value, opening its window: on one line, at the size the row shares (`useFitRow`),
+ * its unit smaller.
  */
 function StatValue({ label, value, unit, hint, onClick, warn }: Total) {
-  // a span or a button: the one ref fits either
-  const fit = useFitText<HTMLSpanElement & HTMLButtonElement>(26, [value, unit]);
+  const fit = { [FIT_VALUE]: "" };
   const look = cn(
     "block w-full overflow-hidden whitespace-nowrap text-left font-display text-[26px] font-semibold",
     warn ? "text-danger" : "text-head"
@@ -63,14 +63,14 @@ function StatValue({ label, value, unit, hint, onClick, warn }: Total) {
   );
   if (!onClick) {
     return (
-      <span ref={fit} className={look}>
+      <span {...fit} className={look}>
         {shown}
       </span>
     );
   }
   return (
     <button
-      ref={fit}
+      {...fit}
       type="button"
       onClick={onClick}
       className={cn(look, "underline-offset-4 hover:underline")}
@@ -132,8 +132,8 @@ export default function WarbandStats(props: WarbandStatsProps) {
         {
           label: "Cost",
           icon: "gold" as const,
-          value: `${workshop.cost} / ${workshop.budget}`,
-          unit: "gc",
+          value: workshop.cost,
+          unit: `/ ${workshop.budget} gc`,
           hint: "",
           warn: workshop.cost > workshop.budget,
         },
@@ -142,10 +142,17 @@ export default function WarbandStats(props: WarbandStatsProps) {
       ]
     : totals;
   const opener = (name: Window) => (open: boolean) => setShown(open ? name : null);
+  const row = useFitRow<HTMLDListElement>(
+    26,
+    shownTotals.map((total) => `${total.value} ${total.unit ?? ""}`)
+  );
 
   return (
     <>
-      <dl className={cn("m-0 grid border-y border-line", workshop ? "grid-cols-3" : "grid-cols-4")}>
+      <dl
+        ref={row}
+        className={cn("m-0 grid border-y border-line", workshop ? "grid-cols-3" : "grid-cols-4")}
+      >
         {shownTotals.map((total) => (
           <div key={total.label} className="flex min-w-0 flex-col gap-0.5 py-3.5 pr-3">
             <dt className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">

@@ -187,9 +187,29 @@ describe("The header's windows", () => {
   it("shows a workshop warband's rating plain, with no breakdown to open", () => {
     renderStats(vi.fn(), { cost: 455, budget: 500 });
 
-    expect(screen.getByText("455 / 500")).toBeInTheDocument();
+    expect(screen.getByText("/ 500 gc")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /^Rating/ })).toBeNull();
     expect(screen.getByText("51.5")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /^Gold/ })).toBeNull();
+  });
+
+  // William, 26 Nov 2026: Rating's and Units' values the size of Cost's, its "500" smaller still
+  it("gives every value the one size, the tightest's, with the budget in the smaller part", () => {
+    const tight = (element: HTMLElement) => element.textContent?.startsWith("455") ?? false;
+    vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(60);
+    vi.spyOn(HTMLElement.prototype, "scrollWidth", "get").mockImplementation(function (
+      this: HTMLElement
+    ) {
+      return tight(this) ? 120 : 30;
+    });
+    renderStats(vi.fn(), { cost: 455, budget: 500 });
+
+    const cost = screen.getByText("/ 500 gc").parentElement as HTMLElement;
+    expect(cost).toHaveTextContent(/^455 \/ 500 gc$/);
+    expect(cost.style.fontSize).toBe("13px");
+    expect(screen.getByText("51.5").style.fontSize).toBe("13px");
+    expect(screen.getByText("of 15").parentElement?.style.fontSize).toBe("13px");
+    expect(screen.getByText("/ 500 gc")).toHaveClass("text-[0.5em]");
+    vi.restoreAllMocks();
   });
 });
