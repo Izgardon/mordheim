@@ -1,5 +1,6 @@
 """Copying a warband list (a warband template) into another campaign as that campaign's own (the workshop plan's
-imports): a list imported into a campaign, a list or a warband's list copied into a workshop (with its own code).
+imports): a list imported into a campaign, a list or a warband's list copied into a workshop (with its own code), with
+the custom content it uses (content.py: its items, races, skills and specials, linked or copied).
 
 The copy is the template editor's copy (`versions.copy_entry` with `version` off: every child row, its fighters' keys,
 the types it serves), made across campaigns: the rules the source campaign wrote for it (its own specials, typed
@@ -25,9 +26,11 @@ from apps.warband_templates.models import (
     TemplateListItem,
     TemplateUpgrade,
     WarbandTemplate,
+    WarbandTemplateType,
 )
 from apps.warband_templates.services.own_specials import special_type
 
+from .content import Carried, Target, carry
 from .relink import Relinker, Warning, entry_links
 
 MAX_NAME = 160
@@ -45,6 +48,7 @@ LINKED_CHILDREN: tuple[tuple[str, type[Model]], ...] = (
 class CopiedList:
     template: WarbandTemplate
     specials: dict[int, int] = field(default_factory=dict)  # the source's own specials -> their copies
+    carried: Carried = field(default_factory=Carried)  # its custom content, as the target now holds it
     warnings: list[Warning] = field(default_factory=list)
 
 
@@ -91,31 +95,56 @@ def _copy_specials(source: WarbandTemplate, copy_name: str, campaign_id: int) ->
     return {old.pk: new.pk for old, new in zip(originals, made, strict=True)}
 
 
-def _relink_children(template: Any, relinker: Relinker) -> None:
-    """Point the copy's child rows at the target's entries; a row that can't do without a link it lost goes."""
+def _children(template: Any) -> dict[type[Model], list[Model]]:
+    """The copy's child rows that link catalogue entries, by table (one query each)."""
     copied: dict[str, dict[Any, Any]] = template.copied_ids
+    rows: dict[type[Model], list[Model]] = {}
     for path, model in LINKED_CHILDREN:
         ids = list(copied.get(path, {}).values())
-        if not ids:
-            continue
-        rows = list(model._default_manager.filter(pk__in=ids))
-        relinker.prepare({model: rows})
+        if ids:
+            rows[model] = list(model._default_manager.filter(pk__in=ids))
+    return rows
+
+
+def _relink_children(rows: dict[type[Model], list[Model]], relinker: Relinker, renamed: dict[str, str]) -> None:
+    """Point the copy's child rows at the target's entries (a fighter's skill groups at their copies' names); a row
+    that can't do without a link it lost goes."""
+    relinker.prepare(rows)
+    for model, found in rows.items():
         kept: list[Model] = []
         dropped: list[Model] = []
-        for row in rows:
+        for row in found:
             (kept if relinker.relink(row) else dropped).append(row)
         fields = [attname for attname, _, _ in entry_links(model)]
+        if model is TemplateFighter and renamed:
+            for fighter in kept:
+                fighter.skill_types = [renamed.get(str(name), name) for name in fighter.skill_types]  # type: ignore[attr-defined]
+            fields.append("skill_types")
         if kept:
             model._default_manager.bulk_update(kept, fields)
         if dropped:
             model._default_manager.filter(pk__in=[row.pk for row in dropped]).delete()
 
 
+def _drop_foreign_types(template: Any, target_id: int) -> list[str]:
+    """The types the copy serves that are another campaign's own go; their names (two queries, none for none)."""
+    ids = list(template.copied_ids.get("type_links", {}).values())
+    links = WarbandTemplateType.objects.filter(pk__in=ids, warband_type__campaign__isnull=False).exclude(
+        warband_type__campaign_id=target_id
+    )
+    names = list(links.values_list("warband_type__name", flat=True)) if ids else []
+    if names:
+        links.delete()
+    return names
+
+
 def copy_list(
-    source: WarbandTemplate, campaign_id: int, user: Any, name: str | None = None, share_code: str | None = None
+    source: WarbandTemplate, target: Target, name: str | None = None, share_code: str | None = None
 ) -> CopiedList:
-    """The source list as the campaign's own template, with its own specials, in the caller's transaction; the
-    campaign's catalogue lists are bumped (templates and specials). `share_code`: a workshop's copy's code."""
+    """The source list as the target's own template, with its own specials and the custom content it uses
+    (content.py), in the caller's transaction; the target's catalogue lists are bumped (templates and specials).
+    `share_code`: a workshop's copy's code."""
+    campaign_id = target.campaign.pk
     copy_name = free_name(campaign_id, (name or source.name).strip()[:MAX_NAME])
     specials = _copy_specials(source, copy_name, campaign_id)
     made = copy_entry(
@@ -127,12 +156,18 @@ def copy_list(
         slug="",
         share_code=share_code,
         copied_from_id=source.pk,
-        updated_by_id=user.pk,
+        updated_by_id=target.user.pk,
         updated_at=timezone.now(),
     )
     assert isinstance(made, WarbandTemplate)
-    relinker = Relinker(campaign_id, {Special: specials})
+    carried = Carried(own={Special: specials})
+    relinker = Relinker(campaign_id, carried.own)
     if source.campaign_id is not None:  # the book's links were pointed at the target's versions by copy_entry
-        _relink_children(made, relinker)
+        rows = _children(made)
+        carried = carry(source.campaign_id, target, rows, {Special: specials})
+        relinker = Relinker(campaign_id, carried.own)
+        _relink_children(rows, relinker, carried.renamed)
+    relinker.left_out += _drop_foreign_types(made, campaign_id)
     bump(campaign_id, *WARBAND_TEMPLATES.changed_lists)
-    return CopiedList(template=made, specials=specials, warnings=relinker.warnings())
+    warnings = [*relinker.warnings(), *carried.warnings(target.live)]
+    return CopiedList(template=made, specials=specials, carried=carried, warnings=warnings)

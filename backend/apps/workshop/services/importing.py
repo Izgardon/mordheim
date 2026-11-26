@@ -33,6 +33,7 @@ from apps.warbands.services.roster_cost import roster_cost
 from apps.warbands.services.types import picked_types
 
 from .codes import unique_share_code
+from .content import Target
 from .copy_list import copy_list
 from .copy_warband import copy_warband
 from .making import workshop_for
@@ -85,7 +86,7 @@ def _list_to_raise_from(
     source = _shared_list(data["list_code"])
     if source.campaign_id == workshop.pk:
         return source, []
-    listed = copy_list(source, workshop.pk, user, share_code=unique_share_code())
+    listed = copy_list(source, Target(workshop, user, live=True), share_code=unique_share_code())
     return listed.template, listed.warnings
 
 
@@ -165,7 +166,7 @@ def _list_into_workshop(user: Any, source: WarbandTemplate) -> Made:
     """A copy of the list in the player's workshop, with its own code."""
     with transaction.atomic():
         workshop = workshop_for(user)
-        copied = copy_list(source, workshop.pk, user, share_code=unique_share_code())
+        copied = copy_list(source, Target(workshop, user, live=True), share_code=unique_share_code())
     return Made(template=copied.template, warnings=copied.warnings)
 
 
@@ -188,17 +189,17 @@ def list_to_workshop(user: Any, source: WarbandTemplate) -> Made:
     return _list_into_workshop(user, source)
 
 
-def import_warband(campaign: Campaign, user: Any, code: Any, serve_types: bool) -> Made:
-    """The warband `code` shares, copied into the campaign as the user's and paid for (`serve_types`: whether a list
-    that comes with it serves its types here, for an importer who may edit the catalogue)."""
+def import_warband(campaign: Campaign, user: Any, code: Any, editor: bool) -> Made:
+    """The warband `code` shares, copied into the campaign as the user's and paid for (`editor`: the importer may
+    edit the catalogue here, so a list that comes with it serves its types and its custom content is live)."""
     source = _shared_warband(code)
     if Warband.objects.filter(campaign=campaign, user=user).exists():
         raise CampaignError(HAS_WARBAND, code="has_warband", status=409)
     try:
         with transaction.atomic():
-            copied = copy_warband(source, campaign, user, serve_types)
+            copied = copy_warband(source, campaign, user, editor)
             warnings = [*copied.warnings, *_pay(copied.warband, source.name)]
-            if serve_types and copied.template is not None:
+            if editor and copied.template is not None:
                 name = copied.template.name
                 message = SERVES_HERE.format(name=name)
                 warnings.append({"code": "list_serves_type", "message": message, "names": [name]})
@@ -213,5 +214,5 @@ def import_list(campaign: Campaign, user: Any, code: Any) -> Made:
     """The list `code` shares, copied into the campaign as its own template."""
     source = _shared_list(code)
     with transaction.atomic():
-        copied = copy_list(source, campaign.pk, user)
+        copied = copy_list(source, Target(campaign, user, live=True))  # an editor imports a list
     return Made(template=copied.template, warnings=copied.warnings)

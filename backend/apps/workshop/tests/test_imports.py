@@ -187,7 +187,8 @@ class CampaignWarbandImportTests(ImportTestCase):
             copy_warband(large, self.elsewhere, self.outsider)
 
 
-COPY_QUERIES = 54  # each table read once and written once, each kind of entry resolved once
+# each table read once and written once, each kind of entry resolved once, and its custom content looked for
+COPY_QUERIES = 62
 
 
 class ListComesWithItTests(ImportTestCase):

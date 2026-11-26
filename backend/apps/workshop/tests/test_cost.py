@@ -2,6 +2,7 @@
 
 from typing import Any
 
+from apps.campaigns.models import CampaignSettings
 from apps.warbands.models import Warband
 from apps.warbands.services.purchases import OVER_BUDGET
 from apps.warbands.services.roster_cost import roster_cost, roster_value
@@ -59,6 +60,18 @@ class CostTests(WorkshopTestCase):
         response = self.post_as(self.player, f"{base}purchases/", body)
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(response.data["summary"]["workshop"], {"cost": KIT_COST + 50, "budget": 500})
+
+    def test_hiring_above_the_budget_warns_of_the_budget_and_goes_ahead(self) -> None:
+        row = self.kitted()
+        CampaignSettings.objects.filter(campaign_id=row["campaign_id"]).update(starting_gold=250)
+        body = {"source": "hired_sword", "id": self.ogre.id}
+        response = self.post_as(self.player, f"/api/warbands/{row['id']}/hirelings/hire/", body)
+        self.assertEqual(response.status_code, 201, response.data)
+        warning = next(found for found in response.data["warnings"] if found["code"] == OVER_BUDGET)
+        self.assertEqual((warning["cost"], warning["budget"]), (KIT_COST + 80, 250))
+        in_campaign = self.post_as(self.player, f"/api/warbands/{self.warband.id}/hirelings/hire/", body)
+        self.assertEqual(in_campaign.status_code, 201, in_campaign.data)
+        self.assertNotIn(OVER_BUDGET, [found["code"] for found in in_campaign.data["warnings"]])
 
     def test_a_campaigns_warband_has_no_workshop_in_its_summary(self) -> None:
         warband = Warband.objects.create(campaign=self.elsewhere, user=self.outsider, name="Far")
