@@ -16,8 +16,8 @@ never applied again, so pressing Next twice pays once (services/postbattle/final
 
 What each step hands over:
 
-- `injuries`: each unit's serious injury (its stat change, special and death), the items a dead unit took with him,
-  the mounts lost and the single-use items used in battle;
+- `injuries`: each unit's serious injury (its stat change, special and death), the items a dead unit took with him
+  and the mounts lost (the single-use items used in battle went when his battle finished: finishing.py);
 - `xp`: the battle XP, the level-ups it crosses, the advances rolled and the kept stat changes;
 - `explore`: the shards found and the gold and items found with them.
 
