@@ -29,7 +29,7 @@ def made(found: Made) -> dict[str, Any]:
     `kind` and the warnings it left."""
     if found.warband is not None:
         warband = reads.live_warbands().get(pk=found.warband.pk)
-        return {**reads.warband_rows([warband])[0], "kind": "warband", "warnings": found.warnings}
+        return {**reads.warband_row(warband), "kind": "warband", "warnings": found.warnings}
     assert found.template is not None
     template = reads.live_lists().get(pk=found.template.pk)
     return {**reads.list_row(template), "kind": "list", "warnings": found.warnings}

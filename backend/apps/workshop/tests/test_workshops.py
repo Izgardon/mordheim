@@ -15,8 +15,8 @@ from apps.warbands.models import Warband
 
 from .support import WorkshopTestCase
 
-# the workshop, its warbands, their costs and their named lists, its lists and their types
-LIST_QUERIES = 7
+# the workshop, its warbands, its lists and their types (no cost or budget: William, 26 Nov 2026)
+LIST_QUERIES = 4
 
 
 class MakingTests(WorkshopTestCase):
@@ -34,11 +34,12 @@ class MakingTests(WorkshopTestCase):
         self.assertEqual((warband.user_id, warband.gold, warband.template_variant), (self.player.id, 500, "reikland"))
         self.assertEqual((warband.in_workshop, warband.template_id), (True, self.made.template.id))
         self.assertEqual(list(warband.rules.values_list("title", flat=True)), ["Hard Bargains", "Marksmen"])
-        picked = ("kind", "cost", "budget", "template_id", "warnings")
+        picked = ("kind", "template_id", "warnings")
         self.assertEqual(
             {key: first[key] for key in picked},
-            {"kind": "warband", "cost": 0, "budget": 500, "template_id": self.made.template.id, "warnings": []},
+            {"kind": "warband", "template_id": self.made.template.id, "warnings": []},
         )
+        self.assertNotIn("cost", first)
         self.assertEqual(len({first["share_code"], second["share_code"]}), 2)
         self.assertTrue(set(first["share_code"]) <= set(SHARE_CODE_ALPHABET) and len(first["share_code"]) == 8)
 
@@ -98,7 +99,8 @@ class MakingTests(WorkshopTestCase):
         row = self.make_warband(list_id=second["id"], warband_type_id=None)
         warband = self.warband_of(row)
         self.assertEqual((warband.template_id, warband.warband_type_id), (second["id"], self.mercenaries.id))
-        self.assertEqual((row["budget"], warband.gold), (700, 700))
+        summary = self.get_as(self.player, f"/api/warbands/{row['id']}/summary/").data["workshop"]
+        self.assertEqual((summary["budget"], warband.gold), (700, 700))
         sheet = self.get_as(self.player, f"/api/warbands/{row['id']}/template/").data
         self.assertEqual(sheet["template"]["id"], second["id"])
         # William, 26 Nov 2026: a type uses the book's list, never one of mine ("One of my lists" is how I use those)
@@ -158,6 +160,11 @@ class ListingTests(WorkshopTestCase):
         self.make_warband(user=self.rival)
         data = self.get_as(self.player, "/api/workshop/").data
         self.assertEqual(data["id"], mine["campaign_id"])
+        # William, 26 Nov 2026: Home's card shows no cost, so the row carries none
+        self.assertEqual(
+            sorted(data["warbands"][0]),
+            ["campaign_id", "id", "name", "no_list", "share_code", "template_id", "updated_at", "warband_type"],
+        )
         self.assertEqual([row["id"] for row in data["warbands"]], [mine["id"]])
         self.assertEqual([row["id"] for row in data["lists"]], [listed["id"]])
         campaigns = [row["id"] for row in self.get_as(self.player, "/api/campaigns/").data]

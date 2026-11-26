@@ -22,11 +22,8 @@ class NoListTestCase(WorkshopTestCase):
 class MakingTests(NoListTestCase):
     def test_a_warband_with_no_list_reads_none_on_its_budget_and_most_warriors(self) -> None:
         row = self.make_listless()
-        picked = ("kind", "template_id", "cost", "budget", "warnings")
-        self.assertEqual(
-            {key: row[key] for key in picked},
-            {"kind": "warband", "template_id": None, "cost": 0, "budget": 500, "warnings": []},
-        )
+        picked = ("kind", "template_id", "warnings")
+        self.assertEqual({key: row[key] for key in picked}, {"kind": "warband", "template_id": None, "warnings": []})
         self.assertEqual(row["warband_type"], {"id": self.mercenaries.id, "name": "Mercenaries"})
         warband = self.warband_of(row)
         self.assertEqual(
@@ -36,7 +33,7 @@ class MakingTests(NoListTestCase):
         self.assertFalse(warband.rules.exists())  # the book list's rules never come
         own = self.make_listless(name="Lean", budget=300, max_units=10, template_variant="reikland")
         warband = self.warband_of(own)
-        self.assertEqual((own["budget"], warband.max_units, warband.template_variant), (300, 10, ""))
+        self.assertEqual((warband.budget, warband.max_units, warband.template_variant), (300, 10, ""))
 
     def test_a_warband_with_no_list_still_takes_a_type_and_names_no_list(self) -> None:
         url = "/api/workshop/warbands/"
@@ -80,13 +77,12 @@ class ReadingTests(NoListTestCase):
         self.client.force_authenticate(user=self.player)
         with self.assertNumQueries(LIST_QUERIES):
             rows = self.client.get("/api/workshop/").data["warbands"]
-        self.assertEqual([row["budget"] for row in rows], [500, 500])
         for index in range(1, 4):
             self.make_listless(name=f"No list {index}", budget=100 * index)
         self.client.force_authenticate(user=self.player)
         with self.assertNumQueries(LIST_QUERIES):
             rows = self.client.get("/api/workshop/").data["warbands"]
-        self.assertEqual([row["budget"] for row in rows], [300, 200, 100, 500, 500])
+        self.assertEqual(len(rows), 5)
         self.assertEqual([row["no_list"] for row in rows], [True, True, True, True, False])  # Home's card says so
 
 
@@ -165,9 +161,8 @@ class CopyingTests(NoListTestCase):
         row = self.make_listless(budget=350)
         copy = self.post_as(self.rival, "/api/workshop/import/", {"code": row["share_code"]})
         self.assertEqual(copy.status_code, 201, copy.data)
-        self.assertEqual((copy.data["template_id"], copy.data["budget"]), (None, 350))
         copied = self.warband_of(copy.data)
-        self.assertEqual((copied.no_list, copied.gold), (True, 350))
+        self.assertEqual((copy.data["template_id"], copied.no_list, copied.budget, copied.gold), (None, True, 350, 350))
         Warband.objects.filter(campaign=self.elsewhere, user=self.outsider).delete()
         imported = self.post_as(
             self.outsider, f"/api/campaigns/{self.elsewhere.id}/warbands/import/", {"code": row["share_code"]}

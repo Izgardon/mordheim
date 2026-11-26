@@ -255,7 +255,9 @@ class IntoMyWorkshopTests(ImportTestCase):
         row = self.kitted()
         copied = self.post_as(self.outsider, "/api/workshop/import/", {"code": row["share_code"]})
         self.assertEqual(copied.status_code, 201, copied.data)
-        self.assertEqual((copied.data["kind"], copied.data["cost"], copied.data["budget"]), ("warband", KIT_COST, 500))
+        self.assertEqual(copied.data["kind"], "warband")
+        summary = self.get_as(self.outsider, f"/api/warbands/{copied.data['id']}/summary/").data["workshop"]
+        self.assertEqual(summary, {"cost": KIT_COST, "budget": 500})
         self.assertNotEqual(copied.data["share_code"], row["share_code"])
         copy = Warband.objects.get(pk=copied.data["id"])
         self.assertEqual(

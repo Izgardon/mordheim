@@ -17,7 +17,7 @@ from apps.core.share_codes import normalised
 from apps.users.names import display_name
 from apps.warband_templates.models import WarbandTemplate, WarbandTemplateType
 from apps.warbands.models import Warband
-from apps.warbands.services.roster_cost import RosterValue, roster_values
+from apps.warbands.services.roster_cost import roster_value
 
 from .making import workshop_of
 
@@ -66,7 +66,8 @@ def type_names(template: WarbandTemplate) -> list[dict[str, Any]]:
     ]
 
 
-def warband_row(warband: Warband, value: RosterValue) -> dict[str, Any]:
+def warband_row(warband: Warband) -> dict[str, Any]:
+    """A warband as `GET workshop/` lists it: no cost or budget (Home's card shows none: William, 26 Nov 2026)."""
     return {
         "id": warband.pk,
         "campaign_id": warband.campaign_id,
@@ -76,8 +77,6 @@ def warband_row(warband: Warband, value: RosterValue) -> dict[str, Any]:
         ),
         "template_id": warband.template_id,
         "no_list": warband.no_list,  # it reads no list at all: Home's card says so (William, 26 Nov 2026)
-        "cost": value.cost,
-        "budget": value.budget,
         "share_code": warband.share_code,
         "updated_at": warband.updated_at,
     }
@@ -95,21 +94,19 @@ def list_row(template: WarbandTemplate) -> dict[str, Any]:
     }
 
 
-def warband_rows(warbands: list[Warband]) -> list[dict[str, Any]]:
-    """The warbands as `GET workshop/` lists them, each with its cost and budget (at most five queries)."""
-    values = roster_values(warbands)
-    return [warband_row(warband, values[warband.pk]) for warband in warbands]
-
-
 def mine(user: Any) -> dict[str, Any]:
     """The player's workshop: its id (null before his first use), his warbands and his lists, newest first (at most
-    eight queries, whatever their number)."""
+    four queries, whatever their number)."""
     workshop = workshop_of(user)
     if workshop is None:
         return {"id": None, "warbands": [], "lists": []}
     warbands = list(live_warbands().filter(campaign=workshop).order_by("-created_at", "-id"))
     lists = live_lists().filter(campaign=workshop).order_by("-id")
-    return {"id": workshop.pk, "warbands": warband_rows(warbands), "lists": [list_row(row) for row in lists]}
+    return {
+        "id": workshop.pk,
+        "warbands": [warband_row(row) for row in warbands],
+        "lists": [list_row(row) for row in lists],
+    }
 
 
 def preview(code: Any) -> dict[str, Any]:
@@ -124,10 +121,10 @@ def preview(code: Any) -> dict[str, Any]:
         return {"kind": "list", "maker": display_name(owner) if owner else "", **{key: row[key] for key in picked}}
     warband = found.warband
     assert warband is not None
-    row = warband_rows([warband])[0]
-    shown = ("name", "share_code", "warband_type", "cost", "budget")
+    row, value = warband_row(warband), roster_value(warband)
+    shown = ("name", "share_code", "warband_type")
     body = {"kind": "warband", "maker": display_name(warband.user), **{key: row[key] for key in shown}}
-    return {**body, **_counts(warband)}
+    return {**body, "cost": value.cost, "budget": value.budget, **_counts(warband)}
 
 
 def _alive(prefix: str) -> Q:

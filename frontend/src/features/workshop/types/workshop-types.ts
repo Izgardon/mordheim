@@ -19,8 +19,6 @@ export type WorkshopWarbandRow = {
   template_id: number | null;
   /** It reads no list at all: its own budget, every unit made by hand. */
   no_list: boolean;
-  cost: number;
-  budget: number;
   share_code: string;
   updated_at: string;
 };
