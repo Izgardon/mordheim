@@ -88,9 +88,11 @@ export default function GroupCard({ entry, recentKeys, onOpen, actions }: GroupC
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
-          <h3 className="m-0 font-display text-[17px] font-semibold text-head">{group.name}</h3>
-          <span className="font-mono text-xs text-accent-text">×{members.length}</span>
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <div className="flex flex-wrap items-baseline gap-x-2">
+            <h3 className="m-0 font-display text-[17px] font-semibold text-head">{group.name}</h3>
+            <span className="font-mono text-xs text-accent-text">×{members.length}</span>
+          </div>
           <span className="text-xs text-muted-foreground">{group.unitType}</span>
         </div>
         {actions ? (

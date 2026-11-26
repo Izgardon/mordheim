@@ -65,7 +65,7 @@ export default function UnitCard({ view, typeLine, recent, onOpen, actions }: Un
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <div className="flex min-w-0 flex-col gap-0.5">
           <h3 className="m-0 font-display text-[17px] font-semibold text-head">
             {unit.displayName}
           </h3>
