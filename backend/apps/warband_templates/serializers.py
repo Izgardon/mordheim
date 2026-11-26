@@ -189,14 +189,16 @@ class TemplateListSerializer(serializers.ModelSerializer):
 
 
 class TemplateFighterSerializer(serializers.ModelSerializer):
-    """A fighter: his figures, profile as written, skill groups, lores, lists, rules and the skills he starts with,
-    and what each variant changes on him, a skill it gives him carrying its rules from the `skill_texts` context."""
+    """A fighter: his figures, profile as written, skill groups, lores, lists, rules and the skills and spells he starts
+    with, and what each variant changes on him, a skill it gives him carrying its rules from the `skill_texts`
+    context."""
 
     race = serializers.SerializerMethodField()
     lists = serializers.SerializerMethodField()
     variant_changes = serializers.SerializerMethodField()
     rules = TemplateSpecialSerializer(source="special_links", many=True, read_only=True)
     skills = TemplateSkillSerializer(source="skill_links", many=True, read_only=True)
+    spells = serializers.SerializerMethodField()
 
     class Meta:
         model = TemplateFighter
@@ -228,7 +230,12 @@ class TemplateFighterSerializer(serializers.ModelSerializer):
             "lists",
             "rules",
             "skills",
+            "spells",
         )
+
+    def get_spells(self, fighter: TemplateFighter) -> list[dict[str, Any]]:
+        """The spells he starts with, read with him (selectors.with_start_spells)."""
+        return list(getattr(fighter, "start_spells", None) or [])
 
     def get_race(self, fighter: TemplateFighter) -> str | None:
         return fighter.race.name if fighter.race is not None else None

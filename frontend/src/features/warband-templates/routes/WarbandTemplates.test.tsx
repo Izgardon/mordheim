@@ -179,6 +179,7 @@ const MERCENARIES: WarbandTemplate = {
       lists: ["mercenary-equipment"],
       rules: [],
       skills: [{ id: 5, name: "Hunter", description: "Fires each turn." }],
+      spells: [{ id: 5, name: "Sacrificial Ritual", description: "A sacrifice." }],
     },
   ],
   upgrades: [],
@@ -282,10 +283,15 @@ describe("The Warbands page", () => {
       "35 gc · 0–2"
     );
     expect(tags("Skills")).toBe("SkillsCombatStrengthSpeed");
-    // the skills he starts with, his own then his variant's, each opened to read (William, 7 Nov 2026)
+    // the skills he starts with, his own then his variant's, each opened to read (William, 7 Nov 2026),
+    // then his spells (William, 26 Nov 2026)
     const champion = within(screen.getByRole("article", { name: "Champion" }));
-    const starts = champion.getByText("Starts with: Hunter, Ride [Animal]").closest("details");
-    expect(starts).toHaveTextContent("HunterFires each turn.Ride [Animal]Rides the animal.");
+    const starts = champion
+      .getByText("Starts with: Hunter, Ride [Animal], Sacrificial Ritual")
+      .closest("details");
+    expect(starts).toHaveTextContent(
+      "HunterFires each turn.Ride [Animal]Rides the animal.Sacrificial RitualA sacrifice."
+    );
     expect(screen.getByRole("button", { name: "Middenheim" })).toHaveAttribute(
       "aria-pressed",
       "true"
@@ -296,7 +302,7 @@ describe("The Warbands page", () => {
 
     await user.click(screen.getByRole("button", { name: "Reikland" }));
     expect(tags("Skills")).toBe("SkillsCombatShootingStrength");
-    expect(champion.getByText("Starts with: Hunter")).toBeInTheDocument();
+    expect(champion.getByText("Starts with: Hunter, Sacrificial Ritual")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Reiklander Special rules" }));
     expect(
       await screen.findByRole("article", { name: "Reiklander Special rules" })

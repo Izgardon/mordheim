@@ -8,6 +8,7 @@ import {
   skillsFor,
   spellLabel,
   startSkillsFor,
+  startsWith,
   listsFor,
 } from "../template-view";
 import type { TemplateFighter, WarbandTemplate } from "../types/template-types";
@@ -59,7 +60,7 @@ export default function TemplateFighterCard({
     .map((key) => held.find((entry) => entry.key === key)?.name)
     .filter((name): name is string => Boolean(name));
   const name = fighter.kind === "henchman" && fighter.plural ? fighter.plural : fighter.name;
-  const starts = startSkillsFor(fighter, variant);
+  const starts = startsWith(startSkillsFor(fighter, variant), fighter.spells);
   return (
     <article
       aria-label={fighter.name}
@@ -77,12 +78,12 @@ export default function TemplateFighterCard({
       {starts.length ? (
         <details className="group">
           <summary className="cursor-pointer text-xs font-semibold text-accent-text">
-            Starts with: {starts.map((skill) => skill.name).join(", ")}
+            Starts with: {starts.map((start) => start.name).join(", ")}
           </summary>
           <div className="mt-2 flex flex-col gap-2.5">
-            {starts.map((skill) => (
-              <RuleBlock key={skill.id} name={skill.name}>
-                {skill.description}
+            {starts.map((start) => (
+              <RuleBlock key={start.key} name={start.name}>
+                {start.description}
               </RuleBlock>
             ))}
           </div>

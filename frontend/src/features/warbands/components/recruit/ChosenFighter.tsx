@@ -1,6 +1,6 @@
 import { RuleBlock, TagList } from "@/features/reference/ReferenceDetail";
 import { ProfileStrip } from "@/features/reference/profile";
-import { groupLabel, spellLabel } from "@/features/warband-templates/template-view";
+import { groupLabel, spellLabel, startsWith } from "@/features/warband-templates/template-view";
 import type { SpecialKind } from "@/components/ui/game-icons";
 
 import type { TemplateFighter } from "../../types/hire-template-types";
@@ -50,6 +50,7 @@ export default function ChosenFighter({
   onChange: () => void;
 }) {
   const name = fighter.kind === "henchman" && fighter.plural ? fighter.plural : fighter.name;
+  const starts = startsWith(fighter.skills, fighter.spells);
   return (
     <div className="flex flex-col gap-1.5">
       <RecruitAsHeader onChange={onChange} />
@@ -65,15 +66,15 @@ export default function ChosenFighter({
         <ProfileStrip profile={{ ...fighter, armour_save: null }} />
         <Tags label="Skills" names={fighter.skill_types} />
         <Tags label="Spells" names={fighter.spell_types.map(spellLabel)} />
-        {fighter.skills.length ? (
+        {starts.length ? (
           <details>
             <summary className="min-h-6 cursor-pointer text-xs font-semibold text-accent-text">
-              Starts with: {fighter.skills.map((skill) => skill.name).join(", ")}
+              Starts with: {starts.map((start) => start.name).join(", ")}
             </summary>
             <div className="mt-2 flex flex-col gap-2.5">
-              {fighter.skills.map((skill) => (
-                <RuleBlock key={skill.id} name={skill.name}>
-                  {skill.description}
+              {starts.map((start) => (
+                <RuleBlock key={start.key} name={start.name}>
+                  {start.description}
                 </RuleBlock>
               ))}
             </div>

@@ -25,6 +25,7 @@ from apps.skills.models import Skill
 from apps.special.categories import book_category
 from apps.special.kinds import WARBAND, book_kind
 from apps.special.models import Special
+from apps.spells.models import Spell
 from apps.warbands.models import WarbandType
 from apps.warbands.utils.stats import MAX_STAT, Stat, read_stat
 
@@ -33,6 +34,7 @@ from .models import (
     TemplateFighterList,
     TemplateFighterSkill,
     TemplateFighterSpecial,
+    TemplateFighterSpell,
     TemplateList,
     TemplateListItem,
     TemplateRule,
@@ -105,6 +107,9 @@ class BookRows:
         }
         self.specials = {(row.name, row.type): row.pk for row in Special.objects.filter(**book)}
         self.skills = dict(Skill.objects.filter(**book).values_list("name", "id"))
+        self.spells = {
+            (lore, name): pk for pk, lore, name in Spell.objects.filter(**book).values_list("id", "type", "name")
+        }
         self.seen_specials: set[int] = set()
 
     @staticmethod
@@ -127,6 +132,9 @@ class BookRows:
 
     def skill(self, name: str, owner: str) -> int:
         return self._found(self.skills, name, "skill", owner)
+
+    def spell(self, ref: Mapping[str, str], owner: str) -> int:
+        return self._found(self.spells, (ref["lore"], ref["name"]), "spell", owner)
 
     def variant_changes(self, changes: Mapping[str, Any], owner: str) -> dict[str, Any]:
         """A fighter's `variant_changes` as stored: the skills a variant gives him, named in the import, linked to the
@@ -231,8 +239,8 @@ def _line(made: TemplateList, position: int, line: dict[str, Any], owner: str, b
 def write_fighters(
     template: WarbandTemplate, entries: list[dict[str, Any]], lists: dict[str, int], book: BookRows
 ) -> None:
-    """The template's fighters, the lists each buys from, his rules and the skills he starts with (the book's of their
-    names)."""
+    """The template's fighters, the lists each buys from, his rules and the skills and spells he starts with (the
+    book's of their names, a spell's in its lore)."""
     owner = template.name
     fighters = TemplateFighter.objects.bulk_create(
         TemplateFighter(
@@ -260,6 +268,11 @@ def write_fighters(
         TemplateFighterSkill(fighter=fighter, position=n, skill_id=book.skill(name, f"{owner}, {row['name']}"))
         for fighter, row in zip(fighters, entries, strict=True)
         for n, name in enumerate(row["skills"])
+    )
+    TemplateFighterSpell.objects.bulk_create(
+        TemplateFighterSpell(fighter=fighter, position=n, spell_id=book.spell(ref, f"{owner}, {row['name']}"))
+        for fighter, row in zip(fighters, entries, strict=True)
+        for n, ref in enumerate(row.get("spells") or [])
     )
 
 

@@ -1,3 +1,4 @@
+import type { Spell } from "@/features/spells/types/spell-types";
 import type { SpecialCategory } from "@/components/ui/game-icons";
 import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
 import type { CatalogueProfile } from "@/features/reference/profile";
@@ -180,6 +181,8 @@ export type TemplateFighter = Omit<CatalogueProfile, "armour_save"> & {
   rules: TemplateSpecial[];
   /** The skills he starts with (the Senior Gunnery Officer's Hunter): every hire of his has them. */
   skills: TemplateSkill[];
+  /** The spells he starts with (the Black Dwarfs' Sorcerer's Sacrificial Ritual), besides his first pick. */
+  spells: Spell[];
 };
 
 export type TemplateUpgrade = {

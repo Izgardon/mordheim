@@ -16,11 +16,18 @@ for rules.") takes that fighter's rule of the name, which the fighter then holds
 that says more than the pointer, or points to a list of choices ("See the Mutations list for costs"), is left alone;
 one we can't resolve stays as it is, listed in the report. The hired swords' rules and skills are our own data
 (apps/hirelings/data/hired-swords.json), worded there.
+
+A rule that says he starts with a spell of his lore is William's call too (`STARTS_WITH_SPELLS`): the rule goes and
+the spell is in his `spells` (by lore and name, ours in apps/spells/data/spells.json), which every hire of his has as
+a real spell, a caster's first pick still to make beside it.
 """
 
 import re
 from dataclasses import dataclass, field
 from typing import Any
+
+from catalogue_import.common import load_json
+from catalogue_import.sources import BACKEND
 
 SKILL_POINTER = re.compile(
     r"^(?:see (?:the )?[\w' -]*?\bskills?(?: section| list)?|as the skill of the same name)\.?$", re.I
@@ -89,6 +96,14 @@ ALSO_STARTS_WITH: dict[str, dict[str, dict[str, list[str]]]] = {
     # Ape can make a diving charge from up to 10" high."
     "The Cursed Cavalcade": {"Fighting Ape": {"Agile": ["Scale Sheer Surfaces", "Acrobat", "Dodge"]}},
 }
+# A rule that says he starts with a spell: template -> fighter -> the rule's name -> our spells as (lore, name); the
+# rule goes. William, 26 Nov 2026, of the Black Dwarfs' Sorcerer, whose rule mordheimer names Priest (our Priest beside
+# his Wizard) and which reads "The Sorcerer starts with two rituals. One of them is the Sacrificial Ritual. The other
+# spell is determined as usual": he is a Wizard (Hashut is spells), starts with the ritual and picks the other as any
+# wizard picks his first.
+STARTS_WITH_SPELLS: dict[str, dict[str, dict[str, list[tuple[str, str]]]]] = {
+    "Black Dwarfs": {"Sorcerer": {"Priest": [("Rituals of Hashut", "Sacrificial Ritual")]}},
+}
 # The same for a dramatis persona: name -> rule -> our skills, the rule keeping its text ("Note that Ippan Shu also
 # has the Dodge skill.", in his Parry Missiles)
 PERSONAE_ALSO_START_WITH: dict[str, dict[str, list[str]]] = {
@@ -109,6 +124,7 @@ def points_to_skill(name: str, text: str) -> bool:
 class PointerLog:
     skills: list[tuple[str, str, str, bool]] = field(default_factory=list)  # owner, rule, skills, the rule kept
     entries: list[tuple[str, str, str]] = field(default_factory=list)  # owner, rule, the entry's rule it took
+    spells: list[tuple[str, str, str]] = field(default_factory=list)  # owner, rule, the spells he starts with
     unresolved: list[tuple[str, str, str]] = field(default_factory=list)  # owner, rule, its pointer
 
 
@@ -200,10 +216,27 @@ def _fighter_rules(template: dict[str, Any], fighter: dict[str, Any], skills: Sk
     fighter["specials"] = rules
 
 
+def _fighter_spells(
+    template: dict[str, Any], fighter: dict[str, Any], ours: set[tuple[str, str]], log: PointerLog
+) -> None:
+    """The spells William's answer starts him with, in place of the rule that said so; a spell we lack, or a rule he
+    hasn't, stops the build."""
+    owner = f"{template['name']}: {fighter['name']}"
+    answers = STARTS_WITH_SPELLS.get(template["name"], {}).get(fighter["name"], {})
+    for rule, spells in answers.items():
+        missing = [f"{name} ({lore})" for lore, name in spells if (lore, name) not in ours]
+        if missing or rule not in {special["name"] for special in fighter["specials"]}:
+            raise ValueError(f"pointer_rules.py: {owner}: no rule {rule}, or spells we lack: {', '.join(missing)}")
+        fighter["specials"] = [special for special in fighter["specials"] if special["name"] != rule]
+        fighter["spells"] = [*fighter.get("spells", []), *({"lore": lore, "name": name} for lore, name in spells)]
+        log.spells.append((owner, rule, ", ".join(name for _, name in spells)))
+
+
 def check_answers(templates: list[dict[str, Any]], personae: list[dict[str, Any]]) -> None:
     """Every template, fighter and persona William's answers name is one the build has (a renamed one stops it)."""
     fighters = {(template["name"], fighter["name"]) for template in templates for fighter in template["fighters"]}
-    named = {(name, fighter) for table in (STARTS_WITH, ALSO_STARTS_WITH) for name in table for fighter in table[name]}
+    tables = (STARTS_WITH, ALSO_STARTS_WITH, STARTS_WITH_SPELLS)
+    named = {(name, fighter) for table in tables for name in table for fighter in table[name]}
     missing = [f"{name}: {fighter}" for name, fighter in sorted(named - fighters)]
     missing += sorted(set(PERSONAE_ALSO_START_WITH) - {persona["name"] for persona in personae})
     if missing:
@@ -214,13 +247,15 @@ def resolve_pointers(
     templates: list[dict[str, Any]], personae: list[dict[str, Any]], rows: list[dict[str, Any]]
 ) -> PointerLog:
     """Every template fighter's and dramatis persona's pointer rule given the skill or rule it points to, and the
-    skills William's answers give, in place."""
+    skills and spells William's answers give, in place."""
     skills = Skills(rows)
+    spells = {(row["type"], row["name"]) for row in load_json(BACKEND / "apps" / "spells" / "data" / "spells.json")}
     log = PointerLog()
     for template in templates:
         for fighter in template["fighters"]:
             fighter.setdefault("skills", [])
             _fighter_rules(template, fighter, skills, log)
+            _fighter_spells(template, fighter, spells, log)
     for persona in personae:
         _persona_rules(persona, skills, log)
     return log
@@ -265,6 +300,8 @@ def render_pointers(log: PointerLog) -> str:
     ] or ["- none"]
     lines += ["", "A rule pointing to another fighter's entry takes that rule:", ""]
     lines += [f"- {owner}: {rule}, from {source}." for owner, rule, source in log.entries] or ["- none"]
+    lines += ["", "A rule that said he starts with a spell is the spell (William, 26 Nov 2026):", ""]
+    lines += [f"- {owner}: {rule}, starts with {spells}." for owner, rule, spells in log.spells] or ["- none"]
     lines += ["", "Left pointing (nothing to take the rule from):", ""]
     lines += [f'- {owner}: {rule}, "{text}"' for owner, rule, text in log.unresolved] or ["- none"]
     return "\n".join(lines) + "\n"

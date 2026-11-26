@@ -43,6 +43,7 @@ export const makeEditorFighter = (overrides: Partial<TemplateFighter> = {}): Tem
   large: false,
   variant_changes: {},
   skills: [],
+  spells: [],
   fixed_kit: "",
   lists: ["kit"],
   rules: [

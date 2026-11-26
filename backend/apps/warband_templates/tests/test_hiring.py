@@ -6,8 +6,8 @@ with as real skills, and an unknown fighter is refused; a unit typed by hand get
 
 from typing import Any
 
-from apps.items.tests.catalogue_support import ITEMS, SKILLS, CatalogueTestCase, make_entry
-from apps.warband_templates.models import TemplateFighter, TemplateFighterSkill, TemplateListItem
+from apps.items.tests.catalogue_support import ITEMS, SKILLS, SPELLS, CatalogueTestCase, make_entry
+from apps.warband_templates.models import TemplateFighter, TemplateFighterSkill, TemplateFighterSpell, TemplateListItem
 from apps.warbands.models import HenchmenGroup, Hero, LedgerAction, WarbandTrade
 
 from .support import Made, make_template
@@ -121,6 +121,21 @@ class HiringFromTheTemplateTests(CatalogueTestCase):
         self.assertEqual(self.batch("heroes", {"create": [{"fighter_key": "captain", "name": "Ada"}]}).status_code, 200)
         hero = Hero.objects.get(warband=self.warband, name="Ada")
         self.assertEqual(list(hero.hero_skills.values_list("skill_id", flat=True)), [own.id])
+
+    def test_a_hire_starts_with_his_spells_and_still_picks_his_first(self) -> None:
+        # William, 26 Nov 2026, of the Black Dwarfs' Sorcerer: he starts with the Sacrificial Ritual "and gets the
+        # usual spell pick at hire"
+        ritual = make_entry(SPELLS, "Sacrificial Ritual", type="Rituals of Hashut")
+        own = make_entry(
+            SPELLS, "Sacrificial Ritual", type="Rituals of Hashut", campaign=self.campaign, replaces=ritual
+        )
+        TemplateFighterSpell.objects.create(fighter=self.made.captain, spell=ritual)
+        heroes = {"create": [{"fighter_key": "captain", "name": "Zhargon"}, {"name": "Typed", "unit_type": "Captain"}]}
+        self.assertEqual(self.batch("heroes", heroes).status_code, 200)
+        hero = Hero.objects.get(warband=self.warband, name="Zhargon")
+        self.assertEqual(list(hero.hero_spells.values_list("spell_id", flat=True)), [own.id])  # the campaign's
+        self.assertEqual(hero.pending_spells, 1)
+        self.assertFalse(Hero.objects.get(warband=self.warband, name="Typed").hero_spells.exists())
 
     def test_a_group_buys_one_loadout_and_every_member_gets_the_dagger(self) -> None:
         create = {"fighter_key": "warriors", "name": "Lads", "henchmen": [{"name": "A"}, {"name": "B"}]}

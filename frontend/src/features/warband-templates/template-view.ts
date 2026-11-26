@@ -179,6 +179,15 @@ export function startSkillsFor(
   return [...own, ...given];
 }
 
+/** What he starts with, his skills then his spells, each as its rules block shows it. */
+export const startsWith = (
+  skills: { id: number; name: string; description?: string | null }[],
+  spells: { id: number; name: string; description?: string | null }[]
+) => [
+  ...skills.map((skill) => ({ ...skill, key: `skill-${skill.id}` })),
+  ...spells.map((spell) => ({ ...spell, key: `spell-${spell.id}` })),
+];
+
 /**
  * The template's fighters in the variant, each as it has him: one it allows none of is left out (the Sartosa Orc
  * Pirates' Goblin Swabbies are no part of a Mordheim Orc Mob).

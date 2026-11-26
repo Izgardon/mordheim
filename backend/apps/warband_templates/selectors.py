@@ -3,7 +3,9 @@ budgets)."""
 
 from typing import Any
 
-from django.db.models import Prefetch, QuerySet
+from django.contrib.postgres.expressions import ArraySubquery
+from django.db.models import OuterRef, Prefetch, QuerySet
+from django.db.models.functions import JSONObject
 
 from apps.campaigns.in_play import InPlayScope, with_in_play
 
@@ -12,6 +14,7 @@ from .models import (
     TemplateFighterList,
     TemplateFighterSkill,
     TemplateFighterSpecial,
+    TemplateFighterSpell,
     TemplateList,
     TemplateListItem,
     TemplateRule,
@@ -19,6 +22,16 @@ from .models import (
     WarbandTemplate,
     WarbandTemplateType,
 )
+
+START_SPELL_COLUMNS = ("id", "name", "type", "dc", "description", "is_prayer")
+
+
+def with_start_spells(fighters: QuerySet[TemplateFighter]) -> QuerySet[TemplateFighter]:
+    """The fighters with the spells each starts with read in the same query (`start_spells`, in order: their ids,
+    names, lores, difficulties, rules and whether each is a prayer)."""
+    links = TemplateFighterSpell.objects.filter(fighter_id=OuterRef("pk")).order_by("position", "id")
+    columns = {column: f"spell__{column}" for column in START_SPELL_COLUMNS}
+    return fighters.annotate(start_spells=ArraySubquery(links.values(entry=JSONObject(**columns))))
 
 
 def type_links(scope: InPlayScope | None = None) -> Prefetch:
@@ -52,9 +65,10 @@ def template_contents(rows: QuerySet[WarbandTemplate]) -> QuerySet[Any]:
 
 def template_details(rows: QuerySet[WarbandTemplate]) -> QuerySet[Any]:
     """The templates with everything the whole template shows: its types, rules, lists with their lines' items,
-    fighters with their races, lists, rules and starting skills, and upgrades with their specials (one query each)."""
+    fighters with their races, lists, rules and starting skills and spells, and upgrades with their specials (one query
+    each)."""
     lines = TemplateListItem.objects.select_related("item")
-    fighters = TemplateFighter.objects.select_related("race").prefetch_related(
+    fighters = with_start_spells(TemplateFighter.objects.select_related("race")).prefetch_related(
         Prefetch("special_links", queryset=TemplateFighterSpecial.objects.select_related("special")),
         Prefetch("skill_links", queryset=TemplateFighterSkill.objects.select_related("skill")),
         Prefetch("list_links", queryset=TemplateFighterList.objects.select_related("equipment_list")),

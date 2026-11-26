@@ -20,6 +20,7 @@ from ..models import (
     TemplateUpgrade,
     WarbandTemplate,
 )
+from ..selectors import with_start_spells
 from .holdings import fighter_holdings, held_items
 from .list_prices import list_prices_open
 from .resolve import (
@@ -37,9 +38,9 @@ from .resolve import (
 
 def hire_details(rows: QuerySet[WarbandTemplate]) -> QuerySet[WarbandTemplate]:
     """The templates with what the hire screens show: rules, lists with their lines' items, fighters with their
-    races, rules, starting skills and lists, and upgrades with their specials (one query each)."""
+    races, rules, starting skills and spells and lists, and upgrades with their specials (one query each)."""
     lines = TemplateListItem.objects.select_related("item")
-    fighters = TemplateFighter.objects.select_related("race").prefetch_related(
+    fighters = with_start_spells(TemplateFighter.objects.select_related("race")).prefetch_related(
         Prefetch("special_links", queryset=TemplateFighterSpecial.objects.select_related("special")),
         Prefetch("skill_links", queryset=TemplateFighterSkill.objects.select_related("skill")),
         Prefetch("list_links", queryset=TemplateFighterList.objects.select_related("equipment_list")),

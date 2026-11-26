@@ -45,6 +45,7 @@ from apps.warband_templates.models import (
     TemplateFighter,
     TemplateFighterSkill,
     TemplateFighterSpecial,
+    TemplateFighterSpell,
     TemplateListItem,
     TemplateUpgrade,
     WarbandTemplate,
@@ -260,7 +261,12 @@ SPELLS = CatalogueKindSpec(
     versioned=True,
     filters=NAME_AND_TYPE,
     hooks=SpellHooks(),
-    holders=_copies("spells", _linked_by(BestiaryEntrySpell, "spell"), *_listed_by_hirelings("spell_links", "spell")),
+    holders=_copies(
+        "spells",
+        _linked_by(BestiaryEntrySpell, "spell"),
+        *_listed_by_hirelings("spell_links", "spell"),
+        _held_by_templates(TemplateFighterSpell, "spell", "fighter__template"),  # a fighter's starting spells
+    ),
 )
 SPECIALS = CatalogueKindSpec(
     key="specials",
@@ -383,6 +389,7 @@ WARBAND_TEMPLATES = CatalogueKindSpec(  # written by the template editor's own r
         "fighters",
         "fighters__special_links",
         "fighters__skill_links",
+        "fighters__spell_links",
         "fighters__list_links",
         "upgrades",
     ),

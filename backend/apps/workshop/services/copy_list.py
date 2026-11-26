@@ -23,6 +23,7 @@ from apps.warband_templates.models import (
     TemplateFighter,
     TemplateFighterSkill,
     TemplateFighterSpecial,
+    TemplateFighterSpell,
     TemplateListItem,
     TemplateUpgrade,
     WarbandTemplate,
@@ -40,6 +41,7 @@ LINKED_CHILDREN: tuple[tuple[str, type[Model]], ...] = (
     ("fighters", TemplateFighter),
     ("fighters__special_links", TemplateFighterSpecial),
     ("fighters__skill_links", TemplateFighterSkill),
+    ("fighters__spell_links", TemplateFighterSpell),
     ("upgrades", TemplateUpgrade),
 )
 

@@ -3628,6 +3628,10 @@ A rule pointing to another fighter's entry takes that rule:
 
 - Orc Mob: Cave Squig: Not Orcs (Cave Squig), from the Goblin Warriors entry's Not Orcs.
 
+A rule that said he starts with a spell is the spell (William, 26 Nov 2026):
+
+- Black Dwarfs: Sorcerer: Priest, starts with Sacrificial Ritual.
+
 Left pointing (nothing to take the rule from):
 
 - none

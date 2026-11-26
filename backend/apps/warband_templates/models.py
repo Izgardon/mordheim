@@ -210,6 +210,23 @@ class TemplateFighterSkill(models.Model):
         return f"{self.fighter_id}:{self.skill_id}"
 
 
+class TemplateFighterSpell(models.Model):
+    """A spell the fighter starts with (William, 26 Nov 2026), the Black Dwarfs' Sorcerer's Sacrificial Ritual: every
+    hire of his has it as a real spell on the roster, besides the first spell a caster picks."""
+
+    fighter = models.ForeignKey(TemplateFighter, related_name="spell_links", on_delete=models.CASCADE)
+    spell = models.ForeignKey("spells.Spell", related_name="template_fighter_links", on_delete=models.RESTRICT)
+    position = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        db_table = "template_fighter_spell"
+        ordering = ["position", "id"]
+        constraints = [models.UniqueConstraint(fields=["fighter", "spell"], name="template_fighter_spell_once")]
+
+    def __str__(self) -> str:
+        return f"{self.fighter_id}:{self.spell_id}"
+
+
 class TemplateList(models.Model):
     """An equipment list ("Marksman equipment list") and its note ("This list is for Marksmen only.")."""
 

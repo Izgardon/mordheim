@@ -11495,13 +11495,15 @@
           {
             "name": "Wizard",
             "type": "Caster"
-          },
-          {
-            "name": "Priest",
-            "type": "Caster"
           }
         ],
-        "skills": []
+        "skills": [],
+        "spells": [
+          {
+            "lore": "Rituals of Hashut",
+            "name": "Sacrificial Ritual"
+          }
+        ]
       },
       {
         "key": "bull-centaur",

@@ -19,6 +19,7 @@ from apps.races.models import Race
 from apps.skills.models import Skill
 from apps.special.kinds import WARBAND
 from apps.special.models import Special
+from apps.spells.models import Spell
 from apps.warband_templates.models import TemplateFighter, TemplateListItem, WarbandTemplate
 from apps.warbands.models import WarbandType
 
@@ -179,6 +180,18 @@ class SeedWarbandTemplatesTests(TestCase):
             captain.variant_changes,
             {"middenheim": {"skill_types": ["Combat"], "skills": [{"id": self.ride.id, "name": "Ride [Animal]"}]}},
         )
+
+    def test_a_fighter_starts_with_the_book_spell_of_its_lore_and_name(self) -> None:
+        # William, 26 Nov 2026: the Black Dwarfs' Sorcerer starts with the Sacrificial Ritual
+        ritual = Spell.objects.create(name="Sacrificial Ritual", type="Rituals of Hashut")
+        Spell.objects.create(name="Sacrificial Ritual", type="Another lore")
+        spells = [{"lore": "Rituals of Hashut", "name": "Sacrificial Ritual"}]
+        seed(template(fighters=[fighter(spells=spells)]))
+        self.assertEqual(
+            list(TemplateFighter.objects.get().spell_links.values_list("spell_id", flat=True)), [ritual.id]
+        )
+        with self.assertRaisesRegex(CommandError, "Captain: spell \('Lesser Magic', 'Fireball'\) isn't seeded"):
+            seed(template(fighters=[fighter(spells=[{"lore": "Lesser Magic", "name": "Fireball"}])]))
 
     def test_a_reseed_writes_the_child_rows_afresh_and_archives_what_went(self) -> None:
         seed(template(), template(slug="skaven", name="Skaven", types=[], lists=[], fighters=[], upgrades=[]))

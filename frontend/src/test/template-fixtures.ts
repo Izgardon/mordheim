@@ -69,6 +69,7 @@ export const makeTemplateFighter = (
   lists: ["kit"],
   rules: [],
   skills: [],
+  spells: [],
   have: { count: 0, groups: 0 },
   off_lines: [],
   off_upgrades: [],

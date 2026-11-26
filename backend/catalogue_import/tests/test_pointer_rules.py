@@ -134,6 +134,19 @@ class PointerTests(SimpleTestCase):
         with self.assertRaisesRegex(ValueError, "names fighters the build lacks: .*Ogre Hunting Party: Ogre Hunter"):
             check_answers([], [])
 
+    def test_a_rule_that_starts_him_with_a_spell_is_the_spell(self):
+        # William, 26 Nov 2026, of the Black Dwarfs' Sorcerer: a Wizard who starts with the Sacrificial Ritual
+        wizard, priest = {"name": "Wizard", "type": "Caster"}, {"name": "Priest", "type": "Caster"}
+        black: dict[str, Any] = {"name": "Black Dwarfs", "fighters": [fighter("Sorcerer", "Sorcerers", wizard, priest)]}
+        log = resolve_pointers([black], [], SKILLS)
+        sorcerer = black["fighters"][0]
+        self.assertEqual(sorcerer["specials"], [wizard])
+        self.assertEqual(sorcerer["spells"], [{"lore": "Rituals of Hashut", "name": "Sacrificial Ritual"}])
+        self.assertIn("- Black Dwarfs: Sorcerer: Priest, starts with Sacrificial Ritual.", render_pointers(log))
+        renamed: dict[str, Any] = {"name": "Black Dwarfs", "fighters": [fighter("Sorcerer", "Sorcerers", wizard)]}
+        with self.assertRaisesRegex(ValueError, "Black Dwarfs: Sorcerer: no rule Priest"):
+            resolve_pointers([renamed], [], SKILLS)
+
 
 class CommittedPointerTests(SimpleTestCase):
     """The committed output (test_build checks it is up to date)."""
@@ -183,3 +196,10 @@ class CommittedPointerTests(SimpleTestCase):
         ippan = self.personae["Grand Master Ippan Shu"]
         self.assertIn("Dodge", ippan["skills"])
         self.assertIn("Parry Missiles", [special["name"] for special in ippan["specials"]])
+
+    def test_the_black_dwarfs_sorcerer_is_a_wizard_who_starts_with_the_sacrificial_ritual(self):
+        sorcerer = self.fighters[("Black Dwarfs", "Sorcerer")]
+        self.assertEqual(sorcerer["caster"], "Wizard")
+        self.assertEqual([(rule["name"], rule["type"]) for rule in sorcerer["specials"][1:]], [("Wizard", "Caster")])
+        self.assertEqual(sorcerer["spells"], [{"lore": "Rituals of Hashut", "name": "Sacrificial Ritual"}])
+        self.assertEqual([lore["name"] for lore in sorcerer["spell_types"]], ["Rituals of Hashut"])
