@@ -173,5 +173,7 @@ roster's size.
 - A warband imported from a custom list brings the list as the campaign's own template. Decided overnight: it
   serves its type only when the importer holds `edit_catalogue` (warned: for every warband there), else it arrives
   serving none (warned). Is that right? Two imports of one list make two templates ("Watch", "Watch (2)").
+- New warband from a list code picks a variant when the list's type presets none (the preview carries the list's
+  `variants` and each type's preset `variant`); a workshop list's editor leaves out "the book's serves it too".
 - Should a recruit, and not only a purchase or a roster save, warn `over_budget` in a workshop? Today the hire
   dialog's (`hirelings/hire/`) answer doesn't; the page shows the cost against the budget throughout.
