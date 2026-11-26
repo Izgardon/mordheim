@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { closeListFirst, DialogKicker, keepOpenForPortals } from "@/components/ui/dialog";
 import { IconButton } from "@/components/ui/icon-button";
 import { useSheetDrag } from "@/components/ui/use-sheet-drag";
+import { keyboardSheetStyle, useKeyboardFrame } from "@/lib/use-keyboard-frame";
 import { cn } from "@/lib/utils";
 
 type BottomSheetProps = {
@@ -25,7 +26,9 @@ type BottomSheetProps = {
 
 /**
  * The phone's sheet from the bottom: a drag handle, a header, a scrolling body, a footer. Dragged
- * down from anywhere it closes (`useSheetDrag`).
+ * down from anywhere it closes (`useSheetDrag`). With the keyboard up it sits on the keyboard
+ * and shrinks to what is left (`useKeyboardFrame`), so its footer and the end of its body stay
+ * reachable.
  */
 export function BottomSheet({
   open,
@@ -39,6 +42,7 @@ export function BottomSheet({
   className,
 }: BottomSheetProps) {
   const dragRef = useSheetDrag(() => onOpenChange(false));
+  const keyboard = useKeyboardFrame(open);
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
@@ -52,6 +56,7 @@ export function BottomSheet({
           onInteractOutside={keepOpenForPortals}
           onEscapeKeyDown={closeListFirst}
           onOpenAutoFocus={(event) => event.preventDefault()}
+          style={keyboardSheetStyle(keyboard)}
           className={cn(
             // full height but for the status bar, so the handle and the × stay reachable
             // (William, 20 Nov 2026: "should be able to go full height as we need the space")

@@ -2,7 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- resizes-content: Android Chrome shrinks the page for the keyboard rather than covering it (iOS Safari
+         ignores it; lib/use-keyboard-frame.ts sits sheets and phone dialogs on its keyboard). -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
     <meta name="color-scheme" content="dark light" />
     <!-- The browser bar takes the page colour; theme-init.js and lib/theme.ts switch it with the theme. -->
     <meta name="theme-color" content="#0f0c09" />

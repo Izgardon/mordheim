@@ -4,10 +4,15 @@
  * form scrolled its buttons out of sight; the phone's bottom sheet already keeps its footer below
  * the scrolling body.
  */
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { act, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import { fakeVisualViewport } from "@/test/visual-viewport";
 
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./dialog";
+
+const media = vi.hoisted(() => ({ mobile: false }));
+vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => media.mobile }));
 
 function open(body: string) {
   render(
@@ -28,6 +33,13 @@ function open(body: string) {
 }
 
 describe("a dialog on a phone", () => {
+  beforeEach(() => {
+    media.mobile = true;
+  });
+  afterEach(() => {
+    media.mobile = false;
+  });
+
   it("may fill the screen but for the status bar, as a bottom sheet may", () => {
     render(
       <Dialog open>
@@ -43,6 +55,26 @@ describe("a dialog on a phone", () => {
     const dialog = screen.getByRole("dialog", { name: "Rating breakdown" });
     expect(dialog.className).toContain("max-h-[calc(100dvh-env(safe-area-inset-top,0px))]");
     expect(dialog.className).not.toContain("max-h-[85dvh]");
+    // nor an inline cap of 85% of the screen over it, as it had (William, 20 Nov 2026)
+    expect(dialog.style.maxHeight).toBe("");
+  });
+
+  it("sits on the keyboard while it is up, as tall as what it leaves", () => {
+    const viewport = fakeVisualViewport(800);
+    render(
+      <Dialog open>
+        <DialogContent>
+          <DialogTitle>Edit hero</DialogTitle>
+          <input aria-label="Name" />
+        </DialogContent>
+      </Dialog>
+    );
+    const dialog = screen.getByRole("dialog", { name: "Edit hero" });
+
+    act(() => viewport.keyboard(320));
+    expect(dialog.style.bottom).toBe("320px");
+    expect(dialog.style.maxHeight).toBe("calc(480px - env(safe-area-inset-top, 0px))");
+    viewport.restore();
   });
 });
 

@@ -1,6 +1,8 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+
+import { fakeVisualViewport } from "@/test/visual-viewport";
 
 import { BottomSheet } from "./bottom-sheet";
 import { SHEET_DISMISS_MIN } from "./use-sheet-drag";
@@ -85,5 +87,23 @@ describe("BottomSheet", () => {
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+});
+
+// William, 26 Nov 2026: "When keyboard is out I can't scroll to bottom of screen, it just covers it"
+describe("The sheet with the keyboard up", () => {
+  it("sits on the keyboard and shrinks to what it leaves, then goes back", () => {
+    const viewport = fakeVisualViewport(800);
+    render(<Harness />);
+    const sheet = screen.getByRole("dialog", { name: "Battle menu" });
+    expect(sheet.style.bottom).toBe("");
+
+    act(() => viewport.keyboard(350));
+    expect(sheet.style.bottom).toBe("350px");
+    expect(sheet.style.maxHeight).toBe("calc(450px - env(safe-area-inset-top, 0px))");
+
+    act(() => viewport.keyboard(0));
+    expect(sheet.style.bottom).toBe("");
+    viewport.restore();
   });
 });

@@ -9,6 +9,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Tooltip } from "@components/tooltip";
 import { useSheetDrag } from "@/components/ui/use-sheet-drag";
+import { keyboardSheetStyle, useKeyboardFrame } from "@/lib/use-keyboard-frame";
 
 /**
  * Outside-interaction handler for anything built on the Radix dialog: a tap inside a portaled
@@ -103,7 +104,9 @@ const DialogContent = React.forwardRef<
       },
       [dragRef, ref]
     );
-    const [mobileMaxHeight, setMobileMaxHeight] = React.useState<number | null>(null);
+    // a phone's dialog sits on the keyboard while it is up, as tall as what it leaves
+    const keyboard = useKeyboardFrame(isMobile);
+    const keyboardStyle = isMobile ? keyboardSheetStyle(keyboard) : undefined;
     const handleOpenAutoFocus: React.ComponentPropsWithoutRef<
       typeof DialogPrimitive.Content
     >["onOpenAutoFocus"] = (event) => {
@@ -124,34 +127,6 @@ const DialogContent = React.forwardRef<
       keepOpenForPortals(event);
     };
 
-    React.useEffect(() => {
-      if (!isMobile) {
-        setMobileMaxHeight(null);
-        return;
-      }
-
-      const viewport = window.visualViewport;
-      const updateMaxHeight = () => {
-        const height = viewport?.height ?? window.innerHeight;
-        const nextHeight = Math.round(height * 0.85);
-        setMobileMaxHeight(nextHeight);
-      };
-
-      updateMaxHeight();
-
-      viewport?.addEventListener("resize", updateMaxHeight);
-      viewport?.addEventListener("scroll", updateMaxHeight);
-      window.addEventListener("resize", updateMaxHeight);
-
-      return () => {
-        viewport?.removeEventListener("resize", updateMaxHeight);
-        viewport?.removeEventListener("scroll", updateMaxHeight);
-        window.removeEventListener("resize", updateMaxHeight);
-      };
-    }, [isMobile]);
-
-    const mobileMaxHeightStyle =
-      isMobile && mobileMaxHeight ? { maxHeight: `${mobileMaxHeight}px` } : undefined;
     return (
       <DialogPortal>
         {isMobile ? (
@@ -174,10 +149,7 @@ const DialogContent = React.forwardRef<
             className,
             "max-[959px]:!max-w-full"
           )}
-          style={{
-            ...(mobileMaxHeightStyle ?? {}),
-            ...(style ?? {}),
-          }}
+          style={{ ...keyboardStyle, ...style }}
           onOpenAutoFocus={handleOpenAutoFocus}
           onInteractOutside={handleInteractOutside}
           {...props}
@@ -187,7 +159,7 @@ const DialogContent = React.forwardRef<
               "pointer-events-auto relative flex max-h-[calc(100dvh-env(safe-area-inset-top,0px))] flex-col overflow-x-hidden pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-ink min-[960px]:max-h-[90vh] min-[960px]:py-8",
               innerClassName
             )}
-            style={mobileMaxHeightStyle}
+            style={keyboardStyle ? { maxHeight: keyboardStyle.maxHeight } : undefined}
           >
             <div className="mb-3 flex justify-center min-[960px]:hidden">
               <span className="h-1 w-10 bg-strong" />
