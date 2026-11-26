@@ -50,6 +50,163 @@ list), which is deleted outright (start afresh; prod's data is disposable).
    workshop, Budget.
 4. QA on a phone and the web, CLAUDE.md, deploy.
 
+## Version 2 API (phases 1 and 2, backend)
+
+Everything takes a signed-in user (anonymous: 401). Refusals use the standard body `{detail, code, fields}` in the
+server's words; `detail` is fit to show. A workshop is its player's alone: anyone else gets 404 on every route that
+names it (its warbands, its campaign, its lists). Version 1's routes `DELETE workshop/<id>/` and the one-workshop-per-
+warband-or-list shape are gone.
+
+### The shape
+
+- `Campaign.kind` is `campaign` (default) or `workshop`; a workshop names its player (`workshop_owner`, one live
+  workshop each: `one_workshop_per_player`) and is soft deleted (`deleted_at`) only with its player's account.
+  Migrations `campaigns/0027` (version 1's workshops retired: deleted) and `0028` (the rules).
+- A workshop's `id` **is its campaign's id**: the warband, catalogue, template and campaign routes take it as
+  `campaign_id` as for any campaign. It is made on the player's first use, and never before.
+- `Warband`: `in_workshop` (set when made; the one-warband-per-player rule holds in campaigns only), `share_code`,
+  `template` (the list it reads in its workshop, since several lists there may serve its type: raised from it,
+  copied with it, else its type's template there when it was made; a new type in Settings names the list serving the
+  new type, the one it named first if it serves it too), `deleted_at`. Migration `warbands/0027`.
+- `WarbandTemplate.share_code`. Migration `warband_templates/0009`.
+- Codes: 8 characters from `ABCDEFGHJKMNPQRSTUVWXYZ23456789` (no 0, O, 1, I, L), unique across warbands and lists,
+  never given out again (a deleted warband keeps its code, unreadable). Read case-blind, spaces and dashes ignored.
+  Every warband and list in a workshop has one (made, copied in, or made in the editor's Make a template there);
+  nothing in a campaign has one.
+- **In play is computed**: a workshop ticks no settings (the campaign payload's `setting_ids` is `[]`) and every
+  setting is in play there: catalogue rows, the warband type picker, who-can, materials, raising and the import
+  warnings all read it so. No scenarios, preset, rules, charts, locations, encampments or plots are written for it.
+
+### Workshop routes
+
+| Route | Body | Answer |
+| --- | --- | --- |
+| `GET workshop/` | | `{id, warbands: [WarbandRow], lists: [ListRow]}`, newest first; `id` null before first use (7 queries, 1 with no workshop) |
+| `POST workshop/` | | 200, the same, the workshop made if he has none (for My content before any warband or list) |
+| `POST workshop/warbands/` | `{name, warband_type_id?, template_variant?, list_id?, list_code?}` | 201 `WarbandRow` + `kind: "warband"`, `warnings` |
+| `POST workshop/lists/` | `{name, copy_of_template_id?, warband_type_ids?}` | 201 `ListRow` + `kind: "list"`, `warnings` |
+| `POST workshop/import/` | `{code}` | 201 the copy in my workshop: `WarbandRow` or `ListRow`, with `kind` and `warnings` |
+| `GET workshop/shared/<code>/` | | `Preview` (anyone signed in) |
+| `POST warbands/<id>/to-workshop/` | | 201 `WarbandRow` + `kind`, `warnings`: my campaign warband (archived campaign too) copied into my workshop |
+| `POST warband-templates/<id>/to-workshop/` | | 201 `ListRow` + `kind`, `warnings`: a campaign's own list (or house version), for any member of that campaign |
+
+- `WarbandRow`: `{id (the warband's), campaign_id (the workshop's), name, warband_type: {id, name} | null,
+  template_id (the list it reads), cost, budget, share_code, updated_at}`.
+- `ListRow`: `{id (the template's), campaign_id, name, warband_types: [{id, name, variant}], variants, share_code,
+  updated_at}`.
+- `Preview`: `{kind: "warband" | "list", share_code, maker, name}` and, for a warband, `warband_type, cost, budget,
+  heroes, henchmen (models), hired_swords`; for a list, `warband_types, variants`. Unknown, deleted, archived or a
+  deleted account's code: 404 `code_not_found`.
+- `POST workshop/warbands/` raises through the campaign path (`raising.raise_warband`: the list's rules, variant, most
+  warriors and Starting Gold). The list it reads: `list_id`, one of my lists (400 `invalid` on `list_id` otherwise,
+  "That isn't one of your lists."); else `list_code`, a shared list copied into my lists first (with its custom
+  content), or used as it is when the code is one of mine (404 `code_not_found`, 400 `not_a_list` for a warband's
+  code); else the type's template in my workshop (one of my lists serving it, the oldest first, else the book's).
+  With a list, `warband_type_id` must be one it serves (400 `type_not_served`; left out: its first), and a list
+  serving none is 400 `list_serves_no_type`. Without one, `warband_type_id` is required (400 `invalid`, "Pick a
+  warband type."). A type that presets no variant needs `template_variant` (400 on `template_variant`, as raising
+  answers). All or nothing.
+- `POST workshop/lists/`: `copy_of_template_id` a book template or one of my lists (anyone else's reads as an unknown
+  id, 400); `warband_type_ids` book types, left out: the copy's source's, each with the variant its source presets,
+  none for a blank list. A name my lists or the book use: 400 `name_taken` (with `matches`), as the editor's Make a
+  template answers. The list is then edited with the template editor's routes (`warband-templates/<id>/...`).
+- Into my workshop (`import/`, `to-workshop/`): a warband's copy is paid for against its budget in one Buy row
+  (hidden), names its list (the copy of its own list, which keeps serving its types, else the book's template it
+  read) and gets its own code; a list's copy gets its own code. Custom content comes live (below).
+
+### Inside a workshop: the usual routes
+
+- **Warbands**: every warband route as in a campaign. `DELETE warbands/<id>/` soft deletes a workshop's warband
+  (204; its code stops working, copies stay; the warband then reads as 404). The sheet's `workshop: {cost, budget,
+  share_code}` (null in a campaign); `capabilities.workshop` true, `trade` false, `delete` and `edit_catalogue` true.
+  Refused there (403 `workshop_campaign`): ledger writes, resource writes and sales, location visits, `POST
+  warbands/` naming a workshop. A hire (`hirelings/hire/`, `source: custom` too) warns `over_budget` when the cost
+  after it is above the budget, as purchases and roster saves do.
+- **His own catalogue** (My content): every catalogue kind's create, edit (a book entry's first edit makes his
+  workshop's version of it), delete, Revert and Restore with `campaign_id` = his workshop, as in a campaign. The
+  workshop's `capabilities` are all false but `edit_catalogue` and `delete_catalogue`.
+- **His lists**: `POST warband-templates/ {name, campaign_id: <workshop>, ...}` makes one (with a code); the editor's
+  section saves write his own lists only (a book template's: 403 `workshop_campaign`; copy it into his lists
+  instead); `DELETE warband-templates/<id>/?campaign_id=<workshop>` deletes one nothing names (204) or archives one a
+  warband names (200 `{outcome: "archived", usage}`); either way its code stops working and the warband keeps reading it.
+  `GET campaigns/<workshop>/warband-types/<type>/template/?list_id=<list>` is the raise outline from one of his lists.
+- Every other campaign route refuses a workshop's writes (403 `workshop_campaign`): settings, members, join codes,
+  archiving, custom warband types, campaign rules, charts, locations, encampments, scenarios, bounties, battles,
+  reported results, trades and the campaign imports below. Joining by a workshop's join code: 404. Never listed:
+  `GET campaigns/` and `GET warbands/` leave workshops out (`GET warbands/?campaign_id=<workshop>` lists its live
+  warbands); account deletion's preview lists none, and deleting the account deletes the workshop.
+
+### Imports into a campaign
+
+| Route | Rule | Body | Answer |
+| --- | --- | --- | --- |
+| `POST campaigns/<id>/warbands/import/` | a member | `{code}` | 201 `{warband_id, template_id, gold, warnings}` |
+| `POST campaigns/<id>/warband-templates/import/` | `edit_catalogue` | `{code}` | 201 `{template_id, name, warnings}` |
+
+- Warband: a non-member 404; an archived campaign 403 `campaign_archived`; a workshop 403 `workshop_campaign`; the
+  importer already has a warband there 409 `has_warband`; a list's code 400 `not_a_warband`; unknown 404
+  `code_not_found`. In one transaction: the copy with the Starting Gold raising gives, then **one** `Buy` row of
+  `-cost`, "Imported <name>". `template_id`: the list that came with it, else null. `gold`: the balance after.
+- List: a warband's code 400 `not_a_list`. The copy is the campaign's own template, "Name (2)" when the name is
+  taken; its own rules (specials typed "Warband - <name>") come with it.
+
+### What a copy takes, and the custom content it brings
+
+The roster as version 1 copied it (54 queries then; now 62 whatever the roster's size, 113 with custom content of
+every kind). **Custom content** is every entry of the source's own (its own entries and its versions of book entries)
+that the copied rows use: items (with their prices, who may buy them and their rules; a source's own shared item rule
+becomes the target's one of the same name and text, else a copy), races, skills (with the source's own groups holding
+them or named by a unit's or fighter's skill access, and those groups' skills), spells, specials and beasts (with their
+own item and their profile's skills, specials, spells and kit). Each is **linked** to the target's entry when the
+target holds one (its own, archived ones too, or a book entry it hasn't replaced) of the same name and effect (every
+field but the catalogue's bookkeeping, every child row, a link compared by its entry's name); else **copied** as the
+target's own, a taken name numbered ("Lucky Charm (2)", a version of the book's Axe "Axe (2)"); a skill group copied
+under a new name is the one the copied units and fighters name. Hired swords and dramatis personae never travel as
+entries: a hireling copied his profile when hired, so nothing links one. A line naming another campaign's own warband
+type is dropped, and so is a copied list's type of that kind and a warband's (`left_out`).
+
+The copies are **live** for an importer holding `edit_catalogue` in the target (always, in his own workshop): offered
+to everyone there. For anyone else they arrive **archived**: the warband keeps them, nobody else's pickers offer them,
+and the catalogue's Restore brings one back.
+
+### Warnings (each `{code, message, ...}`)
+
+- `not_in_play` (`names`): entries, or the warband type, whose setting the campaign doesn't tick (linked all the same).
+- `left_out` (`names`): what the copy could not use there (another campaign's own warband type, an entry of a third
+  campaign).
+- `custom_content_added` (`names`): the copies made, live. `custom_content_archived` (`names`): the copies made,
+  archived. Nothing is said of an entry linked.
+- `gold_negative` (`gold`) in a campaign, `over_budget` (`cost`, `budget`) in a workshop.
+- `list_serves_type` (`names`): its list came and serves its type for every warband there (an editor);
+  `list_serves_none` (`names`): it came serving no type (anyone else).
+
+### The shared catalogue cache
+
+A campaign holding nothing of its own for a list (no own entry, version, archived entry or removed book entry of the
+kind, nor a skill version for the skill groups' list) reads the body shared by every such campaign ticking the same
+settings and the book's version, every workshop under one key (`all`): `apps/core/catalogue/sharing.py`. It is
+computed from the book and the settings alone, and whether a campaign is plain, its settings and the book's version
+are read in the membership's one query, so a hit costs one query as before. Nothing changes for the frontend.
+
+### What the frontend on this branch still reads (version 1)
+
+Home's workshop sections and the workshop pages are broken until they are rewired: `GET workshop/` rows now have the
+warband's or list's own `id` (no `warband_id`, `template_id` is the list a warband reads, and the answer carries the
+workshop `id`); `DELETE workshop/<id>/` is gone (`DELETE warbands/<id>/`, the catalogue's Delete of a list); the
+campaign payload has no `holds` or `share_code` (`WorkshopPage` branches on `campaign.holds`; one workshop holds both,
+so it is the player's workshop page with warbands, lists and My content); `/workshop/:id` is the workshop, a warband
+there opens by its own id; import into my workshop no longer makes a workshop per copy.
+
+### Open questions for William
+
+- Custom content an importer can't edit arrives archived: the warband keeps it and nobody else is offered it. Should
+  an owner or admin see a list of what arrived archived (to Restore what they like)? Today it is the catalogue's
+  usual `?archived=1` view.
+- A version of a book entry in a workshop (edited there) travels as an entry of its own, "Axe (2)", rather than as
+  the target's version of the book's Axe, which would change the Axe for everyone there. Right?
+- A custom skill group copied under a new name ("Thieving (2)", because the campaign has its own Thieving) is what
+  the copied units name; a fighter's variant changes still name the old one. Worth more than that?
+
 ---
 
 # Version 1 (25 Nov 2026, replaced by version 2)
@@ -111,124 +268,3 @@ builder.
    warband page with no treasury, log, resources, campaign points, battles or trading, and the cost); the list
    editor in a workshop; Import by code in a campaign's raise screen and its Warbands page.
 4. **QA on a phone and the web**, CLAUDE.md, deploy.
-
-## API (phases 1 and 2, backend)
-
-Everything takes a signed-in user (anonymous: 401). Refusals use the standard body `{detail, code, fields}` and the
-server's words; `detail` is fit to show. A workshop is its owner's alone: anyone else gets 404 on every route that
-names it (its warband, its campaign, its templates), and a deleted one is 404 for its owner too.
-
-### The shape
-
-- `Campaign.kind` is `campaign` (default) or `workshop`; a workshop's `holds` is `warband` or `list`, and its
-  `share_code` is 8 characters from `ABCDEFGHJKMNPQRSTUVWXYZ23456789` (no 0, O, 1, I, L), unique, never reused.
-  `deleted_at` soft deletes one. A check constraint keeps a campaign's three fields blank. Migration
-  `campaigns/0026_workshops`.
-- A workshop is made as a campaign is (its settings row on the defaults, 500 gc; its maker the owner and only member)
-  with **every setting ticked**, no preset, no scenarios and no plots. A workshop's `id` **is its campaign's id**: the
-  warband, catalogue, template and campaign routes take it as `campaign_id` as for any campaign.
-- The campaign payload (`GET campaigns/<id>/`) carries `kind`, `holds` and `share_code` (null/blank for a campaign).
-  A workshop's `capabilities` are all false, but a list workshop's `edit_catalogue` (its template editor).
-
-### Workshop routes
-
-| Route | Body | Answer |
-| --- | --- | --- |
-| `GET workshop/` | | `{warbands: [WarbandRow], lists: [ListRow]}`, newest first (8 queries, whatever their number) |
-| `POST workshop/warbands/` | `{name, warband_type_id?, template_variant?, list_code?}` | 201 `WarbandRow` + `kind: "warband"`, `warnings` |
-| `POST workshop/lists/` | `{name, copy_of_template_id?, warband_type_ids?}` | 201 `ListRow` + `kind: "list"`, `warnings` |
-| `POST workshop/import/` | `{code}` | 201 a new workshop of mine holding a copy: `WarbandRow` or `ListRow`, with `kind` and `warnings` |
-| `GET workshop/shared/<code>/` | | `Preview` (anyone signed in) |
-| `DELETE workshop/<id>/` | | 204 (the owner; anyone else 404). Its code stops working; copies stay |
-
-- `WarbandRow`: `{id, campaign_id (= id), warband_id, name, warband_type: {id, name} | null, cost, budget,
-  share_code, updated_at}`.
-- `ListRow`: `{id, campaign_id (= id), template_id, name, warband_types: [{id, name}], share_code, updated_at}`.
-- `Preview`: `{kind: "warband" | "list", share_code, maker, name}` and, for a warband, `warband_type, cost, budget,
-  heroes, henchmen (models), hired_swords`; for a list, `warband_types`. Unknown or deleted code: 404
-  `code_not_found`. A code is read case-blind, spaces and dashes ignored.
-- `POST workshop/warbands/` raises the warband through the campaign path (`raising.raise_warband`: the template's
-  rules, variant, most warriors; its Starting Gold). `warband_type_id` is required without `list_code`; a type that
-  presets no variant needs `template_variant` (400 as raising answers). With `list_code` the list is copied into the
-  workshop as its own template first and the warband raised from it: `warband_type_id` must be one it serves (400
-  `type_not_served`; left out: its first), a list serving none is 400 `list_serves_no_type`, a warband's code 400
-  `not_a_list`. All or nothing.
-- `POST workshop/lists/`: `copy_of_template_id` is a book template (400 otherwise); `warband_type_ids` book types,
-  left out: the copy's source's types, each with the variant its source presets, none for a blank list.
-  The list is then edited with the template editor's routes (`warband-templates/<template_id>/...`).
-
-### Imports into a campaign
-
-| Route | Rule | Body | Answer |
-| --- | --- | --- | --- |
-| `POST campaigns/<id>/warbands/import/` | a member | `{code}` | 201 `{warband_id, template_id, gold, warnings}` |
-| `POST campaigns/<id>/warband-templates/import/` | `edit_catalogue` | `{code}` | 201 `{template_id, name, warnings}` |
-
-- Warband: a non-member 404; an archived campaign 403 `campaign_archived`; a workshop 403 `workshop_campaign`; the
-  importer already has a warband there 409 `has_warband`; a list's code 400 `not_a_warband`; unknown 404
-  `code_not_found`. In one transaction the copy (below) is made for the importer with the Starting Gold raising gives
-  (`raising.open_treasury`: the campaign's gold plus its template's difference from 500, its default resource and its
-  preset's fixed counters), then **one** `Buy` ledger row of `-cost`, "Imported <name>". `template_id`: the list
-  that came with it (when it was raised from its workshop's own list), else null. `gold` is the balance after.
-- List: a warband's code 400 `not_a_list`. The copy is the campaign's own template, named as the list, "Name (2)"
-  when the name is taken; its own rules (specials) come with it.
-- `warnings` (each `{code, message, ...}`): `not_in_play` (`names`: entries, or the warband type, whose setting the
-  campaign doesn't tick; linked all the same), `left_out` (`names`: a link to another campaign's own entry the copy
-  could not use, never expected from a workshop), `gold_negative` (`gold`) for a campaign, `over_budget` (`cost`,
-  `budget`) for a workshop; a warband raised from a custom list brings it, `list_serves_type` when the importer may
-  edit the catalogue (it then serves its type for every warband there, the campaign's own before the book's), else
-  `list_serves_none` (it arrives serving no type, so nobody else's recruiting changes; the warband keeps its list's
-  rules, and an editor may make it serve its type).
-
-### What a copy takes
-
-The warband's name, type and `counts_as`, variant, dice colour, backstory, link, most warriors and mobile loadout
-switch; its rules (not a plot's); its stash; every unit still on the roster (dead and dismissed ones, and dead or
-dismissed members, stay behind) with its kit (a mount switched on stays on), a group's loadout rows and members'
-gaps, skills, spells (`dc_change`), specials, pending picks, XP, level-ups and history, fighter keys, notes and
-deeds. Not the ledger, log, resources, plot or campaign points, battles, wins and losses. Every catalogue link is the
-campaign's current entry (its version of a book entry). A list copy takes every child row (types served, rules,
-fighters and their keys, lists and lines, upgrades) and copies the source's own specials, typed by the copy's name
-("Warband - <name>"); the fighters, upgrades and copied units point at those. The copy is 54 queries whatever the
-roster's size.
-
-### The workshop's warband
-
-- The sheet (`GET warbands/<id>/sheet/`) has `workshop: {cost, budget, share_code}` (null for a campaign's warband).
-  `cost` is live: heroes' and hired swords' `price`, each group's `price` × members still in it, and what every copy
-  was paid (units' kit, a group's rows once per member who carries them, the stash by quantity); `budget` is the
-  gold it is raised with (500 plus the template's difference from 500 in its variant, so Marienburg's 600).
-- `capabilities.workshop` is true; `delete`, `trade` and `edit_catalogue` are false; `edit`, `level_up`,
-  `manage_items` and `edit_backstory` as usual. The UI shows no treasury, ledger, log, resources, campaign points or
-  plot, battles, trades, encampments, location visits or bounties for it.
-- The server refuses (403 `workshop_campaign`): ledger writes (`warbands/<id>/trades/`), resource writes and sales,
-  location visits, the warband's DELETE (delete the workshop), a hand-typed hire (`hirelings/hire/` with
-  `source: custom`), `POST warbands/` naming a workshop.
-- Its gold and ledger exist underneath and are never shown: the Starting Gold row, and Buy rows from purchases and
-  recruits as anywhere. Gold drifts from `budget - cost` (a dismissal or an edited price moves the cost, not the
-  gold), so nothing reads it: in a workshop the purchase and roster-save warnings replace `gold_negative` by
-  `over_budget` (`{code, message, cost, budget}`) when the cost after the write is above the budget.
-
-### Guards (deny by default)
-
-- Every campaign route on `CampaignScopedView` refuses any write in a workshop (403 `workshop_campaign`) unless the
-  view names what the workshop holds in `workshop_writes`: only the template editor's section saves
-  (`basics/`, `fighters/`, `lists/`, `rules/`, `upgrades/`) take a **list** workshop's writes, and only for its own
-  template (a book template's save there, which would make a house version, is refused too). So the catalogue's
-  writes (items, skills, ... and `POST warband-templates/`, Revert, Delete), settings, members, join codes,
-  archiving, campaign rules, charts, locations, encampments, scenarios and bounties are refused. Reads answer, owner
-  only.
-- Joining with a workshop's join code: 404 "Campaign not found". Battles and reported results (`get_writable_membership`)
-  and trade requests: 403 `workshop_campaign`.
-- Never listed: `GET campaigns/` and `GET warbands/` (without `campaign_id`) leave workshops out; account deletion's
-  preview lists none, and deleting the account deletes them (soft).
-
-### Open questions for William
-
-- A warband imported from a custom list brings the list as the campaign's own template. Decided overnight: it
-  serves its type only when the importer holds `edit_catalogue` (warned: for every warband there), else it arrives
-  serving none (warned). Is that right? Two imports of one list make two templates ("Watch", "Watch (2)").
-- New warband from a list code picks a variant when the list's type presets none (the preview carries the list's
-  `variants` and each type's preset `variant`); a workshop list's editor leaves out "the book's serves it too".
-- Should a recruit, and not only a purchase or a roster save, warn `over_budget` in a workshop? Today the hire
-  dialog's (`hirelings/hire/`) answer doesn't; the page shows the cost against the budget throughout.
