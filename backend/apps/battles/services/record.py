@@ -54,6 +54,12 @@ class Names:
             for group in neutral_groups(battle)
             for creature in creatures_of(group)
         }
+        # a creature's line ends with its group's name, as a unit's does with his warband's (William, 26 Nov 2026)
+        self.creature_groups = {
+            creature.get("key"): str(group.get("name") or "").strip()
+            for group in neutral_groups(battle)
+            for creature in creatures_of(group)
+        }
 
     def _add(self, warband_id: int, key: Any, name: Any, unit_type: Any, first: bool = False) -> None:
         if not isinstance(key, str) or not key:
@@ -94,11 +100,14 @@ class Rounds:
 
     def put_out(self, key: tuple[str, Any, Any], round_number: Any, name: str, by: str | None) -> None:
         warband_id = key[1]
+        side = self.warbands.get(warband_id, "") if warband_id is not None else ""
+        if key[0] == "creature":
+            side = self.names.creature_groups.get(key[2], "")
         entry = {
             "round": round_number if isinstance(round_number, int) and round_number > 0 else 1,
             "name": name,
             "warband_id": warband_id,
-            "warband_name": self.warbands.get(warband_id, "") if warband_id is not None else "",
+            "warband_name": side,
             "by": by,
             "shown": True,
         }

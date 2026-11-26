@@ -102,7 +102,7 @@ class BattleRecordTests(CampaignTestCase):
             rounds,
             [
                 (1, [("Abbess", "Seer", "Monks"), ("Novice", "Seer", "Monks")]),
-                (2, [("A Zombie", None, "")]),
+                (2, [("A Zombie", None, "The dead")]),  # its group, as a unit's warband (William, 26 Nov 2026)
                 (3, [("Vera", None, "Monks")]),
             ],
         )
