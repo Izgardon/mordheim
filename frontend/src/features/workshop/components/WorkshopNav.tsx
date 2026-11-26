@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 
+import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 
 import { CONTENT_KINDS, workshopPath } from "../paths";
@@ -25,15 +26,20 @@ function NavChip({ to, current, label }: { to: string; current: boolean; label: 
   );
 }
 
-/** The workshop's own nav: its warbands (a warband's page among them), its lists, My content by kind. */
+/**
+ * The workshop's own nav: its warbands (a warband's page among them), its lists, My content by
+ * kind. On a phone one row scrolling sideways with the gap every such row keeps between its chips
+ * and its scrollbar (`scroll-row`); on the web the chips wrap.
+ */
 export default function WorkshopNav({ workshopId }: { workshopId: number }) {
   const base = workshopPath(workshopId);
   const rest = useLocation().pathname.slice(base.length).replace(/^\//, "");
   const section = rest.split("/")[0] ?? "";
+  const isMobile = useMediaQuery("(max-width: 960px)");
   return (
     <nav
       aria-label="Workshop"
-      className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 min-[961px]:mx-0 min-[961px]:flex-wrap min-[961px]:px-0"
+      className={cn("flex gap-1.5", isMobile ? "scroll-row -mx-4 px-4" : "flex-wrap")}
     >
       <NavChip to={base} current={section === "" || section === "warbands"} label="Warbands" />
       <NavChip to={workshopPath(workshopId, "lists")} current={section === "lists"} label="Lists" />
