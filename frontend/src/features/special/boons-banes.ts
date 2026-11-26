@@ -6,6 +6,8 @@ import {
   inPlayOnly,
   settingKeyOptions,
 } from "@/features/reference/in-play";
+import { byNumber } from "@/features/reference/list-sort";
+import type { SortOption } from "@/features/reference/SortMenu";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 
 import type { Special } from "./types/special-types";
@@ -15,6 +17,21 @@ export const SPECIAL_KIND_LABELS: Record<SpecialKind, string> = {
   bane: "Bane",
   trait: "Trait",
 };
+
+export type SpecialSort = "name" | "kind";
+
+/** The Specials page's orders (William, 26 Nov 2026); the category is its filter. */
+export const SPECIAL_SORTS: SortOption<SpecialSort>[] = [
+  { id: "name", label: "Name" },
+  { id: "kind", label: "Kind: boon, bane, trait" },
+];
+
+const KIND_ORDER: SpecialKind[] = ["boon", "bane", "trait"];
+
+/** Boons, then banes, then traits, a special with no kind last; each part by name. */
+const byKind = byNumber((special: Special) =>
+  special.kind ? KIND_ORDER.indexOf(special.kind) : null
+);
 
 export type CategoryFilter = SpecialCategory | "all";
 
@@ -42,6 +59,7 @@ type BoonBaneFilters = {
   query: string;
   category: CategoryFilter;
   setting: string;
+  sort: SpecialSort;
   settings: Map<number, Setting>;
   /** The campaign's own as the Setting filter names it (`useOwnWords().Place`). */
   own?: string;
@@ -50,23 +68,24 @@ type BoonBaneFilters = {
 };
 
 /**
- * The Specials page's rows by name, searched by name, type or rules and filtered by category
+ * The Specials page's rows by name (or by kind), searched by name, type or rules and filtered by category
  * and setting (Mordheim's grades and its ungraded book rows as one), with each category's count
  * and the settings the rows hold.
  */
 export function boonBaneRows(specials: Special[], filters: BoonBaneFilters) {
-  const { query, category, setting, settings, own, openId } = filters;
+  const { query, category, setting, sort, settings, own, openId } = filters;
   const all = referenceSpecials(specials).sort((a, b) => a.name.localeCompare(b.name));
   const searched = all.filter(
     (special) =>
       (setting === ALL_SETTINGS || entrySettingKey(special, settings) === setting) &&
       matchesSearchQuery(query, special.name, special.type, special.description)
   );
-  const rows = all.filter(
+  const kept = all.filter(
     (special) =>
       String(special.id) === openId ||
       (searched.includes(special) && (category === "all" || categoryOf(special) === category))
   );
+  const rows = sort === "kind" ? [...kept].sort(byKind) : kept;
   const counts = CATEGORY_FILTERS.map((entry) => ({
     ...entry,
     count:

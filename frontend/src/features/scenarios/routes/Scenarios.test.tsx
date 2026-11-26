@@ -13,6 +13,7 @@ import { CAMPAIGN_ID, campaignFor } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
 import { HUNT, POOL, makeRow, makeScenario } from "@/test/scenario-fixtures";
+import { pickOption } from "@/test/select";
 import { setupUser } from "@/test/user-event";
 
 import "@/features/campaigns/routes/CampaignLayout";
@@ -75,10 +76,11 @@ describe("The Scenarios page", () => {
     openAs("player");
     await screen.findByRole("button", { name: /The Pool/ });
 
-    const chips = screen.getByRole("group", { name: "Players" });
-    await user.click(within(chips).getByRole("button", { name: /^Multiplayer/ }));
+    // William, 26 Nov 2026: the Players filter a dropdown
+    const players = screen.getByRole("combobox", { name: "Players" });
+    await pickOption(user, players, /^Multiplayer/);
     expect(screen.queryByRole("button", { name: /Wyrdstone Hunt/ })).toBeNull();
-    await user.click(within(chips).getByRole("button", { name: /^All/ }));
+    await pickOption(user, players, /^1v1 and multiplayer/);
     await user.type(screen.getByRole("searchbox", { name: "Search scenarios" }), "wealth");
     expect(screen.queryByRole("button", { name: /The Pool/ })).toBeNull();
     expect(screen.getByRole("button", { name: /Wyrdstone Hunt/ })).toBeInTheDocument();

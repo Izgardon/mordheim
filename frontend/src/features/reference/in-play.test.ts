@@ -127,6 +127,7 @@ describe("Wargear's rows", () => {
     onlyMine: true,
     query: "",
     category: "all" as const,
+    sort: "name" as const,
     openId: null,
   };
   const items = [

@@ -120,8 +120,22 @@ describe("The Specials page", () => {
     renderApp(PAGE);
 
     // William, 7 Nov 2026: "Boons and Banes drop setting and price"
-    expect(await row("Spiked Tail")).toHaveTextContent("Spiked TailMutation");
-    expect(names()).toEqual(["FearPsychology", "Old Battle WoundInjury", "Spiked TailMutation"]);
+    expect(await row("Spiked Tail")).toHaveTextContent("Spiked TailBoonMutation");
+    expect(names()).toEqual([
+      "FearTraitPsychology",
+      "Old Battle WoundBaneInjury",
+      "Spiked TailBoonMutation",
+    ]);
+    // William, 26 Nov 2026: by name or by kind, the Kind heading sorting on the web
+    expect(screen.queryByRole("button", { name: /^Sorted by/ })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Sort by Kind" }));
+    expect(names()).toEqual([
+      "Spiked TailBoonMutation",
+      "Old Battle WoundBaneInjury",
+      "FearTraitPsychology",
+    ]);
+    await user.click(screen.getByRole("button", { name: "Sort by Name" }));
+    expect(names()[0]).toBe("FearTraitPsychology");
     expect(screen.getByText("3 specials shown")).toBeInTheDocument();
     expect(screen.queryByText("Crazed")).toBeNull();
     expect(screen.queryByText("Attacks (Giant)")).toBeNull();
@@ -147,16 +161,15 @@ describe("The Specials page", () => {
     const search = screen.getByRole("searchbox", { name: "Search specials" });
 
     await user.type(search, "battle");
-    expect(names()).toEqual(["Old Battle WoundInjury"]);
+    expect(names()).toEqual(["Old Battle WoundBaneInjury"]);
     await user.clear(search);
     await user.type(search, "psychology");
-    expect(names()).toEqual(["FearPsychology"]);
+    expect(names()).toEqual(["FearTraitPsychology"]);
     await user.clear(search);
 
-    // William, 26 Nov 2026: the category a dropdown, the sort's button ending its line
+    // William, 26 Nov 2026: the category a dropdown
     const categories = screen.getByRole("combobox", { name: "Category" });
     expect(categories).toHaveTextContent("All categories");
-    expect(screen.getByRole("button", { name: "Sorted by Name" })).toBeInTheDocument();
     await user.click(categories);
     expect(screen.getByRole("option", { name: /Mutation/ })).toHaveTextContent("Mutation1");
     // William, 22 Nov 2026: "rename the body type to Physical everywhere for boons and banes"
@@ -164,7 +177,7 @@ describe("The Specials page", () => {
     expect(screen.queryByRole("option", { name: /Body/ })).toBeNull();
     await user.keyboard("{Escape}");
     await pickOption(user, categories, /Injury/);
-    expect(names()).toEqual(["Old Battle WoundInjury"]);
+    expect(names()).toEqual(["Old Battle WoundBaneInjury"]);
     expect(categories).toHaveTextContent("Injury");
     // one setting in play: no Setting filter
     expect(screen.queryByRole("combobox", { name: "Setting" })).toBeNull();
@@ -196,12 +209,12 @@ describe("The Specials page", () => {
     const user = setupUser();
     renderApp(PAGE);
 
-    expect(await row("Beak")).toHaveTextContent("BeakFavour of Tchar");
+    expect(await row("Beak")).toHaveTextContent("BeakTraitFavour of Tchar");
     await user.click(await row("Beak"));
     expect(fact("Setting")).toBe("SettingMutiny in Marienburg");
     await user.click(await row("Beak")); // an open row stays whatever the filters
     await pickOption(user, await screen.findByRole("combobox", { name: "Setting" }), "Mordheim");
-    expect(names()).toEqual(["Old Battle WoundInjury", "Spiked TailMutation"]);
+    expect(names()).toEqual(["Old Battle WoundBaneInjury", "Spiked TailBoonMutation"]);
   });
 
   it("links a psychology special to its part of the Rules page, and no other", async () => {

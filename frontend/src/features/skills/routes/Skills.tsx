@@ -21,7 +21,6 @@ import SkillFormDialog from "../components/SkillFormDialog";
 import SkillGroupFormDialog from "../components/SkillGroupFormDialog";
 import SkillsAddNew from "../components/SkillsAddNew";
 import {
-  GROUP_ORDER,
   NO_GROUP_KEY,
   openRowOf,
   skillGroupRows,
@@ -139,7 +138,7 @@ export default function Skills() {
               isMobile={isMobile}
             />
           </FilterRow>
-          <FilterLine isMobile={isMobile} sort={GROUP_ORDER}>
+          <FilterLine isMobile={isMobile}>
             {settingOptions.length > 2 ? (
               <FilterSelect
                 label="Setting"

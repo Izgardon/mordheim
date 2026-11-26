@@ -7,7 +7,8 @@ import { canEditEntry, useCampaignCapabilities } from "@/features/campaigns/capa
 import { ALL_SETTINGS, entrySettingName } from "@/features/reference/in-play";
 import { FactLine, ReferenceDetail } from "@/features/reference/ReferenceDetail";
 import { useOwnWords } from "@/features/reference/own-words";
-import { BY_NAME_ONLY, FilterLine, FilterSelect } from "@/features/reference/FilterLine";
+import { FilterLine, FilterSelect } from "@/features/reference/FilterLine";
+import { listSort } from "@/features/reference/list-sort";
 import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import {
   ReferenceList,
@@ -23,11 +24,18 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import SpecialFormDialog from "../components/SpecialFormDialog";
-import { SPECIAL_KIND_LABELS, boonBaneRows, categoryOf, type CategoryFilter } from "../boons-banes";
+import {
+  SPECIAL_KIND_LABELS,
+  SPECIAL_SORTS,
+  boonBaneRows,
+  categoryOf,
+  type CategoryFilter,
+} from "../boons-banes";
 import { specialCost } from "../special-cost";
 
 // William, 7 Nov 2026: "Boons and Banes drop setting and price"; an open row shows them
-const COLUMNS = [{ label: "Type", className: "w-[200px] shrink-0" }];
+const TYPE_COLUMN = { label: "Type", className: "w-[200px] shrink-0" };
+const KIND_COLUMN = "w-[96px] shrink-0";
 
 /**
  * Specials (William, 5 Nov 2026: "having a page could be helpful"): the general rules and the
@@ -51,10 +59,12 @@ export default function BoonsBanes() {
   const params = useReferenceParams(!specials.isLoading);
   const category = params.get("category", "all") as CategoryFilter;
   const setting = params.get("setting", ALL_SETTINGS);
+  const sort = listSort(params, SPECIAL_SORTS);
   const { rows, counts, settingOptions } = boonBaneRows(specials.data, {
     query: params.query,
     category,
     setting,
+    sort: sort.value,
     settings,
     own,
     openId: params.openId,
@@ -94,7 +104,7 @@ export default function BoonsBanes() {
               isMobile={isMobile}
             />
           </FilterRow>
-          <FilterLine isMobile={isMobile} sort={BY_NAME_ONLY}>
+          <FilterLine isMobile={isMobile} sort={sort.menu}>
             <FilterSelect
               label="Category"
               allLabel="All categories"
@@ -122,11 +132,16 @@ export default function BoonsBanes() {
       {specials.error ? <p className="m-0 text-sm text-danger">{specials.error}</p> : null}
       <ReferenceList
         nameLabel="Name"
-        columns={isMobile ? undefined : COLUMNS}
+        nameSort={isMobile ? undefined : sort.heading("name")}
+        columns={
+          isMobile
+            ? undefined
+            : [{ label: "Kind", className: KIND_COLUMN, sort: sort.heading("kind") }, TYPE_COLUMN]
+        }
         isEmpty={!specials.isLoading && rows.length === 0}
         empty="No specials match."
       >
-        {specials.isLoading ? <ReferenceRowBones cells={1} /> : null}
+        {specials.isLoading ? <ReferenceRowBones cells={2} /> : null}
         {shown.rows.map((special) => {
           const key = String(special.id);
           const price = specialCost(special);
@@ -146,7 +161,11 @@ export default function BoonsBanes() {
                 </span>
               }
               sub={isMobile ? special.type || undefined : undefined}
-              cells={isMobile ? undefined : [special.type]}
+              cells={
+                isMobile
+                  ? undefined
+                  : [special.kind ? SPECIAL_KIND_LABELS[special.kind] : "–", special.type]
+              }
             >
               <ReferenceDetail title={special.name} kind={kind} isMobile={isMobile}>
                 <FactLine
@@ -181,12 +200,7 @@ export default function BoonsBanes() {
         })}
       </ReferenceList>
       {rows.length > 0 ? (
-        <ShowMore
-          shown={shown.rows.length}
-          total={rows.length}
-          onMore={shown.showMore}
-          sorted="sorted by name"
-        />
+        <ShowMore shown={shown.rows.length} total={rows.length} onMore={shown.showMore} />
       ) : null}
     </ReferencePage>
   );

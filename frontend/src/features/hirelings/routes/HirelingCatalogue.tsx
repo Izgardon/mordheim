@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { campaignCapabilities, canEditEntry } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { useWhoCan } from "@/features/items/api/who-can-queries";
+import { FilterLine } from "@/features/reference/FilterLine";
 import { inPlayOnly } from "@/features/reference/in-play";
+import { listSort } from "@/features/reference/list-sort";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { BuyableToggle, FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import { ReferenceList, ShowMore, useShownRows } from "@/features/reference/ReferenceList";
@@ -20,12 +22,13 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import HireDialog from "../components/HireDialog";
 import HirelingDetail from "../components/HirelingDetail";
 import HirelingProfileFormDialog from "../components/HirelingProfileFormDialog";
-import HirelingRow, { HIRELING_COLUMNS } from "../components/HirelingRow";
+import HirelingRow, { hirelingColumns } from "../components/HirelingRow";
 import {
   HIRELING_CATALOGUES,
   hirelingRace,
   type HirelingCatalogueKind,
 } from "../hireling-catalogue-kinds";
+import { HIRELING_SORTS, hirelingOrder } from "../hireling-sorts";
 import type { HirelingProfile } from "../types/hireling-catalogue-types";
 
 const SECTION: Record<HirelingCatalogueKind, { path: string; title: string }> = {
@@ -69,6 +72,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
   const whoCan = useWhoCan(campaignId, warband?.id);
   const access = kind === "hired-swords" ? whoCan.hiredSwords : whoCan.dramatisPersonae;
   const [onlyMine, setOnlyMine] = useState(true);
+  const sort = listSort(params, HIRELING_SORTS[kind]);
   const canHire = Boolean(warband) && sheet.capabilities.edit;
   const warningOf = (entry: HirelingProfile) => {
     if (!warband) return "";
@@ -76,16 +80,19 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
     return row && !row.can_hire ? row.reason : "";
   };
 
-  // Those the warband can usually hire first, then the rest; each part by name.
+  // Those the warband can usually hire first, then the rest; each part in the order picked.
+  const order = hirelingOrder(sort.value);
   const sorted = useMemo(
     () =>
       // the hire picker (?warband=) lists everyone, as before; the reference page only those in play
       (forWarband ? [...entries.data] : inPlayOnly(entries.data)).sort(
         (a, b) =>
           Number(access.get(a.id)?.can_hire === false) -
-            Number(access.get(b.id)?.can_hire === false) || a.name.localeCompare(b.name)
+            Number(access.get(b.id)?.can_hire === false) ||
+          order(a, b) ||
+          a.name.localeCompare(b.name)
       ),
-    [access, entries.data, forWarband]
+    [access, entries.data, forWarband, order]
   );
   const rows = sorted.filter(
     (entry) =>
@@ -125,31 +132,43 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
         ) : null
       }
       filters={
-        <FilterRow isMobile={isMobile}>
-          <ReferenceSearch
-            value={params.query}
-            onChange={params.setQuery}
-            placeholder={config.labels.search}
-            label={config.labels.search}
-            isMobile={isMobile}
-          />
-          {warband ? (
-            <BuyableToggle
-              warbandName={warband.name}
-              verb="hire"
-              checked={onlyMine}
-              onChange={setOnlyMine}
+        <>
+          <FilterRow isMobile={isMobile}>
+            <ReferenceSearch
+              value={params.query}
+              onChange={params.setQuery}
+              placeholder={config.labels.search}
+              label={config.labels.search}
               isMobile={isMobile}
             />
-          ) : null}
-        </FilterRow>
+            {warband ? (
+              <BuyableToggle
+                warbandName={warband.name}
+                verb="hire"
+                checked={onlyMine}
+                onChange={setOnlyMine}
+                isMobile={isMobile}
+              />
+            ) : null}
+          </FilterRow>
+          <FilterLine isMobile={isMobile} sort={sort.menu} />
+        </>
       }
       summary={isMobile ? undefined : `${rows.length} ${noun(rows.length)} shown`}
     >
       {entries.error ? <p className="m-0 text-sm text-danger">{entries.error}</p> : null}
       <ReferenceList
         nameLabel={config.labels.singular}
-        columns={isMobile ? undefined : HIRELING_COLUMNS}
+        nameSort={isMobile ? undefined : sort.heading("name")}
+        columns={
+          isMobile
+            ? undefined
+            : hirelingColumns({
+                hire: sort.heading("hire", "-hire"),
+                upkeep: sort.heading("upkeep", "-upkeep"),
+                rating: kind === "hired-swords" ? sort.heading("rating", "-rating") : undefined,
+              })
+        }
         isEmpty={!entries.isLoading && rows.length === 0}
         empty={sorted.length ? `${config.labels.noMatches}.` : `${config.labels.emptyTitle}.`}
       >

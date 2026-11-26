@@ -191,8 +191,6 @@ const rowNames = () =>
   [
     ...document.querySelectorAll<HTMLElement>('li[id^="ref-"] > button > span > span:first-child'),
   ].map((name) => name.textContent);
-const param = (app: ReturnType<typeof renderApp>, key: string) =>
-  new URLSearchParams(app.location().search).get(key);
 const tags = (label: string) =>
   within(screen.getByRole("article", { name: "Champion" })).getByText(label).parentElement
     ?.textContent;
@@ -228,7 +226,7 @@ describe("The Warbands page", () => {
     expect(screen.queryByText("Most warriors")).toBeNull();
   });
 
-  it("filters by setting and sorts by name or setting from the headings", async () => {
+  it("filters by setting, by name only", async () => {
     const setting = (id: number, slug: string, name: string) => ({
       id,
       slug,
@@ -256,34 +254,16 @@ describe("The Warbands page", () => {
     };
     fakeApi.on(`GET /warband-templates/?campaign_id=${CAMPAIGN_ID}`, [MERCENARIES, lizardmen]);
     const user = setupUser();
-    const app = renderApp(PAGE);
+    renderApp(PAGE);
 
     expect(await row("Lizardmen")).toHaveTextContent("LizardmenLustria");
     expect(rowNames()).toEqual(["Lizardmen", "Middenheimers", "Reiklanders"]);
 
-    await user.click(screen.getByRole("button", { name: "Sort by Setting" }));
-    expect(rowNames()).toEqual(["Middenheimers", "Reiklanders", "Lizardmen"]);
-    expect(param(app, "sort")).toBe("setting");
-    await user.click(screen.getByRole("button", { name: "Sort by Setting" }));
-    expect(rowNames()).toEqual(["Lizardmen", "Reiklanders", "Middenheimers"]);
-    await user.click(screen.getByRole("button", { name: "Sort by Warband" }));
-    expect(rowNames()).toEqual(["Lizardmen", "Middenheimers", "Reiklanders"]);
     // William, 8 Nov 2026: "on warbands table can we also show grade"
     expect(await row("Lizardmen")).toHaveTextContent("LizardmenLustria1b");
     expect(await row("Reiklanders")).toHaveTextContent("ReiklandersMercenariesMordheim–");
-    await user.click(screen.getByRole("button", { name: "Sort by Grade" }));
-    expect(rowNames()).toEqual(["Lizardmen", "Middenheimers", "Reiklanders"]); // none last
-    expect(param(app, "sort")).toBe("grade");
-    await user.click(screen.getByRole("button", { name: "Sort by Grade" }));
-    expect(rowNames()).toEqual(["Reiklanders", "Middenheimers", "Lizardmen"]);
-    await user.click(screen.getByRole("button", { name: "Sort by Warband" }));
-
-    // the sort's button beside the setting's dropdown sorts the same way
-    await user.click(screen.getByRole("button", { name: "Sorted by Name" }));
-    await user.click(await screen.findByRole("menuitemradio", { name: "Setting" }));
-    expect(rowNames()).toEqual(["Middenheimers", "Reiklanders", "Lizardmen"]);
-    expect(param(app, "sort")).toBe("setting");
-    await user.click(screen.getByRole("button", { name: "Sort by Warband" }));
+    // by name only (William, 26 Nov 2026: "Don't need a setting sort on anything")
+    expect(screen.queryByRole("button", { name: /^Sort/ })).toBeNull();
 
     const settings = screen.getByRole("combobox", { name: "Setting" });
     await pickOption(user, settings, "Lustria");

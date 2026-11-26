@@ -8,7 +8,9 @@ import {
   settingFilterOptions,
   settingShortName,
 } from "@/features/reference/in-play";
+import { byNumber } from "@/features/reference/list-sort";
 import { useOwnWords } from "@/features/reference/own-words";
+import type { SortOption } from "@/features/reference/SortMenu";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 
 import {
@@ -31,6 +33,28 @@ export type WargearRowData = {
   settingName: string;
 };
 
+export type WargearSort = "name" | "cost" | "-cost" | "rarity";
+
+/** Wargear's orders (William, 26 Nov 2026: "wargear doesn't need type or range"). */
+export const WARGEAR_SORTS: SortOption<WargearSort>[] = [
+  { id: "name", label: "Name" },
+  { id: "cost", label: "Cost: low to high" },
+  { id: "-cost", label: "Cost: high to low" },
+  { id: "rarity", label: "Rarity: common first" },
+];
+
+/** The price row's gold (dice left out), none for an item with no price. */
+const costOf = (row: WargearRowData) => (row.availability ? (row.availability.cost ?? 0) : null);
+
+/** Common first, then by its rarity, the rarest last; an item with no price after them. */
+const rarityOf = (row: WargearRowData) =>
+  row.availability ? (row.availability.rarity ?? 0) : null;
+
+const ORDERS: Record<
+  Exclude<WargearSort, "name">,
+  (a: WargearRowData, b: WargearRowData) => number
+> = { cost: byNumber(costOf), "-cost": byNumber(costOf, true), rarity: byNumber(rarityOf) };
+
 type WargearFilters = {
   items: Item[];
   settings: Map<number, Setting>;
@@ -41,6 +65,7 @@ type WargearFilters = {
   query: string;
   category: StoreCategory;
   setting: string;
+  sort: WargearSort;
   openId: string | null;
 };
 
@@ -51,7 +76,7 @@ type WargearFilters = {
  * grades as one), and the summary line.
  */
 export function useWargearRows(filters: WargearFilters) {
-  const { items, settings, offers, onlyMine, query, category, setting, openId } = filters;
+  const { items, settings, offers, onlyMine, query, category, setting, sort, openId } = filters;
   const words = useOwnWords();
   const all = useMemo<WargearRowData[]>(
     () =>
@@ -75,11 +100,13 @@ export function useWargearRows(filters: WargearFilters) {
       (setting === ALL_SETTINGS || settingFilterKey(item.setting_id, settings) === setting) &&
       matchesSearchQuery(query, ...searchWords(item))
   );
-  const rows = all.filter(
+  const kept = all.filter(
     (row) =>
       String(row.item.id) === openId ||
       (searched.includes(row) && (category === "all" || storeCategory(row.item) === category))
   );
+  // the rows are by name, which a stable sort keeps among equals
+  const rows = sort === "name" ? kept : [...kept].sort(ORDERS[sort]);
   const counts = STORE_CATEGORIES.map((entry) => ({
     ...entry,
     count:

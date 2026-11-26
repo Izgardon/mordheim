@@ -226,19 +226,15 @@ export function ShowMore({
   shown,
   total,
   onMore,
-  sorted,
 }: {
   shown: number;
   total: number;
   onMore: () => void;
-  /** "sorted by name". */
-  sorted?: string;
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <span className="text-[13px] text-muted-foreground">
         Showing {shown} of {total}
-        {sorted ? `, ${sorted}` : ""}
       </span>
       {shown < total ? (
         <Button variant="secondary" className="min-h-11" onClick={onMore}>

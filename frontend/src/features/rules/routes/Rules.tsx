@@ -2,7 +2,8 @@ import { useMemo } from "react";
 
 import { Disclaimer } from "@/components/ui/disclaimer";
 import ReferencePage from "@/features/reference/ReferencePage";
-import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import { FilterLine, FilterSelect } from "@/features/reference/FilterLine";
+import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import { ReferenceList } from "@/features/reference/ReferenceList";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -12,7 +13,7 @@ import RuleBookRow from "../components/RuleBookRow";
 import { ruleEntries, ruleMatches } from "../rules-index";
 
 /**
- * Rules (design E's reference layout): the bundled rulebook's sections as chips and each headed
+ * Rules (design E's reference layout): the bundled rulebook's sections as a filter and each headed
  * part as a row. The search looks inside the rules, not just the titles: a row shows the words
  * around its first match, and opens to the part with every match marked.
  */
@@ -27,7 +28,7 @@ export default function Rules() {
       entry.id === params.openId ||
       (searched.includes(entry) && (section === "all" || entry.sectionId === section))
   );
-  const chips = [
+  const sections = [
     { id: "all", label: "All", count: searched.length },
     ...rulesTabs.map((tab) => ({
       id: tab.id as string,
@@ -52,13 +53,16 @@ export default function Rules() {
               isMobile={isMobile}
             />
           </FilterRow>
-          <ReferenceChips
-            label="Section"
-            options={chips}
-            value={section}
-            onChange={(next) => params.set({ section: next === "all" ? null : next })}
-            isMobile={isMobile}
-          />
+          <FilterLine isMobile={isMobile}>
+            <FilterSelect
+              label="Section"
+              allLabel="All sections"
+              options={sections}
+              value={section}
+              onChange={(next) => params.set({ section: next === "all" ? null : next })}
+              isMobile={isMobile}
+            />
+          </FilterLine>
         </>
       }
       summary={

@@ -7,7 +7,6 @@ import { useBestiaryEntryForm } from "../hooks/useBestiaryEntryForm";
 import BestiaryEntryFormFields from "./form/BestiaryEntryFormFields";
 
 import type { NameMatch } from "@/lib/field-errors";
-import type { BeastKind } from "../bestiary-kinds";
 import type { BestiaryEntry, BestiaryEntrySummary } from "../types/bestiary-types";
 
 type Props = {
@@ -16,8 +15,6 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   /** The beast to edit (its detail is read, or taken from the cache); null adds one. */
   editingId: number | null;
-  /** A new beast's kind. */
-  defaultKind?: BeastKind;
   canDelete: boolean;
   onSaved?: (saved: BestiaryEntry, editedId: number | null) => void;
   onDeleted?: (entryId: number) => void;
@@ -34,7 +31,6 @@ export default function BestiaryEntryFormDialog({
   open,
   onOpenChange,
   editingId,
-  defaultKind,
   canDelete,
   onSaved,
   onDeleted,
@@ -46,7 +42,6 @@ export default function BestiaryEntryFormDialog({
   const form = useBestiaryEntryForm({
     campaignId,
     entry,
-    defaultKind,
     open,
     resetKey: `${open}-${editingId}`,
     onSaved: (saved) => onSaved?.(saved, editingId),
@@ -56,12 +51,12 @@ export default function BestiaryEntryFormDialog({
   });
   const { load } = form;
 
-  // Opening fills the form: blank to add (of the kind shown), or the edited beast once it arrives.
+  // Opening fills the form: blank to add, or the edited beast once it arrives.
   useEffect(() => {
     if (open) {
-      load(entry, defaultKind);
+      load(entry);
     }
-  }, [defaultKind, entry, load, open]);
+  }, [entry, load, open]);
 
   // Until the edited beast arrives there is nothing to save: Save waits with the fields.
   const isWaiting = editingId !== null && !entry;

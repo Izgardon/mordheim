@@ -1,10 +1,9 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { campaignCapabilities, canEditEntry } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
-import { inPlayOnly } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import {
@@ -14,7 +13,9 @@ import {
   RuleBlock,
   TagList,
 } from "@/features/reference/ReferenceDetail";
-import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import { FilterLine } from "@/features/reference/FilterLine";
+import { listSort } from "@/features/reference/list-sort";
+import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import {
   ReferenceList,
   ReferenceRow,
@@ -24,16 +25,14 @@ import {
 import { ProfileStrip, profileLine } from "@/features/reference/profile";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useCatalogue } from "@/lib/catalogue-queries";
-import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-import { BEAST_KINDS, beastKindLabel, type BeastKind } from "../bestiary-kinds";
+import { beastKindLabel } from "../bestiary-kinds";
+import { BEAST_SORTS, beastRows } from "../bestiary-rows";
 import BestiaryEntryFormDialog from "../components/BestiaryEntryFormDialog";
 import { useBestiaryEntryDetail } from "../hooks/useBestiaryEntryDetail";
 import type { BestiaryEntrySummary } from "../types/bestiary-types";
 import { shopLine } from "../utils/beast-shop";
-
-const PLURAL: Record<BeastKind, string> = { mount: "Mounts", pet: "Pets", creature: "Creatures" };
 
 /** "Creature · Large · Wizard · Rating 40": a beast's kind, what marks it out and its rating. */
 const kindLine = (entry: BestiaryEntrySummary) =>
@@ -129,9 +128,9 @@ function BeastDetail({
 
 /**
  * The Bestiary (design E's reference layout): every beast in play in the campaign, searched by
- * name or text, a chip per kind (mounts, pets, creatures), rows with the kind, the profile and
- * the store's price; a row opens to its profile and specials. Beasts are added and edited as
- * today.
+ * name or text, rows with the kind, the profile and the store's price, by name, cost or kind
+ * (`?sort=`: the headings on the web, the arrows button on a phone); a row opens to its profile
+ * and specials. Beasts are added and edited as today.
  */
 export default function Bestiary() {
   const { id } = useParams();
@@ -141,35 +140,19 @@ export default function Bestiary() {
   const beasts = useCatalogue("bestiary", campaignId);
   const params = useReferenceParams(!beasts.isLoading);
   const capabilities = campaignCapabilities(campaign);
-  const kind = params.get("kind", "all");
+  const sort = listSort(params, BEAST_SORTS);
   /** The form: closed, adding (null) or editing a beast. */
   const [editing, setEditing] = useState<{ id: number | null } | null>(null);
 
-  const sorted = useMemo(
-    () => inPlayOnly(beasts.data).sort((a, b) => a.name.localeCompare(b.name)),
-    [beasts.data]
-  );
-  const searched = sorted.filter((entry) =>
-    matchesSearchQuery(params.query, entry.name, entry.description, beastKindLabel(entry.kind))
-  );
-  const rows = sorted.filter(
-    (entry) =>
-      String(entry.id) === params.openId ||
-      (searched.includes(entry) && (kind === "all" || entry.kind === kind))
-  );
+  const rows = beastRows(beasts.data, {
+    query: params.query,
+    openId: params.openId,
+    sort: sort.value,
+  });
   const shown = useShownRows(
     rows,
     rows.findIndex((entry) => String(entry.id) === params.openId)
   );
-  const chips = [
-    { id: "all", label: "All", count: searched.length },
-    ...BEAST_KINDS.map((entryKind) => ({
-      id: entryKind,
-      label: PLURAL[entryKind],
-      count: searched.filter((entry) => entry.kind === entryKind).length,
-    })),
-  ];
-
   return (
     <ReferencePage
       title="Bestiary"
@@ -206,13 +189,7 @@ export default function Bestiary() {
               isMobile={isMobile}
             />
           </FilterRow>
-          <ReferenceChips
-            label="Kind"
-            options={chips}
-            value={kind}
-            onChange={(next) => params.set({ kind: next === "all" ? null : next })}
-            isMobile={isMobile}
-          />
+          <FilterLine isMobile={isMobile} sort={sort.menu} />
         </>
       }
       summary={
@@ -222,13 +199,18 @@ export default function Bestiary() {
       {beasts.error ? <p className="m-0 text-sm text-danger">{beasts.error}</p> : null}
       <ReferenceList
         nameLabel="Beast"
+        nameSort={isMobile ? undefined : sort.heading("name")}
         columns={
           isMobile
             ? undefined
             : [
-                { label: "Kind", className: "w-[170px] shrink-0" },
+                { label: "Kind", className: "w-[170px] shrink-0", sort: sort.heading("kind") },
                 { label: "Profile", className: "w-[210px] shrink-0" },
-                { label: "In the store", className: "w-[230px] shrink-0 max-[1180px]:hidden" },
+                {
+                  label: "In the store",
+                  className: "w-[230px] shrink-0 max-[1180px]:hidden",
+                  sort: sort.heading("cost", "-cost"),
+                },
               ]
         }
         isEmpty={!beasts.isLoading && rows.length === 0}
@@ -278,7 +260,6 @@ export default function Bestiary() {
         open={editing !== null}
         onOpenChange={(open) => (open ? null : setEditing(null))}
         editingId={editing?.id ?? null}
-        defaultKind={kind !== "all" ? (kind as BeastKind) : undefined}
         canDelete={capabilities.delete_catalogue}
         onSaved={(saved) => {
           setEditing(null);

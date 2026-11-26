@@ -1,8 +1,8 @@
 /**
  * The Warbands page's Setting column (William, 7 Nov 2026: "add Setting column and make it
  * filterable/sortable") and Grade column (William, 8 Nov 2026: "on warbands table can we also
- * show grade"): each row's setting and grade, the Setting filter (Mordheim's grades as one) and the
- * sort by name, setting or grade, either way.
+ * show grade"): each row's setting and grade and the Setting filter (Mordheim's grades as one), by
+ * name (William, 26 Nov 2026: "Don't need a setting sort on anything").
  */
 import { describe, expect, it } from "vitest";
 
@@ -10,16 +10,7 @@ import type { Setting } from "@/features/campaigns/types/campaign-types";
 import { ALL_SETTINGS } from "@/features/reference/in-play";
 
 import type { TemplateTypeRow } from "./template-view";
-import {
-  DEFAULT_SORT,
-  nextSort,
-  parseSort,
-  rowGrade,
-  rowSettingLabel,
-  shownWarbandRows,
-  sortParam,
-  warbandSettingOptions,
-} from "./warband-rows";
+import { rowGrade, rowSettingLabel, shownWarbandRows, warbandSettingOptions } from "./warband-rows";
 
 const setting = (
   id: number,
@@ -66,8 +57,8 @@ const ROWS = [
   row("Amazons", 6),
 ];
 const names = (rows: TemplateTypeRow[]) => rows.map((entry) => entry.typeName);
-const shown = (setting: string, sort = DEFAULT_SORT, query = "") =>
-  names(shownWarbandRows(ROWS, { query, setting, sort, settings: SETTINGS }));
+const shown = (setting: string, query = "") =>
+  names(shownWarbandRows(ROWS, { query, setting, settings: SETTINGS }));
 
 describe("the Setting column", () => {
   it("names each row's setting as it is, a campaign's own as this campaign's", () => {
@@ -98,29 +89,10 @@ describe("the Setting column", () => {
     expect(shown("mordheim")).toEqual(["Ostlanders", "Skaven"]);
     expect(shown("6")).toEqual(["Amazons", "Lizardmen"]);
     expect(shown("own")).toEqual(["House Wolves"]);
-    expect(shown("6", DEFAULT_SORT, "lizard")).toEqual(["Lizardmen"]);
+    expect(shown("6", "lizard")).toEqual(["Lizardmen"]);
   });
 
-  it("sorts by setting in the book's order, then name, and either way", () => {
-    const bySetting = { key: "setting", descending: false } as const;
-    expect(shown(ALL_SETTINGS, bySetting)).toEqual([
-      "Skaven",
-      "Ostlanders",
-      "Amazons",
-      "Lizardmen",
-      "House Wolves",
-    ]);
-    expect(shown(ALL_SETTINGS, { ...bySetting, descending: true })).toEqual([
-      "House Wolves",
-      "Lizardmen",
-      "Amazons",
-      "Ostlanders",
-      "Skaven",
-    ]);
-    expect(shown("mordheim", { key: "name", descending: true })).toEqual(["Skaven", "Ostlanders"]);
-  });
-
-  it("shows each row's grade and sorts by grade, 1a to 3, a row with none last", () => {
+  it("shows each row's grade, none for a campaign's own", () => {
     // William, 8 Nov 2026: "on warbands table can we also show grade"
     const graded = new Map(
       [
@@ -137,31 +109,5 @@ describe("the Setting column", () => {
       row("Amazons", 6),
     ];
     expect(rows.map((entry) => rowGrade(entry, graded))).toEqual(["1a", "3", "1b", "", "1b"]);
-    const sorted = (descending: boolean) =>
-      names(
-        shownWarbandRows(rows, {
-          query: "",
-          setting: ALL_SETTINGS,
-          sort: { key: "grade", descending },
-          settings: graded,
-        })
-      );
-    expect(sorted(false)).toEqual(["Skaven", "Amazons", "Lizardmen", "Fimir", "House Wolves"]);
-    expect(sorted(true)).toEqual(["House Wolves", "Fimir", "Lizardmen", "Amazons", "Skaven"]);
-    expect(parseSort("-grade")).toEqual({ key: "grade", descending: true });
-  });
-
-  it("keeps the sort in ?sort=, a heading's click turning it round", () => {
-    expect(parseSort("")).toEqual(DEFAULT_SORT);
-    expect(parseSort("-setting")).toEqual({ key: "setting", descending: true });
-    expect(parseSort("rubbish")).toEqual(DEFAULT_SORT);
-    expect(sortParam(DEFAULT_SORT)).toBeNull();
-    expect(sortParam({ key: "setting", descending: true })).toBe("-setting");
-    expect(nextSort(DEFAULT_SORT, "setting")).toEqual({ key: "setting", descending: false });
-    expect(nextSort({ key: "setting", descending: false }, "setting")).toEqual({
-      key: "setting",
-      descending: true,
-    });
-    expect(nextSort(DEFAULT_SORT, "name")).toEqual({ key: "name", descending: true });
   });
 });

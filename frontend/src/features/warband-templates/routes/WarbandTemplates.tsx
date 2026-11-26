@@ -9,7 +9,7 @@ import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { FilterLine, FilterSelect } from "@/features/reference/FilterLine";
 import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
-import { ReferenceList, ReferenceRow, type ColumnSort } from "@/features/reference/ReferenceList";
+import { ReferenceList, ReferenceRow } from "@/features/reference/ReferenceList";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useWarbandTypes } from "@/features/warbands/api/warband-types-queries";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -22,23 +22,13 @@ import { useCopyToWorkshop } from "@/features/workshop/api/useCopyToWorkshop";
 import ImportListButton from "@/features/workshop/components/ImportListButton";
 import { typeRows, type TemplateTypeRow } from "../template-view";
 import {
-  nextSort,
-  parseSort,
   rowGrade,
   rowSettingLabel,
   shownWarbandRows,
-  sortParam,
   warbandSettingOptions,
-  type WarbandSortKey,
 } from "../warband-rows";
 
 const counted = (count: number) => `${count} warband type${count === 1 ? "" : "s"}`;
-
-const SORT_OPTIONS: { id: WarbandSortKey; label: string }[] = [
-  { id: "name", label: "Name" },
-  { id: "setting", label: "Setting" },
-  { id: "grade", label: "Grade" },
-];
 
 /** A phone row's setting, and its grade where the setting's name doesn't already say it. */
 const asideLabel = (setting: string, grade: string) =>
@@ -61,7 +51,7 @@ function NoTemplate({ row, onMake }: { row: TemplateTypeRow; onMake: () => void 
  * Reference → Warbands (the templates plan, phases 1b and 4): each warband type in play with its
  * setting (William, 7 Nov 2026: "drop starting gold and most warriors ... add Setting column and
  * make it filterable/sortable") and grade (William, 8 Nov 2026), searched, filtered by setting
- * (Mordheim's grades as one) and sorted by name, setting or grade (`?sort=`), opening in place
+ * (Mordheim's grades as one), by name, opening in place
  * to its template (gold, warband size, variants, rules, fighters, lists, upgrades), or to Make a
  * template where it has none. Those who edit the catalogue edit a template in the editor (a
  * drawer on the web, a sheet on a phone).
@@ -82,14 +72,8 @@ export default function WarbandTemplates() {
 
   const rows = useMemo(() => typeRows(templates.data, types.data), [templates.data, types.data]);
   const setting = params.get("setting", ALL_SETTINGS);
-  const sort = parseSort(params.get("sort"));
   const settingOptions = warbandSettingOptions(rows, settings);
-  const shown = shownWarbandRows(rows, { query: params.query, setting, sort, settings });
-  const sortBy = (key: WarbandSortKey) => params.set({ sort: sortParam(nextSort(sort, key)) });
-  const sorting = (key: WarbandSortKey): ColumnSort => ({
-    direction: sort.key === key ? (sort.descending ? "desc" : "asc") : null,
-    onSort: () => sortBy(key),
-  });
+  const shown = shownWarbandRows(rows, { query: params.query, setting, settings });
 
   return (
     <ReferencePage
@@ -123,14 +107,7 @@ export default function WarbandTemplates() {
               isMobile={isMobile}
             />
           </FilterRow>
-          <FilterLine
-            isMobile={isMobile}
-            sort={{
-              options: SORT_OPTIONS,
-              value: sort.key,
-              onChange: (key) => params.set({ sort: sortParam({ key, descending: false }) }),
-            }}
-          >
+          <FilterLine isMobile={isMobile}>
             {settingOptions.length > 2 ? (
               <FilterSelect
                 label="Setting"
@@ -148,14 +125,13 @@ export default function WarbandTemplates() {
       {templates.error ? <p className="m-0 text-sm text-danger">{templates.error}</p> : null}
       <ReferenceList
         nameLabel="Warband"
-        nameSort={sorting("name")}
         columns={
           isMobile
             ? undefined
             : [
-                { label: "Setting", className: "w-[200px] shrink-0", sort: sorting("setting") },
+                { label: "Setting", className: "w-[200px] shrink-0" },
                 // William, 8 Nov 2026: "on warbands table can we also show grade"
-                { label: "Grade", className: "w-[80px] shrink-0", sort: sorting("grade") },
+                { label: "Grade", className: "w-[80px] shrink-0" },
               ]
         }
         isEmpty={!templates.isLoading && shown.length === 0}

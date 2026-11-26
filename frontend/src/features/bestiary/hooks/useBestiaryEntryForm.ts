@@ -20,7 +20,6 @@ import { shopPayload, shopProblems } from "../utils/beast-shop";
 import { useBestiaryLinks } from "./useBestiaryLinks";
 import { useShopPrices } from "./useShopPrices";
 
-import type { BeastKind } from "../bestiary-kinds";
 import type { BestiaryEntry, BestiaryEntrySummary } from "../types/bestiary-types";
 
 /** The fields a refusal can name that the form shows by their input. */
@@ -44,8 +43,6 @@ type UseBestiaryEntryFormOptions = {
   campaignId: number;
   /** The beast being edited, with its links; null when adding one. */
   entry: BestiaryEntry | null;
-  /** A new beast's kind (the Kind filter's, when one is chosen). */
-  defaultKind?: BeastKind;
   /** The pickers read the campaign's lists only while the form is open. */
   open: boolean;
   /** Server field errors clear whenever this changes. */
@@ -69,7 +66,6 @@ type UseBestiaryEntryFormOptions = {
 export function useBestiaryEntryForm({
   campaignId,
   entry,
-  defaultKind,
   open,
   resetKey,
   onSaved,
@@ -79,7 +75,7 @@ export function useBestiaryEntryForm({
 }: UseBestiaryEntryFormOptions) {
   const queryClient = useQueryClient();
   const catalogueCache = useCatalogueCache();
-  const [values, setValues] = useState(() => bestiaryValuesOf(entry, defaultKind));
+  const [values, setValues] = useState(() => bestiaryValuesOf(entry));
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(SHOWN_FIELDS, resetKey);
@@ -148,10 +144,10 @@ export function useBestiaryEntryForm({
   const { load: loadLinks } = links;
   const { load: loadPrices, ensureOne } = shop;
   const { clear: clearFieldErrors } = fieldErrors;
-  /** Back to `next`'s values, links and prices (a blank form of `kind` for null), no message. */
+  /** Back to `next`'s values, links and prices (a blank form for null), no message. */
   const load = useCallback(
-    (next: BestiaryEntry | null, kind?: BeastKind) => {
-      setValues(bestiaryValuesOf(next, kind));
+    (next: BestiaryEntry | null) => {
+      setValues(bestiaryValuesOf(next));
       markClean();
       loadLinks(next);
       loadPrices(next?.item);

@@ -68,15 +68,12 @@ export type BestiaryEntryValues = BestiaryCoreValues & {
 const text = (value: number | null | undefined) =>
   value === null || value === undefined ? "" : String(value);
 
-/** A beast's values as the form edits them; a blank one of `kind` for none. */
-export function bestiaryValuesOf(
-  entry: BestiaryEntry | null,
-  kind: BeastKind = "creature"
-): BestiaryEntryValues {
+/** A beast's values as the form edits them; a blank creature for none. */
+export function bestiaryValuesOf(entry: BestiaryEntry | null): BestiaryEntryValues {
   if (!entry) {
     return {
       ...blankBestiaryCore(),
-      kind,
+      kind: "creature",
       has_profile: true,
       gains_xp: false,
       rating_bonus: "",

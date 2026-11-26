@@ -9,28 +9,6 @@ import { matchesSearchQuery } from "@/lib/matches-search-query";
 
 import type { TemplateTypeRow } from "./template-view";
 
-/** What the Warbands page sorts by: name, setting or grade, each either way (`?sort=-grade`). */
-export type WarbandSortKey = "name" | "setting" | "grade";
-export type WarbandSort = { key: WarbandSortKey; descending: boolean };
-
-export const DEFAULT_SORT: WarbandSort = { key: "name", descending: false };
-
-/** `?sort=`: "setting", "-grade", "-name"; anything else is by name. */
-export function parseSort(param: string): WarbandSort {
-  const descending = param.startsWith("-");
-  const key = descending ? param.slice(1) : param;
-  return key === "setting" || key === "grade" ? { key, descending } : { key: "name", descending };
-}
-
-export const sortParam = (sort: WarbandSort) =>
-  sort.key === DEFAULT_SORT.key && !sort.descending
-    ? null
-    : `${sort.descending ? "-" : ""}${sort.key}`;
-
-/** A header's click: its key the other way when it already sorts by it, else its key A to Z. */
-export const nextSort = (sort: WarbandSort, key: WarbandSortKey): WarbandSort =>
-  sort.key === key ? { key, descending: !sort.descending } : { key, descending: false };
-
 /** A row's Setting filter key ("mordheim" for any of Mordheim's grades, "own", or the id). */
 export const rowSettingKey = (row: TemplateTypeRow, settings: Map<number, Setting>) =>
   entrySettingKey(row.setting, settings);
@@ -46,20 +24,6 @@ export const rowSettingLabel = (row: TemplateTypeRow, settings: Map<number, Sett
 export const rowGrade = (row: TemplateTypeRow, settings: Map<number, Setting>) =>
   (row.setting.setting_id != null ? settings.get(row.setting.setting_id)?.grade : undefined) ?? "";
 
-/** Grades in order, 1a < 1b < 1c < 2a < 2b < 3 (as they read), a row with none last. */
-function byGrade(a: TemplateTypeRow, b: TemplateTypeRow, settings: Map<number, Setting>) {
-  const [first, second] = [rowGrade(a, settings), rowGrade(b, settings)];
-  if (!first || !second) return Number(!first) - Number(!second);
-  return first.localeCompare(second);
-}
-
-/** Where a row's setting sorts: the book's order (Mordheim's grades first), the campaign's own last. */
-function settingOrder(row: TemplateTypeRow, settings: Map<number, Setting>) {
-  const setting = row.setting.setting_id != null ? settings.get(row.setting.setting_id) : undefined;
-  if (setting) return setting.sort_order;
-  return rowSettingKey(row, settings) === "mordheim" ? -Infinity : Infinity;
-}
-
 /** The Setting filter's options for these rows: All settings, then each once in the book's order. */
 export const warbandSettingOptions = (rows: TemplateTypeRow[], settings: Map<number, Setting>) =>
   settingKeyOptions(
@@ -70,31 +34,22 @@ export const warbandSettingOptions = (rows: TemplateTypeRow[], settings: Map<num
 type WarbandFilters = {
   query: string;
   setting: string;
-  sort: WarbandSort;
   settings: Map<number, Setting>;
 };
 
 /**
  * The rows the Warbands page shows: those the search (type or template name) and the Setting
- * filter keep, by name, by setting or by grade (then name), either way.
+ * filter keep, by name (William, 26 Nov 2026: "Don't need a setting sort on anything").
  */
 export function shownWarbandRows(
   rows: TemplateTypeRow[],
-  { query, setting, sort, settings }: WarbandFilters
+  { query, setting, settings }: WarbandFilters
 ): TemplateTypeRow[] {
-  const kept = rows.filter(
-    (row) =>
-      matchesSearchQuery(query, row.typeName, row.template?.name ?? "") &&
-      (setting === ALL_SETTINGS || rowSettingKey(row, settings) === setting)
-  );
-  const byName = (a: TemplateTypeRow, b: TemplateTypeRow) =>
-    a.typeName.localeCompare(b.typeName) || a.id.localeCompare(b.id);
-  const compare = {
-    name: byName,
-    setting: (a: TemplateTypeRow, b: TemplateTypeRow) =>
-      settingOrder(a, settings) - settingOrder(b, settings) || byName(a, b),
-    grade: (a: TemplateTypeRow, b: TemplateTypeRow) => byGrade(a, b, settings) || byName(a, b),
-  }[sort.key];
-  const sorted = [...kept].sort(compare);
-  return sort.descending ? sorted.reverse() : sorted;
+  return rows
+    .filter(
+      (row) =>
+        matchesSearchQuery(query, row.typeName, row.template?.name ?? "") &&
+        (setting === ALL_SETTINGS || rowSettingKey(row, settings) === setting)
+    )
+    .sort((a, b) => a.typeName.localeCompare(b.typeName) || a.id.localeCompare(b.id));
 }

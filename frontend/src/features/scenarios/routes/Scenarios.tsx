@@ -4,11 +4,11 @@ import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
 import AddNewMenu from "@/features/reference/AddNewMenu";
-import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import { FilterLine, FilterSelect } from "@/features/reference/FilterLine";
+import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import { ReferenceList, type ColumnSort } from "@/features/reference/ReferenceList";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
-import SortMenu from "@/features/reference/SortMenu";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -100,18 +100,23 @@ export default function Scenarios() {
               isMobile={isMobile}
             />
           </FilterRow>
-          <ReferenceChips
-            label="Players"
-            options={[
-              { id: "all", label: "All", count: counts("all") },
-              { id: "1v1", label: "1v1", count: counts("1v1") },
-              { id: "multiplayer", label: "Multiplayer", count: counts("multiplayer") },
-            ]}
-            value={players}
-            onChange={(next) => params.set({ players: next === "all" ? null : next })}
+          <FilterLine
             isMobile={isMobile}
-            end={<SortMenu options={SORT_OPTIONS} value={sort} onChange={sortBy} />}
-          />
+            sort={{ options: SORT_OPTIONS, value: sort, onChange: sortBy }}
+          >
+            <FilterSelect
+              label="Players"
+              allLabel="1v1 and multiplayer"
+              options={[
+                { id: "all", label: "All", count: counts("all") },
+                { id: "1v1", label: "1v1", count: counts("1v1") },
+                { id: "multiplayer", label: "Multiplayer", count: counts("multiplayer") },
+              ]}
+              value={players}
+              onChange={(next) => params.set({ players: next === "all" ? null : next })}
+              isMobile={isMobile}
+            />
+          </FilterLine>
         </>
       }
       summary={

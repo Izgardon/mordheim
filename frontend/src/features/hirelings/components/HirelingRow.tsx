@@ -1,16 +1,21 @@
 import type { ReactNode } from "react";
 
-import { ReferenceRow } from "@/features/reference/ReferenceList";
+import { ReferenceRow, type ColumnSort } from "@/features/reference/ReferenceList";
 
 import { formatFee } from "../fees";
 import { hirelingRace } from "../hireling-catalogue-kinds";
 import type { HirelingProfile } from "../types/hireling-catalogue-types";
 
-export const HIRELING_COLUMNS = [
+/** The web's columns, the fees and (the hired swords') rating sorting the list as a phone's menu. */
+export const hirelingColumns = (sort: {
+  hire: ColumnSort;
+  upkeep: ColumnSort;
+  rating?: ColumnSort;
+}) => [
   { label: "Race", className: "w-[160px] shrink-0" },
-  { label: "Hire fee", className: "w-[120px] shrink-0" },
-  { label: "Upkeep", className: "w-[120px] shrink-0" },
-  { label: "Rating", className: "w-[64px] shrink-0" },
+  { label: "Hire fee", className: "w-[120px] shrink-0", sort: sort.hire },
+  { label: "Upkeep", className: "w-[120px] shrink-0", sort: sort.upkeep },
+  { label: "Rating", className: "w-[64px] shrink-0", sort: sort.rating },
 ];
 
 /** One hired sword or dramatis persona: race, hire fee, upkeep and rating, greyed with a reason. */

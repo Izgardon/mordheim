@@ -6,7 +6,8 @@ import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { campaignCapabilities, canEditEntry } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { ALL_SETTINGS } from "@/features/reference/in-play";
-import { BY_NAME_ONLY, FilterLine, FilterSelect } from "@/features/reference/FilterLine";
+import { FilterLine, FilterSelect } from "@/features/reference/FilterLine";
+import { listSort } from "@/features/reference/list-sort";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { BuyableToggle, FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import { ReferenceList, ShowMore, useShownRows } from "@/features/reference/ReferenceList";
@@ -21,8 +22,8 @@ import ItemFormDialog from "../components/ItemFormDialog";
 import StorePanel, { type StoreOpening } from "../store/StorePanel";
 import type { StoreCategory } from "../store/store-items";
 import WargearDetail from "./WargearDetail";
-import WargearRow, { WARGEAR_COLUMNS } from "./WargearRow";
-import { useWargearRows } from "./wargear-rows";
+import WargearRow, { wargearColumns } from "./WargearRow";
+import { WARGEAR_SORTS, useWargearRows } from "./wargear-rows";
 
 /**
  * Wargear (design E, the items rebuild): every item in play in the campaign, searched by name,
@@ -56,6 +57,7 @@ export default function Wargear() {
   const [getting, setGetting] = useState<StoreOpening["again"]>(null);
   const capabilities = campaignCapabilities(campaign);
   const canBuy = Boolean(warband) && sheet.capabilities.manage_items;
+  const sort = listSort(params, WARGEAR_SORTS);
   const { rows, counts, settingOptions, summary } = useWargearRows({
     items: items.data,
     settings,
@@ -65,6 +67,7 @@ export default function Wargear() {
     query: params.query,
     category,
     setting,
+    sort: sort.value,
     openId: params.openId,
   });
   const openIndex = rows.findIndex((row) => String(row.item.id) === params.openId);
@@ -112,7 +115,7 @@ export default function Wargear() {
               />
             ) : null}
           </FilterRow>
-          <FilterLine isMobile={isMobile} sort={BY_NAME_ONLY}>
+          <FilterLine isMobile={isMobile} sort={sort.menu}>
             <FilterSelect
               label="Type"
               allLabel="All types"
@@ -136,7 +139,15 @@ export default function Wargear() {
       {items.error ? <p className="m-0 text-sm text-danger">{items.error}</p> : null}
       <ReferenceList
         nameLabel="Item"
-        columns={isMobile ? undefined : WARGEAR_COLUMNS}
+        nameSort={isMobile ? undefined : sort.heading("name")}
+        columns={
+          isMobile
+            ? undefined
+            : wargearColumns({
+                price: sort.heading("cost", "-cost"),
+                rarity: sort.heading("rarity"),
+              })
+        }
         isEmpty={!loading && rows.length === 0}
         empty={
           warband && onlyMine
@@ -175,12 +186,7 @@ export default function Wargear() {
         })}
       </ReferenceList>
       {rows.length > 0 ? (
-        <ShowMore
-          shown={shown.rows.length}
-          total={rows.length}
-          onMore={shown.showMore}
-          sorted="sorted by name"
-        />
+        <ShowMore shown={shown.rows.length} total={rows.length} onMore={shown.showMore} />
       ) : null}
       {warband && canBuy ? (
         <StorePanel

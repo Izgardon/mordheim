@@ -1,16 +1,17 @@
 import type { ReactNode } from "react";
 
-import { PriceRarity, ReferenceRow } from "@/features/reference/ReferenceList";
+import { PriceRarity, ReferenceRow, type ColumnSort } from "@/features/reference/ReferenceList";
 
 import { itemFigures, itemStatsLine, itemSubtype } from "../item-kind";
 import { itemName } from "../store/store-items";
 import { isCommon, priceLabel, rarityLabel } from "../utils/item-prices";
 import type { WargearRowData } from "./wargear-rows";
 
-export const WARGEAR_COLUMNS = [
+/** The web's columns, Price and Rarity sorting the list as the phone's sort button does. */
+export const wargearColumns = (sort: { price: ColumnSort; rarity: ColumnSort }) => [
   { label: "Type", className: "w-[150px] shrink-0" },
-  { label: "Price", className: "w-[124px] shrink-0" },
-  { label: "Rarity", className: "w-[96px] shrink-0" },
+  { label: "Price", className: "w-[124px] shrink-0", sort: sort.price },
+  { label: "Rarity", className: "w-[96px] shrink-0", sort: sort.rarity },
   { label: "Rules", className: "w-[240px] shrink-0 max-[1180px]:hidden" },
   { label: "Setting", className: "w-[120px] shrink-0 max-[1320px]:hidden" },
 ];

@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { Search } from "lucide-react";
 
-import { Chip } from "@/components/ui/chip";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
@@ -119,62 +118,5 @@ export function BuyableToggle({
         {isMobile ? label : checked ? "On" : "Show all"}
       </Switch>
     </FilterField>
-  );
-}
-
-export type ChipOption<T extends string> = { id: T; label: string; count?: number };
-
-type ReferenceChipsProps<T extends string> = {
-  /** The group's name: "Type", "Lore". */
-  label: string;
-  options: ReadonlyArray<ChipOption<T>>;
-  value: T;
-  onChange: (value: T) => void;
-  isMobile: boolean;
-  /** On a phone, a control pinned at the row's end that never scrolls with the chips (a sort). */
-  end?: ReactNode;
-};
-
-/** One-of-many chips (a section, a kind), each with its count when given. */
-export function ReferenceChips<T extends string>(props: ReferenceChipsProps<T>) {
-  const { isMobile } = props;
-  const pinned = isMobile && props.end;
-  const chips = (
-    <div
-      className={cn(
-        "flex items-center gap-2",
-        isMobile && "scroll-row -mx-4 px-4",
-        // the chips scroll in the room the pinned control leaves them
-        pinned && "mr-0 min-w-0 flex-1 pr-2"
-      )}
-    >
-      {isMobile ? null : <span className={cn(CAPTION, "mr-2")}>{props.label}</span>}
-      <div
-        role="group"
-        aria-label={props.label}
-        className={cn("flex gap-1.5", isMobile ? "pb-0.5" : "flex-wrap")}
-      >
-        {props.options.map((option) => (
-          <Chip
-            key={option.id}
-            pressed={props.value === option.id}
-            className="shrink-0"
-            onClick={() => props.onChange(option.id)}
-          >
-            {option.label}
-            {option.count !== undefined && !isMobile ? (
-              <span className="font-mono text-[11px] opacity-80">{option.count}</span>
-            ) : null}
-          </Chip>
-        ))}
-      </div>
-    </div>
-  );
-  if (!pinned) return chips;
-  return (
-    <div className="flex items-start gap-2">
-      {chips}
-      <div className="shrink-0">{props.end}</div>
-    </div>
   );
 }
