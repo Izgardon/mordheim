@@ -10,6 +10,7 @@ point at the campaign's versions of those. An entry's twin (a beast's Animal ite
 the entry's first edit, pointing at the entry's version, and goes back to the book with it.
 """
 
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 from django.db.models import Model
@@ -97,10 +98,31 @@ def copy_entry(
     the book entry's version, replacing it, or with `version` off an entry of the campaign's own (a warband template
     copied in the editor), with `changes` to its own fields. The copy keeps each copied child row's id -> its copy's,
     by path (`copied_ids`), so the write that made it can find the rows it was sent."""
-    clone = _copied(source, None, campaign_id, replaces_id=source.pk if version else None, **changes)
-    _point_at_versions([clone], campaign_id, skip="replaces_id")
-    clone.save(force_insert=True)
-    copied: dict[str, dict[Any, Any]] = {"": {source.pk: clone.pk}}
+    return copy_entries(kind, [source], campaign_id, version=version, skip=skip, changes={source.pk: changes})[0]
+
+
+def copy_entries(
+    kind: CatalogueKindSpec,
+    sources: Sequence[Model],
+    campaign_id: int,
+    *,
+    version: bool = True,
+    skip: tuple[str, ...] = (),
+    changes: Mapping[Any, Mapping[str, Any]] | None = None,
+) -> list[Model]:
+    """`copy_entry` for many entries of one kind at once, in the order sent: one INSERT for the entries and one per
+    child path, whatever their number. `changes` maps a source's id to the changes to its copy's own fields. Every
+    copy carries the same `copied_ids` (each copied row's id -> its copy's, by path, `""` the entries)."""
+    if not sources:
+        return []
+    edits = changes or {}
+    clones = [
+        _copied(source, None, campaign_id, replaces_id=source.pk if version else None, **edits.get(source.pk, {}))
+        for source in sources
+    ]
+    _point_at_versions(clones, campaign_id, skip="replaces_id")
+    made = kind.model._default_manager.bulk_create(clones)
+    copied: dict[str, dict[Any, Any]] = {"": {old.pk: new.pk for old, new in zip(sources, made, strict=True)}}
     siblings: dict[Any, dict[Any, Any]] = {}  # child model -> old id -> new, for links between child rows
     for path in kind.children:
         parent, _, name = path.rpartition("__")
@@ -110,8 +132,9 @@ def copy_entry(
         assert isinstance(relation, ForeignObjectRel)
         copied[path] = _copy_children(relation, copied[parent], campaign_id, siblings)
         siblings.setdefault(relation.related_model, {}).update(copied[path])
-    clone.copied_ids = copied  # type: ignore[attr-defined]
-    return clone
+    for clone in made:
+        clone.copied_ids = copied  # type: ignore[attr-defined]
+    return made
 
 
 def _model_at(model: type[Model], path: str) -> type[Model]:
