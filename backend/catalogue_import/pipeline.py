@@ -84,8 +84,7 @@ def same_name_clusters(items: list[dict[str, Any]], whole: Collection[str] = ())
 
 
 def assign_slugs(items: list[dict[str, Any]], whole: Collection[str] = ()) -> list[list[dict[str, Any]]]:
-    """Slugs from names. mordheimer's entry is the main one: a MiM item sharing its name gets the MiM variant and
-    suffix."""
+    """Slugs from names: a MiM item sharing a mordheimer entry's name gets the MiM variant and suffix."""
     clusters = same_name_clusters(items, whole)
     for members in clusters:
         if any(items[i]["origin"] == "mordheimer" for i in members):
