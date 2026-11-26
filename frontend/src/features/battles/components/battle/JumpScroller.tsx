@@ -92,7 +92,7 @@ export default function JumpScroller({ children }: { children: ReactNode }) {
         className={cn(
           "flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto overscroll-contain px-3 pt-2.5",
           // room under the last card, so the button never sits on its controls at the bottom
-          jump ? "pb-16" : "pb-6"
+          jump ? "pb-20" : "pb-6"
         )}
       >
         {children}
