@@ -82,6 +82,22 @@ select:not([multiple]):not([size]) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b5947' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 }
 
+/*
+ * Every field types at 16 px on a phone, in one place (William, 26 Nov 2026: "do what is best for
+ * iPhone"): Safari zooms the page into a field whose text is under 16 px when it takes focus, and
+ * leaves it zoomed. The page keeps pinch zoom (no maximum-scale). The :not()s hold the specificity
+ * above a Tailwind text utility, and leave a field set larger (a join code's text-lg) as it is.
+ */
+@media (max-width: 960px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not(
+      [type="file"]
+    ):not([type="button"]):not([type="submit"]):not(.text-lg):not(.text-xl):not(.text-2xl),
+  textarea:not(.text-lg):not(.text-xl):not(.text-2xl),
+  select:not(.text-lg):not(.text-xl):not(.text-2xl) {
+    font-size: 16px;
+  }
+}
+
 /* Utility classes */
 
 /* A row of chips that scrolls sideways: a small gap between the chips and the scrollbar under them, so the bar never
