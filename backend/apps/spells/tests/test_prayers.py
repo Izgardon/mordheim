@@ -1,6 +1,7 @@
 """Prayers (William, 26 Nov 2026). Mutiny in Marienburg's prayer lists (the Miracle Workers chapter: "get those
-prayers in from the priest section in MiM"): each a book lore of six on its D6 table, in that setting. Its Taal and
-Ulric lists differ from ours, so they stand apart under the book's name; Sigmar's it only points to, so ours serves.
+prayers in from the priest section in MiM"): each a book lore of six on its D6 table, in that setting. Its Ulric list
+differs from ours, so it stands apart under the book's name; its Taal list is ours (William, 26 Nov 2026: one list,
+Tanglefoot worded for any warband); Sigmar's it only points to, so ours serves.
 
 A lore is a prayer list or spells: the book's prayer lists are named in data/prayer-lores.json and every book spell is
 marked by its lore (`is_prayer`), a campaign's own spell taking its lore's answer unless its write says."""
@@ -27,7 +28,6 @@ MIM_LISTS = (
     "Prayers of Myrmidia",
     "Prayers of Ranald",
     "Prayers of Shallya",
-    "Prayers of Taal (Mutiny in Marienburg)",
     "Prayers of Ulric (Mutiny in Marienburg)",
     "Prayers of Verena",
 )
@@ -48,14 +48,13 @@ class MimPrayerDataTests(SimpleTestCase):
                 self.assertEqual({row["setting"] for row in prayers}, {"mutiny-in-marienburg"})
                 self.assertTrue(all(row["dc"].isdigit() and row["description"] for row in prayers))
 
-    def test_its_taal_list_is_ours_but_for_tanglefoot_and_sigmars_is_not_printed_again(self) -> None:
+    def test_its_taal_list_is_ours_tanglefoot_worded_for_any_warband_and_sigmars_is_not_printed_again(self) -> None:
         rows = book_rows()
-        ours = {row["name"]: row for row in rows if row["type"] == "Prayers of Taal"}
-        mim = {row["name"]: row for row in rows if row["type"] == "Prayers of Taal (Mutiny in Marienburg)"}
-        self.assertEqual(set(mim), set(ours))
-        differ = [name for name in mim if mim[name]["description"] != ours[name]["description"]]
-        self.assertEqual(differ, ["Tanglefoot"])
-        self.assertIn("friendly Taalites", mim["Tanglefoot"]["description"])
+        taal = [row for row in rows if row["type"].startswith("Prayers of Taal")]
+        self.assertEqual({row["type"] for row in taal}, {"Prayers of Taal"})
+        self.assertEqual(sorted(row["roll"] for row in taal), [1, 2, 3, 4, 5, 6])
+        tanglefoot = next(row["description"] for row in taal if row["name"] == "Tanglefoot")
+        self.assertIn("friendly models who worship Taal", tanglefoot)
         self.assertFalse([row for row in rows if row["type"].startswith("Prayers of Sigmar (")])
 
 
