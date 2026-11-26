@@ -11,7 +11,7 @@ import {
   type FormLayout,
 } from "@/features/catalogue/components/form-layout";
 
-import type { SpellFormState } from "../hooks/useSpellForm";
+import type { SpellFormState, SpellKind } from "../hooks/useSpellForm";
 
 const CLASS_COPY = {
   label: "Class",
@@ -21,13 +21,17 @@ const CLASS_COPY = {
 };
 
 const ROLL_OPTIONS = ["1", "2", "3", "4", "5", "6"] as const;
+const KIND_OPTIONS = [
+  { value: "spell", label: "Spell" },
+  { value: "prayer", label: "Prayer" },
+] as const;
 
 type SpellFormFieldsProps = {
   layout: FormLayout;
   form: SpellFormState;
 };
 
-/** A spell's name, class, difficulty, roll and description, inline or in a dialog. */
+/** A spell's name, class, kind, difficulty, roll and description, inline or in a dialog. */
 export default function SpellFormFields({ layout, form }: SpellFormFieldsProps) {
   const isDialog = layout === "dialog";
   const name = (
@@ -44,6 +48,22 @@ export default function SpellFormFields({ layout, form }: SpellFormFieldsProps) 
   );
   const type = (
     <CatalogueTypeField layout={layout} id="spell-type" copy={CLASS_COPY} field={form.typeField} />
+  );
+  const kind = (
+    <CatalogueField layout={layout} label="Kind" htmlFor="spell-kind">
+      <Select value={form.values.kind} onValueChange={(value) => form.setKind(value as SpellKind)}>
+        <SelectTrigger id={fieldId(layout, "spell-kind")}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {KIND_OPTIONS.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </CatalogueField>
   );
   const difficulty = (
     <CatalogueField layout={layout} label="Difficulty" htmlFor="spell-dc">
@@ -85,6 +105,7 @@ export default function SpellFormFields({ layout, form }: SpellFormFieldsProps) 
       <>
         {name}
         {type}
+        {kind}
         <div className="grid grid-cols-2 gap-4">
           {difficulty}
           {roll}
@@ -98,6 +119,7 @@ export default function SpellFormFields({ layout, form }: SpellFormFieldsProps) 
       <div className={INLINE_GRID_CLASS}>
         {name}
         {type}
+        {kind}
         {difficulty}
         {roll}
       </div>

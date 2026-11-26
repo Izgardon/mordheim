@@ -20,6 +20,8 @@ export type SpellCreatePayload = {
   /** The server stores the difficulty as text: "" is none, and null is refused. */
   dc?: number | "";
   roll?: number | null;
+  /** Its Kind: a prayer, else a spell; left out, the server takes its lore's. */
+  is_prayer?: boolean;
 };
 
 export function listSpells(options: ListSpellsOptions = {}) {

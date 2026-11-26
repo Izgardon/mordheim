@@ -7,12 +7,16 @@ import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
 import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
 import { useCatalogueDelete } from "@/features/catalogue/hooks/useCatalogueDelete";
 import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
-import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useCatalogue, useCatalogueCache } from "@/lib/catalogue-queries";
 import { useFieldErrors, type NameMatch } from "@/lib/field-errors";
 
 import { createSpell, updateSpell } from "../api/spells-api";
+import { praysFrom } from "../spell-lores";
 
 import type { Spell } from "../types/spell-types";
+
+/** A lore's spells are spells or prayers (William, 26 Nov 2026): the form's Kind, sent as `is_prayer`. */
+export type SpellKind = "spell" | "prayer";
 
 type SpellFormValues = {
   name: string;
@@ -21,6 +25,9 @@ type SpellFormValues = {
   dc: string;
   roll: string;
   typeCommitted: boolean;
+  kind: SpellKind;
+  /** The Kind was picked, or is the spell's own: the lore no longer sets it. */
+  kindSet: boolean;
 };
 
 type SpellTextField = "name" | "description" | "dc" | "roll";
@@ -32,6 +39,8 @@ const valuesOf = (spell: Spell | null): SpellFormValues => ({
   dc: spell?.dc?.toString() ?? "",
   roll: spell?.roll?.toString() ?? "",
   typeCommitted: Boolean(spell),
+  kind: spell?.is_prayer ? "prayer" : "spell",
+  kindSet: Boolean(spell),
 });
 
 type UseSpellFormOptions = {
@@ -57,8 +66,9 @@ type UseSpellFormOptions = {
 
 /**
  * A spell's Add or Edit form, inline on the Spells page or in the warband pages' dialog: the
- * values, the class ("type") box, the save (trimmed values, difficulty and roll as numbers; the
- * answer goes into the cached list) and the delete (refusals stay in its confirm, BUG-148).
+ * values, the class ("type") box, its Kind (a new spell's lore's until picked), the save (trimmed
+ * values, difficulty and roll as numbers; the answer goes into the cached list) and the delete
+ * (refusals stay in its confirm, BUG-148).
  */
 export function useSpellForm({
   campaignId,
@@ -92,9 +102,16 @@ export function useSpellForm({
     onDeleted,
   });
   const revert = useCatalogueRevert({ kind: "spells", campaignId, entry: spell, onReverted });
+  const spells = useCatalogue("spells", campaignId).data;
   const typeField = useCatalogueTypeField({
     value: values.type,
-    onChange: (type, typeCommitted) => setValues((prev) => ({ ...prev, type, typeCommitted })),
+    onChange: (type, typeCommitted) =>
+      setValues((prev) => ({
+        ...prev,
+        type,
+        typeCommitted,
+        kind: prev.kindSet ? prev.kind : praysFrom([type], spells ?? []) ? "prayer" : "spell",
+      })),
     typeOptions,
   });
 
@@ -126,6 +143,7 @@ export function useSpellForm({
       description: values.description.trim(),
       dc,
       roll: values.roll ? Number(values.roll) : null,
+      is_prayer: values.kind === "prayer",
     };
     try {
       // A book spell's first edit makes the campaign's version of it (CAT-TWEAK-01).
@@ -167,6 +185,7 @@ export function useSpellForm({
     values,
     setValue: (field: SpellTextField, value: string) =>
       setValues((prev) => ({ ...prev, [field]: value })),
+    setKind: (kind: SpellKind) => setValues((prev) => ({ ...prev, kind, kindSet: true })),
     typeField,
     fieldErrors: fieldErrors.errors,
     nameTaken,

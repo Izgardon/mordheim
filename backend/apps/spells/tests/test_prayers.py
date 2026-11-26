@@ -148,6 +148,16 @@ class CampaignPrayerTests(RosterTestCase):
         )
         self.assertTrue(renamed.json()["is_prayer"])
 
+    def test_a_version_keeps_the_kind_it_is_set_to(self) -> None:
+        book = Spell.objects.create(name="Healing Hand", type="Prayers of Sigmar", is_prayer=True)
+        edited = self.client.patch(
+            f"/api/spells/{book.id}/", {"campaign_id": self.campaign.id, "is_prayer": False}, format="json"
+        )
+        self.assertEqual(edited.status_code, 200, edited.data)
+        self.assertFalse(Spell.objects.get(campaign=self.campaign, replaces=book).is_prayer)
+        book.refresh_from_db()
+        self.assertTrue(book.is_prayer)
+
     def test_a_units_spell_says_whether_it_is_a_prayer(self) -> None:
         prayer = Spell.objects.create(name="Soulfire", type="Prayers of Sigmar", is_prayer=True)
         self.assertTrue(SpellDetailSerializer(prayer).data["is_prayer"])
