@@ -34,6 +34,7 @@ const ROWS: Workshop = {
       name: "The Gilded Wagon",
       warband_type: { id: 3, name: "Reiklanders" },
       template_id: 5,
+      no_list: false,
       cost: 455,
       budget: 500,
       share_code: "WAGN2345",
@@ -44,7 +45,8 @@ const ROWS: Workshop = {
       campaign_id: 9,
       name: "Overspent",
       warband_type: { id: 4, name: "Middenheimers" },
-      template_id: 5,
+      template_id: null,
+      no_list: true,
       cost: 620,
       budget: 500,
       share_code: "OVER2345",
@@ -125,6 +127,8 @@ describe("Home's workshop sections", () => {
     expect(card("The Gilded Wagon")).toHaveTextContent("WAGN2345");
     expect(within(card("Overspent")).getByText("620 / 500 gc")).toHaveClass("text-danger");
     expect(card("Night Watch")).toHaveTextContent("Reiklanders, Mercenaries");
+    expect(card("Overspent")).toHaveTextContent("Middenheimers · No list"); // William, 26 Nov 2026
+    expect(card("The Gilded Wagon")).not.toHaveTextContent("No list");
     expect(
       within(card("The Gilded Wagon")).getByRole("link", { name: "The Gilded Wagon" })
     ).toHaveAttribute("href", "/workshop/9/warbands/40");

@@ -75,6 +75,7 @@ def warband_row(warband: Warband, value: RosterValue) -> dict[str, Any]:
             {"id": warband.warband_type_id, "name": warband.warband_type.name} if warband.warband_type else None
         ),
         "template_id": warband.template_id,
+        "no_list": warband.no_list,  # it reads no list at all: Home's card says so (William, 26 Nov 2026)
         "cost": value.cost,
         "budget": value.budget,
         "share_code": warband.share_code,

@@ -17,6 +17,8 @@ export type WorkshopWarbandRow = {
   warband_type: WorkshopType | null;
   /** The list it reads (one of my lists, or the book's template). */
   template_id: number | null;
+  /** It reads no list at all: its own budget, every unit made by hand. */
+  no_list: boolean;
   cost: number;
   budget: number;
   share_code: string;

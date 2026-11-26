@@ -41,7 +41,9 @@ export default function WarbandsSection() {
           key={row.id}
           to={workshopWarbandPath(row.campaign_id, row.id)}
           name={row.name}
-          kicker={row.warband_type?.name ?? "Warband"}
+          kicker={[row.warband_type?.name ?? "Warband", row.no_list && "No list"]
+            .filter(Boolean)
+            .join(" · ")}
           shareCode={row.share_code}
           facts={<CostLine cost={row.cost} budget={row.budget} />}
           onDelete={() => remove.mutateAsync(row.id)}

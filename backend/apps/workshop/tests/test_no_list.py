@@ -87,6 +87,7 @@ class ReadingTests(NoListTestCase):
         with self.assertNumQueries(LIST_QUERIES):
             rows = self.client.get("/api/workshop/").data["warbands"]
         self.assertEqual([row["budget"] for row in rows], [300, 200, 100, 500, 500])
+        self.assertEqual([row["no_list"] for row in rows], [True, True, True, True, False])  # Home's card says so
 
 
 class RecruitingTests(NoListTestCase):
