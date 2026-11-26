@@ -28,6 +28,7 @@ import CombatSheet from "./CombatSheet";
 import { combatOptions } from "./combat-options";
 import { EndFightSheet, FinishSheet } from "./FinishSheets";
 import GearSheet from "./GearSheet";
+import JumpScroller from "./JumpScroller";
 import KillSheet, { type Killer } from "./KillSheet";
 import RoundSheet from "./RoundSheet";
 import { NeutralGroupUnits, OtherWarband } from "./SideUnits";
@@ -43,11 +44,10 @@ import { sideId, type BattleUnitView } from "./battle-units";
 type Panel = "menu" | "rules" | "notes" | "edit" | "add" | "neutral" | "cancel" | "end";
 
 /**
- * The battle screen (design E's E-Mobile-Battle). On a phone it fills the screen: the
- * top bar (back, the battle and "Round N · live", Next round), the strip of warbands and neutral
- * groups, the feed in its own box, the selected side's units and the bottom bar (Rules, Melee,
- * Dice, Ranged, Menu: `BattleTools`). On the web the same pieces sit wider: the tools in the header, the strip
- * and the cards in the main column, the feed as a side column.
+ * The battle screen (design E's E-Mobile-Battle). On a phone it fills the screen: the top bar
+ * (back, the battle, "Round N · live", Next round), the side strip, the feed and the side's units
+ * with Jump over them (`JumpScroller`), and `BattleTools` (Rules, Melee, Dice, Ranged, Menu). On
+ * the web: the tools in the header, the strip and cards in the main column, the feed beside them.
  */
 export default function BattleScreen({ screen, isMobile }: { screen: Screen; isMobile: boolean }) {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
@@ -412,13 +412,13 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
           {nextRoundButton}
         </header>
         <div className="shrink-0 border-b border-line bg-bar px-3 py-2">{strip}</div>
-        <div className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto overscroll-contain px-3 pb-6 pt-2.5">
+        <JumpScroller>
           {feedBox}
           {config.actionError ? (
             <p className="m-0 text-sm text-danger">{config.actionError}</p>
           ) : null}
           {shown}
-        </div>
+        </JumpScroller>
         <div className="shrink-0 pb-[env(safe-area-inset-bottom,0px)]">
           <BattleTools isMobile onOpen={openTool} />
         </div>

@@ -129,7 +129,10 @@ export default function WarbandUnits({
         .filter((section) => section.cards.length > 0)
         .map((section) => (
           <Fragment key={section.kind}>
-            <h2 className="col-span-full m-0 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+            <h2
+              data-jump-section={section.kind}
+              className="col-span-full m-0 text-[11px] font-bold uppercase tracking-[0.12em] text-faint"
+            >
               {battleSectionLabel({ kind: section.kind })}
             </h2>
             {section.cards}

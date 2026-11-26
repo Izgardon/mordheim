@@ -62,6 +62,10 @@ describe("WarbandUnits", () => {
 
     // no animals and no temporary units in the fixture: those headings stay away
     expect(headings()).toEqual(["Heroes", "Henchmen", "Hired swords"]);
+    // what the phone's Jump button steps through
+    expect(
+      screen.getAllByRole("heading", { level: 2 }).map((node) => node.dataset.jumpSection)
+    ).toEqual(["hero", "henchman", "hireling"]);
     expect(screen.getByRole("article", { name: "Captain Wolf" })).toBeInTheDocument();
     expect(screen.getByRole("article", { name: "Youngbloods" })).toBeInTheDocument();
   });
