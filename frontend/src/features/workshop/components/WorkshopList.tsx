@@ -15,9 +15,9 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { useWorkshop } from "../api/workshop-queries";
 
 /**
- * A warband list in my workshop (`/workshop/:id/lists/:templateId`): its name and the types it
- * serves, its share code with Copy, then the list as Reference → Warbands shows it, and Edit
- * list, the template editor on it.
+ * A warband list in my workshop (`/workshop/:id/lists/:templateId`): its name, its share code
+ * with Copy, then the list as Reference → Warbands shows it, and Edit list, the template editor
+ * on it. No line of the types it serves (William, 26 Nov 2026).
  */
 export default function WorkshopList() {
   const { campaign: workshop } = useOutletContext<CampaignLayoutContext>();
@@ -39,7 +39,6 @@ export default function WorkshopList() {
       </p>
     );
   }
-  const types = (template.data?.types ?? row.warband_types).map((entry) => entry.name);
   const close = () => {
     setEditing(null);
     // its name and the types it serves are my workshop's rows too
@@ -50,9 +49,6 @@ export default function WorkshopList() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-end justify-between gap-5">
         <div className="flex min-w-0 flex-col gap-1.5">
-          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
-            {["Warband list", types.join(", ")].filter(Boolean).join(" · ")}
-          </span>
           <h1 className="m-0 break-words font-display text-[32px] font-semibold leading-tight text-head min-[960px]:text-[40px]">
             {template.data?.name ?? row.name}
           </h1>

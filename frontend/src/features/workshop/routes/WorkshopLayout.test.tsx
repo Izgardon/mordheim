@@ -100,7 +100,8 @@ describe("my workshop's pages", () => {
 
     const heading = await screen.findByRole("heading", { name: "Night Watch", level: 1 });
     const header = heading.closest("header") as HTMLElement;
-    expect(header).toHaveTextContent("Warband list · Reiklanders");
+    expect(header).not.toHaveTextContent("Reiklanders"); // William, 26 Nov 2026: no types line
+    expect(header).not.toHaveTextContent("Warband list");
     expect(within(header).getByText("WTCH2345")).toBeInTheDocument();
     expect(within(header).getByRole("button", { name: "Edit list" })).toBeInTheDocument();
     expect(await screen.findByRole("button", { name: "Watchmen" })).toBeInTheDocument();
