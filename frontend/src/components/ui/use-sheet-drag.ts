@@ -2,8 +2,15 @@ import { useCallback, useLayoutEffect, useRef } from "react";
 
 import { ownsItsGestures, scrollPanes } from "@/lib/touch-gestures";
 
-/** How far the sheet must be dragged down before letting go closes it. */
-export const SHEET_DISMISS_DISTANCE = 80;
+/**
+ * How far a sheet must be dragged down before letting go closes it: a third of its height, at
+ * least `SHEET_DISMISS_MIN` (a short sheet still needs a real pull) and at most `SHEET_DISMISS_MAX`
+ * (a tall one never needs a whole-screen drag).
+ */
+export const SHEET_DISMISS_MIN = 100;
+export const SHEET_DISMISS_MAX = 220;
+export const sheetDismissDistance = (height: number) =>
+  Math.min(SHEET_DISMISS_MAX, Math.max(SHEET_DISMISS_MIN, Math.round(height / 3)));
 /** How far a finger moves before the gesture counts as a drag, a scroll or a swipe, not a tap. */
 const SLOP = 8;
 /** A quick flick down closes a sheet dragged less than the distance: px per ms over its last moves. */
@@ -85,7 +92,8 @@ function follow(sheet: HTMLElement, close: () => void) {
     gesture = null;
     if (!done?.dragging) return;
     const now = performance.now();
-    const closing = !cancelled && (done.offset > SHEET_DISMISS_DISTANCE || flicked(done, now));
+    const distance = sheetDismissDistance(sheet.getBoundingClientRect().height);
+    const closing = !cancelled && (done.offset > distance || flicked(done, now));
     // closing first: a phone dialog closes through a click on its own Close, which is no stray
     if (closing) close();
     guardUntil = now + CLICK_GUARD_MS;
@@ -169,7 +177,7 @@ function follow(sheet: HTMLElement, close: () => void) {
 /**
  * Drag a phone's bottom sheet down to close it (William, 25 Nov 2026: from anywhere, not just the
  * handle): its header and footer always, its body while scrolled to the top and moving down. The
- * sheet follows the finger and closes past `SHEET_DISMISS_DISTANCE` or on a quick flick, else
+ * sheet follows the finger and closes past `sheetDismissDistance` of its height or on a quick flick, else
  * springs back. Taps, fields, sliders, steppers, sideways rows and `data-no-sheet-drag` are left
  * alone. The listeners are native so touchmove can be cancelled (React's is passive); the answer
  * is a ref for the sheet's own element (the dialog content).

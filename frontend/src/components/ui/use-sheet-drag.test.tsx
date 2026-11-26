@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { BottomSheet } from "./bottom-sheet";
 import { Dialog, DialogContent, DialogTitle } from "./dialog";
-import { SHEET_DISMISS_DISTANCE } from "./use-sheet-drag";
+import { SHEET_DISMISS_MAX, SHEET_DISMISS_MIN, sheetDismissDistance } from "./use-sheet-drag";
 
 vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => true }));
 
@@ -92,7 +92,7 @@ describe("useSheetDrag", () => {
     fireEvent.touchMove(title, at(0, 450));
     expect(screen.getByRole("dialog").style.transform).toBe("translateY(50px)");
     clock += 400; // slow: no flick
-    fireEvent.touchMove(title, at(0, 400 + SHEET_DISMISS_DISTANCE + 10));
+    fireEvent.touchMove(title, at(0, 400 + SHEET_DISMISS_MIN + 10));
     clock += 400;
     act(() => {
       fireEvent.touchEnd(title, at(0, 0));
@@ -104,11 +104,27 @@ describe("useSheetDrag", () => {
   it("springs back from a short slow drag", () => {
     render(<Harness />);
 
-    drag(screen.getByText("Battle 5"), down(SHEET_DISMISS_DISTANCE - 20), 200);
+    drag(screen.getByText("Battle 5"), down(SHEET_DISMISS_MIN - 20), 200);
 
     const sheet = screen.getByRole("dialog");
     expect(sheet.style.transform).toBe("");
     expect(sheet.style.transition).toContain("transform");
+  });
+
+  it("needs a third of a tall sheet's height, between the least and the most", () => {
+    expect([200, 450, 900].map(sheetDismissDistance)).toEqual([
+      SHEET_DISMISS_MIN,
+      150,
+      SHEET_DISMISS_MAX,
+    ]);
+    render(<Harness />);
+    const sheet = screen.getByRole("dialog");
+    vi.spyOn(sheet, "getBoundingClientRect").mockReturnValue({ height: 600 } as DOMRect);
+
+    drag(screen.getByText("Rules"), down(180), 200);
+    expect(sheetOpen()).toBe(true);
+    drag(screen.getByText("Rules"), down(210), 200);
+    expect(sheetOpen()).toBe(false);
   });
 
   it("closes on a quick flick shorter than the distance", () => {
@@ -122,11 +138,11 @@ describe("useSheetDrag", () => {
   it("drags from the footer and from the body at its top", () => {
     render(<Harness />);
     scrollingBody(0);
-    drag(screen.getByText("Melee"), down(SHEET_DISMISS_DISTANCE + 40), 200);
+    drag(screen.getByText("Melee"), down(SHEET_DISMISS_MIN + 40), 200);
     expect(sheetOpen()).toBe(false);
 
     render(<Harness />);
-    drag(screen.getByRole("button", { name: "Done" }), down(SHEET_DISMISS_DISTANCE + 40), 200);
+    drag(screen.getByRole("button", { name: "Done" }), down(SHEET_DISMISS_MIN + 40), 200);
     expect(sheetOpen()).toBe(false);
   });
 
@@ -173,7 +189,7 @@ describe("useSheetDrag", () => {
   ])("never drags from %s", (_, target) => {
     render(<Harness />);
 
-    drag(target(), down(SHEET_DISMISS_DISTANCE + 60), 200);
+    drag(target(), down(SHEET_DISMISS_MIN + 60), 200);
 
     expect(sheetOpen()).toBe(true);
   });
@@ -206,7 +222,7 @@ describe("useSheetDrag", () => {
     fireEvent.click(button);
     expect(onTap).toHaveBeenCalledTimes(1);
 
-    drag(button, down(SHEET_DISMISS_DISTANCE - 30), 200);
+    drag(button, down(SHEET_DISMISS_MIN - 30), 200);
     fireEvent.click(button);
     expect(onTap).toHaveBeenCalledTimes(1);
   });
@@ -224,7 +240,7 @@ describe("useSheetDrag", () => {
     }
     render(<PhoneDialog />);
 
-    drag(screen.getByText("Edit hero"), down(SHEET_DISMISS_DISTANCE + 40), 200);
+    drag(screen.getByText("Edit hero"), down(SHEET_DISMISS_MIN + 40), 200);
 
     expect(sheetOpen()).toBe(false);
   });

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { BottomSheet } from "./bottom-sheet";
-import { SHEET_DISMISS_DISTANCE } from "./use-sheet-drag";
+import { SHEET_DISMISS_MIN } from "./use-sheet-drag";
 
 function Harness({ onOpenChange = vi.fn() }: { onOpenChange?: (open: boolean) => void }) {
   const [open, setOpen] = useState(true);
@@ -61,11 +61,11 @@ describe("BottomSheet", () => {
     const onOpenChange = vi.fn();
     render(<Harness onOpenChange={onOpenChange} />);
 
-    drag(SHEET_DISMISS_DISTANCE - 10);
+    drag(SHEET_DISMISS_MIN - 10);
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(onOpenChange).not.toHaveBeenCalled();
 
-    drag(SHEET_DISMISS_DISTANCE + 10);
+    drag(SHEET_DISMISS_MIN + 10);
     expect(onOpenChange).toHaveBeenCalledWith(false);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
