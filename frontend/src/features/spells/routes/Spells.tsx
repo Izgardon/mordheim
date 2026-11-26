@@ -3,7 +3,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
-import { campaignCapabilities } from "@/features/campaigns/capabilities";
+import { campaignCapabilities, canEditEntry } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { entrySettingName, inPlayOnly } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
@@ -78,12 +78,11 @@ export default function Spells() {
     <ReferencePage
       title="Spells"
       section="spells"
-      archived={{
-        kind: "spells",
-        campaignId,
-        canRestore: capabilities.edit_catalogue,
-        noun: "spells",
-      }}
+      archived={
+        capabilities.archived_catalogue
+          ? { kind: "spells", campaignId, canRestore: capabilities.edit_catalogue, noun: "spells" }
+          : undefined
+      }
       actions={addButton}
       filters={
         <FilterRow isMobile={isMobile}>
@@ -132,6 +131,7 @@ export default function Spells() {
               edit={
                 capabilities.edit_catalogue
                   ? {
+                      canEdit: (spell) => canEditEntry(capabilities, spell),
                       typeOptions: types,
                       canDelete: capabilities.delete_catalogue,
                       onSaved: (saved) => params.reveal(String(saved.id), { lore: null }),

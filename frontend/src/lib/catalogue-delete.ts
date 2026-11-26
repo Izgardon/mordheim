@@ -60,9 +60,10 @@ type Deleted = { name: string; campaign_id?: number | null };
 /**
  * The delete confirm's words, matched to what will happen (decision 5, CAT-TWEAK-04, CAT-NEW-05):
  * an unused custom entry is deleted; a used one is archived and its copies stay; a book entry is
- * removed from this campaign only. Lossy actions say what they lose.
+ * removed from this campaign only. In a workshop, which keeps no archive (William, 26 Nov 2026),
+ * a used one is deleted from its lists while what uses it keeps it. Lossy actions say what they lose.
  */
-export function deleteWording(entry: Deleted, check: UsageCheck, noun: string) {
+export function deleteWording(entry: Deleted, check: UsageCheck, noun: string, inWorkshop = false) {
   const isBook = entry.campaign_id == null;
   if (check.state === "checking") {
     return {
@@ -76,6 +77,18 @@ export function deleteWording(entry: Deleted, check: UsageCheck, noun: string) {
     return {
       confirm: `Remove ${noun}`,
       message: `Remove ${entry.name} from this campaign only? The book and other campaigns keep it.${keep} You can restore it from Archived.`,
+    };
+  }
+  if (inWorkshop && check.state !== "ready") {
+    return {
+      confirm: `Delete ${noun}`,
+      message: `Delete ${entry.name}? Anything that uses it keeps it.`,
+    };
+  }
+  if (inWorkshop && used) {
+    return {
+      confirm: `Delete ${noun}`,
+      message: `Delete ${entry.name}? It is used by ${used}; they keep it, and it leaves your lists and pickers for good.`,
     };
   }
   if (used) {

@@ -11,6 +11,8 @@ const MATCH = {
   type: "Dark Elf",
   source: "book",
   archived: false,
+  editable: true,
+  restorable: false,
 };
 const duplicate = new ApiError(DUPLICATE, 400, {
   detail: DUPLICATE,

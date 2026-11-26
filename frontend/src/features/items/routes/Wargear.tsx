@@ -3,7 +3,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
-import { campaignCapabilities } from "@/features/campaigns/capabilities";
+import { campaignCapabilities, canEditEntry } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { ALL_SETTINGS } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
@@ -91,12 +91,11 @@ export default function Wargear() {
     <ReferencePage
       title="Wargear"
       section="items"
-      archived={{
-        kind: "items",
-        campaignId,
-        canRestore: capabilities.edit_catalogue,
-        noun: "wargear",
-      }}
+      archived={
+        capabilities.archived_catalogue
+          ? { kind: "items", campaignId, canRestore: capabilities.edit_catalogue, noun: "wargear" }
+          : undefined
+      }
       actions={addButton}
       filters={
         <>
@@ -166,7 +165,7 @@ export default function Wargear() {
                 campaignId={campaignId}
                 isMobile={isMobile}
                 canBuy={canBuy}
-                canEdit={capabilities.edit_catalogue}
+                canEdit={canEditEntry(capabilities, item)}
                 canDelete={capabilities.delete_catalogue}
                 onGet={() => setGetting({ itemId: item.id, name: item.name, price: null })}
                 onSaved={(saved) => params.set({ open: String(saved.id) })}

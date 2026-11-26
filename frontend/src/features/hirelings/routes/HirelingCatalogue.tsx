@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { campaignCapabilities } from "@/features/campaigns/capabilities";
+import { campaignCapabilities, canEditEntry } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { useWhoCan } from "@/features/items/api/who-can-queries";
 import { inPlayOnly } from "@/features/reference/in-play";
@@ -103,12 +103,16 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
     <ReferencePage
       title={SECTION[kind].title}
       section={SECTION[kind].path}
-      archived={{
-        kind,
-        campaignId,
-        canRestore: capabilities.edit_catalogue,
-        noun: kind === "hired-swords" ? "hired swords" : "dramatis personae",
-      }}
+      archived={
+        capabilities.archived_catalogue
+          ? {
+              kind,
+              campaignId,
+              canRestore: capabilities.edit_catalogue,
+              noun: kind === "hired-swords" ? "hired swords" : "dramatis personae",
+            }
+          : undefined
+      }
       actions={
         capabilities.edit_catalogue ? (
           <Button
@@ -169,7 +173,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
                 isMobile={isMobile}
                 onHire={canHire ? () => setHiring(entry) : undefined}
                 onEdit={
-                  capabilities.edit_catalogue ? () => setEditing({ id: entry.id }) : undefined
+                  canEditEntry(capabilities, entry) ? () => setEditing({ id: entry.id }) : undefined
                 }
               />
             </HirelingRow>

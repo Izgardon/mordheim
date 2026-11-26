@@ -26,7 +26,7 @@ export function CatalogueDeleteConfirm({
   isDeleting,
   onConfirm,
 }: CatalogueDeleteConfirmProps) {
-  const wording = deleteWording(entry, confirm.check, noun);
+  const wording = deleteWording(entry, confirm.check, noun, confirm.inWorkshop);
   const checkLine = confirm.checkError ? `Couldn't check what uses it: ${confirm.checkError}` : "";
   return (
     <ConfirmDialog

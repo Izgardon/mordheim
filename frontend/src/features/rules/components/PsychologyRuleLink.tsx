@@ -1,15 +1,17 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useMatch, useParams } from "react-router-dom";
 
 import { psychologyRule, psychologyRulePath } from "../psychology-rules";
 
 /**
  * "Fear in the rules": a psychology special's link to the Rules page's part on it, inside a
- * campaign; nothing for a special that has none.
+ * campaign; nothing for a special that has none, nor in a workshop, which has no Rules page
+ * (William, 26 Nov 2026).
  */
 export default function PsychologyRuleLink({ specialName }: { specialName: string }) {
   const { id } = useParams();
+  const inWorkshop = useMatch("/workshop/:id/*") !== null;
   const rule = psychologyRule(specialName);
-  if (!rule || !id) return null;
+  if (!rule || !id || inWorkshop) return null;
   return (
     <Link
       to={psychologyRulePath(id, rule)}

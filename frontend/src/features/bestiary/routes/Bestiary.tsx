@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { campaignCapabilities } from "@/features/campaigns/capabilities";
+import { campaignCapabilities, canEditEntry } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { inPlayOnly } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
@@ -174,12 +174,16 @@ export default function Bestiary() {
     <ReferencePage
       title="Bestiary"
       section="bestiary"
-      archived={{
-        kind: "bestiary",
-        campaignId,
-        canRestore: capabilities.edit_catalogue,
-        noun: "beasts",
-      }}
+      archived={
+        capabilities.archived_catalogue
+          ? {
+              kind: "bestiary",
+              campaignId,
+              canRestore: capabilities.edit_catalogue,
+              noun: "beasts",
+            }
+          : undefined
+      }
       actions={
         capabilities.edit_catalogue ? (
           <Button
@@ -259,7 +263,7 @@ export default function Bestiary() {
                 entry={entry}
                 isMobile={isMobile}
                 onEdit={
-                  capabilities.edit_catalogue ? () => setEditing({ id: entry.id }) : undefined
+                  canEditEntry(capabilities, entry) ? () => setEditing({ id: entry.id }) : undefined
                 }
               />
             </ReferenceRow>

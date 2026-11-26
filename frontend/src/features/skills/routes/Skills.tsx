@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
-import { campaignCapabilities } from "@/features/campaigns/capabilities";
+import { campaignCapabilities, canEditEntry } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { whoLine } from "@/features/items/utils/item-prices";
 import { ALL_SETTINGS, inPlayOnly } from "@/features/reference/in-play";
@@ -105,15 +105,24 @@ export default function Skills() {
     <ReferencePage
       title="Skills"
       section="skills"
-      archived={[
-        { kind: "skills", campaignId, canRestore: capabilities.edit_catalogue, noun: "skills" },
-        {
-          kind: "skill-groups",
-          campaignId,
-          canRestore: capabilities.edit_catalogue,
-          noun: "skill groups",
-        },
-      ]}
+      archived={
+        capabilities.archived_catalogue
+          ? [
+              {
+                kind: "skills",
+                campaignId,
+                canRestore: capabilities.edit_catalogue,
+                noun: "skills",
+              },
+              {
+                kind: "skill-groups",
+                campaignId,
+                canRestore: capabilities.edit_catalogue,
+                noun: "skill groups",
+              },
+            ]
+          : undefined
+      }
       actions={actions}
       filters={
         <>
@@ -195,8 +204,9 @@ export default function Skills() {
               <GroupSkills
                 row={row}
                 openId={row.key === openKey ? params.openId : null}
-                onEditSkill={capabilities.edit_catalogue ? setEditing : null}
-                onEditGroup={capabilities.edit_catalogue ? setEditingGroup : null}
+                canEdit={(entry) => canEditEntry(capabilities, entry)}
+                onEditSkill={setEditing}
+                onEditGroup={setEditingGroup}
                 isMobile={isMobile}
               />
             </ReferenceRow>

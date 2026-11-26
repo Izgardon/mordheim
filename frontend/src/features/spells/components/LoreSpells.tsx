@@ -18,8 +18,9 @@ type LoreSpellsProps = {
   /** A spell's row: its rules open, or close when they are open. */
   onPick: (spellId: string) => void;
   onClose: () => void;
-  /** Edit spell, for those who edit the catalogue. */
+  /** Edit spell, for those who edit the catalogue (`canEdit`: this one). */
   edit: {
+    canEdit: (spell: Spell) => boolean;
     typeOptions: string[];
     canDelete: boolean;
     onSaved: (spell: Spell) => void;
@@ -51,7 +52,7 @@ export default function LoreSpells({
         }}
         onClose={props.onClose}
       />
-      {edit ? (
+      {edit?.canEdit(spell) ? (
         <SpellFormDialog
           campaignId={props.campaignId}
           spell={spell}

@@ -8,6 +8,8 @@ import {
   editEntryTrigger,
 } from "@/features/catalogue/components/CatalogueFormDialog";
 import { useControllableOpen } from "@/features/catalogue/hooks/useControllableOpen";
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
+import { useCampaignQuery } from "@/features/campaigns/hooks/useCampaignQuery";
 
 import { useSkillForm } from "../hooks/useSkillForm";
 import { groupsOf, useSkillGroups } from "../skill-groups";
@@ -45,6 +47,9 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   const { campaignId } = props;
   const dialog = useControllableOpen(props);
   const groups = useSkillGroups(campaignId);
+  // a book group a skill joins gets the campaign's version: never in a workshop (edit_book_catalogue)
+  const campaign = useCampaignQuery(campaignId, { read: false }).data;
+  const joinsBook = campaign ? campaignCapabilities(campaign).edit_book_catalogue : true;
   const groupIdsOf = useCallback(
     (skillId: number) => groupsOf(groups, skillId).map((group) => group.id),
     [groups]
@@ -84,6 +89,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
         layout="dialog"
         form={form}
         groups={groups}
+        joinsBook={joinsBook}
         idSuffix={skill ? `-${skill.id}` : ""}
       />
     </CatalogueFormDialog>

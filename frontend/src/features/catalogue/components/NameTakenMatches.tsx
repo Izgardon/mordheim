@@ -17,10 +17,16 @@ const named = (match: NameMatch) =>
 const LINK_CLASS =
   "text-xs text-accent-text underline underline-offset-2 hover:text-accent-hi disabled:opacity-50";
 
+/** What a match's line says it is: archived, or in a workshop (no archive) deleted but still used. */
+const state = (match: NameMatch) => {
+  if (!match.archived) return "";
+  return match.restorable ? " · archived" : " · deleted, still in use";
+};
+
 /**
  * Under a taken name (CAT-TWEAK-02): every entry it collided with, where it comes from, and
  * "Edit this instead" (a book entry's edit makes the campaign's version) or, for an archived one,
- * Restore.
+ * Restore, each only where the server's match allows it (never a book entry in a workshop).
  */
 export function NameTakenMatches({ id, nameTaken }: { id: string; nameTaken: NameTakenState }) {
   const [restoring, setRestoring] = useState<number | null>(null);
@@ -48,9 +54,9 @@ export function NameTakenMatches({ id, nameTaken }: { id: string; nameTaken: Nam
           <li key={`${match.kind}-${match.id}`} className="flex flex-wrap items-center gap-x-2">
             <span>
               {label(match)} · {match.source === "book" ? "book" : "this campaign"}
-              {match.archived ? " · archived" : ""}
+              {state(match)}
             </span>
-            {match.archived ? (
+            {match.restorable ? (
               <button
                 type="button"
                 className={LINK_CLASS}
@@ -60,7 +66,7 @@ export function NameTakenMatches({ id, nameTaken }: { id: string; nameTaken: Nam
               >
                 {restoring === match.id ? "Restoring..." : "Restore"}
               </button>
-            ) : nameTaken.onEdit ? (
+            ) : match.editable && nameTaken.onEdit ? (
               <button
                 type="button"
                 className={LINK_CLASS}

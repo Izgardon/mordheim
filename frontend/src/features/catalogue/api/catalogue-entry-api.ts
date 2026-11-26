@@ -43,12 +43,18 @@ export function entryUsage(kind: CatalogueEntryKind, entry: Entry, campaignId: n
   );
 }
 
-/** A delete's answer: null when it was deleted (204), else what happened instead. */
-export type DeleteOutcome = { outcome: "archived" | "removed"; usage: CatalogueUsage } | null;
+/**
+ * A delete's answer: null when it was deleted (204), else what happened instead (`hidden`: in a
+ * workshop, which keeps no archive, gone from its lists while what holds it keeps it).
+ */
+export type DeleteOutcome = {
+  outcome: "archived" | "removed" | "hidden";
+  usage: CatalogueUsage;
+} | null;
 
 /**
- * `DELETE <kind>/:id/`: a custom entry is deleted, or archived while something holds it; a book
- * entry is removed for this campaign only (CAT-TWEAK-04, CAT-NEW-05).
+ * `DELETE <kind>/:id/`: a custom entry is deleted, or archived (hidden, in a workshop) while
+ * something holds it; a book entry is removed for this campaign only (CAT-TWEAK-04, CAT-NEW-05).
  */
 export function deleteEntry(kind: CatalogueEntryKind, entry: Entry, campaignId: number) {
   return apiRequest<DeleteOutcome>(`${entryPath(kind, entry)}${bookQuery(entry, campaignId)}`, {

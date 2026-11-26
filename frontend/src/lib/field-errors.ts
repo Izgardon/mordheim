@@ -18,6 +18,10 @@ export type NameMatch = {
   type: string | null;
   source: "book" | "campaign";
   archived: boolean;
+  /** "Edit this instead" may show (never a book entry in a workshop, nor an archived one). */
+  editable: boolean;
+  /** Restore may show: archived, and not in a workshop, which keeps no archive. */
+  restorable: boolean;
 };
 
 /** A `name_taken` refusal's matches (none for any other error). */
@@ -143,7 +147,9 @@ export function useFieldErrors(shown: readonly string[], resetKey?: unknown) {
     /** A match restored from the list: it is in the catalogue again, so it can be edited. */
     markRestored: (id: number) =>
       setMatches((current) =>
-        current.map((match) => (match.id === id ? { ...match, archived: false } : match))
+        current.map((match) =>
+          match.id === id ? { ...match, archived: false, restorable: false, editable: true } : match
+        )
       ),
   };
 }

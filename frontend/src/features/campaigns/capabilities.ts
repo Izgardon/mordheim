@@ -31,6 +31,10 @@ export const CAMPAIGN_CAPABILITIES = [
   // One code for adding and editing the whole catalogue, and one for deleting (decisions 4, 5).
   "edit_catalogue",
   "delete_catalogue",
+  // What the catalogue does only in a campaign (William, 26 Nov 2026: a workshop is "New + edit own"):
+  // editing, removing or reverting a book entry there, and its archive (Show archived, Restore).
+  "edit_book_catalogue",
+  "archived_catalogue",
   "manage_rules",
   "manage_warbands",
   "manage_encampments",
@@ -68,6 +72,18 @@ export function useCampaignCapabilities(
   const { data } = useCampaignQuery(campaignId, options);
   const raw = data?.capabilities;
   return useMemo(() => readCapabilities(CAMPAIGN_CAPABILITIES, raw), [raw]);
+}
+
+/**
+ * Whether the viewer may edit a catalogue entry here: the campaign's own (a version too) with
+ * `edit_catalogue`; a book entry, whose edit makes the campaign's version, only with
+ * `edit_book_catalogue` (never in a workshop).
+ */
+export function canEditEntry(
+  capabilities: CampaignCapabilities,
+  entry: { campaign_id?: number | null }
+) {
+  return entry.campaign_id != null ? capabilities.edit_catalogue : capabilities.edit_book_catalogue;
 }
 
 /**

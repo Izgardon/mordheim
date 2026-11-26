@@ -109,6 +109,8 @@ export function capabilitiesFor(
     manage_campaign_rules: isStaff,
     edit_catalogue: holds("edit_catalogue"),
     delete_catalogue: holds("delete_catalogue"),
+    edit_book_catalogue: holds("edit_catalogue"),
+    archived_catalogue: true,
     manage_rules: holds("manage_rules"),
     manage_warbands: holds("manage_warbands"),
     manage_encampments: Boolean(campaign.enable_encampments) && holds("manage_encampments"),
@@ -124,7 +126,13 @@ export function capabilitiesFor(
     CampaignCapability,
     boolean
   >;
-  return { ...archived, view_members: isStaff, restore: isOwner, delete: isOwner };
+  return {
+    ...archived,
+    view_members: isStaff,
+    restore: isOwner,
+    delete: isOwner,
+    archived_catalogue: true,
+  };
 }
 
 /** `GET campaigns/1/` as the owner reads it; a started Standard campaign by default. */

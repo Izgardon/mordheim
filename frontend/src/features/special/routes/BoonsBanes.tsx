@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SpecialIcon } from "@/components/ui/game-icons";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
-import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
+import { canEditEntry, useCampaignCapabilities } from "@/features/campaigns/capabilities";
 import { ALL_SETTINGS, entrySettingName } from "@/features/reference/in-play";
 import { FactLine, ReferenceDetail } from "@/features/reference/ReferenceDetail";
 import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
@@ -154,7 +154,7 @@ export default function BoonsBanes() {
                   </p>
                 ) : null}
                 <PsychologyRuleLink specialName={special.name} />
-                {canAdd ? (
+                {canEditEntry(capabilities, special) ? (
                   <SpecialFormDialog
                     campaignId={campaignId}
                     special={special}

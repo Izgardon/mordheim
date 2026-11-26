@@ -12,9 +12,10 @@ type GroupSkillsProps = {
   row: SkillGroupRow;
   /** The skill a link or a save landed on (`?open=`): scrolled to here when this row holds it. */
   openId: string | null;
-  /** Edit skill and Edit skill group, for those who edit the catalogue. */
-  onEditSkill: ((skill: Skill) => void) | null;
-  onEditGroup: ((group: SkillGroup) => void) | null;
+  /** Whether Edit shows on a skill or the group (its campaign's flags: `canEditEntry`). */
+  canEdit: (entry: Skill | SkillGroup) => boolean;
+  onEditSkill: (skill: Skill) => void;
+  onEditGroup: (group: SkillGroup) => void;
   isMobile: boolean;
 };
 
@@ -25,6 +26,7 @@ type GroupSkillsProps = {
 export default function GroupSkills({
   row,
   openId,
+  canEdit,
   onEditSkill,
   onEditGroup,
   isMobile,
@@ -33,7 +35,7 @@ export default function GroupSkills({
   const { group } = row;
   return (
     <ReferenceDetail isMobile={isMobile}>
-      {group && onEditGroup ? (
+      {group && canEdit(group) ? (
         <Button
           variant="secondary"
           className="min-h-10 self-start"
@@ -67,7 +69,7 @@ export default function GroupSkills({
                       {entrySettingName(skill, settings)}
                     </span>
                   </div>
-                  {onEditSkill ? (
+                  {canEdit(skill) ? (
                     <Button
                       size="sm"
                       variant="secondary"

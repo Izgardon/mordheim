@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { useCampaignQuery } from "@/features/campaigns/hooks/useCampaignQuery";
 import type { UsageCheck } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 import { getRefusalMessage } from "@/lib/get-error-message";
@@ -35,6 +36,8 @@ export function useCatalogueDelete({
   onDeleted,
 }: UseCatalogueDeleteOptions) {
   const catalogueCache = useCatalogueCache();
+  // the campaign as its layout read it: a workshop's delete keeps no archive (its words only)
+  const inWorkshop = useCampaignQuery(campaignId, { read: false }).data?.kind === "workshop";
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -68,6 +71,8 @@ export function useCatalogueDelete({
       catalogueCache.remove(kind, campaignId, entry.id);
       if (outcome?.outcome === "archived") {
         toast.success(`${entry.name} archived; its copies stay.`);
+      } else if (outcome?.outcome === "hidden") {
+        toast.success(`${entry.name} deleted; what uses it keeps it.`);
       } else if (outcome?.outcome === "removed") {
         toast.success(`${entry.name} removed from this campaign.`);
       }
@@ -90,6 +95,7 @@ export function useCatalogueDelete({
       close: () => onOpenChange(false),
       /** What the usage check says so far. */
       check,
+      inWorkshop,
       /** Why the usage check failed (the delete may go ahead anyway). */
       checkError: usage.error ? getRefusalMessage(usage.error, "please try again.") : "",
     },

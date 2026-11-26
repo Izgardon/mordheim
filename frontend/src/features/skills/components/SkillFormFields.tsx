@@ -17,6 +17,8 @@ type SkillFormFieldsProps = {
   form: SkillFormState;
   /** The campaign's skill groups, to pick the ones holding it. */
   groups: SkillGroupIndex;
+  /** The book's groups are offered too (`edit_book_catalogue`); else only the campaign's own. */
+  joinsBook: boolean;
   /** Tells the ids of one edited skill's dialog from another's. */
   idSuffix?: string;
 };
@@ -26,6 +28,7 @@ export default function SkillFormFields({
   layout,
   form,
   groups,
+  joinsBook,
   idSuffix = "",
 }: SkillFormFieldsProps) {
   const isDialog = layout === "dialog";
@@ -55,7 +58,9 @@ export default function SkillFormFields({
           addLabel="Add a group"
           placeholder="Search skill groups"
           emptyText="No skill group matches."
-          options={groups.groups.map((group) => option(group.id))}
+          options={groups.groups
+            .filter((group) => joinsBook || group.campaign_id != null)
+            .map((group) => option(group.id))}
           values={form.values.groupIds.filter((id) => groups.byId.has(id)).map(option)}
           onChange={(next) => form.setGroupIds(next.map((picked) => Number(picked.id)))}
         />

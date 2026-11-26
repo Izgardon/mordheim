@@ -67,6 +67,19 @@ describe("usageSummary", () => {
 });
 
 describe("deleteWording (decision 5, CAT-TWEAK-04, CAT-NEW-05)", () => {
+  it("in a workshop, which keeps no archive, deletes an entry in use, saying what keeps it", () => {
+    expect(deleteWording(rope, ready({ units: 3, warbands: 2 }), "item", true)).toEqual({
+      confirm: "Delete item",
+      message:
+        "Delete Rope? It is used by 3 units in 2 warbands; they keep it, and it leaves your lists and pickers for good.",
+    });
+    expect(deleteWording(rope, NOTHING, "item", true).confirm).toBe("Delete item");
+    expect(deleteWording(rope, { state: "failed" }, "item", true)).toEqual({
+      confirm: "Delete item",
+      message: "Delete Rope? Anything that uses it keeps it.",
+    });
+  });
+
   it("deletes an unused custom entry for good", () => {
     expect(deleteWording(rope, NOTHING, "item")).toEqual({
       confirm: "Delete item",

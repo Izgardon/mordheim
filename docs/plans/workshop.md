@@ -101,7 +101,8 @@ warband-or-list shape are gone.
   warriors and Starting Gold). The list it reads: `list_id`, one of my lists (400 `invalid` on `list_id` otherwise,
   "That isn't one of your lists."); else `list_code`, a shared list copied into my lists first (with its custom
   content), or used as it is when the code is one of mine (404 `code_not_found`, 400 `not_a_list` for a warband's
-  code); else the type's template in my workshop (one of my lists serving it, the oldest first, else the book's).
+  code); else the book's list for the type, never one of mine (William, 26 Nov 2026: "One of my lists" is how I use
+  those; `resolve.templates_for_type` reads only the book's in a workshop, for the raise outline too).
   With a list, `warband_type_id` must be one it serves (400 `type_not_served`; left out: its first), and a list
   serving none is 400 `list_serves_no_type`. Without one, `warband_type_id` is required (400 `invalid`, "Pick a
   warband type."). A type that presets no variant needs `template_variant` (400 on `template_variant`, as raising
@@ -122,13 +123,24 @@ warband-or-list shape are gone.
   Refused there (403 `workshop_campaign`): ledger writes, resource writes and sales, location visits, `POST
   warbands/` naming a workshop. A hire (`hirelings/hire/`, `source: custom` too) warns `over_budget` when the cost
   after it is above the budget, as purchases and roster saves do.
-- **His own catalogue** (My content): every catalogue kind's create, edit (a book entry's first edit makes his
-  workshop's version of it), delete, Revert and Restore with `campaign_id` = his workshop, as in a campaign. The
-  workshop's `capabilities` are all false but `edit_catalogue` and `delete_catalogue`.
+- **His own catalogue** (My content; William, 26 Nov 2026: "New + edit own"): the kinds a warband and its units use
+  (`CatalogueKindSpec.in_workshop`: items, item rules, skills, skill groups, spells, specials, races, beasts, hired
+  swords, dramatis personae and warband lists) take creates with `campaign_id` = his workshop, and his own entries
+  are edited and deleted as in a campaign. Scenarios, plots and exploration charts are never written there (403
+  `workshop_campaign`). **The book's entries are read only**: an edit, a removal or a Revert of a book entry (or of a
+  version), a book list's editor save, and a skill joining or leaving a book skill group (on `group_ids`) answer 403
+  `workshop_book_entry`. **No archive**: `?archived=1` and Restore answer 403 `workshop_no_archive`; deleting his
+  entry while something holds it archives it all the same (it leaves his lists, shops and pickers; every unit, list,
+  beast or hired sword holding it keeps it), answered `200 {outcome: "hidden", usage}`, and nothing lists or
+  restores it. A `name_taken` match carries `editable` and `restorable`, both false for a book entry there (and its
+  detail says "Pick another name." when no match is either). The workshop's `capabilities` are all false but
+  `edit_catalogue` and `delete_catalogue`; `edit_book_catalogue` and `archived_catalogue` (true in a campaign) are
+  false, so the pages show no Edit or Revert on a book row and no Show archived.
 - **His lists**: `POST warband-templates/ {name, campaign_id: <workshop>, ...}` makes one (with a code); the editor's
-  section saves write his own lists only (a book template's: 403 `workshop_campaign`; copy it into his lists
-  instead); `DELETE warband-templates/<id>/?campaign_id=<workshop>` deletes one nothing names (204) or archives one a
-  warband names (200 `{outcome: "archived", usage}`); either way its code stops working and the warband keeps reading it.
+  section saves write his own lists only (a book template's: 403 `workshop_book_entry`; copy it into his lists
+  instead), and the editor's warnings name no other list serving its type there (a workshop warband names the list it
+  reads); `DELETE warband-templates/<id>/?campaign_id=<workshop>` deletes one nothing names (204) or hides one a
+  warband names (200 `{outcome: "hidden", usage}`); either way its code stops working and the warband keeps reading it.
   `GET campaigns/<workshop>/warband-types/<type>/template/?list_id=<list>` is the raise outline from one of his lists.
 - Every other campaign route refuses a workshop's writes (403 `workshop_campaign`): settings, members, join codes,
   archiving, custom warband types, campaign rules, charts, locations, encampments, scenarios, bounties, battles,
@@ -197,13 +209,22 @@ campaign payload has no `holds` or `share_code` (`WorkshopPage` branches on `cam
 so it is the player's workshop page with warbands, lists and My content); `/workshop/:id` is the workshop, a warband
 there opens by its own id; import into my workshop no longer makes a workshop per copy.
 
+### William's answers (26 Nov 2026)
+
+- In a workshop, catalogue entries are "New + edit own": the book's are read only, and there is no archive (no
+  Archive, Show archived or Revert); a deleted entry a warband still holds is hidden, the unit intact.
+- A workshop shows only what affects a warband and its units (the catalogue pages above and the lists): no
+  locations, encampments, scenarios, campaign, house or battle rules, charts, bounties or battles, no nav or route
+  (a workshop path to one goes to its index), their writes refused.
+- The editor's "X serves it too" is dropped in a workshop; campaigns keep it.
+- A new warband by type uses the book's list for the type; "One of my lists" uses his own.
+- No list of archived imported content for campaign owners (the catalogue's `?archived=1` view stays); no Races page.
+
 ### Open questions for William
 
-- Custom content an importer can't edit arrives archived: the warband keeps it and nobody else is offered it. Should
-  an owner or admin see a list of what arrived archived (to Restore what they like)? Today it is the catalogue's
-  usual `?archived=1` view.
-- A version of a book entry in a workshop (edited there) travels as an entry of its own, "Axe (2)", rather than as
-  the target's version of the book's Axe, which would change the Axe for everyone there. Right?
+- A name one of his deleted-but-held entries had stays taken in his workshop (the row is kept for what holds it, and
+  names are unique per campaign), so a new entry needs another name: the form says "deleted, still in use" and offers
+  nothing. Should a workshop bring that entry back instead (Restore under another word)?
 
 ---
 
