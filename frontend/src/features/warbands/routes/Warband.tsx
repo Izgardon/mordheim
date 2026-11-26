@@ -7,6 +7,7 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 import type { StoreOpening } from "@/features/items/store/StorePanel";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { useCopyToWorkshop } from "@/features/workshop/api/useCopyToWorkshop";
+import WarbandSettingsDialog from "@/features/workshop/components/WarbandSettingsDialog";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { warbandStashQuery } from "../api/economy-queries";
@@ -43,6 +44,7 @@ export default function Warband() {
   const [advancing, setAdvancing] = useState<RosterUnit | null>(null);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [tradeInviteOpen, setTradeInviteOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [store, setStore] = useState<StoreOpening>({});
   const warbandId = warband?.id ?? 0;
   const actions = useUnitActions(warbandId);
@@ -134,7 +136,12 @@ export default function Warband() {
             ...(warband.warband_link
               ? [{ label: "Warband sheet", href: warband.warband_link }]
               : []),
-            { label: "Rating breakdown", onSelect: () => setBreakdownOpen(true) },
+            // a workshop's warband plays no battles: its rating is plain, with no breakdown
+            ...(workshop
+              ? canEdit
+                ? [{ label: "Settings", onSelect: () => setSettingsOpen(true) }]
+                : []
+              : [{ label: "Rating breakdown", onSelect: () => setBreakdownOpen(true) }]),
             // my own warband in a campaign (archived too) copies into my workshop
             ...(mine && !workshop
               ? [
@@ -201,6 +208,15 @@ export default function Warband() {
           actions={actions}
           placeSearch={searchParams.get("place") ?? undefined}
         />
+        {workshop && settingsOpen ? (
+          <WarbandSettingsDialog
+            open
+            onOpenChange={setSettingsOpen}
+            warband={warband}
+            budget={workshop.budget}
+            noList={workshop.no_list}
+          />
+        ) : null}
         <AdvanceDialog
           entry={advancing}
           campaignId={campaignId}

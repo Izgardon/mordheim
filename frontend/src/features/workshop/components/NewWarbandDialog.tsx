@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { SearchSelect } from "@/components/ui/search-select";
 import { Field, FormError } from "@/features/campaigns/components/settings/settings-ui";
@@ -20,12 +21,14 @@ const SOURCES: { key: Source; name: string }[] = [
   { key: "book", name: "A warband type" },
   { key: "mine", name: "One of my lists" },
   { key: "code", name: "A list code" },
+  { key: "none", name: "No list" },
 ];
 
 /**
  * New warband (the workshop): a name, then a book warband type (every type: every setting is in
- * play in a workshop), one of my lists, or a shared list's code (read first), with the type where
- * the list serves several and the variant where the type presets none. Its page opens once made.
+ * play in a workshop), one of my lists, a shared list's code (read first), with the type where
+ * the list serves several and the variant where the type presets none, or no list: a type, a
+ * budget and most warriors. Its page opens once made.
  */
 export default function NewWarbandDialog({
   open,
@@ -107,7 +110,7 @@ export default function NewWarbandDialog({
           value={draft.source}
           onChange={draft.setSource}
         />
-        {draft.source === "book" ? (
+        {draft.source === "book" || draft.source === "none" ? (
           <Field label="Warband type" htmlFor="workshop-warband-type">
             <SearchSelect
               id="workshop-warband-type"
@@ -142,6 +145,31 @@ export default function NewWarbandDialog({
             label="List code"
           />
         )}
+        {draft.source === "none" ? (
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Budget (gc)" htmlFor="workshop-warband-budget">
+              <NumberInput
+                id="workshop-warband-budget"
+                min={0}
+                step={5}
+                allowEmpty
+                value={draft.budget}
+                onChange={(event) => draft.setBudget(event.target.value)}
+                className="font-mono"
+              />
+            </Field>
+            <Field label="Most warriors" htmlFor="workshop-warband-most">
+              <NumberInput
+                id="workshop-warband-most"
+                min={1}
+                allowEmpty
+                value={draft.most}
+                onChange={(event) => draft.setMost(event.target.value)}
+                className="font-mono"
+              />
+            </Field>
+          </div>
+        ) : null}
         {draft.listTypes.length > 1 ? (
           <ChipPick
             label="Warband type"

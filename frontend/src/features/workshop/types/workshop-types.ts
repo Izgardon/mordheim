@@ -75,6 +75,10 @@ export type MakeWarbandBody = {
   template_variant?: string;
   list_id?: number;
   list_code?: string;
+  /** Raised from no list: its own budget and most warriors, every unit made by hand. */
+  no_list?: boolean;
+  budget?: number;
+  max_units?: number;
 };
 
 export type MakeListBody = { name: string; copy_of_template_id?: number };

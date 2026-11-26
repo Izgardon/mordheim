@@ -201,7 +201,7 @@ describe("useWarbandSheet", () => {
   it("reads a workshop warband's cost from the summary every write answers, with its code", async () => {
     apiMocks.getWarbandSheet.mockResolvedValue(
       sheetOf({
-        workshop: { cost: 100, budget: 500, share_code: "ABCD2345" },
+        workshop: { cost: 100, budget: 500, share_code: "ABCD2345", no_list: false },
         summary: { workshop: { cost: 455, budget: 500 } } as WarbandSheet["summary"],
       })
     );
@@ -209,7 +209,12 @@ describe("useWarbandSheet", () => {
     const { result } = renderSheet();
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.workshop).toEqual({ cost: 455, budget: 500, share_code: "ABCD2345" });
+    expect(result.current.workshop).toEqual({
+      cost: 455,
+      budget: 500,
+      share_code: "ABCD2345",
+      no_list: false,
+    });
   });
 
   it("has no workshop for a campaign's warband", async () => {

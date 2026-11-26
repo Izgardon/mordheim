@@ -1,8 +1,9 @@
 /**
  * Home's workshop: its warbands and lists (each card's cost, code and page), Delete saying the
  * copies stay, My content (making the workshop on its first use), Import by code (read first,
- * imported with the server's warnings, opened), and a new warband from a book type, a list code or
- * one of my lists, with the type and variant each asks for.
+ * imported with the server's warnings, opened), and a new warband from a book type, a list code,
+ * one of my lists, with the type and variant each asks for, or no list (a type, a budget and most
+ * warriors).
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -65,6 +66,32 @@ const ROWS: Workshop = {
       ],
       share_code: "WTCH2345",
       updated_at: "2026-11-25T10:00:00Z",
+    },
+  ],
+};
+
+/** The book's Mercenaries template, serving its type, with two variants and no preset. */
+const MERCENARIES = {
+  id: 5,
+  campaign_id: null,
+  setting_id: null,
+  name: "Mercenaries",
+  source: "Mordheim",
+  variants: [
+    { key: "reikland", name: "Reikland" },
+    { key: "marienburg", name: "Marienburg" },
+  ],
+  types: [
+    {
+      id: 7,
+      name: "Mercenaries",
+      slug: "mercenaries",
+      source_code: "MH",
+      setting_id: null,
+      campaign_id: null,
+      variant: "",
+      archived: false,
+      in_play: null,
     },
   ],
 };
@@ -217,32 +244,7 @@ describe("Home's workshop sections", () => {
 
   it("makes a warband of a book type, asking for the variant its type doesn't preset", async () => {
     const user = setupUser();
-    fakeApi.on("GET /warband-templates/", [
-      {
-        id: 5,
-        campaign_id: null,
-        setting_id: null,
-        name: "Mercenaries",
-        source: "Mordheim",
-        variants: [
-          { key: "reikland", name: "Reikland" },
-          { key: "marienburg", name: "Marienburg" },
-        ],
-        types: [
-          {
-            id: 7,
-            name: "Mercenaries",
-            slug: "mercenaries",
-            source_code: "MH",
-            setting_id: null,
-            campaign_id: null,
-            variant: "",
-            archived: false,
-            in_play: null,
-          },
-        ],
-      },
-    ]);
+    fakeApi.on("GET /warband-templates/", [MERCENARIES]);
     fakeApi.on("POST /workshop/warbands/", {
       ...ROWS.warbands[0],
       id: 21,
@@ -337,6 +339,45 @@ describe("Home's workshop sections", () => {
       list_id: 90,
       warband_type_id: 7,
       template_variant: "reikland",
+    });
+  });
+
+  it("makes a warband with no list: a type, its budget and most warriors, and no variant", async () => {
+    const user = setupUser();
+    fakeApi.on("GET /warband-templates/", [MERCENARIES]);
+    fakeApi.on("POST /workshop/warbands/", {
+      ...ROWS.warbands[0],
+      id: 24,
+      template_id: null,
+      kind: "warband",
+      warnings: [],
+    });
+    renderHome();
+    await screen.findByRole("article", { name: "The Gilded Wagon" });
+
+    await user.click(screen.getByRole("button", { name: "New warband" }));
+    const dialog = screen.getByRole("dialog", { name: "New warband" });
+    await user.type(within(dialog).getByLabelText("Name"), "Freebooters");
+    await user.click(within(dialog).getByRole("button", { name: "No list" }));
+    await user.click(within(dialog).getByRole("combobox", { name: "Warband type" }));
+    await user.click(await screen.findByRole("option", { name: /Mercenaries/ }));
+    expect(within(dialog).queryByRole("group", { name: "Variant" })).not.toBeInTheDocument();
+    const budget = within(dialog).getByLabelText("Budget (gc)");
+    expect(budget).toHaveValue(500);
+    expect(within(dialog).getByLabelText("Most warriors")).toHaveValue(15);
+    await user.clear(budget);
+    const make = within(dialog).getByRole("button", { name: "Make the warband" });
+    expect(make).toBeDisabled();
+    await user.type(budget, "350");
+    await user.click(make);
+
+    expect(await screen.findByText("Workshop page")).toBeInTheDocument();
+    expect(fakeApi.bodyOf("POST /workshop/warbands/")).toEqual({
+      name: "Freebooters",
+      warband_type_id: 7,
+      no_list: true,
+      budget: 350,
+      max_units: 15,
     });
   });
 });

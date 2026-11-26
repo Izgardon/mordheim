@@ -7,16 +7,30 @@ import type { MakeWarbandBody, WorkshopListRow } from "../types/workshop-types";
 import { bookTypeOption, bookTypes, variantsToPick } from "./book-types";
 import { usePreviewOf } from "./CodePreview";
 
-/** Where a new warband starts: a book type, one of my lists, or a shared list's code. */
-export type Source = "book" | "mine" | "code";
+/**
+ * Where a new warband starts: a book type (its book list), one of my lists, a shared list's code,
+ * or no list at all (William, 26 Nov 2026): a type, a budget and most warriors, units by hand.
+ */
+export type Source = "book" | "mine" | "code" | "none";
+
+/** A no-list warband's budget and most warriors, until the player changes them. */
+const BUDGET = "500";
+const MOST_WARRIORS = "15";
+
+/** A box's whole number at or above `least`, else null. */
+const whole = (typed: string, least: number) => {
+  const value = Number(typed);
+  return typed.trim() && Number.isInteger(value) && value >= least ? value : null;
+};
 
 type Listed = { types: { id: number; name: string; variant: string }[]; variants: Variant[] };
 type Variant = { key: string; name: string };
 
 /**
  * New warband's draft: the name, the source, and what it needs picked: a book type (and its
- * variant where it presets none), or a list (mine, or a code's, read first) with the type where
- * it serves several and the variant where that type presets none. `body` is what the server takes.
+ * variant where it presets none), a list (mine, or a code's, read first) with the type where it
+ * serves several and the variant where that type presets none, or a type with no list and its
+ * budget and most warriors. `body` is what the server takes.
  */
 export function useNewWarbandDraft(open: boolean, lists: WorkshopListRow[]) {
   const templates = useBookTemplates(open);
@@ -28,6 +42,8 @@ export function useNewWarbandDraft(open: boolean, lists: WorkshopListRow[]) {
   const [listId, setListId] = useState<number | null>(null);
   const [variant, setVariant] = useState("");
   const [code, setCode] = useState("");
+  const [budget, setBudget] = useState(BUDGET);
+  const [most, setMost] = useState(MOST_WARRIORS);
   const preview = usePreviewOf(code);
 
   const rows = useMemo(() => bookTypes(templates.data ?? []), [templates.data]);
@@ -46,13 +62,28 @@ export function useNewWarbandDraft(open: boolean, lists: WorkshopListRow[]) {
         : null;
   const listType = listed ? (typeId ?? listed.types[0]?.id ?? null) : null;
   const listPreset = listed?.types.find((type) => type.id === listType)?.variant ?? "";
-  const variants = listed ? (listPreset ? [] : listed.variants) : variantsToPick(picked);
+  const noList = source === "none";
+  const listVariants = listed && !listPreset ? listed.variants : [];
+  const variants = noList ? [] : listed ? listVariants : variantsToPick(picked);
+  const budgetGc = whole(budget, 0);
+  const mostWarriors = whole(most, 1);
   const ready =
     Boolean(name.trim()) &&
-    (source === "book" ? Boolean(picked) : Boolean(listed)) &&
+    (source === "book" || noList ? Boolean(picked) : Boolean(listed)) &&
+    (!noList || (budgetGc !== null && mostWarriors !== null)) &&
     (!variants.length || Boolean(variant));
 
-  const body = (): MakeWarbandBody => ({
+  const body = (): MakeWarbandBody =>
+    noList && picked
+      ? {
+          name: name.trim(),
+          warband_type_id: picked.type.id,
+          no_list: true,
+          budget: budgetGc ?? Number(BUDGET),
+          max_units: mostWarriors ?? Number(MOST_WARRIORS),
+        }
+      : listBody();
+  const listBody = (): MakeWarbandBody => ({
     name: name.trim(),
     ...(source === "book" && picked ? { warband_type_id: picked.type.id } : {}),
     ...(source === "mine" && mine ? { list_id: mine.id } : {}),
@@ -69,6 +100,8 @@ export function useNewWarbandDraft(open: boolean, lists: WorkshopListRow[]) {
     setSourceState("book");
     setListId(null);
     setCode("");
+    setBudget(BUDGET);
+    setMost(MOST_WARRIORS);
     pickType(null);
   };
 
@@ -91,6 +124,10 @@ export function useNewWarbandDraft(open: boolean, lists: WorkshopListRow[]) {
     },
     code,
     setCode,
+    budget,
+    setBudget,
+    most,
+    setMost,
     listTypes: listed?.types ?? [],
     listType,
     variants,

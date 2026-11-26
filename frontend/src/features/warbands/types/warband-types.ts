@@ -247,6 +247,8 @@ export type WarbandUpdatePayload = {
   plot_id?: number | null;
   /** Its campaign point total, as the player typed it. */
   campaign_points?: number;
+  /** A workshop warband made with no list: its own budget (apps/workshop). */
+  budget?: number;
 };
 
 export type LevelUpHistoryEntry = {

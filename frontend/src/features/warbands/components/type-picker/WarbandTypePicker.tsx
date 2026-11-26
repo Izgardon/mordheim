@@ -19,6 +19,8 @@ type WarbandTypePickerProps = {
   /** Types not to offer (what a warband already counts as). */
   hidden?: number[];
   placeholder?: string;
+  /** Offers a typed name as the campaign's own type (not in a workshop, which adds none). */
+  canAdd?: boolean;
 };
 
 /** A type's grade: accent while it is in play, plain outside. */
@@ -86,12 +88,16 @@ export default function WarbandTypePicker(props: WarbandTypePickerProps) {
         const picked = all.find((type) => type.id === option?.id);
         if (picked) onPick(picked);
       }}
-      create={{
-        label: (typed) => `Add “${typed}” as a custom warband type`,
-        onCreate: (typed) => {
-          if (!addType.isPending) void addCustom(typed);
-        },
-      }}
+      create={
+        props.canAdd === false
+          ? undefined
+          : {
+              label: (typed) => `Add “${typed}” as a custom warband type`,
+              onCreate: (typed) => {
+                if (!addType.isPending) void addCustom(typed);
+              },
+            }
+      }
       inputClassName="h-11 text-base"
     />
   );
