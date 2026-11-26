@@ -1,5 +1,60 @@
 # The workshop: custom warbands and warband lists outside a campaign
 
+# Version 2: one workshop per player (William, 26 Nov 2026)
+
+William: custom races, items, skills, spells and skill groups are needed in the workshop, which one hidden campaign
+per warband or list can't share between a player's builds; "should every player get their own custom campaign".
+Yes. He approved the plan below on 26 Nov 2026 ("make adjustments you think will improve speed and longevity";
+players adding custom content "will be very few"). It replaces version 1's shape (one workshop per warband or
+list), which is deleted outright (start afresh; prod's data is disposable).
+
+## The shape
+
+- **One workshop per player** (`Campaign.kind` `workshop`, `holds` gone), made on first use and never before, so a
+  player who never builds costs nothing. It holds all their custom warbands, their lists and their custom content
+  (items, races, skills, skill groups, spells, specials, hired swords, beasts), written through the catalogue's
+  usual pages and write path, so it is in play for every warband and list in it.
+- **In play is everything, computed, never stored**: a workshop ticks no settings rows; `in_play.py` treats a
+  workshop as every setting ticked, so a setting added later is in play in every workshop without a backfill.
+- **Several warbands per player in a workshop**: the one-warband-per-player-per-campaign constraint keeps holding in
+  real campaigns and stops in a workshop (a field on `Warband` the constraint's condition can read).
+- **Codes on the warband and on the list** (`share_code`, unique, null for anything not shared): deleting one soft
+  deletes it (its code stops working); every copy stays.
+- **Imports carry custom content**: copying a warband or list into a campaign, or into another player's workshop,
+  copies each custom entry it uses (its own items with their prices and rules, races, skills with their groups,
+  spells, specials, hired swords, beasts) as the target's own entry, linking one the target already holds when the
+  name and the effect match (the "Skills and items match ours by name and effect" rule). For an importer with
+  `edit_catalogue` they arrive usable by everyone (warned); for anyone else they arrive archived, so the warband
+  keeps them and nobody else's pickers offer them (warned), as a list arrives serving no type.
+- **Into my workshop** also from my own campaign warband (Copy to my workshop) and from a campaign's own list (Copy
+  to my lists), besides a code.
+- **Budget, not Gold**, in the store and the recruit tally in a workshop; a hire over budget warns `over_budget` too.
+
+## Speed and longevity
+
+- **Shared catalogue cache**: a list body depends on the book, the settings in play and the campaign's own and house
+  entries. Almost no campaign has entries of its own, so a campaign with none of a kind reads the body cached for its
+  set of settings, shared by every such campaign and every workshop (all of which read "everything"), and only a
+  campaign holding its own entries keys its own. The worker's cache then holds a few dozen bodies whatever the
+  number of campaigns and players. Correctness first: anything a list shows per campaign (usage, in-play, archive)
+  keeps the campaign's own key.
+- A workshop writes no settings rows, no scenarios, no preset rules, charts, locations or encampments.
+
+## Phases
+
+1. Backend: the workshop per player, warbands and lists in it with their own codes, delete, in-play computed, the
+   warband constraint, the shared cache; version 1's shape removed.
+2. Backend: imports carrying custom content (copy or link, archived for non-editors); copying a campaign warband or
+   list into my workshop; the hire's `over_budget`.
+3. Frontend: Home's sections on the new routes, My content in the workshop (the catalogue pages), Copy to my
+   workshop, Budget.
+4. QA on a phone and the web, CLAUDE.md, deploy.
+
+---
+
+# Version 1 (25 Nov 2026, replaced by version 2)
+
+
 William, 25 Nov 2026 (the night brief): the Campaigns page is retitled and gains a Warbands section (custom
 warbands) and a Warband lists section (custom lists), both made outside any campaign and shared by a code.
 
