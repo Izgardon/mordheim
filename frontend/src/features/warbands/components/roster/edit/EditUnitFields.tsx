@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
 import type { HeroCaster } from "../../../types/warband-types";
-import { isGroup, unitName, type RosterUnit } from "../unit-view";
+import { isGroup, type RosterUnit } from "../unit-view";
 import EditGroupModels from "./EditGroupModels";
 import EditLists from "./EditLists";
 import EditProfile, { EditXpField } from "./EditProfile";
@@ -131,7 +131,7 @@ export default function EditUnitFields({
       </div>
       <div className="grid gap-3.5 min-[720px]:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <EditProfile form={form} unitLabel={unitName(unit)} />
+          <EditProfile form={form} unitLabel={unit.name} />
           <RaceMaxWarning
             campaignId={campaignId}
             raceId={(draft.race as number | null) ?? null}

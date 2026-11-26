@@ -31,7 +31,7 @@ def _spend_searcher(warband: Warband, hero_id: int) -> tuple[str, list[dict[str,
     hero = heroes.only("id", "name").first()
     if hero is None:
         raise RollRefused("Not a hero on this warband's roster.")
-    name = hero.name or f"Hero {hero.id}"
+    name = hero.name
     return name, [] if spend_trading_action(heroes) else [spent_warning(hero)]
 
 

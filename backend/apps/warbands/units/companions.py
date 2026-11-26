@@ -187,11 +187,6 @@ def _count(number: int, noun: str) -> str:
     return f"{number} {noun}" if number == 1 else f"{number} {noun}s"
 
 
-def unit_name(unit: Any, unknown: str) -> str:
-    """A unit as its warnings name it: its name, else its type, else its kind's `unknown` name."""
-    return str(unit.name or unit.unit_type or unknown)
-
-
 def companion_warnings(name: str, rows: Iterable[Any], group: bool, warband_mounts: int) -> list[Warning]:
     """Warnings for a unit's companions and the warband's switched-on mounts. Warn, never block."""
     return unit_companion_warnings(name, rows, group) + warband_mount_warnings(warband_mounts)

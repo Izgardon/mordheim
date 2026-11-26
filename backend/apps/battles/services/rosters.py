@@ -163,7 +163,7 @@ def hero_entry(hero: Hero) -> dict:
         "key": f"hero:{hero.id}",
         "id": hero.id,
         "kind": "hero",
-        "displayName": hero.name or f"Hero {hero.id}",
+        "displayName": hero.name,
         "unitType": hero.unit_type or "Hero",
         "isLeader": bool(hero.is_leader),  # Winning Leader XP (BATL-NEW-09)
         **_missing(hero),
@@ -185,7 +185,7 @@ def hireling_entry(hireling: Hireling) -> dict:
         "key": f"hireling:{hireling.id}",
         "id": hireling.id,
         "kind": "hireling",
-        "displayName": hireling.name or f"Hired Sword {hireling.id}",
+        "displayName": hireling.name,
         "unitType": hireling.unit_type or "Hired Sword",
         **_missing(hireling),
         **_profile(hireling),
@@ -256,15 +256,14 @@ def henchman_entry(group: HenchmenGroup, member, links: list) -> dict:
 def henchmen_group_entry(group: HenchmenGroup) -> dict:
     links = list(group.henchmen_group_items.all())
     members = [henchman_entry(group, member, links) for member in group.henchmen.all()]
-    name = group.name or f"Henchmen Group {group.id}"
     return {
         "id": group.id,
-        "name": name,
+        "name": group.name,
         "unitType": group.unit_type or "Henchmen",
         "sourceBeastId": group.source_beast_id,  # recruited from a creature: its beast and kind
         "beastKind": getattr(group, "beast_kind", None),
         "pets": [_beast(row, "henchmen_group") for row in companions(links).pets],  # the group's own: one model each
-        "mountWarnings": group_mount_warnings(name, links),  # every member carries the same gear
+        "mountWarnings": group_mount_warnings(group.name, links),  # every member carries the same gear
         "members": members,
     }
 

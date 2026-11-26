@@ -78,7 +78,6 @@ def _log_loadout_additions(
     kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, before: Mapping[str, set[int]], sent: Any
 ) -> None:
     """One loadout log row per skill, special or spell the PATCH added, compared as the client sent the ids."""
-    unit_name = unit.name or unit.unit_type or kind.unknown_name
     groups = None  # the campaign's skill groups, read for the first skill he learns
     for link in kind.links():
         if link.write_field not in before:
@@ -93,13 +92,13 @@ def _log_loadout_additions(
             else:
                 found = entry.type
             entry_type = found or DEFAULT_ENTRY_TYPE[link.target]
-            payload = {"hero": unit_name, link.target: entry.name, f"{link.target}_type": entry_type}
+            payload = {"hero": unit.name, link.target: entry.name, f"{link.target}_type": entry_type}
             log_warband_event(warband.id, "loadout", str(link.log_entry), payload)
 
 
 def _log_missing_change(kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, before: tuple[int, str]) -> None:
     """The missing games log row ("misses 2 games", "returns") when the update changed them."""
-    entry = missing_change_log(unit.name or unit.unit_type or kind.unknown_name, before, missing_state(unit))
+    entry = missing_change_log(unit.name, before, missing_state(unit))
     if entry is not None:
         log_warband_event(warband.id, *entry)
 

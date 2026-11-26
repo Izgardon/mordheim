@@ -281,10 +281,8 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
       label: "Units",
       hits: (sources.campaign?.units ?? []).map((unit) => ({
         key: `unit-${unit.kind}-${unit.id}`,
-        title: unit.name?.trim() || unit.unit_type || "Unnamed",
-        meta: [unit.name?.trim() ? unit.unit_type : "", unit.warband_name]
-          .filter(Boolean)
-          .join(" · "),
+        title: unit.name,
+        meta: [unit.unit_type, unit.warband_name].filter(Boolean).join(" · "),
         to: `${warbandPath(unit.warband_id)}?unit=${unit.kind}-${unit.id}`,
       })),
     },

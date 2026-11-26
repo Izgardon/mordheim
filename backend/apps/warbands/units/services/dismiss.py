@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 def dismiss(kind: "UnitKindSpec", warband: Warband, unit: RosterUnit) -> None:
     """Dismiss `unit` inside the caller's transaction; a dismissed hero loses the crown."""
-    payload = {"name": unit.name or kind.unknown_name, "type": unit.unit_type or kind.unknown_type}
+    payload = {"name": unit.name, "type": unit.unit_type or kind.unknown_type}
     kind.hooks.before_dismiss(warband)
     log_warband_event(warband.id, "personnel", kind.recruit.log_remove, payload)
     unit.dismissed_at = timezone.now()

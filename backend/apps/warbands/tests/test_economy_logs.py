@@ -38,7 +38,7 @@ class EconomyLogTests(RosterTestCase):
 
     def test_a_move_logs_both_ends(self):
         hero = make_unit(HERO, self.warband, name="Ana")
-        group = make_unit(HENCHMEN, self.warband, name="", unit_type="Zealot")  # no name: the type stands in
+        group = make_unit(HENCHMEN, self.warband, name="Zealots", unit_type="Zealot")
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=10)
 
         to_hero = {"source_type": "stash", "target_type": "hero", "target_id": hero.id}
@@ -52,7 +52,7 @@ class EconomyLogTests(RosterTestCase):
             log_rows(self.warband),
             [
                 ("items", "moved", {**moved, "quantity": 2, "target_name": "Ana"}, None),
-                ("items", "moved", {**onward, "quantity": 1, "target_name": "Zealot"}, None),
+                ("items", "moved", {**onward, "quantity": 1, "target_name": "Zealots"}, None),
             ],
         )
 

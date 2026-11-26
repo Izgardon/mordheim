@@ -14,13 +14,13 @@ import type {
 import LoadoutPanel from "../panels/LoadoutPanel";
 import LocationsPanel from "../panels/LocationsPanel";
 import StashPanel from "../panels/StashPanel";
-import { unitName, type RosterUnit } from "../roster/unit-view";
+import { type RosterUnit } from "../roster/unit-view";
 import { RECRUITED_PARAM } from "../roster/useRosterCards";
 import type { WarbandPanel } from "./WarbandHeader";
 
 /** The store opened for a unit (its loadout, Buy again): it comes first, "Buying for <name>". */
 export const storeFor = (entry: RosterUnit, again?: StoreOpening["again"]): StoreOpening => ({
-  forUnit: { key: recipientKey(entry.kind, entry.unit.id), name: unitName(entry.unit) },
+  forUnit: { key: recipientKey(entry.kind, entry.unit.id), name: entry.unit.name },
   again: again ?? null,
 });
 

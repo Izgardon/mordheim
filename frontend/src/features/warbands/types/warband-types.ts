@@ -295,7 +295,7 @@ export type WarbandHero = UnitCompanionFields &
     warband_id: number;
     /** The template fighter he was recruited as ("champion"); blank: typed by hand. */
     fighter_key?: string;
-    name: string | null;
+    name: string;
     unit_type: string | null;
     race_id: number | null;
     race_name?: string | null;
@@ -370,7 +370,7 @@ export type WarbandHireling = UnitCompanionFields &
   PendingPickFields & {
     id: number;
     warband_id: number;
-    name: string | null;
+    name: string;
     unit_type: string | null;
     /** Older payloads leave these out: a hired sword on the henchman table who stays. */
     kind?: HirelingKind;
@@ -441,7 +441,7 @@ export type WarbandHireling = UnitCompanionFields &
   };
 
 export type WarbandHeroPayload = {
-  name: string | null;
+  name: string;
   unit_type: string | null;
   race: number | null;
   price: number | null;
@@ -480,7 +480,7 @@ export type WarbandHeroPayload = {
 };
 
 export type WarbandHirelingPayload = {
-  name: string | null;
+  name: string;
   unit_type: string | null;
   race: number | null;
   price: number | null;
@@ -636,7 +636,7 @@ export type HenchmenGroup = UnitCompanionFields &
   GroupMountFields & {
     id: number;
     warband_id: number;
-    name: string | null;
+    name: string;
     unit_type: string | null;
     race_id: number | null;
     race_name?: string | null;
@@ -694,7 +694,7 @@ export type HenchmenGroup = UnitCompanionFields &
   };
 
 export type HenchmenGroupPayload = {
-  name: string | null;
+  name: string;
   unit_type: string | null;
   race: number | null;
   price: number | null;

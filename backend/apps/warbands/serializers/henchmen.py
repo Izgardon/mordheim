@@ -10,7 +10,7 @@ from apps.warbands.models import Henchman, HenchmenGroup, RosterUnit, on_roster
 from apps.warbands.prefetches import gap_entries, members_with_gaps
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.loadouts import lacking_by_row, loadout_totals
-from apps.warbands.units.companions import group_mount_warnings, mount_kinds, mount_payload, unit_name
+from apps.warbands.units.companions import group_mount_warnings, mount_kinds, mount_payload
 from apps.warbands.units.create_serializer import UnitCreateSerializer
 from apps.warbands.units.errors import NAME_NEEDED
 from apps.warbands.units.kinds import HENCHMEN_GROUP
@@ -171,7 +171,7 @@ class HenchmenMembersMixin(serializers.Serializer):
 
     def get_mount_warnings(self, group: HenchmenGroup) -> list[dict[str, Any]]:
         """While the group rides more than one kind of mount (every member carries the same gear). No query."""
-        return group_mount_warnings(unit_name(group, HENCHMEN_GROUP.unknown_name), self._rows(group))
+        return group_mount_warnings(group.name, self._rows(group))
 
     def get_beast_kind(self, group: HenchmenGroup) -> str | None:
         """The source beast's kind, read with the group's row (`UnitKindSpec.row_annotations`)."""

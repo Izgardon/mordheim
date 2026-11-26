@@ -11,7 +11,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import { unitApi } from "../../units/unit-api";
 import { BADGE } from "./badge-style";
-import { isGroup, killLine, unitKey, unitName, type RosterUnit } from "./unit-view";
+import { isGroup, killLine, unitKey, type RosterUnit } from "./unit-view";
 
 /** A unit's kills: its counter, or a henchmen group's members' together. */
 export function unitKillCount(entry: RosterUnit) {
@@ -83,7 +83,7 @@ export default function UnitKills({
   const isMobile = useMediaQuery("(max-width: 960px)");
   const box = useRef<HTMLSpanElement>(null);
   const count = member ? member.kills : unitKillCount(entry);
-  const name = member ? member.name : unitName(entry.unit);
+  const name = member ? member.name : entry.unit.name;
 
   useEffect(() => {
     if (!open || isMobile) return;

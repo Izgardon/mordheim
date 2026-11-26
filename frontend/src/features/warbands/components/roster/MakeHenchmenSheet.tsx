@@ -8,7 +8,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 
 import type { RecruitSource, RecruitTarget } from "../../api/beasts-api";
 import { useRecruitBeasts } from "../../hooks/units/useRecruitBeasts";
-import { isGroup, liveMembers, unitName, type RosterUnit } from "./unit-view";
+import { isGroup, liveMembers, type RosterUnit } from "./unit-view";
 
 /** A creature's item about to become henchmen: where its copies are and how many there are. */
 export type BeastCopies = {
@@ -111,7 +111,7 @@ export default function MakeHenchmenSheet(props: MakeHenchmenSheetProps) {
               pressed={into === String(group.unit.id)}
               onClick={() => setInto(String(group.unit.id))}
             >
-              {unitName(group.unit)}
+              {group.unit.name}
               {isGroup(group) ? ` ×${liveMembers(group.unit).length}` : ""}
             </Chip>
           ))}

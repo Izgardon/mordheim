@@ -82,7 +82,7 @@ export function buildXpRows(
         continue;
       }
       const row = xpRow(key, result.xp_earned, group.xp ?? 0, Boolean(group.half_rate), {
-        name: group.name?.trim() || group.unit_type || "Henchmen",
+        name: group.name,
         type: `Henchmen ×${group.henchmen.filter((member) => !member.dead).length}`,
         group: true,
         canGainXp: !group.no_level_ups,

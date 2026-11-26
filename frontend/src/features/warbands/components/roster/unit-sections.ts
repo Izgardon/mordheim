@@ -2,7 +2,7 @@ import { sectionsOf, type SelectSection } from "@/components/ui/sectioned-select
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import type { UnitKindKey } from "../../types/units";
-import { unitName, type RosterUnit } from "./unit-view";
+import { type RosterUnit } from "./unit-view";
 
 /** The headings a short unit picker sorts units under, in the roster's order. */
 export const UNIT_SECTIONS: { key: UnitKindKey; label: string }[] = [
@@ -30,5 +30,5 @@ export const unitSections = (units: RosterUnit[]): SelectSection[] =>
     units.filter((entry) => entry.kind !== "hireling"),
     UNIT_SECTIONS.filter((section) => section.key !== "hireling"),
     (entry) => entry.kind,
-    (entry) => ({ value: unitValue(entry), label: unitName(entry.unit) })
+    (entry) => ({ value: unitValue(entry), label: entry.unit.name })
   );

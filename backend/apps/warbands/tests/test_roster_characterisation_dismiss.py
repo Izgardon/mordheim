@@ -59,18 +59,24 @@ class RosterDismissCharacterisationTests(RosterTestCase):
                 self.assertEqual(list(WarbandItem.objects.values_list("item_id", "quantity")), [(self.axe.id, 1)])
                 self.assertEqual(log_rows(self.warband), expected_logs[kind.key])
 
-    def test_delete_log_falls_back_to_placeholder_names(self):
+    def test_delete_log_names_the_unit_with_no_placeholder_name(self):
+        # William, 26 Nov 2026: every unit has a name, so none is made up ("Unknown Hero" is gone); a type may still
+        # be left out, and reads its placeholder
         expected = {
-            HERO.key: {"name": "Unknown Hero", "type": "Unknown Type"},
-            HENCHMEN.key: {"name": "Unknown", "type": "Unknown"},
-            HIRELING.key: {"name": "Unknown Hired Sword", "type": "Unknown Type"},
+            HERO.key: {"name": "Vex", "type": "Unknown Type"},
+            HENCHMEN.key: {"name": "Vex", "type": "Unknown"},
+            HIRELING.key: {"name": "Vex", "type": "Unknown Type"},
         }
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 self.warband.logs.all().delete()
-                unit = make_unit(kind, self.warband, name="", unit_type="")
+                unit = make_unit(kind, self.warband, name="Vex", unit_type="")
                 self.client.delete(unit_url(kind, self.warband.id, unit.id))
                 self.assertEqual(log_rows(self.warband)[0][2], expected[kind.key])
+                self.warband.logs.all().delete()
+                blank = make_unit(kind, self.warband, name="", unit_type="Ogre")  # a row from before the rule
+                self.client.delete(unit_url(kind, self.warband.id, blank.id))
+                self.assertEqual(log_rows(self.warband)[0][2], {"name": "", "type": "Ogre"})
 
     def test_dead_units_can_be_deleted_but_unknown_or_foreign_ones_are_404(self):
         for kind in KINDS:

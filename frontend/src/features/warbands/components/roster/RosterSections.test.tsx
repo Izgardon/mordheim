@@ -19,7 +19,6 @@ import { makeHero, makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
 
 import type { WarbandHero } from "../../types/warband-types";
 import RosterSections from "./RosterSections";
-import { unitName } from "./unit-view";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
@@ -54,7 +53,7 @@ function Harness() {
       onHire={onHire}
       onAdvance={vi.fn()}
       onBuyAgain={vi.fn()}
-      renderEdit={(entry) => <p>Editing {unitName(entry.unit)}</p>}
+      renderEdit={(entry) => <p>Editing {entry.unit.name}</p>}
     />
   );
 }

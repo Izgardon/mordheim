@@ -8,7 +8,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { useWarbandCacheUpdate, type WarbandUpdate } from "../../../api/warband-cache";
 import { unitApi, type AdvancePick } from "../../../units/unit-api";
 import { buildLevelUpPayload, isTalentBarred, LADS_GOT_TALENT } from "../../../utils/levelup-utils";
-import { LIST_KEY, unitName, type RosterUnit } from "../unit-view";
+import { LIST_KEY, type RosterUnit } from "../unit-view";
 import {
   HENCHMEN_TABLE,
   HERO_TABLE,
@@ -115,7 +115,7 @@ export function useAdvanceFlow(entry: RosterUnit | null, warbandId: number, onDo
     setSaving(true);
     try {
       const payload = buildLevelUpPayload({
-        unitName: unitName(entry.unit),
+        unitName: entry.unit.name,
         selectedStat: advance,
         roll2d6Total: roll2,
         roll1d6Total: row?.outcome.kind === "d6" ? roll1 : null,

@@ -23,13 +23,13 @@ class SpendTradingActionTests(RosterTestCase):
         self.assertTrue(Hero.objects.get(id=other.id).trading_action)
 
     def test_the_warning_names_the_hero(self):
-        hero = make_unit(HERO, self.warband, name="", trading_action=False)
+        hero = make_unit(HERO, self.warband, name="Ana", trading_action=False)
 
         self.assertEqual(
             spent_warning(hero),
             {
                 "code": TRADING_ACTION_SPENT,
-                "message": f"Hero {hero.id} already used their trading action this round.",
+                "message": "Ana already used their trading action this round.",
                 "hero_id": hero.id,
             },
         )

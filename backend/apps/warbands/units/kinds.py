@@ -129,7 +129,6 @@ class UnitKindSpec:
     can_lead: bool  # heroes: one living leader per warband
     recruit: RecruitSpec
     cap: CapSpec | None
-    unknown_name: str  # the dismiss and loadout logs' fallback for a unit without a name
     unknown_type: str  # the dismiss log's fallback for a unit without a type
     hired_from_catalogue: bool = False  # hirelings: `hire/` copies a hired sword or dramatis persona onto the warband
     row_annotations: Mapping[str, Any] = field(default_factory=dict)  # read with each unit's row for its payloads
@@ -225,7 +224,6 @@ HERO = UnitKindSpec(
     recruit=RecruitSpec(LedgerAction.RECRUIT, "new_hero", "remove_hero", client_may_seed_level_up=True),
     # living ones only (BUG-29), and the hirelings in a hero's place (the fees and skill lists step)
     cap=CapSpec("max_heroes", 6, "heroes", "hero_cap_reached", counted=on_roster, others=in_heros_places),
-    unknown_name="Unknown Hero",
     unknown_type="Unknown Type",
     hooks=LeaderHooks(),
 )
@@ -252,7 +250,6 @@ HENCHMEN_GROUP = UnitKindSpec(
     can_lead=False,
     recruit=RecruitSpec(LedgerAction.RECRUIT, "new_henchmen_group", "remove_henchmen_group"),
     cap=None,  # group max_size and warband max_units only warn (decision 12, BUG-67)
-    unknown_name="Unknown",
     unknown_type="Unknown",
     hooks=HenchmenHooks(),
     row_annotations={"beast_kind": F("source_beast__kind")},  # a group recruited from a creature: its kind
@@ -291,7 +288,6 @@ HIRELING = UnitKindSpec(
         counted=_counted_hirelings,
         exempt=_outside_the_cap,
     ),
-    unknown_name="Unknown Hired Sword",
     unknown_type="Unknown Type",
     hired_from_catalogue=True,
 )

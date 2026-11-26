@@ -14,10 +14,9 @@ an item leaves:
 The client may log only what the server can't see (`CLIENT_LOG_ENTRIES`), with a size cap.
 """
 
-from typing import Any, cast
+from typing import Any
 
 from apps.warbands.models import RosterUnit, Warband, WarbandLog
-from apps.warbands.units.kinds import KINDS, UnitKindKey
 
 STASH = "stash"
 # (feature, entry type) the client may still post to logs/: dice rolls happen in the browser. Purchases and
@@ -27,10 +26,8 @@ MAX_CLIENT_PAYLOAD = 4096  # bytes of JSON
 
 
 def unit_name(unit_type: str, unit: RosterUnit | None) -> str | None:
-    """How the log names a move's or sale's end: the unit's name (or type), None for the stash."""
-    if unit is None:
-        return None
-    return unit.name or unit.unit_type or KINDS[cast(UnitKindKey, unit_type)].unknown_name
+    """How the log names a move's or sale's end: the unit's name, None for the stash."""
+    return None if unit is None else unit.name
 
 
 def write(warband: Warband, feature: str, entry_type: str, payload: dict[str, Any]) -> WarbandLog:

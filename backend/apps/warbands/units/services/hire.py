@@ -141,7 +141,7 @@ def custom_payload(body: Mapping[str, Any], terms: HireTerms) -> dict[str, Any]:
     ] or "Hired sword"  # a type is needed: the name then reads well
     lines = [(line.resource, line.amount) for line in terms.lines]
     return {
-        "name": (body.get("name") or "").strip()[:120] or unit_type or HIRELING.unknown_name,
+        "name": (body.get("name") or "").strip()[:120] or unit_type,
         "unit_type": unit_type,
         "kind": "hired_sword",
         "race": None,

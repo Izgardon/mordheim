@@ -22,7 +22,7 @@ def spend_trading_action(heroes: "QuerySet[Hero]") -> int:
 
 def spent_warning(hero: Hero) -> dict[str, Any]:
     """The warning for a hero who already used his trading action this round."""
-    name = hero.name or f"Hero {hero.id}"
+    name = hero.name
     return {
         "code": TRADING_ACTION_SPENT,
         "message": f"{name} already used their trading action this round.",

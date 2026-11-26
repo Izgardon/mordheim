@@ -86,7 +86,7 @@ def build_offer(payload: Any, warband_id: int) -> tuple[dict[str, Any], list[Tra
             raise TradeError("Trader not found.")
         if not hero.trading_action:  # traded this round: warn and allow (decision 9)
             warnings.append(spent_warning(hero))
-        trader_name = hero.name or f"Hero {hero.id}"
+        trader_name = hero.name
     gold = offer_gold(data)
     if gold > max(warband_gold(warband_id), 0):
         raise TradeError("Not enough gold.")

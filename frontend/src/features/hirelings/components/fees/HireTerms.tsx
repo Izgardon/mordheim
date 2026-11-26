@@ -97,7 +97,7 @@ export default function HireTerms({
               <option value="">Nobody</option>
               {heroes.map((hero) => (
                 <option key={hero.id} value={hero.id}>
-                  {hero.name || hero.unit_type || `Hero ${hero.id}`}
+                  {hero.name}
                 </option>
               ))}
             </select>

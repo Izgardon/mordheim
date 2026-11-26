@@ -26,9 +26,6 @@ export type {
 } from "./basket-lines";
 export { isUpgradeLine, lineName } from "./basket-lines";
 
-const nameOf = (unit: { name?: string | null; unit_type?: string | null }, fallback: string) =>
-  unit.name?.trim() || unit.unit_type?.trim() || fallback;
-
 /** A unit's recipient key, as the warband page names the unit the store was opened for. */
 export const recipientKey = (kind: "hero" | "henchmen_group" | "hireling", id: number) =>
   `${kind === "hero" ? "heroes" : kind === "henchmen_group" ? "henchmen" : "hirelings"}:${id}`;
@@ -46,7 +43,7 @@ export function recipientsFor(
     { key: "stash", label: "Stash", target: { kind: "stash" }, count: 1 },
     ...units.heroes.map((unit) => ({
       key: `heroes:${unit.id}`,
-      label: nameOf(unit, "Hero"),
+      label: unit.name,
       target: { kind: "heroes" as const, unit },
       count: 1,
     })),
@@ -54,7 +51,7 @@ export function recipientsFor(
       .filter((unit) => !isCreatureGroup(unit))
       .map((unit) => ({
         key: `henchmen:${unit.id}`,
-        label: nameOf(unit, "Henchmen"),
+        label: unit.name,
         target: { kind: "henchmen" as const, unit },
         count: Math.max(1, unit.henchmen?.length ?? 1),
       })),

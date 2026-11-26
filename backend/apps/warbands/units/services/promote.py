@@ -113,8 +113,7 @@ def promote_henchman(warband: Warband, group: HenchmenGroup, request: dict[str, 
         hero = cast(Hero, apply_create(HERO, fields))
         HERO.hooks.record_recruit(HERO, warband, hero, {})
         Henchman.objects.filter(id=henchman.id).update(dismissed_at=timezone.now())
-        group_name = group.name or group.unit_type or "Henchmen Group"
-        log_payload = {"group": group_name, "advance": LADS_GOT_TALENT, "lads_got_talent": True}
+        log_payload = {"group": group.name, "advance": LADS_GOT_TALENT, "lads_got_talent": True}
         log_payload |= {"henchman_id": henchman.id, "henchman_name": name, "hero_id": hero.id}
         log_warband_event(warband.id, "advance", HENCHMEN_GROUP.advance_log_type, log_payload)
         if len(living) == 1:

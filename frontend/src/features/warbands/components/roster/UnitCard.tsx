@@ -21,7 +21,6 @@ import {
   liveMembers,
   statValues,
   unitDomId,
-  unitName,
   xpInfo,
   type RosterUnit,
 } from "./unit-view";
@@ -110,7 +109,7 @@ export default function UnitCard(props: UnitCardProps) {
     )
   ) : null;
 
-  const name = unitName(unit);
+  const name = unit.name;
   // the badges and (open) kills sit on the row under the head, leaving the head to the name
   // (William, 22 Nov 2026): opposite a hero's trading action, beside a group's members; a hired
   // sword has no such row, so theirs stay in the head. Closed, no kills.

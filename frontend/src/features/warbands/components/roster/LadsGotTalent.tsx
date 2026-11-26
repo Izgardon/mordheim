@@ -9,7 +9,6 @@ import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { promoteHenchman } from "../../hooks/units/promote-henchman";
 import type { HenchmenGroup, WarbandHero } from "../../types/warband-types";
 import { buildHenchmenOptions } from "../../utils/levelup-utils";
-import { unitName } from "./unit-view";
 
 /**
  * The lad's got talent (a henchmen roll of 10–12; William: "after rolling you should see the
@@ -78,7 +77,7 @@ export default function LadsGotTalent({
       <p className="m-0 font-display text-lg font-semibold text-head">The lad&apos;s got talent</p>
       {group.promotable === false ? (
         <p className="m-0 text-xs font-semibold text-danger">
-          {group.name || group.unit_type || "These henchmen"} can&apos;t be promoted in their rules.
+          {group.name} can&apos;t be promoted in their rules.
         </p>
       ) : null}
       <span className={label}>Who joins the heroes</span>
@@ -106,7 +105,7 @@ export default function LadsGotTalent({
             <option value="">Nobody (the promotion is refused at the cap)</option>
             {heroes.map((hero) => (
               <option key={hero.id} value={hero.id}>
-                {unitName(hero)} (carried items are lost)
+                {hero.name} (carried items are lost)
               </option>
             ))}
           </select>

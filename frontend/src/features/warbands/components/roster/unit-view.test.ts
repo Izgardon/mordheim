@@ -57,8 +57,7 @@ describe("unitTypeLine", () => {
     expect(unitTypeLine(hireling({ ...persona, kind: "dramatis_persona" }))).toBe(
       "Dramatis persona"
     );
-    expect(unitTypeLine(hireling({ name: "", unit_type: "Ogre Bodyguard" }))).toBe("Hired sword");
-    expect(unitTypeLine(hireling({ name: "", unit_type: "" }))).toBe("");
+    expect(unitTypeLine(hireling({ name: "Grukk", unit_type: "grukk" }))).toBe("Hired sword");
   });
 });
 

@@ -19,7 +19,6 @@ import {
 
 import type { TradeRequest, TradeSession } from "../../types/trade-request-types";
 import type { WarbandHero, WarbandItemSummary } from "../../types/warband-types";
-import { unitName } from "../roster/unit-view";
 import TradeOffer from "./TradeOffer";
 
 type TradePanelProps = {
@@ -132,7 +131,7 @@ export default function TradePanel({
                 disabled={myAccepted}
                 onClick={() => edit((prev) => withOfferTrader(prev, String(hero.id)))}
               >
-                {unitName(hero)}
+                {hero.name}
                 {hero.trading_action === false ? (
                   <span className="text-[11px] text-muted-foreground">spent</span>
                 ) : null}
@@ -141,7 +140,7 @@ export default function TradePanel({
           </div>
           {trader && trader.trading_action === false && !myAccepted ? (
             <p className="m-0 text-xs text-danger">
-              {unitName(trader)} has used their trading action this round. You can still send them.
+              {trader.name} has used their trading action this round. You can still send them.
             </p>
           ) : null}
         </div>

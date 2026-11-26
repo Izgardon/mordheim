@@ -345,7 +345,7 @@ export function victimOptions(
         ? [
             {
               id: `group:${group.id}`,
-              name: group.name || group.unitType,
+              name: group.name,
               detail: [
                 distinctType({ unitType: group.unitType, displayName: group.name }) || "Henchmen",
                 `${up.length} of ${members.length} standing`,

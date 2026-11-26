@@ -16,7 +16,6 @@ from django.db.models import Case, F, IntegerField, Value, When
 from django.utils import timezone
 
 from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, on_roster
-from apps.warbands.units.kinds import KIND_BY_MODEL
 from apps.warbands.units.services.missing import LogEntry, missing_log, missing_members, returns_log
 
 from ...validation.unit_keys import parse_unit_key
@@ -26,20 +25,16 @@ MODELS: tuple[Any, ...] = (Hero, Hireling, Henchman)
 MEMBER = MODELS.index(Henchman)
 
 
-def _name(model: Any, name: str, unit_type: str) -> str:
-    return name or unit_type or (KIND_BY_MODEL[model].unknown_name if model in KIND_BY_MODEL else "Henchman")
-
-
 def _missing_reads(warband_id: int) -> list[Any]:
-    """Each kind's missing rows (a member's type is his group's), as one shape the union reads."""
+    """Each kind's missing rows, as one shape the union reads."""
     reads = [
         on_roster(model.objects.filter(warband_id=warband_id, missing_games__gt=0))
         .annotate(v_kind=Value(index, output_field=IntegerField()))
-        .values_list("v_kind", "id", "name", "unit_type", "missing_games")
+        .values_list("v_kind", "id", "name", "missing_games")
         for index, model in enumerate(MODELS[:MEMBER])
     ]
     members = missing_members(group__warband_id=warband_id).annotate(v_kind=Value(MEMBER, output_field=IntegerField()))
-    return [*reads, members.values_list("v_kind", "id", "name", "group__unit_type", "missing_games")]
+    return [*reads, members.values_list("v_kind", "id", "name", "missing_games")]
 
 
 def count_down(warband_id: int) -> list[LogEntry]:
@@ -49,10 +44,10 @@ def count_down(warband_id: int) -> list[LogEntry]:
     reads = _missing_reads(warband_id)
     ids: defaultdict[int, list[int]] = defaultdict(list)
     logs = []
-    for index, unit_id, name, unit_type, games in reads[0].union(*reads[1:], all=True).order_by("v_kind", "id"):
+    for index, unit_id, name, games in reads[0].union(*reads[1:], all=True).order_by("v_kind", "id"):
         ids[index].append(unit_id)
         if games == 1:
-            logs.append(returns_log(_name(MODELS[index], name, unit_type)))
+            logs.append(returns_log(name))
     now = timezone.now()
     for index, unit_ids in ids.items():
         versioned = {} if index == MEMBER else {"updated_at": now}
@@ -93,7 +88,7 @@ def set_from_injuries(context: FinaliseContext, unit_results: dict[str, dict]) -
             continue
         unit.missing_games, unit.missing_reason, unit.updated_at = missing["games"], missing["reason"], now
         rows[type(unit)].append(unit)
-        logs.append(missing_log(_name(type(unit), unit.name, unit.unit_type), missing["games"], missing["reason"]))
+        logs.append(missing_log(unit.name, missing["games"], missing["reason"]))
     for model, units in rows.items():
         model.objects.bulk_update(units, ["missing_games", "missing_reason", "updated_at"])
     return logs

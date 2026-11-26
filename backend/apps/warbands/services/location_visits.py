@@ -38,7 +38,7 @@ def visit_location(warband: Warband, location: CampaignLocation, hero_ids: list[
         if location.takes_trading_action:
             warnings += [spent_warning(hero) for hero in heroes if not hero.trading_action]
             spend_trading_action(Hero.objects.filter(id__in=wanted))
-        names = [hero.name or f"Hero {hero.id}" for hero in heroes]
+        names = [hero.name for hero in heroes]
         economy_log.write(
             warband,
             "location",

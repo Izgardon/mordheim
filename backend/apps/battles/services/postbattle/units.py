@@ -174,7 +174,7 @@ class UnitResults:
         existing = self.group_stats.get(group.id)
         if existing is None:
             self.group_stats[group.id] = result.stats_override
-            group_name = group.name or group.unit_type or result.name
+            group_name = group.name
             self.changes.mark(group, kept_stats(group, result.stats_override, group_name, self.outcome.stat_logs))
         elif existing != result.stats_override:
             raise ValueError("All henchmen in a group must share the same stat overrides")

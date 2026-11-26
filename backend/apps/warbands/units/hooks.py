@@ -52,7 +52,7 @@ class UnitHooks:
         """The new unit's log row and, when it cost anything, its recruit trade: "Grukk the Ogre Bodyguard", or just
         the name when the unit is named for its type (a hire keeping the default name). A hire's resources paid are the
         trade's note (`sent["paid"]`, units/services/hire.py), so a fee in resources alone still writes it."""
-        name, unit_type = unit.name or "Unknown", unit.unit_type or "Unknown"
+        name, unit_type = unit.name, unit.unit_type or "Unknown"
         log_warband_event(warband.id, "personnel", kind.recruit.log_new, {"name": name, "type": unit_type})
         paid = sent.get("paid", "") if isinstance(sent, Mapping) else ""
         if (unit.price and unit.price > 0) or paid:
@@ -248,9 +248,9 @@ class HenchmenHooks(UnitHooks):
     def record_recruit(self, kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, sent: Any) -> None:
         """The group's log row, then one log row and one trade at the group price per member."""
         group = cast(HenchmenGroup, unit)
-        log_new = {"name": group.name or "Unknown", "type": group.unit_type or "Unknown"}
+        log_new = {"name": group.name, "type": group.unit_type or "Unknown"}
         log_warband_event(warband.id, "personnel", kind.recruit.log_new, log_new)
-        group_name = group.name or group.unit_type or "Unknown Group"
+        group_name = group.name
         members = list(group.henchmen.all())
         trade_header, log_header = _recruit_headers(
             warband, group_name, len(members), f"Recruited {len(members)} {group_name}"
@@ -285,7 +285,7 @@ class HenchmenHooks(UnitHooks):
         are matched as ints (BUG-93).
         """
         group = cast(HenchmenGroup, unit)
-        group_name = group.name or group.unit_type or "Unknown Group"
+        group_name = group.name
         trade_header, log_header = _recruit_headers(
             warband, group_name, len(recruits), f"Recruited {len(recruits)} into {group_name}"
         )

@@ -104,7 +104,7 @@ export default function VeteransDialog({
           });
       updateCache(camp.warbandId, { henchmenGroups: result.units, summary: result.summary });
       void queryClient.invalidateQueries({ predicate: isWarbandQuery(camp.warbandId, "template") });
-      const groupName = group ? group.name || group.unit_type || "Henchmen" : name.name.trim();
+      const groupName = group ? group.name : name.name.trim();
       await camp.save({
         ...camp.draft,
         camp: {
@@ -152,7 +152,7 @@ export default function VeteransDialog({
           { id: NEW, text: "New group" },
           ...groups.map((entry) => ({
             id: String(entry.id),
-            text: `${entry.name || entry.unit_type} (${entry.henchmen.filter((m) => !m.dead).length}/${entry.max_size ?? 5})`,
+            text: `${entry.name} (${entry.henchmen.filter((m) => !m.dead).length}/${entry.max_size ?? 5})`,
           })),
         ].map((option) => (
           <Chip

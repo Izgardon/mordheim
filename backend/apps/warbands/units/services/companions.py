@@ -28,7 +28,6 @@ from apps.warbands.units.companions import (
     beast_kind,
     companion_warnings,
     unit_companion_warnings,
-    unit_name,
     warband_mount_warnings,
 )
 from apps.warbands.units.errors import RosterError
@@ -72,7 +71,7 @@ def warband_mounts(warband_id: int) -> int:
 def loaded_unit_warnings(kind: UnitKindSpec, warband: Warband, unit: Any) -> list[Warning]:
     """The companion warnings for a unit read with its loadout (`with_loadout`: its item rows and living members)."""
     rows = getattr(unit, kind.items.relation).all()
-    return companion_warnings(_name(kind, unit), rows, kind.has_members, warband_mounts(warband.id))
+    return companion_warnings(unit.name, rows, kind.has_members, warband_mounts(warband.id))
 
 
 def unit_warnings(kind: UnitKindSpec, warband: Warband, unit: RosterUnit) -> list[Warning]:
@@ -87,9 +86,5 @@ def units_warnings(warband: Warband, units: Iterable[tuple[UnitKindSpec, RosterU
     for kind, unit in {(kind.key, unit.pk): (kind, unit) for kind, unit in units}.values():
         links: Any = kind.items.model._default_manager
         rows = list(links.filter(**{kind.parent_field: unit}).select_related("item__bestiary_entry").order_by("id"))
-        warnings += unit_companion_warnings(_name(kind, unit), rows, kind.has_members)
+        warnings += unit_companion_warnings(unit.name, rows, kind.has_members)
     return warnings + warband_mount_warnings(warband_mounts(warband.id))
-
-
-def _name(kind: UnitKindSpec, unit: Any) -> str:
-    return unit_name(unit, kind.unknown_name)

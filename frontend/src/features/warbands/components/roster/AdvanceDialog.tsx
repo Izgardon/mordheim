@@ -18,7 +18,7 @@ import DiceTable from "./advance/DiceTable";
 import RollField from "./advance/RollField";
 import { useAdvanceFlow } from "./advance/useAdvanceFlow";
 import LadsGotTalent from "./LadsGotTalent";
-import { unitName, type RosterUnit } from "./unit-view";
+import { type RosterUnit } from "./unit-view";
 
 const LABEL = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
 const span = (from: number, to: number) => (from === to ? String(from) : `${from}–${to}`);
@@ -69,7 +69,7 @@ export default function AdvanceDialog({
       <DialogContent className="max-w-[620px]">
         <DialogHeader>
           <DialogKicker>Advance</DialogKicker>
-          <DialogTitle>{entry ? unitName(entry.unit) : ""}</DialogTitle>
+          <DialogTitle>{entry ? entry.unit.name : ""}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-3.5">
           <div className="flex flex-col gap-2">

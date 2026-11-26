@@ -57,7 +57,7 @@ export default function StorePanel(props: StorePanelProps) {
   );
   const searchers = heroes.map((hero) => ({
     id: hero.id,
-    name: hero.name?.trim() || hero.unit_type?.trim() || "Hero",
+    name: hero.name,
     spent: hero.trading_action === false,
   }));
   const details = useShownItem(props.open);

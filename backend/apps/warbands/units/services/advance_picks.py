@@ -114,7 +114,7 @@ def apply_pick(kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, pick: R
             links.create(**{link.target: entry})
         result = PickResult(pick.list, entry.id, entry.name, added=added)
     if result.added and link.log_entry:
-        payload = {"hero": unit.name or unit.unit_type or kind.unknown_name, link.target: entry.name}
+        payload = {"hero": unit.name, link.target: entry.name}
         learned = learned_through(entry, unit, warband.campaign_id) if link.target == "skill" else entry.type
         log_warband_event(warband.id, "loadout", link.log_entry, {**payload, f"{link.target}_type": learned})
     return replace(result, roll=pick.roll)

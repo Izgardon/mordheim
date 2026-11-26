@@ -2,14 +2,7 @@ import { ChipLabel } from "@/components/ui/chip";
 import { UNIT_MARKER_ICONS } from "@/components/ui/game-icons";
 import { cn } from "@/lib/utils";
 
-import {
-  isCreature,
-  KIND_TRIM,
-  unitMarker,
-  unitName,
-  unitTypeLine,
-  type RosterUnit,
-} from "./unit-view";
+import { isCreature, KIND_TRIM, unitMarker, unitTypeLine, type RosterUnit } from "./unit-view";
 
 /**
  * A roster card's title, which opens and closes it: its marker (William, 22 Nov 2026: "game icons
@@ -47,7 +40,7 @@ export default function UnitTitle({
       />
       <span className="flex min-w-0 flex-col gap-0.5">
         <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-display text-[19px] font-semibold leading-tight text-head">
-          {unitName(entry.unit)}
+          {entry.unit.name}
           {isCreature(entry) ? (
             // its paw is the marker already
             <ChipLabel className="min-h-0 px-1.5 py-px text-[11px]">Creature</ChipLabel>

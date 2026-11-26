@@ -8,7 +8,7 @@ import { itemKind } from "@/features/items/item-kind";
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { groupItemsById } from "../../utils/warband-utils";
 import { placeOf, unitSections } from "../roster/unit-sections";
-import { isGroup, unitKey, unitName, type RosterUnit } from "../roster/unit-view";
+import { isGroup, unitKey, type RosterUnit } from "../roster/unit-view";
 import type { WarbandItemSummary } from "../../types/warband-types";
 import { ShownItemDock, StashList } from "./StashPanel";
 
@@ -68,7 +68,7 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
       open={entry !== null}
       onOpenChange={props.onOpenChange}
       kicker="Loadout"
-      title={entry ? unitName(entry.unit) : ""}
+      title={entry ? entry.unit.name : ""}
       dock={
         details.shown ? (
           <ShownItemDock

@@ -11,7 +11,7 @@ import EditNotes from "./edit/EditNotes";
 import EditUnitFields from "./edit/EditUnitFields";
 import MissingGamesFields from "./edit/MissingGamesFields";
 import { useUnitEditDraft } from "./edit/useUnitEditDraft";
-import { isGroup, unitName, type RosterUnit } from "./unit-view";
+import { isGroup, type RosterUnit } from "./unit-view";
 
 /**
  * One unit's edit form (design E): inline in its open card on the web, a bottom sheet on a
@@ -135,7 +135,7 @@ export default function EditUnitForm({
         open
         onOpenChange={(open) => (open ? null : discard.close())}
         kicker="Edit"
-        title={unitName(entry.unit)}
+        title={entry.unit.name}
         footer={
           // the three that act on the unit; confirming a dismissal takes the row and pushes the
           // other two down, so the loss is still said plainly and neither is lost

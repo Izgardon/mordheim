@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
-import { unitName } from "@/features/warbands/components/roster/unit-view";
 import type { WarbandHero } from "@/features/warbands/types/warband-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
@@ -76,7 +75,7 @@ export default function LocationVisit({
               aria-description={spent ? "Trading action spent" : undefined}
               className={cn(spent && "border-dashed opacity-55 line-through")}
             >
-              {unitName(hero)}
+              {hero.name}
             </Chip>
           );
         })}
