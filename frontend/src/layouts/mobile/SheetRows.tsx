@@ -2,17 +2,25 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
+import type { NavLink } from "@/layouts/shell/campaign-nav";
 import { cn } from "@/lib/utils";
 
 const ROW =
   "flex min-h-[52px] w-full items-center justify-between gap-2.5 border-t border-line px-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring";
 
-type RowContentProps = { label: string; detail?: string; danger?: boolean };
+type RowContentProps = {
+  label: string;
+  detail?: string;
+  danger?: boolean;
+  /** A leading icon (the Reference sheet's links, as the web rail shows them). */
+  icon?: NavLink["icon"];
+};
 
-function RowContent({ label, detail, danger = false }: RowContentProps) {
+function RowContent({ label, detail, danger = false, icon: Icon }: RowContentProps) {
   return (
     <>
-      <span className="flex flex-col">
+      {Icon ? <Icon className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" /> : null}
+      <span className="flex flex-1 flex-col">
         <span className={cn("text-[15px] font-bold", danger ? "text-danger" : "text-ink")}>
           {label}
         </span>

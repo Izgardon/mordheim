@@ -126,6 +126,7 @@ export default function CampaignBottomNav({
                   key={link.path}
                   to={`${base}/${link.path}`}
                   label={link.label}
+                  icon={link.icon}
                   onNavigate={close}
                 />
               ))}
