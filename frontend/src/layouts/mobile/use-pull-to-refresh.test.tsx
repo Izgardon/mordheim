@@ -34,7 +34,7 @@ describe("usePullToRefresh", () => {
     render(<Page />);
     const page = screen.getByText("Roster");
 
-    for (const distance of [48, 70, 89]) {
+    for (const distance of [20, 40, 48]) {
       const move = swipe(page, [[0, distance]]);
       expect(pulling()).toBe(false);
       expect(move.defaultPrevented).toBe(false);

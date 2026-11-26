@@ -2,8 +2,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { dialogOpen, inSidewaysScroller, scrollPanes } from "@/lib/touch-gestures";
 
-/** How far a finger pulls before the page starts to follow (William, 25 Nov 2026: was 48). */
-const ACTIVATION_DISTANCE = 90;
+/** How far a finger pulls before the page starts to follow (William, 26 Nov 2026: the distance was never the trouble, the sideways swipes were). */
+const ACTIVATION_DISTANCE = 48;
 /** Past this sideways, before the pull starts, the touch is a swipe for the rest of its life. */
 const SIDEWAYS_SLOP = 10;
 export const PULL_TO_REFRESH_THRESHOLD = 72;
