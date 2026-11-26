@@ -12,7 +12,8 @@ export type HireSource = "hired_sword" | "dramatis_persona" | "custom";
  * persona (`dramatis_persona_already_hired`), an entry archived or removed for the campaign
  * (`archived_entry`), a fee in his rules (`fee_special`), a hero's place when the heroes are full
  * (`hero_place_taken`), dice not rolled (`fee_not_rolled`), a resource paid short or by nothing
- * (`resource_short`, `resource_unpaid`).
+ * (`resource_short`, `resource_unpaid`), and in a workshop the roster's cost above its budget after
+ * the hire (`over_budget`).
  */
 export type HireWarning = { code: string; message: string; id?: number; source?: HireSource };
 

@@ -5,6 +5,7 @@ import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
 import { useWarbandHireTemplate } from "@/features/warbands/api/warband-template-queries";
 import type { TemplateUpgrade } from "@/features/warbands/types/hire-template-types";
 import type { HenchmenGroup, Warband, WarbandHero } from "@/features/warbands/types/warband-types";
+import { usePurse } from "@/features/warbands/purse";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useWhoCan } from "../api/who-can-queries";
@@ -92,6 +93,7 @@ export default function StorePanel(props: StorePanelProps) {
     });
   const gold = warband.gold ?? 0;
   const left = gold - basket.total;
+  const purse = usePurse();
   const buyAll = async () => {
     if (await basket.buyAll()) props.onOpenChange(false);
   };
@@ -113,6 +115,9 @@ export default function StorePanel(props: StorePanelProps) {
       title="Store"
       actions={
         <span className="font-display text-[22px] font-semibold text-head">
+          {purse === "Budget" ? (
+            <span className="font-sans text-xs font-semibold text-faint">Budget </span>
+          ) : null}
           {left} <span className="font-sans text-xs font-semibold text-faint">gc</span>
         </span>
       }

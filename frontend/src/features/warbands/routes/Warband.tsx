@@ -21,6 +21,7 @@ import WarbandTrade from "../components/trade/WarbandTrade";
 import type { RosterUnit } from "../components/roster/unit-view";
 import { useUnitActions } from "../hooks/units/useUnitActions";
 import { useWarbandSheet } from "../hooks/warband/useWarbandSheet";
+import { PurseContext } from "../purse";
 
 /** The warband page (design E): your own warband, or someone else's to look at. */
 export default function Warband() {
@@ -111,86 +112,92 @@ export default function Warband() {
   } as const;
 
   return (
-    <div className="flex flex-col gap-6">
-      <PostgameSlot slot={isMobile ? "aside" : "bar"} {...postgame} />
-      <WarbandHeader
-        kicker={[warband.warband_type?.name, mine ? user?.name : null].filter(Boolean).join(" · ")}
-        name={warband.name}
-        code={workshop ? <CopyCode code={workshop.share_code} label="share code" /> : null}
-        stashCount={stashCount}
-        showLocations={!workshop && Boolean(campaign?.enable_locations)}
-        showEncampment={!workshop && isMobile && Boolean(campaign?.enable_encampments)}
-        onOpen={(next) => (next === "store" ? openStore({}) : setPanel(next))}
-        menu={[
-          ...(capabilities.trade
-            ? [{ label: "Trade with a player", onSelect: () => setTradeInviteOpen(true) }]
-            : []),
-          ...(warband.warband_link ? [{ label: "Warband sheet", href: warband.warband_link }] : []),
-          { label: "Rating breakdown", onSelect: () => setBreakdownOpen(true) },
-        ]}
-      />
-      {capabilities.trade ? (
-        <WarbandTrade
+    <PurseContext.Provider value={workshop ? "Budget" : "Gold"}>
+      <div className="flex flex-col gap-6">
+        <PostgameSlot slot={isMobile ? "aside" : "bar"} {...postgame} />
+        <WarbandHeader
+          kicker={[warband.warband_type?.name, mine ? user?.name : null]
+            .filter(Boolean)
+            .join(" · ")}
+          name={warband.name}
+          code={workshop ? <CopyCode code={workshop.share_code} label="share code" /> : null}
+          stashCount={stashCount}
+          showLocations={!workshop && Boolean(campaign?.enable_locations)}
+          showEncampment={!workshop && isMobile && Boolean(campaign?.enable_encampments)}
+          onOpen={(next) => (next === "store" ? openStore({}) : setPanel(next))}
+          menu={[
+            ...(capabilities.trade
+              ? [{ label: "Trade with a player", onSelect: () => setTradeInviteOpen(true) }]
+              : []),
+            ...(warband.warband_link
+              ? [{ label: "Warband sheet", href: warband.warband_link }]
+              : []),
+            { label: "Rating breakdown", onSelect: () => setBreakdownOpen(true) },
+          ]}
+        />
+        {capabilities.trade ? (
+          <WarbandTrade
+            campaignId={campaignId}
+            warbandId={warbandId}
+            heroes={sheet.heroes}
+            gold={warband.gold ?? 0}
+            inviteOpen={tradeInviteOpen}
+            onInviteOpenChange={setTradeInviteOpen}
+          />
+        ) : null}
+        <div className="flex flex-wrap items-start gap-8">
+          <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-6">
+            <WarbandSections
+              campaignId={campaignId}
+              campaign={campaign}
+              warband={shown}
+              sheet={sheet}
+              canEdit={canEdit}
+              breakdownOpen={breakdownOpen}
+              setBreakdownOpen={setBreakdownOpen}
+              onLoadout={setLoadoutFor}
+              onHire={hire}
+              onAdvance={setAdvancing}
+              onBuyAgain={(entry, item) =>
+                openStore(
+                  storeFor(entry, {
+                    itemId: item.id,
+                    name: item.name,
+                    price: item.current_price ?? null,
+                  })
+                )
+              }
+            />
+          </div>
+          {isMobile ? null : <PostgameSlot slot="aside" {...postgame} />}
+        </div>
+
+        <WarbandPanels
+          campaignId={campaignId}
+          warband={shown}
+          heroes={sheet.heroes}
+          henchmenGroups={sheet.henchmenGroups}
+          units={units}
+          canEdit={canEdit}
+          canManageItems={capabilities.manage_items}
+          panel={panel}
+          setPanel={setPanel}
+          loadoutFor={loadoutFor}
+          setLoadoutFor={setLoadoutFor}
+          store={store}
+          openStore={openStore}
+          actions={actions}
+          placeSearch={searchParams.get("place") ?? undefined}
+        />
+        <AdvanceDialog
+          entry={advancing}
           campaignId={campaignId}
           warbandId={warbandId}
           heroes={sheet.heroes}
-          gold={warband.gold ?? 0}
-          inviteOpen={tradeInviteOpen}
-          onInviteOpenChange={setTradeInviteOpen}
+          maxHeroes={campaign?.max_heroes ?? null}
+          onClose={() => setAdvancing(null)}
         />
-      ) : null}
-      <div className="flex flex-wrap items-start gap-8">
-        <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-6">
-          <WarbandSections
-            campaignId={campaignId}
-            campaign={campaign}
-            warband={shown}
-            sheet={sheet}
-            canEdit={canEdit}
-            breakdownOpen={breakdownOpen}
-            setBreakdownOpen={setBreakdownOpen}
-            onLoadout={setLoadoutFor}
-            onHire={hire}
-            onAdvance={setAdvancing}
-            onBuyAgain={(entry, item) =>
-              openStore(
-                storeFor(entry, {
-                  itemId: item.id,
-                  name: item.name,
-                  price: item.current_price ?? null,
-                })
-              )
-            }
-          />
-        </div>
-        {isMobile ? null : <PostgameSlot slot="aside" {...postgame} />}
       </div>
-
-      <WarbandPanels
-        campaignId={campaignId}
-        warband={shown}
-        heroes={sheet.heroes}
-        henchmenGroups={sheet.henchmenGroups}
-        units={units}
-        canEdit={canEdit}
-        canManageItems={capabilities.manage_items}
-        panel={panel}
-        setPanel={setPanel}
-        loadoutFor={loadoutFor}
-        setLoadoutFor={setLoadoutFor}
-        store={store}
-        openStore={openStore}
-        actions={actions}
-        placeSearch={searchParams.get("place") ?? undefined}
-      />
-      <AdvanceDialog
-        entry={advancing}
-        campaignId={campaignId}
-        warbandId={warbandId}
-        heroes={sheet.heroes}
-        maxHeroes={campaign?.max_heroes ?? null}
-        onClose={() => setAdvancing(null)}
-      />
-    </div>
+    </PurseContext.Provider>
   );
 }

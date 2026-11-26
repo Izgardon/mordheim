@@ -23,6 +23,7 @@ import {
 import { makeHenchmenGroup, makeHero, makeItem, makeSpecial } from "@/test/warband-fixtures";
 
 import type { TemplateLine } from "@/features/warbands/types/hire-template-types";
+import { PurseContext, type Purse } from "@/features/warbands/purse";
 
 import type { WeaponMaterial, WhoCan } from "../types/item-types";
 import StorePanel from "./StorePanel";
@@ -80,21 +81,23 @@ const whoCan: WhoCan = {
   materials: [],
 };
 
-function renderStore(heroes: ReturnType<typeof makeHero>[] = []) {
+function renderStore(heroes: ReturnType<typeof makeHero>[] = [], purse: Purse = "Gold") {
   const queryClient = createTestQueryClient();
   queryClient.setQueryData(catalogueListKey(CAMPAIGN, "items"), [lance]);
   queryClient.setQueryData(queryKeys.campaign.warbandWhoCan(CAMPAIGN, WARBAND), whoCan);
   renderWithQueryClient(
-    <StorePanel
-      open
-      onOpenChange={vi.fn()}
-      campaignId={CAMPAIGN}
-      warband={{ id: WARBAND, name: "Clan Eshin", gold: 100 }}
-      heroes={heroes}
-      henchmenGroups={[]}
-      canBuy
-      opening={{}}
-    />,
+    <PurseContext.Provider value={purse}>
+      <StorePanel
+        open
+        onOpenChange={vi.fn()}
+        campaignId={CAMPAIGN}
+        warband={{ id: WARBAND, name: "Clan Eshin", gold: 100 }}
+        heroes={heroes}
+        henchmenGroups={[]}
+        canBuy
+        opening={{}}
+      />
+    </PurseContext.Provider>,
     { queryClient }
   );
 }
@@ -102,6 +105,11 @@ function renderStore(heroes: ReturnType<typeof makeHero>[] = []) {
 beforeEach(() => fakeApi.reset());
 
 describe("StorePanel", () => {
+  it("names a workshop warband's Budget where a campaign's shows only its gold left", () => {
+    renderStore([], "Budget");
+    expect(screen.getByText("Budget 100 gc left")).toBeInTheDocument();
+  });
+
   it("shows a clicked item's details, and hides them on a second click", async () => {
     const user = setupUser();
     renderStore();

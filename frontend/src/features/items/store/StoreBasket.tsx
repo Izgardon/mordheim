@@ -4,6 +4,7 @@ import { ChevronUp, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
+import { usePurse } from "@/features/warbands/purse";
 import { cn } from "@/lib/utils";
 
 import { lineName, type StoreBasket as Basket } from "./useStoreBasket";
@@ -77,6 +78,7 @@ export default function StoreBasket({
 }) {
   const [open, setOpen] = useState(true);
   const left = gold - basket.total;
+  const budget = usePurse() === "Budget" ? "Budget " : "";
   const empty = basket.lines.length === 0;
   const buy = (
     <Button
@@ -115,6 +117,7 @@ export default function StoreBasket({
         ) : null}
         <div className="flex items-center gap-2.5 px-4 pb-1 pt-1.5">
           <span className={cn("flex-1 text-[13px]", left < 0 ? "text-danger" : "text-text2")}>
+            {budget}
             {left} gc left after
           </span>
           {buy}
@@ -137,7 +140,10 @@ export default function StoreBasket({
       <div className="flex items-center gap-3 border-t border-line pt-2.5">
         <span className="flex-1 text-[13px] text-text2">
           Total <span className="font-mono font-bold text-head">{basket.total} gc</span> ·{" "}
-          <span className={left < 0 ? "text-danger" : undefined}>{left} gc left</span>
+          <span className={left < 0 ? "text-danger" : undefined}>
+            {budget}
+            {left} gc left
+          </span>
         </span>
         {buy}
       </div>
