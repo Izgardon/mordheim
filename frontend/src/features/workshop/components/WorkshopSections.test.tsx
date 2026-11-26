@@ -118,7 +118,7 @@ beforeEach(() => {
 });
 
 describe("Home's workshop sections", () => {
-  it("lists my warbands with their cost against the budget and my lists with their types, each with its code", async () => {
+  it("lists my warbands with their cost against the budget and my lists, each with its code", async () => {
     renderHome();
 
     expect(await screen.findByRole("article", { name: "The Gilded Wagon" })).toHaveTextContent(
@@ -126,7 +126,9 @@ describe("Home's workshop sections", () => {
     );
     expect(card("The Gilded Wagon")).toHaveTextContent("WAGN2345");
     expect(within(card("Overspent")).getByText("620 / 500 gc")).toHaveClass("text-danger");
-    expect(card("Night Watch")).toHaveTextContent("Reiklanders, Mercenaries");
+    // William, 26 Nov 2026: a list's card names no types ("not important")
+    expect(card("Night Watch")).not.toHaveTextContent("Reiklanders");
+    expect(card("Night Watch")).toHaveTextContent("WTCH2345");
     expect(card("Overspent")).toHaveTextContent("Middenheimers · No list"); // William, 26 Nov 2026
     expect(card("The Gilded Wagon")).not.toHaveTextContent("No list");
     expect(

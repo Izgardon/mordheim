@@ -9,7 +9,7 @@ import ImportIntoWorkshop from "./ImportIntoWorkshop";
 import NewListDialog from "./NewListDialog";
 import WorkshopCard from "./WorkshopCard";
 
-/** My workshop's warband lists: each with the types it serves and its code; New, Import by code. */
+/** My workshop's warband lists: each with its code; New, Import by code. */
 export default function ListsSection() {
   const workshop = useWorkshop();
   const remove = useDeleteWorkshopList();
@@ -37,7 +37,6 @@ export default function ListsSection() {
           key={row.id}
           to={workshopListPath(row.campaign_id, row.id)}
           name={row.name}
-          kicker={row.warband_types.map((type) => type.name).join(", ") || "Serves no type"}
           shareCode={row.share_code}
           onDelete={() => remove.mutateAsync(row)}
         />

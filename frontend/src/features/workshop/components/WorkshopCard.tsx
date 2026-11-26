@@ -13,8 +13,8 @@ type WorkshopCardProps = {
   /** Its page in the workshop. */
   to: string;
   name: string;
-  /** What it is: a warband's type, or the types a list serves. */
-  kicker: string;
+  /** What it is (a warband's type); a list has none (William, 26 Nov 2026: "not important"). */
+  kicker?: string;
   /** The line under the name: a warband's cost against its budget. */
   facts?: ReactNode;
   shareCode: string;
@@ -23,7 +23,7 @@ type WorkshopCardProps = {
 };
 
 /**
- * A warband or warband list in my workshop: what it is, its name (the card's link, to its page),
+ * A warband or warband list in my workshop: a warband's type, its name (the card's link, to its page),
  * its cost where it is a warband, its share code with Copy, and Delete, which says that copies
  * imported elsewhere stay.
  */
@@ -50,6 +50,20 @@ export default function WorkshopCard({
     }
   };
 
+  const title = (
+    <h3
+      id={titleId}
+      className="m-0 min-w-0 break-words font-display text-2xl font-semibold leading-tight text-head max-[960px]:text-[22px]"
+    >
+      <Link
+        to={to}
+        className="outline-none after:absolute after:inset-0 after:z-[1] after:content-[''] hover:text-accent-hi focus-visible:underline"
+      >
+        {name}
+      </Link>
+    </h3>
+  );
+
   return (
     <Card
       as="article"
@@ -57,9 +71,13 @@ export default function WorkshopCard({
       className="relative flex flex-col gap-2.5 p-5 transition-colors hover:border-accent-line max-[960px]:p-4"
     >
       <div className="flex items-start justify-between gap-2">
-        <span className="min-w-0 break-words pt-2 text-xs font-semibold uppercase tracking-[0.08em] text-faint">
-          {kicker}
-        </span>
+        {kicker ? (
+          <span className="min-w-0 break-words pt-2 text-xs font-semibold uppercase tracking-[0.08em] text-faint">
+            {kicker}
+          </span>
+        ) : (
+          title
+        )}
         <div className="relative z-[2] flex shrink-0 items-center gap-1.5">
           {shareCode ? <CopyCode code={shareCode} label="share code" /> : null}
           <IconButton
@@ -72,17 +90,7 @@ export default function WorkshopCard({
           </IconButton>
         </div>
       </div>
-      <h3
-        id={titleId}
-        className="m-0 break-words font-display text-2xl font-semibold leading-tight text-head max-[960px]:text-[22px]"
-      >
-        <Link
-          to={to}
-          className="outline-none after:absolute after:inset-0 after:z-[1] after:content-[''] hover:text-accent-hi focus-visible:underline"
-        >
-          {name}
-        </Link>
-      </h3>
+      {kicker ? title : null}
       {facts}
       <ConfirmDialog
         open={confirming}
