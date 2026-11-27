@@ -1,6 +1,7 @@
 """The book skills audit (27 Nov 2026): the obvious corrections, read from the committed `out/` (which test_build.py
 pins to a fresh run of build.py) and the hired swords' own data."""
 
+import re
 from typing import Any, ClassVar
 
 from catalogue_import.common import load_json
@@ -279,3 +280,11 @@ class SkillAuditTests(ReviewCase):
                 self.assertIn("instead of choosing a skill", rules["Losing Animosity"])
                 for fighter in self.templates[slug]["fighters"]:
                     self.assertNotIn("Forest Goblins", " ".join(fighter["skill_types"]))
+
+    def test_no_skill_description_carries_a_source_tag(self) -> None:
+        # 142 ended with "(TC 29)", "(MiM)" or "(RB 93)", the newer none; the page shows each skill's setting (William,
+        # 27 Nov 2026: drop them)
+        tag = re.compile(r"\((?:MiM|BTB|TBMF|NC|LotD|TC ?\d+|RB ?\d+|A\d+ \d+|EiF \d+|FO \d+|2005 Rules Review)\)")
+        self.assertEqual([name for name, text in self.skills.items() if tag.search(text)], [])
+        self.assertTrue(self.skills["Shaggy Hide"].endswith("combined with other armour as normal."))
+        self.assertIn("Shadow Weavers. There may never be", self.skills["Powerful Build"])

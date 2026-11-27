@@ -1,7 +1,7 @@
 [
   {
     "name": "[Animal] Handler",
-    "description": "This skill is highly beneficial if non-ridden animals are to be included in a warband. This skill must be taken for specific animals and may be taken multiple times for different animals. It represents knowledge of the general care and well being of the animal as well as training techniques. A warrior with this skill has a beneficial effect on the animals under his care. If a warrior has the Animal Handling skill for a particular animal, any such animals may use his Leadership provided he is within 6\". If the warband’s leader is also nearby, a player may choose which of the warriors’ Leadership to use unless the animal is stupid, in which case only the Handler’s Leadership may be used. In addition, stubborn animals with a Handler in base contact, ignore the effects of stubbornness. (TC 14)"
+    "description": "This skill is highly beneficial if non-ridden animals are to be included in a warband. This skill must be taken for specific animals and may be taken multiple times for different animals. It represents knowledge of the general care and well being of the animal as well as training techniques. A warrior with this skill has a beneficial effect on the animals under his care. If a warrior has the Animal Handling skill for a particular animal, any such animals may use his Leadership provided he is within 6\". If the warband’s leader is also nearby, a player may choose which of the warriors’ Leadership to use unless the animal is stupid, in which case only the Handler’s Leadership may be used. In addition, stubborn animals with a Handler in base contact, ignore the effects of stubbornness."
   },
   {
     "name": "Ride [Animal]",
@@ -9,35 +9,35 @@
   },
   {
     "name": "Cavalry Commander",
-    "description": "Mounted Heroes are an impressive sight. With a good vantage point, they can see (and be seen) far more readily than if they were on foot. If the warband’s leader has this skill and is mounted, he may add an extra 6\" to the distance within which other warriors in the warband may use his Leadership. This is in addition to any other bonuses that increase the range of the leader’s influence. Warriors without Ride may not use this skill. (TC 14)"
+    "description": "Mounted Heroes are an impressive sight. With a good vantage point, they can see (and be seen) far more readily than if they were on foot. If the warband’s leader has this skill and is mounted, he may add an extra 6\" to the distance within which other warriors in the warband may use his Leadership. This is in addition to any other bonuses that increase the range of the leader’s influence. Warriors without Ride may not use this skill."
   },
   {
     "name": "Trick Riding",
-    "description": "By athletically hanging off the side of his mount, a rider makes himself harder to hit. While a rider is trick riding all missile attacks against him suffer -1 to hit in addition to other modifiers. The rider must declare that he is trick riding before moving. He must then make an Initiative test and, if successful, may move full distance. If he fails he loses control of his mount and must roll immediately on the Whoa Boy! table. This skill may not be used with heavy armour because of the agility required. In addition, trick riding requires both hands, so the model may not use a shield or missile weapons whilst using the skill. Warriors without Ride may not use this skill. (TC 14)"
+    "description": "By athletically hanging off the side of his mount, a rider makes himself harder to hit. While a rider is trick riding all missile attacks against him suffer -1 to hit in addition to other modifiers. The rider must declare that he is trick riding before moving. He must then make an Initiative test and, if successful, may move full distance. If he fails he loses control of his mount and must roll immediately on the Whoa Boy! table. This skill may not be used with heavy armour because of the agility required. In addition, trick riding requires both hands, so the model may not use a shield or missile weapons whilst using the skill. Warriors without Ride may not use this skill."
   },
   {
     "name": "Combat Riding",
-    "description": "The rider has trained his mount to use its bulk to trample any unmounted enemy before him. A warrior with this skill may make a single additional S4 attack when charging an unmounted opponent. In subsequent rounds of combat, or if charged by enemy warriors, the mounted warrior fights as normal. Warriors without Ride may not use this skill. (TC 14)"
+    "description": "The rider has trained his mount to use its bulk to trample any unmounted enemy before him. A warrior with this skill may make a single additional S4 attack when charging an unmounted opponent. In subsequent rounds of combat, or if charged by enemy warriors, the mounted warrior fights as normal. Warriors without Ride may not use this skill."
   },
   {
     "name": "Evade",
-    "description": "The rider has trained his mount to swerve from side to side in combat, wrongfooting his opponent. A rider with this skill always strikes first in close combat against dismounted opponents. When charged by an opponent, or otherwise fighting an enemy also entitled to strike first, attacks are carried out in order of Initiative. If Initiative is equal, the model with greater Experience strikes first. Warriors without Ride may not use this skill. (TC 14)"
+    "description": "The rider has trained his mount to swerve from side to side in combat, wrongfooting his opponent. A rider with this skill always strikes first in close combat against dismounted opponents. When charged by an opponent, or otherwise fighting an enemy also entitled to strike first, attacks are carried out in order of Initiative. If Initiative is equal, the model with greater Experience strikes first. Warriors without Ride may not use this skill."
   },
   {
     "name": "Running Dismount",
-    "description": "The rider is able to dismount from his mount at speed. The rider may ride up to the mount’s normal move distance and then dismount immediately. No further movement or shooting is possible. This skill may be used to move into contact with the enemy, counting as a diving charge from a height of 2\" – all the usual rules for diving charges apply. Note that the rider then counts as dismounted, gaining no further assistance from his mount. Warriors without Ride may not use this skill. (TC 14)"
+    "description": "The rider is able to dismount from his mount at speed. The rider may ride up to the mount’s normal move distance and then dismount immediately. No further movement or shooting is possible. This skill may be used to move into contact with the enemy, counting as a diving charge from a height of 2\" – all the usual rules for diving charges apply. Note that the rider then counts as dismounted, gaining no further assistance from his mount. Warriors without Ride may not use this skill."
   },
   {
     "name": "Athletic Mount",
-    "description": "Without breaking stride, the warrior is able to leap onto the back of his mount and immediately spur it into a full gallop. Once the warrior is on board, the mount may make a run or charge move as normal. The warrior must be within half his full move distance of his steed to use this skill. Warriors without Ride may not use this skill. (TC 14)"
+    "description": "Without breaking stride, the warrior is able to leap onto the back of his mount and immediately spur it into a full gallop. Once the warrior is on board, the mount may make a run or charge move as normal. The warrior must be within half his full move distance of his steed to use this skill. Warriors without Ride may not use this skill."
   },
   {
     "name": "Horse Archer",
-    "description": "The rider has learned the skills of the steppe nomads and can shoot from a running mount. The rider may shoot in a 360 degree arc whilst mounted, and may shoot while his mount is running; however, the shot suffers a -1 to hit penalty in addition to all other normal modifiers. Warriors without Ride may not use this skill. (TC 14)"
+    "description": "The rider has learned the skills of the steppe nomads and can shoot from a running mount. The rider may shoot in a 360 degree arc whilst mounted, and may shoot while his mount is running; however, the shot suffers a -1 to hit penalty in addition to all other normal modifiers. Warriors without Ride may not use this skill."
   },
   {
     "name": "Mounted Combat Master",
-    "description": "The rider is especially skilled at combat against a mounted opponent. If the model is fighting mounted against a mounted opponent and successfully wounds the enemy, the wounded model must add +1 to his roll on the Whoa Boy! table. Warriors without Ride may not use this skill. (TC 14)"
+    "description": "The rider is especially skilled at combat against a mounted opponent. If the model is fighting mounted against a mounted opponent and successfully wounds the enemy, the wounded model must add +1 to his roll on the Whoa Boy! table. Warriors without Ride may not use this skill."
   },
   {
     "name": "Seismic Toss",
@@ -61,267 +61,267 @@
   },
   {
     "name": "Falconer",
-    "description": "Hawking is a popular pastime amongst the Great Families of Marienburg. Gentlemen of noble lineage enjoy nothing greater than \"...discussing the moor country and its prospects for falconry.\" A well trained fighting falcon is fully capable of blinding an opponent. Hunting birds including hawks, owls, ospreys and eagles are specially trained raptors suited to the sport.\nHunting birds can be used as missile weapons and as weapons in hand-to-hand combat as well by any warrior with the Falconer skill. The range of the falcon is 24\". When shooting, roll to hit using the warrior's Ballistic Skill. This represents his skill in directing the falcon to its target in flight. After a falcon attacks it flies back to the falconer. In close combat, falcons strike first with a single attack and use the warrior's Weapon Skill. Each successful falcon attack inflicts a Strength 3 hit.\nIf the Hero is taken out of action the falcon flies away, returning after the battle. Falcons cannot be attacked or slain, but if the Hero is slain the falcons are lost with him just like any other equipment.\nA warrior must wear a leather or mesh falconry glove, otherwise be seriously injured when the raptor landed on his arm during each battle. Make a roll on the Serious Injury Chart in the post battle sequence for a warrior using a hunting bird without a falconry glove.\nUnless stated elsewhere a falconer may only supervise a single hunting bird. (MiM)"
+    "description": "Hawking is a popular pastime amongst the Great Families of Marienburg. Gentlemen of noble lineage enjoy nothing greater than \"...discussing the moor country and its prospects for falconry.\" A well trained fighting falcon is fully capable of blinding an opponent. Hunting birds including hawks, owls, ospreys and eagles are specially trained raptors suited to the sport.\nHunting birds can be used as missile weapons and as weapons in hand-to-hand combat as well by any warrior with the Falconer skill. The range of the falcon is 24\". When shooting, roll to hit using the warrior's Ballistic Skill. This represents his skill in directing the falcon to its target in flight. After a falcon attacks it flies back to the falconer. In close combat, falcons strike first with a single attack and use the warrior's Weapon Skill. Each successful falcon attack inflicts a Strength 3 hit.\nIf the Hero is taken out of action the falcon flies away, returning after the battle. Falcons cannot be attacked or slain, but if the Hero is slain the falcons are lost with him just like any other equipment.\nA warrior must wear a leather or mesh falconry glove, otherwise be seriously injured when the raptor landed on his arm during each battle. Make a roll on the Serious Injury Chart in the post battle sequence for a warrior using a hunting bird without a falconry glove.\nUnless stated elsewhere a falconer may only supervise a single hunting bird."
   },
   {
     "name": "Heron Strike",
-    "description": "when charging the Battle Monk instead of making their normal attacks they may make a single Flying kick attack, this adds 1” to their charge range gains +1 to critical hit rolls. This attack rolls on the Thrusting weapons chart rather than the Unarmed chart. (MiM)"
+    "description": "when charging the Battle Monk instead of making their normal attacks they may make a single Flying kick attack, this adds 1” to their charge range gains +1 to critical hit rolls. This attack rolls on the Thrusting weapons chart rather than the Unarmed chart."
   },
   {
     "name": "Swallow Kick",
-    "description": "instead of their regular attacks they monk may instead make a single swallow kick attack, which gains +1 to hit, if the attack successfully wounds their opponent, they may make another attack against another opponent in close combat. They may continue in this manner until all opponents have been wounded. (MiM)"
+    "description": "instead of their regular attacks they monk may instead make a single swallow kick attack, which gains +1 to hit, if the attack successfully wounds their opponent, they may make another attack against another opponent in close combat. They may continue in this manner until all opponents have been wounded."
   },
   {
     "name": "Water Form",
-    "description": "instead of attacking this round, the Monk may parry with his bare hands and parry multiple attacks, for each parry roll of 6 they may make a free attack after the opponent has finished attacking but before wounds are applied. (MiM)"
+    "description": "instead of attacking this round, the Monk may parry with his bare hands and parry multiple attacks, for each parry roll of 6 they may make a free attack after the opponent has finished attacking but before wounds are applied."
   },
   {
     "name": "Inch Punch",
-    "description": "instead of making your regular attacks you may instead perform a single One inch punch. If the punch scores a critical hit it instead counts as knocking the target D6 inches backwards, if the target collides with another model, the other model is hit once at S3. (MiM)"
+    "description": "instead of making your regular attacks you may instead perform a single One inch punch. If the punch scores a critical hit it instead counts as knocking the target D6 inches backwards, if the target collides with another model, the other model is hit once at S3."
   },
   {
     "name": "Shaggy Hide",
-    "description": "The beastman’s massively shaggy hide acts as armour, deflecting sword strokes and protecting him from harm. The model gains a 6+ armour save that can be combined with other armour as normal. (2005 Rules Review)"
+    "description": "The beastman’s massively shaggy hide acts as armour, deflecting sword strokes and protecting him from harm. The model gains a 6+ armour save that can be combined with other armour as normal."
   },
   {
     "name": "Mutant",
-    "description": "The Hero may buy one mutation from the Possessed Mutation list. This skill may be taken only once. (EiF 74)"
+    "description": "The Hero may buy one mutation from the Possessed Mutation list. This skill may be taken only once."
   },
   {
     "name": "Fearless",
-    "description": "Immune to Fear and All Alone tests. (EiF 74)"
+    "description": "Immune to Fear and All Alone tests."
   },
   {
     "name": "Horned One",
-    "description": "The Beastman has mighty horns, and can make an additional Attack with its basic Strength on a turn it charges. (EiF 74)"
+    "description": "The Beastman has mighty horns, and can make an additional Attack with its basic Strength on a turn it charges."
   },
   {
     "name": "Bellowing Roar",
-    "description": "Only the Beastman Chief may have this skill. He may re-roll any failed Rout tests. (EiF 74)"
+    "description": "Only the Beastman Chief may have this skill. He may re-roll any failed Rout tests."
   },
   {
     "name": "Manhater",
-    "description": "Will be affected by the rules of Hatred when fighting any Human warbands. (EiF 74)"
+    "description": "Will be affected by the rules of Hatred when fighting any Human warbands."
   },
   {
     "name": "Virtue of Purity",
-    "description": "The Knight’s sole purpose is to serve the Lady of the Lake. His purity of heart and discipline endow him with the strength of spirit to resist enemy magic. Any spell cast against the knight will be dispelled on the D6 roll of a 4+. This is a natural dispel on account of the knights extreme piety. (TC8)"
+    "description": "The Knight’s sole purpose is to serve the Lady of the Lake. His purity of heart and discipline endow him with the strength of spirit to resist enemy magic. Any spell cast against the knight will be dispelled on the D6 roll of a 4+. This is a natural dispel on account of the knights extreme piety."
   },
   {
     "name": "Virtue of Valour",
-    "description": "The Knight has vowed to confront the biggest and strongest foes. The more awesome his enemy, the more valourous are his efforts. If fighting a model with a higher Strength characteristic than himself, the Knight may re-roll any failed to hit rolls in hand-to-hand combat. (TC8)"
+    "description": "The Knight has vowed to confront the biggest and strongest foes. The more awesome his enemy, the more valourous are his efforts. If fighting a model with a higher Strength characteristic than himself, the Knight may re-roll any failed to hit rolls in hand-to-hand combat."
   },
   {
     "name": "Virtue of Discipline",
-    "description": "The Knight has total faith in his chivalric code: he maintains self-control in the face of adversity, and displays complete confidence whatever the odds. Once per game, if the Knight is not Out of Action, Stunned or Knocked Down, you may re-roll a failed Rout Test. (TC8)"
+    "description": "The Knight has total faith in his chivalric code: he maintains self-control in the face of adversity, and displays complete confidence whatever the odds. Once per game, if the Knight is not Out of Action, Stunned or Knocked Down, you may re-roll a failed Rout Test."
   },
   {
     "name": "Virtue of Noble Disdain",
-    "description": "The Knight has nothing but contempt for enemies who hide behind weapons of Dishonour. The Knight is subject to Hatred of all enemies armed with shooting weapons. (TC8)"
+    "description": "The Knight has nothing but contempt for enemies who hide behind weapons of Dishonour. The Knight is subject to Hatred of all enemies armed with shooting weapons."
   },
   {
     "name": "Virtue of the Impetuous",
-    "description": "The Knight is eager to get to grips with the enemy. He charges into combat with reckless enthusiasm. The Knight gains an additional +D3\" to his move when charging. Roll the dice each time you wish to charge and before moving the model. (TC8)"
+    "description": "The Knight is eager to get to grips with the enemy. He charges into combat with reckless enthusiasm. The Knight gains an additional +D3\" to his move when charging. Roll the dice each time you wish to charge and before moving the model."
   },
   {
     "name": "Virtue of the Squire",
-    "description": "Squires only. The squire has accepted his place in the world, his is a hunter’s heart. The Squire may never become a knight (eg. through the Knighted rule), but may now learn Shooting skills and may learn one immediately when taking this skill. (MiM)"
+    "description": "Squires only. The squire has accepted his place in the world, his is a hunter’s heart. The Squire may never become a knight (eg. through the Knighted rule), but may now learn Shooting skills and may learn one immediately when taking this skill."
   },
   {
     "name": "Fury of Khaine",
-    "description": "The Dark Elf is infused with an intense raging thirst for blood and is a whirlwind in hand-to-hand combat, moving from opponent to opponent. The Dark Elf may make a 4\" follow up move if he takes all of his opponents out of action. If he comes into contact with another enemy this starts a new combat. This new combat takes place in the following turn and the model counts as charging. May not follow up in the opponent’s turn. (TC10)"
+    "description": "The Dark Elf is infused with an intense raging thirst for blood and is a whirlwind in hand-to-hand combat, moving from opponent to opponent. The Dark Elf may make a 4\" follow up move if he takes all of his opponents out of action. If he comes into contact with another enemy this starts a new combat. This new combat takes place in the following turn and the model counts as charging. May not follow up in the opponent’s turn."
   },
   {
     "name": "Powerful Build (Dark Elf)",
-    "description": "The warrior is strongly built for an Elf and is capable of feats of strength. A warrior with this skill may choose skills from the Strength table. The Sorceress may never take this skill and no more than two warriors in the warband may take this skill at any one time. (TC10)"
+    "description": "The warrior is strongly built for an Elf and is capable of feats of strength. A warrior with this skill may choose skills from the Strength table. The Sorceress may never take this skill and no more than two warriors in the warband may take this skill at any one time."
   },
   {
     "name": "Fey Quickness",
-    "description": "Few can ever hope to match an Elf ’s inhuman quickness and agility. An Elf with Fey Quickness can avoid melee or missile attacks on a roll of 6. If the Elf also has Step Aside or Dodge this will increase to a 4+ in the relevant area. For example, an Elf with Fey Quickness and Step Aside avoids melee attacks on a 4+ and missile attacks on a 6. (TC10)"
+    "description": "Few can ever hope to match an Elf ’s inhuman quickness and agility. An Elf with Fey Quickness can avoid melee or missile attacks on a roll of 6. If the Elf also has Step Aside or Dodge this will increase to a 4+ in the relevant area. For example, an Elf with Fey Quickness and Step Aside avoids melee attacks on a 4+ and missile attacks on a 6."
   },
   {
     "name": "Infiltration",
-    "description": "A warrior with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12\" away from any enemy model. If both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first. (RB 93)"
+    "description": "A warrior with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12\" away from any enemy model. If both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first."
   },
   {
     "name": "Master of Poisons",
-    "description": "The Dark Elf is proficient in concocting different poisons. If the Hero doesn’t search for rare items, he may make D3-1 doses of Dark Venom instead. There is a chance of getting none, as the hero doesn’t have access to a stable workplace. The poison must be used in the next battle and cannot be sold or traded to other warbands as the Dark Elves guard their secrets very carefully. (TC10)"
+    "description": "The Dark Elf is proficient in concocting different poisons. If the Hero doesn’t search for rare items, he may make D3-1 doses of Dark Venom instead. There is a chance of getting none, as the hero doesn’t have access to a stable workplace. The poison must be used in the next battle and cannot be sold or traded to other warbands as the Dark Elves guard their secrets very carefully."
   },
   {
     "name": "Master of Blades",
-    "description": "This Dwarf’s martial skills surpass those of a normal warrior; he has fought unscathed against hordes of Orcs and Goblins. When using a weapon that has a Parry special rule, this hero parries successfully if he beats or matches his opponents highest ‘to hit’ roll, not just if he beats the roll. In addition, if this warrior is using two weapons that have the Parry special rule, he is allowed to parry two attacks (if his two dice match or beat the two highest Attack dice against him) instead of the normal maximum of one. Note that if this Dwarf has two Dwarf axes he can reroll any failed parries. (A02 24)"
+    "description": "This Dwarf’s martial skills surpass those of a normal warrior; he has fought unscathed against hordes of Orcs and Goblins. When using a weapon that has a Parry special rule, this hero parries successfully if he beats or matches his opponents highest ‘to hit’ roll, not just if he beats the roll. In addition, if this warrior is using two weapons that have the Parry special rule, he is allowed to parry two attacks (if his two dice match or beat the two highest Attack dice against him) instead of the normal maximum of one. Note that if this Dwarf has two Dwarf axes he can reroll any failed parries."
   },
   {
     "name": "Extra Tough",
-    "description": "This Dwarf is notorious for walking away from wounds that would kill a lesser being. When rolling on the Heroes Serious Injury chart for this Hero after a game in which he has been taken out of action, the dice may be re-rolled once. The result of this second dice roll must be accepted, even if it is a worse result. (A02 24)"
+    "description": "This Dwarf is notorious for walking away from wounds that would kill a lesser being. When rolling on the Heroes Serious Injury chart for this Hero after a game in which he has been taken out of action, the dice may be re-rolled once. The result of this second dice roll must be accepted, even if it is a worse result."
   },
   {
     "name": "Resource Hunter",
-    "description": "This Dwarf is especially good at locating valuable resources. When rolling on the Exploration chart at the end of a game, the Hero may modify one dice roll by +1/-1. (A02 24)"
+    "description": "This Dwarf is especially good at locating valuable resources. When rolling on the Exploration chart at the end of a game, the Hero may modify one dice roll by +1/-1."
   },
   {
     "name": "True Grit",
-    "description": "Dwarfs are hardy individuals and this Hero is hardy even for a Dwarf! When rolling on the Injury table for this Hero, a roll of 1-3 is treated as knocked down, 4-5 as stunned, and 6 as out of action. (A02 24)"
+    "description": "Dwarfs are hardy individuals and this Hero is hardy even for a Dwarf! When rolling on the Injury table for this Hero, a roll of 1-3 is treated as knocked down, 4-5 as stunned, and 6 as out of action."
   },
   {
     "name": "Thick Skull",
-    "description": "The hero has a thick skull even for a Dwarf. He has a special 3+ save on a D6 to avoid being Stunned. If the save is made, treat a Stunned result as Knocked Down instead. If the Dwarf also wears a Helmet, this save is 2+ instead of 3+ (this takes the place of the normal Helmet special rule). (MiM)"
+    "description": "The hero has a thick skull even for a Dwarf. He has a special 3+ save on a D6 to avoid being Stunned. If the save is made, treat a Stunned result as Knocked Down instead. If the Dwarf also wears a Helmet, this save is 2+ instead of 3+ (this takes the place of the normal Helmet special rule)."
   },
   {
     "name": "Hide in Shadows",
-    "description": "The warrior has become an expert at concealing himself from his enemies (and potential victims!). An enemy warrior attempting to detect this warrior when he is Hidden must halve his Initiative (round up) before measuring the distance. (NC)"
+    "description": "The warrior has become an expert at concealing himself from his enemies (and potential victims!). An enemy warrior attempting to detect this warrior when he is Hidden must halve his Initiative (round up) before measuring the distance."
   },
   {
     "name": "Tunneler",
-    "description": "The Sapper has an uncanny sense of direction and knows exactly where to position charges in tunnels. if equipped with a cinderblast charge and underground, the Sapper may use the charge to blow a hole to the surface. any mode standing directly above the position of the charge suffers a S4 hit and a new opening to underground is made in that spot. Sapper Only. (MiM)"
+    "description": "The Sapper has an uncanny sense of direction and knows exactly where to position charges in tunnels. if equipped with a cinderblast charge and underground, the Sapper may use the charge to blow a hole to the surface. any mode standing directly above the position of the charge suffers a S4 hit and a new opening to underground is made in that spot. Sapper Only."
   },
   {
     "name": "Tinkerer",
-    "description": "The dwarf is constantly thinking improvements, even in the head of battle! In the post game the dwarf may roll on the customisation chart to try and improve the gyropcopter. If they have chosen to tinker they may not do any other action post game. (MiM)"
+    "description": "The dwarf is constantly thinking improvements, even in the head of battle! In the post game the dwarf may roll on the customisation chart to try and improve the gyropcopter. If they have chosen to tinker they may not do any other action post game."
   },
   {
     "name": "Quick Thinker",
-    "description": "The dwarf may add +1 to any roll on the experimental weapons chart. (MiM)"
+    "description": "The dwarf may add +1 to any roll on the experimental weapons chart."
   },
   {
     "name": "Darkstalker",
-    "description": "The warrior is accustomed to darkness and has almost cat-like sight. Ignores All Alone tests, and may double his initiative when looking for Hidden models. (LotD)"
+    "description": "The warrior is accustomed to darkness and has almost cat-like sight. Ignores All Alone tests, and may double his initiative when looking for Hidden models."
   },
   {
     "name": "Instinctual Violence",
-    "description": "The warrior has experienced too many Undead bursting out of the coffin that he is trying to rob that he has developed an almost casual response to such an act. When charged by any number of Undead models, the Hero does not have to check for Fear; in addition, he may nominate one of his attacks to Strike First. (LotD)"
+    "description": "The warrior has experienced too many Undead bursting out of the coffin that he is trying to rob that he has developed an almost casual response to such an act. When charged by any number of Undead models, the Hero does not have to check for Fear; in addition, he may nominate one of his attacks to Strike First."
   },
   {
     "name": "De-animator",
-    "description": "The warrior is adept at fighting animated corpses and literally tears them apart. Ignores the No Pain rule for Undead, as his shattering blows can still stun undead as he tears limbs from sockets and breaks bones. (LotD)"
+    "description": "The warrior is adept at fighting animated corpses and literally tears them apart. Ignores the No Pain rule for Undead, as his shattering blows can still stun undead as he tears limbs from sockets and breaks bones."
   },
   {
     "name": "Hardy Constitution (Grave Robber)",
-    "description": "The Hero is a veteran of grave-robbing, and has come across many different diseases and withstood them all. He is completely immune to all diseases and poisons. (LotD)"
+    "description": "The Hero is a veteran of grave-robbing, and has come across many different diseases and withstood them all. He is completely immune to all diseases and poisons."
   },
   {
     "name": "Body Dealer",
-    "description": "The warrior is brave and corrupt enough to sell human bodies to whomever pays, and is usually sneaky enough to avoid getting caught. However, he is not the only one with looting the dead on their mind! On a roll of 4+, you can recover the body of a Hero or Henchman that died (as a result of a Serious Injury) from your Warband. His equipment is recovered and added to the warband's stash; in addition, the body itself may be sold for 2d6 gc. You may also attempt to recover the bodies of fallen enemies, but there is a chance that the character is noticed and chased away. Roll a D6 and add the Body Dealer's Initiative; the enemy Leader does the same (if their leader was taken OOA, they use the I value of the model with the most experience); if the enemy's score was higher, the Body Dealer was noticed and chased away. If the Body Dealer's score was higher, he may attempt to recover the bodies of the enemy as well as those of his own warband. If you lose the roll by rolling a '1' your Body Dealer is captured by the enemy warband as per the Captured result in the injury table. (LotD)"
+    "description": "The warrior is brave and corrupt enough to sell human bodies to whomever pays, and is usually sneaky enough to avoid getting caught. However, he is not the only one with looting the dead on their mind! On a roll of 4+, you can recover the body of a Hero or Henchman that died (as a result of a Serious Injury) from your Warband. His equipment is recovered and added to the warband's stash; in addition, the body itself may be sold for 2d6 gc. You may also attempt to recover the bodies of fallen enemies, but there is a chance that the character is noticed and chased away. Roll a D6 and add the Body Dealer's Initiative; the enemy Leader does the same (if their leader was taken OOA, they use the I value of the model with the most experience); if the enemy's score was higher, the Body Dealer was noticed and chased away. If the Body Dealer's score was higher, he may attempt to recover the bodies of the enemy as well as those of his own warband. If you lose the roll by rolling a '1' your Body Dealer is captured by the enemy warband as per the Captured result in the injury table."
   },
   {
     "name": "Crude Belch",
-    "description": "Consequences are to be expected from those inconsiderate enough to consume a rich meal before battle. A Hero with this 'condition' may unleash his thunderous fumes on all enemies engaged in close combat. Those that do not pass a Leadership test suffer a –1 'to hit' modifier for the turn. The warrior must wait until a new enemy engages him in combat before he relieves himself again. (MiM)"
+    "description": "Consequences are to be expected from those inconsiderate enough to consume a rich meal before battle. A Hero with this 'condition' may unleash his thunderous fumes on all enemies engaged in close combat. Those that do not pass a Leadership test suffer a –1 'to hit' modifier for the turn. The warrior must wait until a new enemy engages him in combat before he relieves himself again."
   },
   {
     "name": "Stealthy",
-    "description": "The Hero can hide even after running, and can run while within 8\" of enemy models if he starts and ends his move hidden. (MiM)"
+    "description": "The Hero can hide even after running, and can run while within 8\" of enemy models if he starts and ends his move hidden."
   },
   {
     "name": "Tea-leaf",
-    "description": "Halflings are most adept at picking pockets! The Hero may attempt to steal one item during the post battle sequence. Choose any item, if it is a common item the Halfling successfully steals it on a 2+ on a D6. Rare items are successfully stolen by rolling higher than the availability number on 2D6. Any items stolen may be used in exactly the same way as one that was bought. If the Hero fails to steal the item roll a D6. On a score of 1-5 the Halfling is chased out of the trading post and escapes. On the score of a 6 the Hero is caught by whatever authorities there may be and is hung. Remove him from the warband roster. (MiM)"
+    "description": "Halflings are most adept at picking pockets! The Hero may attempt to steal one item during the post battle sequence. Choose any item, if it is a common item the Halfling successfully steals it on a 2+ on a D6. Rare items are successfully stolen by rolling higher than the availability number on 2D6. Any items stolen may be used in exactly the same way as one that was bought. If the Hero fails to steal the item roll a D6. On a score of 1-5 the Halfling is chased out of the trading post and escapes. On the score of a 6 the Hero is caught by whatever authorities there may be and is hung. Remove him from the warband roster."
   },
   {
     "name": "Flan-eater",
-    "description": "Halflings are generally considered civilized and it is proven they are prone to absorb foreign customs when travelling the world. Some eventually learn strange new skills before returning home to their communities. This Halfling may immediately learn one skill from the Combat or Strength skill lists. This skill may be taken only once. (MiM)"
+    "description": "Halflings are generally considered civilized and it is proven they are prone to absorb foreign customs when travelling the world. Some eventually learn strange new skills before returning home to their communities. This Halfling may immediately learn one skill from the Combat or Strength skill lists. This skill may be taken only once."
   },
   {
     "name": "Looter",
-    "description": "The Hero is an expert in finding valuables on a victim before moving on. If the Hero takes any warriors of the enemy warband out of action (and he was not taken out of action himself), the Hero's warband receives one additional Treasure or Wyrdstone Shard. This does not affect the opposing warband's number of Treasures. (MiM)"
+    "description": "The Hero is an expert in finding valuables on a victim before moving on. If the Hero takes any warriors of the enemy warband out of action (and he was not taken out of action himself), the Hero's warband receives one additional Treasure or Wyrdstone Shard. This does not affect the opposing warband's number of Treasures."
   },
   {
     "name": "Taunt (Militant Mootlanders)",
-    "description": "After years of baiting persecutors into drunken brawls, this Halfling has learned some of the vilest insults in the Empire. During the Shooting phase, the Halfling may choose to taunt one enemy instead of shooting with a missile weapon. The Hero must be able to see the enemy and taunting requires a line of sight as it would for shooting. The player should insult the enemy warrior whenever possible (perhaps his hat looks like a strangled parrot or his mother was a Bretonnian!) and the enemy then takes a Leadership test. If he passes, nothing happens but if he fails he must spend his next movement phase trying to get into close combat with the Halfling who taunted him. (MiM)"
+    "description": "After years of baiting persecutors into drunken brawls, this Halfling has learned some of the vilest insults in the Empire. During the Shooting phase, the Halfling may choose to taunt one enemy instead of shooting with a missile weapon. The Hero must be able to see the enemy and taunting requires a line of sight as it would for shooting. The player should insult the enemy warrior whenever possible (perhaps his hat looks like a strangled parrot or his mother was a Bretonnian!) and the enemy then takes a Leadership test. If he passes, nothing happens but if he fails he must spend his next movement phase trying to get into close combat with the Halfling who taunted him."
   },
   {
     "name": "Banditry",
-    "description": "Between missions, the bandit goes off and robs travelers or other innocent victims. Instead of searching for Rare equipment, the hero may engage in banditry - roll a D6, on a result of 2-6, the banditry is successful and the hero adds D6+1 gold to the warband's stash. However, on a result of 1, the attempted robbery has somehow gone wrong - roll on the Serious Injury table for the bandit, as if he had been taken Out of Action in the last game. If several heroes have this skill, it is quite possible that some are successful and some not in their Banditry attempt between games...that is the nature of theives' honor - if a man falls behind, he is usually on his own! This skill may not be combined with the Huckster's Slick Operator special ability. (NC)"
+    "description": "Between missions, the bandit goes off and robs travelers or other innocent victims. Instead of searching for Rare equipment, the hero may engage in banditry - roll a D6, on a result of 2-6, the banditry is successful and the hero adds D6+1 gold to the warband's stash. However, on a result of 1, the attempted robbery has somehow gone wrong - roll on the Serious Injury table for the bandit, as if he had been taken Out of Action in the last game. If several heroes have this skill, it is quite possible that some are successful and some not in their Banditry attempt between games...that is the nature of theives' honor - if a man falls behind, he is usually on his own! This skill may not be combined with the Huckster's Slick Operator special ability."
   },
   {
     "name": "Jump Back",
-    "description": "This warrior is an expert at getting himself out of sticky situations. If the warrior is in close combat with an enemy warrior (and not Knocked Down or Stunned) at the start of his Movement Phase, he may attempt to jump out of combat. To attempt to do so, the warrior must make an Initiative test. If he fails the test, the warrior will automatically strike last in that round of combat. However, if he passes, immediately move him 1\" away from the enemy warrior (this does not count against his movement for that Movement Phase); he may then move and otherwise act normally for the test of that that turn (even charging back into combat if he chooses!). (NC)"
+    "description": "This warrior is an expert at getting himself out of sticky situations. If the warrior is in close combat with an enemy warrior (and not Knocked Down or Stunned) at the start of his Movement Phase, he may attempt to jump out of combat. To attempt to do so, the warrior must make an Initiative test. If he fails the test, the warrior will automatically strike last in that round of combat. However, if he passes, immediately move him 1\" away from the enemy warrior (this does not count against his movement for that Movement Phase); he may then move and otherwise act normally for the test of that that turn (even charging back into combat if he chooses!)."
   },
   {
     "name": "Sniper",
-    "description": "The bandit is an expert at shooting his victims from the comfort of cover. When Hiding, the warrior may cast spells or shoot and still remain Hidden. Note that the bandit may not use this skill if he is shooting a Blackpowder weapon! (NC)"
+    "description": "The bandit is an expert at shooting his victims from the comfort of cover. When Hiding, the warrior may cast spells or shoot and still remain Hidden. Note that the bandit may not use this skill if he is shooting a Blackpowder weapon!"
   },
   {
     "name": "Throw Voice",
-    "description": "This rogue has mastered the art of misdirecting enemies who get too close by making them hear noises or voices some distance from his location. If an Enemy warrior is attempting to detect the bandit While he is Hidden, roll a D6 - on a result of 4 or better, the bandit is undetected and remains Hidden. (NC)"
+    "description": "This rogue has mastered the art of misdirecting enemies who get too close by making them hear noises or voices some distance from his location. If an Enemy warrior is attempting to detect the bandit While he is Hidden, roll a D6 - on a result of 4 or better, the bandit is undetected and remains Hidden."
   },
   {
     "name": "Infiltration (Skink)",
-    "description": "The Skink is a great hunter and is an expert at sneaking upon his prey unnoticed. The Hero may set up anywhere on the table but no closer than 12\" to an enemy and he must start the game in hiding. (TC 12)"
+    "description": "The Skink is a great hunter and is an expert at sneaking upon his prey unnoticed. The Hero may set up anywhere on the table but no closer than 12\" to an enemy and he must start the game in hiding."
   },
   {
     "name": "Great Hunter",
-    "description": "The Skink Great Crest is adept at making the most of the cover available and imposes an additional -1 to hit the Skink if he is in cover, IE a -2 to hit penalty. (TC 12)"
+    "description": "The Skink Great Crest is adept at making the most of the cover available and imposes an additional -1 to hit the Skink if he is in cover, IE a -2 to hit penalty."
   },
   {
     "name": "Bellowing Battle Roar",
-    "description": "The Saurus’ roar is so deafening that enemy models in base contact suffer -1 to hit in the first round of combat against them. (TC 12)"
+    "description": "The Saurus’ roar is so deafening that enemy models in base contact suffer -1 to hit in the first round of combat against them."
   },
   {
     "name": "Toughened Hide",
-    "description": "Through years of battle the Saurus’ hide has become hardened and the Saurus will only be taken out of action on a 6+. (TC 12)"
+    "description": "Through years of battle the Saurus’ hide has become hardened and the Saurus will only be taken out of action on a 6+."
   },
   {
     "name": "Backstabber",
-    "description": "The Hero specializes in attacking his targets when their back is turned. The Hero may charge an opponent he cannot see (he knows you're there!) as long as the target model is within his charge reach. If he does this, he surprises his opponent and receives a +1 to hit him with all attacks and any rolls on the Serious Injuries chart are at +1. The bonus lasts for the first round of combat only, as his opponent will swiftly recover his wits if he survives the initial assault. (MiM)"
+    "description": "The Hero specializes in attacking his targets when their back is turned. The Hero may charge an opponent he cannot see (he knows you're there!) as long as the target model is within his charge reach. If he does this, he surprises his opponent and receives a +1 to hit him with all attacks and any rolls on the Serious Injuries chart are at +1. The bonus lasts for the first round of combat only, as his opponent will swiftly recover his wits if he survives the initial assault."
   },
   {
     "name": "Pick Locks",
-    "description": "The Hero knows how to open doors that others find impossible. When testing to open a locked door, the Hero just needs to make an Initiative test in order to be successful. (MiM)"
+    "description": "The Hero knows how to open doors that others find impossible. When testing to open a locked door, the Hero just needs to make an Initiative test in order to be successful."
   },
   {
     "name": "Poisoner",
-    "description": "A warrior with this skill knows how to prepare lethal poisons and potions. The Hero knows exactly where to resource the drugs and arcane herbs required to produce them himself. The Hero starts each game with his weapons coated with Black Lotus or Dark Venom. The controlling player decides which poison the Hero is armed with before the game starts, and the poison does not need to be traded for. The Hero cannot poison other warrior's weapons, nor will he loan his out! (MiM)"
+    "description": "A warrior with this skill knows how to prepare lethal poisons and potions. The Hero knows exactly where to resource the drugs and arcane herbs required to produce them himself. The Hero starts each game with his weapons coated with Black Lotus or Dark Venom. The controlling player decides which poison the Hero is armed with before the game starts, and the poison does not need to be traded for. The Hero cannot poison other warrior's weapons, nor will he loan his out!"
   },
   {
     "name": "Slaver",
-    "description": "Any Hero or Henchman put out of action by the Slaver in hand-to-hand combat will automatically be captured (see 'Captured' on the Serious Injuries chart) unless the Mobsmen warband is routed. Any Hero or Henchman captured must be sold or exchanged to another warband during the post battle sequence. If an arrangement cannot be reached with another warband, then that particular Hero or Henchman is sold into slavery and removed from the warband roster. There may never be more than two warriors with this skill in the warband at any one time. (MiM)"
+    "description": "Any Hero or Henchman put out of action by the Slaver in hand-to-hand combat will automatically be captured (see 'Captured' on the Serious Injuries chart) unless the Mobsmen warband is routed. Any Hero or Henchman captured must be sold or exchanged to another warband during the post battle sequence. If an arrangement cannot be reached with another warband, then that particular Hero or Henchman is sold into slavery and removed from the warband roster. There may never be more than two warriors with this skill in the warband at any one time."
   },
   {
     "name": "Cutpurse",
-    "description": "The Hero makes his profession by finding items others have lost. At the end of the game when the warband rolls to find Treasures, they receive one additional Treasure as long as the Hero was in the battle, and wasn't taken out of action. (MiM)"
+    "description": "The Hero makes his profession by finding items others have lost. At the end of the game when the warband rolls to find Treasures, they receive one additional Treasure as long as the Hero was in the battle, and wasn't taken out of action."
   },
   {
     "name": "Chosen of Chaos",
-    "description": "The Hero has been found worthy of his god’s service and entered the rank of a Chaos Warrior. He uses the maximum profile for Warriors of Chaos and the Hero equipment list (if he does not already). (BTB)"
+    "description": "The Hero has been found worthy of his god’s service and entered the rank of a Chaos Warrior. He uses the maximum profile for Warriors of Chaos and the Hero equipment list (if he does not already)."
   },
   {
     "name": "Tattooed Body",
-    "description": "Only the warband's leader may have this skill. The Hero's body is covered with unholy Chaos signs to attract his patron's attention. The Eye of the Gods special rule's effect (of becoming a Chaos Spawn or receiving a Mark) happens on a result of 10+ instead of 12+ only. Note that for the less favoured Norse leaders this is 11+. (BTB)"
+    "description": "Only the warband's leader may have this skill. The Hero's body is covered with unholy Chaos signs to attract his patron's attention. The Eye of the Gods special rule's effect (of becoming a Chaos Spawn or receiving a Mark) happens on a result of 10+ instead of 12+ only. Note that for the less favoured Norse leaders this is 11+."
   },
   {
     "name": "Sweeping Blow",
-    "description": "Whenever the Hero takes an enemy model out of action using a double-handed weapon he may immediately make an additional attack against another model in base contact. Requires the Strongman skill. (BTB)"
+    "description": "Whenever the Hero takes an enemy model out of action using a double-handed weapon he may immediately make an additional attack against another model in base contact. Requires the Strongman skill."
   },
   {
     "name": "Mutant (Marauders of Chaos)",
-    "description": "The Hero may buy one mutation. See the Mutations section of the Possessed on special rules. Heroes with the Mark of Onogal may choose a Blessing of Nurgle instead, except the Mark of Nurgle. Note that unlike other skills Marauder Heroes may take this skill more than once. (BTB)"
+    "description": "The Hero may buy one mutation. See the Mutations section of the Possessed on special rules. Heroes with the Mark of Onogal may choose a Blessing of Nurgle instead, except the Mark of Nurgle. Note that unlike other skills Marauder Heroes may take this skill more than once."
   },
   {
     "name": "Heart of the Warrior",
-    "description": "Only the warband’s leader may have this skill. He may re-roll any failed Rout test and is immune to fear and all alone tests. (BTB)"
+    "description": "Only the warband’s leader may have this skill. He may re-roll any failed Rout test and is immune to fear and all alone tests."
   },
   {
     "name": "Fungus Farmer",
-    "description": "The industrious little git has a mushroom crop back at the cave. If the Hero doesn’t search for rare items, it may pick D3-1 Mad Cap Mushrooms instead. There is a chance of getting none, as there is no guarantee they will be ready for harvest. Each Mad Cap Mushroom must be used in the next battle, and they cannot be sold or traded to other warbands These are a special high yield/low shelf life crop. (TBMF)"
+    "description": "The industrious little git has a mushroom crop back at the cave. If the Hero doesn’t search for rare items, it may pick D3-1 Mad Cap Mushrooms instead. There is a chance of getting none, as there is no guarantee they will be ready for harvest. Each Mad Cap Mushroom must be used in the next battle, and they cannot be sold or traded to other warbands These are a special high yield/low shelf life crop."
   },
   {
     "name": "Netter",
-    "description": "The Goblin applies techniques learned hunting wild Cave Squigs in the depths of the mountains to disable charging enemies. Instead of their normal use, the Goblin may throw a Net they are equipped with at an enemy who is charging them. This will reduce the charge range of the attacker by D6 inches as the charger either slows down to avoid the net, or gets tangled up in it. If this means that the attacker cannot reach the Goblin then it is a failed charge. Regardless of the outcome the Net is lost when this skill is used. (TBMF)"
+    "description": "The Goblin applies techniques learned hunting wild Cave Squigs in the depths of the mountains to disable charging enemies. Instead of their normal use, the Goblin may throw a Net they are equipped with at an enemy who is charging them. This will reduce the charge range of the attacker by D6 inches as the charger either slows down to avoid the net, or gets tangled up in it. If this means that the attacker cannot reach the Goblin then it is a failed charge. Regardless of the outcome the Net is lost when this skill is used."
   },
   {
     "name": "Ride Squig",
-    "description": "This Goblin can ride one of the warband's Cave Squigs, or even a Great Squig! The pair deploy as a single model. Standard mount rules are not used, although the rider counts as being mounted for the Cavelry Bonus rule (see spears and lances). While the Sqiug is being ridden, it and the rider move as a single model using the Squig's movement rules, but attack separately in Close Combat. In this skill's text, the use of “Squig” refers to both Cave Squigs and Great Squigs. Any shooting or close combat attacks will hit the rider on a D6 roll of 1-2, and the Squig on a 3-6. If the Squig is stunned or taken out of action, the rider takes a Strength 2 hit with no Armor save as they crash to the ground. If the Rider is stunned or taken out of action, the Squig reverts to normal Squig behavior. In either case the rider is now dismounted for the rest of the battle. Squigs don't like being ridden. If the movement roll results in a double or triple, the rider must roll a D6 before the Squig moves. If the result is over the rider's Strength, they are thrown off before the Squig moves away, and take a Strength 2 hit with no Armor save as they crash to the ground. The rider is now dismounted for the rest of the battle. If the roll is equal to or below their Strength, the rider keeps their grip and remains atop the Squig. (TBMF)"
+    "description": "This Goblin can ride one of the warband's Cave Squigs, or even a Great Squig! The pair deploy as a single model. Standard mount rules are not used, although the rider counts as being mounted for the Cavelry Bonus rule (see spears and lances). While the Sqiug is being ridden, it and the rider move as a single model using the Squig's movement rules, but attack separately in Close Combat. In this skill's text, the use of “Squig” refers to both Cave Squigs and Great Squigs. Any shooting or close combat attacks will hit the rider on a D6 roll of 1-2, and the Squig on a 3-6. If the Squig is stunned or taken out of action, the rider takes a Strength 2 hit with no Armor save as they crash to the ground. If the Rider is stunned or taken out of action, the Squig reverts to normal Squig behavior. In either case the rider is now dismounted for the rest of the battle. Squigs don't like being ridden. If the movement roll results in a double or triple, the rider must roll a D6 before the Squig moves. If the result is over the rider's Strength, they are thrown off before the Squig moves away, and take a Strength 2 hit with no Armor save as they crash to the ground. The rider is now dismounted for the rest of the battle. If the roll is equal to or below their Strength, the rider keeps their grip and remains atop the Squig."
   },
   {
     "name": "Sneaky Git",
-    "description": "The Goblin specializes in attacking their targets from the shadows. They may charge an opponent from hiding, even if they cannot see the target. There is no need for an initiative test, and the target may be over the normal 4” limit for charging unseen targets. If the charge is successful, the Goblin surprises their opponent who will attack at half Weapon Skill and half Initiative, rounded up. This penalty lasts for the first round of combat only, as the opponent will swiftly recover their wits if the initial assault is survived. (TBMF)"
+    "description": "The Goblin specializes in attacking their targets from the shadows. They may charge an opponent from hiding, even if they cannot see the target. There is no need for an initiative test, and the target may be over the normal 4” limit for charging unseen targets. If the charge is successful, the Goblin surprises their opponent who will attack at half Weapon Skill and half Initiative, rounded up. This penalty lasts for the first round of combat only, as the opponent will swiftly recover their wits if the initial assault is survived."
   },
   {
     "name": "Barbarian Courage",
-    "description": "As Norse warriors strive to die bravely in battle, they learn to fear nothing and embrace hardship. This hero never needs to take all alone tests and may re-roll failed fear tests. (TC 13)"
+    "description": "As Norse warriors strive to die bravely in battle, they learn to fear nothing and embrace hardship. This hero never needs to take all alone tests and may re-roll failed fear tests."
   },
   {
     "name": "Berserk Charge",
-    "description": "The Norse are very skilled with weapons that many other races see as primitive and savage. When this hero is armed with an axe or double handed weapon, he may re-roll all failed to hit rolls when he charges. (TC 13)"
+    "description": "The Norse are very skilled with weapons that many other races see as primitive and savage. When this hero is armed with an axe or double handed weapon, he may re-roll all failed to hit rolls when he charges."
   },
   {
     "name": "Battle Tongue",
@@ -329,147 +329,147 @@
   },
   {
     "name": "Shield Master",
-    "description": "Norse warriors begin training with shields when they are still children. Some warriors become so skilled with these weapons they can stop almost any blow against them. When this hero is armed with a shield he may parry with it in addition to getting a 6+ save. (TC 13)"
+    "description": "Norse warriors begin training with shields when they are still children. Some warriors become so skilled with these weapons they can stop almost any blow against them. When this hero is armed with a shield he may parry with it in addition to getting a 6+ save."
   },
   {
     "name": "Crushing Blow",
-    "description": "Norse warriors train in almost all of their spare time. They are expert fighters and learn to put all of their strength into very powerful attacks. No enemy may parry an attack made by this hero because it strikes with such great power that it pushes right through a buckler or sword. (TC 13)"
+    "description": "Norse warriors train in almost all of their spare time. They are expert fighters and learn to put all of their strength into very powerful attacks. No enemy may parry an attack made by this hero because it strikes with such great power that it pushes right through a buckler or sword."
   },
   {
     "name": "Master of Arms",
-    "description": "The Ogre learns how to use his size. He may now wield a Difficult to Use weapon and a hand weapon at the same time, but not two Difficult to Use weapons. (BTB)"
+    "description": "The Ogre learns how to use his size. He may now wield a Difficult to Use weapon and a hand weapon at the same time, but not two Difficult to Use weapons."
   },
   {
     "name": "Maneater",
-    "description": "Ogres are not civilized of their own accord but it is proven they are prone to absorb foreign customs when travelling the world. Some eventually learn strange new skills before returning home to their tribes. This Ogre may immediately learn one skill from the Shooting or Academic skill lists. This skill may be taken only once and may not be taken by the Guide. (BTB)"
+    "description": "Ogres are not civilized of their own accord but it is proven they are prone to absorb foreign customs when travelling the world. Some eventually learn strange new skills before returning home to their tribes. This Ogre may immediately learn one skill from the Shooting or Academic skill lists. This skill may be taken only once and may not be taken by the Guide."
   },
   {
     "name": "Bull Charge",
-    "description": "Ogres learn to use their vast bulk in a charge, trampling the enemy to the ground. When charging, an Ogre with this skill may attempt a single attack with a +1 ‘to hit’ modifier rather than making his normal attacks. If successful the enemy model is automatically knocked down. (BTB)"
+    "description": "Ogres learn to use their vast bulk in a charge, trampling the enemy to the ground. When charging, an Ogre with this skill may attempt a single attack with a +1 ‘to hit’ modifier rather than making his normal attacks. If successful the enemy model is automatically knocked down."
   },
   {
     "name": "Dog of War",
-    "description": "When an Ogre travels south he can find employment as a tavern bouncer. Some are enlisted by Paymasters to fight for Tilean City States. Drawing from experience gained during a stint on foreign soil, the band can now hire those Hired Swords available for Mercenaries. This skill may only be taken by the leader and if he dies all Hired Swords are removed from the Warband. (BTB)"
+    "description": "When an Ogre travels south he can find employment as a tavern bouncer. Some are enlisted by Paymasters to fight for Tilean City States. Drawing from experience gained during a stint on foreign soil, the band can now hire those Hired Swords available for Mercenaries. This skill may only be taken by the leader and if he dies all Hired Swords are removed from the Warband."
   },
   {
     "name": "Bellowing Roar (Ogres)",
-    "description": "An Ogre leader expects challenges to his authority. One of the best ways to suppress a mutineer in the ranks is to give his ear drums a good pounding. This skill may only be taken by the warband leader, allowing him to re-roll the first failed Rout test. (BTB)"
+    "description": "An Ogre leader expects challenges to his authority. One of the best ways to suppress a mutineer in the ranks is to give his ear drums a good pounding. This skill may only be taken by the warband leader, allowing him to re-roll the first failed Rout test."
   },
   {
     "name": "’Ard ’Ead",
-    "description": "The warrior has a thick skull even for an Orc. He has a special 3+ save on a D6 to avoid being stunned. If the save is made, treat a stunned result as knocked down instead. If the Orc also wears a helmet, this save is 2+ instead of 3+ (this takes the place of the normal helmet special rule). (A02 13)"
+    "description": "The warrior has a thick skull even for an Orc. He has a special 3+ save on a D6 to avoid being stunned. If the save is made, treat a stunned result as knocked down instead. If the Orc also wears a helmet, this save is 2+ instead of 3+ (this takes the place of the normal helmet special rule)."
   },
   {
     "name": "Waaagh!",
-    "description": "Orcs are aggressive creatures and some are experts at bulldozing charges. The warrior may add +D3\" to his charge range. (A02 13)"
+    "description": "Orcs are aggressive creatures and some are experts at bulldozing charges. The warrior may add +D3\" to his charge range."
   },
   {
     "name": "’Ere We Go!",
-    "description": "Orcs often charge even the most fearsome opponents. The model may ignore Fear and Terror tests when charging. (A02 13)"
+    "description": "Orcs often charge even the most fearsome opponents. The model may ignore Fear and Terror tests when charging."
   },
   {
     "name": "Da Cunnin’ Plan",
-    "description": "Only the Boss may have this skill. The warband may re-roll any failed Rout tests as long as the Boss is not out of action. (A02 13)"
+    "description": "Only the Boss may have this skill. The warband may re-roll any failed Rout tests as long as the Boss is not out of action."
   },
   {
     "name": "Well ’Ard",
-    "description": "(not available to Black Orc warband) The Orc has a thick, dark-green skin, possibly indicating Black Orc blood. Such is the toughness of the Orc that he may add +1 to any armour saves. (A02 13)"
+    "description": "(not available to Black Orc warband) The Orc has a thick, dark-green skin, possibly indicating Black Orc blood. Such is the toughness of the Orc that he may add +1 to any armour saves."
   },
   {
     "name": "’Eadbasher",
-    "description": "Orcs have massive physical strength and some of them even learn to aim their blows at the heads of their opponents, with obvious results. Any knocked down results which the Orc causes in hand-to-hand count as stunned results instead. (A02 13)"
+    "description": "Orcs have massive physical strength and some of them even learn to aim their blows at the heads of their opponents, with obvious results. Any knocked down results which the Orc causes in hand-to-hand count as stunned results instead."
   },
   {
     "name": "Proven Warrior",
-    "description": "(Black Orc Young’uns only) This young warrior has proven himself worthy of his Black Orc heritage. This skill may only be taken by a Young’un with the Black Orc blood ability and 25 experience. Once he gains this skill, the model is now considered a full Black Orc Warrior (yet still retains the title of Young’un). He follows all the rules for Black Orcs and uses their equipment list and has access to the same skill lists as a Black Orc. (NC)"
+    "description": "(Black Orc Young’uns only) This young warrior has proven himself worthy of his Black Orc heritage. This skill may only be taken by a Young’un with the Black Orc blood ability and 25 experience. Once he gains this skill, the model is now considered a full Black Orc Warrior (yet still retains the title of Young’un). He follows all the rules for Black Orcs and uses their equipment list and has access to the same skill lists as a Black Orc."
   },
   {
     "name": "Bull Rush",
-    "description": "This warrior is huge, even by Ostlander standards, and can use his massive girth to overpower his opponents. When he charges, this Hero may attempt to knock down his opponent rather than making his normal attacks. Roll to hit once with a +1 to hit modifier, though no ‘to wound’ roll is necessary. Instead, if the warrior hits with this attack, the opposing model is Knocked Down. (Models with the Bull Rush skill should have a suitably large beer-belly modeled out of putty whenever possible.) (A02 46)"
+    "description": "This warrior is huge, even by Ostlander standards, and can use his massive girth to overpower his opponents. When he charges, this Hero may attempt to knock down his opponent rather than making his normal attacks. Roll to hit once with a +1 to hit modifier, though no ‘to wound’ roll is necessary. Instead, if the warrior hits with this attack, the opposing model is Knocked Down. (Models with the Bull Rush skill should have a suitably large beer-belly modeled out of putty whenever possible.)"
   },
   {
     "name": "Foul Odour",
-    "description": "Ostlanders are one and all prodigious drinkers and none too hygienic! This warrior rises head and shoulders above the rest. After a lifetime of drinking, liquor has little effect on him any more... not that this stops him from consuming massive quantities! His unwashed clothes and sweat reek of alcohol and all living enemies (not Undead or Possessed) are at -1 to hit him in hand-to-hand combat. In addition, the warrior cannot carry any open flames (torch, lantern, etc.) and fire attacks made against him are resolved at +1 Strength as his beer soaked clothing burns readily. (A02 13)"
+    "description": "Ostlanders are one and all prodigious drinkers and none too hygienic! This warrior rises head and shoulders above the rest. After a lifetime of drinking, liquor has little effect on him any more... not that this stops him from consuming massive quantities! His unwashed clothes and sweat reek of alcohol and all living enemies (not Undead or Possessed) are at -1 to hit him in hand-to-hand combat. In addition, the warrior cannot carry any open flames (torch, lantern, etc.) and fire attacks made against him are resolved at +1 Strength as his beer soaked clothing burns readily."
   },
   {
     "name": "Taunt",
-    "description": "After years of baiting opponents into drunken brawls the Ostlander has learned some of most vile insults in the Empire. During the shooting phase the warrior may choose to taunt one enemy instead of shooting with a missile weapon or casting a spell. The warrior must be able to see the enemy and taunting follows all the LOS rules for shooting (you must taunt the nearest opponent, etc.). The player should insult the enemy model in some manner whenever possible (perhaps his hat looks like a strangled parrot or his mother was a Bretonnian.). The enemy then takes a Leadership test. If he passes, nothing happens but if he fails he must spend his next movement phase trying to get into close combat with the warrior who taunted him. (A02 13)"
+    "description": "After years of baiting opponents into drunken brawls the Ostlander has learned some of most vile insults in the Empire. During the shooting phase the warrior may choose to taunt one enemy instead of shooting with a missile weapon or casting a spell. The warrior must be able to see the enemy and taunting follows all the LOS rules for shooting (you must taunt the nearest opponent, etc.). The player should insult the enemy model in some manner whenever possible (perhaps his hat looks like a strangled parrot or his mother was a Bretonnian.). The enemy then takes a Leadership test. If he passes, nothing happens but if he fails he must spend his next movement phase trying to get into close combat with the warrior who taunted him."
   },
   {
     "name": "Animal Friendship",
-    "description": "Having grown up amidst the animals of the forest this warrior exudes a certain charm to all ‘normal’ animals (i.e. warhorses, Warhounds, etc.). Animals will never attack him and up to two Wardogs that the warrior owns do not count against the maximum number of models in the Warband. (A02 13)"
+    "description": "Having grown up amidst the animals of the forest this warrior exudes a certain charm to all ‘normal’ animals (i.e. warhorses, Warhounds, etc.). Animals will never attack him and up to two Wardogs that the warrior owns do not count against the maximum number of models in the Warband."
   },
   {
     "name": "Blood Oath",
-    "description": "The leader of an Ostlander Warband sometimes takes a Blood Oath never to leave any of his fallen ‘family’ members behind. Such is his determination to protect his fallen Blood-kin that it is extremely difficult to cause him to Rout from the field. Only a Warband’s leader may have this skill, which allows him to re-roll a single Rout test once per game. (A02 13)"
+    "description": "The leader of an Ostlander Warband sometimes takes a Blood Oath never to leave any of his fallen ‘family’ members behind. Such is his determination to protect his fallen Blood-kin that it is extremely difficult to cause him to Rout from the field. Only a Warband’s leader may have this skill, which allows him to re-roll a single Rout test once per game."
   },
   {
     "name": "Sea Shanty Singer",
-    "description": "The pirate is renowned throughout the seas as one of the greatest singers aboard a ship, able to raise the spirits of any crew with his stirring renditions of ‘The Sloop Johan Bee’, ‘What do you do with a Drunken Halfling?’, and other famous pirate ditties. At the start of his Close Combat phase he can suddenly burst out in song, distracting one opponent in base contact of his choosing. That enemy must pass a Leadership test, or loose 1 Attack that turn. This does not effect Undead or other non-living creatures, such as Possessed. (TC 9)"
+    "description": "The pirate is renowned throughout the seas as one of the greatest singers aboard a ship, able to raise the spirits of any crew with his stirring renditions of ‘The Sloop Johan Bee’, ‘What do you do with a Drunken Halfling?’, and other famous pirate ditties. At the start of his Close Combat phase he can suddenly burst out in song, distracting one opponent in base contact of his choosing. That enemy must pass a Leadership test, or loose 1 Attack that turn. This does not effect Undead or other non-living creatures, such as Possessed."
   },
   {
     "name": "Sea Legs",
-    "description": "Even in the strongest seas, the pirate has learned to keep his footing and equilibrium. If he Falls during a battle, he may ignore the effects of the D3 hits on a roll of 4+ (make a single roll to see if any of the hits take effect or not). In addition, if he is knocked down or stunned within 1\" of a precipice he may re-roll his Initiative test to see if he falls down or not. (TC 9)"
+    "description": "Even in the strongest seas, the pirate has learned to keep his footing and equilibrium. If he Falls during a battle, he may ignore the effects of the D3 hits on a roll of 4+ (make a single roll to see if any of the hits take effect or not). In addition, if he is knocked down or stunned within 1\" of a precipice he may re-roll his Initiative test to see if he falls down or not."
   },
   {
     "name": "Cutlass Master",
-    "description": "These short, single bladed swords are the mainstay weapon of any pirate crew, and in the hands of a trained seaman they are superb weapons for close quarters fighting. If the pirate is equipped with a Sword, this skill will give him the additional benefit of also being able to parry successfully if the player rolls equal to the number rolled to hit, not just higher as normal. This extra ability only apply if the Pirate is not in the open; ie., only when in cover or in a building, within 2\" of a terrain feature like a wall or tree, etc. (TC 9)"
+    "description": "These short, single bladed swords are the mainstay weapon of any pirate crew, and in the hands of a trained seaman they are superb weapons for close quarters fighting. If the pirate is equipped with a Sword, this skill will give him the additional benefit of also being able to parry successfully if the player rolls equal to the number rolled to hit, not just higher as normal. This extra ability only apply if the Pirate is not in the open; ie., only when in cover or in a building, within 2\" of a terrain feature like a wall or tree, etc."
   },
   {
     "name": "Booming Voice",
-    "description": "(Captain only) The Captain has spent many a battle bellowing orders to his crew, yelling above the roar of the cannons and the screams of the enemy. Once per turn, the captain may shout encouraging words (or threats) at any one pirate within 8\" who just failed his test to see if he runs away from combat, or to stop running away if he was already fleeing. That pirate may then re-roll the test. This can only be done if the Captain is on his feet, but not if the Captain is in close combat himself. (TC 9)"
+    "description": "(Captain only) The Captain has spent many a battle bellowing orders to his crew, yelling above the roar of the cannons and the screams of the enemy. Once per turn, the captain may shout encouraging words (or threats) at any one pirate within 8\" who just failed his test to see if he runs away from combat, or to stop running away if he was already fleeing. That pirate may then re-roll the test. This can only be done if the Captain is on his feet, but not if the Captain is in close combat himself."
   },
   {
     "name": "Hardy Constitution",
-    "description": "Many months at sea, and especially many months eating hardtack, have hardened the pirate’s body to effects that would cause a lesser man to collapse. During the battle, the pirate may ignore any Critical Hits on a roll of 5+ (the wound is treated as normal if the roll is successful). If the roll is failed, the Critical Hit is worked out as normal. (TC 9)"
+    "description": "Many months at sea, and especially many months eating hardtack, have hardened the pirate’s body to effects that would cause a lesser man to collapse. During the battle, the pirate may ignore any Critical Hits on a roll of 5+ (the wound is treated as normal if the roll is successful). If the roll is failed, the Critical Hit is worked out as normal."
   },
   {
     "name": "Swashbuckler",
-    "description": "The pirate cuts a dashing figure in combat, mixing dazzling swordplay and acrobatic feats with charm and witty comments. Even the basest villains in Mordheim respect (and curse) his ability to always seem to effortlessly slip from their grasp. The pirate may make a Leadership Test at the end of any Hand to Hand phase (pirate’s or enemy’s turn) if he is still in base contact with any enemy models. If he passes, he may make an immediate normal movement away from the enemy (but may not run or charge), without the enemy striking any blows on him. If he fails the test he remains in melee combat and must fight as normal in the following turn. (FO 65)"
+    "description": "The pirate cuts a dashing figure in combat, mixing dazzling swordplay and acrobatic feats with charm and witty comments. Even the basest villains in Mordheim respect (and curse) his ability to always seem to effortlessly slip from their grasp. The pirate may make a Leadership Test at the end of any Hand to Hand phase (pirate’s or enemy’s turn) if he is still in base contact with any enemy models. If he passes, he may make an immediate normal movement away from the enemy (but may not run or charge), without the enemy striking any blows on him. If he fails the test he remains in melee combat and must fight as normal in the following turn."
   },
   {
     "name": "Captain Blood",
-    "description": "The pirate is adept at leaping from the Tops into the melee below. When making attacks during a Diving Charge, the pirate makes Critical Hits on a 5+ instead of a 6+. (TBMF)"
+    "description": "The pirate is adept at leaping from the Tops into the melee below. When making attacks during a Diving Charge, the pirate makes Critical Hits on a 5+ instead of a 6+."
   },
   {
     "name": "Sea Legs (TBMF)",
-    "description": "The pirate swings through rope and rigging with ease. When attempting a Diving Charge, the pirate may re-roll a failed Initiative Test, as if he had the Acrobat skill. He may also fall or jump up to 12” without taking any damage if he passes a single Initiative Test (Note: Mates do not have access to Speed skills, so this duplication of the Acrobat skill is intentional). (TBMF)"
+    "description": "The pirate swings through rope and rigging with ease. When attempting a Diving Charge, the pirate may re-roll a failed Initiative Test, as if he had the Acrobat skill. He may also fall or jump up to 12” without taking any damage if he passes a single Initiative Test (Note: Mates do not have access to Speed skills, so this duplication of the Acrobat skill is intentional)."
   },
   {
     "name": "Treasure Hunter",
-    "description": "(Captain only) The pirate may modify one Exploration die by +1 or -1, so long as they were not taken Out of Action during the scenario. (TBMF)"
+    "description": "(Captain only) The pirate may modify one Exploration die by +1 or -1, so long as they were not taken Out of Action during the scenario."
   },
   {
     "name": "Bulging Biceps",
-    "description": "The Pit Fighter may ignore the entire ‘heavy’ weapons special rule penalty. The Strength bonus will now apply to all rounds in Close-Combat. So a Morning Star will give +1 Strength in all turns not only the first one. (TC 21)"
+    "description": "The Pit Fighter may ignore the entire ‘heavy’ weapons special rule penalty. The Strength bonus will now apply to all rounds in Close-Combat. So a Morning Star will give +1 Strength in all turns not only the first one."
   },
   {
     "name": "Force of Will",
-    "description": "When the Pit Fighter loses his last wound and is taken Out-of-Action, he must roll a D6 equal or under his Toughness, each following round he has to roll again on his toughness but then with a -1 modifier for each subsequent round. If he succeeds he gets up and may continue to fight, when he gets taken Out-of-Action a second time he’ll be removed as normal. (TC 21)"
+    "description": "When the Pit Fighter loses his last wound and is taken Out-of-Action, he must roll a D6 equal or under his Toughness, each following round he has to roll again on his toughness but then with a -1 modifier for each subsequent round. If he succeeds he gets up and may continue to fight, when he gets taken Out-of-Action a second time he’ll be removed as normal."
   },
   {
     "name": "Arms Master",
-    "description": "The Pit Fighter may now ignore all ‘difficult to use’ rules for all weapons. This enables him to combine certain types of weapons, he can combine a Morning Star with buckler, or even a Morning Star with a Morning Star. (TC 21)"
+    "description": "The Pit Fighter may now ignore all ‘difficult to use’ rules for all weapons. This enables him to combine certain types of weapons, he can combine a Morning Star with buckler, or even a Morning Star with a Morning Star."
   },
   {
     "name": "Body Slam",
-    "description": "Instead of making a normal charge, the Pit Fighter may attempt to slam his opponent to the ground, he burrows his shoulder deep into his opponent’s stomach. Instead of making his normal attacks the Pit fighter may make a single attack resolved as following: +1Str, +1 to Hit, no weapon bonuses or abilities. Critical hit on a 5+. (TC 21)"
+    "description": "Instead of making a normal charge, the Pit Fighter may attempt to slam his opponent to the ground, he burrows his shoulder deep into his opponent’s stomach. Instead of making his normal attacks the Pit fighter may make a single attack resolved as following: +1Str, +1 to Hit, no weapon bonuses or abilities. Critical hit on a 5+."
   },
   {
     "name": "Grizzled Veteran",
-    "description": "The Pit Fighter is used to fighting fearsome monsters and being cornered in the pit when there’s no escape. He has been close to death so many times that he has made his peace and the thought of death no longer bothers him. The Pit Fighter is immune to all psychology. (TC 21)"
+    "description": "The Pit Fighter is used to fighting fearsome monsters and being cornered in the pit when there’s no escape. He has been close to death so many times that he has made his peace and the thought of death no longer bothers him. The Pit Fighter is immune to all psychology."
   },
   {
     "name": "Ferocious Charge",
-    "description": "The Slayer may double his attacks on the turn that he charges. He will suffer a -1 to hit penalty on that turn. (TC 21)"
+    "description": "The Slayer may double his attacks on the turn that he charges. He will suffer a -1 to hit penalty on that turn."
   },
   {
     "name": "Monster Slayer",
-    "description": "The Slayer always wounds any opponent on a roll of 4+, regardless of Toughness, unless his own Strength (after all modifiers due to weapon bonuses, etc) would mean that a lower roll than this is needed. (TC 21)"
+    "description": "The Slayer always wounds any opponent on a roll of 4+, regardless of Toughness, unless his own Strength (after all modifiers due to weapon bonuses, etc) would mean that a lower roll than this is needed."
   },
   {
     "name": "Berserker",
-    "description": "The Slayer may add +1 to his close combat to hit rolls during the turn which he charges. (may not be used with Ferocious Charge). (TC 21)"
+    "description": "The Slayer may add +1 to his close combat to hit rolls during the turn which he charges. (may not be used with Ferocious Charge)."
   },
   {
     "name": "Corpse Bomb",
@@ -493,95 +493,95 @@
   },
   {
     "name": "Luck",
-    "description": "The Elf is blessed by Lileath, the Elven goddess of luck. Once per game he may re-roll any dice roll he makes (but not one made by other members of the warband). (MiM)"
+    "description": "The Elf is blessed by Lileath, the Elven goddess of luck. Once per game he may re-roll any dice roll he makes (but not one made by other members of the warband)."
   },
   {
     "name": "See in Shadows",
-    "description": "The warrior’s senses have become especially keen from years spent walking the shadows. As long as he has movement to reach them, the warrior may always roll to charge opponents he cannot see (instead of the normal 4\"). (TC10)"
+    "description": "The warrior’s senses have become especially keen from years spent walking the shadows. As long as he has movement to reach them, the warrior may always roll to charge opponents he cannot see (instead of the normal 4\")."
   },
   {
     "name": "Powerful Build",
-    "description": "The warrior is strongly built for an Elf, and is capable of feats of strength not often seen among the people of Ulthuan. A warrior with this skill may choose skills from the Strength skills table from now on. This skill may not be taken by Shadow Weavers. (TC10) There may never be more than two Elves with this skill in the warband at any one time. (TC 12)"
+    "description": "The warrior is strongly built for an Elf, and is capable of feats of strength not often seen among the people of Ulthuan. A warrior with this skill may choose skills from the Strength skills table from now on. This skill may not be taken by Shadow Weavers. There may never be more than two Elves with this skill in the warband at any one time."
   },
   {
     "name": "Fey",
-    "description": "Hostile magic spells will not affect the Elf on a D6 roll of 4+. (MiM)"
+    "description": "Hostile magic spells will not affect the Elf on a D6 roll of 4+."
   },
   {
     "name": "Sniper (Shadow Warriors)",
-    "description": "If Hidden, a warrior with this skill may shoot or cast spells and still remain Hidden. (TC10) If the sniper’s target is not taken out of action he is allowed an immediate Initiative test, as is anyone within 2” of him, and if successful they spot the sniper and he loses his ability to remain Hidden. (TC 12)"
+    "description": "If Hidden, a warrior with this skill may shoot or cast spells and still remain Hidden. If the sniper’s target is not taken out of action he is allowed an immediate Initiative test, as is anyone within 2” of him, and if successful they spot the sniper and he loses his ability to remain Hidden."
   },
   {
     "name": "Master of Runes",
-    "description": "The Shadow Weaver has learned to harness the power of the High Elven runes of power to a degree few mages attain. When using Elven Runestones, the mage is +1 to his dispel roll. In addition, the mage can inscribe the weapons and armour of one of his fellow warriors with Elven runes. One member of the Warband may re-roll a single failed armour save or Parry roll once per battle. After a single battle, the runes lose their glamour and must be redone. This skill may only be taken by Shadow Weavers. (TC10)"
+    "description": "The Shadow Weaver has learned to harness the power of the High Elven runes of power to a degree few mages attain. When using Elven Runestones, the mage is +1 to his dispel roll. In addition, the mage can inscribe the weapons and armour of one of his fellow warriors with Elven runes. One member of the Warband may re-roll a single failed armour save or Parry roll once per battle. After a single battle, the runes lose their glamour and must be redone. This skill may only be taken by Shadow Weavers."
   },
   {
     "name": "Righteous Aura",
-    "description": "The Sister is favored by the great god Sigmar. Possessed or Undead opponents lose their first attack against the Priestess in the first round of hand-to-hand combat (down to a minimum of 1). (RB 83)"
+    "description": "The Sister is favored by the great god Sigmar. Possessed or Undead opponents lose their first attack against the Priestess in the first round of hand-to-hand combat (down to a minimum of 1)."
   },
   {
     "name": "Protection of Sigmar",
-    "description": "The Sister has been blessed by the High Matriarch. Any spell which would affect her is nullified on a D6 roll of 4+. Note that if the spell is nullified it will not affect any other models either. (RB 83)"
+    "description": "The Sister has been blessed by the High Matriarch. Any spell which would affect her is nullified on a D6 roll of 4+. Note that if the spell is nullified it will not affect any other models either."
   },
   {
     "name": "Utter Determination",
-    "description": "Only the Matriarch or the Warrior Priest may have this skill, which allows them to re-roll any failed Rout tests. (RB 83)"
+    "description": "Only the Matriarch or the Warrior Priest may have this skill, which allows them to re-roll any failed Rout tests."
   },
   {
     "name": "Righteous Fury",
-    "description": "The Sister feels cold fury and utter contempt towards any evil that pollutes the soil of the holy Empire with its presence. The model hates all Skaven, Undead or Possessed warbands and all models in them. (RB 83)"
+    "description": "The Sister feels cold fury and utter contempt towards any evil that pollutes the soil of the holy Empire with its presence. The model hates all Skaven, Undead or Possessed warbands and all models in them."
   },
   {
     "name": "Absolute Faith",
-    "description": "The Sister puts her faith in Sigmar, and faces dangers unflinchingly. She may re-roll any Fear tests and does not have to test for fighting alone against several opponents. (RB 83)"
+    "description": "The Sister puts her faith in Sigmar, and faces dangers unflinchingly. She may re-roll any Fear tests and does not have to test for fighting alone against several opponents."
   },
   {
     "name": "Black Hunger",
-    "description": "The Skaven can draw upon the dreaded Black Hunger, the fighting frenzy which gives him unnatural strength and speed but can ravage him from inside. The Skaven Hero may declare at the beginning of his turn that he is using this skill. The Hero may add +1 attack and +D3\" to the total move to his profile for the duration of his own turn but will suffer D3 S3 hits with no armour save possible at the end of the turn. (RB 93)"
+    "description": "The Skaven can draw upon the dreaded Black Hunger, the fighting frenzy which gives him unnatural strength and speed but can ravage him from inside. The Skaven Hero may declare at the beginning of his turn that he is using this skill. The Hero may add +1 attack and +D3\" to the total move to his profile for the duration of his own turn but will suffer D3 S3 hits with no armour save possible at the end of the turn."
   },
   {
     "name": "Tail Fighting",
-    "description": "The Skaven may wield a shield, knife or a sword with its tail. The model gains an extra attack with the appropriate weapon or a +1 bonus to its armor save. (RB 93)"
+    "description": "The Skaven may wield a shield, knife or a sword with its tail. The model gains an extra attack with the appropriate weapon or a +1 bonus to its armor save."
   },
   {
     "name": "Wall Runner",
-    "description": "The warrior does not need to take an Initiative test when climbing up walls and other sheer surfaces. (RB 93)"
+    "description": "The warrior does not need to take an Initiative test when climbing up walls and other sheer surfaces."
   },
   {
     "name": "Art of Silent Death",
-    "description": "The Skaven has patiently mastered the deadly art of open-hand fighting, as taught by the mystics of Cathay in the temples of the far East. In hand-to-hand combat, the Skaven can fight with his bare paws without any penalties and counts as having two weapons (i.e., +1 attack). In addition, a Skaven Hero with this skill will cause a critical hit on a To Wound roll of 5-6 instead of just 6. This skill may be used in conjunction with the Eshin Fighting Claws (+2 Attacks instead of +1). (RB 93)"
+    "description": "The Skaven has patiently mastered the deadly art of open-hand fighting, as taught by the mystics of Cathay in the temples of the far East. In hand-to-hand combat, the Skaven can fight with his bare paws without any penalties and counts as having two weapons (i.e., +1 attack). In addition, a Skaven Hero with this skill will cause a critical hit on a To Wound roll of 5-6 instead of just 6. This skill may be used in conjunction with the Eshin Fighting Claws (+2 Attacks instead of +1)."
   },
   {
     "name": "Unblinking Eye",
-    "description": "Thanks to the sorcerous devices built by the Warlock Engineers, one of its eyes was replaced with a monstrous telescopic lens. The sharpshooter Hero can spot hidden enemies at twice his Initiative value in inches. (MiM)"
+    "description": "Thanks to the sorcerous devices built by the Warlock Engineers, one of its eyes was replaced with a monstrous telescopic lens. The sharpshooter Hero can spot hidden enemies at twice his Initiative value in inches."
   },
   {
     "name": "Metallic Body",
-    "description": "Elaborate armour encases the Hero, arms and legs locked inside complicated frameworks of pipes and gears. The Hero has a 3+ armour save. (MiM)"
+    "description": "Elaborate armour encases the Hero, arms and legs locked inside complicated frameworks of pipes and gears. The Hero has a 3+ armour save."
   },
   {
     "name": "Respirator",
-    "description": "A complex pump system of tubes has been fed directly into the skaven respiratory organs. The breathing apparatus means the Hero is able to ignore the effects of gas or soporific based attacks. Furthermore the skaven is immune to poison. (MiM)"
+    "description": "A complex pump system of tubes has been fed directly into the skaven respiratory organs. The breathing apparatus means the Hero is able to ignore the effects of gas or soporific based attacks. Furthermore the skaven is immune to poison."
   },
   {
     "name": "Tinker-Rat",
-    "description": "The Hero can't resist making modifications. The beauty of the Machine-Ogre is that, even though it starts off a bit pathetic, battlefield trials are the best way to see what needs to be improved. During the post battle sequence when you would roll for Hero and Henchmen advances, you may decide to have a tinker with your Machine-Ogre. If you do, your Hero cannot be used for anything else in the post battle sequence. Roll 2D6 on the Customisation Chart to see what happens:\n2D6 Result\n2 That didn't go well! Over-enthusiastic tinkering coupled with a wobbly ladder means that something important has been sliced off! Roll again on this chart (rerolling any further instances of 'That didn't go well!' and 'Breakthrough!') but instead of increasing the characteristic rolled, decrease it!\n3 Warpfire Projector. A smaller version of the dreaded warpfire thrower has been built into the machines arm.\n4 Every Gear and Gizmo. For some reason, the engineer decided that more gizmos were needed! Although it may seem illogical, the extra gears give the MachineOgre +1 Movement.\n5 Warp-powered Skeleton. A stroke of genius on the engineer's part has hardened the bones with warpstone dust resulting in +1 Weapon Skill.\n6 Faster Pistons. New rumbling pistons with faster moving joints lets the Machine-Ogre react faster meaning it gains +1 Initiative.\n7 More Reliable. The engineer has tuned the skeletal automaton. The result of the D6 roll to activate and work the MachineOgre can be re-rolled each turn.\n8 Extra Arm. Drawing inspiration from a passing mutant, the engineer decides more arms are a great idea! The Machine-Ogre gains +1 Attack.\n9 Bigger Claws. Welding bigger, heavier claws to the Machine-Ogre means that it can grip with more force! The MachineOgre gains +1 Strength.\n10 Reinforced Cavity. Chest plates of steel, wire and tubing running from machinery behind the ribs to sink into metal rods bolted to each arm and leg make the skeletal bulk more durable. The MachineOgre gains +1 Toughness.\n11 Steel Spine. A new sub-frame gives the Machine-Ogre a more durable design. The Machine-Ogre gains +1 Wound.\n12 Breakthrough! If by accident or by design, the tinkering has worked brilliantly! Roll a further D3 times on this chart, ignoring any further rolls of 'Breakthrough!'\n(MiM)"
+    "description": "The Hero can't resist making modifications. The beauty of the Machine-Ogre is that, even though it starts off a bit pathetic, battlefield trials are the best way to see what needs to be improved. During the post battle sequence when you would roll for Hero and Henchmen advances, you may decide to have a tinker with your Machine-Ogre. If you do, your Hero cannot be used for anything else in the post battle sequence. Roll 2D6 on the Customisation Chart to see what happens:\n2D6 Result\n2 That didn't go well! Over-enthusiastic tinkering coupled with a wobbly ladder means that something important has been sliced off! Roll again on this chart (rerolling any further instances of 'That didn't go well!' and 'Breakthrough!') but instead of increasing the characteristic rolled, decrease it!\n3 Warpfire Projector. A smaller version of the dreaded warpfire thrower has been built into the machines arm.\n4 Every Gear and Gizmo. For some reason, the engineer decided that more gizmos were needed! Although it may seem illogical, the extra gears give the MachineOgre +1 Movement.\n5 Warp-powered Skeleton. A stroke of genius on the engineer's part has hardened the bones with warpstone dust resulting in +1 Weapon Skill.\n6 Faster Pistons. New rumbling pistons with faster moving joints lets the Machine-Ogre react faster meaning it gains +1 Initiative.\n7 More Reliable. The engineer has tuned the skeletal automaton. The result of the D6 roll to activate and work the MachineOgre can be re-rolled each turn.\n8 Extra Arm. Drawing inspiration from a passing mutant, the engineer decides more arms are a great idea! The Machine-Ogre gains +1 Attack.\n9 Bigger Claws. Welding bigger, heavier claws to the Machine-Ogre means that it can grip with more force! The MachineOgre gains +1 Strength.\n10 Reinforced Cavity. Chest plates of steel, wire and tubing running from machinery behind the ribs to sink into metal rods bolted to each arm and leg make the skeletal bulk more durable. The MachineOgre gains +1 Toughness.\n11 Steel Spine. A new sub-frame gives the Machine-Ogre a more durable design. The Machine-Ogre gains +1 Wound.\n12 Breakthrough! If by accident or by design, the tinkering has worked brilliantly! Roll a further D3 times on this chart, ignoring any further rolls of 'Breakthrough!'"
   },
   {
     "name": "Censer Bearer",
-    "description": "Only a Clan Pestilens member with the Black Hunger special skill may choose the Censer Bearer special skill. A Clan Pestilens member with this skill is called a Censer Bearer. He gains the special rule Frenzy and the only weapon he may use in close combat is a censer. (TC 29)"
+    "description": "Only a Clan Pestilens member with the Black Hunger special skill may choose the Censer Bearer special skill. A Clan Pestilens member with this skill is called a Censer Bearer. He gains the special rule Frenzy and the only weapon he may use in close combat is a censer."
   },
   {
     "name": "Rotten Body",
-    "description": "A Clan Pestilens member with this skill has grown accustomed to poisons, diseases, and the fog of death emanated by censers. He is now immune to poisons and diseases and, if taken out of combat because of a failed test for wielding a censer, he will not have to roll for injuries at the end of the battle, recovering automatically. (TC 29)"
+    "description": "A Clan Pestilens member with this skill has grown accustomed to poisons, diseases, and the fog of death emanated by censers. He is now immune to poisons and diseases and, if taken out of combat because of a failed test for wielding a censer, he will not have to roll for injuries at the end of the battle, recovering automatically."
   },
   {
     "name": "Contagious",
-    "description": "Only a Clan Pestilens member with the Rotten Body skill may choose the Contagious special skill. A model who inflicts and injury in close combat that sends the Contagious member of the Clan Pestilens out of combat must take a Toughness test. Roll a D6. If the result is higher than the Toughness of the model taking the test, he will suffer an automatic wound. A result of 6 always inflicts a wound. Models of Undead or Possessed never take this test. (TC 29)"
+    "description": "Only a Clan Pestilens member with the Rotten Body skill may choose the Contagious special skill. A model who inflicts and injury in close combat that sends the Contagious member of the Clan Pestilens out of combat must take a Toughness test. Roll a D6. If the result is higher than the Toughness of the model taking the test, he will suffer an automatic wound. A result of 6 always inflicts a wound. Models of Undead or Possessed never take this test."
   },
   {
     "name": "Ignore Pain",
-    "description": "A Clan Pestilens member with this skill treats “Stunned” injuries as “Knocked Down.” (TC 29)"
+    "description": "A Clan Pestilens member with this skill treats “Stunned” injuries as “Knocked Down.”"
   },
   {
     "name": "Sand Worm",
@@ -597,23 +597,23 @@
   },
   {
     "name": "Transfixing Glare",
-    "description": "The Vampire is able to hypnotize a victim using his glowing red eyes, the victim will remain passive and wait for the Vampire to close. The Glare may be used on any living model in base contact that is not Immune to Psychology. The victim must pass a Leadership test on a 2D6 or be transfixed. A transfixed model may not attack in close combat and is treated as being knocked down for purpose of being attacked. Roll for the Glare at the start of the combat phase. (TC11)"
+    "description": "The Vampire is able to hypnotize a victim using his glowing red eyes, the victim will remain passive and wait for the Vampire to close. The Glare may be used on any living model in base contact that is not Immune to Psychology. The victim must pass a Leadership test on a 2D6 or be transfixed. A transfixed model may not attack in close combat and is treated as being knocked down for purpose of being attacked. Roll for the Glare at the start of the combat phase."
   },
   {
     "name": "Mist Form",
-    "description": "A Vampire's human form is only one of many and a few can transform into a thin mist in the recovery phase. While in this state the Vampire has a move of 2D6\" per turn. He may not attack in close combat, shoot with a missile weapon or cast spells and he gains no protection from armour. All to hit rolls against the Vampire need a natural '6' to hit and all to wound rolls need a natural '6 '. Note that this may not be modified by any bonuses as it represents the protection of a non-physical form. The Vampire may reduce the injury roll by -2. If the Vampire is knocked down he immediately reverts to his physical form. The Vampire may change back to Vampire form in any subsequent recovery phase by choice. (TC11)"
+    "description": "A Vampire's human form is only one of many and a few can transform into a thin mist in the recovery phase. While in this state the Vampire has a move of 2D6\" per turn. He may not attack in close combat, shoot with a missile weapon or cast spells and he gains no protection from armour. All to hit rolls against the Vampire need a natural '6' to hit and all to wound rolls need a natural '6 '. Note that this may not be modified by any bonuses as it represents the protection of a non-physical form. The Vampire may reduce the injury roll by -2. If the Vampire is knocked down he immediately reverts to his physical form. The Vampire may change back to Vampire form in any subsequent recovery phase by choice."
   },
   {
     "name": "Ratswarm Form",
-    "description": "Some Vampires hold a sway over nature and they can transform into animals such as a wolf, a swarm of rats or a giant bat. A Vampire can change form in the recovery phase regardless of whether the Vampire is Knocked Down or Stunned but he suffers all penalties for standing up for example. The Vampire may change back to Vampire form at the start of any subsequent recovery phase. M6 WS3 BS0 S3 T3 W* I* A4 Ld* *Use the same characteristics as the Vampire. While in Ratswarm form the Vampire may not use weapons and does not receive any protection from armour. He cannot shoot with a missile weapon or cast spells but can attack in close combat without a penalty for fighting without a weapon. The Vampire should be represented by a Ratswarm base but treat the Vampire as being the size of a single rat for moving through alleys or similar small spaces. The Vampire may move through small holes and gaps that would allow a single rat-sized creature to pass through and can thus move through walls as most have a small holes in them. (TC11)"
+    "description": "Some Vampires hold a sway over nature and they can transform into animals such as a wolf, a swarm of rats or a giant bat. A Vampire can change form in the recovery phase regardless of whether the Vampire is Knocked Down or Stunned but he suffers all penalties for standing up for example. The Vampire may change back to Vampire form at the start of any subsequent recovery phase. M6 WS3 BS0 S3 T3 W* I* A4 Ld* *Use the same characteristics as the Vampire. While in Ratswarm form the Vampire may not use weapons and does not receive any protection from armour. He cannot shoot with a missile weapon or cast spells but can attack in close combat without a penalty for fighting without a weapon. The Vampire should be represented by a Ratswarm base but treat the Vampire as being the size of a single rat for moving through alleys or similar small spaces. The Vampire may move through small holes and gaps that would allow a single rat-sized creature to pass through and can thus move through walls as most have a small holes in them."
   },
   {
     "name": "Bat Form",
-    "description": "Many Vampires can transform into giant bats. A Vampire can change form exactly as for Mist Form: he transforms in the recovery phase, reverts to his physical form at once if he is knocked down, and may change back to Vampire form in any subsequent recovery phase by choice. M8 WS3 BS0 S3 T2 W* I* A1 Ld* *Use the same characteristics as the Vampire. Whilst in Bat form the Vampire may fly and ignores movement penalties, he cannot run as such but may move double distance and a charge move is also doubled. The Vampire may not use weapons and does not receive any protection from armour. He cannot shoot with a missile weapon or cast spells but can attack in close combat without a penalty for fighting without a weapon. (TC11)"
+    "description": "Many Vampires can transform into giant bats. A Vampire can change form exactly as for Mist Form: he transforms in the recovery phase, reverts to his physical form at once if he is knocked down, and may change back to Vampire form in any subsequent recovery phase by choice. M8 WS3 BS0 S3 T2 W* I* A1 Ld* *Use the same characteristics as the Vampire. Whilst in Bat form the Vampire may fly and ignores movement penalties, he cannot run as such but may move double distance and a charge move is also doubled. The Vampire may not use weapons and does not receive any protection from armour. He cannot shoot with a missile weapon or cast spells but can attack in close combat without a penalty for fighting without a weapon."
   },
   {
     "name": "Giant Wolf Form",
-    "description": "Many Vampires can transform into Giant Wolves. A Vampire can change form exactly as for Mist Form: he transforms in the recovery phase, reverts to his physical form at once if he is knocked down, and may change back to Vampire form in any subsequent recovery phase by choice. M9 WS4 BS0 S4 T3 W* I* A2 Ld* *Use the same characteristics as the Vampire. Whilst in Wolf form the Vampire may not use weapons and does not receive any protection from armour. He cannot shoot with a missile weapon or cast spells but can attack in close combat without a penalty for fighting without a weapon. (TC11)"
+    "description": "Many Vampires can transform into Giant Wolves. A Vampire can change form exactly as for Mist Form: he transforms in the recovery phase, reverts to his physical form at once if he is knocked down, and may change back to Vampire form in any subsequent recovery phase by choice. M9 WS4 BS0 S4 T3 W* I* A2 Ld* *Use the same characteristics as the Vampire. Whilst in Wolf form the Vampire may not use weapons and does not receive any protection from armour. He cannot shoot with a missile weapon or cast spells but can attack in close combat without a penalty for fighting without a weapon."
   },
   {
     "name": "Strike to Injure",
@@ -757,11 +757,11 @@
   },
   {
     "name": "Handyman",
-    "description": "The warrior is skilled in fixing minor damage on a wagon, cart or coach. If the wagon is stationary and has not moved during the last turn then if the warrior is in contact with the wagon, he may repair one previously damaged wheel. He can even set in a new wheel if it flew off. The Hero may do nothing else that turn and the wagon may not be moved. A wagon cannot be repaired if an enemy model is in contact with the handyman or the wagon. (MiM)"
+    "description": "The warrior is skilled in fixing minor damage on a wagon, cart or coach. If the wagon is stationary and has not moved during the last turn then if the warrior is in contact with the wagon, he may repair one previously damaged wheel. He can even set in a new wheel if it flew off. The Hero may do nothing else that turn and the wagon may not be moved. A wagon cannot be repaired if an enemy model is in contact with the handyman or the wagon."
   },
   {
     "name": "Beastmaster",
-    "description": "The Hero is able to communicate on a primal level with any beast he encounters. If the model confronts an animal (not mount) in hand-to-hand combat, before combat he may take a Leadership test. If the test fails, combat proceeds as normal. If successful the animal falls under his command. Place the models 1\" apart. The player may control the animal, but the beastmaster must pass a Leadership test at the beginning of his turn or control is lost. The animal must remain within 6\" of the Hero or control is lost. No more than one animal can be controlled this way. (MiM)"
+    "description": "The Hero is able to communicate on a primal level with any beast he encounters. If the model confronts an animal (not mount) in hand-to-hand combat, before combat he may take a Leadership test. If the test fails, combat proceeds as normal. If successful the animal falls under his command. Place the models 1\" apart. The player may control the animal, but the beastmaster must pass a Leadership test at the beginning of his turn or control is lost. The animal must remain within 6\" of the Hero or control is lost. No more than one animal can be controlled this way."
   },
   {
     "name": "Leap",
@@ -813,7 +813,7 @@
   },
   {
     "name": "Master Inventor",
-    "description": "The Engineer may now attempt D3+1 inventions in the post-game phase rather than 1. Expelled Engineer Only. (MiM)"
+    "description": "The Engineer may now attempt D3+1 inventions in the post-game phase rather than 1. Expelled Engineer Only."
   },
   {
     "name": "Axe Thrower",

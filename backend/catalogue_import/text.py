@@ -85,6 +85,15 @@ def single_spaced(text: str) -> str:
     return re.sub(r" {2,}", " ", text)
 
 
+SOURCE_TAG = re.compile(r" ?\((?:MiM|BTB|TBMF|NC|LotD|TC ?\d+|RB ?\d+|A\d+ \d+|EiF \d+|FO \d+|2005 Rules Review)\)")
+
+
+def without_source_tags(text: str) -> str:
+    """A skill's rules without the sources' tags, "(TC 29)", "(MiM)", "(RB 93)": the page shows each skill's setting
+    (William, 27 Nov 2026: drop them)."""
+    return SOURCE_TAG.sub("", text).strip()
+
+
 def same_text(left: str, right: str) -> bool:
     """Equal once spacing and case are ignored, so only a real rewording counts as different."""
     return " ".join(left.lower().split()) == " ".join(right.lower().split())
