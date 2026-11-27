@@ -32582,7 +32582,12 @@
           "Strength",
           "Dwarf Rangers"
         ],
-        "spell_types": [],
+        "spell_types": [
+          {
+            "name": "Minor Runes (Dwarf Rangers)",
+            "note": ""
+          }
+        ],
         "gains_xp": true,
         "promotable": true,
         "is_leader": true,
@@ -32602,7 +32607,12 @@
           {
             "name": "Inscribe Runes",
             "type": "Warband - Dwarf Rangers",
-            "description": "A Runesmith knows one minor rune (see list at the end of this warband list), determined randomly when the warband is first created. He may inscribe the rune on an item carried by one of the warriors of his warband, and (if successful, see below) the item will gain a bonus from the rune for that game. When a Runesmith advances and rolls a skill on the Hero Advance table, he may choose to learn a new rune instead of learning a skill (exactly like a spellcaster advancing and learning a new spell)."
+            "description": "A Runesmith knows one minor rune, rolled at random when the warband is first created. Before each game he may try to inscribe it on an item one of the warband's warriors carries: roll 2D6, and on a score equal to or more than the rune's difficulty the item gains its bonus for that game. On a 2 he fumbles and the item is destroyed and struck from the warrior's equipment, though it may be replaced before the game if the warband has the gold; any other failure gives no bonus. When he rolls a skill on the Hero Advance table he may learn a new rune instead, as a spellcaster learns a new spell."
+          },
+          {
+            "name": "The Jealousy of Runes",
+            "type": "Warband - Dwarf Rangers",
+            "description": "A rune's bonus is not cumulative with a magical bonus from another item: a warrior with a Rune of Stone on his shield gains nothing more from a second armour rune, or from magic armour, that adds to his armour save."
           }
         ],
         "skills": []

@@ -3,7 +3,10 @@ from the committed `out/` (which test_build.py pins to a fresh run of build.py).
 
 from typing import Any
 
-from catalogue_import.tests.review_support import ReviewCase
+from catalogue_import.common import load_json
+from catalogue_import.tests.review_support import SPELL_DATA, ReviewCase
+
+MINOR_RUNES = "Minor Runes (Dwarf Rangers)"
 
 
 class CasterTests(ReviewCase):
@@ -37,3 +40,28 @@ class CasterTests(ReviewCase):
         # he casts from is one of prayer-lores.json's
         self.assertEqual(self.fighter("mordheimers-fanatics", "Prophet")["caster"], "Priest")
         self.assertEqual(self.lores("mordheimers-fanatics", "Prophet"), ["Prophetic Rants"])
+
+    def test_the_dwarf_rangers_runesmith_knows_a_minor_rune_from_their_d6_list(self) -> None:
+        # "He knows one of the following minor runes": the six, on the D6, as his lore; The Jealousy of Runes his
+        # rule; and no caster rule, the lore alone giving his first rune (William, 27 Nov 2026)
+        runesmith = self.fighter("dwarf-rangers", "Runesmith")
+        self.assertEqual((runesmith["caster"], self.lores("dwarf-rangers", "Runesmith")), ("No", [MINOR_RUNES]))
+        rules = {special["name"]: special["description"] for special in runesmith["specials"]}
+        self.assertIn("not cumulative", rules["The Jealousy of Runes"])
+        self.assertIn("roll 2D6", rules["Inscribe Runes"])
+        for pointer in ("see list", "see below"):
+            self.assertNotIn(pointer, rules["Inscribe Runes"])
+        runes = [row for row in load_json(SPELL_DATA / "spells.json") if row["type"] == MINOR_RUNES]
+        table = [(row["roll"], row["name"], row["dc"]) for row in runes]
+        self.assertEqual(
+            table,
+            [
+                (1, "Rune of Stone", "8"),
+                (2, "Rune of Sharpness", "6"),
+                (3, "Rune of Speed", "7"),
+                (4, "Rune of Warding", "8"),
+                (5, "Rune of Accuracy", "9"),
+                (6, "Rune of Striding", "8"),
+            ],
+        )
+        self.assertEqual({row["setting"] for row in runes}, {"nemesis-crown"})

@@ -15,6 +15,7 @@ from catalogue_import.sources import BACKEND
 from catalogue_import.template_answers import (
     GENERAL_CASTER_RULES,
     LORE_ONLY,
+    OWN_RULES_ADDED,
     RULES_ADDED,
     SIZES,
     TEMPLATE_TYPES,
@@ -112,9 +113,10 @@ def _share(fighters: list[dict[str, Any]], upgrades: list[dict[str, Any]], name:
 
 def add_rules(slug: str, fighters: list[dict[str, Any]], name: str, shared: SharedSpecials) -> None:
     """The shared specials William gives a fighter his page leaves them off (RULES_ADDED: the beasts' Animal), linked as
-    his own rule of that name would be, and held once."""
+    his own rule of that name would be, and held once; and his own rules the page prints apart from him
+    (OWN_RULES_ADDED: the Dwarf Rangers' Runesmith's The Jealousy of Runes)."""
     keys = {fighter["key"] for fighter in fighters}
-    missing = [key for page, key in RULES_ADDED if page == slug and key not in keys]
+    missing = [key for page, key in [*RULES_ADDED, *OWN_RULES_ADDED] if page == slug and key not in keys]
     if missing:
         raise ValueError(f"template_answers.RULES_ADDED: {slug} has no fighter {', '.join(missing)}")
     for fighter in fighters:
@@ -125,6 +127,8 @@ def add_rules(slug: str, fighters: list[dict[str, Any]], name: str, shared: Shar
             entry = found[1]
             if entry["name"] not in [special["name"] for special in fighter["specials"]]:
                 fighter["specials"].append({"name": entry["name"], "type": entry["type"]})
+        for rule, text in OWN_RULES_ADDED.get((slug, fighter["key"]), []):
+            fighter["specials"].append({"name": rule, "type": f"Warband - {name}", "description": text})
 
 
 def _specials_once(fighters: list[dict[str, Any]], upgrades: list[dict[str, Any]], slug: str, log: TemplateLog) -> None:

@@ -972,7 +972,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 3993 |
 | warband rules | 514 |
 | upgrades | 179 |
-| the templates' own specials | 1114 |
+| the templates' own specials | 1115 |
 
 ### List lines
 
@@ -1100,6 +1100,7 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | court-of-the-profane-pleasures | Slaaneshi Priest of Obscene | Wizard | Chaos Rituals |
 | cult-of-the-posessed | Magister | Wizard | Chaos Rituals |
 | dark-elves | Dark Elf Sorceress | Wizard | Dark Elf Magic |
+| dwarf-rangers | Runesmith | No | Minor Runes (Dwarf Rangers) |
 | forest-goblins | Shaman | Wizard | Forest Goblin Magic |
 | horned-hunters | Priest of Taal | Priest | Prayers of Taal |
 | lizardmen | Skink Priest | Wizard | Lizardmen Magic |

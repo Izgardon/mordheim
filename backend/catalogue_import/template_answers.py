@@ -350,6 +350,15 @@ RULE_TITLES: dict[tuple[str, int], str] = {
 # Experience, the Tomb Guard's Undead, the Slayers' Doomed, the Forest Goblin's Animosity): a page wording
 # would wipe what his says, so they are left for William, with the list in .pdf-sources/work.
 GENERAL_RULE_WORDINGS: dict[tuple[str, str], str] = {
+    # the page's "Dwarf Runes" text after its fighters, which his rule pointed to (William, 27 Nov 2026)
+    ("dwarf-rangers", "Inscribe Runes"): (
+        "A Runesmith knows one minor rune, rolled at random when the warband is first created. Before each game he may "
+        "try to inscribe it on an item one of the warband's warriors carries: roll 2D6, and on a score equal to or more "
+        "than the rune's difficulty the item gains its bonus for that game. On a 2 he fumbles and the item is destroyed "
+        "and struck from the warrior's equipment, though it may be replaced before the game if the warband has the gold; "
+        "any other failure gives no bonus. When he rolls a skill on the Hero Advance table he may learn a new rune "
+        "instead, as a spellcaster learns a new spell."
+    ),
     ("mordheimers-fanatics", "Fanatical"): "The model is immune to fear.",
     ("arabyan-theives", "Known thief"): "The model counts as a known thief.",
     ("bretonnian", "Knights Virtue"): (
@@ -548,6 +557,9 @@ CASTERS: dict[tuple[str, str], str] = {
     ("tomb-guardians-old", "Liche Priest"): "Mortuary Cult Scrolls (Nehekhara Tomb Guards)",
     # "he would start a campaign knowing one of the Prayers of Sigmar" (William, 27 Nov 2026: a Priest, yes)
     ("outlaws-of-stirwood-forest", "Cleric"): "Prayers of Sigmar",
+    # "He knows one of the following minor runes": the six on the D6 the page prints after its fighters (William,
+    # 27 Nov 2026), a lore of their own, not the Nemesis Crown's Runes; no caster rule (LORE_ONLY)
+    ("dwarf-rangers", "Runesmith"): "Minor Runes (Dwarf Rangers)",
 }
 # A caster rule of another name that says only what ours does, that he starts with one spell or prayer at random from
 # his list (William, 27 Nov 2026: "For a general caster in a warband or a simple hired sword they will always start
@@ -578,6 +590,7 @@ LORE_ONLY: frozenset[tuple[str, str]] = frozenset(
     {
         ("dwarf-grudgebearers", "Runesmith"),
         ("mazzalupo", "Wandering knight"),
+        ("dwarf-rangers", "Runesmith"),  # inscribes runes, and stays no caster (William, 27 Nov 2026)
     }
 )
 MAGIC_WARBANDS: dict[str, str] = {"Ostlanders": "ostlander"}  # magic.json's warband names that aren't a page's
@@ -652,6 +665,18 @@ WARBAND_RULES_ADDED: dict[str, list[tuple[str, str]]] = {
 # The shared specials a fighter holds that his page leaves off (William, 25 Nov 2026: the beasts lacking the one Animal
 # rule; not the Rat Ogres): page, fighter key -> shared special names. A page or fighter we no longer have stops the
 # build.
+# A fighter's own rule his page prints apart from him: page, fighter key -> (name, text). William, 27 Nov 2026, of the
+# Dwarf Rangers' Runesmith: The Jealousy of Runes, under the page's minor runes, is his rule.
+OWN_RULES_ADDED: dict[tuple[str, str], list[tuple[str, str]]] = {
+    ("dwarf-rangers", "runesmith"): [
+        (
+            "The Jealousy of Runes",
+            "A rune's bonus is not cumulative with a magical bonus from another item: a warrior with a Rune of Stone on "
+            "his shield gains nothing more from a second armour rune, or from magic armour, that adds to his armour "
+            "save.",
+        )
+    ],
+}
 ANIMAL = "Animal"
 RULES_ADDED: dict[tuple[str, str], list[str]] = {
     ("skaven-eshin", "giant-rats"): [ANIMAL],

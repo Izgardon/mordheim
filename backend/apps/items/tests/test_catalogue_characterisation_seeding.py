@@ -101,7 +101,7 @@ class SeedAllTests(TestCase):
                 "SkillGroup": 137,  # the import's 108 (Pirates (TBMF) folded into Pirates, and the Forest Goblins' two lists gone with their Animosity, 27 Nov 2026) (Athel Loren's three, Relics of the Crusades' Holy) + a group of his own for each of 25 hired swords, 9 of them broheim's hireling sections'
                 # the Mousillon Priest of Morr's Rituals of Morr are his lore (William, 27 Nov 2026), so his four that
                 # share a name with the Funerary Rites, worded otherwise, are made in it rather than linking those: 4 more
-                "Spell": 520,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026); the Marienburg Annual's eight College lores, 48 spells, and Slave Master Haggard's Combustion (23 Nov 2026); Mutiny in Marienburg's seven prayer lists of its own, 42 prayers (26 Nov 2026; its Taal list is ours)
+                "Spell": 526,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026); the Marienburg Annual's eight College lores, 48 spells, and Slave Master Haggard's Combustion (23 Nov 2026); Mutiny in Marienburg's seven prayer lists of its own, 42 prayers (26 Nov 2026; its Taal list is ours); the Dwarf Rangers' six minor runes (27 Nov 2026)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -164,9 +164,10 @@ class SeedAllTests(TestCase):
                 # Sabre Trainer and the Watchmen Sergeant's Falconer are the skill alone (William, 27 Nov 2026), 2 fewer;
                 # the Prospector's Dwarf Skills rule keeps the Dwarves skills for a Dwarf (William, 27 Nov 2026), 1 more;
                 # his Prospector is his rule, not a skill (William, 27 Nov 2026), 1 more; the rules named Seeker are
-                # the one Seeker skill he starts with (William, 27 Nov 2026), 4 fewer
+                # the one Seeker skill he starts with (William, 27 Nov 2026), 4 fewer; the Dwarf Rangers' Runesmith's
+                # The Jealousy of Runes (William, 27 Nov 2026), 1 more
                 # and the Kislev Ranger's Hunter's Cloak is an item of its own (the items audit, 27 Nov 2026), 1 fewer
-                "Special": 1993,
+                "Special": 1994,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
