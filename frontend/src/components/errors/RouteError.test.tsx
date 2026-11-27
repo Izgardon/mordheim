@@ -58,6 +58,7 @@ describe("RouteError", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it("replaces only the failing page, keeps the shell, and retries", async () => {
@@ -73,12 +74,37 @@ describe("RouteError", () => {
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 
-  it("offers a reload when a page's code is missing after a deploy", () => {
+  it("offers a reload when a page's code is missing after a deploy", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(null, { status: 200 }))
+    );
     renderCampaign(<StaleChunkPage />);
 
-    expect(screen.getByText("The app was updated")).toBeInTheDocument();
+    expect(await screen.findByText("The app was updated")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Reload" }));
     expect(reloadApp).toHaveBeenCalledTimes(1);
+  });
+
+  // docs/plans/offline.md: a page's code that didn't download for want of signal isn't a deploy
+  it("says there's no connection when the phone is offline", () => {
+    vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+    renderCampaign(<StaleChunkPage />);
+
+    expect(screen.getByText("No connection")).toBeInTheDocument();
+    expect(screen.queryByText("The app was updated")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Reload" })).toBeInTheDocument();
+  });
+
+  it("says there's no connection when the signal is too weak to reach the app", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Promise.reject(new TypeError("Failed to fetch")))
+    );
+    renderCampaign(<StaleChunkPage />);
+
+    expect(await screen.findByText("No connection")).toBeInTheDocument();
+    expect(screen.queryByText("The app was updated")).not.toBeInTheDocument();
   });
 });
 
