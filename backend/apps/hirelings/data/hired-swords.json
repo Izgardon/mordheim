@@ -770,6 +770,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_types": [
+      "Lesser Magic"
+    ],
     "spell_picks": 2,
     "specials": [
       {
@@ -1513,6 +1516,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_types": [
+      "Spells of the Djedhi"
+    ],
     "spell_picks": 3,
     "specials": [
       {
@@ -1954,6 +1960,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Priest",
+    "spell_types": [
+      "Norse Runes"
+    ],
     "spell_picks": 2,
     "specials": [
       {
@@ -2142,6 +2151,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Priest",
+    "spell_types": [
+      "Funerary Rites"
+    ],
     "specials": [
       {
         "name": "Loner",
@@ -2196,6 +2208,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Priest",
+    "spell_types": [
+      "Runes"
+    ],
     "specials": [
       {
         "name": "Runesmith",
@@ -2523,6 +2538,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Priest",
+    "spell_types": [
+      "Prayers of Sigmar"
+    ],
     "specials": [
       {
         "name": "Priest",
@@ -2576,6 +2594,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_types": [
+      "Charms and Hexes"
+    ],
     "spell_picks": 2,
     "specials": [
       {
@@ -2707,6 +2728,9 @@
     "armour_save": 6,
     "large": false,
     "caster": "Priest",
+    "spell_types": [
+      "Prayers of Ulric"
+    ],
     "specials": [
       {
         "name": "Hatred",
@@ -3790,6 +3814,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_types": [
+      "Lesser Magic"
+    ],
     "specials": [
       {
         "name": "Wizard",
@@ -4632,6 +4659,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_types": [
+      "Dark Elf Magic"
+    ],
     "spell_picks": 2,
     "specials": [
       {
@@ -5714,6 +5744,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_types": [
+      "Lesser Magic"
+    ],
     "spell_picks": 2,
     "specials": [
       {
@@ -6841,6 +6874,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Priest",
+    "spell_types": [
+      "Potion Recipes"
+    ],
     "spell_picks": 2,
     "specials": [
       {

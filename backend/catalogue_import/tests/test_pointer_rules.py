@@ -281,5 +281,24 @@ class CommittedPointerTests(SimpleTestCase):
         rules = {special["name"] for name in lores for special in self.personae[name]["specials"]}
         self.assertFalse(rules & {"Spells", "Barbarian Shaman", "Magic of the Horned Rat"})
 
+    def test_every_persona_who_casts_names_the_lores_he_casts_from(self):
+        lores = {name: row.get("spell_types") for name, row in self.personae.items() if row["caster"] != "No"}
+        self.assertEqual(
+            lores,
+            {
+                "Abdul Alhazred, the Mad Sorcerer": ["Arabian Elemental Magic", "Necromancy"],
+                "Bertha Bestraufrung, High Matriarch of the Sisterhood": ["Prayers of Sigmar"],
+                "Dark Emissary": ["Lore of Darkness"],
+                "Gaz Er Unga Og": ["Barbarian Shaman Magic"],
+                "Grey Seer Neekit": ["Magic of the Horned Rat"],
+                "Khar-mel the Djinn": None,  # "the Elemental Magic list": a question for William
+                "Nicodemus, the Cursed Pilgrim": ["Lesser Magic"],
+                "Slave Master Haggard, the Stone Daemon of Suidock": ["Necromancy", "Rituals of Hashut"],
+                "The Crow Master": ["Necromancy"],
+                "The Grandmother": ["Lesser Magic", "Charms and Hexes"],
+                "Truthsayer": ["Lore of Light"],
+            },
+        )
+
     def test_khar_mel_is_a_wizard(self):
         self.assertEqual(self.personae["Khar-mel the Djinn"]["caster"], "Wizard")

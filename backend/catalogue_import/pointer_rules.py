@@ -24,7 +24,9 @@ choose or roll picks that many at hire (`SPELL_PICKS`, `PERSONAE_SPELL_PICKS`: h
 are in their own data); his rule keeps its text. A dramatis persona whose rule says he knows a whole lore starts with
 every spell of its table, as the book prints it (`PERSONAE_KNOW_LORE`), so he has none to pick, and the rule goes
 (one that says more keeps its text: `PERSONAE_ALSO_KNOW_LORE`); one typed no caster casts from those lores.
-One whose page lists no spells but whose rule says he knows some casts as William says (`PERSONAE_CASTERS`).
+One whose page lists no spells but whose rule says he knows some casts as William says (`PERSONAE_CASTERS`). A caster's
+`spell_types` are the lores he casts from, which a hire's spell picker offers first: those he knows whole, and the
+ones his rules name (`PERSONAE_LORES`).
 """
 
 import re
@@ -152,6 +154,15 @@ PERSONAE_ALSO_KNOW_LORE: dict[str, dict[str, list[str]]] = {
 # what he casts as. William, 27 Nov 2026, of Khar-mel ("knows D3 spells chosen from the Elemental Magic list"): "They
 # are a caster", so a hire of hers picks the usual one, her rule keeping its D3.
 PERSONAE_CASTERS: dict[str, str] = {"Khar-mel the Djinn": "Wizard"}
+# The lores a dramatis persona casts from, his rules name and his page doesn't list (the spells audit, 27 Nov 2026: a hire
+# set none, so his first spell could be picked from any list); one who knows a whole lore casts from it too. Khar-mel's
+# "Elemental Magic list" is William's to settle.
+PERSONAE_LORES: dict[str, list[str]] = {
+    "Dark Emissary": ["Lore of Darkness"],  # "four randomly determined spells of the Lore of Darkness"
+    "Truthsayer": ["Lore of Light"],
+    "The Grandmother": ["Lesser Magic", "Charms and Hexes"],  # two of each, every battle
+    "Slave Master Haggard, the Stone Daemon of Suidock": ["Necromancy", "Rituals of Hashut"],  # his spells' lores
+}
 # The same for a dramatis persona: name -> rule -> our skills, the rule keeping its text ("Note that Ippan Shu also
 # has the Dodge skill.", in his Parry Missiles)
 PERSONAE_ALSO_START_WITH: dict[str, dict[str, list[str]]] = {
@@ -292,6 +303,7 @@ def check_answers(templates: list[dict[str, Any]], personae: list[dict[str, Any]
         *PERSONAE_KNOW_LORE,
         *PERSONAE_ALSO_KNOW_LORE,
         *PERSONAE_CASTERS,
+        *PERSONAE_LORES,
     }
     missing += sorted(named_personae - {persona["name"] for persona in personae})
     if missing:
@@ -306,6 +318,7 @@ def resolve_pointers(
     skills = Skills(rows)
     ours = [row for row in load_json(BACKEND / "apps" / "spells" / "data" / "spells.json") if isinstance(row, dict)]
     spells = {(row["type"], row["name"]) for row in ours}
+    spells_lores = {lore for lore, _name in spells}
     tables: dict[str, list[str]] = {}  # a lore's table: its rolled spells in roll order
     for row in sorted((row for row in ours if row.get("roll") is not None), key=lambda row: row["roll"]):
         tables.setdefault(row["type"], []).append(row["name"])
@@ -321,6 +334,11 @@ def resolve_pointers(
         _persona_rules(persona, skills, log)
         _persona_lores(persona, tables, log)
         persona["caster"] = PERSONAE_CASTERS.get(persona["name"], persona.get("caster", "No"))
+        if lores := PERSONAE_LORES.get(persona["name"]):
+            missing = [lore for lore in lores if lore not in spells_lores]
+            if missing:
+                raise ValueError(f"pointer_rules.py: {persona['name']} casts from lores we lack: {missing}")
+            persona["spell_types"] = [*persona.get("spell_types", []), *lores]
         if picks := PERSONAE_SPELL_PICKS.get(persona["name"]):
             persona["spell_picks"] = picks
     return log
@@ -366,6 +384,7 @@ def _persona_lores(persona: dict[str, Any], tables: dict[str, list[str]], log: P
                 persona["specials"] = kept
             known = [{"lore": lore, "name": name} for lore in lores for name in tables[lore]]
             persona["spells"] = [*persona.get("spells", []), *known]
+            persona["spell_types"] = [*persona.get("spell_types", []), *lores]
             if persona.get("caster", "No") == "No":
                 persona["caster"] = "Priest" if all(is_prayers(lore) for lore in lores) else "Wizard"
             log.spells.append((persona["name"], rule, f"every {' and '.join(lores)} spell"))

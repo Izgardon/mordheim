@@ -135,6 +135,35 @@ class HirelingSeederTests(TestCase):
         strength = Spell.objects.get(name="Dark Strength")
         self.assertEqual((strength.type, strength.roll, strength.dc), ("Spells of Wrath", 1, "7"))
 
+    def test_every_hired_sword_who_casts_names_the_lores_he_casts_from(self):
+        # the spells audit (27 Nov 2026): a hire set no lores, so his first spell could be picked from any list
+        rows = json.loads(Path("apps/hirelings/data/hired-swords.json").read_text(encoding="utf-8"))
+        lores = {row["name"]: row.get("spell_types") for row in rows if row.get("caster") != "No" or row.get("spell_picks")}  # fmt: skip
+        self.assertEqual(
+            lores,
+            {
+                "Warlock": ["Lesser Magic"],
+                "Elf Mage": ["Spells of the Djedhi"],
+                "Norse Shaman": ["Norse Runes"],
+                "Priest of Morr": ["Funerary Rites"],
+                "Runesmith Journeyman": ["Runes"],
+                "Warrior Priest of Sigmar": ["Prayers of Sigmar"],
+                "Witch": ["Charms and Hexes"],
+                "Wolf Priest of Ulric": ["Prayers of Ulric"],
+                "Dark Mage": ["Dark Magic", "Lesser Magic"],
+                "The Fallen Sister": ["Lesser Magic"],
+                "Dark Elf Sorceress (Dark Elf Corsairs)": ["Dark Elf Magic"],
+                "Trancas Quendalmanliye": ["Lesser Magic"],
+                "Necromancer": ["Necromancy"],
+                "Priest of Morr (Mousillon)": ["Rituals of Morr"],
+                "Alchemist": ["Potion Recipes"],
+                "Dark Maiden": ["Spells of Wrath"],
+                "White Lady": ["Spells of the Lake"],
+                "Genie": None,  # the element he rolls at hire: a question for William
+                "Warlock Engineer": None,  # Chain Lightning, and no other spell ever
+            },
+        )
+
     def test_a_spell_named_in_two_lores_is_the_one_of_his_own_lore(self):
         # the Mousillon Priest of Morr's rites linked the Vampire Hunters' Funerary Rites of their names: by name
         # alone, the last lore holding it won

@@ -118,7 +118,11 @@
       "unique_to": "All warbands, except Witch Hunters and Sisters of Sigmar, may hire the Mad Sorcerer.",
       "stays": "always",
       "payment_note": ""
-    }
+    },
+    "spell_types": [
+      "Arabian Elemental Magic",
+      "Necromancy"
+    ]
   },
   {
     "name": "Aenur, the Sword of Twilight",
@@ -540,7 +544,10 @@
       "unique_to": "Bertha Bestraufrung will only join Sisters of Sigmar warbands.",
       "stays": "always",
       "payment_note": ""
-    }
+    },
+    "spell_types": [
+      "Prayers of Sigmar"
+    ]
   },
   {
     "name": "Billie Rattenmörder and Butcher",
@@ -866,6 +873,9 @@
       "stays": "always",
       "payment_note": ""
     },
+    "spell_types": [
+      "Lore of Darkness"
+    ],
     "spell_picks": 4
   },
   {
@@ -1602,7 +1612,10 @@
       "payment_note": "",
       "available_skill_types": [],
       "available_special_skills": []
-    }
+    },
+    "spell_types": [
+      "Barbarian Shaman Magic"
+    ]
   },
   {
     "name": "Grand Master Ippan Shu",
@@ -1842,7 +1855,10 @@
       "payment_note": "",
       "available_skill_types": [],
       "available_special_skills": []
-    }
+    },
+    "spell_types": [
+      "Magic of the Horned Rat"
+    ]
   },
   {
     "name": "Hauppman Heinrich of the River Watch",
@@ -3753,7 +3769,10 @@
       "unique_to": "Any warband except Skaven, Undead, the Possessed and Witch Hunters may hire Nicodemus.",
       "stays": "always",
       "payment_note": ""
-    }
+    },
+    "spell_types": [
+      "Lesser Magic"
+    ]
   },
   {
     "name": "No-Eyes Ned",
@@ -4522,7 +4541,11 @@
       "payment_note": "",
       "available_skill_types": [],
       "available_special_skills": []
-    }
+    },
+    "spell_types": [
+      "Necromancy",
+      "Rituals of Hashut"
+    ]
   },
   {
     "name": "The Crow Master",
@@ -4611,7 +4634,10 @@
       "unique_to": "Any warband except Dwarfs, Elves, Sisters of Sigmar and Witch Hunters may hire Simius.",
       "stays": "always",
       "payment_note": ""
-    }
+    },
+    "spell_types": [
+      "Necromancy"
+    ]
   },
   {
     "name": "The Dark Jester in Mordheim",
@@ -4963,7 +4989,11 @@
       "payment_note": "",
       "available_skill_types": [],
       "available_special_skills": []
-    }
+    },
+    "spell_types": [
+      "Lesser Magic",
+      "Charms and Hexes"
+    ]
   },
   {
     "name": "The Headless Horseman",
@@ -5206,6 +5236,9 @@
       "stays": "always",
       "payment_note": ""
     },
+    "spell_types": [
+      "Lore of Light"
+    ],
     "spell_picks": 3
   },
   {
