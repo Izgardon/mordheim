@@ -2590,7 +2590,10 @@
       "unique_to": "Any warband may hire Khar-mel. However in order to summon her, a Wizard (or other spell caster, including a Priest) must pass a test on his own Leadership. This Wizard may be a Hired Sword, but must have been with the warband for at least one battle prior to attempting to summon Khar-mel. If the Wizard that summoned Khar-mel is killed or leaves the warband, Khar-mel will leave as well.",
       "stays": "always",
       "payment_note": ""
-    }
+    },
+    "spell_types": [
+      "Arabian Elemental Magic"
+    ]
   },
   {
     "name": "Kromwell the Blackhearted",

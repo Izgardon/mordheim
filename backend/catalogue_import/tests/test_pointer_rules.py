@@ -290,7 +290,7 @@ class CommittedPointerTests(SimpleTestCase):
                 "Dark Emissary": ["Lore of Darkness"],
                 "Gaz Er Unga Og": ["Barbarian Shaman Magic"],
                 "Grey Seer Neekit": ["Magic of the Horned Rat"],
-                "Khar-mel the Djinn": None,  # "the Elemental Magic list": a question for William
+                "Khar-mel the Djinn": ["Arabian Elemental Magic"],  # "the Elemental Magic list" (William, 27 Nov 2026)
                 "Nicodemus, the Cursed Pilgrim": ["Lesser Magic"],
                 "Slave Master Haggard, the Stone Daemon of Suidock": ["Necromancy", "Rituals of Hashut"],
                 "The Crow Master": ["Necromancy"],

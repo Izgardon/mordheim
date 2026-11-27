@@ -170,8 +170,9 @@ PERSONAE_ALSO_KNOW_LORE: dict[str, dict[str, list[str]]] = {
 PERSONAE_CASTERS: dict[str, str] = {"Khar-mel the Djinn": "Wizard"}
 # The lores a dramatis persona casts from, his rules name and his page doesn't list (the spells audit, 27 Nov 2026: a hire
 # set none, so his first spell could be picked from any list); one who knows a whole lore casts from it too. Khar-mel's
-# "Elemental Magic list" is William's to settle.
+# "Elemental Magic list" is Araby's, as Abdul's is (William, 27 Nov 2026).
 PERSONAE_LORES: dict[str, list[str]] = {
+    "Khar-mel the Djinn": ["Arabian Elemental Magic"],
     "Dark Emissary": ["Lore of Darkness"],  # "four randomly determined spells of the Lore of Darkness"
     "Truthsayer": ["Lore of Light"],
     "The Grandmother": ["Lesser Magic", "Charms and Hexes"],  # two of each, every battle
