@@ -57,6 +57,11 @@ STARTS_WITH: dict[str, dict[str, dict[str, list[str]]]] = {
     "Maneaters": {"Bull": {"Bull Charge": ["Bull Charge"]}},
     "Sea Ghosts": {"Minstrel": {"Songster": ["Songster"]}},
     "Woodsmen de Artois": {"Trapper": {"Set Traps": ["Set Traps"]}},  # the Ogre Hunting Party's Trapper's
+    # William, 27 Nov 2026, of two that held the rule as a special and the skill both: "drop the rule, keep the skill".
+    # "The Ogre Hunter has the Sabre Trainer skill: when a Sabretusk Cub ..." retells the skill
+    "Ogre Hunting Party": {"Ogre Hunter": {"Sabre Trainer": ["Sabre Trainer"]}},
+    # "A Sergeant has the animal handling skill Falconer, so he may use a hunting bird."
+    "Watchmen": {"Sergeant": {"Falconer": ["Falconer"]}},
     # "A Questing Knight starts with the skill Ride Warhorse."
     "Bretonnian Chapel Guard": {"Questing Knight": {"Ride": ["Ride [Animal]"]}},
     # "Brutes start the game with the Strongman skill from the Strength skill list"
@@ -93,11 +98,6 @@ STARTS_WITH: dict[str, dict[str, dict[str, list[str]]]] = {
 }
 # A rule that says he has one of our skills and more: he starts with the skills and the rule keeps its text.
 ALSO_STARTS_WITH: dict[str, dict[str, dict[str, list[str]]]] = {
-    # "The Ogre Hunter has the Sabre Trainer skill: when a Sabretusk Cub ... you may move it 3D6" towards any model
-    # within 12" of it that it can see, instead of the nearest" (William, 11 Nov 2026: it says more, so it keeps it)
-    "Ogre Hunting Party": {"Ogre Hunter": {"Sabre Trainer": ["Sabre Trainer"]}},
-    # "A Sergeant has the animal handling skill Falconer, so he may use a hunting bird."
-    "Watchmen": {"Sergeant": {"Falconer": ["Falconer"]}},
     "Knights of the Bitter Moors": {
         # "A Knight has the Ride skill for a horse or a warhorse (Blazing Saddles). He comes with his mount in his
         # cost"

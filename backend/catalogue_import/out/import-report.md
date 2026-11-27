@@ -974,7 +974,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 3993 |
 | warband rules | 512 |
 | upgrades | 179 |
-| the templates' own specials | 1119 |
+| the templates' own specials | 1117 |
 
 ### List lines
 
@@ -3649,7 +3649,7 @@ A fighter's or dramatis persona's own rule that only pointed to a skill, or said
 - Militant Mootlanders: Thief: Infiltration, starts with Infiltration.
 - Nipponese Expedition: Hatamoto: Ride, starts with Ride [Animal].
 - Nipponese Expedition: Retainer: Ride, starts with Ride [Animal].
-- Ogre Hunting Party: Ogre Hunter: Sabre Trainer, keeps the rule and starts with Sabre Trainer.
+- Ogre Hunting Party: Ogre Hunter: Sabre Trainer, starts with Sabre Trainer.
 - Pit Fighters: Pit King: Pit Fighter, starts with Pit Fighter.
 - Pit Fighters: Dwarf Troll Slayer: Pit Fighter, starts with Pit Fighter.
 - Pit Fighters: Pit Veteran: Pit Fighter, starts with Pit Fighter.
@@ -3668,7 +3668,7 @@ A fighter's or dramatis persona's own rule that only pointed to a skill, or said
 - The Cursed Cavalcade: Aristocrat: Expert Horseman, starts with Ride [Animal].
 - The Cursed Cavalcade: Companion: Expert Swordsman, starts with Expert Swordsman.
 - The Cursed Cavalcade: Fighting Ape: Agile (Fighting Ape), keeps the rule and starts with Scale Sheer Surfaces, Acrobat, Dodge.
-- Watchmen: Sergeant: Falconer, keeps the rule and starts with Falconer.
+- Watchmen: Sergeant: Falconer, starts with Falconer.
 - Woodsmen de Artois: Trapper: Set Traps, starts with Set Traps.
 - Grand Master Ippan Shu: Parry Missiles, keeps the rule and starts with Dodge.
 - Maximilian the Mad: Strongman, starts with Strongman.

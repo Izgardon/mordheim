@@ -805,7 +805,8 @@ class PdfImportTests(SimpleTestCase):
     def test_a_rule_that_says_more_than_the_skill_keeps_its_text_and_the_skill(self) -> None:
         # William, 11 Nov 2026: a fighter whose rule only names one of our skills starts with the skill and the rule
         # goes (the Estalian Captain's Expert Swordsman, the Hatamoto's Ride); one that says more keeps its text and
-        # starts with the skill too (the Ogre Hunter's Sabre Trainer, the Watchmen Sergeant's Falconer).
+        # starts with the skill too. The Ogre Hunter's Sabre Trainer and the Watchmen Sergeant's Falconer, which said
+        # the skill again, are the skill alone (William, 27 Nov 2026: "drop the rule, keep the skill").
         def fighter(slug: str, name: str) -> dict[str, Any]:
             return next(row for row in self.templates[slug]["fighters"] if row["name"] == name)
 
@@ -815,7 +816,7 @@ class PdfImportTests(SimpleTestCase):
         ):
             row = fighter(slug, name)
             self.assertEqual(row["skills"], [skill])
-            self.assertIn(skill, [special["name"] for special in row["specials"]])
+            self.assertNotIn(skill, [special["name"] for special in row["specials"]])
         for slug, name, skill in (
             ("estalian-corsairs", "Pirate Captain", "Expert Swordsman"),
             ("nipponese-expedition", "Hatamoto", "Ride [Animal]"),
