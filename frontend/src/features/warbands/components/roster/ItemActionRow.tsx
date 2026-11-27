@@ -1,10 +1,8 @@
-import { useState } from "react";
-
 import { Button } from "@/components/ui/button";
-import { NumberInput } from "@/components/ui/number-input";
 import { SectionedSelect } from "@/components/ui/sectioned-select";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
+import SellControl from "./SellControl";
 import { placeOf, unitSections } from "./unit-sections";
 import type { RosterUnit } from "./unit-view";
 
@@ -36,10 +34,6 @@ export default function ItemActionRow({
   /** The sale price offered: the copies' suggested price. */
   suggested: number;
 }) {
-  const [selling, setSelling] = useState(false);
-  const [price, setPrice] = useState(String(suggested));
-  const sellFor = Number(price) || 0;
-
   return (
     <div data-testid="item-actions" className="flex flex-wrap items-center gap-1">
       {actions.ride ? (
@@ -76,26 +70,7 @@ export default function ItemActionRow({
       >
         Stash
       </Button>
-      {selling ? (
-        <span className="flex items-center gap-1.5">
-          <NumberInput
-            compact
-            aria-label="Sale price"
-            inputSize="sm"
-            className="h-8 w-16"
-            containerClassName="h-8"
-            value={price}
-            onChange={(event) => setPrice(event.target.value)}
-          />
-          <Button size="sm" className={SMALL} onClick={() => actions.onSell(sellFor)}>
-            Sell for {sellFor} gc
-          </Button>
-        </span>
-      ) : (
-        <Button size="sm" variant="secondary" className={SMALL} onClick={() => setSelling(true)}>
-          Sell
-        </Button>
-      )}
+      <SellControl suggested={suggested} onSell={actions.onSell} className={SMALL} />
       <Button size="sm" variant="secondary" className={SMALL} onClick={actions.onBuyAgain}>
         Buy again
       </Button>
