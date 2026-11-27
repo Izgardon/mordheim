@@ -56,6 +56,9 @@ class HirelingProfile(WrittenStatBlock, CatalogueEntry):
     # how many spells he picks at hire (William, 26 Nov 2026: the Warlock's two random spells); null: the usual one
     # for a Wizard or Priest who knows none (units/services/hire.py)
     spell_picks = models.PositiveSmallIntegerField(null=True, blank=True)
+    # the lores he casts from, by name, which a hire's spell picker offers first (William, 27 Nov 2026, of the Dark
+    # Maiden's Spells of Wrath: his lore, not spells he knows)
+    available_spell_types = models.JSONField(default=list, blank=True)
     race_label = models.CharField(max_length=60, blank=True, default="")
     hire_fee = models.JSONField(default=no_fee)
     upkeep_fee = models.JSONField(default=no_fee)

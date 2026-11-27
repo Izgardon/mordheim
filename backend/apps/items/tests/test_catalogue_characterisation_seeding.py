@@ -99,7 +99,9 @@ class SeedAllTests(TestCase):
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 572,  # the import's 530 (one per name, the Marienburg Annual's nine (eight new Strength and Combat skills and Resilience (Annual)), Relics of the Crusades' ten Holy skills and its Smith (Academic), Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 42 hired swords' own skills the book lacks (the Runesmith's Rune Use and Durable are his rules, William, 21 Nov 2026), 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 142,  # the import's 111 (Athel Loren's three, Relics of the Crusades' Holy) + a group of his own for each of 27 hired swords, 9 of them broheim's hireling sections'
-                "Spell": 516,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026); the Marienburg Annual's eight College lores, 48 spells, and Slave Master Haggard's Combustion (23 Nov 2026); Mutiny in Marienburg's seven prayer lists of its own, 42 prayers (26 Nov 2026; its Taal list is ours)
+                # the Mousillon Priest of Morr's Rituals of Morr are his lore (William, 27 Nov 2026), so his four that
+                # share a name with the Funerary Rites, worded otherwise, are made in it rather than linking those: 4 more
+                "Spell": 520,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's) + the Nehekhara Tomb Guards' six, the Mortuary Cult scrolls as their own page prints them (William, 13 Nov 2026: two lores); Relics of the Crusades' six, the Runesmith's six Runes and the Alchemist's six Potion Recipes (William, 21 Nov 2026); the Marienburg Annual's eight College lores, 48 spells, and Slave Master Haggard's Combustion (23 Nov 2026); Mutiny in Marienburg's seven prayer lists of its own, 42 prayers (26 Nov 2026; its Taal list is ours)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -1129,11 +1131,21 @@ class SeedAllTests(TestCase):
         amazons = SkillGroup.objects.get(name="Amazons").warband_links.values_list("warband_group__slug", flat=True)
         self.assertEqual(list(amazons), ["amazons"])  # both Amazons types, stored as their group
 
-    def test_the_dark_mage_knows_his_six_spells(self):
+    def test_the_dark_mage_casts_from_his_six_spells(self):
         # BUG-54, CAT-TEST-13: the "1 - " to "6 - " prefixes kept his spells from matching; they are his own spells,
         # written as book spells with the roll from the prefix and the difficulty from the text, in the lore his rules
-        # name them by, Dark Magic (the review, 5 Nov 2026: D3; they were "Hired Sword - Dark Mage")
-        spells = Spell.objects.filter(hired_sword_spells__hired_sword__name="Dark Mage").order_by("roll")
+        # name them by, Dark Magic (the review, 5 Nov 2026: D3; they were "Hired Sword - Dark Mage"). They are his lore,
+        # not spells he knows (William, 27 Nov 2026: "Yes give them random correct number of spells"): he picks one
+        dark_mage = HiredSword.objects.get(name="Dark Mage")
+        self.assertEqual((dark_mage.available_spell_types, dark_mage.spell_links.count()), (["Dark Magic", "Lesser Magic"], 0))  # fmt: skip
+        lores = {
+            name: (row.available_spell_types, row.spell_picks, row.spell_links.count())
+            for name in ("Dark Maiden", "White Lady", "Priest of Morr (Mousillon)")
+            for row in [HiredSword.objects.get(name=name)]
+        }
+        self.assertEqual(lores, {"Dark Maiden": (["Spells of Wrath"], 2, 0), "White Lady": (["Spells of the Lake"], None, 0), "Priest of Morr (Mousillon)": (["Rituals of Morr"], 2, 0)})  # fmt: skip
+        self.assertTrue(Spell.objects.filter(type="Rituals of Morr", is_prayer=True).exists())
+        spells = Spell.objects.filter(campaign__isnull=True, type="Dark Magic").order_by("roll")
 
         self.assertEqual(
             [(spell.roll, spell.name, spell.dc, spell.type) for spell in spells],

@@ -73,7 +73,11 @@ class PrayerLoreTests(SimpleTestCase):
     def test_every_prayer_list_named_is_a_lore_we_hold(self) -> None:
         lores = {row["type"] for row in book_rows()}
         swords = json.loads(HIRED_SWORDS.read_text(encoding="utf-8"))
-        lores |= {f"Hired Sword - {sword['name']}" for sword in swords if sword.get("spells")}
+        lores |= {
+            sword.get("spell_lore") or f"Hired Sword - {sword['name']}"
+            for sword in swords
+            if sword.get("spells") or sword.get("lore_spells")
+        }
         named = json.loads(PRAYER_LORES_PATH.read_text(encoding="utf-8"))
         self.assertEqual([name for name in named if name not in lores], [])
         self.assertTrue(set(MIM_LISTS) <= set(named))
@@ -106,11 +110,13 @@ class PrayerMarkTests(TestCase):
     def test_a_hired_swords_own_spell_is_made_as_his_lore_is(self) -> None:
         lookups = BookLookups()
         rite = lookups.spell(
-            {"name": "5 - Presence of Morr", "description": "Difficulty: 7"}, "Priest of Morr (Mousillon)"
+            {"name": "5 - Presence of Morr", "description": "Difficulty: 7"},
+            "Priest of Morr (Mousillon)",
+            "Rituals of Morr",
         )
         mage = lookups.spell({"name": "1 - Shade Step", "description": "Difficulty: 7"}, "Dark Mage")
         assert rite is not None and mage is not None
-        self.assertEqual((rite.type, rite.is_prayer), ("Hired Sword - Priest of Morr (Mousillon)", True))
+        self.assertEqual((rite.type, rite.is_prayer), ("Rituals of Morr", True))
         self.assertFalse(mage.is_prayer)
 
 

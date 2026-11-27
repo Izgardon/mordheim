@@ -2,11 +2,14 @@
 seed_dramatis_personae read the same shape.
 
 Each row is an object: `name`, `description` (fluff), the nine characteristics, `armour_save` ("4+" or null),
-`large`, `caster`, `skills`, `specials`, `spells` (his own under `spell_lore` where it is given, else under "Hired
-Sword - <name>"; a spell line may name its own `lore`, for one whose spells come from several) and `equipment` (`{"item", "quantity", "item_type"?}` or an item's
+`large`, `caster`, `skills`, `specials`, `spells` (the spells he knows: his own under `spell_lore` where it is given,
+else under "Hired Sword - <name>"; a spell line may name its own `lore`, for one whose spells come from several),
+`lore_spells` (his own lore's spells, made in the book under `spell_lore` as `spells` are, which he casts from and
+does not know: the Dark Maiden's Spells of Wrath) and `equipment` (`{"item", "quantity", "item_type"?}` or an item's
 name), and the hire terms in one object (`hired_sword`, or `dramatis_persona`): `hire_fee` and `upkeep_fee` (structured
 fees, fees.py; or `hire_cost` and `upkeep_cost` in gold with a `*_cost_expression` kept as the note), `rating`,
-`grade`, `race`, `unique_to`, `available_skill_types` and `available_special_skills`; a dramatis persona's adds
+`grade`, `race`, `unique_to`, `available_skill_types`, `available_spell_types` (the lores he casts from) and
+`available_special_skills`; a dramatis persona's adds
 `stays` ("always" or "one_battle") and `payment_note`.
 
 Who may hire a row, its fees and the book's sentence come from the catalogue import (`out/who-can.json`, mordheimer's
@@ -128,6 +131,7 @@ class _Run:
             "large": bool(data.get("large", False)),
             "caster": data.get("caster") or "No",
             "spell_picks": data.get("spell_picks"),  # how many he picks at hire; none: the usual one
+            "available_spell_types": list(terms.get("available_spell_types") or []),  # the lores he casts from
             **read_stats(data, label),  # fail loudly (BUG-54)
             "rating": parse_int(terms["rating"]) if terms.get("rating") is not None else None,
             "grade": clean(terms.get("grade")),

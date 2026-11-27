@@ -297,10 +297,12 @@ class BookLookups:
 
     def links(self, data: dict[str, Any], owner: str) -> EntryLinks:
         """The skills, specials, spells and equipment a seeded entry lists, resolved in the book (its own specials and
-        spells created there); unresolved ones are warned about and left out, and two names for one shared special
-        link it once."""
+        spells created there, and his lore's `lore_spells`, which he casts from and does not know); unresolved ones are
+        warned about and left out, and two names for one shared special link it once."""
         specials = [special for item in data.get("specials", []) if (special := self.special(item, owner))]
         lore = str(data.get("spell_lore") or "")
+        for item in data.get("lore_spells", []):
+            self.spell(item, owner, _lore(item, lore))
         links = EntryLinks(
             skills=[skill for name in data.get("skills", []) if (skill := self.skill(name, owner))],
             specials=list(dict.fromkeys(specials)),

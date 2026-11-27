@@ -3520,7 +3520,6 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
-    "spell_lore": "Dark Magic",
     "specials": [
       {
         "name": "Wizard",
@@ -3536,7 +3535,8 @@
       }
     ],
     "skills": [],
-    "spells": [
+    "spell_lore": "Dark Magic",
+    "lore_spells": [
       {
         "name": "1 - Banishment",
         "description": "Difficulty 8. Pulling the energies of death to him, the Dark Mage dispels the power of the undead. All Undead within 4” of the Dark Mage must take an unmodified Leadership Test or suffer a S4 hit."
@@ -3580,7 +3580,11 @@
       "available_special_skills": [],
       "grade": "2a",
       "rating": 18,
-      "race": "Human"
+      "race": "Human",
+      "available_spell_types": [
+        "Dark Magic",
+        "Lesser Magic"
+      ]
     }
   },
   {
@@ -6719,6 +6723,7 @@
     "armour_save": null,
     "large": false,
     "caster": "Priest",
+    "spell_picks": 2,
     "specials": [
       {
         "name": "My God Is With Me",
@@ -6738,7 +6743,8 @@
       }
     ],
     "skills": [],
-    "spells": [
+    "spell_lore": "Rituals of Morr",
+    "lore_spells": [
       {
         "name": "1 - Morr's Protection",
         "description": "Difficulty 7. Any magical attack or prayer made by a spellcaster or priest who is not of Morr, and which would be a direct attack on the Priest, is negated on a 4+. While the protection lasts, a damaging spell may never put the Priest out of action: treat an out of action result as stunned. The prayer stays in play until it successfully saves against such an attack."
@@ -6801,7 +6807,10 @@
         "Academic",
         "Combat"
       ],
-      "available_special_skills": []
+      "available_special_skills": [],
+      "available_spell_types": [
+        "Rituals of Morr"
+      ]
     }
   },
   {
@@ -6896,6 +6905,7 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_picks": 2,
     "specials": [
       {
         "name": "Fear",
@@ -6907,7 +6917,8 @@
       }
     ],
     "skills": [],
-    "spells": [
+    "spell_lore": "Spells of Wrath",
+    "lore_spells": [
       {
         "name": "1 - Dark Strength",
         "description": "Difficulty 8. The Dark Maiden may pick herself or any one friendly model within 6\". That model gains +1 Attack and scores a critical hit on a 5+. The spell lasts until the beginning of her next magic or shooting phase."
@@ -6969,7 +6980,10 @@
         "Academic",
         "Speed"
       ],
-      "available_special_skills": []
+      "available_special_skills": [],
+      "available_spell_types": [
+        "Spells of Wrath"
+      ]
     }
   },
   {
@@ -6999,7 +7013,8 @@
       }
     ],
     "skills": [],
-    "spells": [
+    "spell_lore": "Spells of the Lake",
+    "lore_spells": [
       {
         "name": "1 - Early Morning Fog",
         "description": "Difficulty 8. Anyone shooting at the White Lady, or at any friendly model within 6\", is at -1 to hit. Models in the mist suffer no critical hits. The spell lasts until the beginning of her next magic or shooting phase."
@@ -7074,7 +7089,10 @@
         "Academic",
         "Speed"
       ],
-      "available_special_skills": []
+      "available_special_skills": [],
+      "available_spell_types": [
+        "Spells of the Lake"
+      ]
     }
   },
   {

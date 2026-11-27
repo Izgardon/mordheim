@@ -117,6 +117,24 @@ class HirelingSeederTests(TestCase):
         # the warband types aren't seeded: his own fees, everyone may hire him, and his "unique to" is the note
         self.assertEqual((ogre.for_everyone, ogre.hire_note, ogre.warband_links.count()), (True, "Mercenaries only", 0))
 
+    def test_his_lores_spells_are_made_in_the_book_and_none_is_one_he_knows(self):
+        # William, 27 Nov 2026, of the Dark Maiden, who "starts with two of them, determined at random": her Spells of
+        # Wrath are her lore (`lore_spells`, under `spell_lore`), which she casts from, not six spells she knows
+        maiden = {
+            **OGRE,
+            "caster": "Wizard",
+            "spell_lore": "Spells of Wrath",
+            "lore_spells": [{"name": "1 - Dark Strength", "description": "Difficulty 7. +1 Strength."}],
+            "spells": [],
+            "hired_sword": {**OGRE["hired_sword"], "available_spell_types": ["Spells of Wrath"]},
+        }
+        with data_file([maiden]) as path:
+            run("seed_hired_swords", json_paths=[path])
+        ogre = HiredSword.objects.get()
+        self.assertEqual((ogre.available_spell_types, ogre.spell_links.count()), (["Spells of Wrath"], 0))
+        strength = Spell.objects.get(name="Dark Strength")
+        self.assertEqual((strength.type, strength.roll, strength.dc), ("Spells of Wrath", 1, "7"))
+
     def test_one_who_starts_with_several_spells_keeps_how_many_he_picks(self):
         with data_file([{**OGRE, "caster": "Wizard", "spell_picks": 2}, RUNESMITH]) as path:
             run("seed_hired_swords", json_paths=[path])
@@ -136,6 +154,8 @@ class HirelingSeederTests(TestCase):
                 "Dark Elf Sorceress (Dark Elf Corsairs)": 2,
                 "Trancas Quendalmanliye": 2,
                 "Alchemist": 2,  # two potion recipes
+                "Dark Maiden": 2,  # "She starts with two of them, determined at random"
+                "Priest of Morr (Mousillon)": 2,  # "He begins with two, determined at random"
                 "Genie": 1,  # "He starts with one spell", typed no caster (William, 27 Nov 2026: "YES")
             },
         )

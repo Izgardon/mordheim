@@ -52,6 +52,7 @@ COPIED = (  # with the nine characteristics, written values as written (stat_inp
     "armour_save",
     "large",
     "caster",
+    "available_spell_types",
     "hire_fee",
     "upkeep_fee",
 )

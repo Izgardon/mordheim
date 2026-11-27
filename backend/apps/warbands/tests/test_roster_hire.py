@@ -77,6 +77,13 @@ class HireCopyTests(HireTestCase):
         self.ogre.spell_links.all().delete()
         self.assertEqual(self.hire(name="Third").data["pending_spells"], 0)
 
+    def test_a_hire_casts_from_his_lores(self):
+        # William, 27 Nov 2026, of the Dark Maiden ("Yes give them random correct number of spells"): his lore is what
+        # he casts from, which the spell picker offers first, not spells he knows
+        HiredSword.objects.filter(id=self.ogre.id).update(caster="Wizard", available_spell_types=["Spells of Wrath"])
+        body = self.hire().data
+        self.assertEqual((body["available_spell_types"], body["pending_spells"]), (["Spells of Wrath"], 1))
+
     def test_one_who_starts_with_several_spells_has_that_many_to_pick(self):
         # William, 26 Nov 2026: "there are a few hired swords that start with multiple" (the Warlock's two random
         # spells): his `spell_picks`, whatever he casts as
