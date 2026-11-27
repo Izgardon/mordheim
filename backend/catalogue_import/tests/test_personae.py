@@ -71,6 +71,17 @@ class PersonaRowTests(SimpleTestCase):
 
         self.assertEqual([persona_row(row, CATALOGUE)["caster"] for row in (wizard, priest, AENUR)], ["Wizard", "Priest", "No"])  # fmt: skip
 
+    def test_a_rule_written_as_a_spell_says_its_difficulty_once_and_drops_its_flavour(self) -> None:
+        # the spells audit (27 Nov 2026, L1): the Crow Master's Decay of Ages read "Difficulty: 9" and kept the
+        # site's italics around its flavour
+        decay = {
+            "rulename": "Decay of Ages",
+            "ruleFull": "Difficulty: 9<br /><br />*He gestures.*<br /><br />A warrior must test.",
+        }
+        row = persona_row({**AENUR, "specialRules": [decay]}, CATALOGUE)
+
+        self.assertEqual(row["specials"][0]["description"], "Difficulty 9. A warrior must test.")
+
     def test_a_plain_skill_list_is_read_after_its_colon_and_prose_left_out(self) -> None:
         text = "He has the following skills: Horse Archer, Pistolier, and Strongman. (and yes, he may)"
 

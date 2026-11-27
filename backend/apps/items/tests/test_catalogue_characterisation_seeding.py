@@ -1159,7 +1159,7 @@ class SeedAllTests(TestCase):
                 (2, "Soul Render", "8", "Dark Magic"),
                 (3, "Shade Mount", "8", "Dark Magic"),
                 (4, "Jozun's Decay", "9", "Dark Magic"),
-                (5, "Cowel of Pain", "6", "Dark Magic"),
+                (5, "Cowl of Pain", "6", "Dark Magic"),  # "Cowel" (the spells audit's L3)
                 (6, "Doom & Dark", "7", "Dark Magic"),
             ],
         )

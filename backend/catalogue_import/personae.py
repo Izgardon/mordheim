@@ -30,6 +30,8 @@ STATS = {
 NAMED = re.compile(r"<(Tooltip|a)\b[^>]*>(.*?)</\1>", re.S | re.I)
 LEADING_NUMBER = re.compile(r"^\s*(\d+)")
 CASTERS = ("Wizard", "Priest")
+DIFFICULTY = re.compile(r"^Difficulty: (\d+)\s*")  # a rule written as a spell (the Crow Master's Decay of Ages)
+FLAVOUR = re.compile(r"^\*[^*\n]+\*$")  # a paragraph the site sets in italics: the spell's flavour
 ONE_BATTLE = re.compile(r"\bwanderers?\b|for the duration of (?:the|one|a) battle|only ever stays", re.I)
 
 
@@ -89,9 +91,17 @@ def _rules(entry: dict[str, Any]) -> list[dict[str, Any]]:
     return rules
 
 
+def _rule_text(text: str) -> str:
+    """A rule's text, a rule written as a spell saying its difficulty once as a spell's does ("Difficulty 9. ...")
+    and without the flavour the site sets in italics (the spells audit, 27 Nov 2026: L1)."""
+    paragraphs = [part for part in text.split("\n\n") if not FLAVOUR.match(part.strip())]
+    text = "\n\n".join(paragraphs)
+    return DIFFICULTY.sub(lambda found: f"Difficulty {found.group(1)}. ", text, count=1)
+
+
 def _specials(entry: dict[str, Any], rules: list[dict[str, Any]]) -> list[dict[str, str]]:
     specials = [
-        {"name": clean_inline(rule.get("rulename")), "description": clean_inline(rule.get("ruleFull"))}
+        {"name": clean_inline(rule.get("rulename")), "description": _rule_text(clean_inline(rule.get("ruleFull")))}
         for rule in rules
         if clean_inline(rule.get("rulename"))
     ]
