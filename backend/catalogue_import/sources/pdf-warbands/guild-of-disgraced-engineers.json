@@ -182,6 +182,7 @@
       "name": "Cinderblast Bomb",
       "type": "Weapon",
       "subtype": "Ranged",
+      "cost": 45,
       "rarity": 10,
       "dice": 3,
       "rulesPage": 2,

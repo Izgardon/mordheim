@@ -88,15 +88,15 @@ def _rules(
 
 def _availability(item: dict[str, Any], row: dict[str, Any], reader: MimReader, log: MimLog) -> dict[str, Any]:
     restriction = clean_inline(row.get("unique_to"))
-    rarity, rarity_note = parse_rarity(row.get("rarity"))
+    rarity = parse_rarity(row.get("rarity"))
     warbands = reader.warbands(restriction) if restriction else None
-    note = rarity_note
+    note = ""
     if warbands is not None:
         names = ", ".join(entry.get("group") or entry.get("type") or "" for entry in warbands)
         log.as_lists.append((item["name"], restriction, names))
     elif restriction:
         log.as_notes.append((item["name"], restriction))
-        note = "; ".join(filter(None, [restriction, rarity_note]))
+        note = restriction
     return {
         "label": "",
         **mim_cost(row.get("cost"), row.get("variable_cost")),

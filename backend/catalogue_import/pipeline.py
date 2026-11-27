@@ -13,7 +13,7 @@ from catalogue_import.grading import build_settings, collect_evidence
 from catalogue_import.groups import build_groups
 from catalogue_import.hiring import HiringLog, build_who_can
 from catalogue_import.injuries import build_serious_injuries
-from catalogue_import.item_overrides import add_notes, set_own_rules
+from catalogue_import.item_overrides import add_notes, set_own_rules, set_row_notes
 from catalogue_import.item_saves import set_saves
 from catalogue_import.item_splits import as_printed, choose_items, read_splits, render_splits, split_rows
 from catalogue_import.item_subtypes import merge_subtypes
@@ -263,6 +263,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         rule["used_by"] = sum({"rule": rule["slug"]} in item["rules"] for item in everything)
     word_item_rules(everything, wordings)  # an item's own wording of a reworded rule: dropped, or only what is its own
     add_notes(everything, overrides.get("item_notes", {}))
+    set_row_notes(everything, overrides.get("item_row_notes", {}))
     set_own_rules(everything, overrides.get("item_own_rules", {}))
     set_saves(everything, overrides.get("item_saves", {}))  # what equipping it does to the save (18 Nov 2026)
     set_single_use(everything, overrides.get("single_use_items", []))  # what a battle uses up (26 Nov 2026)

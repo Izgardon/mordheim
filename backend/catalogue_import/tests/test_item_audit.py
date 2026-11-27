@@ -94,3 +94,41 @@ class PlaceholderTests(ItemAuditCase):
         rules = self.items["Dispel Scroll"]["rules"]
         self.assertEqual([self.placeholder(rule) for rule in rules], [True])
         self.assertEqual(self.items["Dispel Scroll"]["flavour"], "")
+
+
+class BuyingNoteTests(ItemAuditCase):
+    def notes(self) -> list[tuple[str, str, str]]:
+        return [
+            (name, key, row[key])
+            for name, item in self.items.items()
+            for row in item["availabilities"]
+            for key in ("note", "cost_note")
+            if row[key]
+        ]
+
+    def test_no_buying_note_is_the_imports_own_residue(self) -> None:
+        # "No rarity in the source; No price in the source", "Rarity in the source: Common?", "All warbands*"
+        for name, key, text in self.notes():
+            with self.subTest(item=name, key=key):
+                self.assertNotIn("in the source", text)
+                self.assertNotIn("?", text)
+                self.assertNotIn("*", text)
+        self.assertEqual(self.rows("Nehekharan Javelins", "tomb-guardians"), [(10, None, None, "Tomb Lord only")])
+
+    def test_a_note_shutting_warbands_out_sits_only_on_the_row_open_to_everyone(self) -> None:
+        for name in ("Black Lotus", "Dark Venom"):
+            for row in self.items[name]["availabilities"]:
+                with self.subTest(item=name, label=row["label"], everyone=row["for_everyone"]):
+                    shut_out = "Not available to" in row["note"]
+                    self.assertEqual(shut_out, row["for_everyone"])
+
+    def test_the_familiars_terms_are_its_buying_note_and_its_cost_is_plain(self) -> None:
+        (row,) = self.items["Familiar"]["availabilities"]
+        self.assertEqual((row["cost"], row["dice"], row["cost_note"]), (20, 1, ""))
+        self.assertEqual(
+            row["note"], "Only spellcasters may search for one, and the gold is spent even if the rarity roll fails."
+        )
+
+    def test_the_cinderblast_bombs_dice_show_once(self) -> None:
+        (row,) = self.items["Cinderblast Bomb"]["availabilities"]
+        self.assertEqual((row["cost"], row["dice"], row["cost_note"]), (45, 3, ""))

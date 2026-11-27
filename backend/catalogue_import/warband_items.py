@@ -171,7 +171,7 @@ def special_equipment_items(
         rarity = int(match.group(1)) if match and match.group(1) else None
         note = clean_inline((match.group(2) or match.group(3)) if match else "").strip()
         lines = [{**line, "excluded": False} for line in collapse([warband["slug"]], groups)]
-        row = _row(mordheimer_cost(entry.get("cost")), parse_rarity(rarity or 0)[0], lines, note)
+        row = _row(mordheimer_cost(entry.get("cost")), parse_rarity(rarity or 0), lines, note)
         fields = {**_equipment_fields(entry, name, index), "availabilities": [row], "link_url": warband["link_url"]}
         items.append(
             _item(

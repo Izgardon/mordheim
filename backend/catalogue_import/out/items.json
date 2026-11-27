@@ -2310,7 +2310,7 @@
             "excluded": false
           }
         ],
-        "note": "No rarity in the source; No price in the source"
+        "note": ""
       }
     ],
     "save_bonus": 3,
@@ -4544,7 +4544,7 @@
             "excluded": false
           }
         ],
-        "note": "No rarity in the source; No price in the source"
+        "note": ""
       }
     ]
   },
@@ -8109,7 +8109,7 @@
             "excluded": false
           }
         ],
-        "note": "Not available to Witch Hunters, Warrior-Priests or Sisters of Sigmar"
+        "note": ""
       },
       {
         "label": "Skink heroes",
@@ -8125,7 +8125,7 @@
             "excluded": false
           }
         ],
-        "note": "Not available to Witch Hunters, Warrior-Priests or Sisters of Sigmar"
+        "note": ""
       },
       {
         "label": "",
@@ -8892,7 +8892,7 @@
             "excluded": false
           }
         ],
-        "note": "Not available to Witch Hunters, Warrior-Priests or Sisters of Sigmar"
+        "note": ""
       },
       {
         "label": "Skink heroes",
@@ -8908,7 +8908,7 @@
             "excluded": false
           }
         ],
-        "note": "Not available to Witch Hunters, Warrior-Priests or Sisters of Sigmar"
+        "note": ""
       },
       {
         "label": "",
@@ -9314,7 +9314,7 @@
         "cost": 20,
         "dice": 1,
         "dice_multiplier": null,
-        "cost_note": "Gold is spent even on unsuccessful rare roll",
+        "cost_note": "",
         "rarity": 8,
         "for_everyone": true,
         "warbands": [
@@ -9323,7 +9323,7 @@
             "excluded": true
           }
         ],
-        "note": "All warbands*, only spell casters may attempt to find"
+        "note": "Only spellcasters may search for one, and the gold is spent even if the rarity roll fails."
       }
     ]
   },
@@ -12839,7 +12839,7 @@
             "excluded": false
           }
         ],
-        "note": "Rarity in the source: Common?"
+        "note": ""
       }
     ]
   },
@@ -14349,7 +14349,7 @@
             "excluded": false
           }
         ],
-        "note": "Rarity in the source: Special"
+        "note": ""
       },
       {
         "label": "Mutiny in Marienburg",
@@ -15162,7 +15162,7 @@
             "excluded": false
           }
         ],
-        "note": "No rarity in the source; No price in the source"
+        "note": ""
       }
     ]
   },
@@ -15530,7 +15530,7 @@
             "excluded": false
           }
         ],
-        "note": "Tomb Lord only; Rarity in the source: Common?"
+        "note": "Tomb Lord only"
       }
     ]
   },
@@ -23274,7 +23274,7 @@
         "cost": 45,
         "dice": 3,
         "dice_multiplier": null,
-        "cost_note": "+3D6",
+        "cost_note": "",
         "rarity": 10,
         "for_everyone": false,
         "warbands": [

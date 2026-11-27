@@ -42,10 +42,12 @@ class CostTests(SimpleTestCase):
 
 class RarityTests(SimpleTestCase):
     def test_zero_is_common(self) -> None:
-        self.assertEqual(parse_rarity(0), (None, ""))
-        self.assertEqual(parse_rarity(9), (9, ""))
-        self.assertEqual(parse_rarity("8"), (8, ""))
+        self.assertEqual(parse_rarity(0), None)
+        self.assertEqual(parse_rarity(9), 9)
+        self.assertEqual(parse_rarity("8"), 8)
 
-    def test_odd_values_say_so(self) -> None:
-        self.assertEqual(parse_rarity("Common?"), (None, "Rarity in the source: Common?"))
-        self.assertEqual(parse_rarity(""), (None, "No rarity in the source"))
+    def test_odd_values_are_common_and_say_nothing(self) -> None:
+        # the items audit, 27 Nov 2026: "Rarity in the source: Common?" was the import's residue on a buying note
+        for value in ("Common?", "Special", "", "Common"):
+            with self.subTest(value=value):
+                self.assertEqual(parse_rarity(value), None)

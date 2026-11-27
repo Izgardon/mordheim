@@ -142,7 +142,7 @@ def _override_rows(
     name, resolve = item["name"], ctx.reader.resolver.resolve
     by_rarity: dict[int, list[str]] = {}
     for entry in item.get("warbandRarityOverride") or []:
-        value = parse_rarity(entry.get("availability"))[0] or 0
+        value = parse_rarity(entry.get("availability")) or 0
         by_rarity.setdefault(value, []).extend(resolve(entry.get("warband", ""), "items"))
     pairs = []
     for value, slugs in by_rarity.items():
@@ -188,25 +188,26 @@ def mordheimer_rows(item: dict[str, Any], ctx: Context) -> list[dict[str, Any]]:
 def _price_rows(item: dict[str, Any], ctx: Context) -> list[dict[str, Any]]:
     found = read_statements(item, ctx.reader)
     cost = mordheimer_cost(item.get("cost"))
-    rarity, rarity_note = parse_rarity(item.get("availability"))
+    rarity = parse_rarity(item.get("availability"))
     everyone, included, shut_out = _who(item, found, ctx)
     warbands = _warbands(included, False, ctx) + _warbands(shut_out, True, ctx)
     notes = _notes(item, found)
-    if cost["cost"] is None and not cost["cost_note"]:
-        if not everyone and not included:
-            return []  # the Fist: nothing to buy
-        rarity_note = "; ".join(filter(None, [rarity_note, "No price in the source"]))
-    base_note = "; ".join(notes + ([rarity_note] if rarity_note else []))
+    if cost["cost"] is None and not cost["cost_note"] and not everyone and not included:
+        return []  # the Fist: nothing to buy
+    base_note = "; ".join(notes)
     rows = [_row(cost, rarity, everyone, warbands, base_note)]
     brace = (item.get("cost") or {}).get("braceCost")
     if isinstance(brace, dict):
-        brace_rarity = parse_rarity(item["braceAvailability"])[0] if "braceAvailability" in item else rarity
+        brace_rarity = parse_rarity(item["braceAvailability"]) if "braceAvailability" in item else rarity
         rows.append(_row(mordheimer_cost(brace), brace_rarity, everyone, warbands, base_note, "Brace"))
+    # a row for the warbands it names says nothing of the ones the item shuts out ("Not available to Witch
+    # Hunters" on the Lizardmen's Black Lotus: the items audit, 27 Nov 2026)
+    named = "; ".join(note for note in notes if not note.lower().startswith("not available to"))
     for value, slugs in _override_rows(item, found, cost, shut_out, ctx):
         if slugs:
-            rows.append(_row(cost, value or None, False, _warbands(slugs, False, ctx), "; ".join(notes)))
+            rows.append(_row(cost, value or None, False, _warbands(slugs, False, ctx), named))
     if found.skink_cost is not None:
         skinks = ctx.reader.resolver.resolve("Lizardmen", "items")
         flat: Cost = {"cost": found.skink_cost, "dice": None, "dice_multiplier": None, "cost_note": ""}
-        rows.append(_row(flat, None, False, _warbands(skinks, False, ctx), "; ".join(notes), "Skink heroes"))
+        rows.append(_row(flat, None, False, _warbands(skinks, False, ctx), named, "Skink heroes"))
     return rows

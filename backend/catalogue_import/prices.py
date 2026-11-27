@@ -60,17 +60,12 @@ def mim_cost(base: object, variable: object) -> Cost:
     }
 
 
-def parse_rarity(value: object) -> tuple[int | None, str]:
-    """(rarity, note). 0 and "Common" are Common (None). Odd values ("Common?", "Special", "") say so in the note."""
+def parse_rarity(value: object) -> int | None:
+    """A rarity, None for Common: 0, "Common", and the odd values ("Common?", "Special", "") are Common, which a
+    player is never told is the import's guess (the items audit, 27 Nov 2026)."""
     if isinstance(value, bool):
-        return None, ""
+        return None
     if isinstance(value, int | float):
-        return (None, "") if int(value) == 0 else (int(value), "")
+        return int(value) or None
     text = str(value or "").strip()
-    if not text:
-        return None, "No rarity in the source"
-    if text.isdigit():
-        return parse_rarity(int(text))
-    if text.lower() == "common":
-        return None, ""
-    return None, f"Rarity in the source: {text}"
+    return parse_rarity(int(text)) if text.isdigit() else None
