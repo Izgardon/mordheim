@@ -42,13 +42,28 @@ class SkillAuditTests(ReviewCase):
         own = [skill["name"] for skill in self.terms("Prospector (Karak Azgal)")["available_special_skills"]]
         self.assertIn("Luck (Prospector)", own)
 
-    def test_the_two_wood_elf_seekers_are_one_skill(self) -> None:
-        # the Wood Elves of Arden's and of Athel Loren's Seeker are word for word the same
-        for old in ("Seeker (Wood Elves of Arden)", "Seeker (Wood Elves of Athel Loren)"):
+    def test_one_seeker_skill_that_each_seeker_starts_with(self) -> None:
+        # the Wood Elves of Arden's and of Athel Loren's Seeker were word for word the same, and the Kislev Ranger's
+        # and five rules named Seeker the same effect (William, 27 Nov 2026: one Seeker skill)
+        for old in ("Seeker (Wood Elves of Arden)", "Seeker (Wood Elves of Athel Loren)", "Seeker (Wood Elves)"):
             self.assertNotIn(old, self.skills)
-        self.assertIn("Seeker (Wood Elves)", self.groups["Wood Elves of Arden"])
-        self.assertIn("Seeker (Wood Elves)", self.groups["Wood Elves of Athel Loren"])
-        self.assertTrue(self.skills["Seeker (Wood Elves)"].startswith("Only one Hero of the warband"))
+        self.assertIn("Seeker", self.groups["Wood Elves of Arden"])
+        self.assertIn("Seeker", self.groups["Wood Elves of Athel Loren"])
+        self.assertTrue(self.skills["Seeker"].startswith("Only one Hero of the warband"))
+        for slug, name in (
+            ("adventurers", "Elf"),
+            ("high-elves", "Ranger"),
+            ("sea-ghosts", "Lookout"),
+            ("survivors-of-strigos", "Seer"),
+        ):
+            with self.subTest(fighter=name):
+                found = next(row for row in self.templates[slug]["fighters"] if row["name"] == name)
+                self.assertIn("Seeker", found["skills"])
+                self.assertNotIn("Seeker", [special["name"] for special in found["specials"]])
+        ranger = self.hired["Elf Ranger"]
+        self.assertIn("Seeker", ranger["skills"])
+        self.assertNotIn("Seeker", [special["name"] for special in ranger["specials"]])
+        self.assertIn("Seeker", self.terms("Kislev Ranger")["available_special_skills"])  # ours, by name
 
     def test_a_skill_several_races_learn_is_worded_for_none_of_them(self) -> None:
         # Crude Belch is the Ogres' and the Ogre Hunting Party's too, Stealthy the Low Kings', Sniper (Shadow
@@ -143,7 +158,7 @@ class SkillAuditTests(ReviewCase):
             ("maneaters", "Bull"): ("Bull Charge", "Bull Charge"),
             ("merchant-caravans", "Blackguard"): ("Strongman", "Strongman"),
             ("sea-ghosts", "Minstrel"): ("Songster", "Songster"),
-            ("high-elves", "Ranger"): ("Seeker", "Seeker (Wood Elves)"),
+            ("high-elves", "Ranger"): ("Seeker", "Seeker"),
             ("woodsmen-de-artois", "Trapper"): ("Set Traps", "Set Traps"),
         }
         for (slug, name), (rule, skill) in fighters.items():

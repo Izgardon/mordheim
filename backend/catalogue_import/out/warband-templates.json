@@ -1105,14 +1105,11 @@
             "name": "Hatred",
             "type": "Warband - Adventurers",
             "description": "The Elf hates Dark Elves."
-          },
-          {
-            "name": "Seeker",
-            "type": "Warband - Adventurers",
-            "description": "If the Elf is not taken out of action during the battle, you may change one dice of the exploration sequence by +1 or -1."
           }
         ],
-        "skills": []
+        "skills": [
+          "Seeker"
+        ]
       },
       {
         "key": "barbarian",
@@ -45597,7 +45594,7 @@
         ],
         "specials": [],
         "skills": [
-          "Seeker (Wood Elves)"
+          "Seeker"
         ]
       },
       {
@@ -90067,14 +90064,10 @@
         "lists": [
           "elf-rangers-equipment-list"
         ],
-        "specials": [
-          {
-            "name": "Seeker",
-            "type": "Warband - Sea Ghosts",
-            "description": "When you roll on the Exploration chart, the Lookout lets you change one dice by -1 or +1."
-          }
-        ],
-        "skills": []
+        "specials": [],
+        "skills": [
+          "Seeker"
+        ]
       },
       {
         "key": "sea-rangers",
@@ -105038,16 +105031,13 @@
         ],
         "specials": [
           {
-            "name": "Seeker",
-            "type": "Warband - Survivors of Strigos",
-            "description": "A Seer who fought in the battle and wasn't taken out of action may change one exploration die by +1 or -1."
-          },
-          {
             "name": "Wizard",
             "type": "Caster"
           }
         ],
-        "skills": []
+        "skills": [
+          "Seeker"
+        ]
       },
       {
         "key": "domnu",

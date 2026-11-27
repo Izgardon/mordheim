@@ -528,8 +528,8 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Vampire Hunters of Sylvania | Vampire Hunters of Sylvania | new group | Iron Will and Righteous Aura: the Vampire Hunter and Slayers only. | Righteous Aura, Iron Will, Thirst for Vengeance, Blessing of Morr, Touch of Darkness |
 | Werewolf Hunting Pack | Werewolf Hunting Pack | new group | - | Hunter's Senses, Complete Healing, Terrible Claws, Bloodthirst, Chilling Howl, Bestial Savagery, Pack Hunter, Heavy Pelt |
 | Wood Elf Scouts | Wood Elf Scouts | new group | - | Infiltrate (Wood Elf Scouts), Trapper, Expert Hunter, Stand and Shoot, Wild Hunter, Pathfinder (Wood Elf Scouts), Tree Walker, Sniper (Wood Elf Scouts) |
-| Wood Elves of Arden | Wood Elves of Arden | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker (Wood Elves) |
-| Wood Elves of Athel Loren | Wood Elves of Athel Loren | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker (Wood Elves) |
+| Wood Elves of Arden | Wood Elves of Arden | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker |
+| Wood Elves of Athel Loren | Wood Elves of Athel Loren | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker |
 | Woodsmen de Artois | Woodsmen de Artois | new group | - | Bull Rush, Infiltration, Sniper (Shadow Warriors), Staff Master, Forager |
 
 ### New groups and skills (`new_skill_groups`)
@@ -822,7 +822,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Tree Walker | Wood Elf Scouts | athel-loren | Athel Loren |
 | Sniper (Wood Elf Scouts) | Wood Elf Scouts | athel-loren | Athel Loren |
 | Elven Luck | Wood Elves of Arden | mordheim-2a | Mousillon |
-| Seeker (Wood Elves) | Wood Elves of Arden | mordheim-2a | Mousillon |
+| Seeker | Wood Elves of Arden | mordheim-2a | Mousillon |
 | Aspect of the Hawk | Animal Aspects | grade-3 | Wood Elves, the Asrai Way-farers |
 | Aspect of the Serpent | Animal Aspects | grade-3 | Wood Elves, the Asrai Way-farers |
 | Aspect of the Panther | Animal Aspects | grade-3 | Wood Elves, the Asrai Way-farers |
@@ -850,7 +850,6 @@ mordheimer also lists Netter for Ogre Hunting Party; left out of the group.
 mordheimer also lists Unshakeable Faith for Protectorate of Sigmar; left out of the group.
 mordheimer also lists Sigmar’s Guidance for Protectorate of Sigmar; left out of the group.
 mordheimer also lists Achilles’ Heel for Snotlings; left out of the group.
-mordheimer also lists Seeker for Wood Elves of Athel Loren; left out of the group.
 
 Our skills the new groups hold, whose learners change (a skill is learnable by whoever has a group holding it):
 
@@ -976,7 +975,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 3993 |
 | warband rules | 512 |
 | upgrades | 179 |
-| the templates' own specials | 1117 |
+| the templates' own specials | 1114 |
 
 ### List lines
 
@@ -3439,7 +3438,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): Choice of Warriors (p1) allows up to five Greycoats, while the Greycoat entry (p5) is headed "0-2": the count is taken as 0-5, with Mummers 0-5 as Choice of Warriors has them (their entry prints no number).
 - Flag (p1): The warband has no standing leader: the hero with the highest Leadership leads each battle, so no fighter is marked the leader and the template's checks warn that it has none.
 - Flag (p2): The skill table: the Baron ticks Combat, Shooting, Strength, Speed and Special, the Elder Academic and Special, and the Greenjack Combat, Shooting, Strength and Speed with no Special.
-- Flag (p2): The special skills: Wall Runner is ours, the same effect (worded for the warrior, without mordheimer's suggested change: the skills audit, 27 Nov 2026). Expert Explorer does what our Resource Hunter, Seeker (Wood Elves) and Treasure Hunter do, and Silent Strike what our Sniper does: both are kept apart. A decision for William.
+- Flag (p2): The special skills: Wall Runner is ours, the same effect (worded for the warrior, without mordheimer's suggested change: the skills audit, 27 Nov 2026). Expert Explorer does what our Resource Hunter, Seeker and Treasure Hunter do, and Silent Strike what our Sniper does: both are kept apart. A decision for William.
 - Flag (p5): The Greycoat's profile row is labelled "Trapper": read as the Greycoat's, the entry it sits under.
 - Flag (p5): The Mummer's and the Scavenger's Weapons/Armour lines both name the Scavengers: read as each entry's own fighter, both from the Lost equipment list.
 - Flag (p5): Brutes (re-roll a Lad's Got Talent result) is read as Mummers not being promotable, and his rule carries the re-roll.
@@ -3561,7 +3560,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p3): List prices as printed: Elven Cloak 75 gc, Ithilmar Armour 60 gc, Hunting Arrows 35 gc, Elven Wine 50 gc, Elf Bow 35 gc. Ours are priced otherwise, and are left alone.
 - Flag (p5): The Ivy Ferret's Movement is printed as "-": it stays beside its keeper, which is kept as its Keeper rule.
 - Flag (p6): Woodland Incantations is the lore we already hold from the Wood Elves of Athel Loren: the same six spells with the same difficulties, so the Forest Mage casts ours.
-- Flag (p2): The five special skills are word for word the Wood Elves of Athel Loren's (their PDF, p5), but that warband is Mordheim 2a and this one Mousillon, and a skill carries its setting, so this is a group of its own rather than a shared one. Fey and Infiltration are ours; Elven Luck and Excellent Sight are kept apart as they are there; Seeker is one skill with the Wood Elves of Athel Loren's, Seeker (Wood Elves), as our Kislev Ranger's Seeker holds the plain name, and its "only one Elven Hero" opens its description (the skills audit, 27 Nov 2026: the two rows were word for word the same).
+- Flag (p2): The five special skills are word for word the Wood Elves of Athel Loren's (their PDF, p5), but that warband is Mordheim 2a and this one Mousillon, and a skill carries its setting, so this is a group of its own rather than a shared one. Fey and Infiltration are ours; Elven Luck and Excellent Sight are kept apart as they are there; Seeker is our one Seeker, the Wood Elves of Athel Loren's, the Kislev Ranger's and the skill five fighters start with (William, 27 Nov 2026), and its "only one Elven Hero" opens its description.
 
 ### Wood Elves of Athel Loren
 
@@ -3573,7 +3572,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p2): Elven Runestones (50+2D6 gc, Rare 11, Forest Mage only) and the Familiar (20+D6 gc, Rare 8, spell-users only) are on no list: they are special equipment, both ours, the Forest Mage's (the only spell-user).
 - Flag (p3): The Leader rule says "within 6" of the Protector of the Hunt": read as the Hunt Master, who leads.
 - Flag (p4): "Bought in groups of 1-5" stands over the henchmen: Deepwood Scouts and Glade Guard come in groups of 1-5.
-- Flag (p5): The special skills are a new group, Wood Elves of Athel Loren. Fey and Infiltration are ours (William, 6 Nov 2026, of Infiltration: "match it to ours drop theirs"). Excellent Sight (also a warband rule for every Elf) is one skill with the Druchii's Excellent Sight, in both groups. Excellent Sight and Seeker do what our Unblinking Eye and Resource Hunter do, under other names, so they are kept apart (William, 6 Nov 2026: "keep both of those separate as they have a name that inspires a different idea behind it"); Seeker's "only one Elven Hero" opens its description, and it is named Seeker (Wood Elves), one skill with the Wood Elves of Arden's, as the Kislev Ranger's own Seeker holds the name (his needs him not to have gone out of action). Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one; William: "separate yes").
+- Flag (p5): The special skills are a new group, Wood Elves of Athel Loren. Fey and Infiltration are ours (William, 6 Nov 2026, of Infiltration: "match it to ours drop theirs"). Excellent Sight (also a warband rule for every Elf) is one skill with the Druchii's Excellent Sight, in both groups. Excellent Sight and Seeker do what our Unblinking Eye and Resource Hunter do, under other names, so they are kept apart (William, 6 Nov 2026: "keep both of those separate as they have a name that inspires a different idea behind it"); Seeker's "only one Elven Hero" opens its description, and it is our one Seeker, the Wood Elves of Arden's and the Kislev Ranger's too (William, 27 Nov 2026). Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one; William: "separate yes").
 - Flag (p5): Woodland Incantations is a new lore. Lyrics of Feral Infatuation gives no range or duration, and Song of the Sun names no test ("must make a test"): both are kept as printed.
 
 ### Wood Elves, The Asrai Way-farers
@@ -3621,6 +3620,7 @@ Pages folded into another warband's list as one of its variants:
 
 A fighter's or dramatis persona's own rule that only pointed to a skill, or said he has one, is now the skill, which he starts with as one he'd learned (William, 7 Nov 2026: "yes please do that"; catalogue_import/pointer_rules.py), and the rule goes; a rule that says more keeps its text:
 
+- Adventurers: Elf: Seeker, starts with Seeker.
 - Battle Monks of Cathay: Emissary: Ride Horse, starts with Ride [Animal].
 - Bretonnian Chapel Guard: Questing Knight: Ride, starts with Ride [Animal].
 - Carnival of Chaos: Brute: Unnatural Strength, starts with Strongman.
@@ -3631,7 +3631,7 @@ A fighter's or dramatis persona's own rule that only pointed to a skill, or said
 - Forest Goblins: Chieftain: Ride Spiders, starts with Ride [Animal].
 - Gunnery School of Nuln: Senior Gunnery Officer: Hunter, starts with Hunter.
 - Gunnery School of Nuln: Marksmen: Quick Reload, starts with Hunter.
-- High Elves: Ranger: Seeker, starts with Seeker (Wood Elves).
+- High Elves: Ranger: Seeker, starts with Seeker.
 - Imperial Outriders: Knight: Ride, starts with Ride [Animal].
 - Imperial Outriders: Outrider: Ride, starts with Ride [Animal].
 - Imperial Outriders: Scout: Ride, starts with Ride [Animal].
@@ -3664,8 +3664,10 @@ A fighter's or dramatis persona's own rule that only pointed to a skill, or said
 - Pit Fighters (old): Pursuer: Pit Fighter, starts with Pit Fighter.
 - Pit Fighters (old): Pit Fighter: Pit Fighter, starts with Pit Fighter.
 - Pit Fighters (old): Pit Fighter: Arms Master, starts with Arms Master.
+- Sea Ghosts: Lookout: Seeker, starts with Seeker.
 - Sea Ghosts: Minstrel: Songster, starts with Songster.
 - Skaven of Clan Moulder: Packmaster: Master Handler, keeps the rule and starts with Ride [Animal].
+- Survivors of Strigos: Seer: Seeker, starts with Seeker.
 - The Cursed Cavalcade: Aristocrat: Expert Horseman, starts with Ride [Animal].
 - The Cursed Cavalcade: Companion: Expert Swordsman, starts with Expert Swordsman.
 - The Cursed Cavalcade: Fighting Ape: Agile (Fighting Ape), keeps the rule and starts with Scale Sheer Surfaces, Acrobat, Dodge.

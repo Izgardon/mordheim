@@ -210,15 +210,13 @@
     "caster": "No",
     "specials": [
       {
-        "name": "Seeker",
-        "description": "When rolling on the Exploration chart, the Elf Ranger allows you to modify one dice roll by -1/+1."
-      },
-      {
         "name": "Excellent Sight",
         "description": "Elves have eyesight unmatched by mere humans. The Elf Ranger spots Hidden enemies from two times as far away as other warriors (ie, twice his Initiative value in inches)."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Seeker"
+    ],
     "spells": [],
     "equipment": [
       {
@@ -1807,10 +1805,7 @@
         "Speed"
       ],
       "available_special_skills": [
-        {
-          "name": "Seeker",
-          "description": "If the Ranger did not go out of action, she may modify one Exploration die by +/-1."
-        },
+        "Seeker",
         {
           "name": "Animal Call",
           "description": "If hidden, the Ranger may use animal calls to confound the enemies. Any enemy model that is within 18\" of the Ranger and does not declare a charge in its movement phase must take a Leadership test. Those that fail the Ranger may move in any direction she wishes instead of their normal movement."

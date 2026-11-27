@@ -54,14 +54,14 @@ def _named(raw: str | dict[str, str]) -> tuple[str, str, str]:
 
 def hireling_skill_names(*profiles: list[dict[str, Any]]) -> dict[str, str]:
     """The special skills our hired swords and dramatis personae bring (their seeder makes each its own): name ->
-    whose."""
+    whose. One named alone, with no rules of its own, is ours of the name (the Kislev Ranger's Seeker), not his."""
     found: dict[str, str] = {}
     for rows in profiles:
         for row in rows:
             for terms in (row.get("hired_sword"), row.get("dramatis_persona")):
                 for skill in (terms or {}).get("available_special_skills") or []:
-                    name = skill if isinstance(skill, str) else skill.get("name", "")
-                    found.setdefault(norm_name(name), str(row.get("name")))
+                    if isinstance(skill, dict):
+                        found.setdefault(norm_name(skill.get("name", "")), str(row.get("name")))
     return found
 
 

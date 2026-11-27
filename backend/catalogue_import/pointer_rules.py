@@ -53,9 +53,12 @@ STARTS_WITH: dict[str, dict[str, dict[str, list[str]]]] = {
     # William, 27 Nov 2026, of the rules that share a skill's name and effect (the skills audit's M4): "A", the skill
     # he starts with; it adds no group to his advance list
     "Channel Rats": {"Domnu": {"Prize-fighter": ["Prize-fighter"]}, "Truant": {"Spry": ["Spry"]}},
-    "High Elves": {"Ranger": {"Seeker": ["Seeker (Wood Elves)"]}},  # "you may modify one Exploration dice by -1 or +1"
+    # William, 27 Nov 2026, of the rules named Seeker, the Wood Elves' skill's effect: "one Seeker skill"
+    "Adventurers": {"Elf": {"Seeker": ["Seeker"]}},
+    "High Elves": {"Ranger": {"Seeker": ["Seeker"]}},  # "you may modify one Exploration dice by -1 or +1"
+    "Survivors of Strigos": {"Seer": {"Seeker": ["Seeker"]}},
     "Maneaters": {"Bull": {"Bull Charge": ["Bull Charge"]}},
-    "Sea Ghosts": {"Minstrel": {"Songster": ["Songster"]}},
+    "Sea Ghosts": {"Minstrel": {"Songster": ["Songster"]}, "Lookout": {"Seeker": ["Seeker"]}},
     "Woodsmen de Artois": {"Trapper": {"Set Traps": ["Set Traps"]}},  # the Ogre Hunting Party's Trapper's
     # William, 27 Nov 2026, of two that held the rule as a special and the skill both: "drop the rule, keep the skill".
     # "The Ogre Hunter has the Sabre Trainer skill: when a Sabretusk Cub ..." retells the skill
