@@ -81,12 +81,12 @@ const units: RosterUnit[] = [
   { kind: "hero", unit: makeHero({ id: 2, name: "Krekk Blackfur" }) },
 ] as RosterUnit[];
 
-function renderStash(onMove = vi.fn()) {
+function renderStash(onMove = vi.fn(), onSell = vi.fn()) {
   const queryClient = createTestQueryClient();
   queryClient.setQueryData(queryKeys.campaign.warbandStash(CAMPAIGN, WARBAND), [
     makeStashItem({ id: 101, name: "Sword", cost: 10 }),
     makeStashItem({ id: 101, name: "Sword", cost: 40, material: "gromril" }),
-    makeStashItem({ id: 102, name: "Halberd", cost: 10, quantity: 2 }),
+    makeStashItem({ id: 102, name: "Halberd", cost: 10, quantity: 2, suggested_sale_price: 5 }),
   ]);
   queryClient.setQueryData(catalogueListKey(CAMPAIGN, "items"), [sword, halberd]);
   queryClient.setQueryData(queryKeys.campaign.warbandWhoCan(CAMPAIGN, WARBAND), whoCan);
@@ -99,7 +99,7 @@ function renderStash(onMove = vi.fn()) {
       canEdit
       units={units}
       onMove={onMove}
-      onSell={vi.fn()}
+      onSell={onSell}
     />,
     { queryClient }
   );
@@ -151,6 +151,26 @@ describe("StashPanel", () => {
 
     expect(onMove).toHaveBeenCalledWith(101, { type: "hero", id: 2 }, 1, "");
     expect(screen.queryByRole("region", { name: "Sword" })).not.toBeInTheDocument();
+  });
+});
+
+describe("Selling from the stash", () => {
+  it("asks the price first, the suggested one in place, as a unit's item does", async () => {
+    const user = setupUser();
+    const onSell = vi.fn();
+    renderStash(vi.fn(), onSell);
+    const halberd = screen.getByRole("button", { name: /^Halberd/ }).closest("li")!;
+
+    await user.click(within(halberd).getByRole("button", { name: "Sell" }));
+    // one tap sold it at once before, at a price nobody saw
+    expect(onSell).not.toHaveBeenCalled();
+    const price = within(halberd).getByLabelText("Sale price");
+    expect(price).toHaveValue(5);
+    await user.clear(price);
+    await user.type(price, "7");
+    await user.click(within(halberd).getByRole("button", { name: "Sell for 7 gc" }));
+
+    expect(onSell).toHaveBeenCalledWith(expect.objectContaining({ id: 102 }), 7);
   });
 });
 

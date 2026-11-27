@@ -26,7 +26,7 @@ type LoadoutPanelProps = {
     quantity?: number,
     material?: string
   ) => void;
-  onSellFromStash: (item: WarbandItemSummary) => void;
+  onSellFromStash: (item: WarbandItemSummary, price: number) => void;
   /** Puts a material on a weapon the unit or the stash holds (weapon materials): silver only. */
   onOpenStore: () => void;
 };

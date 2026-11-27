@@ -57,8 +57,8 @@ export default function WarbandPanels(props: WarbandPanelsProps) {
     params.set(RECRUITED_PARAM, `hireling-${unitId}`);
     setSearchParams(params, { replace: true });
   };
-  const sellFromStash = (item: WarbandItemSummary) =>
-    actions.sellItem(null, item.id, item.suggested_sale_price ?? 0, 1, item.material ?? "");
+  const sellFromStash = (item: WarbandItemSummary, price: number) =>
+    actions.sellItem(null, item.id, price, 1, item.material ?? "");
   const current = loadoutFor
     ? (units.find((u) => u.kind === loadoutFor.kind && u.unit.id === loadoutFor.unit.id) ?? null)
     : null;

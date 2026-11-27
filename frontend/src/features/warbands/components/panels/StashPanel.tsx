@@ -20,6 +20,7 @@ import { stashKey } from "../../api/warband-cache";
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { copiesForGroup } from "../../units/loadout";
 import { placeOf, unitSections } from "../roster/unit-sections";
+import SellControl from "../roster/SellControl";
 import StashMakeHenchmen from "./StashMakeHenchmen";
 import { isGroup, type RosterUnit } from "../roster/unit-view";
 import type { WarbandItemSummary } from "../../types/warband-types";
@@ -36,7 +37,8 @@ type StashPanelProps = {
   forUnit?: RosterUnit | null;
   /** `quantity`: a group takes one copy for each member, up to what the stash holds. */
   onMove: (itemId: number, to: ItemPlace, quantity?: number, material?: string) => void;
-  onSell: (item: WarbandItemSummary) => void;
+  /** Sells one copy at the price the player settled on (the suggested one at first). */
+  onSell: (item: WarbandItemSummary, price: number) => void;
   /** Puts a material on a weapon in the stash (weapon materials): silver only. */
 };
 
@@ -146,9 +148,10 @@ export function StashList({
                     }}
                   />
                 )}
-                <Button size="sm" variant="ghost" onClick={() => onSell(item)}>
-                  Sell
-                </Button>
+                <SellControl
+                  suggested={item.suggested_sale_price ?? 0}
+                  onSell={(price) => onSell(item, price)}
+                />
               </div>
             ) : null}
           </li>
