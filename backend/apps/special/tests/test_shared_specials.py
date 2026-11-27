@@ -51,6 +51,11 @@ class SharedSeedTests(TestCase):
         self.assertEqual((rows["Stupidity"].kind, poison.type, poison.kind), (BANE, "Trait", BOON))
         self.assertEqual((poison.category, poison.description), (BODY, "Not affected by any poison."))
         self.assertEqual(immune.type, "Psychology")
+        # William, 27 Nov 2026: a Large Target may be shot at even if not the closest target, as the rulebook says
+        large = (
+            "The model is a Large Target: it may be shot at even if it is not the closest target, and with +1 to hit."
+        )
+        self.assertEqual(rows["Large"].description, large)
         claw, flies, rot = rows["Great Claw"], rows["Cloud of Flies"], rows["Nurgle's Rot"]
         self.assertEqual((claw.owner_kind, claw.kind, claw.category), (GENERAL, BOON, MUTATION))
         self.assertTrue(flies.description.startswith("The model is surrounded by a cloud of flies"))

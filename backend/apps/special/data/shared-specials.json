@@ -53,7 +53,7 @@
     {
       "name": "Large",
       "type": "Trait",
-      "text": "This unit is treated as a Large Target. They may always be shot at with ranged weapons with a +1 modifier to hit.",
+      "text": "The model is a Large Target: it may be shot at even if it is not the closest target, and with +1 to hit.",
       "aliases": [
         "Large Target"
       ]
