@@ -25378,7 +25378,11 @@
           "attacks": 1,
           "leadership": 10
         },
-        "skill_types": [],
+        "skill_types": [
+          "Combat",
+          "Strength",
+          "Cursed Dwarves"
+        ],
         "spell_types": [],
         "gains_xp": true,
         "promotable": true,

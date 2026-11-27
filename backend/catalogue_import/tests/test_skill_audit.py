@@ -170,3 +170,9 @@ class SkillAuditTests(ReviewCase):
         self.assertFalse(self.skills["Set Traps"].startswith("Gnoblars only"))
         groups = {row["name"]: row for row in load_json(OUT / "skill-groups.json")}
         self.assertIn("Set Traps", groups["Ogre Hunting Party"]["note"])
+
+    def test_the_cursed_dwarves_longbeard_learns_the_clansmens_line(self) -> None:
+        # the book's skill lists name Leader, Priest, "Clansmen" and Slayers; the Clansmen are henchmen, so that line
+        # is the Longbeard's (William, 27 Nov 2026)
+        longbeard = next(row for row in self.templates["cursed-dwarves"]["fighters"] if row["name"] == "Longbeard")
+        self.assertEqual(longbeard["skill_types"], ["Combat", "Strength", "Cursed Dwarves"])

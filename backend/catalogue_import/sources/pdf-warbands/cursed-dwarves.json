@@ -101,7 +101,7 @@
       "startingXp": 8,
       "statblock": {"m": 3, "ws": 5, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 10},
       "equipmentLists": ["cursed-dwarf-equipment-list"],
-      "skillAccess": {"combat": false, "shooting": false, "academic": false, "strength": false, "speed": false, "special": false},
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
       "specialRules": []
     },
     {
@@ -190,8 +190,7 @@
     {"page": 1, "what": "The PDF says its rules are a rough draft."},
     {"page": 3, "what": "The Priest's profile prints W4 (M3 WS4 BS4 S3 T3 W4 I2 A1 Ld9), read from the page's own columns; as printed."},
     {"page": 4, "what": "The Dwarf Ghoul's profile row is labelled \"Leader\" in the PDF; it is the Ghoul's line, T5 A2 as printed."},
-    {"page": 2, "what": "No skill table is printed for the Longbeard, so he is imported with no skill access (William, 11 Nov 2026: stub what is missing and flag it)."},
-    {"page": 2, "what": "The skill table gives the Clansmen Combat, Strength and Special, but they are Henchmen, who take no skill lists in our templates."},
+    {"page": 2, "what": "No skill table is printed for the Longbeard, and the table's Clansmen line (Combat, Strength and Special) names henchmen, who take no skill lists: it is the Longbeard's (William, 27 Nov 2026)."},
     {"page": 2, "what": "The Slayer skills are a second group of his own (\"Cursed Dwarf Slayer Skills\"), open to the Cursed Dwarves alone, because he picks from them as well as from the warband's table."},
     {"page": 3, "what": "The Priest's \"Blessed Water is common and Holy Relic is rare 6\" is two price rows for the warband; his starting vial stays in his rules."},
     {"page": 5, "what": "\"Dwarf armour\" at 80 gc is read as our Gromril Armour (150 gc Rare 11 globally), shown under the list's name at the list price. See the decisions."},

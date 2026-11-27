@@ -1792,7 +1792,7 @@ Kept apart from a family's, the effect differing:
 | channel-rats | channel-rats | 8 | 0 | 2 | 10 |
 | circus-extraordinare | circus-extraordinare | 8 | 0 | 0 | 15 |
 | clockworkers | clockworkers | 7 | 0 | 14 | 12 |
-| cursed-dwarves | cursed-dwarves | 7 | 3 | 0 | 11 |
+| cursed-dwarves | cursed-dwarves | 7 | 3 | 0 | 10 |
 | dark-elf-corsairs | dark-elf-corsairs | 5 | 0 | 0 | 9 |
 | disciples-of-maldred | disciples-of-maldred | 5 | 0 | 0 | 10 |
 | dreamwalkers-cult-of-morr | dreamwalkers-cult-of-morr | 6 | 0 | 0 | 11 |
@@ -2195,8 +2195,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): The PDF says its rules are a rough draft.
 - Flag (p3): The Priest's profile prints W4 (M3 WS4 BS4 S3 T3 W4 I2 A1 Ld9), read from the page's own columns; as printed.
 - Flag (p4): The Dwarf Ghoul's profile row is labelled "Leader" in the PDF; it is the Ghoul's line, T5 A2 as printed.
-- Flag (p2): No skill table is printed for the Longbeard, so he is imported with no skill access (William, 11 Nov 2026: stub what is missing and flag it).
-- Flag (p2): The skill table gives the Clansmen Combat, Strength and Special, but they are Henchmen, who take no skill lists in our templates.
+- Flag (p2): No skill table is printed for the Longbeard, and the table's Clansmen line (Combat, Strength and Special) names henchmen, who take no skill lists: it is the Longbeard's (William, 27 Nov 2026).
 - Flag (p2): The Slayer skills are a second group of his own ("Cursed Dwarf Slayer Skills"), open to the Cursed Dwarves alone, because he picks from them as well as from the warband's table.
 - Flag (p3): The Priest's "Blessed Water is common and Holy Relic is rare 6" is two price rows for the warband; his starting vial stays in his rules.
 - Flag (p5): "Dwarf armour" at 80 gc is read as our Gromril Armour (150 gc Rare 11 globally), shown under the list's name at the list price. See the decisions.
