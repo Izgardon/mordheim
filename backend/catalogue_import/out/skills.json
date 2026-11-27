@@ -184,10 +184,6 @@
     "description": "The dwarf may add +1 to any roll on the experimental weapons chart. (MiM)"
   },
   {
-    "name": "Animosity",
-    "description": "A Forest Goblin Brave may choose to remove his Animosity instead of choosing a skill, should they earn one. (NC)"
-  },
-  {
     "name": "Darkstalker",
     "description": "The warrior is accustomed to darkness and has almost cat-like sight. Ignores All Alone tests, and may double his initiative when looking for Hidden models. (LotD)"
   },

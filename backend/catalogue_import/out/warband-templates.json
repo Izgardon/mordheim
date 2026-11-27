@@ -38287,6 +38287,12 @@
         "description": "Orcs and Goblins enjoy nothing more than a good scrap, unfortunately they’re not always very discerning about who they scrap with! To represent this, at the start of the Orc player’s turn, roll a D6 for each Henchman who is either an Orc or a Goblin. A roll of 1 means that the warrior has taken offense to something one of his mates has done or said. Do not roll for models that are engaged in hand-to-hand combat (they’re already scrappin’!). To find out just how offended the model is, roll another D6 and consult the following chart to see what happens:\n\nAnimosity Result\n\n| D6 | Result | | :------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | | 1 | \"I ’Erd Dat!\"\nThe warrior decides that the nearest friendly Orc or Goblin Henchman has insulted his lineage or personal hygiene and must pay the price!\nIf there is a friendly Orc or Goblin Henchman or Hired Sword within charge reach (if there are multiple targets within reach, choose the one nearest to the mad model), the offended warrior will immediately charge and fight a round of hand-to-hand combat against the source of his ire. At the end of this round of combat, the models will immediately move 1\" apart and no longer count as being in close combat (unless one of them fails another Animosity test and rolls this result again).\nIf there are no friendly Orc or Goblin Henchmen or Hired Swords within charge reach, and the warrior is armed with a missile weapon, he immediately takes a shot at the nearest friendly Orc or Goblin Henchman or Hired Sword. If none of the above applies, or if the nearest friendly model is an Orc Hero, the warrior behaves as if a 2-5 had been rolled on this chart. In any case, the warrior in question may take no other action this turn, though he may defend himself if attacked in hand-to-hand combat. | | 2-5 | \"Wud Yoo Say?\"\nThe warrior is fairly certain he heard an offensive sound from the nearest friendly Orc or Goblin, but he’s not quite sure. He spends the turn hurling insults at his mate.\nHe may do nothing else this turn, though he may defend himself if attacked in hand-to-hand combat. | | 6 | \"I’ll Show Yer!\"\nThe warrior imagines that his mates are laughing about him behind his back and calling him silly names. To show them up he decides that he’ll be the first one to the scrap!\nThis model must move as quickly as possible towards the nearest enemy model, charging into combat if possible. If there are no enemy models within sight, the Orc or Goblin warrior may make a normal move immediately. This move is in addition to his regular move in the Movement phase, so he may therefore move twice in a single turn if you wish.\nIf the extra move takes the Orc or Goblin warrior within charge reach of an enemy model, the warrior must charge into close combat during his regular movement. |",
         "variant": "",
         "type": ""
+      },
+      {
+        "title": "Losing Animosity",
+        "description": "A Brave may choose to lose his animosity instead of choosing a skill, should he earn one.",
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -38653,8 +38659,7 @@
         "skill_types": [
           "Combat",
           "Shooting",
-          "Speed",
-          "Forest Goblins"
+          "Speed"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -38972,6 +38977,12 @@
       {
         "title": "Animosity",
         "description": "At the start of the Forest Goblin player's turn, roll a D6 for each hero or henchman subject to animosity. Do not roll for a model engaged in hand-to-hand combat. On a 1 he has taken offence: roll another D6 and apply the result.\n\nD6 | Result\n1 | I 'Erd Dat! If a friendly Goblin henchman or Hired Sword is within charge reach, the warrior charges the nearest one and fights one round of close combat. At the end of that round both models move 1\" apart and no longer count as being in close combat, unless one of them fails another animosity test and rolls this result again. If no friendly Goblin henchman or Hired Sword is within charge reach and the warrior has a missile weapon, he shoots at the nearest one instead. If neither applies, or the nearest friendly model is a Goblin hero, treat the result as a 2-5. In any case he may take no other action this turn, though he may defend himself in hand-to-hand combat.\n2-5 | Wud Yoo Say? The warrior spends the turn hurling insults at the nearest friendly Goblin. He may do nothing else this turn, though he may defend himself in hand-to-hand combat.\n6 | I'll Show Yer! The warrior must move as quickly as possible towards the nearest enemy model, charging into combat if possible. If no enemy model is in sight he may make a normal move at once. This move is in addition to his move in the movement phase, so he may move twice in one turn. If the extra move takes him within charge reach of an enemy model, he must charge into close combat during his regular movement.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Losing Animosity",
+        "description": "A Boss may choose to lose his animosity instead of choosing a skill, should he earn one.",
         "variant": "",
         "type": ""
       }
@@ -39426,8 +39437,7 @@
         "skill_types": [
           "Combat",
           "Shooting",
-          "Speed",
-          "Forest Goblins (Lustria)"
+          "Speed"
         ],
         "spell_types": [],
         "gains_xp": true,

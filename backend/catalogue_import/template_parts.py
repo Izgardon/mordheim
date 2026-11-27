@@ -18,6 +18,7 @@ from catalogue_import.template_answers import (
     STYLES_AFTER,
     VARIANT_LINES,
     VARIANT_ONLY,
+    WARBAND_RULES_ADDED,
 )
 from catalogue_import.template_lists import TAG, Fighter, ItemIndex, Price, Who, line_price, plain, read_note
 from catalogue_import.template_text import clean_rule, clean_title
@@ -252,4 +253,8 @@ def build_rules(slug: str, page: dict[str, Any], variants: list[dict[str, str]],
         rules.append({"title": title, "description": description, "variant": variant, "type": rule_type})
         if slug == PIT_FIGHTERS and title == STYLES_AFTER:
             rules += _style_notes(page)
+    rules += [
+        {"title": title, "description": text, "variant": "", "type": ""}
+        for title, text in WARBAND_RULES_ADDED.get(slug, [])
+    ]
     return rules

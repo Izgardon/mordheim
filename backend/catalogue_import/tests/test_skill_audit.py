@@ -265,3 +265,17 @@ class SkillAuditTests(ReviewCase):
         for hero in heroes:
             self.assertNotIn("Pirates (TBMF)", hero["skill_types"])
         self.assertIn("in cover or in a building", self.skills["Cutlass Master"])
+
+    def test_losing_animosity_is_a_forest_goblin_warband_rule_not_a_skill(self) -> None:
+        # a Brave (a Boss in Lustria) may lose his Animosity in place of a skill: a player who "learned" it got a skill
+        # that read as the opposite (William, 27 Nov 2026: a warband rule)
+        self.assertNotIn("Animosity", self.skills)
+        self.assertNotIn("Forest Goblins", self.groups)
+        self.assertNotIn("Forest Goblins (Lustria)", self.groups)
+        for slug, hero in (("forest-goblins", "Brave"), ("forest-goblins-lustria", "Boss")):
+            with self.subTest(warband=slug):
+                rules = {rule["title"]: rule["description"] for rule in self.templates[slug]["rules"]}
+                self.assertIn(hero, rules["Losing Animosity"])
+                self.assertIn("instead of choosing a skill", rules["Losing Animosity"])
+                for fighter in self.templates[slug]["fighters"]:
+                    self.assertNotIn("Forest Goblins", " ".join(fighter["skill_types"]))

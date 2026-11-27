@@ -937,41 +937,6 @@
     ]
   },
   {
-    "name": "Forest Goblins",
-    "setting": "nemesis-crown",
-    "for_everyone": false,
-    "warbands": [
-      {
-        "type": "forest-goblins-nc",
-        "excluded": false
-      }
-    ],
-    "large_only": false,
-    "note": "",
-    "how": "intersection",
-    "open_to_all": false,
-    "skills": [
-      "Animosity"
-    ]
-  },
-  {
-    "name": "Forest Goblins (Lustria)",
-    "setting": "lustria",
-    "for_everyone": false,
-    "warbands": [
-      {
-        "type": "forest-goblins-lus",
-        "excluded": false
-      }
-    ],
-    "large_only": false,
-    "note": "Bosses only.",
-    "how": "new group",
-    "skills": [
-      "Animosity"
-    ]
-  },
-  {
     "name": "Goblin Raiders",
     "setting": "grade-3",
     "for_everyone": false,

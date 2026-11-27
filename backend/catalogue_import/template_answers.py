@@ -594,7 +594,6 @@ SPECIAL_GROUPS: dict[str, list[str]] = {
     "orc-mob": ["Orcs"],
     "bretonnian": ["Bretonnian Knights"],
     "bretonnian-chapel-guard": ["Bretonnian Chapel Guard"],
-    "forest-goblins": ["Forest Goblins"],
     "hochland-bandits": ["Hochland Bandits"],
     "maneaters": ["Ogres"],
     "marauders-of-chaos": ["Marauders of Chaos"],
@@ -629,6 +628,17 @@ SPECIAL_GROUPS_BY_FIGHTER: dict[tuple[str, str], list[str]] = {
     ("lizardmen", "Saurus Totem Warrior"): ["Saurus"],
 }
 SPECIAL_ADDED: dict[str, list[str]] = {"black-dwarfs": ["Bull Centaur"]}  # mordheimer leaves its tick off
+# A warband rule a page's skill list printed as a skill: page -> (title, text), after its own rules. William, 27 Nov
+# 2026, of the Forest Goblins' Animosity, the only skill of their list, which a Brave "learned" in place of a skill to
+# lose his animosity: a warband rule, so the Braves' Special tick names no group.
+WARBAND_RULES_ADDED: dict[str, list[tuple[str, str]]] = {
+    "forest-goblins": [
+        (
+            "Losing Animosity",
+            "A Brave may choose to lose his animosity instead of choosing a skill, should he earn one.",
+        )
+    ],
+}
 
 # The shared specials a fighter holds that his page leaves off (William, 25 Nov 2026: the beasts lacking the one Animal
 # rule; not the Rat Ogres): page, fighter key -> shared special names. A page or fighter we no longer have stops the

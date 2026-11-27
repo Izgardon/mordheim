@@ -27,9 +27,9 @@ Answers go into `overrides.json`; the next build applies them.
 | items (MiM) | 51 |
 | items (warband templates) | 44 |
 | price rows | 613 |
-| skills | 529 |
-| skill groups | 114 |
-| skill group links | 678 |
+| skills | 528 |
+| skill groups | 112 |
+| skill group links | 676 |
 | serious injuries (D66) | 20 |
 | shared specials | 83 |
 | random mutation results (D66) | 36 |
@@ -208,11 +208,11 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 529 | 153 | 341 | 35 |
+| skills | 528 | 153 | 341 | 34 |
 | hired swords | 133 | 71 | 62 | 0 |
 | dramatis personae | 61 | 30 | 31 | 0 |
 
-Not on mordheimer (skills), so Mordheim: [Animal] Handler, Ride [Animal], Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip, Falconer, Heron Strike, Swallow Kick, Water Form, Inch Punch, Virtue of the Impetuous, Virtue of the Squire, Tunneler, Tinkerer, Quick Thinker, Animosity, Backstabber, Pick Locks, Slaver, Cutpurse, ’ard ’ead, Captain Blood, Treasure Hunter, Luck, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat, Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form.
+Not on mordheimer (skills), so Mordheim: [Animal] Handler, Ride [Animal], Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip, Falconer, Heron Strike, Swallow Kick, Water Form, Inch Punch, Virtue of the Impetuous, Virtue of the Squire, Tunneler, Tinkerer, Quick Thinker, Backstabber, Pick Locks, Slaver, Cutpurse, ’ard ’ead, Captain Blood, Treasure Hunter, Luck, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat, Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form.
 
 Names mordheimer gives more than one setting; the entry for our list's warband was taken, else the one of our type, else the lowest. One set in overrides.json is settled:
 
@@ -258,7 +258,7 @@ Norse Shaman (hired swords) is in lustria, border-town-burning on mordheimer; it
 | hired swords | 72 | 0 | 0 | 72 |
 | dramatis personae | 30 | 1 | 0 | 29 |
 
-Skills mordheimer lacks, read from their list's name: Heron Strike (Battle Monks of Cathay) -> Battle Monks of Cathay; Swallow Kick (Battle Monks of Cathay) -> Battle Monks of Cathay; Water Form (Battle Monks of Cathay) -> Battle Monks of Cathay; Inch Punch (Battle Monks of Cathay) -> Battle Monks of Cathay; Virtue of the Impetuous (Bretonnian Knights) -> Bretonnian Knights; Virtue of the Squire (Bretonnian Knights) -> Bretonnian Knights; Animosity (Forest Goblins) -> Forest Goblins; Tea-leaf (Militant Mootlanders) -> Militant Mootlanders; Flan-eater (Militant Mootlanders) -> Militant Mootlanders; Looter (Militant Mootlanders) -> Militant Mootlanders; Backstabber (Low Kings) -> Low Kings; Pick Locks (Low Kings) -> Low Kings; Slaver (Low Kings) -> Low Kings; Cutpurse (Low Kings) -> Low Kings; ’ard ’ead (Orcs) -> Orcs; Luck (Sea Ghosts) -> Sea Ghosts.
+Skills mordheimer lacks, read from their list's name: Heron Strike (Battle Monks of Cathay) -> Battle Monks of Cathay; Swallow Kick (Battle Monks of Cathay) -> Battle Monks of Cathay; Water Form (Battle Monks of Cathay) -> Battle Monks of Cathay; Inch Punch (Battle Monks of Cathay) -> Battle Monks of Cathay; Virtue of the Impetuous (Bretonnian Knights) -> Bretonnian Knights; Virtue of the Squire (Bretonnian Knights) -> Bretonnian Knights; Tea-leaf (Militant Mootlanders) -> Militant Mootlanders; Flan-eater (Militant Mootlanders) -> Militant Mootlanders; Looter (Militant Mootlanders) -> Militant Mootlanders; Backstabber (Low Kings) -> Low Kings; Pick Locks (Low Kings) -> Low Kings; Slaver (Low Kings) -> Low Kings; Cutpurse (Low Kings) -> Low Kings; ’ard ’ead (Orcs) -> Orcs; Luck (Sea Ghosts) -> Sea Ghosts.
 
 Fees that aren't plain numbers, as structured fees (kind, gold, D6, resources and a note for the rest). A hire fee of n/a is in his rules (special: hired at 0 gc with a warning), an upkeep of n/a is none (no camp row), Hero takes a hero's place and a blank is a fee with no gold, filled in when hiring or at camp:
 
@@ -307,6 +307,7 @@ Every fee was read.
 | Dwarf Exiled Engineers | Guild of Disgraced Engineers |  | Tunneler, Tinkerer, Quick Thinker, Master Inventor |
 | Holy | everyone | Path of The One (Preacher) and Path of Sigmar (Holy Vow) path-takers only | Martyr, Charitable, Slayer of the Heretic, Aesthete, Light of Glory, Divine Guidance, On the Wings of Angels, Converter, Blessed Weapon, Iron Faith |
 
+Left out: Animosity (Forest Goblins), a rule about losing animosity in place of a skill, so a warband rule of the Forest Goblins' and the Lustria Forest Goblins' (William, 27 Nov 2026)
 Left out: Skills list prohibitions (Saurus), a rules note, not a skill (William): Saurus can't take Academic skills or use missile weapons
 Left out: Knowledge of Myths and Legends (Strigany), left out of the catalogue for now (William)
 Left out: Bull Rush (Strigany), left out of the catalogue for now (William): no Strigany warband type exists, so no Strigany group (William, 4 Nov 2026: take recommendations); Bull Rush stays, the Ostlanders'
@@ -368,7 +369,7 @@ Description put right: Beastmaster (Strength).
 
 ## Skill groups
 
-`out/skills.json` is 529 skills, one per name; `out/skill-groups.json` is 114 groups holding them (678 links), the five core groups first.
+`out/skills.json` is 528 skills, one per name; `out/skill-groups.json` is 112 groups holding them (676 links), the five core groups first.
 
 ### Merged by name
 
@@ -457,8 +458,6 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Dwarf Troll Slayers | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Dwarf Slayers | skill_group_learners | - | Ferocious Charge, Monster Slayer, Berserker, Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Dwarves | Dwarf Treasure Hunters, Dwarf Guildsmen, Dwarf Slayers, Dwarf Grudgebearers | skill_group_learners | - | Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Fen Guard | Fen Guard | new group | - | Absorption, Adaptation, Harvester of Souls, Gladeborn, Transform, Take Root, Poison Sap |
-| Forest Goblins | Forest Goblins (NC) | intersection | - | Animosity |
-| Forest Goblins (Lustria) | Forest Goblins (LUS) | new group | Bosses only. | Animosity |
 | Goblin Raiders | Goblin Raiders | new group | Hit and run is any Hero's; Beast tamer needs the Beastmasta Nitch and Infiltration the Nasty Skulker Nitch. | Hit and Run, Beastmaster, Infiltration, Flank, Strong 'Un, Wolf Breaker, Fast Learner |
 | Grail Companions | Bretonnian Grail Companions | new group | - | Virtue of the Impetuous, Virtue of Noble Disdain (Grail Companions), Virtue of Heroism, Virtue of Stoicism, Virtue of the Penitent, Virtue of the Ideal, Virtue of Audacity, Virtue of Purity (Grail Companions), Virtue of Duty, Virtue of the Joust, Virtue of Confidence, Virtue of Knightly Temper, Virtue of Discipline (Grail Companions), Virtue of Empathy |
 | Grave Robber | Grave Robbers | intersection | - | Darkstalker, Instinctual Violence, De-animator, Hardy Constitution (Grave Robber), Body Dealer |
@@ -873,7 +872,6 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Weather Tolerant | Arabian Tomb Raiders | Arabian Tomb Raiders, Arabyan Nomads |
 | Virtue of the Impetuous | Bretonnian Knights | Bretonnian Knights, Bretonnian Grail Companions, Knights of the Bitter Moors |
 | Bull Rush | Ostlanders | Ostlanders, Channel Rats, Woodsmen de Artois |
-| Animosity | Forest Goblins (NC) | Forest Goblins (NC), Forest Goblins (LUS) |
 | Stealthy | Halflings | Halflings, Low Kings, Militant Mootlanders |
 | Luck | Sea Ghosts | High Elves, Sea Ghosts |
 | Mutant | Beastmen Raiders | Beastmen Raiders, Khorne Raiders |
@@ -972,7 +970,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | henchmen that can't be promoted | 165 |
 | equipment lists | 367 |
 | list lines | 3993 |
-| warband rules | 512 |
+| warband rules | 514 |
 | upgrades | 179 |
 | the templates' own specials | 1114 |
 
@@ -1075,7 +1073,7 @@ Written values, kept as written:
 | underworld-alliance | Sewer Squig | movement 2D6 |
 | wood-elves-of-arden | Ivy Ferret | movement - |
 
-Ticked for special skills with no group to name, the tick left out: imperial-outriders: Knight, imperial-outriders: Outrider, imperial-outriders: Scout.
+Ticked for special skills with no group to name, the tick left out: forest-goblins: Braves, imperial-outriders: Knight, imperial-outriders: Outrider, imperial-outriders: Scout.
 
 ### Skill groups
 
@@ -2410,7 +2408,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): The PDF spells the leader "Chieftan" in its headings and "Chieftain" in its text; he is imported as Chieftain.
 - Flag (p2): The Forest Goblin maximum profile (M5 WS3 BS5 S4 T4 W2 I6 A3 Ld7) is lower than our Goblin race's in several places, so it is a race of its own, Goblin (Lustria). It is taken as printed, although the Chieftain already stands at the WS3 maximum.
 - Flag (p3): The skill table ticks the Chieftain Combat, Shooting, Academic and Speed; the Bosses Combat, Shooting, Speed and Special; and the Shaman Shooting, Academic and Speed. Only the Bosses tick Special, so only they learn the warband's own skills; the Chieftain has no Special and no Strength tick, and the Shaman has Shooting. Read from the tick positions, as printed.
-- Flag (p3): The only special skill printed is Animosity, which lets a Boss remove his animosity instead of taking a skill. It is our Animosity skill, whose description says "A Forest Goblin Brave" (the Nemesis Crown warband's name for the same hero); the limit to Bosses is in the group's note.
+- Flag (p3): The only special skill printed is Animosity, which lets a Boss remove his animosity instead of taking a skill: it is the warband rule Losing Animosity (William, 27 Nov 2026), so the warband has no skill group and the Bosses' Special tick names none.
 - Flag (p4): The henchmen list's missile weapons read Short Bow 5 gc, then a line "Throwing Weapons 15 gc" and Blowpipe 25 gc under the same heading. The 15 gc line is read as our Throwing Knives/Stars/Axes, which carries that price and rarity.
 - Flag (p2): The Bosspole is our Boss Pole, which the Nemesis Crown Forest Goblins already buy at 20 gc with the same rules (ignore animosity within 6", acts as a spear).
 - Flag (p3): The Arachnid Mount (45 gc, Rare 5) is bought as our Giant Spider under the PDF's name. Ours carries Poisoned Attack and Wall Walk; the PDF gives Movement 6, +1 armour save, no need to dismount to climb and a re-roll of a failed climb. Ours is unchanged; the price row is the PDF's.
