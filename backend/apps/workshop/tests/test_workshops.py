@@ -15,7 +15,7 @@ from apps.warbands.models import Warband
 
 from .support import WorkshopTestCase
 
-# the workshop, its warbands, its lists and their types (no cost or budget: William, 26 Nov 2026)
+# the workshop, its warbands, its lists and their types (no cost: William, 26 Nov 2026)
 LIST_QUERIES = 4
 
 
@@ -31,7 +31,7 @@ class MakingTests(WorkshopTestCase):
         self.assertEqual(second["campaign_id"], workshop.pk)
         self.assertEqual(Campaign.objects.filter(kind=WORKSHOP).count(), 1)
         warband = self.warband_of(first)
-        self.assertEqual((warband.user_id, warband.gold, warband.template_variant), (self.player.id, 500, "reikland"))
+        self.assertEqual((warband.user_id, warband.gold, warband.template_variant), (self.player.id, 0, "reikland"))
         self.assertEqual((warband.in_workshop, warband.template_id), (True, self.made.template.id))
         self.assertEqual(list(warband.rules.values_list("title", flat=True)), ["Hard Bargains", "Marksmen"])
         picked = ("kind", "template_id", "warnings")
@@ -100,7 +100,7 @@ class MakingTests(WorkshopTestCase):
         warband = self.warband_of(row)
         self.assertEqual((warband.template_id, warband.warband_type_id), (second["id"], self.mercenaries.id))
         summary = self.get_as(self.player, f"/api/warbands/{row['id']}/summary/").data["workshop"]
-        self.assertEqual((summary["budget"], warband.gold), (700, 700))
+        self.assertEqual((summary, warband.gold), ({"cost": 0}, 0))  # its list's gold is no budget there
         sheet = self.get_as(self.player, f"/api/warbands/{row['id']}/template/").data
         self.assertEqual(sheet["template"]["id"], second["id"])
         # William, 26 Nov 2026: a type uses the book's list, never one of mine ("One of my lists" is how I use those)
@@ -202,7 +202,6 @@ class ListingTests(WorkshopTestCase):
                 "name": "The Gilded Wagon",
                 "warband_type": {"id": self.mercenaries.id, "name": "Mercenaries"},
                 "cost": 0,
-                "budget": 500,
                 "heroes": 0,
                 "henchmen": 0,
                 "hired_swords": 0,

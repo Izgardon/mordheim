@@ -57,11 +57,9 @@ class GuardTests(WorkshopTestCase):
         self.refused(self.post_as(self.player, f"{warband}trades/", {"action": "Adjustment", "price": 5}))
         self.refused(self.post_as(self.player, f"{warband}resources/", {"name": "Treasure", "amount": 1}))
 
-    def test_the_sheet_says_it_is_a_workshops_with_its_cost_budget_and_code(self) -> None:
+    def test_the_sheet_says_it_is_a_workshops_with_its_cost_and_code(self) -> None:
         sheet = self.get_as(self.player, f"/api/warbands/{self.row['id']}/sheet/").data
-        self.assertEqual(
-            sheet["workshop"], {"cost": 0, "budget": 500, "share_code": self.row["share_code"], "no_list": False}
-        )
+        self.assertEqual(sheet["workshop"], {"cost": 0, "share_code": self.row["share_code"]})
         capabilities = sheet["capabilities"]
         held = ("workshop", "edit", "manage_items", "delete", "edit_catalogue")
         self.assertTrue(all(capabilities[name] for name in held), capabilities)

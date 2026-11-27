@@ -39,14 +39,11 @@ from . import economy_log, ledger
 from .loadouts import living_ids
 from .prices import CampaignPrices
 from .rarity_rolls import RollRefused, record_roll
-from .roster_cost import roster_value
 from .stash import add_to_stash
 from .unit_items import add_unit_copies, holds_loadout, resolve_unit
 
 Warning = dict[str, Any]  # {"code", "message", ...}, the shape trades answer
 GOLD_NEGATIVE = "gold_negative"
-OVER_BUDGET = "over_budget"  # a workshop's warband (apps/workshop): its cost above its budget
-GOLD_CODES = frozenset({GOLD_NEGATIVE, OVER_BUDGET})
 ARCHIVED_ENTRY = "archived_entry"
 UNLISTED_BEAST = "unlisted_beast"
 STASH = "stash"
@@ -88,14 +85,10 @@ def gold_negative(warband: Warband) -> Warning:
 
 
 def gold_warnings(warband: Warband) -> list[Warning]:
-    """What a charge's gold warns of: below 0 gc, or for a workshop's warband, whose gold is never shown, its roster
-    cost above its budget (two queries, only for a workshop's)."""
+    """What a charge's gold warns of: below 0 gc; nothing for a workshop's warband, which has a running cost and no
+    gold or budget to run out of (William, 27 Nov 2026)."""
     if warband.campaign.is_workshop:
-        value = roster_value(warband)
-        if not value.over:
-            return []
-        message = f"This brings the warband to {value.cost} gc, over its {value.budget} gc budget."
-        return [{"code": OVER_BUDGET, "message": message, "cost": value.cost, "budget": value.budget}]
+        return []
     return [gold_negative(warband)] if warband.gold < 0 else []
 
 

@@ -82,11 +82,11 @@ def _encampments(warband: Warband) -> list[dict[str, Any]]:
 
 
 def workshop_facts(warband: Warband, summary: dict[str, Any]) -> dict[str, Any] | None:
-    """A workshop's warband's cost against its budget (its summary's: roster_cost.py), its code and whether it was
-    made with no list (its budget then its own, set in Settings); null for a campaign's warband."""
+    """A workshop's warband's running cost (its summary's: roster_cost.py; no budget: William, 27 Nov 2026) and its
+    code; null for a campaign's warband."""
     if not warband.campaign.is_workshop or summary.get("workshop") is None:
         return None
-    return {**summary["workshop"], "share_code": warband.share_code, "no_list": warband.no_list}
+    return {**summary["workshop"], "share_code": warband.share_code}
 
 
 def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, Any]:
@@ -113,7 +113,7 @@ def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, 
         "item_names": template_item_names(warband),
         # what it holds while the campaign has Encampments on (one query); [] while they are off
         "encampments": _encampments(warband),
-        # a workshop's warband (apps/workshop): {cost, budget, share_code, no_list}; null for a campaign's
+        # a workshop's warband (apps/workshop): {cost, share_code}; null for a campaign's
         "workshop": workshop_facts(warband, summary),
         **{kind.collection: UNIT_SERIALIZERS[key].detail(rosters[key], many=True).data for key, kind in KINDS.items()},
     }

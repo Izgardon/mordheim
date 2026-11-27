@@ -1,26 +1,19 @@
-"""What a warband's roster is worth, read live (the workshop plan, docs/plans/workshop.md): what a custom warband
-"costs" against its budget, and what an imported one pays in one ledger row.
+"""What a warband's roster is worth, read live (the workshop plan, docs/plans/workshop.md): a custom warband's running
+cost (it has no budget: William, 27 Nov 2026), and what an imported one pays in one ledger row.
 
 The cost is each hero's and hired sword's `price`, each henchmen group's `price` for each member still in it, and what
 every copy the warband owns was paid: a unit's own copies, a group's loadout rows once for each member who carries
 them (its living members less their gaps: henchmen loadouts) and the stash's rows by quantity. Dead and dismissed units
 and members cost nothing: they have left the roster. A copy whose cost isn't known counts 0. One query, whatever the
 roster's size or the number of warbands.
-
-The budget is the gold the warband is raised with in its campaign: the campaign's starting gold plus its template's
-difference from 500 in its variant (`payload.raise_gold`), so a Marienburg variant's 600 follows a variant changed in
-Settings. A workshop's warband made with no list has the budget its player set.
 """
 
 from collections.abc import Iterable
-from dataclasses import dataclass
 from typing import Any
 
 from django.db.models import F, IntegerField, OuterRef, QuerySet, Subquery, Sum, Value
 from django.db.models.functions import Coalesce
 
-from apps.warband_templates.services.payload import raise_gold
-from apps.warband_templates.services.resolve import templates_for_warbands, warband_variant
 from apps.warbands.models import (
     Henchman,
     HenchmanItemGap,
@@ -31,8 +24,6 @@ from apps.warbands.models import (
     Warband,
     WarbandItem,
 )
-
-DEFAULT_GOLD = 500  # a campaign without its settings row
 
 
 def _total(rows: QuerySet[Any], by: str, amount: Any) -> Coalesce:
@@ -84,43 +75,3 @@ def roster_costs(warband_ids: Iterable[int]) -> dict[int, int]:
 def roster_cost(warband: Warband) -> int:
     """The warband's roster cost in gold (one query)."""
     return roster_costs([warband.pk]).get(warband.pk, 0)
-
-
-def roster_budgets(warbands: Iterable[Warband]) -> dict[int, int]:
-    """The gold each warband is raised with in its campaign, as its template and variant now read (three queries;
-    each warband read with its campaign's settings)."""
-    rows = list(warbands)
-    templates = templates_for_warbands(rows)
-    budgets = {}
-    for warband in rows:
-        if warband.budget is not None:  # made with no list: its own
-            budgets[warband.pk] = warband.budget
-            continue
-        settings = getattr(warband.campaign, "settings", None)
-        campaign_gold = abs(settings.starting_gold) if settings is not None else DEFAULT_GOLD
-        template = templates[warband.pk]
-        variant = warband_variant(warband, template) if template is not None else ""
-        budgets[warband.pk] = raise_gold(campaign_gold, template, variant)
-    return budgets
-
-
-@dataclass(frozen=True)
-class RosterValue:
-    cost: int
-    budget: int
-
-    @property
-    def over(self) -> bool:
-        return self.cost > self.budget
-
-
-def roster_values(warbands: Iterable[Warband]) -> dict[int, RosterValue]:
-    """Each warband's cost and budget (four queries)."""
-    rows = list(warbands)
-    costs, budgets = roster_costs(warband.pk for warband in rows), roster_budgets(rows)
-    return {warband.pk: RosterValue(cost=costs.get(warband.pk, 0), budget=budgets[warband.pk]) for warband in rows}
-
-
-def roster_value(warband: Warband) -> RosterValue:
-    """The warband's cost and budget (four queries)."""
-    return roster_values([warband])[warband.pk]

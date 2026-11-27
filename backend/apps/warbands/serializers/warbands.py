@@ -9,7 +9,7 @@ from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.prices import sale_price
 from apps.warbands.services.rating_breakdown import rating_breakdown
 from apps.warbands.services.resources import MAX_AMOUNT
-from apps.warbands.services.roster_cost import roster_value
+from apps.warbands.services.roster_cost import roster_cost
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.companions import beast_kind
 from apps.warbands.units.kinds import HERO, HIRELING
@@ -21,8 +21,6 @@ from .purchases import MaterialField
 from .types import WarbandTypeBriefSerializer
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
-MOST_BUDGET = 1_000_000
-BUDGET_WITH_LIST = "Only a warband with no list sets its own budget: a list's gold is its budget."
 
 
 class WarbandSerializer(serializers.ModelSerializer):
@@ -94,7 +92,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
     max_heroes = serializers.SerializerMethodField()
     hireling_count = serializers.SerializerMethodField()
     max_hired_swords = serializers.SerializerMethodField()
-    workshop = serializers.SerializerMethodField()  # a workshop's warband's cost and budget (apps/workshop)
+    workshop = serializers.SerializerMethodField()  # a workshop's warband's running cost (apps/workshop)
 
     def _units(self, obj) -> WarbandUnits:
         # rating and the three unit lists share one load of the unit tables; the sheet passes the units it loaded
@@ -154,12 +152,11 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
         return cap_limit(HIRELING, obj)
 
     def get_workshop(self, obj: Warband) -> dict[str, int] | None:
-        """A workshop's warband's cost against its budget (four queries: roster_cost.py), so every write's summary
-        carries the cost after it; null for a campaign's warband (no query)."""
+        """A workshop's warband's running cost (one query: roster_cost.py), so every write's summary carries the cost
+        after it; it has no budget (William, 27 Nov 2026). Null for a campaign's warband (no query)."""
         if not obj.campaign.is_workshop:
             return None
-        value = roster_value(obj)
-        return {"cost": value.cost, "budget": value.budget}
+        return {"cost": roster_cost(obj)}
 
     class Meta:
         model = Warband
@@ -219,8 +216,6 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
     # its plot (apps/plots): changed for nothing, as often as the player likes (William: "editable for free"); null
     # follows none. Its campaign point total is typed, and nothing but the player changes it
     plot_id = serializers.IntegerField(min_value=1, required=False, allow_null=True)
-    # a workshop warband made with no list sets its own budget (never cleared: a list is what would replace it)
-    budget = serializers.IntegerField(min_value=0, max_value=MOST_BUDGET, required=False)
 
     class Meta:
         model = Warband
@@ -228,7 +223,6 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
             "name",
             "warband_type_id",
             "counts_as_ids",
-            "budget",
             "wins",
             "losses",
             "backstory",
@@ -246,11 +240,6 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
         if not cleaned:
             raise serializers.ValidationError("Name is required")
         return cleaned
-
-    def validate_budget(self, value: int) -> int:
-        if self.instance is None or not self.instance.no_list:
-            raise serializers.ValidationError(BUDGET_WITH_LIST)
-        return value
 
 
 class WarbandResourceSerializer(serializers.ModelSerializer):

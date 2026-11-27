@@ -13,10 +13,9 @@ William, 26 Nov 2026) reads none at all, whatever its type.
 """
 
 from collections.abc import Iterable, Mapping
-from copy import copy
 from typing import Any
 
-from django.db.models import Case, Exists, F, OuterRef, Prefetch, Q, QuerySet, Subquery, Value, When
+from django.db.models import Case, Exists, F, OuterRef, Q, QuerySet, Subquery, Value, When
 
 from apps.campaigns.in_play import is_workshop
 from apps.core.models import CatalogueRemoval
@@ -98,79 +97,6 @@ def template_for_new_type(warband: Warband, warband_type_id: int | None) -> Warb
         named_first = Case(When(pk=warband.template_id, then=Value(0)), default=Value(1))
         rows = rows.order_by(named_first, F("campaign_id").asc(nulls_last=True), "id")
     return rows.first()
-
-
-def templates_for_warbands(warbands: Iterable[Warband]) -> dict[int, WarbandTemplate | None]:
-    """Each warband's template, as `template_for_warband` finds it in its own campaign (the list a workshop's names,
-    else the campaign's own, oldest first, else the book's it hasn't replaced or removed; never an archived one),
-    each with its type's `preset_variant`, for many warbands of many campaigns at once (three queries, whatever their
-    number, and one more when a workshop's warband names its list; one naming none reads the book's, and one made with
-    no list none)."""
-    found: dict[int, WarbandTemplate | None] = dict.fromkeys((warband.pk for warband in warbands), None)
-    named = [warband for warband in warbands if warband.template_id is not None]
-    found.update(_named_templates(named))
-    rows = [
-        warband
-        for warband in warbands
-        if warband.warband_type_id is not None and warband.template_id is None and not warband.no_list
-    ]
-    if not rows:
-        return found
-    campaign_ids = {warband.campaign_id for warband in rows}
-    type_ids = {warband.warband_type_id for warband in rows}
-    links = list(
-        WarbandTemplateType.objects.filter(
-            Q(template__campaign_id__in=campaign_ids) | Q(template__campaign__isnull=True),
-            template__archived_at__isnull=True,
-            warband_type_id__in=type_ids,
-        ).select_related("template")
-    )
-    hidden = set(
-        WarbandTemplate.objects.filter(campaign_id__in=campaign_ids, replaces__isnull=False).values_list(
-            "campaign_id", "replaces_id"
-        )
-    )
-    hidden |= set(
-        CatalogueRemoval.objects.filter(campaign_id__in=campaign_ids, kind=KIND).values_list("campaign_id", "entry_id")
-    )  # the book's templates each campaign replaced or removed
-    for warband in rows:
-        serving = [
-            link
-            for link in links
-            if link.warband_type_id == warband.warband_type_id
-            and (
-                (link.template.campaign_id == warband.campaign_id and not warband.in_workshop)
-                or (link.template.campaign_id is None and (warband.campaign_id, link.template_id) not in hidden)
-            )
-        ]
-        serving.sort(key=lambda link: (link.template.campaign_id is None, link.template_id))
-        if serving:
-            template = serving[0].template
-            template.preset_variant = serving[0].variant  # type: ignore[attr-defined]
-            found[warband.pk] = template
-    return found
-
-
-def _named_templates(warbands: list[Warband]) -> dict[int, WarbandTemplate | None]:
-    """The lists workshop warbands name, each with its warband's type's preset variant (one query, none for none)."""
-    if not warbands:
-        return {}
-    links = Prefetch("type_links", queryset=WarbandTemplateType.objects.all())
-    templates = {
-        row.pk: row
-        for row in WarbandTemplate.objects.filter(pk__in={w.template_id for w in warbands}).prefetch_related(links)
-    }
-    found: dict[int, WarbandTemplate | None] = {}
-    for warband in warbands:
-        template = templates.get(warband.template_id or 0)
-        if template is not None:
-            presets = [
-                link.variant for link in template.type_links.all() if link.warband_type_id == warband.warband_type_id
-            ]
-            template = copy(template)
-            template.preset_variant = presets[0] if presets else ""  # type: ignore[attr-defined]
-        found[warband.pk] = template
-    return found
 
 
 def template_id_for(warband: Warband) -> Subquery:

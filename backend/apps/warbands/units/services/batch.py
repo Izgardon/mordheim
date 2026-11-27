@@ -21,7 +21,7 @@ from rest_framework import serializers
 from apps.warband_templates.services.hiring import fill_from_template
 from apps.warband_templates.services.upgrades import UpgradeLines, buy_upgrades, plan_upgrades
 from apps.warbands.models import RosterUnit, Warband, not_dismissed
-from apps.warbands.services.purchases import GOLD_CODES, Warning, gold_warnings
+from apps.warbands.services.purchases import GOLD_NEGATIVE, Warning, gold_warnings
 from apps.warbands.units.errors import FieldErrors, RosterError, flatten_errors
 from apps.warbands.utils.leaders import lock_warband
 
@@ -173,7 +173,6 @@ def apply_batch(kind: "UnitKindSpec", warband: Warband, plan: BatchPlan) -> list
         plan.created_ids = [unit.pk for unit in created]
         warnings = apply_lines(kind, warband, plan.lines, created)
         upgraded = _buy_upgrades(kind, warband, plan, created)
-        # the gold as the upgrades left it; a workshop's cost after its recruits too, which charge no purchase line
-        if upgraded or warband.campaign.is_workshop:
-            warnings = [warning for warning in warnings if warning["code"] not in GOLD_CODES] + gold_warnings(warband)
+        if upgraded:  # the gold as the upgrades left it
+            warnings = [warning for warning in warnings if warning["code"] != GOLD_NEGATIVE] + gold_warnings(warband)
         return warnings

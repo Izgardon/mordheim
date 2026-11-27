@@ -17,7 +17,7 @@ from apps.core.share_codes import normalised
 from apps.users.names import display_name
 from apps.warband_templates.models import WarbandTemplate, WarbandTemplateType
 from apps.warbands.models import Warband
-from apps.warbands.services.roster_cost import roster_value
+from apps.warbands.services.roster_cost import roster_cost
 
 from .making import workshop_of
 
@@ -67,7 +67,7 @@ def type_names(template: WarbandTemplate) -> list[dict[str, Any]]:
 
 
 def warband_row(warband: Warband) -> dict[str, Any]:
-    """A warband as `GET workshop/` lists it: no cost or budget (Home's card shows none: William, 26 Nov 2026)."""
+    """A warband as `GET workshop/` lists it: no cost (Home's card shows none: William, 26 Nov 2026)."""
     return {
         "id": warband.pk,
         "campaign_id": warband.campaign_id,
@@ -110,8 +110,8 @@ def mine(user: Any) -> dict[str, Any]:
 
 
 def preview(code: Any) -> dict[str, Any]:
-    """What a code shares, for anyone signed in: what it is, its name and maker, and a warband's type, cost, budget
-    and how many heroes, henchmen and hired swords it has, or a list's types and variants (at most eight queries)."""
+    """What a code shares, for anyone signed in: what it is, its name and maker, and a warband's type, running cost
+    and how many heroes, henchmen and hired swords it has, or a list's types and variants (three queries)."""
     found = shared(code)
     if found.template is not None:
         template = found.template
@@ -121,10 +121,10 @@ def preview(code: Any) -> dict[str, Any]:
         return {"kind": "list", "maker": display_name(owner) if owner else "", **{key: row[key] for key in picked}}
     warband = found.warband
     assert warband is not None
-    row, value = warband_row(warband), roster_value(warband)
+    row = warband_row(warband)
     shown = ("name", "share_code", "warband_type")
     body = {"kind": "warband", "maker": display_name(warband.user), **{key: row[key] for key in shown}}
-    return {**body, "cost": value.cost, "budget": value.budget, **_counts(warband)}
+    return {**body, "cost": roster_cost(warband), **_counts(warband)}
 
 
 def _alive(prefix: str) -> Q:

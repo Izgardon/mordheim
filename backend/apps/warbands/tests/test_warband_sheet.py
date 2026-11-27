@@ -56,7 +56,7 @@ class WarbandSheetTests(RosterTestCase):
                 "plot",  # the plot it follows and its ladder (apps/plots); null here: it follows none
                 "item_names",
                 "encampments",  # what it holds while the campaign has Encampments on; [] here: they are off
-                "workshop",  # a workshop's warband's cost, budget and code (apps/workshop); null here
+                "workshop",  # a workshop's warband's cost and code (apps/workshop); null here
                 "heroes",
                 "henchmen_groups",
                 "hirelings",

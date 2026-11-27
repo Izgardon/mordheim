@@ -3,10 +3,11 @@ version 2), each all or nothing. The workshop is made on his first use (`making.
 
 - A warband is raised through the campaign path (`raising.raise_warband`), naming the list it reads there: one of his
   lists (`list_id`), a shared list's code (copied in as a list of his own first, unless it is his already), else the
-  book's list for its type, never one of his (William, 26 Nov 2026); or no list at all (`no_list`: a budget and most
-  warriors of his own, every unit made by hand). Everything in a workshop carries a code.
+  book's list for its type, never one of his (William, 26 Nov 2026); or no list at all (`no_list`: most warriors of
+  his own, every unit made by hand). Everything in a workshop carries a code. A workshop's warband has a running cost
+  and no budget (William, 27 Nov 2026): it starts on no gold, and what it spends there is never shown or warned of.
 - A list is one template of his own, blank or a copy of one he can see there (the book's or one of his).
-- A code copies into his workshop: a warband (paid for against its budget, its list with it) or a list.
+- A code copies into his workshop: a warband (its list with it) or a list.
 - A warband's code imports it into a campaign for a member with no warband there: the copy starts on the gold raising
   gives (its Starting Gold row), then **one** ledger row pays its roster's cost, as if just raised. A list's code
   imports it into a campaign as the campaign's own template (`edit_catalogue`).
@@ -104,7 +105,7 @@ def _type_served(template: WarbandTemplate, type_id: int | None) -> int:
 def make_warband(user: Any, data: dict[str, Any]) -> Made:
     """A warband in the player's workshop, raised from the list it names (`_list_to_raise_from`), else the book's
     list for its type (a workshop's type template: resolve.py), or from none (`no_list`): its type picked all the
-    same, its budget and most warriors its player's, and recruiting by hand."""
+    same, its most warriors its player's, and recruiting by hand."""
     no_list = data["no_list"]
     with transaction.atomic():
         workshop = workshop_for(user)
@@ -121,7 +122,7 @@ def make_warband(user: Any, data: dict[str, Any]) -> Made:
         }
         picked_types(workshop.pk, fields)  # its type as a Warband type row (a 400 for an unknown one)
         if no_list:  # it reads no list (Warband.no_list), so it names none
-            fields.update(budget=data["budget"], max_units=data["max_units"], template_variant="", template=None)
+            fields.update(no_list=True, max_units=data["max_units"], template_variant="", template=None)
         else:
             fields["template"] = template or templates_for_type(workshop.pk, type_id).first()
         fields.update(in_workshop=True, share_code=unique_share_code())
@@ -152,7 +153,8 @@ def make_list(user: Any, data: dict[str, Any]) -> Made:
 
 
 def _pay(copied: Warband, name: str) -> list[Warning]:
-    """One Buy row paying the copy's roster cost; the gold warnings it leaves (below 0, or over a workshop's budget)."""
+    """One Buy row paying the copy's roster cost; the gold warnings it leaves (below 0 in a campaign; none in a
+    workshop)."""
     cost = roster_cost(copied)
     if cost:
         ledger.record(copied, LedgerAction.BUY, -cost, f"Imported {name}")
@@ -160,7 +162,7 @@ def _pay(copied: Warband, name: str) -> list[Warning]:
 
 
 def _warband_into_workshop(user: Any, source: Warband) -> Made:
-    """A copy of the warband in the player's workshop, its list with it, paid for against its budget."""
+    """A copy of the warband in the player's workshop, its list with it."""
     with transaction.atomic():
         workshop = workshop_for(user)
         copied = copy_warband(source, workshop, user)

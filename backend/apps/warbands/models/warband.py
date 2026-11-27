@@ -58,10 +58,9 @@ class Warband(models.Model):
     template = models.ForeignKey(
         "warband_templates.WarbandTemplate", related_name="+", null=True, blank=True, on_delete=models.SET_NULL
     )
-    # a workshop warband made with no list (William, 26 Nov 2026): the gold it is built against, set by its player, and
-    # the mark that it reads no list at all, whatever its type (`no_list`); null: it reads a list (its own, or its
-    # type's), whose gold is its budget
-    budget = models.PositiveIntegerField(null=True, blank=True)
+    # a workshop warband made with no list (William, 26 Nov 2026): it reads no list at all, whatever its type, and
+    # every unit is made by hand; set when it is made and never changed
+    no_list = models.BooleanField(default=False)
     # a workshop warband its player deleted: hidden and unreadable, its code no longer found; copies made stay
     deleted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -82,14 +81,12 @@ class Warband(models.Model):
             ),
             models.CheckConstraint(
                 check=models.Q(in_workshop=True)
-                | models.Q(
-                    share_code__isnull=True, template__isnull=True, deleted_at__isnull=True, budget__isnull=True
-                ),
+                | models.Q(share_code__isnull=True, template__isnull=True, deleted_at__isnull=True, no_list=False),
                 name="warband_workshop_fields",
             ),
             # a warband with no list names none
             models.CheckConstraint(
-                check=models.Q(budget__isnull=True) | models.Q(template__isnull=True), name="warband_no_list_names_none"
+                check=models.Q(no_list=False) | models.Q(template__isnull=True), name="warband_no_list_names_none"
             ),
         ]
 
@@ -104,12 +101,6 @@ class Warband(models.Model):
                 field.name for field in self._meta.concrete_fields if not field.primary_key and field.name != "gold"
             ]
         super().save(*args, **kwargs)
-
-    @property
-    def no_list(self) -> bool:
-        """A workshop warband made with no list: it reads no template, so recruiting is by hand and the store sells
-        from the general catalogue, against the budget its player set."""
-        return self.budget is not None
 
 
 class WarbandItem(models.Model):

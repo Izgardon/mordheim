@@ -12,8 +12,8 @@ and the log, resources, campaign points and the plot, battles, wins and losses, 
 catalogue link becomes the target's current entry (`relink.py`). When the warband reads its campaign's own list (a
 workshop's list it names, or a campaign's own or house template for its type), that list comes too as the target's
 own template (`copy_list.py`). In a workshop the copy is a workshop's warband: its own code, and the list it names
-(that copy, else the book's template it read); one made with no list stays so there, its budget with it, and reads its
-type's template in a campaign.
+(that copy, else the book's template it read); one made with no list stays so there, and reads its type's template in
+a campaign.
 
 A fixed number of queries whatever the roster's size: each table is read once and written in one INSERT.
 """
@@ -218,7 +218,7 @@ def copy_warband(source: Warband, target: Campaign, user: Any, editor: bool = Tr
         in_workshop=target.is_workshop,
         share_code=unique_share_code() if target.is_workshop else None,
         template=named,
-        budget=source.budget if target.is_workshop else None,  # one with no list stays so in a workshop
+        no_list=source.no_list and target.is_workshop,  # one with no list stays so in a workshop
         **{**fields, "warband_type_id": type_id},
     )
     warband.counts_as.set(counts_as)

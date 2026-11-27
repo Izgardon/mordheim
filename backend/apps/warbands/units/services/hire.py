@@ -35,7 +35,6 @@ from apps.hirelings.models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword,
 from apps.hirelings.selectors import link_model
 from apps.items.models import Item
 from apps.warbands.models import Hireling, HirelingItem, Warband, on_roster
-from apps.warbands.services.purchases import gold_warnings
 from apps.warbands.units.kinds import HIRELING
 from apps.warbands.utils.leaders import lock_warband
 from apps.warbands.utils.stats import stat_inputs
@@ -228,6 +227,4 @@ def hire(warband: Warband, writer: Any, source: str, entry: Any, terms: HireTerm
         warnings += payment.warnings
         if entry is not None and _kit(unit, entry, warband.campaign_id):
             warnings += unit_warnings(HIRELING, warband, unit)
-        if warband.campaign.is_workshop:  # its cost after the hire, against its budget (apps/workshop)
-            warnings += gold_warnings(warband)
     return Hired(unit, warnings)
