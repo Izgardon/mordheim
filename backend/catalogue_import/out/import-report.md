@@ -352,9 +352,15 @@ Added: Weak Spot (Combat), from the Marienburg Annual (Broheim, Mutiny in Marien
 Added: Resilience (Strength), from the Marienburg Annual (Broheim, Mutiny in Marienburg), Errata (p. 7).
 Description put right: Mutant (Beastmen Raiders).
 Description put right: Quick Thinker (Dwarf Exiled Engineers).
+Description put right: Slaver (Low Kings).
+Description put right: Mutant (Marauders of Chaos).
+Description put right: Animal Friendship (Ostlanders).
 Description put right: Sniper (Shadow Warriors).
+Description put right: Master of Runes (Shadow Warriors).
 Description put right: Wall Runner (Skaven).
 Description put right: Ignore Pain (Skaven Clan Pestilens).
+Description put right: Bat Form (Undead Vampires).
+Description put right: Giant Wolf Form (Undead Vampires).
 Description put right: Trap Expert (Academic).
 Description put right: Handyman (Strength).
 Description put right: Beastmaster (Strength).
@@ -371,7 +377,7 @@ Description put right: Beastmaster (Strength).
 | --- | --- | --- | --- |
 | Powerful Build | Powerful Build (Dark Elf), Powerful Build (Sea Ghosts), Powerful Build (Shadow Warriors) | longest | Powerful Build (Dark Elf): The warrior is strongly built for an Elf and is capable of feats of strength. A warrior with this skill may choose skills from the Strength table. The Sorceress may never take this skill and no more than two warriors in the warband may take this skill at any one time. (TC10) / Powerful Build (Sea Ghosts): The warrior is strongly built for an Elf, and is capable of feats of strength not often seen among the elder race. A warrior with this skill may choose skills from the Strength skills table from now on. There may never be more than two Elves with this skill in the warband at any one time. (MiM) |
 | Infiltration | Infiltration (Dark Elf), Infiltration (Sea Ghosts), Infiltration (Skaven), Infiltration (Skaven Metal Mongers) | overrides.json | Infiltration (Dark Elf): A Skaven with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12" away from any enemy model. If both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first. (RB 93) / Infiltration (Sea Ghosts): An Elf with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12" away from any enemy model. If both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first. (MiM) / Infiltration (Skaven Metal Mongers): A Skaven with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12" away from any enemy model. If both players have models that infiltrate, roll a D6 for each, and the lowest roll sets up first. (MiM) |
-| Master of Blades | Master of Blades (Dwarves), Master of Blades (Dwarf Troll Slayers) | longest | - |
+| Master of Blades | Master of Blades (Dwarves), Master of Blades (Dwarf Troll Slayers) | overrides.json | Master of Blades (Dwarves): This Dwarf’s martial skills surpass those of a normal warrior; he has fought unscathed against hordes of Orcs and Goblins. When using a weapon that has a Parry special rule, this hero parries successfully if he beats or matches his opponents highest ‘to hit’ roll, not just if he beats the roll. In addition, if this warrior is using two weapons that have the Parry special rule, he is allowed to parry two attacks (if his two dice match or beat the two highest Attack dice against him) instead of the normal maximum of one. Note that if this Dwarf has two Dwarf axes (as detailed above) he can reroll any failed parries. (A02 24) |
 | Extra Tough | Extra Tough (Dwarves), Extra Tough (Dwarf Exiled Engineers), Extra Tough (Dwarf Troll Slayers) | longest | Extra Tough (Dwarf Exiled Engineers): This Dwarf is notorious for walking away from wounds that would kill a lesser being. When rolling on the Heroes Serious Injury Chart for this hero after a game in which he has been taken Out of Action, the dice may be re-rolled once. The result of this second dice roll must be accepted, even if it is a worse result. (MiM) |
 | Resource Hunter | Resource Hunter (Dwarves), Resource Hunter (Dwarf Troll Slayers) | longest | - |
 | True Grit | True Grit (Dwarves), True Grit (Dwarf Exiled Engineers), True Grit (Dwarf Troll Slayers) | longest | True Grit (Dwarf Exiled Engineers): Dwarfs are hardy individuals and this hero is hardy even for a Dwarf! When rolling on the Injury Table for this hero, a roll of 1-3 is treated as Knocked Down, 4- 5 as Stunned and 6 is Taken Out. (MiM) |

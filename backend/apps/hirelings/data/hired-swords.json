@@ -1407,7 +1407,7 @@
       "available_special_skills": [
         {
           "name": "Pathfinder",
-          "description": "Dwarf Pathfinders also learn how to find hidden paths in the forest. A Dwarf Pathfinder is able to Infiltrate (as the Skaven skill of the same name)."
+          "description": "Dwarf Pathfinders also learn how to find hidden paths in the forest. A Dwarf Pathfinder is able to Infiltrate, as the Infiltration skill."
         }
       ],
       "grade": "1b",

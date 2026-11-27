@@ -89,3 +89,29 @@ class SkillAuditTests(ReviewCase):
         for pages in ({"a": late, "b": early}, {"a": early, "b": late}):
             self.assertEqual(skill_settings(pages, setting_of, grades), {"Magic Resistant": "karak-azgal"})
         self.assertEqual(skill_settings({"a": late, "b": early}, setting_of), {"Magic Resistant": "khemri-3"})
+
+    def test_no_skill_points_a_player_at_a_page_or_a_rule_he_cant_follow(self) -> None:
+        pointers = {
+            "Animal Friendship": "Mordheim book, page",
+            "Slaver": "p.119",
+            "Mutant (Marauders of Chaos)": "Empire in Flames, page",
+            "Bat Form": "detailed above",
+            "Giant Wolf Form": "described above",
+            "Master of Runes": "below)",
+            "Master of Blades": "detailed above",
+            "Wall Runner": "Suggested Changes",
+        }
+        for skill, pointer in pointers.items():
+            with self.subTest(skill=skill):
+                self.assertNotIn(pointer, self.skills[skill])
+        for skill in ("Bat Form", "Giant Wolf Form"):
+            self.assertIn("exactly as for Mist Form: he transforms in the recovery phase", self.skills[skill])
+        pathfinder = next(
+            skill
+            for skill in self.terms("Dwarf Pathfinder")["available_special_skills"]
+            if skill["name"] == "Pathfinder"
+        )
+        self.assertNotIn("Skaven skill", pathfinder["description"])
+
+    def test_no_skill_description_holds_a_double_space(self) -> None:
+        self.assertEqual([name for name, text in self.skills.items() if "  " in text], [])

@@ -105,11 +105,11 @@
   },
   {
     "name": "Virtue of Purity",
-    "description": "The Knight’s sole purpose is to serve the Lady of the Lake. His purity of heart and discipline endow him with the strength of spirit to resist enemy magic. Any spell cast against the knight will be dispelled on the D6 roll of a 4+. This is a natural dispel on account of the knights extreme piety.  (TC8)"
+    "description": "The Knight’s sole purpose is to serve the Lady of the Lake. His purity of heart and discipline endow him with the strength of spirit to resist enemy magic. Any spell cast against the knight will be dispelled on the D6 roll of a 4+. This is a natural dispel on account of the knights extreme piety. (TC8)"
   },
   {
     "name": "Virtue of Valour",
-    "description": "The Knight has vowed to confront the biggest and strongest foes. The more awesome his enemy, the more valourous are his efforts. If fighting a model with a higher Strength characteristic than himself, the Knight may re-roll any failed to hit rolls in hand-to-hand combat.  (TC8)"
+    "description": "The Knight has vowed to confront the biggest and strongest foes. The more awesome his enemy, the more valourous are his efforts. If fighting a model with a higher Strength characteristic than himself, the Knight may re-roll any failed to hit rolls in hand-to-hand combat. (TC8)"
   },
   {
     "name": "Virtue of Discipline",
@@ -133,7 +133,7 @@
   },
   {
     "name": "Powerful Build",
-    "description": "The warrior is strongly built for an Elf, and is capable of feats of strength not often seen among the people of Ulthuan. A warrior with this skill may choose skills from the Strength skills table from now on. This skill may not be taken by Shadow Weavers. (TC10)  There may never be more than two Elves with this skill in the warband at any one time. (TC 12)"
+    "description": "The warrior is strongly built for an Elf, and is capable of feats of strength not often seen among the people of Ulthuan. A warrior with this skill may choose skills from the Strength skills table from now on. This skill may not be taken by Shadow Weavers. (TC10) There may never be more than two Elves with this skill in the warband at any one time. (TC 12)"
   },
   {
     "name": "Fey Quickness",
@@ -149,7 +149,7 @@
   },
   {
     "name": "Master of Blades",
-    "description": "This Dwarf’s martial skills surpass those of a normal warrior; he has fought unscathed against hordes of Orcs and Goblins. When using a weapon that has a Parry special rule, this hero parries successfully if he beats or matches his opponents highest ‘to hit’ roll, not just if he beats the roll. In addition, if this warrior is using two weapons that have the Parry special rule, he is allowed to parry two attacks (if his two dice match or beat the two highest Attack dice against him) instead of the normal maximum of one. Note that if this Dwarf has two Dwarf axes (as detailed above) he can reroll any failed parries. (A02 24)"
+    "description": "This Dwarf’s martial skills surpass those of a normal warrior; he has fought unscathed against hordes of Orcs and Goblins. When using a weapon that has a Parry special rule, this hero parries successfully if he beats or matches his opponents highest ‘to hit’ roll, not just if he beats the roll. In addition, if this warrior is using two weapons that have the Parry special rule, he is allowed to parry two attacks (if his two dice match or beat the two highest Attack dice against him) instead of the normal maximum of one. Note that if this Dwarf has two Dwarf axes he can reroll any failed parries. (A02 24)"
   },
   {
     "name": "Extra Tough",
@@ -221,19 +221,19 @@
   },
   {
     "name": "Flan-eater",
-    "description": "Halflings are generally considered civilized and it is proven they are prone to absorb foreign customs when travelling the world. Some eventually learn strange new skills before returning home to their communities. This Halfling may immediately learn one skill from the Combat or Strength skill lists. This skill may be taken only once.  (MiM)"
+    "description": "Halflings are generally considered civilized and it is proven they are prone to absorb foreign customs when travelling the world. Some eventually learn strange new skills before returning home to their communities. This Halfling may immediately learn one skill from the Combat or Strength skill lists. This skill may be taken only once. (MiM)"
   },
   {
     "name": "Looter",
-    "description": "The Hero is an expert in finding valuables on a victim before moving on. If the Hero takes any warriors of the enemy warband out of action (and he was not taken out of action himself), the Hero's warband receives one additional Treasure or Wyrdstone Shard. This does not affect the opposing warband's number of Treasures.  (MiM)"
+    "description": "The Hero is an expert in finding valuables on a victim before moving on. If the Hero takes any warriors of the enemy warband out of action (and he was not taken out of action himself), the Hero's warband receives one additional Treasure or Wyrdstone Shard. This does not affect the opposing warband's number of Treasures. (MiM)"
   },
   {
     "name": "Taunt (Militant Mootlanders)",
-    "description": "After years of baiting persecutors into drunken brawls, this Halfling has learned some of the vilest insults in the Empire. During the Shooting phase, the Halfling may choose to taunt one enemy instead of shooting with a missile weapon. The Hero must be able to see the enemy and taunting requires a line of sight as it would for shooting. The player should insult the enemy warrior whenever possible (perhaps his hat looks like a strangled parrot or his mother was a Bretonnian!) and the enemy then takes a Leadership test. If he passes, nothing happens but if he fails he must spend his next movement phase trying to get into close combat with the Halfling who taunted him.  (MiM)"
+    "description": "After years of baiting persecutors into drunken brawls, this Halfling has learned some of the vilest insults in the Empire. During the Shooting phase, the Halfling may choose to taunt one enemy instead of shooting with a missile weapon. The Hero must be able to see the enemy and taunting requires a line of sight as it would for shooting. The player should insult the enemy warrior whenever possible (perhaps his hat looks like a strangled parrot or his mother was a Bretonnian!) and the enemy then takes a Leadership test. If he passes, nothing happens but if he fails he must spend his next movement phase trying to get into close combat with the Halfling who taunted him. (MiM)"
   },
   {
     "name": "Banditry",
-    "description": "Between missions, the bandit goes off and robs travelers or other innocent victims. Instead of searching for Rare equipment, the hero may engage in banditry - roll a D6, on a result of 2-6, the banditry is successful and the hero adds D6+1 gold to the warband's stash. However, on a result of 1, the attempted robbery has somehow gone wrong - roll on the Serious Injury table for the bandit, as if he had been taken Out of Action in the last game. If several heroes have this skill, it is quite possible that some are successful and some not in their Banditry attempt between games...that is the nature of theives' honor - if a man falls behind, he is usually on his own! This skill may not be combined with the Huckster's Slick Operator special ability.  (NC)"
+    "description": "Between missions, the bandit goes off and robs travelers or other innocent victims. Instead of searching for Rare equipment, the hero may engage in banditry - roll a D6, on a result of 2-6, the banditry is successful and the hero adds D6+1 gold to the warband's stash. However, on a result of 1, the attempted robbery has somehow gone wrong - roll on the Serious Injury table for the bandit, as if he had been taken Out of Action in the last game. If several heroes have this skill, it is quite possible that some are successful and some not in their Banditry attempt between games...that is the nature of theives' honor - if a man falls behind, he is usually on his own! This skill may not be combined with the Huckster's Slick Operator special ability. (NC)"
   },
   {
     "name": "Jump back",
@@ -257,7 +257,7 @@
   },
   {
     "name": "Bellowing Battle Roar",
-    "description": "The Saurus’ roar is so deafening that enemy  models in base contact suffer -1 to hit in the first round of combat against them. (TC 12)"
+    "description": "The Saurus’ roar is so deafening that enemy models in base contact suffer -1 to hit in the first round of combat against them. (TC 12)"
   },
   {
     "name": "Toughened Hide",
@@ -277,7 +277,7 @@
   },
   {
     "name": "Slaver",
-    "description": "Any Hero or Henchman put out of action by the Slaver in hand-to-hand combat will automatically be captured (see 'Captured' on the Serious Injuries chart, p.119 of the Mordheim Rulebook) unless the Mobsmen warband is routed. Any Hero or Henchman captured must be sold or exchanged to another warband during the post battle sequence. If an arrangement cannot be reached with another warband, then that particular Hero or Henchman is sold into slavery and removed from the warband roster. There may never be more than two warriors with this skill in the warband at any one time. (MiM)"
+    "description": "Any Hero or Henchman put out of action by the Slaver in hand-to-hand combat will automatically be captured (see 'Captured' on the Serious Injuries chart) unless the Mobsmen warband is routed. Any Hero or Henchman captured must be sold or exchanged to another warband during the post battle sequence. If an arrangement cannot be reached with another warband, then that particular Hero or Henchman is sold into slavery and removed from the warband roster. There may never be more than two warriors with this skill in the warband at any one time. (MiM)"
   },
   {
     "name": "Cutpurse",
@@ -297,7 +297,7 @@
   },
   {
     "name": "Mutant (Marauders of Chaos)",
-    "description": "The Hero may buy one mutation. See the Mutations section of the Possessed on special rules. Heroes with the Mark of Onogal may choose a Blessing of Nurgle instead (see Empire in Flames, page 66) except the Mark of Nurgle. Note that unlike other skills Marauder Heroes may take this skill more than once. (BTB)"
+    "description": "The Hero may buy one mutation. See the Mutations section of the Possessed on special rules. Heroes with the Mark of Onogal may choose a Blessing of Nurgle instead, except the Mark of Nurgle. Note that unlike other skills Marauder Heroes may take this skill more than once. (BTB)"
   },
   {
     "name": "Heart of the warrior",
@@ -305,11 +305,11 @@
   },
   {
     "name": "Fungus Farmer",
-    "description": "The industrious little git has a mushroom crop back at the cave. If the Hero doesn’t search for rare items, it may pick D3-1 Mad Cap Mushrooms instead. There is a chance of getting none, as there is no guarantee they will be ready for harvest. Each Mad Cap Mushroom must be used in the next battle, and they cannot be sold or traded to other warbands These are a special high yield/low shelf life crop.  (TBMF)"
+    "description": "The industrious little git has a mushroom crop back at the cave. If the Hero doesn’t search for rare items, it may pick D3-1 Mad Cap Mushrooms instead. There is a chance of getting none, as there is no guarantee they will be ready for harvest. Each Mad Cap Mushroom must be used in the next battle, and they cannot be sold or traded to other warbands These are a special high yield/low shelf life crop. (TBMF)"
   },
   {
     "name": "Infiltrate",
-    "description": "A Night Goblin with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband, and more than 12\" away from any enemy model. If both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first.  (TBMF)"
+    "description": "A Night Goblin with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband, and more than 12\" away from any enemy model. If both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first. (TBMF)"
   },
   {
     "name": "Netter",
@@ -321,7 +321,7 @@
   },
   {
     "name": "Sneaky Git",
-    "description": "The Goblin specializes in attacking their targets from the shadows. They may charge an opponent from hiding, even if they cannot see the target. There is no need for an initiative test, and the target may be over the normal 4” limit for charging unseen targets. If the charge is successful, the Goblin surprises their opponent who will attack at half Weapon Skill and half Initiative, rounded up. This penalty lasts for the first round of combat only, as the opponent will swiftly recover their wits if the initial assault is survived.  (TBMF)"
+    "description": "The Goblin specializes in attacking their targets from the shadows. They may charge an opponent from hiding, even if they cannot see the target. There is no need for an initiative test, and the target may be over the normal 4” limit for charging unseen targets. If the charge is successful, the Goblin surprises their opponent who will attack at half Weapon Skill and half Initiative, rounded up. This penalty lasts for the first round of combat only, as the opponent will swiftly recover their wits if the initial assault is survived. (TBMF)"
   },
   {
     "name": "Barbarian courage",
@@ -405,7 +405,7 @@
   },
   {
     "name": "Animal Friendship",
-    "description": "Having grown up amidst the animals of the forest this warrior exudes a certain charm to all ‘normal’ animals (i.e. warhorses, Warhounds, etc.). Animals will never attack him and up to two Wardogs (see Mordheim book, page 54) that the warrior owns do not count against the maximum number of models in the Warband. (A02 13)"
+    "description": "Having grown up amidst the animals of the forest this warrior exudes a certain charm to all ‘normal’ animals (i.e. warhorses, Warhounds, etc.). Animals will never attack him and up to two Wardogs that the warrior owns do not count against the maximum number of models in the Warband. (A02 13)"
   },
   {
     "name": "Blood Oath",
@@ -433,19 +433,19 @@
   },
   {
     "name": "Swashbuckler",
-    "description": "The pirate cuts a dashing figure in combat, mixing dazzling swordplay and acrobatic feats with charm and witty comments.  Even the basest villains in Mordheim respect (and curse) his ability to always seem to effortlessly slip from their grasp.  The pirate may make a Leadership Test at the end of any Hand to Hand phase (pirate’s or enemy’s turn) if he is still in base contact with any enemy models.  If he passes, he may make an immediate normal movement away from the enemy (but may not run or charge), without the enemy striking any blows on him.  If he fails the test he remains in melee combat and must fight as normal in the following turn. (FO 65)"
+    "description": "The pirate cuts a dashing figure in combat, mixing dazzling swordplay and acrobatic feats with charm and witty comments. Even the basest villains in Mordheim respect (and curse) his ability to always seem to effortlessly slip from their grasp. The pirate may make a Leadership Test at the end of any Hand to Hand phase (pirate’s or enemy’s turn) if he is still in base contact with any enemy models. If he passes, he may make an immediate normal movement away from the enemy (but may not run or charge), without the enemy striking any blows on him. If he fails the test he remains in melee combat and must fight as normal in the following turn. (FO 65)"
   },
   {
     "name": "Captain Blood",
-    "description": "The pirate is adept at leaping from the Tops into the melee below.  When making attacks during a Diving Charge, the pirate makes Critical Hits on a 5+ instead of a 6+. (TBMF)"
+    "description": "The pirate is adept at leaping from the Tops into the melee below. When making attacks during a Diving Charge, the pirate makes Critical Hits on a 5+ instead of a 6+. (TBMF)"
   },
   {
     "name": "Sea Legs (TBMF)",
-    "description": "The pirate swings through rope and rigging with ease.  When attempting a Diving Charge, the pirate may re-roll a failed Initiative Test, as if he had the Acrobat skill.  He may also fall or jump up to 12” without taking any damage if he passes a single Initiative Test (Note: Mates do not have access to Speed skills, so this duplication of the Acrobat skill is intentional). (TBMF)"
+    "description": "The pirate swings through rope and rigging with ease. When attempting a Diving Charge, the pirate may re-roll a failed Initiative Test, as if he had the Acrobat skill. He may also fall or jump up to 12” without taking any damage if he passes a single Initiative Test (Note: Mates do not have access to Speed skills, so this duplication of the Acrobat skill is intentional). (TBMF)"
   },
   {
     "name": "Treasure Hunter",
-    "description": "(Captain only)  The pirate may modify one Exploration die by +1 or -1, so long as they were not taken Out of Action during the scenario. (TBMF)"
+    "description": "(Captain only) The pirate may modify one Exploration die by +1 or -1, so long as they were not taken Out of Action during the scenario. (TBMF)"
   },
   {
     "name": "Bulging Biceps",
@@ -517,7 +517,7 @@
   },
   {
     "name": "Master of Runes",
-    "description": "The Shadow Weaver has learned to harness the power of the High Elven runes of power (see Elven Runestones, below) to a degree few mages attain. When using Elven Runestones, the mage is +1 to his dispel roll. In addition, the mage can inscribe the weapons and armour of one of his fellow warriors with Elven runes. One member of the Warband may re-roll a single failed armour save or Parry roll once per battle. After a single battle, the runes lose their glamour and must be redone. This skill may only be taken by Shadow Weavers. (TC10)"
+    "description": "The Shadow Weaver has learned to harness the power of the High Elven runes of power to a degree few mages attain. When using Elven Runestones, the mage is +1 to his dispel roll. In addition, the mage can inscribe the weapons and armour of one of his fellow warriors with Elven runes. One member of the Warband may re-roll a single failed armour save or Parry roll once per battle. After a single battle, the runes lose their glamour and must be redone. This skill may only be taken by Shadow Weavers. (TC10)"
   },
   {
     "name": "Righteous Aura",
@@ -573,15 +573,15 @@
   },
   {
     "name": "Censer Bearer",
-    "description": "Only a Clan Pestilens member with the Black Hunger special skill may choose the Censer Bearer special skill.  A Clan Pestilens member with this skill is called a Censer Bearer.  He gains the special rule Frenzy and the only weapon he may use in close combat is a censer.  (TC 29)"
+    "description": "Only a Clan Pestilens member with the Black Hunger special skill may choose the Censer Bearer special skill. A Clan Pestilens member with this skill is called a Censer Bearer. He gains the special rule Frenzy and the only weapon he may use in close combat is a censer. (TC 29)"
   },
   {
     "name": "Rotten Body",
-    "description": "A Clan Pestilens member with this skill has grown accustomed to poisons, diseases, and the fog of death emanated by censers.  He is now immune to poisons and diseases and, if taken out of combat because of a failed test for wielding a censer, he will not have to roll for injuries at the end of the battle, recovering automatically. (TC 29)"
+    "description": "A Clan Pestilens member with this skill has grown accustomed to poisons, diseases, and the fog of death emanated by censers. He is now immune to poisons and diseases and, if taken out of combat because of a failed test for wielding a censer, he will not have to roll for injuries at the end of the battle, recovering automatically. (TC 29)"
   },
   {
     "name": "Contagious",
-    "description": "Only a Clan Pestilens member with the Rotten Body skill may choose the Contagious special skill.  A model who inflicts and injury in close combat that sends the Contagious member of the Clan Pestilens out of combat must take a Toughness test.  Roll a D6.  If the result is higher than the Toughness of the model taking the test, he will suffer an automatic wound.  A result of 6 always inflicts a wound.  Models of Undead or Possessed never take this test.  (TC 29)"
+    "description": "Only a Clan Pestilens member with the Rotten Body skill may choose the Contagious special skill. A model who inflicts and injury in close combat that sends the Contagious member of the Clan Pestilens out of combat must take a Toughness test. Roll a D6. If the result is higher than the Toughness of the model taking the test, he will suffer an automatic wound. A result of 6 always inflicts a wound. Models of Undead or Possessed never take this test. (TC 29)"
   },
   {
     "name": "Ignore Pain",
@@ -589,7 +589,7 @@
   },
   {
     "name": "Sand worm",
-    "description": "The warrior can bury himself in sand and become almost undetectable.  The model can Hide in open ground.  Cannot be used inside buildings."
+    "description": "The warrior can bury himself in sand and become almost undetectable. The model can Hide in open ground. Cannot be used inside buildings."
   },
   {
     "name": "Hit and run",
@@ -597,7 +597,7 @@
   },
   {
     "name": "Weather tolerant",
-    "description": "The warrior has grown so used to the weather that it doesn’t affect him anymore.  Weather conditions such as heat no longer affect this model."
+    "description": "The warrior has grown so used to the weather that it doesn’t affect him anymore. Weather conditions such as heat no longer affect this model."
   },
   {
     "name": "Transfixing Glare",
@@ -613,11 +613,11 @@
   },
   {
     "name": "Bat Form",
-    "description": "Many Vampires can transform into giant bats. A Vampire can change form in exactly the same manner as detailed above. M8 WS3 BS0 S3 T2 W* I* A1 Ld* *Use the same characteristics as the Vampire.  Whilst in Bat form the Vampire may fly and ignores movement penalties, he cannot run as such but may move double distance and a charge move is also doubled. The Vampire may not use weapons and does not receive any protection from armour. He cannot shoot with a missile weapon or cast spells but can attack in close combat without a penalty for fighting without a weapon. (TC11)"
+    "description": "Many Vampires can transform into giant bats. A Vampire can change form exactly as for Mist Form: he transforms in the recovery phase, reverts to his physical form at once if he is knocked down, and may change back to Vampire form in any subsequent recovery phase by choice. M8 WS3 BS0 S3 T2 W* I* A1 Ld* *Use the same characteristics as the Vampire. Whilst in Bat form the Vampire may fly and ignores movement penalties, he cannot run as such but may move double distance and a charge move is also doubled. The Vampire may not use weapons and does not receive any protection from armour. He cannot shoot with a missile weapon or cast spells but can attack in close combat without a penalty for fighting without a weapon. (TC11)"
   },
   {
     "name": "Giant Wolf Form",
-    "description": "Many Vampires can transform into Giant Wolves. A Vampire can change form in exactly the same manner as described above. M9 WS4 BS0 S4 T3 W* I* A2 Ld* *Use the same characteristics as the Vampire. Whilst in Wolf form the Vampire may not use weapons and does not receive any protection from armour. He cannot shoot with a missile weapon or cast spells but can attack in close combat without a penalty for fighting without a weapon. (TC11)"
+    "description": "Many Vampires can transform into Giant Wolves. A Vampire can change form exactly as for Mist Form: he transforms in the recovery phase, reverts to his physical form at once if he is knocked down, and may change back to Vampire form in any subsequent recovery phase by choice. M9 WS4 BS0 S4 T3 W* I* A2 Ld* *Use the same characteristics as the Vampire. Whilst in Wolf form the Vampire may not use weapons and does not receive any protection from armour. He cannot shoot with a missile weapon or cast spells but can attack in close combat without a penalty for fighting without a weapon. (TC11)"
   },
   {
     "name": "Strike to Injure",

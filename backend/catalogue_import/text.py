@@ -80,6 +80,11 @@ def clean_text(snippet: str | None) -> tuple[str, list[Table]]:
     return clean_inline(text), tables
 
 
+def single_spaced(text: str) -> str:
+    """The text with each run of spaces made one space, its line breaks kept."""
+    return re.sub(r" {2,}", " ", text)
+
+
 def same_text(left: str, right: str) -> bool:
     """Equal once spacing and case are ignored, so only a real rewording counts as different."""
     return " ".join(left.lower().split()) == " ".join(right.lower().split())

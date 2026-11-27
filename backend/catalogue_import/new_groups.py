@@ -23,7 +23,7 @@ from catalogue_import.common import as_list, norm_name
 from catalogue_import.hiring import named_after
 from catalogue_import.skill_groups import Skill, SkillGroupBuild, SkillGroupLog, group_rank, title_case
 from catalogue_import.skill_lists import SkillLists
-from catalogue_import.text import clean_inline
+from catalogue_import.text import clean_inline, single_spaced
 from catalogue_import.warbands import Resolver
 
 Assign = Callable[[list[dict[str, Any]]], list[dict[str, Any]]]  # rows (name, type) -> their settings (assignments.py)
@@ -195,6 +195,6 @@ def build_skill_groups(
     built += new.groups(assign)
     build.check_reused(new.reused, built)
     settings += new.settings
-    skills = [{"name": skill.name, "description": skill.description} for skill in build.skills.values()]
-    skills += [{"name": skill.name, "description": skill.description} for skill in new.made.values()]
+    made = [*build.skills.values(), *new.made.values()]
+    skills = [{"name": skill.name, "description": single_spaced(skill.description)} for skill in made]
     return SkillGroups(skills, sorted(built, key=lambda group: group_rank(group["name"])), settings, build.log)
