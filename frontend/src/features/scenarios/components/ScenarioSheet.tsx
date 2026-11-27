@@ -7,7 +7,7 @@ import ScenarioPlayersIcon from "./ScenarioPlayersIcon";
 import { sourceLine } from "../scenario-rows";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-/** The battle's scenario as the Rules sheet opens it: its name, and the campaign scenario it is played as. */
+/** A battle's scenario as the sheet opens it: its name, and the campaign scenario it is played as. */
 export type BattleScenario = { name: string; id: number | null };
 
 function ScenarioBones() {
@@ -52,7 +52,8 @@ function ScenarioBody({ campaignId, scenarioId }: { campaignId: number; scenario
 /**
  * The scenario's details (William, 24 Nov 2026: "we will be making the scenario: skirmish a button
  * to open the scenario details"): the campaign scenario the battle is played as, read as the
- * Scenarios page shows it. A battle whose scenario was typed holds only its name.
+ * Scenarios page shows it. A battle whose scenario was typed holds only its name. Start a battle's
+ * View opens it too, for the scenario picked before the battle starts.
  */
 export default function ScenarioSheet({
   campaignId,

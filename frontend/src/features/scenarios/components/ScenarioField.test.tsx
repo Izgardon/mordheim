@@ -80,4 +80,28 @@ describe("Start a battle's scenario", () => {
     await user.click(screen.getByRole("button", { name: "Random scenario" }));
     expect(await screen.findByRole("alert")).toHaveTextContent(detail);
   });
+
+  it("reads a picked scenario whole before the battle starts, from View (William, 27 Nov 2026)", async () => {
+    const user = setupUser();
+    fakeApi.on("GET /scenarios/11/", HUNT.scenario);
+    renderWithQueryClient(<Harness />);
+    expect(screen.queryByRole("button", { name: "View" })).toBeNull();
+
+    await user.click(screen.getByRole("combobox", { name: "Scenario" }));
+    await user.click(await screen.findByRole("option", { name: /Wyrdstone Hunt/ }));
+    await user.click(screen.getByRole("button", { name: "View" }));
+
+    const sheet = await screen.findByRole("dialog", { name: "Wyrdstone Hunt" });
+    expect(await within(sheet).findByRole("region", { name: "Special rules" })).toBeInTheDocument();
+    expect(within(sheet).getByText("Gain wealth by picking up wyrdstone.")).toBeInTheDocument();
+  });
+
+  it("offers no View for a typed name, which has nothing to read", async () => {
+    const user = setupUser();
+    renderWithQueryClient(<Harness />);
+
+    await user.type(screen.getByRole("combobox", { name: "Scenario" }), "Bridge fight");
+    await user.click(screen.getByRole("option", { name: "Play “Bridge fight”" }));
+    expect(screen.queryByRole("button", { name: "View" })).toBeNull();
+  });
 });
