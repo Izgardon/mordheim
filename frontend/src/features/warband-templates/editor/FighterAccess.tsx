@@ -109,11 +109,16 @@ export function StartingSkillsField({
 export function StartingSpellsField({
   campaignId,
   lores,
+  caster,
+  picks,
   value,
   saved,
   onChange,
 }: {
   campaignId: number;
+  /** His caster ("No", "Wizard", "Priest") and how many random picks a hire gets (null: one). */
+  caster: string;
+  picks: number | null;
   /** The lores he casts from, offered first. */
   lores: string[];
   value: number[];
@@ -129,6 +134,9 @@ export function StartingSpellsField({
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
       <span className={CAPTION}>Starting spells</span>
+      {caster !== "No" || picks ? (
+        <p className="m-0 text-xs text-text2">{randomPicksLine(caster, picks ?? 1)}</p>
+      ) : null}
       <SearchMultiSelect
         values={value.map((id) => {
           const spell = known.get(id);
@@ -146,6 +154,14 @@ export function StartingSpellsField({
       />
     </div>
   );
+}
+
+/** What every hire of his gets besides his starting spells (William, 27 Nov 2026: "regardless"). */
+export function randomPicksLine(caster: string, picks: number) {
+  const noun = caster === "Priest" ? "prayer" : "spell";
+  return picks === 1
+    ? `Plus one random ${noun} at hire.`
+    : `Plus ${picks} random ${noun}s at hire.`;
 }
 
 /** The lores he casts from (each with its note, kept as it is: "with the Mark of Tchar"). */

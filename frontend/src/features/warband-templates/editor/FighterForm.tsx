@@ -156,6 +156,8 @@ export default function FighterForm(props: FighterFormProps) {
       <StartingSpellsField
         campaignId={props.campaignId}
         lores={draft.spellTypes.map((lore) => lore.name)}
+        caster={draft.caster}
+        picks={fighter?.spell_picks ?? null}
         value={draft.spellIds}
         saved={fighter?.spells ?? []}
         onChange={(spellIds) => set({ spellIds })}

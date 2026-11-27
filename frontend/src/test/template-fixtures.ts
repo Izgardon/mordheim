@@ -64,6 +64,7 @@ export const makeTemplateFighter = (
   promotable: true,
   is_leader: false,
   caster: "No",
+  spell_picks: null,
   large: false,
   fixed_kit: "",
   lists: ["kit"],

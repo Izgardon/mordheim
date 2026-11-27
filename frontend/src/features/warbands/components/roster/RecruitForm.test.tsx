@@ -83,6 +83,7 @@ const fighter = (key: string, name: string, cost: number, extra: Partial<Templat
     promotable: true,
     is_leader: false,
     caster: "No",
+    spell_picks: null,
     large: false,
     fixed_kit: "",
     lists: ["mercenary"],

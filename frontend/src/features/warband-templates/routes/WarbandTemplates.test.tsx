@@ -168,6 +168,7 @@ const MERCENARIES: WarbandTemplate = {
       promotable: true,
       is_leader: false,
       caster: "No",
+      spell_picks: null,
       large: false,
       variant_changes: {
         middenheim: {

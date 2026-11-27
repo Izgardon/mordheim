@@ -172,6 +172,8 @@ export type TemplateFighter = Omit<CatalogueProfile, "armour_save"> & {
   promotable: boolean;
   is_leader: boolean;
   caster: string;
+  /** How many spells a hire of his picks at random; null: one for a caster. */
+  spell_picks: number | null;
   large: boolean;
   /** By variant key: what differs from the first variant's (its skill groups, profile as written, most). */
   variant_changes: Record<string, VariantChange>;

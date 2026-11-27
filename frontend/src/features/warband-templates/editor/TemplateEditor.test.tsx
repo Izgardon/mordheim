@@ -166,6 +166,8 @@ describe("The template editor", () => {
     await user.click(await screen.findByRole("button", { name: /^Fighters/ }));
     await user.click(screen.getByRole("button", { name: /^Champion/ }));
     expect(screen.getByRole("button", { name: "Remove Sacrificial Ritual" })).toBeInTheDocument();
+    // every hire also gets the usual random one (William, 27 Nov 2026: "regardless")
+    expect(screen.getByText("Plus one random spell at hire.")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Spell" }));
     const options = within(await screen.findByRole("listbox")).getAllByRole("option");
     expect(options.map((option) => option.textContent)).toEqual([

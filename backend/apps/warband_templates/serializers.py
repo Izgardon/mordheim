@@ -224,6 +224,7 @@ class TemplateFighterSerializer(serializers.ModelSerializer):
             "promotable",
             "is_leader",
             "caster",
+            "spell_picks",
             "large",
             "variant_changes",
             "fixed_kit",
