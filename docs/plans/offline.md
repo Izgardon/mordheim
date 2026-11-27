@@ -7,8 +7,40 @@ Research (27 Nov 2026). For William, who plays at the table on phones, often whe
 offline with nothing read is loading and says "No connection" (`lib/query-offline.ts`: `useCatalogue`, the entry
 detail, who-can, the warband lists); a page whose code didn't download says "No connection" when the app's site
 can't be reached, and "The app was updated" only when it can (`lib/chunk-failure.ts`); and a failed pusher-js
-download is tried again on the next subscribe or the `online` event (`lib/realtime/client.ts`). Still open: the
-offline bar, writes that refuse at once offline, and phases 1 to 4.
+download is tried again on the next subscribe or the `online` event (`lib/realtime/client.ts`).
+
+**Phase 1 done (27 Nov 2026), with a plain offline bar:** the phone keeps the reads a player needs at the table in
+IndexedDB and shows them before anything is read (`frontend/src/lib/offline/`, `PersistQueryClientProvider` in
+`app/provider.tsx`). What was built, against the design below:
+- **Kept** (`kept-queries.ts`, an allowlist of key shapes): your campaigns, the settings, and per campaign its detail,
+  players, campaign rules, charts, house rules, the post-game rules, scenarios and a scenario, locations,
+  encampments, the exploration chart, the warband lists and a list, each catalogue list (not the archived variant)
+  and catalogue entry, the open battles, your warband, and any warband's sheet, rules, stash and who-can (the
+  reference pages' "What <warband> can buy" waits for it), and a battle's state and rosters while it isn't ended or
+  cancelled. **Left out:** members (emails), chat, trades, bounties and their targets, every preview behind a
+  confirm button, share codes, search, history, the chronicle, ledgers and logs.
+- A kept read lives a week (`maxAge`, and the same `gcTime` set as the query is made and on restore, since a read
+  dropped from memory would leave the phone at the next save); one older than a week is not written. Saves are at
+  most every two seconds and flushed when the app goes to the background; writes are never kept
+  (`shouldDehydrateMutation: () => false`: phase 3).
+- **The buster** is the build (`__APP_BUILD__` in `vite.config.js`: Vercel's commit SHA, else the build time), so a
+  deploy starts empty and the first online visit fills it again.
+- **Whose:** the saved copy carries the token's user id, and a restore for anyone else (or nobody) deletes it. Sign-out,
+  a session ended and any account switch (`auth-store.tsx` `dropUserData`, now also a switch before the last
+  profile loaded) wipe it with the memory cache.
+- **A battle** is no longer `gcTime: 0`: it reads afresh on every visit (`refetchOnMount: "always"`, asking only
+  for newer events) and is kept while not over, read only offline (every write still goes to the server).
+- An installed app asks once for persistent storage (`navigator.storage.persist()`); a browser tab doesn't.
+- **The bar** (`components/offline/OfflineBar.tsx`, `lib/offline/use-offline.ts`): "You're offline. Showing what
+  this phone last saw." in the campaign banners' style, under the top bar (campaign shell, Home/Account/workshop
+  frame, the phone's battle screen), while `navigator.onLine` is false or TanStack's online manager is offline.
+  Weak signal (requests timing out with the browser still online) doesn't show it yet.
+- **Measured** (the demo campaign, iPhone 13 and desktop in Playwright): 1.3 MB for the warband sheet, Wargear,
+  the campaign rules and an active battle (Wargear's item list is most of it). Reloaded with the API unreachable,
+  each page showed from the phone; offline, each showed with the bar.
+
+Still open: writes that refuse at once offline, the bar for weak signal, "Not saved on this phone yet" wording, and
+phases 2 to 4.
 
 ## Summary
 
@@ -270,7 +302,7 @@ the cost.
 | Phase | Delivers | Size |
 |---|---|---|
 | **0. Say it plainly** | An "offline" bar (from the browser's offline events plus failed or timed-out requests; cleared by the next success, with a cheap check of `/api/health/`). Writes refuse at once offline instead of pausing silently. The three bug fixes are **done** (the empty list, the wrong cause, pusher-js retried) | ~1 day |
-| **1. Keep the last-seen data** (option a) | The sheet, reference pages, rules, charts, scenarios and an open battle read from the phone on weak or no signal (while the app's files can load) | ~2–3 days |
+| **1. Keep the last-seen data** (option a) — **done** 27 Nov 2026 | The sheet, reference pages, rules, charts, scenarios and an open battle read from the phone on weak or no signal (while the app's files can load) | ~2–3 days |
 | **2. Open with no signal** (option b, fonts first) | The app opens from a cold start in airplane mode and shows phase 1's data. Online players still always get the newest deploy | ~2.5 days + phone checks |
 | **3. Type the battle offline** (option c) | Wounds, statuses, notes, out of action, kills and the post-game draft are saved on the phone and sent later. Refused changes are listed plainly | ~4–6 days |
 | **3b. No double buys** | **Done** for purchases, hires and roster Saves; location visits and the other gold writes can take the same `once()` | — |
