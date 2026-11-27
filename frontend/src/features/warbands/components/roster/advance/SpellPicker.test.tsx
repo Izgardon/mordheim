@@ -12,6 +12,12 @@ import { setupUser } from "@/test/user-event";
 
 import SpellPicker from "./SpellPicker";
 
+const dice = vi.hoisted(() => ({ faces: [] as number[] }));
+vi.mock("@/lib/dice", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/dice")>()),
+  rollDie: () => dice.faces.shift() ?? 1,
+}));
+
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
@@ -109,5 +115,40 @@ describe("Their lores first", () => {
     await user.click(within(lores).getByRole("button", { name: LORE }));
     expect(screen.getByText("Not one of their lores")).toBeInTheDocument();
     expect(await screen.findByRole("table", { name: `${LORE} spells` })).toBeInTheDocument();
+  });
+});
+
+describe("A lore shorter than its die", () => {
+  const THESPIAN = "Thespian Magic";
+  const lines: Spell[] = [1, 2, 3].map((roll) => ({
+    id: 90 + roll,
+    name: `Line ${roll}`,
+    type: THESPIAN,
+    dc: "7",
+    roll,
+  }));
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /spells/?campaign_id=1", lines);
+  });
+
+  it("rolls again on a result with no spell, and says so of a typed one", async () => {
+    const onChange = vi.fn();
+    renderWithQueryClient(
+      <SpellPicker campaignId={1} known={[]} lores={[THESPIAN]} value={null} onChange={onChange} />
+    );
+    const user = setupUser();
+    const table = await screen.findByRole("table", { name: `${THESPIAN} spells` });
+    await within(table).findByText("Line 3");
+    dice.faces = [5, 4, 2];
+    await user.click(screen.getByRole("button", { name: "Roll D6" }));
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ mode: "roll", roll: 2, spell: lines[1] })
+    );
+    expect(screen.queryByText(/roll again/)).toBeNull();
+
+    await user.type(screen.getByLabelText("D6 rolled"), "6");
+    expect(onChange).toHaveBeenLastCalledWith(null);
+    expect(screen.getByText("No spell on a 6: roll again")).toBeInTheDocument();
   });
 });

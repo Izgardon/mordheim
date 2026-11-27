@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import DiceEntry from "@/components/ui/dice-entry";
 
 /**
@@ -9,16 +10,29 @@ export default function RollField({
   dice,
   value,
   onChange,
+  roll,
 }: {
   /** How many D6. */
   dice: 1 | 2;
   value: number | null;
   onChange: (roll: number | null) => void;
+  /** The Roll button's own roll, in place of the dice's (a short table rolling again on an empty row). */
+  roll?: () => number;
 }) {
+  const label = dice === 2 ? "2D6" : "D6";
   return (
     <DiceEntry
-      dice={dice === 2 ? "2D6" : "D6"}
+      dice={label}
       total={value}
+      button={
+        roll
+          ? () => (
+              <Button variant="secondary" onClick={() => onChange(roll())}>
+                Roll {label}
+              </Button>
+            )
+          : undefined
+      }
       onFaces={(faces) => onChange(faces.reduce((sum, die) => sum + die, 0))}
       // a box emptied takes the total back
       onChange={(faces) => (faces.includes(null) && value !== null ? onChange(null) : undefined)}

@@ -7,6 +7,7 @@ import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { spellOption, warnedLast } from "@/features/catalogue/search-options";
 import type { Spell } from "@/features/spells/types/spell-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
+import { rollDie } from "@/lib/dice";
 
 import { spellResult, spellRollResult } from "./advance-table";
 import DiceTable from "./DiceTable";
@@ -24,8 +25,11 @@ const fold = (text?: string | null) => (text ?? "").trim().toLowerCase();
  * A new spell, guided (William): pick one of his lores (those his template fighter casts from,
  * then those he already has a spell from) and roll a D6 on its table, or click a row; a spell he
  * knows gets 1 easier for him ("Difficulty 7 → 6"). Another lore is offered greyed under Show all,
- * still pickable. A spell with no roll ("–") is never rolled, only clicked. With no lore of his yet
- * any lore will do, with a warning. "Pick instead" chooses any spell by hand, with a warning.
+ * still pickable. A spell with no roll ("–") is never rolled, only clicked. A roll with no spell on
+ * it is rolled again (William, 27 Nov 2026, of the three-spell lores on a D6: "a 4 to 6 is rolled
+ * again"): the Roll button rolls until it lands on one, and a typed one says to roll again. With
+ * no lore of his yet any lore will do, with a warning. "Pick instead" chooses any spell by hand,
+ * with a warning.
  */
 export default function SpellPicker({
   campaignId,
@@ -59,10 +63,19 @@ export default function SpellPicker({
     .sort((a, b) => (a.roll ?? 99) - (b.roll ?? 99) || a.name.localeCompare(b.name));
   const roll = value?.mode === "roll" ? value.roll : null;
   const prayers = table.some((spell) => spell.is_prayer);
+  const faces = new Set(table.map((spell) => spell.roll).filter((face) => face && face <= 6));
+  const [missed, setMissed] = useState<number | null>(null);
 
   const rolled = (next: number | null) => {
     const result = lore && next !== null ? spellRollResult(table, known, next) : null;
+    setMissed(next !== null && !result ? next : null);
     onChange(result && lore ? { mode: "roll", lore, roll: next!, ...result } : null);
+  };
+  /** A D6 rolled until it lands on a spell of the table. */
+  const rollSpell = () => {
+    let face = rollDie(6);
+    while (!faces.has(face)) face = rollDie(6);
+    return face;
   };
 
   if (picking) {
@@ -116,6 +129,7 @@ export default function SpellPicker({
             title={lores.includes(name) ? undefined : "Not one of their lores"}
             onClick={() => {
               setLore(name);
+              setMissed(null);
               onChange(null);
             }}
           >
@@ -133,7 +147,17 @@ export default function SpellPicker({
       ) : null}
       {lore ? (
         <>
-          <RollField dice={1} value={roll} onChange={rolled} />
+          <RollField
+            dice={1}
+            value={roll ?? missed}
+            onChange={rolled}
+            roll={faces.size ? rollSpell : undefined}
+          />
+          {missed !== null ? (
+            <span className="text-xs font-semibold text-danger">
+              No {prayers ? "prayer" : "spell"} on a {missed}: roll again
+            </span>
+          ) : null}
           <DiceTable
             label={`${lore} ${prayers ? "prayers" : "spells"}`}
             columns={["D6", prayers ? "Prayer" : "Spell", "Difficulty"]}
