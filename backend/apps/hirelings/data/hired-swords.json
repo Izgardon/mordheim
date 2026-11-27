@@ -6537,7 +6537,16 @@
       }
     ],
     "skills": [],
-    "spells": [],
+    "spells": [
+      {
+        "lore": "Necromancy",
+        "name": "Spell of Awakening"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Death Vision"
+      }
+    ],
     "equipment": [
       {
         "item": "Dagger",
@@ -6603,7 +6612,10 @@
         "Academic",
         "Speed"
       ],
-      "available_special_skills": []
+      "available_special_skills": [],
+      "available_spell_types": [
+        "Necromancy"
+      ]
     }
   },
   {

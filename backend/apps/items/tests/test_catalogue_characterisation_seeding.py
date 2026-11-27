@@ -1145,6 +1145,11 @@ class SeedAllTests(TestCase):
         }
         self.assertEqual(lores, {"Dark Maiden": (["Spells of Wrath"], 2, 0), "White Lady": (["Spells of the Lake"], None, 0), "Priest of Morr (Mousillon)": (["Rituals of Morr"], 2, 0)})  # fmt: skip
         self.assertTrue(Spell.objects.filter(type="Rituals of Morr", is_prayer=True).exists())
+        # the Necromancer "starts with the spells Awakening and Death Vision" (William, 27 Nov 2026: yes, fixed)
+        necromancer = HiredSword.objects.get(name="Necromancer")
+        known = set(necromancer.spell_links.values_list("spell__type", "spell__name"))
+        self.assertEqual(known, {("Necromancy", "Spell of Awakening"), ("Necromancy", "Death Vision")})
+        self.assertEqual((necromancer.available_spell_types, necromancer.spell_picks), (["Necromancy"], None))
         spells = Spell.objects.filter(campaign__isnull=True, type="Dark Magic").order_by("roll")
 
         self.assertEqual(
