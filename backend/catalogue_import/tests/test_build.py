@@ -3,9 +3,10 @@ from typing import Any, ClassVar
 
 from django.test import SimpleTestCase
 
+from catalogue_import.item_overrides import add_notes
 from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimReader
-from catalogue_import.pipeline import ItemDecisions, add_notes, build, same_name_clusters, seed_changes
+from catalogue_import.pipeline import ItemDecisions, build, same_name_clusters, seed_changes
 from catalogue_import.rules import reword_shared, word_item_rules
 from catalogue_import.sources import OUT
 from catalogue_import.tests.world import world

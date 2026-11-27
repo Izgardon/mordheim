@@ -13,6 +13,7 @@ from catalogue_import.grading import build_settings, collect_evidence
 from catalogue_import.groups import build_groups
 from catalogue_import.hiring import HiringLog, build_who_can
 from catalogue_import.injuries import build_serious_injuries
+from catalogue_import.item_overrides import add_notes, set_own_rules
 from catalogue_import.item_saves import set_saves
 from catalogue_import.item_splits import as_printed, choose_items, read_splits, render_splits, split_rows
 from catalogue_import.item_subtypes import merge_subtypes
@@ -132,31 +133,6 @@ class ItemDecisions:
         for name in self.overrides.get(key, {}):
             self._check_item(key, name)
         return dict(self.overrides.get(key, {}))
-
-
-def add_notes(items: list[dict[str, Any]], notes: dict[str, str]) -> None:
-    """overrides.json "item_notes": a soft note on every price row of the named item."""
-    for item in items:
-        note = notes.get(item["name"])
-        if not note:
-            continue
-        for row in item["availabilities"]:
-            row["note"] = "; ".join(filter(None, [row["note"], note]))
-
-
-def set_own_rules(items: list[dict[str, Any]], decisions: dict[str, Any]) -> None:
-    """overrides.json "item_own_rules": the rules William settles for one of our items, in place of its own (the
-    Rain Coat, which mordheimer leaves to its flavour line while the Khemri page prints what it does). A name that
-    is no item of ours stops the build."""
-    by_name = {item["name"]: item for item in items}
-    missing = sorted(set(decisions) - set(by_name))
-    if missing:
-        raise ValueError(f"overrides.json item_own_rules: no item {', '.join(missing)}")
-    for name, decision in decisions.items():
-        by_name[name]["rules"] = [
-            {"name": rule.get("name", ""), "summary": rule.get("summary", ""), "text": rule["text"], "tables": []}
-            for rule in decision["rules"]
-        ]
 
 
 def _resolve_everything(sources: Sources, resolver: Resolver) -> None:
