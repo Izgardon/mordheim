@@ -19,9 +19,7 @@ from .roster_support import HENCHMEN, HERO, RosterTestCase, cap_error, log_rows,
 
 STATS = {"movement": 4, "weapon_skill": 3, "ballistic_skill": 3, "strength": 3, "toughness": 3}
 STATS |= {"wounds": 1, "initiative": 3, "attacks": 1, "leadership": 7}
-PROMOTE_QUERY_BUDGET = (
-    42  # whatever the roster size (test below); the response re-reads hero, group (its loadout kept) and summary
-)
+PROMOTE_QUERY_BUDGET = 43  # whatever the roster size (test below), the special lists one; the response re-reads hero, group (its loadout kept) and summary
 
 
 class PromoteTests(RosterTestCase):

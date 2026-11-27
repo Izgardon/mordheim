@@ -11,7 +11,8 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.warbands.models import Hero
+from apps.skills.models import SkillGroup, SkillGroupWarband
+from apps.warbands.models import Hero, WarbandGroup, WarbandType
 
 from .roster_support import HENCHMEN, HERO, HIRELING, RosterTestCase, make_unit, unit_url
 
@@ -44,6 +45,27 @@ class TalentSkillListsTests(RosterTestCase):
 
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.json(), {"skill_lists": ["Combat", "Academic", "Speed", "Strength"], "pick": 2})
+
+    def test_the_warbands_special_list_is_offered_after_the_heroes(self):
+        skaven = WarbandGroup.objects.create(name="Skaven", slug="skaven-talent", kind="race")
+        eshin = WarbandType.objects.create(name="Clan Eshin", slug="clan-eshin-talent")
+        skaven.members.add(eshin)
+        self.warband.warband_type = eshin
+        self.warband.save(update_fields=["warband_type"])
+        for name, line in (("Skaven Special", {"warband_group": skaven}), ("Eshin Special", {"warband_type": eshin})):
+            SkillGroupWarband.objects.create(group=SkillGroup.objects.create(name=name, for_everyone=False), **line)
+        other = WarbandType.objects.create(name="Witch Hunters", slug="witch-hunters-talent")
+        SkillGroupWarband.objects.create(
+            group=SkillGroup.objects.create(name="Witch Hunter Special", for_everyone=False), warband_type=other
+        )
+        excluded = SkillGroup.objects.create(name="Not for Eshin", for_everyone=False)
+        SkillGroupWarband.objects.create(group=excluded, warband_group=skaven)
+        SkillGroupWarband.objects.create(group=excluded, warband_type=eshin, excluded=True)
+        make_unit(HERO, self.warband, name="Captain", is_leader=True, available_skills=["Combat", "Eshin Special"])
+
+        response = self.client.get(self._url())
+
+        self.assertEqual(response.json()["skill_lists"], ["Combat", "Eshin Special", "Skaven Special"])
 
     def test_the_offer_reads_in_a_fixed_number_of_queries(self):
         self._heroes()
