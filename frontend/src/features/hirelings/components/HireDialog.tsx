@@ -11,6 +11,7 @@ import type { Warband, WarbandHero } from "@/features/warbands/types/warband-typ
 import { toastServerWarnings } from "@/features/warbands/utils/server-warnings";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
+import { useRequestKey } from "@/lib/request-key";
 
 import { feeOf, feeSettle, formatFee } from "../fees";
 import type { HirelingCatalogueConfig } from "../hireling-catalogue-kinds";
@@ -53,6 +54,7 @@ export default function HireDialog(props: HireDialogProps) {
   const [dismissHeroId, setDismissHeroId] = useState<number | null>(null);
   const [feePaid, setFeePaid] = useState(false);
   const [saving, setSaving] = useState(false);
+  const requestKey = useRequestKey();
   const counters = warband.resources ?? [];
   const settle = feeSettle(entry?.hire_fee); // the server's words for what no gold settles
   useEffect(() => {
@@ -65,7 +67,7 @@ export default function HireDialog(props: HireDialogProps) {
     if (!entry) return;
     setSaving(true);
     try {
-      const answer = await hireWarbandHireling(warband.id, {
+      const body = {
         source: config.source,
         id: entry.id,
         ...(name.trim() ? { name: name.trim() } : {}),
@@ -74,7 +76,9 @@ export default function HireDialog(props: HireDialogProps) {
         resources: paymentLines(payment, counters),
         dismiss_hero_id: dismissHeroId,
         ...(settle && feePaid ? { fee_paid: true } : {}),
-      });
+      };
+      const answer = await hireWarbandHireling(warband.id, body, requestKey.keyFor(body));
+      requestKey.done();
       toastServerWarnings(answer.warnings);
       toast.success(`${answer.name?.trim() || entry.name} joins ${warband.name}.`);
       void queryClient.invalidateQueries({

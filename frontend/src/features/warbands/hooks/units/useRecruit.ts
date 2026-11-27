@@ -3,12 +3,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { getErrorMessage } from "@/lib/get-error-message";
+import { useRequestKey } from "@/lib/request-key";
 
 import { isWarbandQuery, useWarbandCacheUpdate, type WarbandUpdate } from "../../api/warband-cache";
 import type { TemplateHire } from "../../components/recruit/TemplateRecruit";
 import { LIST_KEY } from "../../components/roster/unit-view";
 import type { UnitKindKey } from "../../types/units";
-import { unitApi } from "../../units/unit-api";
+import { unitApi, type UnitBatch } from "../../units/unit-api";
 import { toastServerWarnings } from "../../utils/server-warnings";
 
 /**
@@ -58,6 +59,10 @@ export function useRecruit(kind: RecruitKind, warbandId: number, existingIds: nu
   const updateCache = useWarbandCacheUpdate();
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
+  const requestKey = useRequestKey();
+  /** The Save, keyed so a retry after a lost answer recruits once. */
+  const send = (batch: UnitBatch<RecruitKind>) =>
+    unitApi(kind).batch(warbandId, batch, requestKey.keyFor(batch));
 
   const create = async (draft: RecruitDraft) => {
     const type = draft.type.trim();
@@ -76,7 +81,7 @@ export function useRecruit(kind: RecruitKind, warbandId: number, existingIds: nu
           }
         : {}),
     };
-    const result = await unitApi(kind).batch(warbandId, { create: [body as never] });
+    const result = await send({ create: [body as never] });
     updateCache(warbandId, {
       [LIST_KEY[kind]]: result.units,
       summary: result.summary,
@@ -100,7 +105,7 @@ export function useRecruit(kind: RecruitKind, warbandId: number, existingIds: nu
           }
         : {}),
     };
-    const result = await unitApi(kind).batch(warbandId, {
+    const result = await send({
       create: [body as never],
       ...(hire.purchases.length ? { purchases: hire.purchases } : {}),
       ...(hire.upgrades.length ? { upgrades: hire.upgrades } : {}),
@@ -119,6 +124,7 @@ export function useRecruit(kind: RecruitKind, warbandId: number, existingIds: nu
     setSaving(true);
     try {
       const id = await write();
+      requestKey.done();
       return id === null ? null : `${kind}-${id}`;
     } catch (error) {
       toast.error("Couldn't recruit.", { description: getErrorMessage(error) });

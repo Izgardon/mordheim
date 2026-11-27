@@ -3,6 +3,7 @@ import { toast } from "sonner";
 
 import { apiRequest } from "@/lib/api-client";
 import { socketIdHeaders } from "@/lib/realtime/socket-headers";
+import { requestKeyHeaders } from "@/lib/request-key";
 import {
   applyWarbandUpdate,
   markLedgerStale,
@@ -89,6 +90,8 @@ export type PurchaseRequest = {
   companion?: boolean;
   /** A creature bought for the stash: recruited straight away instead (POST purchases/ only). */
   recruit?: RecruitTarget | null;
+  /** This purchase's key, the same on a retry, so a lost answer never buys twice (lib/request-key.ts). */
+  requestKey?: string;
 };
 
 const API_TARGETS: Record<PurchaseTarget["kind"], ApiTargetType> = {
@@ -115,7 +118,7 @@ export function purchaseLine({
   rarityRoll,
   companion,
   material,
-}: Omit<PurchaseRequest, "warbandId" | "target" | "recruit">) {
+}: Omit<PurchaseRequest, "warbandId" | "target" | "recruit" | "requestKey">) {
   // A copy's price: what one costs when buying, the cost it keeps for resale when given.
   const price = meta.isBuying ? meta.unitPrice : getPersistedItemCost(item, meta);
   const reason = meta.reason.trim();
@@ -185,13 +188,13 @@ export function toastPurchaseWarnings(warnings: PurchaseWarning[] = []) {
  * the log and any rarity roll in one transaction, refuses as a whole, and answers what changed.
  */
 export async function purchase(request: PurchaseRequest, queryClient: QueryClient) {
-  const { warbandId, target, recruit } = request;
+  const { warbandId, target, recruit, requestKey, ...line } = request;
   const answer = await apiRequest<PurchaseAnswer>(`/warbands/${warbandId}/purchases/`, {
     method: "POST",
     // Every warband write tells the other members (`warband.changed`), not this browser.
-    headers: socketIdHeaders(),
+    headers: requestKeyHeaders(requestKey, socketIdHeaders()),
     body: {
-      ...purchaseLine(request),
+      ...purchaseLine(line),
       target_type: API_TARGETS[target.kind],
       ...(target.kind === "stash" ? {} : { target_id: target.unit.id }),
       ...(recruit ? { recruit } : {}),

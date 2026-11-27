@@ -11,7 +11,7 @@ import AcquireForm from "./AcquireForm";
 import type { MaterialWeapon } from "./material-rows";
 import MaterialWeapons from "./MaterialWeapons";
 import { itemName } from "./store-items";
-import type { BasketLine, Recipient } from "./useStoreBasket";
+import type { NewItemBasketLine, Recipient } from "./useStoreBasket";
 
 type MaterialRowProps = {
   material: WeaponMaterial;
@@ -33,7 +33,7 @@ type MaterialRowProps = {
   searchers: { id: number; name: string; spent: boolean }[];
   /** The bonus a rare search starts on for the weapon picked (the variant's). */
   rareBonus: (item: MaterialWeapon["offer"]["item"]) => number;
-  onPick: (line: Omit<BasketLine, "id">) => void;
+  onPick: (line: NewItemBasketLine) => void;
 };
 
 /**

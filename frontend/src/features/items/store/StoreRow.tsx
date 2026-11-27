@@ -7,7 +7,7 @@ import type { Item, ItemAvailability } from "../types/item-types";
 import { isCommon, priceLabel, rarityLabel } from "../utils/item-prices";
 import AcquireForm from "./AcquireForm";
 import { itemName } from "./store-items";
-import type { BasketLine, Recipient } from "./useStoreBasket";
+import type { NewItemBasketLine, Recipient } from "./useStoreBasket";
 
 /** One offer: the item, the price row the server picked first, the rows it may buy at, why not usually. */
 export type StoreOffer = {
@@ -39,7 +39,7 @@ type StoreRowProps = {
   startPrice: number | null;
   /** The bonus a rare search starts on (the variant's: Marienburg +1). */
   rareBonus: number;
-  onPick: (line: Omit<BasketLine, "id">) => void;
+  onPick: (line: NewItemBasketLine) => void;
   isShown: (key: string) => boolean;
   onToggleShown: (next: ShownItem) => void;
 };

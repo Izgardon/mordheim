@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { useRequestKey } from "@/lib/request-key";
 
 import { isWarbandQuery, useWarbandCacheUpdate } from "../../api/warband-cache";
 import { useWarbandHireTemplate } from "../../api/warband-template-queries";
 import { typedType } from "../../hooks/units/useRecruit";
-import { unitApi } from "../../units/unit-api";
+import { unitApi, type UnitBatch } from "../../units/unit-api";
 import { isCreatureGroup } from "../../utils/companions";
 import HireTally from "../recruit/HireTally";
 import { useRecruitName } from "../recruit/RecruitNameField";
@@ -49,6 +50,7 @@ export default function VeteransDialog({
   const [recruits, setRecruits] = useState<string[]>(["", ""]);
   const [cost, setCost] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const requestKey = useRequestKey();
   // a new group from the warband's template (the templates plan, phase 2): its henchmen to recruit as
   const [as, setAs] = useState("");
   const answer = useWarbandHireTemplate(camp.campaignId, camp.warbandId).data;
@@ -76,8 +78,8 @@ export default function VeteransDialog({
     const names = recruits.map((_, index) => label(index));
     const gc = Number(price) || 0;
     try {
-      const result = group
-        ? await unitApi("henchmen_group").batch(camp.warbandId, {
+      const batch: UnitBatch<"henchmen_group"> = group
+        ? {
             update: [
               {
                 id: group.id,
@@ -88,8 +90,8 @@ export default function VeteransDialog({
                 ] as never,
               },
             ],
-          })
-        : await unitApi("henchmen_group").batch(camp.warbandId, {
+          }
+        : {
             create: [
               {
                 // from the template, the server fills his type, race, profile and rules
@@ -101,7 +103,14 @@ export default function VeteransDialog({
                 henchmen: names.map((recruitName) => ({ name: recruitName })),
               } as never,
             ],
-          });
+          };
+      // keyed, so a retry after a lost answer hires the veterans once
+      const result = await unitApi("henchmen_group").batch(
+        camp.warbandId,
+        batch,
+        requestKey.keyFor(batch)
+      );
+      requestKey.done();
       updateCache(camp.warbandId, { henchmenGroups: result.units, summary: result.summary });
       void queryClient.invalidateQueries({ predicate: isWarbandQuery(camp.warbandId, "template") });
       const groupName = group ? group.name : name.name.trim();

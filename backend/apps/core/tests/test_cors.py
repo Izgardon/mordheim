@@ -27,6 +27,18 @@ class CorsPreflightTests(TestCase):
         allowed = {header.strip() for header in response["Access-Control-Allow-Headers"].lower().split(",")}
         self.assertTrue({"authorization", "content-type", "x-pusher-socket-id"} <= allowed)
 
+    def test_a_preflight_naming_the_request_key_header_is_allowed(self):
+        # The offline plan's double buy: purchases, hires and roster saves send Idempotency-Key
+        response = self.client.options(
+            "/api/warbands/1/purchases/",
+            HTTP_ORIGIN=APP,
+            HTTP_ACCESS_CONTROL_REQUEST_METHOD="POST",
+            HTTP_ACCESS_CONTROL_REQUEST_HEADERS="authorization, content-type, idempotency-key",
+        )
+
+        allowed = {header.strip() for header in response["Access-Control-Allow-Headers"].lower().split(",")}
+        self.assertIn("idempotency-key", allowed)
+
     def test_another_origin_is_not_allowed(self):
         response = self._preflight("https://elsewhere.example.com")
 

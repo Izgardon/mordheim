@@ -14,6 +14,7 @@ from .hirelings import (
     HirelingSpecial,
     HirelingSpell,
 )
+from .request_keys import WarbandRequestKey
 from .shared import MAX_PENDING_PICKS, PendingPicks, RosterUnit, not_dismissed, on_roster
 from .types import WarbandAccess, WarbandGroup, WarbandType
 from .warband import LedgerAction, Warband, WarbandItem, WarbandLog, WarbandResource, WarbandRule, WarbandTrade
@@ -33,6 +34,7 @@ __all__ = [
     "WarbandLog",
     "WarbandResource",
     "WarbandRule",
+    "WarbandRequestKey",
     "WarbandTrade",
     "Hero",
     "HeroItem",

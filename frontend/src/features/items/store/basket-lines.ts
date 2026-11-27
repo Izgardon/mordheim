@@ -7,6 +7,8 @@ export type Recipient = { key: string; label: string; target: PurchaseTarget; co
 /** One line of the basket: the item, who gets it and at what price (each), or free with a reason. */
 export type BasketLine = {
   id: number;
+  /** Its purchase's key (lib/request-key.ts): kept while Buy all is tried again, new when edited. */
+  requestKey: string;
   item: Item;
   availabilityId: number | null;
   /** The availability's cost: what a gift keeps for its resale price. */
@@ -27,6 +29,7 @@ export type BasketLine = {
 /** An upgrade of the warband's template for a hero (the templates plan, phase 3), at its price. */
 export type UpgradeBasketLine = {
   id: number;
+  requestKey: string;
   upgrade: { id: number; name: string; group: string; specialId: number };
   recipient: Recipient;
   price: number;
@@ -36,7 +39,9 @@ export type UpgradeBasketLine = {
 
 /** What the basket holds: items, and upgrades bought onto a hero. */
 export type AnyBasketLine = BasketLine | UpgradeBasketLine;
-export type NewBasketLine = Omit<BasketLine, "id"> | Omit<UpgradeBasketLine, "id">;
+/** A line as a row picks it: the basket gives it its id and request key. */
+export type NewItemBasketLine = Omit<BasketLine, "id" | "requestKey">;
+export type NewBasketLine = NewItemBasketLine | Omit<UpgradeBasketLine, "id" | "requestKey">;
 
 export const isUpgradeLine = (line: AnyBasketLine | NewBasketLine): line is UpgradeBasketLine =>
   "upgrade" in line;

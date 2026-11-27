@@ -243,8 +243,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 cors_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:5173")
 CORS_ALLOWED_ORIGINS = [origin for origin in cors_origins.split(",") if origin]
-# Trade writes name the sender's Pusher socket, so its own events skip it (ECON-PERF-02)
-CORS_ALLOW_HEADERS = (*default_headers, "x-pusher-socket-id")
+# Trade writes name the sender's Pusher socket, so its own events skip it (ECON-PERF-02); gold-moving writes carry a
+# request key, so a retry after a lost answer is answered again (services/request_keys.py)
+CORS_ALLOW_HEADERS = (*default_headers, "x-pusher-socket-id", "idempotency-key")
 
 # Render terminates TLS at its proxy and forwards the original scheme.
 if not DEBUG:

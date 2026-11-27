@@ -71,9 +71,13 @@ class WarbandPurchaseView(WarbandScopedView):
         body = PurchaseSerializer(data=request.data)
         if not body.is_valid():
             raise validation_error(body.errors)
-        item = scoped_item(self.warband, body.validated_data["item_id"])
-        bought = purchase(self.warband, item, body.validated_data)
-        return Response(purchase_answer(self.warband, item, bought), status=status.HTTP_201_CREATED)
+
+        def buy() -> Response:
+            item = scoped_item(self.warband, body.validated_data["item_id"])
+            bought = purchase(self.warband, item, body.validated_data)
+            return Response(purchase_answer(self.warband, item, bought), status=status.HTTP_201_CREATED)
+
+        return self.once("purchase", buy)
 
 
 class WarbandRarityRollView(WarbandScopedView):

@@ -7,7 +7,7 @@ import { isCommon, materialPrice, priceLabel, rarityLabel } from "../utils/item-
 import AddToBasket from "./AddToBasket";
 import PriceFields from "./PriceFields";
 import RareSearch, { type StoreSearch } from "./RareSearch";
-import type { BasketLine, Recipient } from "./useStoreBasket";
+import type { NewItemBasketLine, Recipient } from "./useStoreBasket";
 
 type AcquireFormProps = {
   warbandId: number;
@@ -25,7 +25,7 @@ type AcquireFormProps = {
   /** What the weapon is made of (weapon materials), from the material's own store row; null: plain. */
   material?: WeaponMaterial | null;
   isMobile: boolean;
-  onPick: (line: Omit<BasketLine, "id">) => void;
+  onPick: (line: NewItemBasketLine) => void;
 };
 
 /** The hero a recipient key names ("heroes:5"), else null. */

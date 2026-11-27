@@ -6,6 +6,7 @@ import type { HenchmenGroup, WarbandHero } from "@/features/warbands/types/warba
 import { isWarbandQuery } from "@/features/warbands/api/warband-cache";
 import { isCreatureGroup } from "@/features/warbands/utils/companions";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { newRequestKey } from "@/lib/request-key";
 
 import { buyUpgrade } from "../api/buy-upgrade";
 import { purchase } from "../api/purchase";
@@ -21,6 +22,7 @@ export type {
   AnyBasketLine,
   BasketLine,
   NewBasketLine,
+  NewItemBasketLine,
   Recipient,
   UpgradeBasketLine,
 } from "./basket-lines";
@@ -83,7 +85,12 @@ function readBasket(warbandId: number): BasketState {
   try {
     const saved = JSON.parse(sessionStorage.getItem(storageKey(warbandId)) ?? "null");
     if (Array.isArray(saved?.lines)) {
-      state = { lines: saved.lines, nextId: Number(saved.nextId) || saved.lines.length + 1 };
+      // a line saved before lines carried a request key gets one
+      const lines = saved.lines.map((line: AnyBasketLine) => ({
+        ...line,
+        requestKey: line.requestKey || newRequestKey(),
+      }));
+      state = { lines, nextId: Number(saved.nextId) || lines.length + 1 };
     }
   } catch {
     // No storage (a private window, blocked site data): the basket lives in memory only.
@@ -126,7 +133,10 @@ export function useStoreBasket(warbandId: number) {
 
   const add = (line: NewBasketLine) =>
     writeBasket(warbandId, (state) => ({
-      lines: [...state.lines, { ...line, id: state.nextId }],
+      lines: [
+        ...state.lines,
+        { ...line, id: state.nextId, requestKey: newRequestKey() } as AnyBasketLine,
+      ],
       nextId: state.nextId + 1,
     }));
   const remove = (id: number) => setLines((current) => current.filter((line) => line.id !== id));
@@ -136,8 +146,8 @@ export function useStoreBasket(warbandId: number) {
         line.id !== id
           ? line
           : isUpgradeLine(line)
-            ? { ...line, price }
-            : { ...line, price, rowPrice: false }
+            ? { ...line, price, requestKey: newRequestKey() }
+            : { ...line, price, rowPrice: false, requestKey: newRequestKey() }
       )
     );
 
@@ -153,6 +163,7 @@ export function useStoreBasket(warbandId: number) {
             heroId,
             upgradeId: line.upgrade.id,
             price: line.price,
+            requestKey: line.requestKey,
           });
           bought += 1;
           setLines((current) => current.filter((entry) => entry.id !== line.id));
@@ -178,6 +189,7 @@ export function useStoreBasket(warbandId: number) {
               reason: line.free ? line.reason.trim() || "Found or given" : "",
               baseCost: line.baseCost,
             },
+            requestKey: line.requestKey,
           },
           queryClient
         );

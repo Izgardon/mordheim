@@ -76,6 +76,23 @@ describe("HireDialog", () => {
     expect(fakeApi.bodyOf(route)).not.toHaveProperty("fee_paid");
   });
 
+  it("sends a hire again with the same request key after a lost answer (the double buy)", async () => {
+    const route = "POST /warbands/9/hirelings/hire/";
+    fakeApi.fail(route, new Error("The server took too long to respond."));
+    const user = setupUser();
+    show({ gold: 80, settle: "" });
+
+    await user.click(screen.getByRole("button", { name: "Hire for 80 gc" }));
+    await waitFor(() => expect(fakeApi.countOf(route)).toBe(1));
+    fakeApi.on(route, { id: 31, name: "Knight Panther" });
+    await user.click(screen.getByRole("button", { name: "Hire for 80 gc" }));
+
+    await waitFor(() => expect(fakeApi.countOf(route)).toBe(2));
+    const [first, retry] = fakeApi.headersOf(route).map((headers) => headers["Idempotency-Key"]);
+    expect(first).toMatch(/^[0-9a-f]{32}$/);
+    expect(retry).toBe(first);
+  });
+
   it("offers no Paid button for a fee in gold: it is charged and written already", () => {
     show({ gold: 80, settle: "" });
 

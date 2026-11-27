@@ -202,15 +202,19 @@ class UnitBatchView(UnitView):
         shape = UnitBatchSerializer(data=request.data)
         if not shape.is_valid():
             raise validation_error(shape.errors)
-        plan = plan_batch(self.kind, self.serializers, self.warband, shape.validated_data)
-        warnings = apply_batch(self.kind, self.warband, plan)
-        units = self.kind.roster(self.warband, detail=True)
-        payload = {
-            "units": self.serializers.detail(units, many=True).data,
-            "summary": WarbandSummarySerializer(self.warband).data,
-            "warnings": warnings,
-        }
-        return Response(payload)
+
+        def save() -> Response:
+            plan = plan_batch(self.kind, self.serializers, self.warband, shape.validated_data)
+            warnings = apply_batch(self.kind, self.warband, plan)
+            units = self.kind.roster(self.warband, detail=True)
+            payload = {
+                "units": self.serializers.detail(units, many=True).data,
+                "summary": WarbandSummarySerializer(self.warband).data,
+                "warnings": warnings,
+            }
+            return Response(payload)
+
+        return self.once(f"{self.kind.key}.batch", save)
 
 
 # The bestiary rewrite: a hired sword or dramatis persona copied from the catalogue, or one typed by hand (`custom`),
@@ -230,11 +234,14 @@ class UnitHireView(UnitView):
             payload = hire_payload(sent["source"], entry, sent.get("name"), terms.gold)
         writer = self.serializers.create(data=payload, context={"campaign_id": campaign_id})
         writer.is_valid(raise_exception=True)
-        hired = hire(self.warband, writer, sent["source"], entry, terms)
-        unit = self.kind.detail_queryset().get(id=hired.unit.pk)
-        return Response(
-            {**self.serializers.detail(unit).data, "warnings": hired.warnings}, status=status.HTTP_201_CREATED
-        )
+
+        def hire_one() -> Response:
+            hired = hire(self.warband, writer, sent["source"], entry, terms)
+            unit = self.kind.detail_queryset().get(id=hired.unit.pk)
+            answer = {**self.serializers.detail(unit).data, "warnings": hired.warnings}
+            return Response(answer, status=status.HTTP_201_CREATED)
+
+        return self.once(f"{self.kind.key}.hire", hire_one)
 
 
 # The bestiary rewrite step 4: a mount or pet in the unit's items switched on or off for him (only the unit holding the

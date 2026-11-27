@@ -1,5 +1,6 @@
 import { apiRequest } from "@/lib/api-client";
 import { socketIdHeaders } from "@/lib/realtime/socket-headers";
+import { requestKeyHeaders } from "@/lib/request-key";
 
 import type { PurchaseLine, PurchaseWarning } from "@/features/items/api/purchase";
 import type { UnitKillHistory, WarbandUnitsSummary } from "../types/warband-types";
@@ -62,7 +63,8 @@ export type UnitApi<K extends UnitKindKey> = {
   ): Promise<Unit<K>>;
   /** Makes a pick an advance left for later ("Skill to choose"). */
   pick(warbandId: number, unitId: number, pick: AdvancePick): Promise<Unit<K>>;
-  batch(warbandId: number, body: UnitBatch<K>): Promise<UnitBatchResult<K>>;
+  /** `requestKey`: the Save's key, the same on a retry, so a lost answer never recruits or buys twice. */
+  batch(warbandId: number, body: UnitBatch<K>, requestKey?: string): Promise<UnitBatchResult<K>>;
 };
 
 function createUnitApi<K extends UnitKindKey>(kind: K): UnitApi<K> {
@@ -96,10 +98,10 @@ function createUnitApi<K extends UnitKindKey>(kind: K): UnitApi<K> {
         headers: socketIdHeaders(),
         body: pick,
       }),
-    batch: (warbandId, body) =>
+    batch: (warbandId, body, requestKey) =>
       apiRequest<UnitBatchResult<K>>(`${base(warbandId)}batch/`, {
         method: "POST",
-        headers: socketIdHeaders(),
+        headers: requestKeyHeaders(requestKey, socketIdHeaders()),
         body,
       }),
   };

@@ -19,14 +19,19 @@ type Handler = (body: unknown, path: string) => unknown;
 export type SentRequest = { method: string; path: string; body?: unknown };
 
 const sent: SentRequest[] = [];
+const sentHeaders: (Record<string, string> | undefined)[] = []; // beside `sent`, kept out of its shape
 const routes = new Map<string, Handler>();
 
 const routeOf = (method: string, path: string) => `${method} ${path}`;
 
 export const fakeApi = {
-  apiRequest: async (path: string, options: { method?: string; body?: unknown } = {}) => {
+  apiRequest: async (
+    path: string,
+    options: { method?: string; body?: unknown; headers?: Record<string, string> } = {}
+  ) => {
     const method = (options.method ?? "GET").toUpperCase();
     sent.push(options.body === undefined ? { method, path } : { method, path, body: options.body });
+    sentHeaders.push(options.headers);
     const handler = routes.get(routeOf(method, path));
     if (!handler) {
       return new Promise<never>(() => undefined);
@@ -56,12 +61,14 @@ export const fakeApi = {
   /** Forgets every route and every recorded request. */
   reset() {
     sent.length = 0;
+    sentHeaders.length = 0;
     routes.clear();
   },
 
   /** Clears the recorded requests, keeping the routes (e.g. after a screen's initial loads). */
   clearRequests() {
     sent.length = 0;
+    sentHeaders.length = 0;
   },
 
   /** Every request so far as `"METHOD /path/"`, in the order it was sent. */
@@ -75,6 +82,12 @@ export const fakeApi = {
     const matches = sent.filter((request) => routeOf(request.method, request.path) === route);
     return matches[matches.length - 1]?.body;
   },
+
+  /** The headers each request to `"METHOD /path/"` was sent with, in order. */
+  headersOf: (route: string) =>
+    sent.flatMap((request, index) =>
+      routeOf(request.method, request.path) === route ? [sentHeaders[index] ?? {}] : []
+    ),
 
   /** How many requests went to `"METHOD /path/"`. */
   countOf: (route: string) =>

@@ -1,11 +1,12 @@
 """The base of every view under warbands/<warband_id>/ (design 0.29, IMP-25)."""
 
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from typing import Any
 
 from rest_framework import permissions
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.campaigns.errors import CampaignArchived, WorkshopCampaign
@@ -14,6 +15,7 @@ from apps.campaigns.permissions import get_membership
 from apps.realtime.services import send_warband_changed, sender_socket_id
 from apps.warbands.access import WARBAND_RULES, warband_capabilities
 from apps.warbands.models import Warband
+from apps.warbands.services import request_keys
 
 WRITES = ("POST", "PUT", "PATCH", "DELETE")
 WORKSHOP_WRITES = frozenset(WRITES)  # what a workshop's warband refuses of a view it has no part of
@@ -62,6 +64,22 @@ class WarbandScopedView(APIView):
 
     def capabilities(self) -> dict[str, bool]:
         return warband_capabilities(self.request.user, self.warband, self.membership)
+
+    def once(self, action: str, write: Callable[[], Response]) -> Response:
+        """A gold-moving write that a timeout can repeat: with an `Idempotency-Key`, a key sent before is answered as it
+        was, and nothing is written or announced again (services/request_keys.py); without one, just `write()`."""
+        key = request_keys.sent_key(self.request.headers)
+        if key is None:
+            return write()
+
+        def answered() -> request_keys.Answer:
+            response = write()
+            return request_keys.Answer(response.data, response.status_code)
+
+        answer, replayed = request_keys.once(self.warband, key, action, answered)
+        if replayed:
+            self._announced = True  # the first one told the others; nothing changed since
+        return Response(answer.data, status=answer.status)
 
     def announce_change(self) -> None:
         """`warband.changed` to the campaign's other members once the write commits, so their open page of this

@@ -1,6 +1,7 @@
 import type { Fee } from "@/features/hirelings/fees";
 import { apiRequest } from "@/lib/api-client";
 import { socketIdHeaders } from "@/lib/realtime/socket-headers";
+import { requestKeyHeaders } from "@/lib/request-key";
 
 import type { WarbandHireling } from "../types/warband-types";
 
@@ -47,10 +48,10 @@ export type HireBody = {
  * resource from its counter, never below 0) and logs the hire. A hired sword at the cap is refused
  * (400 `hired_sword_cap_reached`); a dramatis persona or one in a hero's place never is.
  */
-export function hireWarbandHireling(warbandId: number, body: HireBody) {
+export function hireWarbandHireling(warbandId: number, body: HireBody, requestKey?: string) {
   return apiRequest<HireAnswer>(`/warbands/${warbandId}/hirelings/hire/`, {
     method: "POST",
-    headers: socketIdHeaders(),
+    headers: requestKeyHeaders(requestKey, socketIdHeaders()),
     body,
   });
 }

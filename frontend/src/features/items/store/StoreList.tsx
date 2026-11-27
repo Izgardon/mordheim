@@ -16,7 +16,7 @@ import { storeEntries } from "./store-rows";
 import type { StoreCategory } from "./store-items";
 import StoreRow, { type StoreOffer } from "./StoreRow";
 import StoreUpgrades from "./StoreUpgrades";
-import type { BasketLine, Recipient } from "./useStoreBasket";
+import type { NewItemBasketLine, Recipient } from "./useStoreBasket";
 
 export type StoreListProps = {
   campaignId: number;
@@ -40,7 +40,7 @@ export type StoreListProps = {
   inBasket?: (itemId: number) => number;
   /** A hero from the template: their template's upgrades, put in the basket at their price. */
   upgrades?: (HisUpgrades & { onGet: (upgrade: TemplateUpgrade, price: number) => void }) | null;
-  onPick: (line: Omit<BasketLine, "id">) => void;
+  onPick: (line: NewItemBasketLine) => void;
   /** Whether a row's item shows its details at the foot of the store. */
   isShown: (key: string) => boolean;
   onToggleShown: (next: ShownItem) => void;

@@ -321,6 +321,14 @@ class QueryBudgetTests(TestCase):
                     response = client.post(url, body, format="json")
                 self.assertEqual(response.status_code, 201, response.data)
                 self.assertLessEqual(len(captured), budget, f"{name} ran {len(captured)} queries (budget {budget}).")
+        # A request key (the double buy) adds its lookup, a savepoint pair, the old keys cleared and the key stored;
+        # its repeat is the access checks and the lookup
+        for name, budget in (("with a request key", 21), ("its repeat", 3)):
+            with self.subTest(purchase=name):
+                with CaptureQueriesContext(connection) as captured:
+                    response = client.post(url, cases[0][1], format="json", headers={"Idempotency-Key": "budget-k"})
+                self.assertEqual(response.status_code, 201, response.data)
+                self.assertLessEqual(len(captured), budget, f"{name} ran {len(captured)} queries (budget {budget}).")
 
     @override_settings(RATE_LIMIT_ENABLED=False)  # trade writes are throttled; the throttle itself runs no SQL
     def test_trade_writes_stay_within_query_budget(self):

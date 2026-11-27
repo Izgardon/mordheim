@@ -13,11 +13,13 @@ import { toastPurchaseWarnings } from "./purchase";
 export async function buyUpgrade(
   queryClient: QueryClient,
   warbandId: number,
-  line: { heroId: number; upgradeId: number; price: number }
+  line: { heroId: number; upgradeId: number; price: number; requestKey?: string }
 ) {
-  const answer = await unitApi("hero").batch(warbandId, {
-    upgrades: [{ unit_id: line.heroId, upgrade_id: line.upgradeId, price: line.price }],
-  });
+  const answer = await unitApi("hero").batch(
+    warbandId,
+    { upgrades: [{ unit_id: line.heroId, upgrade_id: line.upgradeId, price: line.price }] },
+    line.requestKey
+  );
   applyWarbandUpdate(queryClient, warbandId, { heroes: answer.units, summary: answer.summary });
   toastPurchaseWarnings(answer.warnings);
   return answer;
