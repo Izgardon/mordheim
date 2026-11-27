@@ -1,5 +1,5 @@
 import type { IconType } from "react-icons";
-import { GiTiedScroll } from "react-icons/gi";
+import { GiBrutalHelm } from "react-icons/gi";
 import { Link, useLocation } from "react-router-dom";
 
 import { GAME_ICONS } from "@/components/ui/game-icons";
@@ -53,13 +53,13 @@ export default function WorkshopNav({ workshopId }: { workshopId: number }) {
         to={base}
         current={section === "" || section === "warbands"}
         label="Warbands"
-        icon={GAME_ICONS.warbands}
+        icon={GiBrutalHelm}
       />
       <NavChip
         to={workshopPath(workshopId, "lists")}
         current={section === "lists"}
         label="Lists"
-        icon={GiTiedScroll}
+        icon={GAME_ICONS.warbands}
       />
       <span aria-hidden="true" className="mx-1 w-px shrink-0 self-stretch bg-line" />
       {CONTENT_KINDS.map((kind) => (

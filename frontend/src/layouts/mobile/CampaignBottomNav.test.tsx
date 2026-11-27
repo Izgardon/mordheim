@@ -129,7 +129,7 @@ describe("the Reference sheet", () => {
       "Bestiary",
       "Hired swords",
       "Dramatis personae",
-      "Warbands",
+      "Warband lists",
     ]);
     expect(names("Rules")).toEqual(["Rules", "House rules", "Campaign rules"]);
   });

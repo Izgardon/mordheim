@@ -5,7 +5,7 @@
  */
 import { render, screen, within } from "@testing-library/react";
 import type { IconType } from "react-icons";
-import { GiCheckedShield, GiTiedScroll } from "react-icons/gi";
+import { GiBrutalHelm, GiCheckedShield } from "react-icons/gi";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -51,8 +51,9 @@ describe("the workshop's nav", () => {
     const reference = (path: string) =>
       REFERENCE_LINKS.find((link) => link.path === path)?.icon as IconType;
     const pills: [string, IconType][] = [
-      ["Warbands", GiCheckedShield],
-      ["Lists", GiTiedScroll],
+      ["Warbands", GiBrutalHelm],
+      // a list keeps the shield the Reference nav gives Warband lists (William, 27 Nov 2026)
+      ["Lists", GiCheckedShield],
       ["Items", reference("items")],
       ["Skills", reference("skills")],
       ["Spells", reference("spells")],

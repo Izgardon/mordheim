@@ -77,7 +77,7 @@ export default function WarbandTemplates() {
 
   return (
     <ReferencePage
-      title="Warbands"
+      title="Warband lists"
       section="warband-templates"
       actions={
         canEdit ? (

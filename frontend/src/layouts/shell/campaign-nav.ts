@@ -40,7 +40,7 @@ export const REFERENCE_LINKS: NavLink[] = [
   { label: "Bestiary", path: "bestiary", icon: GiPawPrint },
   { label: "Hired swords", path: "hired-swords", icon: GiCrownCoin },
   { label: "Dramatis personae", path: "dramatis-personae", icon: GiDramaMasks },
-  { label: "Warbands", path: "warband-templates", icon: GiCheckedShield },
+  { label: "Warband lists", path: "warband-templates", icon: GiCheckedShield },
 ];
 
 /** The Rules section: the rulebook, the campaign's house rules and its own campaign rules. */
