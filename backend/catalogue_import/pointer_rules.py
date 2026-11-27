@@ -113,7 +113,19 @@ STARTS_WITH_SPELLS: dict[str, dict[str, dict[str, list[tuple[str, str]]]]] = {
 # A fighter whose rule says he starts with several spells, chosen or rolled: template -> fighter -> how many he picks
 # at hire (William, 26 Nov 2026, of the Arch-Mage's "one Common Magic spell of your choice and one Common Magic spell
 # chosen at random": "can give him 2 levels sure").
-SPELL_PICKS: dict[str, dict[str, int]] = {"Altdorf Expeditionary Party": {"Arch-Mage": 2}}
+# The caster rules that say more stay theirs (William, 27 Nov 2026: shared-specials.json's "Wizard (Liche)" and the
+# like), and those that say he starts with two spells pick two the same way.
+SPELL_PICKS: dict[str, dict[str, int]] = {
+    "Adventurers": {"Wizard": 2},
+    "Albion Barbarians": {"Shaman": 2},
+    "Altdorf Expeditionary Party": {"Arch-Mage": 2},
+    "Channel Rats": {"Petru": 2},
+    "Fen Guard": {"Branchwych": 2},
+    "Lords of the Marsh": {"Draich": 2},
+    "Mages": {"Arch Mage": 2, "Warlock": 2},
+    "Sorcerous Society": {"Magus": 2},
+    "The Restless Dead": {"Liche": 2},
+}
 # The same for a dramatis persona: "knows four randomly determined spells of the Lore of Darkness", "three ... of the
 # Lore of Light". Khar-mel's D3 and the Grandmother's four, rolled again each battle, stay their rules.
 PERSONAE_SPELL_PICKS: dict[str, int] = {"Dark Emissary": 4, "Truthsayer": 3}

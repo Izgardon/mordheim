@@ -1058,7 +1058,8 @@
             "description": "The Wizard is a spell caster. He starts with two spells from the Lesser Magic list, chosen at random."
           }
         ],
-        "skills": []
+        "skills": [],
+        "spell_picks": 2
       },
       {
         "key": "elf",
@@ -1611,7 +1612,8 @@
             "description": "The Shaman is a spell caster and uses Barbarian Shaman Magic. He starts with two spells, chosen at random."
           }
         ],
-        "skills": []
+        "skills": [],
+        "spell_picks": 2
       },
       {
         "key": "champion",
@@ -21022,7 +21024,8 @@
             "description": "Before a battle, one Hero of the warband may drink one of the Petru's potions. Roll a D6:\n\nD6 | Result\n1 | Debilitating: -1 Toughness for the whole of the next battle, until he rolls a 6 on a D6 in a recovery phase.\n2-3 | Strength: +1 Strength until he rolls a 1 on a D6 in a recovery phase.\n4-5 | Resilience: +1 Toughness until he rolls a 1 on a D6 in a recovery phase.\n6 | Fortitude: +1 Wound for the whole battle; once lost, it can't be restored."
           }
         ],
-        "skills": []
+        "skills": [],
+        "spell_picks": 2
       },
       {
         "key": "tinker",
@@ -37906,7 +37909,8 @@
             "description": "On an advance roll of +1 Wound the Branchwych may pick a new skill from her lists instead."
           }
         ],
-        "skills": []
+        "skills": [],
+        "spell_picks": 2
       },
       {
         "key": "branchnymph",
@@ -55709,7 +55713,8 @@
             "description": "The model is subject to fear unless it is protected by Mystic Mist."
           }
         ],
-        "skills": []
+        "skills": [],
+        "spell_picks": 2
       },
       {
         "key": "daemon-fimm",
@@ -59197,7 +59202,8 @@
             "description": "The Arch Mage may take spells from two of the elemental lores, and starts with two spells, one from each."
           }
         ],
-        "skills": []
+        "skills": [],
+        "spell_picks": 2
       },
       {
         "key": "mage",
@@ -59315,7 +59321,8 @@
             "description": "The Warlock casts from the Lesser Magic list and starts with two spells."
           }
         ],
-        "skills": []
+        "skills": [],
+        "spell_picks": 2
       },
       {
         "key": "apprentice",
@@ -103331,7 +103338,8 @@
             "description": "The Magus is a wizard and starts with two spells rolled at random from any one Elemental lore, or from Lesser Magic."
           }
         ],
-        "skills": []
+        "skills": [],
+        "spell_picks": 2
       },
       {
         "key": "companions",
@@ -109081,7 +109089,8 @@
             "description": "If a Liche gets an advance roll of +1 Wound, they may instead pick a new skill from their available lists."
           }
         ],
-        "skills": []
+        "skills": [],
+        "spell_picks": 2
       },
       {
         "key": "necromancer",
