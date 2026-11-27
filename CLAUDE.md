@@ -17,6 +17,7 @@ Mordheim Chronicler: a campaign manager for the Mordheim tabletop game. Django +
 - **A form with more than 8 inputs asks "Discard changes?"** before closing with unsaved edits; short forms don't (5 Nov 2026).
 - **Gold rounds up** (6 Nov 2026: "always round up in mordheim for gold"): half of 35 gc is 18, for any halved or divided gold (`(value + 1) // 2`, as `apps/warbands/services/prices.py` does).
 - **Skills and items match ours by name and effect** (6 Nov 2026): an import links ours only when both match. The same effect under another name stays separate and becomes a question for William. A limit on who in a warband may take a skill opens the skill's description, or sits in its group's note for a skill of ours; never in a warband rule.
+- **An entry sits with its earliest adopter** (27 Nov 2026: "Yes, always move skills, lores, items down to the earliest adopter"): a skill, skill group, lore (with its spells) or item takes the earliest graded setting of the warbands, template fighters and hirelings that use it, where that is earlier than its own; one open to everyone, one nobody uses and one overrides.json sets keep theirs (`catalogue_import/earliest.py`, the import report's Earliest adopters).
 - **Start afresh** (30 Oct 2026: "easier to start afresh"): when new code replaces old, delete the old component, its tests and dead helpers in the same change, with no shims, wrappers, re-exports or aliases.
 
 ## Engineering rules (must follow)

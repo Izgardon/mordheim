@@ -15,21 +15,30 @@ class NumbersSettingsRowsAndNamesTests(ReviewCase):
     def test_each_mutiny_in_marienburg_item_sits_in_the_setting_of_its_grade(self) -> None:
         # William, 12 Nov 2026: a MiM item of a Mordheim grade belongs to that Mordheim setting; the grades above
         # the supplement's own 2b ("2c" and "3a", which the system has no part for) are 2b and stay in it. The ten
-        # stubs that duplicate an item of ours are gone (William, 15 Nov 2026), two of them 1b's
+        # stubs that duplicate an item of ours are gone (William, 15 Nov 2026), two of them 1b's. Then each moves down
+        # to its earliest adopter (William, 27 Nov 2026: "always move skills, lores, items down to the earliest
+        # adopter"): the Witch Hunters' Blessed Hauberk and Flame Bullets, the Skaven's Poison Wind Globe, the Shadow
+        # Warriors' three and the Maneaters' Border Town Burning three (and Skull Cap, 2a's)
         mim = [row for row in load_json(OUT / "items.json") if row["origin"] == "mim"]
         by_setting: dict[str, list[str]] = {}
         for row in mim:
             by_setting.setdefault(row["setting"], []).append(row["name"])
         self.assertEqual(
             {setting: len(names) for setting, names in sorted(by_setting.items())},
-            {"mordheim": 3, "mordheim-1b": 5, "mordheim-2a": 6, "mutiny-in-marienburg": 37},
+            {"border-town-burning": 4, "mordheim": 6, "mordheim-1b": 8, "mordheim-2a": 4, "mutiny-in-marienburg": 29},
         )
-        self.assertEqual(sorted(by_setting["mordheim"]), ["Caber", "Falconry Glove", "Lyre"])
+        self.assertEqual(
+            sorted(by_setting["mordheim"]),
+            ["Blessed Hauberk", "Caber", "Falconry Glove", "Flame Bullets", "Lyre", "Poison Wind Globe"],
+        )
         self.assertEqual(
             sorted(by_setting["mordheim-1b"]),
             [
                 "Albion Cloth",
                 "Alcoholic Spirits",
+                "Armour of the Wildwood",
+                "Blade of Leaping Gold",
+                "Eagle-eye Bolt Thrower",
                 "Gas Mask",
                 "Iron Strongbox",
                 "Thief's Cloak",
@@ -37,14 +46,10 @@ class NumbersSettingsRowsAndNamesTests(ReviewCase):
         )
         self.assertEqual(
             sorted(by_setting["mordheim-2a"]),
-            [
-                "Beast Hide/Wyvern Hide Cloak",
-                "Hunter's Throwing Axe",
-                "Poison Wind Globe",
-                "Shark-tooth Necklace",
-                "Skull Cap",
-                "Stiletto Blade",
-            ],  # fmt: skip
+            ["Beast Hide/Wyvern Hide Cloak", "Hunter's Throwing Axe", "Shark-tooth Necklace", "Stiletto Blade"],
+        )
+        self.assertEqual(
+            sorted(by_setting["border-town-burning"]), ["Celestial Iron Fan", "Greedy Fist", "Hellheart", "Skull Cap"]
         )
 
     def test_no_item_is_graded_2c_or_3a_any_more(self) -> None:

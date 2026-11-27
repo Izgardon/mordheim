@@ -17,6 +17,7 @@ from catalogue_import.common import loose_key, norm_name
 from catalogue_import.grading import SETTING_ORDER, _named_settings
 
 MORDHEIM = "mordheim"
+PDF_PAGES = "pdf-warbands"  # a new skill's setting, from the pages that declare it
 
 
 @dataclass
@@ -80,13 +81,19 @@ def best_entry(ours_type: str, found: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _pick(
-    kind: str, row: dict[str, Any], found: list[dict[str, Any]], log: AssignmentLog, chosen: str | None = None
+    kind: str,
+    row: dict[str, Any],
+    found: list[dict[str, Any]],
+    log: AssignmentLog,
+    chosen: str | None = None,
+    chosen_how: str = "overrides.json",
 ) -> str:
-    """The setting of the best-fitting entry among `found` (all of one name), or overrides.json's (`chosen`); either
-    way the report hears when mordheimer gives the name more than one."""
+    """The setting of the best-fitting entry among `found` (all of one name), or the one chosen for it (`chosen`:
+    overrides.json's, or a PDF page's, `chosen_how`); either way the report hears when mordheimer gives the name more
+    than one."""
     taken = best_entry(str(row.get("type") or ""), found)
     settings = _home(taken)
-    setting, how = (chosen, "overrides.json") if chosen else (settings[0], "mordheimer")
+    setting, how = (chosen, chosen_how) if chosen else (settings[0], "mordheimer")
     homes = {_home(entry)[0] for entry in found}
     if len(homes) > 1:
         others = sorted(homes - {setting}, key=_order)
@@ -102,8 +109,10 @@ def assign(
     theirs: list[dict[str, Any]],
     log: AssignmentLog,
     chosen: dict[str, str] | None = None,
+    pages: dict[str, str] | None = None,
 ) -> list[Any]:
-    """Each of our rows with its setting: overrides.json's (`chosen`, by label), else mordheimer's for its name, else
+    """Each of our rows with its setting: overrides.json's (`chosen`, by label), else its PDF page's (`pages`, by
+    label: a new skill of a page's group, pdf_warbands.skill_settings), else mordheimer's for its name, else
     Mordheim's."""
     by_name: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for entry in theirs:
@@ -117,12 +126,14 @@ def assign(
         typed = kind == "skills" and "type" in row
         assigned: dict[str, Any] = {"name": name, **({"type": row["type"]} if typed else {})}
         found = by_name.get(norm_name(name), [])
-        picked = (chosen or {}).get(label(assigned))
+        picked, picked_how = (chosen or {}).get(label(assigned)), "overrides.json"
+        if not picked and label(assigned) in (pages or {}):
+            picked, picked_how = (pages or {})[label(assigned)], PDF_PAGES
         if found:
-            setting = _pick(kind, assigned, found, log, picked)
-            how = "overrides.json" if picked else "mordheimer"
+            setting = _pick(kind, assigned, found, log, picked, picked_how)
+            how = picked_how if picked else "mordheimer"
         elif picked:
-            setting, how = picked, "overrides.json"
+            setting, how = picked, picked_how
         else:
             setting, how = MORDHEIM, "no match"
             log.unmatched.setdefault(kind, []).append(name)

@@ -64,8 +64,8 @@ from html import escape
 from pathlib import Path
 from typing import Any
 
-from catalogue_import.common import GRADE_RANK, load_json, loose_key, norm_name, slugify
-from catalogue_import.grading import SETTING_ORDER
+from catalogue_import.common import load_json, loose_key, norm_name, slugify
+from catalogue_import.earliest import setting_rank
 from catalogue_import.sources import SOURCES
 from catalogue_import.template_lists import ItemIndex, line_price
 from catalogue_import.text import clean_inline
@@ -500,18 +500,15 @@ def skill_settings(
     ticks a grade's settings and those below it; `grades`, setting -> grade), then the earliest by the settings' own
     order (`grading.SETTING_ORDER`). A skill two pages share is one skill (the Wood Elves' Elven Luck, the Slayers'
     Songster, Magic Resistant: Karak Azgal's 2b, not Khemri 3), so it sits in one setting, whatever the file order."""
-    order = {slug: index for index, slug in enumerate(SETTING_ORDER)}
-
-    def rank(slug: str) -> tuple[int, int]:
-        return GRADE_RANK.get((grades or {}).get(slug, ""), 0), order.get(slug, len(order))
-
     found: dict[str, str] = {}
     for slug, page in pages.items():
         setting = setting_of[page[TYPE]]
         for _group, skills, _source, _slugs in declared_groups(slug, page):
             for row in skills:
                 held = found.get(row["name"])
-                if "description" in row and (held is None or rank(setting) < rank(held)):
+                if "description" in row and (
+                    held is None or setting_rank(setting, grades or {}) < setting_rank(held, grades or {})
+                ):
                     found[row["name"]] = setting
     return found
 
@@ -525,13 +522,13 @@ def add_skill_groups(
     setting_of = {row["slug"]: row["setting"] for row in types}
     settings = skill_settings(pages, setting_of, {row["slug"]: row["grade"] for row in grades})
     groups = dict(sources.overrides.get("new_skill_groups", {}))
-    chosen = dict(sources.overrides.get("setting_assignments", {}).get("skills", {}))
     for slug, page in pages.items():
         for group, skills, source, slugs in declared_groups(slug, page):
             if group["name"] in groups:
                 raise ValueError(f"pdf-warbands/{slug}.json: the skill group {group['name']!r} is made twice")
             groups[group["name"]], rows = _new_group(page, group, skills, source, slugs)
             sources.skill_files[source] = rows
-            chosen.update({f"{row['name']} ({group['name']})": settings[row["name"]] for row in rows})
-    assignments = {**sources.overrides.get("setting_assignments", {}), "skills": chosen}
-    sources.overrides = {**sources.overrides, "new_skill_groups": groups, "setting_assignments": assignments}
+            sources.page_skill_settings.update(
+                {f"{row['name']} ({group['name']})": settings[row["name"]] for row in rows}
+            )
+    sources.overrides = {**sources.overrides, "new_skill_groups": groups}

@@ -285,13 +285,14 @@ class SeedAllTests(TestCase):
         # brought on 11 Nov 2026), their skills and the six warband groups plus the Cursed Dwarf Slayer Skills, the
         # Skeleton race and the six Hobgoblin Magic spells and the twenty-four of Khemri's own four elemental lores
         # (Ice, Fire, Wind and Earth Magic, read 12 Nov 2026); Khemri's own four hired swords and Abdul Alhazred are
-        # 1b's, as are its Lamp of the Djinn, Monkey's Paw, Tufenk, Katar and Magic Carpet
+        # 1b's, as are its Lamp of the Djinn, Monkey's Paw, Tufenk, Katar and Magic Carpet; the Cutlass and Scimitar
+        # moved down to their earliest adopters (the Orc Pirate's Sartosa, Khar-mel's 1b: William, 27 Nov 2026)
         self.assertEqual(
             khemri_3,
             {
                 "WarbandType": 8,
                 "WarbandTemplate": 8,
-                "Item": 7,
+                "Item": 5,
                 "Skill": 23,  # the Arabyan Nomads' Blending into the Sands is our Sand Worm (William, 12 Nov 2026); Magic
                 # Resistant is Karak Azgal's, the Adventurers learning it too (the skills audit, 27 Nov 2026)
                 "SkillGroup": 7,
@@ -1097,7 +1098,7 @@ class SeedAllTests(TestCase):
         self.assertLessEqual(annual, holds("Strength"))
         self.assertLessEqual({"Ambidextrous", "Man at Arms", "Frightful Crack", "Weak Spot"}, holds("Combat"))
         in_annual = Skill.objects.filter(campaign_type__slug="marienburg-annual")
-        self.assertEqual(in_annual.count(), 9)
+        self.assertEqual(in_annual.count(), 10)  # and Play Dead, Nibbles's (its earliest adopter: 27 Nov 2026)
         self.assertIn("-1 on the critical hit chart", Skill.objects.get(name="Resilience (Annual)").description)
         self.assertIn("Toughness is increased by +1", Skill.objects.get(name="Resilience").description)
         vampires = group("Undead Vampires")

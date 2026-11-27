@@ -37,6 +37,8 @@ class Sources:
     our_extra_personae: list[dict[str, Any]] = field(default_factory=list)
     skill_files: dict[str, list[dict[str, Any]]] = field(default_factory=dict)  # SKILL_FILES, by file name
     setting_grades: dict[str, str] = field(default_factory=dict)  # each built setting's grade (pipeline.py)
+    # a PDF page's new skill's setting, by "Name (Group)" (pdf_warbands.add_skill_groups), apart from overrides.json's
+    page_skill_settings: dict[str, str] = field(default_factory=dict)
 
 
 def _values(data: Json) -> list[dict[str, Any]]:

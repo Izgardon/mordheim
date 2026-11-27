@@ -282,7 +282,10 @@ class CommittedBestiaryTests(TestCase):
 
         self.assertEqual(len(settings), 97)
         self.assertEqual({settings[name] for name in ("Dragon Turtle", "Geckamand", "Lizard-Hawk", "Tiger", "Wyvern")}, {"mutiny-in-marienburg"})  # fmt: skip
-        self.assertEqual((settings["Warhorse"], settings["Chaos Steed"]), ("mordheim", "mordheim-1b"))
+        # Blazing Saddles' (1b) Chaos Steed sits with the Cult of the Possessed (1a) who buy it, its earliest adopter
+        # (William, 27 Nov 2026), the Undead's Nightmare with them
+        self.assertEqual((settings["Warhorse"], settings["Chaos Steed"]), ("mordheim", "mordheim"))
+        self.assertEqual((settings["Nightmare"], settings["Rhinox"]), ("mordheim", "lustria"))
         self.assertEqual(
             {settings[name] for name in ("Great Eagle", "Lord of Change", "Rot Fly")}, {"marienburg-annual"}
         )

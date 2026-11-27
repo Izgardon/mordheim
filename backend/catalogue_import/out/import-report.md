@@ -204,13 +204,14 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 ## Settings for the catalogue we have
 
-`out/setting-assignments.json` gives each of our seeded skills, hired swords and dramatis personae the setting mordheimer tags its name with; a name mordheimer lacks is Mordheim's (1a). Items get theirs in the items rebuild. A row is fixed in overrides.json "setting_assignments" by kind and by the name shown here.
+`out/setting-assignments.json` gives each of our seeded skills, hired swords and dramatis personae the setting mordheimer tags its name with; a name mordheimer lacks is Mordheim's (1a), a PDF page's new skill its page's, and each lore of our spells its spells' (apps/spells/data/spells.json); a skill or lore whose earliest adopter is earlier sits there (Earliest adopters, below). Items get theirs in the items rebuild. A row is fixed in overrides.json "setting_assignments" by kind and by the name shown here.
 
-| Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
-| --- | --- | --- | --- | --- |
-| skills | 528 | 149 | 345 | 34 |
-| hired swords | 133 | 71 | 62 | 0 |
-| dramatis personae | 61 | 30 | 31 | 0 |
+| Kind | Ours | On mordheimer | Set in overrides.json | From a PDF page | From spells.json | Earliest adopter | Mordheim by default |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| skills | 528 | 148 | 76 | 267 | 0 | 3 | 34 |
+| hired swords | 133 | 71 | 62 | 0 | 0 | 0 | 0 |
+| dramatis personae | 61 | 30 | 31 | 0 | 0 | 0 | 0 |
+| lores | 86 | 0 | 0 | 0 | 86 | 0 | 0 |
 
 Not on mordheimer (skills), so Mordheim: [Animal] Handler, Ride [Animal], Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip, Falconer, Heron Strike, Swallow Kick, Water Form, Inch Punch, Virtue of the Impetuous, Virtue of the Squire, Tunneler, Tinkerer, Quick Thinker, Backstabber, Pick Locks, Slaver, Cutpurse, ’ard ’ead, Captain Blood, Treasure Hunter, Luck, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat, Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form.
 
@@ -394,7 +395,7 @@ Description put right: Beastmaster (Strength).
 | Black Hunger | Black Hunger (Skaven), Black Hunger (Skaven Clan Pestilens) | longest | - |
 | Tail Fighting | Tail Fighting (Skaven), Tail Fighting (Skaven Metal Mongers) | longest | Tail Fighting (Skaven Metal Mongers): The Skaven may wield a shield, dagger or a sword with its tail. The model gains an extra attack with the appropriate weapon or a +1 bonus to its armour save. (MiM) |
 
-Merged skills whose rows had different settings, given the lowest: Hide in Shadows: mordheim-1b, mordheim-1c, nemesis-crown -> mordheim-1b; Crude Belch: mordheim-1c, mordheim-2a -> mordheim-1c; Battle Tongue: mordheim, mordheim-1b -> mordheim.
+Merged skills whose rows had different settings, given the lowest: Hide in Shadows: mordheim-1b, nemesis-crown, mordheim-1c -> mordheim-1b; Crude Belch: mordheim-1c, mordheim-2a -> mordheim-1c; Battle Tongue: mordheim, mordheim-1b -> mordheim.
 
 ### Kept apart (`skill_splits`)
 
@@ -3692,6 +3693,68 @@ A rule that said he starts with a spell, or knows a whole lore, is those spells 
 Left pointing (nothing to take the rule from):
 
 - none
+
+## Earliest adopters
+
+A skill, skill group, lore (its spells with it) or item sits in the setting of the earliest graded setting among those who use it, where that is earlier than its own (William, 27 Nov 2026: "Yes, always move skills, lores, items down to the earliest adopter"; catalogue_import/earliest.py). Moved:
+
+### Skill groups (0)
+
+- none
+
+### Skills (3)
+
+- Play Dead: grade-3 -> marienburg-annual (Nibbles, the Grand Sneak/Stab of Bitter Stink (dramatis persona))
+- Seeker: mordheim-2a -> mordheim (Elf Ranger (hired sword))
+- Stealthy: mordheim-2a -> mordheim-1b (Halfling Thief (hired sword))
+
+### Lores (0)
+
+- none
+
+### Items (36)
+
+- Armour of the Wildwood: mutiny-in-marienburg -> mordheim-1b (Shadow Warriors)
+- Bear-Claw Necklace: mordheim-1b -> mordheim (Kislevites)
+- Blade of Leaping Gold: mutiny-in-marienburg -> mordheim-1b (Shadow Warriors)
+- Blessed Hauberk: mutiny-in-marienburg -> mordheim (Witch Hunters)
+- Book of the Dead: mordheim-1b -> mordheim (Undead)
+- Boss Pole: nemesis-crown -> lustria (Forest Goblins)
+- Celestial Iron Fan: mutiny-in-marienburg -> border-town-burning (Battle Monks of Cathay)
+- Chaos Armour: border-town-burning -> mordheim (Cult of the Possessed)
+- Chaos Steed: mordheim-1b -> mordheim (Cult of the Possessed)
+- Cutlass: khemri-3 -> sartosa (Orc Pirate (hired sword))
+- Double-barrelled Pistol: nemesis-crown -> mordheim (Ostlanders: Jaeger Equipment List)
+- Eagle-eye Bolt Thrower: mutiny-in-marienburg -> mordheim-1b (Shadow Warriors)
+- Engine of Chaos: border-town-burning -> mordheim-1c (Sons of Hashut)
+- Flame Bullets: mutiny-in-marienburg -> mordheim (Witch Hunters)
+- Giant Spider: mordheim-1b -> mordheim (Orc Mob)
+- Giant Wolf: mordheim-1b -> mordheim (Orc Mob)
+- Greedy Fist: mutiny-in-marienburg -> border-town-burning (Maneaters)
+- Hellheart: mutiny-in-marienburg -> border-town-burning (Maneaters)
+- Magic Gubbinz: nemesis-crown -> lustria (Forest Goblins)
+- Mechanical Suit: border-town-burning -> mordheim-1c (Sons of Hashut)
+- Nightmare: mordheim-1b -> mordheim (Undead)
+- Obsidian Weapon: mordheim-1c -> mordheim (Cult of the Possessed)
+- Pike: mordheim-1c -> lustria (Miragleans)
+- Poison Wind Globe: mordheim-2a -> mordheim (Skaven)
+- Poisoned Weapon: nemesis-crown -> lustria (Forest Goblins)
+- Red Toof Tribal Jewellery: nemesis-crown -> lustria (Forest Goblins)
+- Rhinox: mordheim-1c -> lustria (Norse Explorers)
+- Rickshaw: mordheim-1c -> mordheim (Averlanders)
+- Scimitar: khemri-3 -> mordheim-1b (Khar-mel the Djinn (dramatis persona))
+- Scythe: sylvania -> mordheim-1b (Priest of Morr (hired sword))
+- Skull Cap: mordheim-2a -> border-town-burning (Maneaters)
+- Temple Dog: mordheim-1c -> mordheim (Marienburgers)
+- Vial of Pestilens: lustria -> mordheim (Skaven)
+- Vodka: mordheim-1b -> mordheim (Kislevites)
+- Warplock Jezzail: athel-loren -> sartosa (Jezzail Gunner (hired sword))
+- Wolfcloak: mordheim-1b -> mordheim (Middenheimers)
+
+Set in overrides.json and kept there, though an adopter is earlier still (William's call):
+
+- Hide in Shadows (skills): mordheim-1b, while Imperial Assassin (hired sword) is mordheim
+- Fey (skills): lustria, while Elf Ranger (hired sword) is mordheim
 
 ## Scenarios
 

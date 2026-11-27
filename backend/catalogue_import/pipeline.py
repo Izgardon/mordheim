@@ -9,6 +9,7 @@ from typing import Any
 from catalogue_import.assignments import AssignmentLog, assign, build_assignments
 from catalogue_import.availability import Context, Decisions
 from catalogue_import.common import as_list, dump_json, load_json, loose_key, slugify
+from catalogue_import.earliest import move_to_earliest, render_earliest
 from catalogue_import.grading import build_settings, collect_evidence
 from catalogue_import.groups import build_groups
 from catalogue_import.hiring import HiringLog, build_who_can
@@ -199,7 +200,7 @@ def _skill_groups(
         resolver,
         who_can.pop("skills"),
         assignments["skills"],
-        lambda rows: assign("skills", rows, sources.skills, log, chosen),
+        lambda rows: assign("skills", rows, sources.skills, log, chosen, sources.page_skill_settings),
     )
     assignments["skills"] = grouped.settings
     return grouped
@@ -299,6 +300,8 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     choose_items(templates, splits)
     check_answers(templates, sources.our_personae)
     pointers = resolve_pointers(templates, sources.our_personae, grouped.skills)  # the skill he starts with (7 Nov)
+    # William, 27 Nov 2026: "always move skills, lores, items down to the earliest adopter" (earliest.py)
+    moves = move_to_earliest(settings, types, groups, templates, sources, assignments, grouped.groups, everything)
     shared_specials = build_shared(one_rule, sources.our_hired_swords, sources.our_personae, snapshot.injuries)
     own = own_rules(one_rule, sources.our_hired_swords, sources.our_personae)  # each owner's own (5 Nov 2026)
     shared_specials["own_names"] = own.names()
@@ -375,6 +378,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
                 render_random(random_mutations, one_rule),
                 render_pdf(pdf_pages, stubs, folded),
                 render_pointers(pointers),
+                render_earliest(moves),
                 render_scenarios(scenarios),
             ]
         ),

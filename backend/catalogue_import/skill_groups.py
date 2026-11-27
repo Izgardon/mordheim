@@ -27,8 +27,8 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from catalogue_import.assignments import label
-from catalogue_import.common import GRADE_RANK, norm_name
-from catalogue_import.grading import SETTING_ORDER
+from catalogue_import.common import norm_name
+from catalogue_import.earliest import earliest, setting_rank
 from catalogue_import.groups import collapse
 from catalogue_import.skill_lists import SkillLists
 from catalogue_import.text import same_text
@@ -93,10 +93,6 @@ class Skill:
     name: str
     description: str = ""
     rows: list[dict[str, Any]] = field(default_factory=list)
-
-
-def setting_order(slug: str) -> int:
-    return SETTING_ORDER.index(slug) if slug in SETTING_ORDER else len(SETTING_ORDER)
 
 
 class SkillGroupBuild:
@@ -180,7 +176,7 @@ class SkillGroupBuild:
         return str(text)
 
     def settings(self, assigned: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        """Each skill's setting: the lowest of its rows' (setting-assignments.json's, by name and list)."""
+        """Each skill's setting: the earliest of its rows' (setting-assignments.json's, by name and list)."""
         by_row = {label(row): row for row in assigned}
         rows = []
         for skill in self.skills.values():
@@ -188,8 +184,9 @@ class SkillGroupBuild:
             if not found:
                 rows.append({"name": skill.name, "setting": "mordheim", "how": "no match"})
                 continue
-            taken = min(found, key=lambda row: setting_order(row["setting"]))
-            settings = sorted({row["setting"] for row in found}, key=setting_order)
+            first = earliest((row["setting"] for row in found), self.grades)
+            taken = next(row for row in found if row["setting"] == first)
+            settings = sorted({row["setting"] for row in found}, key=lambda slug: setting_rank(slug, self.grades))
             if len(settings) > 1:
                 self.log.settings.append((skill.name, settings, taken["setting"]))
             rows.append({"name": skill.name, "setting": taken["setting"], "how": taken["how"]})
@@ -242,8 +239,7 @@ class SkillGroupBuild:
         settings = {self.type_rows.get(slug, {}).get("setting") for slug in slugs}
         if not settings or None in settings:
             return None
-        found = {str(setting) for setting in settings}
-        return min(found, key=lambda slug: (GRADE_RANK.get(self.grades.get(slug, ""), 0), setting_order(slug)))
+        return earliest({str(setting) for setting in settings}, self.grades)
 
     def type_set(self, access: dict[str, Any]) -> frozenset[str]:
         """The type slugs a who-can list lets in (everyone: every type but those it shuts out)."""

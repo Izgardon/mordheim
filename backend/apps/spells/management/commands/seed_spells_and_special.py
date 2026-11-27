@@ -9,6 +9,7 @@ Rows are matched by name and type in the book only (BUG-17); the run is all or n
 a taken roll is saved with none, and the run says so (spells/rolls.py).
 """
 
+import json
 from pathlib import Path
 
 from django.core.management.base import BaseCommand
@@ -32,6 +33,17 @@ from apps.spells.rolls import first_on_each_roll
 SPELLS_JSON_PATH = Path("apps/spells/data/spells.json")
 SPECIAL_JSON_PATH = Path("apps/special/data/special.json")
 SERIOUS_INJURIES_PATH = IMPORT_OUT / "serious-injuries.json"
+SETTING_ASSIGNMENTS_PATH = IMPORT_OUT / "setting-assignments.json"
+
+
+def lore_settings() -> dict[str, str | None]:
+    """Each book lore's setting as the catalogue import gives it (`out/setting-assignments.json`'s `lores`: its
+    spells' own, or its earliest adopter's: William, 27 Nov 2026), by lore name; a lore it doesn't list keeps the
+    setting its spells name."""
+    if not SETTING_ASSIGNMENTS_PATH.exists():
+        return {}
+    data = json.loads(SETTING_ASSIGNMENTS_PATH.read_text(encoding="utf-8"))
+    return {str(row["name"]): row.get("setting") for row in data.get("lores", [])}
 
 
 class Command(BaseCommand):
@@ -63,13 +75,14 @@ class Command(BaseCommand):
     ) -> tuple[int, int]:
         """Upsert each named, typed row of the file: its stripped texts, a spell's roll, a special's kind and
         category, and either's setting (none: Mordheim's; Border Town Burning's beasts' rules are that setting's,
-        the Hobgoblin Magic lore Khemri 3's)."""
+        the Hobgoblin Magic lore Khemri 3's; a spell's its lore's, as the catalogue import gives it)."""
         if not path.exists():
             self.stdout.write(self.style.WARNING(f"{label} JSON not found at {path}"))
             return 0, 0
         created = updated = 0
         entries = read_json_list(path)
         settings = dict(CampaignType.objects.values_list("slug", "id"))
+        lores = lore_settings() if model is Spell else {}
         if model is Spell:
             entries, cleared = first_on_each_roll(entries)
             for line in cleared:
@@ -81,7 +94,8 @@ class Command(BaseCommand):
             defaults = {field: entry.get(field, "").strip() for field in texts}
             if model is Spell:
                 defaults["roll"] = entry.get("roll")
-                defaults["campaign_type_id"] = settings.get(entry.get("setting") or "")
+                setting = lores[entry_type] if entry_type in lores else entry.get("setting")
+                defaults["campaign_type_id"] = settings.get(setting or "")
             else:  # Boons & Banes (special/kinds.py) and its icon (special/categories.py)
                 defaults["campaign_type_id"] = settings.get(entry.get("setting") or "")
                 defaults["kind"] = book_kind(name)

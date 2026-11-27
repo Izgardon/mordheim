@@ -262,8 +262,8 @@
     },
     {
       "name": "Stealthy",
-      "setting": "mordheim-2a",
-      "how": "mordheimer"
+      "setting": "mordheim-1b",
+      "how": "earliest adopter"
     },
     {
       "name": "Tea-leaf",
@@ -1298,1347 +1298,1347 @@
     {
       "name": "Chosen of the White Tower",
       "setting": "karak-azgal",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Hard to Kill",
       "setting": "karak-azgal",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Instinctive Warrior",
       "setting": "karak-azgal",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Trading Flair",
       "setting": "karak-azgal",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Taunt (Adventurers)",
       "setting": "karak-azgal",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Magic Resistant",
       "setting": "karak-azgal",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Experienced Fighter",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Attack Howl",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Master Shot",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Concealment (Albion Barbarians)",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Power Surge",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Arcane Reach",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Combat Wizard",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Arcane Barrage",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Large Familiar",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Surveyor",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Hardened Will",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Dispel (Altdorf Expeditionary Party)",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Fierce Casting",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Slave Driver",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Pious Fury",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Pawnbroker",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Black Market",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Man of the World",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Sticky Fingers",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Knife Fighting (Arabyan Thieves)",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Hide in Shadows (Arabyan Thieves)",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Sheer Speed",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Silent Strike (Assassin Squad)",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Ultimate Kill",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Master of Poisons (Assassin Squad)",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Shadow Defense",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Ultimate Specialist",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Play Dead",
-      "setting": "grade-3",
-      "how": "overrides.json"
+      "setting": "marienburg-annual",
+      "how": "earliest adopter"
     },
     {
       "name": "Virtue of Noble Disdain (Grail Companions)",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of Heroism",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of Stoicism",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of the Penitent",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of the Ideal",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of Audacity",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of Purity (Grail Companions)",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of Duty",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of the Joust",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of Confidence",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of Knightly Temper",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of Discipline (Grail Companions)",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of Empathy",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Combat Charge",
       "setting": "mousillon",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Lancer",
       "setting": "mousillon",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Sword Master",
       "setting": "mousillon",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Armour Specialist",
       "setting": "mousillon",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Wight Walk",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Traumatic Passing",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Possession",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "The Key and the Gate",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Siren Song",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Prize-fighter",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Knowledge of Myths and Legends",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Animal Charmer",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Songster",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Experimental Enhancements",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Moonstone Infusion",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Puppeteer",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Rogue Control",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Gift of Sentience",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Smith",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Gnollengrom",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Fearless (Cursed Dwarves)",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Dwarf Grit",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Sweeping Strike",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Tattoos of Grimnir",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Fated",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Furious Charge",
       "setting": "mousillon",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Excellent Sight",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Looting",
       "setting": "mousillon",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Inspiring Presence",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Fanatical",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Inured to Horror",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Blessed by Morr",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Fury of Khaine (Druchii)",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Master of Poisons (Druchii)",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Vraithen Master",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Survival of the Fittest",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Monster Hunter",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Set Traps (Dwarf Grudgebearers)",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Expert Runesmith",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Deathwish",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Monster Slayer (Slayer Cult)",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Berserker (Slayer Cult)",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Deathblow",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Axe Mastery",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Thick Skull (Slayer Cult)",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Song of Honor",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Relentless",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Greased Hair",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Double-Hand Master",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Survivor",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Whirlwind",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Absorption",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Adaptation",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Harvester of Souls",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Gladeborn",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Transform",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Take Root",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Poison Sap",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Flank",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Strong 'Un",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Wolf Breaker",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Fast Learner",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Quiet as a Mouse",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Crude Belch (Halflings MIC)",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Wizened Halfling",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Skilled Huntsman",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Layers of Fat",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Shifty",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "High Sorcery",
       "setting": "lustria",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Stand and Fire",
       "setting": "lustria",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Miniath",
       "setting": "lustria",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Unerring Strike",
       "setting": "lustria",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Strict Leader",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Sneaky (Hobgoblin Horde)",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Discretion",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Slaver (Hobgoblin Horde)",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Backstabber (Hobgoblin Horde)",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Mystic Aura",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Ded Shooty (Hobgoblins)",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Ded Sneaky",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Backstabba",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Blood of Khorne",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Berserker (Khorne Raiders)",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Massive Muscles",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Stromfel's Boon",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Master Tanner",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Rite of Combat",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Virtue of Valour (Knights of the Bitter Moors)",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Swift",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Transfix",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Quickblood",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Innocence Lost",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Seduction",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Night Creature",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Graceful Strength",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Swordmasters Protege",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Defending Guard",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Swift Fighter",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Dispel",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Store Spell",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Clockwork Mage",
       "setting": "khemri-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Surgeon",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Alchemist",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Apt Revitalist",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Lunatic",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Pupil of Nagash",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Master of the Black Arts",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Pull of Undeath",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Sneaky Git (Karak Azgal)",
       "setting": "karak-azgal",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Netter (Karak Azgal)",
       "setting": "karak-azgal",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Death Before Dishonor",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Night Fighter",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Iaijutsu",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Last Stand",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Tea Ceremony",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Blessed by the Kami",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Scent Hound",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Sabre Trainer",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Set Traps",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Netter (Ogre Hunting Party)",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Angel of the Sword",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Knowledge of Shadows",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Art of the Silent Death",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Energy Focus",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Monk Weaponry",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Iron Will",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Rousing Sermon",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Sigmar's Guidance",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Pistol Expertise",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Riposte",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Impenetrable Defense",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Prince of Cats",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Powder Refiner",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Quick as a Monkey",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Snapshot",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Dirty Fighter",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Swing",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Smell of Treasure",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Helmsmen",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Festooned with Pistols",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Looting the Dead",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Novice Press-ganger",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Master Press-ganger",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Surge",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Wardance",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Savage Frenzy",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "The Power of Man's Red Flower",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Cutthroat",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Hit and Run (Silent Brotherhood)",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Hide in Shadows (Silent Brotherhood)",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Beastkin",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Hypnotic Musk",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Subjugator of Mankind",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Twistkin",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Cloud of Flies",
       "setting": "lustria",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Frenzy",
       "setting": "lustria",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Resilience",
       "setting": "lustria",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Bloated",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Thing Handler",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Enrage",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Breeder",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Mutating Experiment",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Skavenbrew Master",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Warpstone Resistance",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Gloryseeker",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Leviathan Slayer",
       "setting": "sartosa",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Stampede",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Achilles' Heel",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Worm",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Big Bully",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Frustratingly Tiny",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Mob Master",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Iron Sinews",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Great Thirster",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Curse of the Revenant",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Dark Arts",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Light Fingers",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Practiced Arm",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "The Terror",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Mother Knows Best",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Ground Pounder",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Titanic Strength",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Hurl",
       "setting": "sealed-city",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Taunt (The Innocents)",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Humane",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Child of the Ruins",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Expert Explorer",
       "setting": "mousillon",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Trap Master",
       "setting": "mousillon",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Silent Strike",
       "setting": "mousillon",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Wyrdstone Addict",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Toss Me!",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Stuff 'Em with Green",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Ha! Watch This",
       "setting": "mutiny-in-marienburg",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Thirst for Vengeance",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Blessing of Morr",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Touch of Darkness",
       "setting": "sylvania",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Hunter's Senses",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Complete Healing",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Terrible Claws",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Bloodthirst",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Chilling Howl",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Bestial Savagery",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Pack Hunter",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Heavy Pelt",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Infiltrate (Wood Elf Scouts)",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Trapper",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Expert Hunter",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Stand and Shoot",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Wild Hunter",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Pathfinder (Wood Elf Scouts)",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Tree Walker",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Sniper (Wood Elf Scouts)",
       "setting": "athel-loren",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Elven Luck",
       "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Seeker",
-      "setting": "mordheim-2a",
-      "how": "overrides.json"
+      "setting": "mordheim",
+      "how": "earliest adopter"
     },
     {
       "name": "Aspect of the Hawk",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Aspect of the Serpent",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Aspect of the Panther",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Aspect of the Fox",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Aspect of the Stag",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Aspect of the Rabbit",
       "setting": "grade-3",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Staff Master",
       "setting": "mousillon",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     },
     {
       "name": "Forager",
       "setting": "mousillon",
-      "how": "overrides.json"
+      "how": "pdf-warbands"
     }
   ],
   "hired_swords": [
@@ -3613,6 +3613,438 @@
       "name": "“Busty” Gwen",
       "setting": "mordheim-2a",
       "how": "mordheimer"
+    }
+  ],
+  "lores": [
+    {
+      "name": "Lesser Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Dark Elf Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Chaos Rituals",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Charms and Hexes",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Necromancy",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Prayers of Sigmar",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Prayers of Ulric",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Prayers of Taal",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Goblin Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Waaaagh! Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Arabian Elemental Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Spells of the Djedhi",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Amazon Rituals",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Chaos Dwarfs Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Forest Goblin Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Funerary Rites",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Lady's Prayers",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Lizardmen Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Lore of Darkness",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Lore of Light",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Magic of the Horned Rat",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Mortuary Cult Scrolls",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Mortuary Cult Scrolls (Nehekhara Tomb Guards)",
+      "setting": "khemri-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Necromancy (Restless Dead)",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Norse Runes",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Nurgle Rituals",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Onogal Rituals",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Rituals of Hashut",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Shadow Warrior Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Shornaal Rituals",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Tchar Rituals",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Grail Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Dark Magic (Druchii)",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Charms and Hexes (Strigos)",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Dark Arts",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Woodland Incantations",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Snotling Waaagh! Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Dreaded Scrolls of Nagash",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Elemental Lore of Water",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Elemental Lore of Fire",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Elemental Lore of Earth",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Elemental Lore of Air",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Funerary Rites (Vampire Hunters of Sylvania)",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Utterances of the Oak",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Necromancy (Call of the Night Haint)",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Songs of Sorrow",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Spells of the Lothern Sea",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Laws of Construction",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Hobgoblin Magic",
+      "setting": "khemri-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "High Elf Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Clan Skryre Magic",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Barbarian Shaman Magic",
+      "setting": "grade-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Common Magic",
+      "setting": "grade-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Dwarf Runes",
+      "setting": "grade-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Commands (Mazzalupo)",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Blessings of the Mare",
+      "setting": null,
+      "how": "spells.json"
+    },
+    {
+      "name": "Prophetic Rants",
+      "setting": "grade-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Heresy of Alchemy",
+      "setting": "grade-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Thespian Magic",
+      "setting": "grade-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Werewolf Runes",
+      "setting": "grade-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Fey Magic",
+      "setting": "grade-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Ice Magic",
+      "setting": "khemri-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Fire Magic",
+      "setting": "khemri-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Wind Magic",
+      "setting": "khemri-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Earth Magic",
+      "setting": "khemri-3",
+      "how": "spells.json"
+    },
+    {
+      "name": "Light and Silence",
+      "setting": "relics-of-the-crusades",
+      "how": "spells.json"
+    },
+    {
+      "name": "Relics of the Crusades Spells",
+      "setting": "relics-of-the-crusades",
+      "how": "spells.json"
+    },
+    {
+      "name": "Minor Runes (Dwarf Rangers)",
+      "setting": "nemesis-crown",
+      "how": "spells.json"
+    },
+    {
+      "name": "Runes",
+      "setting": "nemesis-crown",
+      "how": "spells.json"
+    },
+    {
+      "name": "Potion Recipes",
+      "setting": "mousillon",
+      "how": "spells.json"
+    },
+    {
+      "name": "Lore of Light (Colleges of Magic)",
+      "setting": "marienburg-annual",
+      "how": "spells.json"
+    },
+    {
+      "name": "Lore of Metal (Colleges of Magic)",
+      "setting": "marienburg-annual",
+      "how": "spells.json"
+    },
+    {
+      "name": "Lore of Life (Colleges of Magic)",
+      "setting": "marienburg-annual",
+      "how": "spells.json"
+    },
+    {
+      "name": "Lore of Heavens (Colleges of Magic)",
+      "setting": "marienburg-annual",
+      "how": "spells.json"
+    },
+    {
+      "name": "Lore of Shadows (Colleges of Magic)",
+      "setting": "marienburg-annual",
+      "how": "spells.json"
+    },
+    {
+      "name": "Lore of Death (Colleges of Magic)",
+      "setting": "marienburg-annual",
+      "how": "spells.json"
+    },
+    {
+      "name": "Lore of Fire (Colleges of Magic)",
+      "setting": "marienburg-annual",
+      "how": "spells.json"
+    },
+    {
+      "name": "Lore of Beasts (Colleges of Magic)",
+      "setting": "marienburg-annual",
+      "how": "spells.json"
+    },
+    {
+      "name": "Prayers of Manann",
+      "setting": "mutiny-in-marienburg",
+      "how": "spells.json"
+    },
+    {
+      "name": "Prayers of Morr",
+      "setting": "mutiny-in-marienburg",
+      "how": "spells.json"
+    },
+    {
+      "name": "Prayers of Myrmidia",
+      "setting": "mutiny-in-marienburg",
+      "how": "spells.json"
+    },
+    {
+      "name": "Prayers of Ranald",
+      "setting": "mutiny-in-marienburg",
+      "how": "spells.json"
+    },
+    {
+      "name": "Prayers of Shallya",
+      "setting": "mutiny-in-marienburg",
+      "how": "spells.json"
+    },
+    {
+      "name": "Prayers of Ulric (Mutiny in Marienburg)",
+      "setting": "mutiny-in-marienburg",
+      "how": "spells.json"
+    },
+    {
+      "name": "Prayers of Verena",
+      "setting": "mutiny-in-marienburg",
+      "how": "spells.json"
+    },
+    {
+      "name": "Rituals of Dhar",
+      "setting": "mutiny-in-marienburg",
+      "how": "spells.json"
     }
   ]
 }

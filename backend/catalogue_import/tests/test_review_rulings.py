@@ -100,8 +100,9 @@ class MergesAndSeparationsTests(ReviewCase):
         # no deviation; the Athel Loren PDF prints Strength 4, a 1" template, a D3" deviation and a globe that
         # bursts when its carrier goes down, so it is an item of its own and the Athel Loren lines name it
         ours = self.items["Poison Wind Globe"]
-        # ours is Mutiny in Marienburg's, and a grade 2a one, so it reads in Mordheim 2a (see the setting moves)
-        self.assertEqual((ours["setting"], ours["strength"]), ("mordheim-2a", "Special"))
+        # ours is Mutiny in Marienburg's, a grade 2a one, and the Skaven (1a) buy it, so it reads in Mordheim 1a (its
+        # earliest adopter's: William, 27 Nov 2026)
+        self.assertEqual((ours["setting"], ours["strength"]), ("mordheim", "Special"))
         theirs = self.items["Poison Wind Globe (Athel Loren)"]
         self.assertEqual((theirs["setting"], theirs["range"], theirs["strength"]), ("athel-loren", '6"', "4"))
         self.assertEqual(
