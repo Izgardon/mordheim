@@ -65,3 +65,25 @@ class CasterTests(ReviewCase):
             ],
         )
         self.assertEqual({row["setting"] for row in runes}, {"nemesis-crown"})
+
+    def test_the_draich_casts_from_the_chaos_rituals_and_the_rituals_of_dhar(self) -> None:
+        # "one from the Chaos Rituals, and one from the Rituals of Dhar": Mutiny in Marienburg's, imported (William,
+        # 27 Nov 2026: "give him both lores and 2 spell levels")
+        draich = self.fighter("lords-of-the-marsh", "Draich")
+        self.assertEqual(self.lores("lords-of-the-marsh", "Draich"), ["Chaos Rituals", "Rituals of Dhar"])
+        self.assertEqual((draich["caster"], draich["spell_picks"]), ("Wizard", 2))
+        dhar = [row for row in load_json(SPELL_DATA / "spells.json") if row["type"] == "Rituals of Dhar"]
+        self.assertEqual(
+            [(row["roll"], row["name"], row["dc"]) for row in dhar],
+            [
+                (1, "Doom Bolt", "9"),
+                (2, "Word of Pain", "8"),
+                (3, "Soul Stealer", "9"),
+                (4, "Flamesword", "8"),
+                (5, "Death Spasm", "10"),
+                (6, "Witch Flight", "7"),
+            ],
+        )
+        self.assertEqual({row["setting"] for row in dhar}, {"mutiny-in-marienburg"})
+        prayers = load_json(SPELL_DATA / "prayer-lores.json")
+        self.assertNotIn("Rituals of Dhar", prayers)

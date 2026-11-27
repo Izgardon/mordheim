@@ -1143,7 +1143,7 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | hobgoblins | Magi | Wizard | Hobgoblin Magic |
 | lahmian | Necromancer | Wizard | Necromancy |
 | lizardmen-lus | Skink Priest | Wizard | Lizardmen Magic |
-| lords-of-the-marsh | Draich | Wizard | Chaos Rituals |
+| lords-of-the-marsh | Draich | Wizard | Chaos Rituals, Rituals of Dhar |
 | lothern-sea-patrol | Mist Mage | Wizard | Spells of the Lothern Sea |
 | mages | Arch Mage | Wizard | Ice Magic, Fire Magic, Wind Magic, Earth Magic |
 | mages | Mage | Wizard | Ice Magic, Fire Magic, Wind Magic, Earth Magic |
@@ -2665,7 +2665,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): Mystic Mist is printed as a spell (difficulty 7) the warband casts "using potent talismans", and "the warband begins the battle wreathed in mist": the PDF names no caster and no casting roll's timing, so it is a warband rule as printed. Craven and the Young Nobles' and Shearls' Stupidity hold only outside it; Stupidity links our shared Stupidity, so the Mystic Mist rule says it lifts it.
 - Flag (p2): Scaly Skin (6+, the Fimir Warriors' 5+) is a warband rule, unlike our shared Scaly Skin (5+).
 - Flag (p3): The skill table has no Special column, so the warband has no skill group. Its ticks are read from where the text layer places them: Draich Combat, Academic; Daemon-Fimm and Young Noble Combat, Strength, Speed.
-- Flag (p3): The Draich's Wizard rule takes one spell from the Chaos Rituals (ours) and one from the Rituals of Dhar, which we lack and the PDF doesn't print: only the Chaos Rituals are set. He is equipped with "weapons" from the Heroes list: he buys from the whole list.
+- Flag (p3): The Draich's Wizard rule takes one spell from the Chaos Rituals (ours) and one from the Rituals of Dhar, which the PDF doesn't print: Mutiny in Marienburg's (its Bazaar of Books), imported as a lore of their own, so he casts from both (William, 27 Nov 2026). He is equipped with "weapons" from the Heroes list: he buys from the whole list.
 - Flag (p3): Daemon-Fimm "cannot be equipped with weapons" and wear armour from the Heroes list: they buy from that list's three armours only. The PDF doesn't say whether they fight unarmed without penalty. Daemon Soul and Spiked Tail link our shared mutations, which say the same.
 - Flag (p4): The henchmen's costs are read from each one's column: Shearls 55 gc, Fimir Warriors 180 gc. Monstrous makes a Fimir Warrior count as 2 models towards the maximum: not imported, the most stays 12.
 

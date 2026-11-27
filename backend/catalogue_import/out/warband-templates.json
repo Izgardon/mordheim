@@ -55677,6 +55677,10 @@
           {
             "name": "Chaos Rituals",
             "note": ""
+          },
+          {
+            "name": "Rituals of Dhar",
+            "note": ""
           }
         ],
         "gains_xp": true,
