@@ -1120,7 +1120,8 @@
       "unique_to": "Lizardmen warbands only",
       "available_skill_types": [
         "Shooting",
-        "Speed"
+        "Speed",
+        "Lizardmen (Lustria)"
       ],
       "available_special_skills": [],
       "grade": "1b",

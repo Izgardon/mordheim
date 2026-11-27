@@ -196,3 +196,11 @@ class SkillAuditTests(ReviewCase):
         self.assertIn("Prospector", rules)
         own = [skill["name"] for skill in self.terms("Prospector (Karak Azgal)")["available_special_skills"]]
         self.assertEqual(own, ["Luck (Prospector)"])
+
+    def test_the_chameleon_skink_learns_lizardmen_skills(self) -> None:
+        # "may choose from Shooting, Speed and Lizardmen special skills": the Lustria list, as he is a Lustria hired
+        # sword (William, 27 Nov 2026)
+        self.assertEqual(
+            self.terms("Chameleon Skink")["available_skill_types"], ["Shooting", "Speed", "Lizardmen (Lustria)"]
+        )
+        self.assertIn("Lizardmen (Lustria)", self.groups)
