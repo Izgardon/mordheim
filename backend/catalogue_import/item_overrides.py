@@ -27,6 +27,28 @@ def set_row_notes(items: list[dict[str, Any]], decisions: dict[str, Any]) -> Non
             row.update({key: decision[key] for key in ("note", "cost_note")})
 
 
+def set_row_prices(items: list[dict[str, Any]], decisions: dict[str, Any]) -> None:
+    """overrides.json "item_row_prices": the price William settles for one price row of an item, in place of the
+    source's (William, 27 Nov 2026: the Double-barrelled Pistol's brace is 50+2D6, twice the single's 25+D6). A row is
+    found by its label ("" for none) and, where the decision names one, the warband type its lines name; a name that
+    is no item of ours, or a row that matches none or several, stops the build."""
+    by_name = {item["name"]: item for item in items}
+    missing = sorted(set(decisions) - set(by_name))
+    if missing:
+        raise ValueError(f"overrides.json item_row_prices: no item {', '.join(missing)}")
+    for name, rows in decisions.items():
+        for decision in rows:
+            label, slug = decision.get("label", ""), decision.get("type")
+            found = [
+                row
+                for row in by_name[name]["availabilities"]
+                if row["label"] == label and (slug is None or {"type": slug, "excluded": False} in row["warbands"])
+            ]
+            if len(found) != 1:
+                raise ValueError(f"overrides.json item_row_prices {name!r}: {len(found)} rows match, not one")
+            found[0].update({key: decision[key] for key in ("cost", "dice", "dice_multiplier") if key in decision})
+
+
 def set_own_rules(items: list[dict[str, Any]], decisions: dict[str, Any]) -> None:
     """overrides.json "item_own_rules": the rules William settles for one of our items, in place of its own (the
     Rain Coat, which mordheimer leaves to its flavour line while the Khemri page prints what it does); a rule may be a

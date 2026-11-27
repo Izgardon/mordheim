@@ -2935,7 +2935,7 @@
       },
       {
         "label": "Brace",
-        "cost": 46,
+        "cost": 50,
         "dice": 2,
         "dice_multiplier": null,
         "cost_note": "",
@@ -8723,7 +8723,7 @@
       {
         "label": "",
         "cost": 45,
-        "dice": null,
+        "dice": 2,
         "dice_multiplier": null,
         "cost_note": "",
         "rarity": 9,
