@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { session } from "@/lib/session";
 
-const { FakePusher, refreshSession } = vi.hoisted(() => {
+const { FakePusher, refreshSession, pusherDownload } = vi.hoisted(() => {
   class FakeChannel {
     callbacks: ((event: string, data: unknown) => void)[] = [];
     constructor(public name: string) {}
@@ -47,10 +47,19 @@ const { FakePusher, refreshSession } = vi.hoisted(() => {
     }
   }
 
-  return { FakePusher, refreshSession: vi.fn() };
+  return { FakePusher, refreshSession: vi.fn(), pusherDownload: { fails: 0 } };
 });
 
-vi.mock("pusher-js", () => ({ default: FakePusher }));
+// The mocked module is kept across resetModules, so its download fails through a getter.
+vi.mock("pusher-js", () => ({
+  get default() {
+    if (pusherDownload.fails > 0) {
+      pusherDownload.fails -= 1; // pusher-js's download failing, as with no signal
+      throw new TypeError("Failed to fetch dynamically imported module: /assets/pusher.js");
+    }
+    return FakePusher;
+  },
+}));
 vi.mock("@/lib/api-client", () => ({ refreshSession }));
 vi.mock("@/config/env", () => ({
   PUSHER_KEY: "test-key",
@@ -75,6 +84,7 @@ const connected = async () => {
 describe("realtime client", () => {
   beforeEach(() => {
     FakePusher.instances = [];
+    pusherDownload.fails = 0;
     refreshSession.mockReset();
     localStorage.clear();
   });
@@ -176,6 +186,40 @@ describe("realtime client", () => {
     expect(FakePusher.instances[1].subscribe).not.toHaveBeenCalledWith(
       "private-user-1-notifications"
     );
+  });
+
+  // docs/plans/offline.md: the failed download used to be kept, so realtime stayed dead until a reload
+  it("downloads pusher-js again when the connection returns after a failed download", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    pusherDownload.fails = 1;
+    const { onConnectionRestored, subscribe } = await loadClient();
+    const restored = vi.fn();
+    onConnectionRestored(restored);
+    subscribe("private-campaign-7-events", "warband.changed", vi.fn());
+    await vi.waitFor(() => expect(console.warn).toHaveBeenCalled());
+    expect(FakePusher.instances).toHaveLength(0);
+
+    window.dispatchEvent(new Event("online"));
+    const pusher = await connected();
+
+    expect(pusher.subscribe).toHaveBeenCalledWith("private-campaign-7-events");
+    // events were missed while it was down, so its first connect is a catch-up
+    pusher.setState("connecting", "connected");
+    expect(restored).toHaveBeenCalledTimes(1);
+  });
+
+  it("downloads pusher-js again for the next subscriber after a failed download", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    pusherDownload.fails = 1;
+    const { subscribe } = await loadClient();
+    subscribe("private-user-1-notifications", "notification", vi.fn());
+    await vi.waitFor(() => expect(console.warn).toHaveBeenCalled());
+
+    subscribe("private-campaign-7-events", "warband.changed", vi.fn());
+    const pusher = await connected();
+
+    expect(pusher.subscribe).toHaveBeenCalledWith("private-user-1-notifications");
+    expect(pusher.subscribe).toHaveBeenCalledWith("private-campaign-7-events");
   });
 
   it("does not load pusher-js until something subscribes", async () => {

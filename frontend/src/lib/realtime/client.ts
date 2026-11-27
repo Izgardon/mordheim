@@ -15,7 +15,8 @@ import { session } from "@/lib/session";
 /**
  * The app's one realtime connection (PERF-18, IMP-14). pusher-js is downloaded the first time
  * something subscribes (only signed-in screens do), every channel shares one WebSocket, and a
- * channel stays subscribed while at least one subscriber holds it.
+ * channel stays subscribed while at least one subscriber holds it. A download that fails (no
+ * signal) is tried again by the next subscriber or when the connection returns.
  */
 
 type Handler = (data: unknown) => void;
@@ -35,6 +36,8 @@ let client: Pusher | null = null;
 let clientPromise: Promise<Pusher | null> | null = null;
 let clientGeneration = 0;
 let hasConnected = false;
+/** pusher-js failed to download before connecting: events were missed, so its first connect catches up. */
+let missedWhileLoading = false;
 let warnedDisabled = false;
 
 export const isRealtimeEnabled = () => Boolean(PUSHER_KEY && PUSHER_CLUSTER);
@@ -89,11 +92,13 @@ function handleStateChange({ previous, current }: { previous: string; current: s
   if (current !== "connected") {
     return;
   }
-  // The first connect is not a reconnect; later ones mean events may have been missed.
-  if (hasConnected && previous !== "connected") {
+  // The first connect is not a reconnect, unless realtime was down while it failed to download;
+  // later ones mean events may have been missed.
+  if ((hasConnected || missedWhileLoading) && previous !== "connected") {
     restoredListeners.forEach((listener) => listener());
   }
   hasConnected = true;
+  missedWhileLoading = false;
 }
 
 function loadClient() {
@@ -106,34 +111,59 @@ function loadClient() {
   }
   if (!clientPromise) {
     const generation = clientGeneration;
-    clientPromise = import("pusher-js").then(({ default: PusherClient }) => {
-      if (generation !== clientGeneration) {
-        return null; // Disconnected (signed out) while pusher-js was downloading.
-      }
-      const pusher = new PusherClient(PUSHER_KEY, {
-        cluster: PUSHER_CLUSTER,
-        ...(PUSHER_HOST
-          ? {
-              wsHost: PUSHER_HOST,
-              wsPort: PUSHER_PORT,
-              wssPort: PUSHER_PORT,
-              forceTLS: PUSHER_FORCE_TLS,
-              enabledTransports: ["ws", "wss"],
-            }
-          : {}),
-        channelAuthorization: {
-          transport: "ajax",
-          endpoint: PUSHER_AUTH_ENDPOINT,
-          headersProvider: authHeaders,
-        },
-      });
-      pusher.connection.bind("state_change", handleStateChange);
-      client = pusher;
-      channels.forEach((_, channelName) => attachChannel(pusher, channelName));
-      return pusher;
-    });
+    clientPromise = import("pusher-js")
+      .then(({ default: PusherClient }) => {
+        if (generation !== clientGeneration) {
+          return null; // Disconnected (signed out) while pusher-js was downloading.
+        }
+        const pusher = new PusherClient(PUSHER_KEY, {
+          cluster: PUSHER_CLUSTER,
+          ...(PUSHER_HOST
+            ? {
+                wsHost: PUSHER_HOST,
+                wsPort: PUSHER_PORT,
+                wssPort: PUSHER_PORT,
+                forceTLS: PUSHER_FORCE_TLS,
+                enabledTransports: ["ws", "wss"],
+              }
+            : {}),
+          channelAuthorization: {
+            transport: "ajax",
+            endpoint: PUSHER_AUTH_ENDPOINT,
+            headersProvider: authHeaders,
+          },
+        });
+        pusher.connection.bind("state_change", handleStateChange);
+        client = pusher;
+        channels.forEach((_, channelName) => attachChannel(pusher, channelName));
+        return pusher;
+      })
+      .catch(failedToLoad(generation));
   }
   return clientPromise;
+}
+
+/**
+ * pusher-js didn't download (no signal): forget the failed download, which would otherwise keep
+ * realtime dead until a reload, and try again when the connection returns (or on the next subscribe).
+ */
+function failedToLoad(generation: number) {
+  return (error: unknown) => {
+    if (generation !== clientGeneration) {
+      return null;
+    }
+    clientPromise = null;
+    missedWhileLoading = true;
+    console.warn("Realtime didn't load; it tries again when the connection returns.", error);
+    window.addEventListener(
+      "online",
+      () => {
+        if (generation === clientGeneration && channels.size > 0) void loadClient();
+      },
+      { once: true }
+    );
+    return null;
+  };
 }
 
 /** Listens for `event` on `channelName`. Returns the unsubscribe function. */
@@ -195,4 +225,5 @@ export function disconnectRealtime() {
   client = null;
   clientPromise = null;
   hasConnected = false;
+  missedWhileLoading = false;
 }
