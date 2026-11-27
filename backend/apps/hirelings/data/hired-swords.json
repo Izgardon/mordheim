@@ -3255,16 +3255,12 @@
       },
       {
         "name": "Rockets",
-        "description": "In every shooting phase the Pyromaniac starts one rocket. Use the artillery dice to determine how far the rocket flies. The initial direction can be controlled by the Pyromaniac. Unless an object is hit on the way, place a marker there. From then on, in every shooting phase each rocket will keep on flying a distance determined with the artillery dice and in a direction randomly determined with the scatter dice until it hits an object. Anything hit by a rocket suffers an automatic Strength 4 hit. In addition, objects hit by a rocket are set on fire on a roll of 4+. Whenever the artillery die scores a misfire, the rocket detonates immediately. Roll on the following table to determine the effect of the fireworks: 1: Nothing. The rocket falls to the ground without any further effect. 2-3: Zishh! Re-roll the artillery dice and move the rocket with twice the scored number. 4-5: Spectacle. The rocket explodes with colourful lights. All models within 2D6\" must pass a Ld test or are distracted for the turn. Distracted models are automatically hit in close combat and cannot attack back. 6: Explosion. The rocket explodes causing an automatic S4 hit to all models within D6\"."
+        "description": "His fireworks are these rockets, and like his firecrackers they never run out. In every shooting phase the Pyromaniac starts one rocket. Use the artillery dice to determine how far the rocket flies. The initial direction can be controlled by the Pyromaniac. Unless an object is hit on the way, place a marker there. From then on, in every shooting phase each rocket will keep on flying a distance determined with the artillery dice and in a direction randomly determined with the scatter dice until it hits an object. Anything hit by a rocket suffers an automatic Strength 4 hit. In addition, objects hit by a rocket are set on fire on a roll of 4+. Whenever the artillery die scores a misfire, the rocket detonates immediately. Roll on the following table to determine the effect of the fireworks: 1: Nothing. The rocket falls to the ground without any further effect. 2-3: Zishh! Re-roll the artillery dice and move the rocket with twice the scored number. 4-5: Spectacle. The rocket explodes with colourful lights. All models within 2D6\" must pass a Ld test or are distracted for the turn. Distracted models are automatically hit in close combat and cannot attack back. 6: Explosion. The rocket explodes causing an automatic S4 hit to all models within D6\"."
       }
     ],
     "skills": [],
     "spells": [],
     "equipment": [
-      {
-        "item": "Fireworks",
-        "quantity": 1
-      },
       {
         "item": "Firecrackers",
         "quantity": 1

@@ -77,3 +77,20 @@ class StaffKitTests(TestCase):
             self.kit("Ninja Gnoblar"),
             {"Toughened Leathers": (1, ""), "Throwing Knives/Stars/Axes": (1, ""), "Bo": (1, "")},
         )
+
+
+class PyromaniacTests(TestCase):
+    """The Pyromaniac's fireworks are his rules, not an item (William, 27 Nov 2026, the items audit's question 13: B)."""
+
+    def test_his_kit_is_his_firecrackers_and_his_rules_hold_the_fireworks(self):
+        Item.objects.create(name="Firecrackers", type="Miscellaneous")
+        Item.objects.create(name="Fireworks", type="Miscellaneous")
+        row = next(row for row in json.loads(DATA.read_text()) if row["name"] == "Pyromaniac")
+
+        links = BookLookups().links(row, row["name"])
+
+        self.assertEqual([Item.objects.get(pk=pk).name for pk in links.equipment], ["Firecrackers"])
+        rockets = next(special["description"] for special in row["specials"] if special["name"] == "Rockets")
+        self.assertTrue(
+            rockets.startswith("His fireworks are these rockets, and like his firecrackers they never run out.")
+        )

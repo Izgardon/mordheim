@@ -61,7 +61,6 @@ EQUIPMENT_NAME_ALIASES = {
     "hammer of sigmar": "sigmarite warhammer",
     "holy water": "blessed water",
     "wolf cloak": "wolfcloak",
-    "fireworks": "firecrackers",
     "superior black powder": "superior blackpowder",
     "hardened leathers": "toughened leathers",
     "rope and hook": "rope & hook",
