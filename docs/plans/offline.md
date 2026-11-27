@@ -1,6 +1,14 @@
 # Working offline: what's possible and what to build
 
-Research only (27 Nov 2026). No code changed. For William, who plays at the table on phones, often where the signal is poor.
+Research (27 Nov 2026). For William, who plays at the table on phones, often where the signal is poor.
+
+**Done since (27 Nov 2026), bug fixes only:** the double buy (purchases, hires and roster Saves carry a request key:
+`Idempotency-Key`, `apps/warbands/services/request_keys.py`, `frontend/src/lib/request-key.ts`); a list paused
+offline with nothing read is loading and says "No connection" (`lib/query-offline.ts`: `useCatalogue`, the entry
+detail, who-can, the warband lists); a page whose code didn't download says "No connection" when the app's site
+can't be reached, and "The app was updated" only when it can (`lib/chunk-failure.ts`); and a failed pusher-js
+download is tried again on the next subscribe or the `online` event (`lib/realtime/client.ts`). Still open: the
+offline bar, writes that refuse at once offline, and phases 1 to 4.
 
 ## Summary
 
@@ -8,7 +16,8 @@ Research only (27 Nov 2026). No code changed. For William, who plays at the tabl
   do this a lot) needs the network to load its first page. If the app is still open, pages you saw in the last five
   minutes keep showing. Anything else gives an error, a spinner that never ends, or an empty list that looks real.
 - **With weak signal, reads and writes wait up to 20 seconds and then fail.** A purchase that times out may still have
-  gone through on the server, so tapping Buy again can buy the item twice. That can happen today.
+  gone through on the server; tapping Buy again used to buy the item twice. **Fixed:** it now sends the same request
+  key and gets the first answer back.
 - **Most of the value can be had safely and cheaply.** You can read your warband sheet, the reference pages, the
   campaign rules and charts, and a battle in progress, all from what the phone last saw. Wounds, statuses, notes and
   out-of-action taps during a battle can be saved on the phone and sent when signal returns.
@@ -48,11 +57,11 @@ Research only (27 Nov 2026). No code changed. For William, who plays at the tabl
 |---|---|---|
 | Opening the app at all | **Fails**: the browser's "no connection" page | OK |
 | Warband sheet | Fails | Shows if seen in the last 5 min; after that, a spinner that never ends (`useWarbandSheet`) |
-| Reference pages (items, skills, spells, specials) | Fails | Shows if seen in the last 5 min; after that **an empty list**, because a paused query isn't "loading" (`useCatalogue` returns no entries, `isLoading` false) |
+| Reference pages (items, skills, spells, specials) | Fails | Shows if seen in the last 5 min; after that it used to be **an empty list**, because a paused query isn't "loading". **Fixed:** loading, with "No connection: this list loads when you're back online." |
 | Scenarios, campaign rules, charts | Fails | As above |
 | Battle in progress | Fails | Shows while the battle page stays open. Leave it and it's gone: battle data is never kept (`gcTime: 0`, `battle-queries.ts`) |
-| A page you haven't opened in this visit | Fails | Fails: its code file can't download, and the error page says **"The app was updated"**, which is wrong here (`RouteError.tsx`) |
-| Live updates | n/a | Reconnect is handled. But if the pusher-js download itself fails, realtime stays dead until a reload (`clientPromise` keeps the failed import) |
+| A page you haven't opened in this visit | Fails | Fails: its code file can't download. The error page used to say **"The app was updated"**. **Fixed:** "No connection" when the app's site can't be reached |
+| Live updates | n/a | Reconnect is handled. A failed pusher-js download used to keep realtime dead until a reload. **Fixed:** tried again on the next subscribe or when the connection returns |
 
 ### Writing
 
@@ -61,8 +70,9 @@ Research only (27 Nov 2026). No code changed. For William, who plays at the tabl
   save fails with an error. The screen keeps showing the change, but it was never saved, and a reload loses it.
 - **Kills, out of action, rounds** wait for the server (`useBattleScreen.ts`) and then show "Couldn't change that."
 - **Buying** (`POST warbands/<id>/purchases/`) waits up to 20 s and then fails. Two problems:
-  - The server may have taken the purchase even though the answer never arrived. There is no protection against
-    sending the same request twice (no idempotency key), so tapping Buy again buys it twice and charges twice.
+  - The server may have taken the purchase even though the answer never arrived. Tapping Buy again used to buy it
+    twice and charge twice. **Fixed:** purchases, hires and roster Saves carry an `Idempotency-Key`; a repeat gets the
+    first answer.
   - The 18 places that use `useMutation` (plots, locations, encampments, ledger, trades, ...) behave differently:
     after an `offline` event they **pause silently** and fire minutes later when signal returns, after the player has
     given up. If iOS closes the app in the meantime, they're lost.
@@ -220,10 +230,10 @@ weren't saved: the battle had ended. They are listed below." Show the list, so n
   goes away.
 - On reconnect: send the outbox first, then refresh the battle (it already refreshes after reconnecting).
 
-**Also worth doing, offline or not:** an `Idempotency-Key` header on purchases, hires and location visits. The
-server would remember the answer for a day, so the same key gets the same answer. This fixes today's double-buy
-after a timeout on weak signal. It is a backend helper (one small table, one decorator) plus one header in
-`apiRequest`.
+**Done, offline or not:** an `Idempotency-Key` header on purchases, hires and roster Saves (the store's upgrades and
+camp's veterans too). The server keeps the answer a day, written in the write's own transaction, so the same key gets
+the same answer and two at once can't both go through. Not keyed yet: location visits, sales, transfers, resource
+sales and the ledger's own rows; a new one is a `once()` around its view and a key from `useRequestKey`.
 
 **What the player sees:**
 - The bar says "No signal · 4 changes waiting to send".
@@ -259,11 +269,11 @@ the cost.
 
 | Phase | Delivers | Size |
 |---|---|---|
-| **0. Say it plainly** | An "offline" bar (from the browser's offline events plus failed or timed-out requests; cleared by the next success, with a cheap check of `/api/health/`). Writes refuse at once offline instead of pausing silently. Three bug fixes, each with a test that fails first: the empty reference list when a query is paused with no data; "The app was updated" shown when the real cause is no signal; pusher-js never retried after a failed download | ~1 day |
+| **0. Say it plainly** | An "offline" bar (from the browser's offline events plus failed or timed-out requests; cleared by the next success, with a cheap check of `/api/health/`). Writes refuse at once offline instead of pausing silently. The three bug fixes are **done** (the empty list, the wrong cause, pusher-js retried) | ~1 day |
 | **1. Keep the last-seen data** (option a) | The sheet, reference pages, rules, charts, scenarios and an open battle read from the phone on weak or no signal (while the app's files can load) | ~2–3 days |
 | **2. Open with no signal** (option b, fonts first) | The app opens from a cold start in airplane mode and shows phase 1's data. Online players still always get the newest deploy | ~2.5 days + phone checks |
 | **3. Type the battle offline** (option c) | Wounds, statuses, notes, out of action, kills and the post-game draft are saved on the phone and sent later. Refused changes are listed plainly | ~4–6 days |
-| **3b. No double buys** | An idempotency key on purchases, hires and location visits (worth doing even without offline) | ~1–2 days |
+| **3b. No double buys** | **Done** for purchases, hires and roster Saves; location visits and the other gold writes can take the same `once()` | — |
 | **4. Drafts to send later** (optional) | The store basket and a Report result draft survive offline and are sent with one tap once there's signal, so the player still sees the server's warnings | ~2–3 days |
 
 Each phase is its own PR, and the font self-hosting is a separate PR before phase 2, following the rule that a refactor
