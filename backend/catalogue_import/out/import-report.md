@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 244 |
 | items (MiM) | 51 |
 | items (warband templates) | 43 |
-| price rows | 613 |
+| price rows | 614 |
 | skills | 529 |
 | skill groups | 115 |
 | skill group links | 680 |
@@ -1837,7 +1837,7 @@ Kept apart from a family's, the effect differing:
 | ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
 | orc-pirates | orc-pirates | 8 | 0 | 1 | 10 |
 | order-of-the-mare | order-of-the-mare | 8 | 0 | 0 | 14 |
-| ostermark-roadwardens | ostermark-roadwardens | 6 | 0 | 0 | 10 |
+| ostermark-roadwardens | ostermark-roadwardens | 6 | 0 | 1 | 10 |
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
 | pirates-of-the-cathayan-sea | pirates-of-the-cathayan-sea | 8 | 0 | 1 | 13 |
 | protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 2 | 9 |
@@ -2935,6 +2935,7 @@ Pages folded into another warband's list as one of its variants:
 
 ### Ostermark Roadwardens
 
+- Stub: Perpetual Torch, 5 gc, Common; its rules are on p3.
 - Price row (p2): our Barding for ostermark-roadwardens, Rare 8, Warhorse only.
 - Flag (p1): A Roadwardens warband needs at least three models: our templates hold no minimum, so it is not imported.
 - Flag (p1): The PDF prints no Heroes and Henchmen headings. The Warden, the Reeves and the Couriers have skill tables and named starting experience, so they are the heroes; the Chasseurs, Grooms and Angry Mob fall under "All Henchmen start with 0 experience".
@@ -2943,7 +2944,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p2): Barding is sold at 50 gc for a warhorse only; ours is 80 gc Rare 8, so the warband gets a price row at 50 with the note. Light armour is 15 gc here against our 20, and heavy armour 40 against our 50: only the starting list price is theirs.
 - Flag (p2): The Warden's and Reeves' Ride Horse and Ride Warhorse, and the Couriers' and Chasseurs' Ride Horse, are all our one Ride [Animal] skill, which they start with. The Grooms' Driver is ours; their Animal Handling is not a skill of ours and stays a rule of theirs.
 - Flag (p2): The Warden and each Reeve come with a Riding Horse that may be upgraded to a Warhorse for 40 gc more, and a Courier and a Chasseur with a Riding Horse. Neither horse is on an equipment list, so both are written in the fighter's equipment and nothing is bought.
-- Flag (p3): The Angry Mob's Pitchfork is "as spear", so the line is our Spear under that name. Their Torch is 5 gc and perpetual on the list, while the item entry reprints the Empire in Flames torch at 2 gc, which is ours; the list's 5 gc is kept. See the decisions.
+- Flag (p3): The Angry Mob's Pitchfork is "as spear", so the line is our Spear under that name. Their Torch is 5 gc and perpetual on the list, while the item entry reprints the Empire in Flames torch at 2 gc, which lasts one game. The list's is its own item, the Perpetual Torch, our Torch's rules but never used up (William, 27 Nov 2026, the items audit's question 5: A), shown as Torch (perpetual).
 - Flag (p3): The Horseman's Hammer entry reprints the Empire in Flames rules, which our Horseman's Hammer already carries at the same 12 gc.
 - Flag (p1): No group sizes are printed for the henchmen.
 

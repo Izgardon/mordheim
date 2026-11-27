@@ -64,7 +64,7 @@
       "items": [
         {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
         {"name": "spear", "alias": "Pitchfork", "cost": {"cost": 10}},
-        {"name": "Torch", "alias": "Torch (perpetual)", "cost": {"cost": 5}}
+        {"name": "Perpetual Torch", "alias": "Torch (perpetual)", "cost": {"cost": 5}}
       ]
     }
   ],
@@ -176,7 +176,19 @@
     }
   ],
   "aliases": [],
-  "stubs": [],
+  "stubs": [
+    {
+      "name": "Perpetual Torch",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 3,
+      "rules": [
+        {"name": "Torch", "text": "Torches act exactly as lanterns, adding +4\" to the range the model may spot hidden enemies. A model armed with a torch counts as causing fear in animals (Hunting Dogs, all riding steeds, Bears, Wolves, etc), and may use it as a makeshift club: in combat it is treated as a normal club, though with a -1 to hit modifier. Models with a Regeneration special rule (like Trolls) cannot regenerate wounds caused by a torch during the battle. Torches may also cause buildings to catch fire. Unlike the Empire in Flames torch, the Angry Mob's is perpetual: it is never used up."}
+      ]
+    }
+  ],
   "priceRows": [
     {"name": "Barding", "cost": 50, "rarity": 8, "dice": null, "note": "Warhorse only", "page": 2}
   ],
@@ -188,7 +200,7 @@
     {"page": 2, "what": "Barding is sold at 50 gc for a warhorse only; ours is 80 gc Rare 8, so the warband gets a price row at 50 with the note. Light armour is 15 gc here against our 20, and heavy armour 40 against our 50: only the starting list price is theirs."},
     {"page": 2, "what": "The Warden's and Reeves' Ride Horse and Ride Warhorse, and the Couriers' and Chasseurs' Ride Horse, are all our one Ride [Animal] skill, which they start with. The Grooms' Driver is ours; their Animal Handling is not a skill of ours and stays a rule of theirs."},
     {"page": 2, "what": "The Warden and each Reeve come with a Riding Horse that may be upgraded to a Warhorse for 40 gc more, and a Courier and a Chasseur with a Riding Horse. Neither horse is on an equipment list, so both are written in the fighter's equipment and nothing is bought."},
-    {"page": 3, "what": "The Angry Mob's Pitchfork is \"as spear\", so the line is our Spear under that name. Their Torch is 5 gc and perpetual on the list, while the item entry reprints the Empire in Flames torch at 2 gc, which is ours; the list's 5 gc is kept. See the decisions."},
+    {"page": 3, "what": "The Angry Mob's Pitchfork is \"as spear\", so the line is our Spear under that name. Their Torch is 5 gc and perpetual on the list, while the item entry reprints the Empire in Flames torch at 2 gc, which lasts one game. The list's is its own item, the Perpetual Torch, our Torch's rules but never used up (William, 27 Nov 2026, the items audit's question 5: A), shown as Torch (perpetual)."},
     {"page": 3, "what": "The Horseman's Hammer entry reprints the Empire in Flames rules, which our Horseman's Hammer already carries at the same 12 gc."},
     {"page": 1, "what": "No group sizes are printed for the henchmen."}
   ]

@@ -130,3 +130,20 @@ class SingleUseTests(ReviewCase):
         for name in self.USED_UP:
             with self.subTest(item=name):
                 self.assertTrue(self.items[name].get("single_use"))
+
+
+class PerpetualTorchTests(ReviewCase):
+    """Question 5 (A): the Roadwardens' Angry Mob torch is its own item, never used up."""
+
+    def test_the_angry_mobs_torch_is_never_used_up(self) -> None:
+        lines = [
+            line
+            for entry in self.templates["ostermark-roadwardens"]["lists"]
+            for line in entry["lines"]
+            if line["shown_as"] == "Torch (perpetual)"
+        ]
+        self.assertEqual([(line["item"]["name"], line["cost"]) for line in lines], [("Perpetual Torch", 5)])
+        torch = self.items["Perpetual Torch"]
+        self.assertFalse(torch.get("single_use"))
+        self.assertIn("never used up", torch["rules"][0]["text"])
+        self.assertTrue(self.items["Torch"]["single_use"])
