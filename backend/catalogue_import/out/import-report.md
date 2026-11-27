@@ -28,8 +28,8 @@ Answers go into `overrides.json`; the next build applies them.
 | items (warband templates) | 44 |
 | price rows | 613 |
 | skills | 529 |
-| skill groups | 115 |
-| skill group links | 680 |
+| skill groups | 114 |
+| skill group links | 678 |
 | serious injuries (D66) | 20 |
 | shared specials | 83 |
 | random mutation results (D66) | 36 |
@@ -368,7 +368,7 @@ Description put right: Beastmaster (Strength).
 
 ## Skill groups
 
-`out/skills.json` is 529 skills, one per name; `out/skill-groups.json` is 115 groups holding them (680 links), the five core groups first.
+`out/skills.json` is 529 skills, one per name; `out/skill-groups.json` is 114 groups holding them (678 links), the five core groups first.
 
 ### Merged by name
 
@@ -492,8 +492,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Ogres | Ogres (group) | skill_group_learners | - | Master of Arms, Crude Belch, Maneater, Bull Charge, Dog of War, Bellowing Roar (Ogres) |
 | Orcs | Orcs (group) | skill_group_learners | - | ’Ard ’Ead, Waaagh!, ’Ere We Go!, Da Cunnin’ Plan, Well ’Ard, ’Eadbasher, Proven Warrior |
 | Ostlanders | Ostlanders | skill_group_learners | - | Bull Rush, Foul Odour, Taunt, Animal Friendship, Blood Oath |
-| Pirates | Pirates | intersection | - | Sea Shanty Singer, Sea Legs, Cutlass Master, Booming Voice, Hardy Constitution, Swashbuckler |
-| Pirates (TBMF) | Pirates | skill_lists | - | Captain Blood, Sea Legs (TBMF), Cutlass Master, Treasure Hunter, Swashbuckler |
+| Pirates | Pirates | intersection | - | Sea Shanty Singer, Sea Legs, Cutlass Master, Booming Voice, Hardy Constitution, Swashbuckler, Captain Blood, Sea Legs (TBMF), Treasure Hunter |
 | Pirates of the Cathayan Sea | Pirates of the Cathayan Sea | new group | - | Angel of the Sword, Knowledge of Shadows, Art of the Silent Death, Energy Focus, Monk Weaponry |
 | Pit Fighters | Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Bulging Biceps, Force of Will, Arms Master, Body Slam, Grizzled Veteran |
 | Protectorate of Sigmar | Protectorate of Sigmar | new group | - | Protection of Sigmar, Utter Determination, Iron Will, Rousing Sermon, Sigmar's Guidance |

@@ -8,6 +8,8 @@ becomes a group that says who learns from it.
   report lists every wording dropped. Its setting is the lowest of its rows' (so it is in play wherever one was).
 - ``skill_splits``: a row whose rule differs stays a skill of its own, renamed after its group ("Sniper (Shadow
   Warriors)"), in that group alone.
+- ``skill_list_folds``: a list whose rows are another list's (``into``), so its skills sit in that group and it is no
+  group of its own (William, 27 Nov 2026: Pirates (TBMF) is the Pirates').
 - Who learns from a group: ``skill_group_learners`` (William settling a flagged group), else its list's decision
   (``skill_lists``, with ``large_only`` and the learning ``note``), else the warbands that may learn every skill in it
   (the intersection of its rows' who-can). A group whose intersection is empty (the union is taken) or differs from
@@ -118,6 +120,7 @@ class SkillGroupBuild:
         self.groups = groups
         self.lists = lists
         self.splits: dict[str, dict[str, str]] = dict(overrides.get("skill_splits", {}))
+        self.folds = {name: str(entry["into"]) for name, entry in overrides.get("skill_list_folds", {}).items()}
         self.wording_names = list(overrides.get("skill_wordings", {}))
         self.wordings = {norm_name(name): entry for name, entry in overrides.get("skill_wordings", {}).items()}
         self.learners = {norm_name(name): entry for name, entry in overrides.get("skill_group_learners", {}).items()}
@@ -197,7 +200,12 @@ class SkillGroupBuild:
         self.row_access = {label(row): row for row in who_rows}
         lists: dict[str, list[dict[str, Any]]] = {}
         for row in rows:
-            lists.setdefault(str(row["type"]).strip(), []).append(row)
+            list_name = str(row["type"]).strip()
+            lists.setdefault(self.folds.get(list_name, list_name), []).append(row)
+        seen = {str(row["type"]).strip() for row in rows}
+        unfolded = sorted(name for name, into in self.folds.items() if name not in seen or into not in seen)
+        if unfolded:
+            raise ValueError(f"overrides.json skill_list_folds names lists we don't have: {', '.join(unfolded)}")
         groups = []
         for name, members in lists.items():
             skills = list(dict.fromkeys(self.row_skill[label(row)] for row in members))

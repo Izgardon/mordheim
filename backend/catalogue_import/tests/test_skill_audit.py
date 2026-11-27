@@ -251,3 +251,17 @@ class SkillAuditTests(ReviewCase):
                 self.assertNotIn(pointer, own)
         personae = {row["name"]: row for row in load_json(HIRELING_DATA / "dramatis-personae.json")}
         self.assertFalse([name for name, row in personae.items() if "Infiltrate" in row.get("skills", [])])
+
+    def test_the_pirates_learn_from_one_list(self) -> None:
+        # every Pirates hero named both Pirates and Pirates (TBMF), so Cutlass Master and Swashbuckler showed twice
+        # (William, 27 Nov 2026: merge them; one Cutlass Master, the limited wording)
+        self.assertNotIn("Pirates (TBMF)", self.groups)
+        pirates = self.groups["Pirates"]
+        for skill in ("Sea Legs", "Sea Legs (TBMF)", "Captain Blood", "Treasure Hunter", "Cutlass Master"):
+            self.assertIn(skill, pirates)
+        self.assertEqual(len(pirates), len(set(pirates)))
+        heroes = [row for row in self.templates["pirates"]["fighters"] if row["kind"] == "hero"]
+        self.assertTrue(heroes)
+        for hero in heroes:
+            self.assertNotIn("Pirates (TBMF)", hero["skill_types"])
+        self.assertIn("in cover or in a building", self.skills["Cutlass Master"])

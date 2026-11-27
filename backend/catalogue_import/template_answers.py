@@ -613,7 +613,7 @@ SPECIAL_GROUPS: dict[str, list[str]] = {
     "night-goblins-web": ["Night Goblins"],
     "night-goblins": ["Night Goblins (MIC)"],  # night-goblins-mic's, as skill groups named it
     "ostlander": ["Ostlanders"],
-    "pirates": ["Pirates", "Pirates (TBMF)"],
+    "pirates": ["Pirates"],  # Pirates (TBMF) is folded into it (William, 27 Nov 2026)
     "shadow-warriors": ["Shadow Warriors"],
     "skaven-eshin": ["Skaven"],
     "skaven-pestilens": ["Skaven Clan Pestilens"],

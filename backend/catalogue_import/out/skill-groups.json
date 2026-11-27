@@ -1724,29 +1724,10 @@
       "Cutlass Master",
       "Booming Voice",
       "Hardy Constitution",
-      "Swashbuckler"
-    ]
-  },
-  {
-    "name": "Pirates (TBMF)",
-    "setting": "mordheim-1b",
-    "for_everyone": false,
-    "warbands": [
-      {
-        "type": "pirates",
-        "excluded": false
-      }
-    ],
-    "large_only": false,
-    "note": "",
-    "how": "skill_lists",
-    "open_to_all": false,
-    "skills": [
+      "Swashbuckler",
       "Captain Blood",
       "Sea Legs (TBMF)",
-      "Cutlass Master",
-      "Treasure Hunter",
-      "Swashbuckler"
+      "Treasure Hunter"
     ]
   },
   {
