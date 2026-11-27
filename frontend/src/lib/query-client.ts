@@ -2,6 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 
 // other
 import { ApiError } from "./api-client";
+import { keepTableReadsInMemory } from "./offline/kept-queries";
 
 export const DEFAULT_STALE_TIME_MS = 30_000;
 export const DEFAULT_GC_TIME_MS = 5 * 60_000;
@@ -21,7 +22,7 @@ export function shouldRetryQuery(failureCount: number, error: unknown) {
 }
 
 export function createQueryClient() {
-  return new QueryClient({
+  const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: DEFAULT_STALE_TIME_MS,
@@ -34,4 +35,6 @@ export function createQueryClient() {
       },
     },
   });
+  keepTableReadsInMemory(queryClient.getQueryCache());
+  return queryClient;
 }

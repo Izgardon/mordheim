@@ -3,8 +3,16 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+// The build's id: the commit Vercel builds, else when it was built. The phone's saved reads are
+// thrown away when it changes (lib/offline/persist-options.ts), so a deploy never reads data saved
+// in an older shape.
+const APP_BUILD = process.env.VERCEL_GIT_COMMIT_SHA || `local-${Date.now()}`;
+
 export default defineConfig({
   plugins: [react()],
+  define: {
+    __APP_BUILD__: JSON.stringify(APP_BUILD),
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 // api
 import { loginAccount, registerAccount } from "../api/auth-api";
 import { SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
+import { wipeOfflineReads } from "../../../lib/offline/persister";
 import { disconnectRealtime } from "../../../lib/realtime/client";
 import { session, useSession, type SessionChange } from "../../../lib/session";
 import { AuthContext, type AuthContextValue } from "./auth-context";
@@ -29,8 +30,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const { status, token, user, ended } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Shared devices: nothing cached for one user may reach the next one (BUG-22).
+  // Shared devices: nothing cached for one user may reach the next one (BUG-22), in memory or
+  // kept on the phone.
   const dropUserData = useCallback(() => {
+    void wipeOfflineReads();
     queryClient.clear();
     disconnectRealtime();
   }, [queryClient]);
@@ -40,7 +43,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       if (change.kind === "refreshed") {
         return;
       }
-      if (change.kind === "ended" || change.previousUser) {
+      // Another account, even before the last one's profile loaded: what the phone kept for that
+      // one was restored at start.
+      if (change.kind === "ended" || change.kind === "switched") {
         dropUserData();
       }
       if (change.kind === "switched" && change.needsProfile) {

@@ -22,13 +22,17 @@ import { fakeApi } from "@/test/fake-api";
 import { createTestQueryClient } from "@/test/query-test-utils";
 import { AuthProvider, useAuthContext } from "./auth-store";
 
-const { disconnectRealtime } = vi.hoisted(() => ({ disconnectRealtime: vi.fn() }));
+const { disconnectRealtime, wipeOfflineReads } = vi.hoisted(() => ({
+  disconnectRealtime: vi.fn(),
+  wipeOfflineReads: vi.fn(async () => undefined),
+}));
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
 vi.mock("@/lib/realtime/client", () => ({ disconnectRealtime }));
+vi.mock("@/lib/offline/persister", () => ({ wipeOfflineReads }));
 
 const RIVAL = { id: 3, email: "rival@example.com", name: "Rival" };
 
@@ -62,6 +66,7 @@ beforeEach(() => {
   localStorage.clear();
   fakeApi.reset();
   disconnectRealtime.mockClear();
+  wipeOfflineReads.mockClear();
 });
 
 describe("token storage", () => {
@@ -107,7 +112,7 @@ describe("token storage", () => {
 });
 
 describe("signing out", () => {
-  it("clears both tokens, the query cache and the socket (once: its own token event is skipped), and tells the server nothing", async () => {
+  it("clears both tokens, the query cache, what the phone kept and the socket (once: its own token event is skipped), and tells the server nothing", async () => {
     storeSession();
     fakeApi.on("GET /auth/me/", RAIDER);
     const { queryClient, result } = renderSession();
@@ -119,6 +124,7 @@ describe("signing out", () => {
 
     expect(localStorage.length).toBe(0);
     expect(queryClient.getQueryCache().getAll()).toHaveLength(0);
+    expect(wipeOfflineReads).toHaveBeenCalledTimes(1);
     expect(disconnectRealtime).toHaveBeenCalledTimes(1);
     expect(result.current.auth).toMatchObject({
       token: null,
@@ -186,7 +192,26 @@ describe("a session changed in another tab", () => {
 
     await waitFor(() => expect(result.current.auth.user).toEqual(RIVAL));
     expect(queryClient.getQueryData(["campaigns"])).toBeUndefined();
+    expect(wipeOfflineReads).toHaveBeenCalledTimes(1);
     expect(disconnectRealtime).toHaveBeenCalledTimes(1);
     expect(fakeApi.countOf("GET /auth/me/")).toBe(2);
+  });
+
+  it("drops what the phone restored for the last account when another signs in before its profile loaded", async () => {
+    storeSession(RAIDER, { cachedUser: false });
+    fakeApi.on("GET /auth/me/", () => new Promise(() => undefined));
+    const { queryClient, result } = renderSession();
+    // The kept reads come back from the phone at start, before anyone's profile has loaded.
+    queryClient.setQueryData(["campaigns"], [{ id: 1 }]);
+    fakeApi.on("GET /auth/me/", RIVAL);
+
+    act(() => {
+      localStorage.setItem("mordheim_token", accessToken(RIVAL.id, "other-tab"));
+      window.dispatchEvent(new StorageEvent("storage", { key: "mordheim_token" }));
+    });
+
+    await waitFor(() => expect(result.current.auth.user).toEqual(RIVAL));
+    expect(queryClient.getQueryData(["campaigns"])).toBeUndefined();
+    expect(wipeOfflineReads).toHaveBeenCalledTimes(1);
   });
 });

@@ -16,12 +16,14 @@ import { queryKeys } from "@/lib/query-keys";
  * queries, so moving between prebattle, active and postbattle reads nothing again; writes and
  * socket messages update the cached state in place.
  *
- * Every visit reads afresh (`gcTime: 0`), as each page did before; nothing refetches on focus,
- * reconnect or a timer, because the battle channel keeps the state current.
+ * Every visit reads afresh (`refetchOnMount: "always"`); nothing refetches on focus, reconnect or a
+ * timer, because the battle channel keeps the state current. The phone keeps a battle that isn't
+ * over (`lib/offline/kept-queries.ts`), so with no signal the last state read still shows, read
+ * only: every write still goes to the server. A visit's read asks only for the newer events.
  */
 const BATTLE_QUERY_DEFAULTS = {
   staleTime: Infinity,
-  gcTime: 0,
+  refetchOnMount: "always",
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
   retry: false,

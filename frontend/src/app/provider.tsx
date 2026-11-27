@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from "react";
 import { lazy, Suspense, useEffect, useState } from "react";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 // components
 import { AppToaster } from "../components/ui/toaster";
@@ -10,6 +10,7 @@ import { AuthProvider } from "../features/auth/stores/auth-store";
 import { AppStoreProvider } from "../stores/app-store";
 
 // other
+import { flushWhenHidden, offlinePersistOptions } from "../lib/offline/persist-options";
 import { createQueryClient } from "../lib/query-client";
 
 // Dev-only, loaded on demand so it never reaches the production bundle.
@@ -23,6 +24,10 @@ const ReactQueryDevtools = import.meta.env.DEV
 
 export default function AppProvider({ children }: PropsWithChildren) {
   const [queryClient] = useState(createQueryClient);
+  // The reads kept for the table come back from the phone before any query runs (lib/offline/).
+  const [persistOptions] = useState(() => offlinePersistOptions(queryClient));
+
+  useEffect(flushWhenHidden, []);
 
   useEffect(() => {
     const handleSubmit = (event: Event) => {
@@ -39,7 +44,7 @@ export default function AppProvider({ children }: PropsWithChildren) {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
       <AuthProvider>
         <AppStoreProvider>{children}</AppStoreProvider>
       </AuthProvider>
@@ -49,6 +54,6 @@ export default function AppProvider({ children }: PropsWithChildren) {
           <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
         </Suspense>
       ) : null}
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }
