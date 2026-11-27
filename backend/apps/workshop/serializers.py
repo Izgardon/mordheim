@@ -75,3 +75,37 @@ class CodeSerializer(serializers.Serializer):
     """An import's body: the code shared."""
 
     code = serializers.CharField(max_length=CODE_LENGTH)
+
+
+ONE_OF = "Send a code or one of your own, not both."
+NEITHER = "Send a code, or pick one of your own."
+
+
+class CampaignImportSerializer(serializers.Serializer):
+    """A campaign import's body: the code shared, or the id of one of the player's own in his workshop (`own`, the
+    field a subclass names: William, 27 Nov 2026, his own "there already"), never both."""
+
+    own = ""
+    code = serializers.CharField(max_length=CODE_LENGTH, required=False)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        has_code, has_own = "code" in attrs, attrs.get(self.own) is not None
+        if has_code and has_own:
+            raise serializers.ValidationError({self.own: [ONE_OF]})
+        if not has_code and not has_own:
+            raise serializers.ValidationError({"code": [NEITHER]})
+        return attrs
+
+
+class WarbandImportSerializer(CampaignImportSerializer):
+    """`POST campaigns/<id>/warbands/import/`: a warband's code, or one of my workshop's warbands."""
+
+    own = "warband_id"
+    warband_id = serializers.IntegerField(min_value=1, required=False, allow_null=True)
+
+
+class ListImportSerializer(CampaignImportSerializer):
+    """`POST campaigns/<id>/warband-templates/import/`: a list's code, or one of my workshop's lists."""
+
+    own = "list_id"
+    list_id = serializers.IntegerField(min_value=1, required=False, allow_null=True)

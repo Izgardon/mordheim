@@ -18,7 +18,13 @@ from apps.campaigns.views.base import AnswersRefusals, CampaignScopedView
 from apps.warband_templates.models import WarbandTemplate
 from apps.warbands.models import Warband
 
-from .serializers import CodeSerializer, ListWorkshopSerializer, WarbandWorkshopSerializer
+from .serializers import (
+    CodeSerializer,
+    ListImportSerializer,
+    ListWorkshopSerializer,
+    WarbandImportSerializer,
+    WarbandWorkshopSerializer,
+)
 from .services import importing, reads
 from .services.importing import Made
 from .services.making import workshop_for
@@ -113,16 +119,17 @@ class ListToWorkshopView(SignedIn):
 
 
 class CampaignWarbandImportView(CampaignScopedView):
-    """POST {code}: a member with no warband here imports a shared warband as his, paying its cost (a workshop or
-    an archived campaign refuses, as every campaign write does)."""
+    """POST {code} or {warband_id}: a member with no warband here imports a shared warband, or one of his workshop's,
+    as his, paying its cost (a workshop or an archived campaign refuses, as every campaign write does)."""
 
     rules = {"POST": "view"}
 
     def post(self, request: Request, campaign_id: int) -> Response:
-        body = CodeSerializer(data=request.data)
+        body = WarbandImportSerializer(data=request.data)
         body.is_valid(raise_exception=True)
-        code = body.validated_data["code"]
-        found = importing.import_warband(self.access.campaign, request.user, code, self.access.has("edit_catalogue"))
+        source = importing.warband_to_import(request.user, body.validated_data)
+        editor = self.access.has("edit_catalogue")
+        found = importing.import_warband(self.access.campaign, request.user, source, editor)
         assert found.warband is not None
         answer = {
             "warband_id": found.warband.pk,
@@ -134,14 +141,16 @@ class CampaignWarbandImportView(CampaignScopedView):
 
 
 class CampaignListImportView(CampaignScopedView):
-    """POST {code}: a shared list imported as the campaign's own template (`edit_catalogue`)."""
+    """POST {code} or {list_id}: a shared list, or one of my workshop's, imported as the campaign's own template
+    (`edit_catalogue`)."""
 
     rules = {"POST": "edit_catalogue"}
 
     def post(self, request: Request, campaign_id: int) -> Response:
-        body = CodeSerializer(data=request.data)
+        body = ListImportSerializer(data=request.data)
         body.is_valid(raise_exception=True)
-        found = importing.import_list(self.access.campaign, request.user, body.validated_data["code"])
+        source = importing.list_to_import(request.user, body.validated_data)
+        found = importing.import_list(self.access.campaign, request.user, source)
         assert found.template is not None
         answer = {"template_id": found.template.pk, "name": found.template.name, "warnings": found.warnings}
         return Response(answer, status=201)

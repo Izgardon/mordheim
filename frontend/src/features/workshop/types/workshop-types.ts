@@ -82,6 +82,12 @@ export type MakeWarbandBody = {
 
 export type MakeListBody = { name: string; copy_of_template_id?: number };
 
+/** A campaign import's body: a shared code, or one of my own workshop warbands. */
+export type WarbandImportBody = { code: string } | { warband_id: number };
+
+/** A campaign import's body: a shared code, or one of my own workshop lists. */
+export type ListImportBody = { code: string } | { list_id: number };
+
 /** `POST campaigns/<id>/warbands/import/`: the warband made, its list's copy, the gold left. */
 export type ImportedWarband = {
   warband_id: number;

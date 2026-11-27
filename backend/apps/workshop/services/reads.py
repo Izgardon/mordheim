@@ -12,7 +12,7 @@ from typing import Any
 from django.db.models import Count, Prefetch, Q, QuerySet
 
 from apps.campaigns.errors import CampaignError
-from apps.campaigns.models import WORKSHOP, Campaign
+from apps.campaigns.models import WORKSHOP
 from apps.core.share_codes import normalised
 from apps.users.names import display_name
 from apps.warband_templates.models import WarbandTemplate, WarbandTemplateType
@@ -143,6 +143,13 @@ def _counts(warband: Warband) -> dict[str, int]:
     return {key: int(row.get(key) or 0) for key in counted}
 
 
-def my_list(workshop: Campaign, template_id: Any) -> WarbandTemplate | None:
-    """One of the workshop's live lists by id, or None (one query)."""
-    return WarbandTemplate.objects.filter(pk=template_id, campaign=workshop, archived_at__isnull=True).first()
+def own_warband(user: Any, warband_id: Any) -> Warband | None:
+    """One of the player's own workshop warbands by id, read as its code reads it, or None (one query): anyone
+    else's, a deleted one and a campaign's are none."""
+    return live_warbands().filter(campaign__workshop_owner=user, pk=warband_id).first()
+
+
+def own_list(user: Any, template_id: Any) -> WarbandTemplate | None:
+    """One of the player's own workshop lists by id, read as its code reads it, or None (two queries): anyone else's,
+    a deleted one and a campaign's are none."""
+    return live_lists().filter(campaign__workshop_owner=user, pk=template_id).first()

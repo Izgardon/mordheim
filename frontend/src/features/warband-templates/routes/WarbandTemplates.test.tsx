@@ -447,6 +447,52 @@ describe("Making and editing templates on the Warbands page", () => {
     });
   });
 
+  it("offers my workshop lists to pick straight from Import a list, with no code", async () => {
+    fakeApi.on("GET /workshop/", {
+      id: 9,
+      warbands: [],
+      lists: [
+        {
+          id: 61,
+          campaign_id: 9,
+          name: "Night Watch",
+          warband_types: [{ id: 10, name: "Reiklanders", variant: "reikland" }],
+          variants: [],
+          share_code: "WTCH2345",
+          updated_at: "2026-11-27T10:00:00Z",
+        },
+      ],
+    });
+    fakeApi.on(`POST /campaigns/${CAMPAIGN_ID}/warband-templates/import/`, {
+      template_id: 44,
+      name: "Night Watch",
+      warnings: [],
+    });
+    const user = setupUser();
+    renderApp(PAGE);
+    await row("Reiklanders");
+    const reads = fakeApi.countOf(`GET /warband-templates/?campaign_id=${CAMPAIGN_ID}`);
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Import a list" })).toHaveAttribute(
+        "aria-haspopup",
+        "menu"
+      )
+    );
+
+    await user.click(screen.getByRole("button", { name: "Import a list" }));
+    const picked = await screen.findByRole("menuitem", { name: /Night Watch/ });
+    expect(picked).toHaveTextContent("Reiklanders");
+    await user.click(picked);
+
+    await waitFor(() =>
+      expect(fakeApi.countOf(`GET /warband-templates/?campaign_id=${CAMPAIGN_ID}`)).toBe(reads + 1)
+    );
+    expect(fakeApi.bodyOf(`POST /campaigns/${CAMPAIGN_ID}/warband-templates/import/`)).toEqual({
+      list_id: 61,
+    });
+    expect((await screen.findAllByText("Imported Night Watch.")).length).toBeGreaterThan(0);
+  });
+
   it("copies the campaign's own list into my lists, opening it in my workshop with the server's warnings", async () => {
     const own = {
       ...MERCENARIES,

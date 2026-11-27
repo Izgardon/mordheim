@@ -4,10 +4,12 @@ import type { WarbandTemplateSummary } from "@/features/warband-templates/types/
 import type {
   ImportedList,
   ImportedWarband,
+  ListImportBody,
   MadeInWorkshop,
   MakeListBody,
   MakeWarbandBody,
   SharedPreview,
+  WarbandImportBody,
   Workshop,
 } from "../types/workshop-types";
 
@@ -51,19 +53,19 @@ export function previewSharedCode(code: string, signal?: AbortSignal) {
   return apiRequest<SharedPreview>(`/workshop/shared/${encodeURIComponent(code)}/`, { signal });
 }
 
-/** A shared warband imported as mine into a campaign where I have none, paying its cost. */
-export function importWarbandIntoCampaign(campaignId: number, code: string) {
+/** A shared warband, or one of my workshop's, imported as mine into a campaign where I have none, paying its cost. */
+export function importWarbandIntoCampaign(campaignId: number, body: WarbandImportBody) {
   return apiRequest<ImportedWarband>(`/campaigns/${campaignId}/warbands/import/`, {
     method: "POST",
-    body: { code },
+    body,
   });
 }
 
-/** A shared list imported as the campaign's own template (`edit_catalogue`). */
-export function importListIntoCampaign(campaignId: number, code: string) {
+/** A shared list, or one of my workshop's, imported as the campaign's own template (`edit_catalogue`). */
+export function importListIntoCampaign(campaignId: number, body: ListImportBody) {
   return apiRequest<ImportedList>(`/campaigns/${campaignId}/warband-templates/import/`, {
     method: "POST",
-    body: { code },
+    body,
   });
 }
 

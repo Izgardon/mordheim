@@ -10,7 +10,9 @@ version 2), each all or nothing. The workshop is made on his first use (`making.
 - A code copies into his workshop: a warband (its list with it) or a list.
 - A warband's code imports it into a campaign for a member with no warband there: the copy starts on the gold raising
   gives (its Starting Gold row), then **one** ledger row pays its roster's cost, as if just raised. A list's code
-  imports it into a campaign as the campaign's own template (`edit_catalogue`).
+  imports it into a campaign as the campaign's own template (`edit_catalogue`). His own warbands and lists are picked
+  there by id instead, needing no code (William, 27 Nov 2026: "a user didn't have to import any of their own warbands
+  or lists as they were there already"): the same copy, of his own alone.
 - His own campaign warband, and a campaign's own list he can see, copy into his workshop.
 """
 
@@ -39,7 +41,7 @@ from .content import Target
 from .copy_list import copy_list
 from .copy_warband import copy_warband
 from .making import workshop_for
-from .reads import my_list, shared
+from .reads import own_list, own_warband, shared
 from .relink import Warning
 
 HAS_WARBAND = "You already have a warband in this campaign: a warband is imported only by a player without one."
@@ -49,6 +51,7 @@ NOT_SERVED = "This list doesn't serve that warband type."
 SERVES_HERE = "Its list {name} came too, and now serves its warband type for every warband in this campaign."
 SERVES_NONE = "This list serves no warband type yet: pick one in its Basics."
 NO_SUCH_LIST = "That isn't one of your lists."
+NO_SUCH_WARBAND = "That isn't one of your warbands."
 PICK_TYPE = "Pick a warband type."
 
 
@@ -79,7 +82,7 @@ def _list_to_raise_from(
     """The list a new warband reads: one of his (`list_id`), a shared one (`list_code`: copied in, unless his own),
     else none (its type's); a 400 for a list id not his."""
     if data.get("list_id"):
-        template = my_list(workshop, data["list_id"])
+        template = own_list(user, data["list_id"])
         if template is None:
             raise CampaignError(NO_SUCH_LIST, code="invalid", fields={"list_id": [NO_SUCH_LIST]})
         return template, []
@@ -197,10 +200,31 @@ def list_to_workshop(user: Any, source: WarbandTemplate) -> Made:
     return _list_into_workshop(user, source)
 
 
-def import_warband(campaign: Campaign, user: Any, code: Any, editor: bool) -> Made:
-    """The warband `code` shares, copied into the campaign as the user's and paid for (`editor`: the importer may
-    edit the catalogue here, so a list that comes with it serves its types and its custom content is live)."""
-    source = _shared_warband(code)
+def warband_to_import(user: Any, data: dict[str, Any]) -> Warband:
+    """The warband a campaign import copies: one of his own (`warband_id`; anyone else's, a deleted one or a
+    campaign's: 400 `not_yours`), else the one its `code` shares."""
+    if data.get("warband_id") is None:
+        return _shared_warband(data["code"])
+    found = own_warband(user, data["warband_id"])
+    if found is None:
+        raise CampaignError(NO_SUCH_WARBAND, code="not_yours", fields={"warband_id": [NO_SUCH_WARBAND]})
+    return found
+
+
+def list_to_import(user: Any, data: dict[str, Any]) -> WarbandTemplate:
+    """The list a campaign import copies: one of his own (`list_id`; anyone else's, a deleted one or a campaign's:
+    400 `not_yours`), else the one its `code` shares."""
+    if data.get("list_id") is None:
+        return _shared_list(data["code"])
+    found = own_list(user, data["list_id"])
+    if found is None:
+        raise CampaignError(NO_SUCH_LIST, code="not_yours", fields={"list_id": [NO_SUCH_LIST]})
+    return found
+
+
+def import_warband(campaign: Campaign, user: Any, source: Warband, editor: bool) -> Made:
+    """The warband copied into the campaign as the user's and paid for (`editor`: the importer may edit the
+    catalogue here, so a list that comes with it serves its types and its custom content is live)."""
     if Warband.objects.filter(campaign=campaign, user=user).exists():
         raise CampaignError(HAS_WARBAND, code="has_warband", status=409)
     try:
@@ -218,9 +242,8 @@ def import_warband(campaign: Campaign, user: Any, code: Any, editor: bool) -> Ma
     return Made(warband=copied.warband, template=copied.template, warnings=warnings)
 
 
-def import_list(campaign: Campaign, user: Any, code: Any) -> Made:
-    """The list `code` shares, copied into the campaign as its own template."""
-    source = _shared_list(code)
+def import_list(campaign: Campaign, user: Any, source: WarbandTemplate) -> Made:
+    """The list copied into the campaign as its own template."""
     with transaction.atomic():
         copied = copy_list(source, Target(campaign, user, live=True))  # an editor imports a list
     return Made(template=copied.template, warnings=copied.warnings)

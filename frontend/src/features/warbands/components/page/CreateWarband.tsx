@@ -25,7 +25,7 @@ import ImportWarbandButton from "@/features/workshop/components/ImportWarbandBut
  * pick where the type presets none), pick the plot it follows where the campaign plays with any
  * (changed for nothing later), then raise it. Browse warbands opens the Warbands reference to
  * choose from (William, 23 Nov 2026), at the picked type's own row once its template is read.
- * Import a warband brings in a shared warband by its code instead (the workshop).
+ * Import a warband brings in one of my workshop's warbands, or a shared one by its code, instead.
  */
 export default function CreateWarband({
   campaignId,

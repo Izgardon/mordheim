@@ -10,6 +10,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { toast } from "sonner";
 
+import { ApiError } from "@/lib/api-client";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
@@ -79,6 +80,14 @@ const outline = (extra: Partial<NonNullable<RaiseOutline["template"]>>): RaiseOu
 });
 
 const OUTLINE = "GET /campaigns/4/warband-types/7/template/";
+
+/** The import button once my workshop is read: a menu of my own, then By code. */
+const menuButton = async (name: string) => {
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name })).toHaveAttribute("aria-haspopup", "menu")
+  );
+  return screen.getByRole("button", { name });
+};
 
 const renderRaise = (ui: ReactElement) => renderWithQueryClient(<MemoryRouter>{ui}</MemoryRouter>);
 
@@ -247,5 +256,89 @@ describe("Raising a warband from its type's template", () => {
         id: "server-warning-gold_negative",
       })
     );
+  });
+
+  it("offers my workshop warbands to pick straight from Import a warband, with no code", async () => {
+    const user = setupUser();
+    fakeApi.on("GET /workshop/", {
+      id: 9,
+      warbands: [
+        {
+          id: 21,
+          campaign_id: 9,
+          name: "The Gilded Wagon",
+          warband_type: { id: 7, name: "Merchant Caravans" },
+          template_id: null,
+          no_list: false,
+          share_code: "WAGN2345",
+          updated_at: "2026-11-27T10:00:00Z",
+        },
+      ],
+      lists: [],
+    });
+    fakeApi.on("POST /campaigns/4/warbands/import/", {
+      warband_id: 30,
+      template_id: null,
+      gold: 20,
+      warnings: [],
+    });
+    renderRaise(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
+
+    await user.click(await menuButton("Import a warband"));
+    const picked = await screen.findByRole("menuitem", { name: /The Gilded Wagon/ });
+    expect(picked).toHaveTextContent("Merchant Caravans");
+    expect(screen.getByRole("menuitem", { name: "By code" })).toBeInTheDocument();
+    await user.click(picked);
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf("POST /campaigns/4/warbands/import/")).toEqual({ warband_id: 21 })
+    );
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("toasts the server's refusal of a pick in its words", async () => {
+    const user = setupUser();
+    fakeApi.on("GET /workshop/", {
+      id: 9,
+      warbands: [
+        {
+          id: 21,
+          campaign_id: 9,
+          name: "The Gilded Wagon",
+          warband_type: null,
+          template_id: null,
+          no_list: true,
+          share_code: "WAGN2345",
+          updated_at: "2026-11-27T10:00:00Z",
+        },
+      ],
+      lists: [],
+    });
+    fakeApi.fail(
+      "POST /campaigns/4/warbands/import/",
+      new ApiError("Conflict", 409, {
+        detail: "You already have a warband in this campaign.",
+        code: "has_warband",
+      })
+    );
+    renderRaise(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
+
+    await user.click(await menuButton("Import a warband"));
+    await user.click(await screen.findByRole("menuitem", { name: "The Gilded Wagon" }));
+
+    await waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith("You already have a warband in this campaign.")
+    );
+  });
+
+  it("goes straight to the code when my workshop holds no warband", async () => {
+    const user = setupUser();
+    fakeApi.on("GET /workshop/", { id: null, warbands: [], lists: [] });
+    renderRaise(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
+    await waitFor(() => expect(fakeApi.countOf("GET /workshop/")).toBe(1));
+
+    await user.click(screen.getByRole("button", { name: "Import a warband" }));
+    expect(screen.getByRole("dialog", { name: "Import a warband" })).toBeInTheDocument();
+    expect(fakeApi.calls()).not.toContain("POST /workshop/");
   });
 });

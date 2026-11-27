@@ -164,8 +164,16 @@ warband-or-list shape are gone.
 
 | Route | Rule | Body | Answer |
 | --- | --- | --- | --- |
-| `POST campaigns/<id>/warbands/import/` | a member | `{code}` | 201 `{warband_id, template_id, gold, warnings}` |
-| `POST campaigns/<id>/warband-templates/import/` | `edit_catalogue` | `{code}` | 201 `{template_id, name, warnings}` |
+| `POST campaigns/<id>/warbands/import/` | a member | `{code}` or `{warband_id}` | 201 `{warband_id, template_id, gold, warnings}` |
+| `POST campaigns/<id>/warband-templates/import/` | `edit_catalogue` | `{code}` or `{list_id}` | 201 `{template_id, name, warnings}` |
+
+- **His own by id** (William, 27 Nov 2026: "a user didn't have to import any of their own warbands or lists as they
+  were there already"): `warband_id` / `list_id` names one of the caller's live workshop warbands or lists and copies
+  it exactly as its code would (the same query count, a list's one fewer: a code looks among warbands first). Anyone
+  else's, a deleted one, a campaign's, the book's or an unknown id: 400 `not_yours` ("That isn't one of your
+  warbands." / "That isn't one of your lists.", on the field). Both a code and an id, or neither: 400 on the field.
+  The raise screen's Import a warband and the Warbands page's Import a list offer his own (from `GET workshop/`) in a
+  menu before By code.
 
 - Warband: a non-member 404; an archived campaign 403 `campaign_archived`; a workshop 403 `workshop_campaign`; the
   importer already has a warband there 409 `has_warband`; a list's code 400 `not_a_warband`; unknown 404
