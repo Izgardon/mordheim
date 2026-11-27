@@ -2,14 +2,24 @@ import { useMemo } from "react";
 
 import { Chip } from "@/components/ui/chip";
 import { SearchMultiSelect, type SearchOption } from "@/components/ui/search-select";
+import { useSettingsById } from "@/features/campaigns/api/settings-queries";
+import { spellOptions } from "@/features/catalogue/search-options";
 import { CORE_GROUPS, useSkillGroups } from "@/features/skills/skill-groups";
 import { useCatalogue } from "@/lib/catalogue-queries";
+
+import type { Spell } from "@/features/spells/types/spell-types";
 
 import type { TemplateSpellType } from "../types/template-types";
 import { spellLabel } from "../template-view";
 import { CAPTION } from "./editor-ui";
 
 const fold = (name: string) => name.trim().toLowerCase();
+
+/** A spell's row with its lore, and "Prayer" for a prayer list's (Funerary Rites says nothing). */
+const marked = (option: SearchOption, spell: Spell | undefined): SearchOption =>
+  spell?.is_prayer
+    ? { ...option, subtitle: [option.subtitle, "Prayer"].filter(Boolean).join(" · ") }
+    : option;
 
 /** His skill groups: the core five as chips, then the others (a special list) picked by name. */
 export function SkillTypesField({
@@ -86,6 +96,52 @@ export function StartingSkillsField({
         addLabel="Skill"
         placeholder="Search skills"
         emptyText="No skill by that name."
+        onChange={(next) => onChange(next.map((option) => Number(option.id)))}
+      />
+    </div>
+  );
+}
+
+/**
+ * The spells he starts with (the Black Dwarfs' Sorcerer's Sacrificial Ritual): every hire of his
+ * has them, besides the first a caster picks. His lores' spells come first, each with its lore.
+ */
+export function StartingSpellsField({
+  campaignId,
+  lores,
+  value,
+  saved,
+  onChange,
+}: {
+  campaignId: number;
+  /** The lores he casts from, offered first. */
+  lores: string[];
+  value: number[];
+  /** The spells he was saved with, shown while the campaign's spells load. */
+  saved: Spell[];
+  onChange: (ids: number[]) => void;
+}) {
+  const spells = useCatalogue("spells", campaignId).data;
+  const settings = useSettingsById();
+  const known = new Map<number, Spell>(saved.map((spell) => [spell.id, spell]));
+  spells.forEach((spell) => known.set(spell.id, spell));
+  const sorted = [...spells].sort((a, b) => a.name.localeCompare(b.name));
+  return (
+    <div className="flex min-w-0 flex-col gap-1.5">
+      <span className={CAPTION}>Starts with</span>
+      <SearchMultiSelect
+        values={value.map((id) => {
+          const spell = known.get(id);
+          // a picked spell's chip names its lore alone, which a chip has room for
+          const chip = { id, title: spell?.name ?? "", subtitle: spell?.type ?? undefined };
+          return marked(chip, spell);
+        })}
+        options={spellOptions(sorted, settings, lores).map((option) =>
+          marked(option, known.get(Number(option.id)))
+        )}
+        addLabel="Spell"
+        placeholder="Search spells"
+        emptyText="No spell by that name."
         onChange={(next) => onChange(next.map((option) => Number(option.id)))}
       />
     </div>

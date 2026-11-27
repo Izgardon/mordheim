@@ -10,7 +10,12 @@ import RaceField from "@/features/races/components/RaceField";
 import type { TemplateFighter, WarbandTemplate } from "../types/template-types";
 import { CAPTION, Field, FORM_BOX, NumberField, SaveRow } from "./editor-ui";
 import { fighterDraft, type FighterDraft } from "./fighter-draft";
-import { SkillTypesField, SpellTypesField, StartingSkillsField } from "./FighterAccess";
+import {
+  SkillTypesField,
+  SpellTypesField,
+  StartingSkillsField,
+  StartingSpellsField,
+} from "./FighterAccess";
 import FighterFlags from "./FighterFlags";
 import FighterProfile from "./FighterProfile";
 import RulePicker from "./RulePicker";
@@ -40,7 +45,7 @@ const variantNote = (template: WarbandTemplate, fighter: TemplateFighter | null)
 
 /**
  * One fighter's form: his name and figures, his profile as written, his skill groups, the skills
- * he starts with and his spell lores, his flags (a henchman's group size, gains XP and
+ * he starts with, his spell lores and the spells he starts with, his flags (a henchman's group size, gains XP and
  * promotable), fixed kit, the lists he buys from and his rules (picked or written). Taking him
  * out leaves units recruited as him.
  */
@@ -147,6 +152,13 @@ export default function FighterForm(props: FighterFormProps) {
         campaignId={props.campaignId}
         value={draft.spellTypes}
         onChange={(spellTypes) => set({ spellTypes })}
+      />
+      <StartingSpellsField
+        campaignId={props.campaignId}
+        lores={draft.spellTypes.map((lore) => lore.name)}
+        value={draft.spellIds}
+        saved={fighter?.spells ?? []}
+        onChange={(spellIds) => set({ spellIds })}
       />
       <FighterFlags draft={draft} onChange={set} />
       <div className="flex flex-col gap-1.5">

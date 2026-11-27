@@ -31,6 +31,8 @@ export type FighterDraft = {
   rules: RuleDraft[];
   /** The skills he starts with, in order. */
   skillIds: number[];
+  /** The spells he starts with, in order. */
+  spellIds: number[];
 };
 
 const BLANK_STATS = profileInputs({
@@ -74,6 +76,7 @@ export function fighterDraft(
       lists: [],
       rules: [],
       skillIds: [],
+      spellIds: [],
     };
   }
   return {
@@ -105,6 +108,7 @@ export function fighterDraft(
       description: rule.description,
     })),
     skillIds: fighter.skills.map((skill) => skill.id),
+    spellIds: fighter.spells.map((spell) => spell.id),
   };
 }
 
@@ -133,6 +137,7 @@ export function fighterInput(draft: FighterDraft): FighterInput {
     fixed_kit: draft.fixedKit.trim(),
     lists: draft.lists,
     skill_ids: draft.skillIds,
+    spell_ids: draft.spellIds,
     rules: draft.rules.map((rule) =>
       rule.special_id !== null
         ? { special_id: rule.special_id }

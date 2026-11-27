@@ -36,6 +36,12 @@ describe("a fighter's save", () => {
     expect(fighterInput(fighterDraft(null)).skill_ids).toEqual([]);
   });
 
+  it("sends the spells he starts with by id, none for a new fighter", () => {
+    const sorcerer = makeEditorFighter({ spells: [{ id: 9, name: "Sacrificial Ritual" }] });
+    expect(fighterInput(fighterDraft(sorcerer)).spell_ids).toEqual([9]);
+    expect(fighterInput(fighterDraft(null)).spell_ids).toEqual([]);
+  });
+
   it("starts a new henchman in groups of 1–5", () => {
     const sent = fighterInput({ ...fighterDraft(null, "henchman"), name: "Hound", cost: "15" });
     expect([sent.kind, sent.cost, sent.group_min, sent.group_max, sent.max_count]).toEqual([

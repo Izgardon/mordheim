@@ -75,6 +75,8 @@ export type FighterInput = {
   rules: RuleInput[];
   /** The skills he starts with, in order. */
   skill_ids: number[];
+  /** The spells he starts with, in order. */
+  spell_ids: number[];
 };
 
 export type LineInput = {

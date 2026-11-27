@@ -8,7 +8,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CAMPAIGN_ID, campaignSummary } from "@/test/campaign-fixtures";
-import { skill } from "@/test/catalogue-fixtures";
+import { skill, spell } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import {
@@ -139,6 +139,46 @@ describe("The template editor", () => {
     await waitFor(() =>
       expect(fakeApi.bodyOf("PUT /warband-templates/1/fighters/champions/")).toMatchObject({
         skill_ids: [5, 3],
+      })
+    );
+  });
+
+  it("picks the spells a fighter starts with, his lores' first and prayers marked, and saves them", async () => {
+    // William, 27 Nov 2026: "Just have a spell picker"
+    const ritual = spell({ id: 9, name: "Sacrificial Ritual", type: "Rituals of Hashut" });
+    fakeApi.on(`GET /spells/?campaign_id=${CAMPAIGN_ID}`, [
+      ritual,
+      spell({ id: 4, name: "Bolt", type: "Lesser Magic" }),
+      spell({ id: 6, name: "Flame", type: "Rituals of Hashut", dc: 8, is_prayer: true }),
+    ]);
+    const sorcerer = makeEditorFighter({
+      caster: "Wizard",
+      spell_types: [{ name: "Rituals of Hashut", note: "" }],
+      spells: [ritual],
+    });
+    fakeApi.on(
+      EDITOR,
+      makeEditorAnswer({ template: makeEditorTemplate({ fighters: [sorcerer] }) })
+    );
+    fakeApi.on("PUT /warband-templates/1/fighters/champions/", () => makeEditorAnswer());
+    const user = setupUser();
+    renderWithQueryClient(<Harness />);
+    await user.click(await screen.findByRole("button", { name: /^Fighters/ }));
+    await user.click(screen.getByRole("button", { name: /^Champion/ }));
+    expect(screen.getByRole("button", { name: "Remove Sacrificial Ritual" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Spell" }));
+    const options = within(await screen.findByRole("listbox")).getAllByRole("option");
+    expect(options.map((option) => option.textContent)).toEqual([
+      expect.stringContaining("Flame"),
+      expect.stringContaining("Bolt"),
+    ]);
+    expect(options[0]).toHaveTextContent("Rituals of Hashut · Difficulty 8 · Prayer");
+    await user.type(screen.getByRole("combobox", { name: "Spell" }), "Bolt{Enter}");
+    await user.click(screen.getByRole("button", { name: "Save fighter" }));
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf("PUT /warband-templates/1/fighters/champions/")).toMatchObject({
+        spell_ids: [9, 4],
       })
     );
   });
