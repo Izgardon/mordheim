@@ -22,7 +22,6 @@ Price = tuple[int | None, int | None, int | None, int | None]  # cost, dice, dic
 # not: a price open to everyone where ours names warbands, a cost of its own, or an exclusion ours carries
 CARRIED: list[tuple[str, str, Price]] = [
     ("Fish-hook Shot/Hunting Lasso", "Fish-Hook Shot", (10, None, None, 7)),  # ours: two warbands' rows
-    ("Trade Wagon/Stage Coach", "Trade Wagon", (100, None, None, 7)),  # ours: 180 gc, the Merchant Caravans'
     ("Hochland Long Hunting Rifle", "Hunting Rifle", (200, None, None, 11)),  # ours shuts the Dark Elves out
     (
         "Double-barrelled Hunting Rifle",
@@ -38,6 +37,7 @@ TWINS: list[tuple[str, str]] = [
     ("Riverboat", "Riverboat"),
     ("Rowing Boat", "Rowboat"),
     ("Barge", "River Barge"),
+    ("Trade Wagon/Stage Coach", "Wagon, Stagecoach"),  # the stagecoach's price (27 Nov 2026), not the Trade Wagon's
 ]
 # the stubs whose price William keeps off our item (27 Nov 2026: "wolf cloak doesn't really go to everyone due to its
 # purchase path"): its own rows sell it to the warbands whose lists hunt for it

@@ -13596,8 +13596,7 @@
     "link_url": "https://mordheimer.net/docs/weapons-armour/miscellaneous-equipment#trade-wagon",
     "tags": [
       "trade wagon",
-      "trade wagons",
-      "trade wagon/stage coach"
+      "trade wagons"
     ],
     "flavour": "The many vulnerable items such as Cathayan jewels, spices and silk cloths are stored in the Trade Cart.",
     "range": "",
@@ -13684,18 +13683,6 @@
           }
         ],
         "note": ""
-      },
-      {
-        "label": "Mutiny in Marienburg",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": true,
-        "warbands": [],
-        "note": "",
-        "setting": "mutiny-in-marienburg"
       }
     ]
   },
@@ -14092,7 +14079,8 @@
     "link_url": "https://mordheimer.net/docs/weapons-armour/miscellaneous-equipment#wagon-stagecoach",
     "tags": [
       "wagon",
-      "stagecoach"
+      "stagecoach",
+      "trade wagon/stage coach"
     ],
     "flavour": "",
     "range": "",

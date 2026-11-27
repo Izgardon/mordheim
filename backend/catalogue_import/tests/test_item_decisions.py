@@ -84,7 +84,7 @@ class StaffTests(ReviewCase):
 class MarienburgRowTests(ReviewCase):
     """Question 1 (B): a Mutiny in Marienburg price row counts only where Mutiny in Marienburg is in play."""
 
-    CARRIED = ("Ostlander Double-barrelled Hunting Rifle", "Hunting Rifle", "War Boar", "Fish-Hook Shot", "Trade Wagon")
+    CARRIED = ("Ostlander Double-barrelled Hunting Rifle", "Hunting Rifle", "War Boar", "Fish-Hook Shot")
 
     def marienburg(self, name: str) -> list[dict[str, object]]:
         return [row for row in self.items[name]["availabilities"] if row["label"] == "Mutiny in Marienburg"]
@@ -190,3 +190,13 @@ class JollyRogerTests(ReviewCase):
             self.rows("Jolly Roger", "sartosan-pirates"),
             [(40, 2, 9, "A banner in Sartosa, which a Navy warband never carries.")],
         )
+
+
+class StagecoachTests(ReviewCase):
+    """Question 9 (A): Marienburg's Trade Wagon/Stage Coach is our Wagon, Stagecoach."""
+
+    def test_the_trade_wagon_is_the_merchant_caravans_alone(self) -> None:
+        rows = self.items["Trade Wagon"]["availabilities"]
+        self.assertEqual([(row["cost"], row["for_everyone"]) for row in rows], [(180, False)])
+        self.assertNotIn("trade wagon/stage coach", self.items["Trade Wagon"]["tags"])
+        self.assertIn("trade wagon/stage coach", self.items["Wagon, Stagecoach"]["tags"])
