@@ -63,12 +63,14 @@ class MimReader:
         return [{**entry, "excluded": False} for entry in collapse(slugs, self.groups)]
 
 
+_POINTER = re.compile(r";?\s*details in rules\.?$", re.I)
+
+
 def _rules(
     item: dict[str, Any], properties: dict[int, dict[str, Any]], index: dict[str, dict[str, Any]], log: MimLog
 ) -> list[dict[str, Any]]:
-    rules: list[dict[str, Any]] = [
-        {"name": "", "summary": clean_inline(item.get("description")), "text": "", "tables": []}
-    ]
+    """Its properties as rules: a shared rule by name, else its own."""
+    rules: list[dict[str, Any]] = []
     for pid in item.get("properties") or []:
         prop = properties.get(int(pid))
         if prop is None:
@@ -113,6 +115,15 @@ def mim_item(
     log: MimLog,
 ) -> dict[str, Any]:
     name = item["name"]
+    # the list's one-liner sums up the rules that follow, so it is the item's flavour, "details in rules" left out
+    # (the items audit, 27 Nov 2026); with no rules yet it stays the one rule until the PDF pass writes them
+    line = clean_inline(item.get("description"))
+    rules = _rules(item, properties, index, log)
+    flavour = _POINTER.sub("", line).strip() if rules else ""
+    if flavour and not flavour.endswith("."):
+        flavour += "."
+    if not rules:
+        rules = [{"name": "", "summary": line, "text": "", "tables": []}]
     return {
         "slug": "",
         "name": name,
@@ -124,14 +135,14 @@ def mim_item(
         "source": "Mutiny in Marienburg",
         "link_url": "",
         "tags": [part.strip().lower() for part in name.split("/")] if "/" in name else [],
-        "flavour": "",
+        "flavour": flavour,
         "range": clean_inline(item.get("range")),
         "strength": clean_inline(item.get("strength")),
         "save": clean_inline(item.get("save")),
         "statblock": item.get("statblock") or [],
         "notes": "",
         "needs_rules": item.get("needs_rules", True),  # false once its rules are in (William, 6 Nov 2026)
-        "rules": _rules(item, properties, index, log),
+        "rules": rules,
         "availabilities": [_availability(item, row, reader, log) for row in item.get("availabilities") or []],
     }
 

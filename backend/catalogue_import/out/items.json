@@ -15984,7 +15984,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Large wooden/metal club used by Albion warriors; counts as a two-handed melee weapon.",
     "range": "Close Combat",
     "strength": "As user +?",
     "save": "",
@@ -15992,12 +15992,6 @@
     "notes": "",
     "needs_rules": true,
     "rules": [
-      {
-        "name": "",
-        "summary": "Large wooden/metal club used by Albion warriors; counts as a two-handed melee weapon.",
-        "text": "",
-        "tables": []
-      },
       {
         "rule": "two-handed"
       }
@@ -16027,7 +16021,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Celestial iron fan used by Battle Monks; grants +1 Initiative and can parry missiles.",
     "range": "Close Combat",
     "strength": "As user",
     "save": "",
@@ -16035,12 +16029,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Celestial iron fan used by Battle Monks; grants +1 Initiative and can parry missiles.",
-        "text": "",
-        "tables": []
-      },
       {
         "rule": "parry"
       },
@@ -16087,7 +16075,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "An Elven blade that cannot be parried.",
     "range": "Close Combat",
     "strength": "As user",
     "save": "",
@@ -16095,12 +16083,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "An Elven blade that cannot be parried.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Blade of Leaping Gold",
         "summary": "",
@@ -16138,7 +16120,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Massive ogre gauntlets, worn and fought with as a close combat weapon.",
     "range": "Close Combat",
     "strength": "As user",
     "save": "",
@@ -16146,12 +16128,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Massive ogre gauntlets, worn and fought with as a close combat weapon.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Greedy Fist",
         "summary": "",
@@ -16189,7 +16165,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Saw-toothed blade made from kraken teeth; ignores armour saves and can cause extra wound on criticals.",
     "range": "Close Combat",
     "strength": "As user",
     "save": "",
@@ -16197,12 +16173,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Saw-toothed blade made from kraken teeth; ignores armour saves and can cause extra wound on criticals.",
-        "text": "",
-        "tables": []
-      },
       {
         "rule": "parry"
       },
@@ -16284,7 +16254,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Mechanical prosthetic weapon-hand; +1 Strength, parry, extra attack; replaces a lost hand/arm.",
     "range": "Close Combat",
     "strength": "As user +1",
     "save": "",
@@ -16292,12 +16262,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Mechanical prosthetic weapon-hand; +1 Strength, parry, extra attack; replaces a lost hand/arm.",
-        "text": "",
-        "tables": []
-      },
       {
         "rule": "parry"
       },
@@ -16382,7 +16346,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A master-crafted throwing knife.",
     "range": "8\"",
     "strength": "As user",
     "save": "",
@@ -16390,12 +16354,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A master-crafted throwing knife.",
-        "text": "",
-        "tables": []
-      },
       {
         "rule": "thrown-weapon",
         "text": "This is a thrown weapon. The warrior suffers no penalty for range or moving."
@@ -16432,7 +16390,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A fine throwing axe taken from a huntsman.",
     "range": "6\"",
     "strength": "As user +1",
     "save": "",
@@ -16440,12 +16398,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A fine throwing axe taken from a huntsman.",
-        "text": "",
-        "tables": []
-      },
       {
         "rule": "thrown-weapon",
         "text": "This is a thrown weapon. The warrior suffers no penalty for range or moving."
@@ -16516,7 +16468,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Skaven gas bomb weapon.",
     "range": "6\"",
     "strength": "Special",
     "save": "",
@@ -16524,12 +16476,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Skaven gas bomb weapon; details in rules.",
-        "text": "",
-        "tables": []
-      },
       {
         "rule": "thrown-weapon",
         "text": "A model throwing a Poison Wind Globe takes no penalty for range or for moving."
@@ -16596,7 +16542,7 @@
       "harpoon gun",
       "crossbow"
     ],
-    "flavour": "",
+    "flavour": "A harpoon launcher mounted on a boat's railings, swivelling through a 90 degree arc.",
     "range": "36\"",
     "strength": "4",
     "save": "",
@@ -16604,12 +16550,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A harpoon launcher mounted on a boat's railings, swivelling through a 90 degree arc.",
-        "text": "",
-        "tables": []
-      },
       {
         "rule": "move-or-fire",
         "text": "A model cannot move, moving to man the weapon included, and shoot in the same turn."
@@ -16655,7 +16595,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "An Elven bolt thrower mounted on a boat's railings, swivelling through a 90 degree arc.",
     "range": "36\"",
     "strength": "5",
     "save": "",
@@ -16663,12 +16603,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "An Elven bolt thrower mounted on a boat's railings, swivelling through a 90 degree arc.",
-        "text": "",
-        "tables": []
-      },
       {
         "rule": "move-or-fire",
         "text": "A model cannot move, moving to man the weapon included, and shoot in the same turn."
@@ -16720,7 +16654,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Elven armour of living wood.",
     "range": "",
     "strength": "",
     "save": "6+",
@@ -16728,12 +16662,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Elven armour of living wood.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Armour of the Wildwood",
         "summary": "",
@@ -16792,7 +16720,7 @@
       "beast hide",
       "wyvern hide cloak"
     ],
-    "flavour": "",
+    "flavour": "A cloak of beast or wyvern hide.",
     "range": "",
     "strength": "",
     "save": "6+",
@@ -16800,12 +16728,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A cloak of beast or wyvern hide.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Hide Cloak",
         "summary": "",
@@ -16840,7 +16762,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A mail hauberk blessed by priests.",
     "range": "",
     "strength": "",
     "save": "6+",
@@ -16848,12 +16770,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A mail hauberk blessed by priests.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Blessed Hauberk",
         "summary": "",
@@ -16893,7 +16809,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Armour of living oak.",
     "range": "",
     "strength": "",
     "save": "5+",
@@ -16901,12 +16817,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Armour of living oak.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "The Oaken Armour",
         "summary": "",
@@ -16957,7 +16867,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "An ogre's metal skull cap.",
     "range": "",
     "strength": "",
     "save": "",
@@ -16965,12 +16875,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "An ogre's metal skull cap.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Skull Cap",
         "summary": "",
@@ -17008,7 +16912,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A shirt enchanted to be as strong as steel.",
     "range": "",
     "strength": "",
     "save": "6+",
@@ -17016,12 +16920,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A shirt enchanted to be as strong as steel.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Steel Cloth",
         "summary": "",
@@ -17056,7 +16954,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A warpstone-derived narcotic.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17064,12 +16962,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A warpstone-derived narcotic.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Black Dust",
         "summary": "",
@@ -17103,7 +16995,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A herbal powder snorted by the berserkers of Norsca.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17111,12 +17003,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A herbal powder snorted by the berserkers of Norsca.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Daemon Dust",
         "summary": "",
@@ -17150,7 +17036,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A drug drawn from the mud of the Cursed Marshes.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17158,12 +17044,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A drug drawn from the mud of the Cursed Marshes.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Slaaneshi's Dream",
         "summary": "",
@@ -17278,7 +17158,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "An iron circlet worn by a Warrior-Priest of Sigmar.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17286,12 +17166,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "An iron circlet worn by a Warrior-Priest of Sigmar.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Burnished Circlet",
         "summary": "",
@@ -17365,7 +17239,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Glove used by falconers to handle hunting birds.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17373,12 +17247,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Glove used by falconers to handle hunting birds.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Falconry",
         "summary": "",
@@ -17451,7 +17319,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Ammunition loaded with phosphorus powder that ignites when fired.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17459,12 +17327,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Ammunition loaded with phosphorus powder that ignites when fired.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Flame Bullets",
         "summary": "",
@@ -17542,7 +17404,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Protective mask against gas attacks.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17598,7 +17460,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A Chaos Spawn's heart, eaten whole.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17606,12 +17468,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A Chaos Spawn's heart, eaten whole.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Hellheart",
         "summary": "",
@@ -17650,7 +17506,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A blue gem with a constant aura of cold about it.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17658,12 +17514,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A blue gem with a constant aura of cold about it.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Ice Gem",
         "summary": "",
@@ -17696,7 +17546,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A fence's iron strongbox with a hidden compartment.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17704,12 +17554,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A fence's iron strongbox with a hidden compartment.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Iron Strongbox",
         "summary": "",
@@ -17742,7 +17586,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Jewellery rich enough that merchants flock to its wearer.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17750,12 +17594,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Jewellery rich enough that merchants flock to its wearer.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Jewel Necklace",
         "summary": "",
@@ -17788,7 +17626,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "An enchanted instrument handcrafted in Ulthuan.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17796,12 +17634,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "An enchanted instrument handcrafted in Ulthuan.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Songs",
         "summary": "",
@@ -17834,7 +17666,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A golden acorn woven with an enchantment of premonition.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17842,12 +17674,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A golden acorn woven with an enchantment of premonition.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Magic Acorn",
         "summary": "",
@@ -17920,7 +17746,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "An Elven quiver whose arrows strike with shattering force.",
     "range": "",
     "strength": "",
     "save": "",
@@ -17928,12 +17754,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "An Elven quiver whose arrows strike with shattering force.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Quiver of Shattering",
         "summary": "",
@@ -18046,7 +17866,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A cloak that blends its wearer into his surroundings.",
     "range": "",
     "strength": "",
     "save": "",
@@ -18054,12 +17874,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A cloak that blends its wearer into his surroundings.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Thief's Cloak",
         "summary": "",
@@ -18092,7 +17906,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A plain old band of metal worn on the head.",
     "range": "",
     "strength": "",
     "save": "",
@@ -18100,12 +17914,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A plain old band of metal worn on the head.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Worn Circlet",
         "summary": "",
@@ -18138,7 +17946,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Cursed trinket of Stromfels; transforms wearer into Harbinger under conditions.",
     "range": "",
     "strength": "",
     "save": "",
@@ -18159,12 +17967,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Cursed trinket of Stromfels; transforms wearer into Harbinger under conditions.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Harbinger",
         "summary": "",
@@ -18202,7 +18004,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Enchanted carved ivory.",
     "range": "",
     "strength": "",
     "save": "",
@@ -18210,12 +18012,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Enchanted carved ivory.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Scrimshaw Bauble",
         "summary": "",
@@ -18248,7 +18044,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "Necklace of shark teeth used by Mutant-Priest of Stromfels; enables special recruitment/hex rules.",
     "range": "",
     "strength": "",
     "save": "",
@@ -18256,12 +18052,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "Necklace of shark teeth used by Mutant-Priest of Stromfels; enables special recruitment/hex rules.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Stromfels Luck",
         "summary": "",
@@ -18380,7 +18170,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A vehicle rigged to be blown up with everyone aboard.",
     "range": "",
     "strength": "",
     "save": "",
@@ -18388,12 +18178,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A vehicle rigged to be blown up with everyone aboard.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Grunweld's Last Resort",
         "summary": "",
@@ -18427,7 +18211,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [],
-    "flavour": "",
+    "flavour": "A steam propulsion fitted to a boat or a cart.",
     "range": "",
     "strength": "",
     "save": "",
@@ -18435,12 +18219,6 @@
     "notes": "",
     "needs_rules": false,
     "rules": [
-      {
-        "name": "",
-        "summary": "A steam propulsion fitted to a boat or a cart.",
-        "text": "",
-        "tables": []
-      },
       {
         "name": "Steam Engine",
         "summary": "",

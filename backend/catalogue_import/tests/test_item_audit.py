@@ -32,7 +32,7 @@ class SharedRuleWordingTests(ItemAuditCase):
             "thrown-weapon",
             "Cathayan candles",
             ["Hunter's Throwing Axe", "Magnin Throwing Knife", "Poison Wind Globe", "Poison Wind Globe (Athel Loren)"],
-        ),  # noqa: E501
+        ),
         ("move-or-fire", "handgun", ["Eagle-eye Bolt Thrower", "Harpoon Gun/Crossbow", "Swivel Gun"]),
         ("prepare-shot", "handgun", ["Eagle-eye Bolt Thrower", "Harpoon Gun/Crossbow", "Swivel Gun", "Sword Pistol"]),
         ("save-modifier", "Handguns", ["Eagle-eye Bolt Thrower", "Harpoon Gun/Crossbow", "Pocket Pistol"]),
@@ -72,3 +72,25 @@ class SharedRuleWordingTests(ItemAuditCase):
         self.assertEqual(
             held, ["rarity", "cost", "gift-of-chaos", "spellcasters", "Suited and Booted", "movement-penalty"]
         )
+
+
+class PlaceholderTests(ItemAuditCase):
+    @staticmethod
+    def placeholder(rule: dict[str, Any]) -> bool:
+        """Mutiny in Marienburg's list one-liner: an unnamed rule with a summary and no text."""
+        return "rule" not in rule and not rule["name"] and not rule["text"] and bool(rule["summary"])
+
+    def test_the_list_one_liner_is_flavour_where_real_rules_follow(self) -> None:
+        # the items audit, 27 Nov 2026: 38 items showed it as a "Rule" above the rules it summed up
+        for name, item in self.items.items():
+            if item["origin"] == "mim" and len(item["rules"]) > 1:
+                with self.subTest(item=name):
+                    self.assertFalse(any(self.placeholder(rule) for rule in item["rules"]))
+        self.assertEqual(self.items["Lyre"]["flavour"], "An enchanted instrument handcrafted in Ulthuan.")
+        # "details in rules" pointed at the rules that follow, so it goes
+        self.assertEqual(self.items["Poison Wind Globe"]["flavour"], "Skaven gas bomb weapon.")
+
+    def test_an_item_with_nothing_else_keeps_it_until_its_rules_are_written(self) -> None:
+        rules = self.items["Dispel Scroll"]["rules"]
+        self.assertEqual([self.placeholder(rule) for rule in rules], [True])
+        self.assertEqual(self.items["Dispel Scroll"]["flavour"], "")
