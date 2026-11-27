@@ -159,7 +159,13 @@ class HirelingSeederTests(TestCase):
                 "Alchemist": ["Potion Recipes"],
                 "Dark Maiden": ["Spells of Wrath"],
                 "White Lady": ["Spells of the Lake"],
-                "Genie": None,  # the element he rolls at hire: a question for William
+                # the element he rolls at hire, of the Sorcerous Society's four (William, 27 Nov 2026)
+                "Genie": [
+                    "Elemental Lore of Water",
+                    "Elemental Lore of Fire",
+                    "Elemental Lore of Air",
+                    "Elemental Lore of Earth",
+                ],
                 "Warlock Engineer": None,  # Chain Lightning, and no other spell ever
             },
         )

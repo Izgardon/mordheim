@@ -7240,6 +7240,12 @@
     "armour_save": null,
     "large": false,
     "caster": "No",
+    "spell_types": [
+      "Elemental Lore of Water",
+      "Elemental Lore of Fire",
+      "Elemental Lore of Air",
+      "Elemental Lore of Earth"
+    ],
     "spell_picks": 1,
     "specials": [
       {
