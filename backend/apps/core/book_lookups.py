@@ -185,7 +185,9 @@ class BookLookups:
         }
         self.shared, self.kept, self.own_names = shared_names({(row.name, row.type): row for row in specials})
         spells = list(Spell.objects.filter(**book))
-        self.spells = {lookup_key(row.name): row for row in spells}
+        self.spells: dict[str, list[Spell]] = {}  # by name: every lore's spell of it, in the lores' order
+        for row in spells:
+            self.spells.setdefault(lookup_key(row.name), []).append(row)
         self.lore_spells = {(row.type, lookup_key(row.name)): row for row in spells}
         self.items: dict[tuple[str, str], Item] = {}
         self.item_names: dict[str, Item] = {}
@@ -263,15 +265,16 @@ class BookLookups:
         )
         return True
 
-    def spell(self, item: Any, owner: str, lore: str = "") -> Spell | None:
+    def spell(self, item: Any, owner: str, lore: str = "", lores: tuple[str, ...] = ()) -> Spell | None:
         """The book's spell of the item's name (in `lore`, the entry's `spell_lore`, when he has one: the Dark Mage's
-        Shade Mount is his Dark Magic's, not the Sorcerous Society's Elemental Lore of Air's), else his own, created
-        under `lore` (his spells as his source names them, the Dark Mage's "Dark Magic") or "<own_type> - <name>"."""
+        Shade Mount is his Dark Magic's, not the Sorcerous Society's Elemental Lore of Air's; else the one of his
+        `lores` of the name, then the only one), else his own, created under `lore` (his spells as his source names
+        them, the Dark Mage's "Dark Magic") or "<own_type> - <name>"."""
         name, fields = spell_fields(item)
         if not name:
             return None
         lore = lore.strip()
-        spell = self.lore_spells.get((lore, lookup_key(name))) if lore else self.spells.get(lookup_key(name))
+        spell = self.lore_spells.get((lore, lookup_key(name))) if lore else self._named(name, lores, owner)
         if spell is None:  # his own spell (the Dark Mage's six), as specials and skills are (BUG-54)
             spell_type = lore or self.own_type_of(owner)
             if book_roll_taken(spell_type, fields["roll"]):  # his lore keeps the first on each roll (spells/rolls.py)
@@ -280,10 +283,23 @@ class BookLookups:
                 )
                 fields["roll"] = None
             spell = Spell.objects.create(name=name, type=spell_type, is_prayer=is_prayer_lore(spell_type), **fields)
-            self.spells[lookup_key(name)] = spell
+            self.spells.setdefault(lookup_key(name), []).append(spell)
             self.lore_spells[(spell_type, lookup_key(name))] = spell
             self.warnings.append(f"  Created spell '{name}' ({spell_type}) for '{owner}'")
         return spell
+
+    def _named(self, name: str, lores: tuple[str, ...], owner: str) -> Spell | None:
+        """The book's spell of the name in one of his lores (the Priest of Morr's Hand of Morr is the Funerary Rites',
+        not the Vampire Hunters' of Sylvania), else the only one of the name; of several, none his, the first, warned
+        about."""
+        rows = self.spells.get(lookup_key(name), [])
+        his = [row for row in rows if row.type in lores]
+        if his:
+            return his[0]
+        if len(rows) > 1:
+            held = ", ".join(row.type for row in rows)
+            self.warnings.append(f"  Spell '{name}' for '{owner}' is in {held}, none his lore: {rows[0].type}'s linked")
+        return rows[0] if rows else None
 
     def equipment(self, line: dict[str, Any], owner: str) -> Item | None:
         """The item an equipment line names: by name and type when it gives a type, else by name (what the book
@@ -301,12 +317,15 @@ class BookLookups:
         warned about and left out, and two names for one shared special link it once."""
         specials = [special for item in data.get("specials", []) if (special := self.special(item, owner))]
         lore = str(data.get("spell_lore") or "")
+        lores = tuple(str(name) for name in data.get("spell_types") or [])
         for item in data.get("lore_spells", []):
             self.spell(item, owner, _lore(item, lore))
         links = EntryLinks(
             skills=[skill for name in data.get("skills", []) if (skill := self.skill(name, owner))],
             specials=list(dict.fromkeys(specials)),
-            spells=[spell for item in data.get("spells", []) if (spell := self.spell(item, owner, _lore(item, lore)))],
+            spells=[
+                spell for item in data.get("spells", []) if (spell := self.spell(item, owner, _lore(item, lore), lores))
+            ],
             equipment={},
         )
         for equipment in data.get("equipment", []):

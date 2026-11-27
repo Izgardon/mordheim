@@ -3520,6 +3520,10 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_types": [
+      "Dark Magic",
+      "Lesser Magic"
+    ],
     "specials": [
       {
         "name": "Wizard",
@@ -3580,11 +3584,7 @@
       "available_special_skills": [],
       "grade": "2a",
       "rating": 18,
-      "race": "Human",
-      "available_spell_types": [
-        "Dark Magic",
-        "Lesser Magic"
-      ]
+      "race": "Human"
     }
   },
   {
@@ -6530,6 +6530,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_types": [
+      "Necromancy"
+    ],
     "specials": [
       {
         "name": "Necromantic Magic",
@@ -6612,10 +6615,7 @@
         "Academic",
         "Speed"
       ],
-      "available_special_skills": [],
-      "available_spell_types": [
-        "Necromancy"
-      ]
+      "available_special_skills": []
     }
   },
   {
@@ -6735,6 +6735,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Priest",
+    "spell_types": [
+      "Rituals of Morr"
+    ],
     "spell_picks": 2,
     "specials": [
       {
@@ -6819,10 +6822,7 @@
         "Academic",
         "Combat"
       ],
-      "available_special_skills": [],
-      "available_spell_types": [
-        "Rituals of Morr"
-      ]
+      "available_special_skills": []
     }
   },
   {
@@ -6917,6 +6917,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_types": [
+      "Spells of Wrath"
+    ],
     "spell_picks": 2,
     "specials": [
       {
@@ -6992,10 +6995,7 @@
         "Academic",
         "Speed"
       ],
-      "available_special_skills": [],
-      "available_spell_types": [
-        "Spells of Wrath"
-      ]
+      "available_special_skills": []
     }
   },
   {
@@ -7014,6 +7014,9 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_types": [
+      "Spells of the Lake"
+    ],
     "specials": [
       {
         "name": "Herald of the Lady",
@@ -7101,10 +7104,7 @@
         "Academic",
         "Speed"
       ],
-      "available_special_skills": [],
-      "available_spell_types": [
-        "Spells of the Lake"
-      ]
+      "available_special_skills": []
     }
   },
   {

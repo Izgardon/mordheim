@@ -126,7 +126,7 @@ class HirelingSeederTests(TestCase):
             "spell_lore": "Spells of Wrath",
             "lore_spells": [{"name": "1 - Dark Strength", "description": "Difficulty 7. +1 Strength."}],
             "spells": [],
-            "hired_sword": {**OGRE["hired_sword"], "available_spell_types": ["Spells of Wrath"]},
+            "spell_types": ["Spells of Wrath"],
         }
         with data_file([maiden]) as path:
             run("seed_hired_swords", json_paths=[path])
@@ -134,6 +134,16 @@ class HirelingSeederTests(TestCase):
         self.assertEqual((ogre.available_spell_types, ogre.spell_links.count()), (["Spells of Wrath"], 0))
         strength = Spell.objects.get(name="Dark Strength")
         self.assertEqual((strength.type, strength.roll, strength.dc), ("Spells of Wrath", 1, "7"))
+
+    def test_a_spell_named_in_two_lores_is_the_one_of_his_own_lore(self):
+        # the Mousillon Priest of Morr's rites linked the Vampire Hunters' Funerary Rites of their names: by name
+        # alone, the last lore holding it won
+        ours = Spell.objects.create(name="Hand of Morr", type="Funerary Rites", dc="9")
+        Spell.objects.create(name="Hand of Morr", type="Funerary Rites (Vampire Hunters of Sylvania)", dc="7")
+        priest = {**OGRE, "caster": "Priest", "spells": ["Hand of Morr"], "spell_types": ["Funerary Rites"]}
+        with data_file([priest]) as path:
+            run("seed_hired_swords", json_paths=[path])
+        self.assertEqual([link.spell_id for link in HiredSword.objects.get().spell_links.all()], [ours.id])
 
     def test_one_who_starts_with_several_spells_keeps_how_many_he_picks(self):
         with data_file([{**OGRE, "caster": "Wizard", "spell_picks": 2}, RUNESMITH]) as path:
