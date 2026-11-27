@@ -546,6 +546,8 @@ CASTERS: dict[tuple[str, str], str] = {
     # 6 at 12" for 1D6 hits, with the opposite tail. Two lores (William, 13 Nov 2026: "Yes 2 lores seems best");
     # the Tomb Guardians' printing is the earlier, so it keeps the true name.
     ("tomb-guardians-old", "Liche Priest"): "Mortuary Cult Scrolls (Nehekhara Tomb Guards)",
+    # "he would start a campaign knowing one of the Prayers of Sigmar" (William, 27 Nov 2026: a Priest, yes)
+    ("outlaws-of-stirwood-forest", "Cleric"): "Prayers of Sigmar",
 }
 # A caster rule of another name that says only what ours does, that he starts with one spell or prayer at random from
 # his list (William, 27 Nov 2026: "For a general caster in a warband or a simple hired sword they will always start

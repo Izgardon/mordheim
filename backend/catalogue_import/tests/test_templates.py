@@ -399,3 +399,8 @@ class CommittedCasterTests(SimpleTestCase):
         hunter = self.fighters[("Witch Hunters", "Warrior-Priest")]
         self.assertIn({"name": "Priest", "type": "Caster"}, hunter["specials"])
         self.assertNotIn("Prayers", [special["name"] for special in hunter["specials"]])
+
+    def test_the_old_outlaws_cleric_prays_from_the_prayers_of_sigmar(self) -> None:
+        # William, 27 Nov 2026: "yes" a Priest with the Prayers of Sigmar, picking the usual one at random
+        cleric = self.fighters[("Outlaws of Stirwood Forest", "Cleric")]
+        self.assertEqual((cleric["caster"], [lore["name"] for lore in cleric["spell_types"]]), ("Priest", ["Prayers of Sigmar"]))  # fmt: skip

@@ -1099,6 +1099,7 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | night-goblins | Shaman | Wizard | Waaaagh! Magic |
 | orc-mob | Orc Shaman | Wizard | Waaaagh! Magic |
 | ostlander | Priest of Taal | Priest | Prayers of Taal |
+| outlaws-of-stirwood-forest | Cleric | Priest | Prayers of Sigmar |
 | shadow-warriors | Shadow Weaver | Wizard | Shadow Warrior Magic |
 | sisters-of-sigmar | Sigmarite Matriarch | Priest | Prayers of Sigmar |
 | skaven-eshin | Eshin Sorcerer | Wizard | Magic of the Horned Rat |

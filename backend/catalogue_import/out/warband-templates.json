@@ -81518,11 +81518,16 @@
         "skill_types": [
           "Academic"
         ],
-        "spell_types": [],
+        "spell_types": [
+          {
+            "name": "Prayers of Sigmar",
+            "note": ""
+          }
+        ],
         "gains_xp": true,
         "promotable": true,
         "is_leader": false,
-        "caster": "No",
+        "caster": "Priest",
         "large": false,
         "variant_changes": {},
         "fixed_kit": "",
