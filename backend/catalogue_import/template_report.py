@@ -85,6 +85,9 @@ def _fighters(log: TemplateLog) -> list[str]:
     if fighters.no_special_group:
         names = ", ".join(f"{page}: {fighter}" for page, fighter in fighters.no_special_group)
         out += [f"Ticked for special skills with no group to name, the tick left out: {names}.", ""]
+    if fighters.unticked:
+        names = ", ".join(f"{page}: {fighter} ({why})" for page, fighter, why in fighters.unticked)
+        out += [f"Special ticks taken off (template_answers.SPECIAL_UNTICKED): {names}.", ""]
     return out
 
 

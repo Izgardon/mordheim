@@ -25,6 +25,7 @@ from catalogue_import.template_answers import (
     SPECIAL_ADDED,
     SPECIAL_GROUPS,
     SPECIAL_GROUPS_BY_FIGHTER,
+    SPECIAL_UNTICKED,
     VARIANT_COUNTS,
     VARIANT_STATS,
 )
@@ -69,6 +70,7 @@ class FighterLog:
     unknown_races: list[tuple[str, str, str]] = field(default_factory=list)  # a race we don't have
     creatures: list[tuple[str, str, str]] = field(default_factory=list)
     no_special_group: list[tuple[str, str]] = field(default_factory=list)
+    unticked: list[tuple[str, str, str]] = field(default_factory=list)  # SPECIAL_UNTICKED's, as met: page, fighter, why
     lore_only: list[tuple[str, str]] = field(default_factory=list)  # LORE_ONLY's fighters, as the build met them
     lores: dict[str, str] = field(default_factory=dict)  # magic.json's lore -> ours, where they differ
     unplaced_casters: list[str] = field(default_factory=list)  # magic.json lines no page fighter matches
@@ -142,6 +144,9 @@ def skill_types(
     else:
         tables = {entry.get("subfaction") or "": entry.get("skills") or {} for entry in access}
         keyed = [(variant["key"], variant["subfaction"]) for variant in variants] or [("", next(iter(tables)))]
+    if (page, name) in SPECIAL_UNTICKED and any(table.get("special") for table in tables.values()):
+        tables = {key: {**table, "special": False} for key, table in tables.items()}
+        log.unticked.append((page, name, SPECIAL_UNTICKED[(page, name)]))
     if any(table.get("special") for table in tables.values()) and not specials:
         log.no_special_group.append((page, name))
     base = _table(tables.get(keyed[0][1]) or next(iter(tables.values())), specials, extra)

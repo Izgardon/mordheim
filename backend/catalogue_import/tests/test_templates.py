@@ -227,6 +227,15 @@ class FighterTests(SimpleTestCase):
         self.assertEqual(skill_types("imperial-outriders", knight, [], log)[0], ["Combat"])
         self.assertEqual(log.no_special_group, [("imperial-outriders", "Knight")])
 
+    def test_the_forest_goblin_braves_special_tick_is_taken_off(self) -> None:
+        # William, 27 Nov 2026: "If useless untick but check we aren't missing any data": their list's one skill,
+        # Animosity, is the warband rule Losing Animosity, and their books print no other special skill
+        log = FighterLog()
+        braves = {"name": "Braves", "skillAccess": {"combat": True, "shooting": True, "speed": True, "special": True}}
+        self.assertEqual(skill_types("forest-goblins", braves, [], log)[0], ["Combat", "Shooting", "Speed"])
+        self.assertEqual(log.no_special_group, [])
+        self.assertEqual([(page, name) for page, name, _why in log.unticked], [("forest-goblins", "Braves")])
+
     def test_a_variants_numbers_change_his_profile_as_written_and_his_most(self) -> None:
         changes: dict[str, Any] = {"middenheim": {"skill_types": ["Combat"]}}
         variant_numbers("mercenaries", "Champion", {"strength": 3, "ballistic_skill": 3}, changes)

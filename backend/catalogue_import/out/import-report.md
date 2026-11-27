@@ -1073,7 +1073,9 @@ Written values, kept as written:
 | underworld-alliance | Sewer Squig | movement 2D6 |
 | wood-elves-of-arden | Ivy Ferret | movement - |
 
-Ticked for special skills with no group to name, the tick left out: forest-goblins: Braves, imperial-outriders: Knight, imperial-outriders: Outrider, imperial-outriders: Scout.
+Ticked for special skills with no group to name, the tick left out: imperial-outriders: Knight, imperial-outriders: Outrider, imperial-outriders: Scout.
+
+Special ticks taken off (template_answers.SPECIAL_UNTICKED): forest-goblins: Braves (their only special skill, Animosity, is the warband rule Losing Animosity).
 
 ### Skill groups
 

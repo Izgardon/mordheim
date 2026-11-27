@@ -650,6 +650,13 @@ SPECIAL_GROUPS_BY_FIGHTER: dict[tuple[str, str], list[str]] = {
     ("lizardmen", "Saurus Totem Warrior"): ["Saurus"],
 }
 SPECIAL_ADDED: dict[str, list[str]] = {"black-dwarfs": ["Bull Centaur"]}  # mordheimer leaves its tick off
+# A Special tick for a skill list that holds nothing, taken off: page, fighter -> why. William, 27 Nov 2026, of the
+# Forest Goblins' Braves: "If useless untick but check we aren't missing any data". Their list held only Animosity,
+# now the warband rule Losing Animosity, and neither mordheimer's page nor the Nemesis Crown book's Forest Goblin Skill
+# Table prints another special skill.
+SPECIAL_UNTICKED: dict[tuple[str, str], str] = {
+    ("forest-goblins", "Braves"): "their only special skill, Animosity, is the warband rule Losing Animosity",
+}
 # A warband rule a page's skill list printed as a skill: page -> (title, text), after its own rules. William, 27 Nov
 # 2026, of the Forest Goblins' Animosity, the only skill of their list, which a Brave "learned" in place of a skill to
 # lose his animosity: a warband rule, so the Braves' Special tick names no group.
