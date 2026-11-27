@@ -95,3 +95,12 @@ class CommittedPersonaeTests(SimpleTestCase):
     def test_the_dark_emissary_and_the_truthsayer_are_wizards(self) -> None:
         rows = {row["name"]: row for row in json.loads((OUT / "dramatis-personae.json").read_text(encoding="utf-8"))}
         self.assertEqual([rows[name]["caster"] for name in ("Dark Emissary", "Truthsayer")], ["Wizard", "Wizard"])
+
+    def test_nibbles_causes_fear(self) -> None:
+        # William, 27 Nov 2026, of his Horrible Scars, which the Annual names among his skills with no rule: "Just
+        # give them fear", the shared Fear his seeder links
+        rows = {row["name"]: row for row in json.loads((OUT / "dramatis-personae.json").read_text(encoding="utf-8"))}
+        nibbles = rows["Nibbles, the Grand Sneak/Stab of Bitter Stink"]
+        names = [special if isinstance(special, str) else special["name"] for special in nibbles["specials"]]
+        self.assertIn("Fear", names)
+        self.assertNotIn("Horrible Scars", names)

@@ -152,8 +152,8 @@ class SeedAllTests(TestCase):
                 # 2026, of the Grandmother's Wizard): six hired swords' and three personae's Wizard, Oxyotl's Scaly
                 # Skin and the Headless Horseman's Immune to Psychology, 11 more; five personae's rule that they know
                 # a whole lore is its spells (William, 27 Nov 2026: Nicodemus, Gaz Er Unga Og, Bertha, the Crow
-                # Master and Neekit), 5 fewer
-                "Special": 2006,
+                # Master and Neekit), 5 fewer; Nibbles' Horrible Scars is the shared Fear (William, 27 Nov 2026), 1 fewer
+                "Special": 2005,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -367,9 +367,9 @@ class SeedAllTests(TestCase):
                     114,
                     0,
                     13,
-                    10,
+                    11,
                     37,
-                ),  # fighters, upgrades, hired swords, dramatis personae, beasts (13 of the East, 12 Marienburg's, 9 the Annual's)
+                ),  # fighters, upgrades, hired swords, dramatis personae (Nibbles' Horrible Scars), beasts (13 of the East, 12 Marienburg's, 9 the Annual's)
                 "Stupidity": (11, 0, 0, 0, 4),  # Marienburg's Troll and Chaos Troll
                 "Immune to Psychology": (
                     66,

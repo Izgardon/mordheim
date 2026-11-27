@@ -3550,8 +3550,8 @@
         "description": "At the start of each of his turns you may send him into a rage: he is subject to frenzy and has +1 Strength. If he has taken no model out of action by the end of that turn, he passes out from the fury and is out of action himself."
       },
       {
-        "name": "Horrible Scars",
-        "description": "Named among his skills; the Annual gives it no rule."
+        "name": "Fear",
+        "description": ""
       }
     ],
     "skills": [
