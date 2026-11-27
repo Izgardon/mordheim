@@ -1372,7 +1372,9 @@
         "description": "Note that Dwarfs may never take the Arcane Lore skill. It is not possible for a dwarf to learn how to cast spells."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Infiltration"
+    ],
     "spells": [],
     "equipment": [
       {
@@ -1402,12 +1404,7 @@
         "Combat",
         "Shooting"
       ],
-      "available_special_skills": [
-        {
-          "name": "Pathfinder",
-          "description": "Dwarf Pathfinders also learn how to find hidden paths in the forest. A Dwarf Pathfinder is able to Infiltrate, as the Infiltration skill."
-        }
-      ],
+      "available_special_skills": [],
       "grade": "1b",
       "rating": 12,
       "race": "Dwarf"
@@ -1719,7 +1716,9 @@
         "description": "A Human Scout that has been declared as Hidden may only be detected by models within half their Initiative value in inches, not their Initiative value as normal. In addition, a Human Scout may fire his Bow without giving away his position (he may fire and remain Hidden)."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Infiltration"
+    ],
     "spells": [],
     "equipment": [
       {
@@ -1746,12 +1745,7 @@
         "Shooting",
         "Speed"
       ],
-      "available_special_skills": [
-        {
-          "name": "Sit in Wait",
-          "description": "A Human Scout is able to Infiltrate."
-        }
-      ],
+      "available_special_skills": [],
       "grade": "1b",
       "rating": 9,
       "race": "Human"

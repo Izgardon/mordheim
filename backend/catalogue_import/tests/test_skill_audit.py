@@ -101,18 +101,12 @@ class SkillAuditTests(ReviewCase):
             "Master of Runes": "below)",
             "Master of Blades": "detailed above",
             "Wall Runner": "Suggested Changes",
-        }
+        }  # the Dwarf Pathfinder's Pathfinder, "as the Skaven skill", is the Infiltration he starts with now
         for skill, pointer in pointers.items():
             with self.subTest(skill=skill):
                 self.assertNotIn(pointer, self.skills[skill])
         for skill in ("Bat Form", "Giant Wolf Form"):
             self.assertIn("exactly as for Mist Form: he transforms in the recovery phase", self.skills[skill])
-        pathfinder = next(
-            skill
-            for skill in self.terms("Dwarf Pathfinder")["available_special_skills"]
-            if skill["name"] == "Pathfinder"
-        )
-        self.assertNotIn("Skaven skill", pathfinder["description"])
 
     def test_no_skill_description_holds_a_double_space(self) -> None:
         self.assertEqual([name for name, text in self.skills.items() if "  " in text], [])
@@ -229,3 +223,16 @@ class SkillAuditTests(ReviewCase):
         self.assertIn("The Sorceress may never take this skill", self.skills["Powerful Build (Dark Elf)"])
         self.assertIn("Shadow Weavers", self.skills["Powerful Build"])
         self.assertIn("Powerful Build", self.groups["Sea Ghosts"])
+
+    def test_infiltrate_is_infiltration_and_the_pointers_to_it_are_infiltration_he_starts_with(self) -> None:
+        # the Night Goblins' Infiltrate has Infiltration's text, and the Dwarf Pathfinder's Pathfinder and the Human
+        # Scout's Sit in Wait only said he could infiltrate (William, 27 Nov 2026)
+        self.assertNotIn("Infiltrate", self.skills)
+        self.assertIn("Infiltration", self.groups["Night Goblins"])
+        for hired, pointer in (("Dwarf Pathfinder", "Pathfinder"), ("Human Scout", "Sit in Wait")):
+            with self.subTest(hired=hired):
+                self.assertEqual(self.hired[hired]["skills"], ["Infiltration"])
+                own = [skill["name"] for skill in self.terms(hired)["available_special_skills"]]
+                self.assertNotIn(pointer, own)
+        personae = {row["name"]: row for row in load_json(HIRELING_DATA / "dramatis-personae.json")}
+        self.assertFalse([name for name, row in personae.items() if "Infiltrate" in row.get("skills", [])])

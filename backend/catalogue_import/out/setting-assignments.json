@@ -386,11 +386,6 @@
       "how": "mordheimer"
     },
     {
-      "name": "Infiltrate",
-      "setting": "mordheim",
-      "how": "no match"
-    },
-    {
       "name": "Netter",
       "setting": "mordheim-1c",
       "how": "overrides.json"
