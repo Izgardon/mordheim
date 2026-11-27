@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 import type { CampaignSummary } from "../../types/campaign-types";
-import { useCampaignSave } from "./CampaignSection";
+import { useCampaignSave } from "../../hooks/settings/useCampaignSave";
 import { SettingRow } from "./settings-ui";
 
 /** A warband's sheet, summary or treasury in this campaign: what a gold adjustment changes. */

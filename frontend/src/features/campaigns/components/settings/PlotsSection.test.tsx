@@ -57,9 +57,28 @@ beforeEach(() => {
   serve();
 });
 
+/** The plots are folded under how many are played: open them. */
+const show = async () => {
+  renderWithQueryClient(<PlotsSection campaign={campaign} />);
+  await setupUser().click(screen.getByRole("button", { name: /^Plots/ }));
+};
+
 describe("Settings → Plots", () => {
-  it("shows every plot the campaign can see, with the ones it plays with ticked", async () => {
+  it("is folded under how many are played, warning of a played plot out of play", async () => {
+    played = [SHARDS.id, WITCH.id];
     renderWithQueryClient(<PlotsSection campaign={campaign} />);
+
+    const button = screen.getByRole("button", { name: /^Plots/ });
+    expect(button).toHaveAttribute("aria-expanded", "false");
+    await waitFor(() => expect(button).toHaveTextContent("2 of 2 played"));
+    expect(
+      screen.getByText("1 played plot isn't in this campaign's settings.")
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("checkbox", { name: "The Shards" })).not.toBeInTheDocument();
+  });
+
+  it("shows every plot the campaign can see, with the ones it plays with ticked", async () => {
+    await show();
 
     const shards = await screen.findByRole("checkbox", { name: "The Shards" });
     await waitFor(() => expect(shards).toBeChecked());
@@ -68,7 +87,7 @@ describe("Settings → Plots", () => {
 
   it("picks a plot whose setting isn't ticked, and warns about it", async () => {
     const user = setupUser();
-    renderWithQueryClient(<PlotsSection campaign={campaign} />);
+    await show();
 
     const witch = await screen.findByRole("checkbox", { name: "Drowning the Witch" });
     expect(witch).toBeEnabled();
@@ -84,7 +103,7 @@ describe("Settings → Plots", () => {
 
   it("unticks the last plot and sends an empty list", async () => {
     const user = setupUser();
-    renderWithQueryClient(<PlotsSection campaign={campaign} />);
+    await show();
 
     await user.click(await screen.findByRole("checkbox", { name: "The Shards" }));
 
@@ -95,7 +114,7 @@ describe("Settings → Plots", () => {
 
   it("opens the editor to add the campaign's own plot", async () => {
     const user = setupUser();
-    renderWithQueryClient(<PlotsSection campaign={campaign} />);
+    await show();
 
     await user.click(await screen.findByRole("button", { name: "Add a plot" }));
 

@@ -13,9 +13,9 @@ import { settingShortName } from "@/features/reference/in-play";
 
 import { outOfPlay, useSettingsById } from "../../api/settings-queries";
 import type { CampaignSummary, Setting } from "../../types/campaign-types";
-import { useCampaignSave } from "./CampaignSection";
+import { useCampaignSave } from "../../hooks/settings/useCampaignSave";
 import PresetNote, { presetDim } from "./PresetNote";
-import { SettingRow, SettingsCard } from "./settings-ui";
+import { SettingRow } from "./settings-ui";
 
 /** A campaign's own chart says so; a book chart is named for its setting already (William, 18 Nov 2026). */
 const source = (chart: ExplorationChartRow) => (chart.campaign_id === null ? "" : " (Yours)");
@@ -31,7 +31,8 @@ const chartLabel = (chart: ExplorationChartRow, settings: Map<number, Setting>) 
   settingShortName(chart.campaign_type_id, settings) || chart.name;
 
 /**
- * Settings → Exploration (`edit_settings`, the owner): which chart the post-game explores by. The
+ * Settings → Rules → Exploration chart (`edit_settings`, the owner): which chart the post-game
+ * explores by, a dropdown in the open rather than folded away. The
  * book's Mordheim chart until another is picked. A chart whose setting isn't ticked is greyed and
  * still pickable, with the warning under it once picked (restrictions warn, they never block), and
  * the chart the campaign's preset sets is greyed the same way, warning once another is picked.
@@ -62,47 +63,42 @@ export default function ExplorationSection({ campaign }: { campaign: CampaignSum
   };
 
   return (
-    <SettingsCard
-      title="Exploration"
-      description="The chart the post-game explores by: its income table and the places the multiples find."
+    <SettingRow
+      label="Exploration chart"
+      hint={
+        locks.sets.has("exploration_chart_id") ? (
+          <PresetNote locks={locks} field="exploration_chart_id" />
+        ) : (
+          inUse.data?.summary || undefined
+        )
+      }
+      error={error}
+      below={warning ? <p className="m-0 text-sm text-accent-text">{warning}.</p> : undefined}
     >
-      <SettingRow
-        label="Chart"
-        hint={
-          locks.sets.has("exploration_chart_id") ? (
-            <PresetNote locks={locks} field="exploration_chart_id" />
-          ) : (
-            inUse.data?.summary || undefined
-          )
-        }
-        error={error}
+      <select
+        aria-label="Exploration chart"
+        value={current ?? ""}
+        disabled={saving || charts.isLoading || rows.length === 0}
+        onChange={(event) => pick(event.target.value)}
+        className={cn(
+          // w-full and min-w-0: a select is as wide as its widest option, which ran off a phone
+          "min-h-10 w-full min-w-0 max-w-full border border-strong bg-page px-2.5 text-sm text-ink",
+          presetDim(locks, "exploration_chart_id")
+        )}
       >
-        <select
-          aria-label="Exploration chart"
-          value={current ?? ""}
-          disabled={saving || charts.isLoading || rows.length === 0}
-          onChange={(event) => pick(event.target.value)}
-          className={cn(
-            // w-full and min-w-0: a select is as wide as its widest option, which ran off a phone
-            "min-h-10 w-full min-w-0 max-w-full border border-strong bg-page px-2.5 text-sm text-ink",
-            presetDim(locks, "exploration_chart_id")
-          )}
-        >
-          {current === null ? <option value="">Loading…</option> : null}
-          {rows.map((chart) => (
-            <option
-              key={chart.id}
-              value={chart.id}
-              className={cn(chart.in_play === false && "text-faint")}
-            >
-              {chartLabel(chart, settings)}
-              {source(chart)}
-              {chart.in_play === false ? " — not in this campaign" : ""}
-            </option>
-          ))}
-        </select>
-      </SettingRow>
-      {warning ? <p className="m-0 text-sm text-accent-text">{warning}.</p> : null}
-    </SettingsCard>
+        {current === null ? <option value="">Loading…</option> : null}
+        {rows.map((chart) => (
+          <option
+            key={chart.id}
+            value={chart.id}
+            className={cn(chart.in_play === false && "text-faint")}
+          >
+            {chartLabel(chart, settings)}
+            {source(chart)}
+            {chart.in_play === false ? " — not in this campaign" : ""}
+          </option>
+        ))}
+      </select>
+    </SettingRow>
   );
 }

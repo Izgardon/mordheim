@@ -3,7 +3,7 @@
  * will set, and what it will swap, before it saves -- and the change itself does the swap, so
  * there is no button underneath to press afterwards (William, 20 Nov 2026).
  */
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { campaignSummary } from "@/test/campaign-fixtures";
@@ -119,7 +119,57 @@ describe("the campaign preset", () => {
     );
     renderWithQueryClient(<CampaignPresetCard campaign={{ ...campaign, preset_id: 2 }} />);
 
-    expect(await screen.findByText("Trade locations on · Most heroes 6")).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: /^What it sets/ })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Swap rules|Add its/ })).not.toBeInTheDocument();
+  });
+
+  it("folds what it sets under their names, each with its value once opened", async () => {
+    const user = setupUser();
+    fakeApi.on(
+      `GET /campaigns/${campaign.id}/preset/`,
+      state({ preset_id: 2, preset_name: "Mutiny in Marienburg", sets: SETS })
+    );
+    renderWithQueryClient(<CampaignPresetCard campaign={{ ...campaign, preset_id: 2 }} />);
+
+    const fold = await screen.findByRole("button", { name: /^What it sets/ });
+    expect(fold).toHaveAttribute("aria-expanded", "false");
+    expect(fold).toHaveTextContent("Trade locations and Most heroes");
+    await user.click(fold);
+
+    const sets = screen.getByRole("group", { name: "What it sets" });
+    expect(within(sets).getByText("Most heroes").nextElementSibling).toHaveTextContent("6");
+  });
+
+  it("shows a departure from it while folded, in the server's words", async () => {
+    fakeApi.on(
+      `GET /campaigns/${campaign.id}/preset/`,
+      state({
+        preset_id: 2,
+        preset_name: "Mutiny in Marienburg",
+        sets: SETS,
+        departures: [
+          {
+            field: "max_heroes",
+            label: "Most heroes",
+            message: "Mutiny in Marienburg sets Most heroes: 6.",
+          },
+        ],
+      })
+    );
+    renderWithQueryClient(<CampaignPresetCard campaign={{ ...campaign, preset_id: 2 }} />);
+
+    const lines = await screen.findAllByText("Mutiny in Marienburg sets Most heroes: 6.");
+    expect(lines.filter((line) => !line.closest("[hidden]"))).toHaveLength(1);
+  });
+
+  it("says when the published campaign sets nothing", async () => {
+    fakeApi.on(
+      `GET /campaigns/${campaign.id}/preset/`,
+      state({ preset_id: 1, preset_name: "Mordheim" })
+    );
+    renderWithQueryClient(<CampaignPresetCard campaign={{ ...campaign, preset_id: 1 }} />);
+
+    expect(await screen.findByText("Mordheim sets nothing.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^What it sets/ })).not.toBeInTheDocument();
   });
 });

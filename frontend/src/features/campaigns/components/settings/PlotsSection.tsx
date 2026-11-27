@@ -15,7 +15,8 @@ import { cn } from "@/lib/utils";
 
 import { outOfPlay, useSettingsById } from "../../api/settings-queries";
 import type { CampaignSummary } from "../../types/campaign-types";
-import { FormError, SettingsCard } from "./settings-ui";
+import SettingsDisclosure from "./SettingsDisclosure";
+import { FormError } from "./settings-ui";
 
 type Setting = { name: string };
 
@@ -64,7 +65,7 @@ function PlotRowView({
 }
 
 /**
- * Settings → Plots, shown while Plots and CP is on: which plots the campaign plays
+ * Settings → Rules → Plots, shown while Plots and CP is on: which plots the campaign plays
  * with, from every setting, each marked with where it comes from. A plot whose setting isn't
  * ticked is greyed and still pickable, with the warning beside it once picked. Switching Plots on
  * gave the campaign its preset's plots; from then on this list is the list.
@@ -86,31 +87,40 @@ export default function PlotsSection({ campaign }: { campaign: CampaignSummary }
     pick.mutate([...next]);
   };
 
+  const summary = offered.isLoading ? "Loading…" : `${picked.size} of ${rows.length} played`;
+  const outside = rows.filter((plot) => picked.has(plot.id) && outOfPlay(plot, settings)).length;
+  const warnings = outside
+    ? [
+        `${outside} played ${outside === 1 ? "plot isn't" : "plots aren't"} in this campaign's settings.`,
+      ]
+    : [];
+
   return (
-    <SettingsCard
-      title="Plots"
-      description="The plots this campaign plays with."
-      action={
-        can.edit_catalogue ? (
-          <Button variant="secondary" onClick={() => setEditing({ plotId: null })}>
-            Add a plot
-          </Button>
-        ) : null
-      }
-    >
-      {rows.map((plot) => (
-        <PlotRowView
-          key={plot.id}
-          plot={plot}
-          picked={picked.has(plot.id)}
-          warning={outOfPlay(plot, settings)}
-          busy={pick.isPending}
-          canEdit={can.edit_catalogue}
-          settings={settings}
-          onToggle={() => toggle(plot.id)}
-          onEdit={() => setEditing({ plotId: plot.id })}
-        />
-      ))}
+    <SettingsDisclosure title="Plots" summary={summary} warnings={warnings}>
+      {can.edit_catalogue ? (
+        <Button
+          variant="secondary"
+          className="self-start"
+          onClick={() => setEditing({ plotId: null })}
+        >
+          Add a plot
+        </Button>
+      ) : null}
+      <div className="flex flex-col">
+        {rows.map((plot) => (
+          <PlotRowView
+            key={plot.id}
+            plot={plot}
+            picked={picked.has(plot.id)}
+            warning={outOfPlay(plot, settings)}
+            busy={pick.isPending}
+            canEdit={can.edit_catalogue}
+            settings={settings}
+            onToggle={() => toggle(plot.id)}
+            onEdit={() => setEditing({ plotId: plot.id })}
+          />
+        ))}
+      </div>
       {!offered.isLoading && rows.length === 0 ? (
         <p className="m-0 text-sm text-text2">No plots yet.</p>
       ) : null}
@@ -123,6 +133,6 @@ export default function PlotsSection({ campaign }: { campaign: CampaignSummary }
           onClose={() => setEditing(null)}
         />
       ) : null}
-    </SettingsCard>
+    </SettingsDisclosure>
   );
 }

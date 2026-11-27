@@ -136,7 +136,7 @@ export default function ArchiveSection({
 
   return (
     <SettingsCard
-      title="Archive campaign"
+      title="Danger zone"
       tone="danger"
       description="To delete it for good, archive it first."
       action={

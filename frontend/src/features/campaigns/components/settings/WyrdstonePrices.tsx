@@ -9,7 +9,7 @@ import {
 } from "@/features/warbands/utils/wyrdstone-prices";
 
 import type { CampaignSummary } from "../../types/campaign-types";
-import { useCampaignSave } from "./CampaignSection";
+import { useCampaignSave } from "../../hooks/settings/useCampaignSave";
 import { SettingRow } from "./settings-ui";
 
 type Draft = string[][];
@@ -20,7 +20,7 @@ const draftOf = (table: readonly (readonly number[])[]): Draft =>
 const sameTable = (draft: Draft, table: readonly (readonly number[])[]) =>
   draft.every((row, shards) => row.every((cell, band) => cell === String(table[shards]?.[band])));
 
-const CELL = "h-8 w-full min-w-0 px-1.5 text-center font-mono md:h-9";
+const CELL = "h-8 w-full min-w-0 px-1.5 text-center font-mono md:h-9 max-[960px]:px-0";
 
 /**
  * The wyrdstone sell prices (`edit_settings`; William, 8 Nov 2026: the rulebook's table): the gold
@@ -64,7 +64,7 @@ export default function WyrdstonePrices({ campaign }: { campaign: CampaignSummar
           <table className="w-full max-w-[560px] table-fixed border-collapse text-sm">
             <thead>
               <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-faint">
-                <th scope="col" className="w-14 pb-1 text-left font-bold">
+                <th scope="col" className="w-14 pb-1 text-left font-bold max-[960px]:w-9">
                   {resource}
                 </th>
                 <th scope="colgroup" colSpan={SIZE_BANDS.length} className="pb-1 font-bold">

@@ -6,8 +6,9 @@ import { queryKeys } from "@/lib/query-keys";
 
 import { useCampaignPreset, useCampaignPresets } from "../../api/preset-queries";
 import type { CampaignPreset, CampaignSummary } from "../../types/campaign-types";
-import { useCampaignSave } from "./CampaignSection";
+import { useCampaignSave } from "../../hooks/settings/useCampaignSave";
 import { setsLine } from "./campaign-preset";
+import PresetSets from "./PresetSets";
 import { SettingRow, SettingsCard } from "./settings-ui";
 
 /** "55 rules, 14 charts and 9 encampments", leaving out whatever the preset has none of. */
@@ -50,7 +51,7 @@ function ChangeSummary({ preset }: { preset: CampaignPreset }) {
 }
 
 /**
- * Settings → Campaign → Campaign (the owner): which published campaign this one plays. Changing
+ * Settings → Preset (the owner): which published campaign this one plays, and what it sets. Changing
  * it re-applies what that campaign dictates, ticks the settings it guides towards, and swaps its
  * rules and charts in there and then (William, 20 Nov 2026): the dialog says so before it happens,
  * because taking rules out is lossy. Every control it sets stays operable, greyed, and warns when
@@ -93,17 +94,14 @@ export default function CampaignPresetCard({ campaign }: { campaign: CampaignSum
   };
 
   return (
-    <SettingsCard
-      title="Campaign preset"
-      description="Which published campaign this one plays. It sets the rules; the content in play is yours to change."
-    >
+    <SettingsCard title="Preset">
       <SettingRow label="Playing" error={error}>
         <select
           aria-label="Published campaign"
           value={current ?? ""}
           disabled={saving || presets.isLoading}
           onChange={(event) => pick(event.target.value)}
-          className="min-h-10 border border-strong bg-page px-2.5 text-sm text-ink"
+          className="min-h-10 w-[280px] border border-strong bg-page px-2.5 text-sm text-ink max-[960px]:w-auto max-[960px]:min-w-0 max-[960px]:flex-1"
         >
           <option value="">None</option>
           {rows.map((preset) => (
@@ -113,12 +111,7 @@ export default function CampaignPresetCard({ campaign }: { campaign: CampaignSum
           ))}
         </select>
       </SettingRow>
-      {state.data?.preset_id ? (
-        <SettingRow
-          label="It sets"
-          hint={setsLine(state.data.sets) || "Nothing: every setting below is yours."}
-        />
-      ) : null}
+      {state.data?.preset_id ? <PresetSets state={state.data} /> : null}
 
       <ConfirmDialog
         open={Boolean(changing)}

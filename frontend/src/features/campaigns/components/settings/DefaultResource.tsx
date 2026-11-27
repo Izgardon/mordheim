@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import type { CampaignSummary } from "../../types/campaign-types";
-import { useCampaignSave } from "./CampaignSection";
+import { useCampaignSave } from "../../hooks/settings/useCampaignSave";
 import { SettingRow } from "./settings-ui";
 
 /**
