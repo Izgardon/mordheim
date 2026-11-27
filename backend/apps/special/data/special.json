@@ -2,7 +2,7 @@
   {
     "name": "Wizard",
     "type": "Caster",
-    "description": "A wizard starts with one spell, rolled at random from his list, and casts one spell per turn. He may not wear armour or use shields. Instead of a new skill he may roll a new spell from his list."
+    "description": "A wizard starts with one spell, rolled at random from his list, and casts one spell per turn. He may cast no spell while he wears armour. Instead of a new skill he may roll a new spell from his list."
   },
   {
     "name": "Priest",
