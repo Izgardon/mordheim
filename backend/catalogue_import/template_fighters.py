@@ -14,6 +14,7 @@ from catalogue_import.template_answers import (
     CREATURES,
     GENERAL_CASTER_RULES,
     GENERAL_RULE_WORDINGS,
+    LORE_ONLY,
     LORES,
     MAGIC_WARBANDS,
     RACES,
@@ -60,6 +61,7 @@ class FighterLog:
     unknown_races: list[tuple[str, str, str]] = field(default_factory=list)  # a race we don't have
     creatures: list[tuple[str, str, str]] = field(default_factory=list)
     no_special_group: list[tuple[str, str]] = field(default_factory=list)
+    lore_only: list[tuple[str, str]] = field(default_factory=list)  # LORE_ONLY's fighters, as the build met them
     lores: dict[str, str] = field(default_factory=dict)  # magic.json's lore -> ours, where they differ
     unplaced_casters: list[str] = field(default_factory=list)  # magic.json lines no page fighter matches
     casters: list[tuple[str, str, str, list[str]]] = field(default_factory=list)  # page, fighter, caster, lores
@@ -281,6 +283,9 @@ def build_fighter(
     hero = fighter["type"] == "hero"
     lores = context["lores"].of(page, fighter["name"])
     caster = ("Priest" if all(is_prayers(lore["name"]) for lore in lores) else "Wizard") if lores else "No"
+    if (page, plain(fighter["name"])) in LORE_ONLY:  # no wizard or priest by his own rules: his lore alone
+        log.lore_only.append((page, plain(fighter["name"])))
+        caster = "No"
     specials, leader, large = rules(page, fighter, context["owner"], caster, _kept(context, fighter), log)
     base, changes = skill_types(page, fighter, context["variants"], log, context.get("special_groups"))
     stats = profile(page, fighter, log)

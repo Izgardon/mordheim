@@ -14,6 +14,7 @@ from catalogue_import.snapshot import Snapshot
 from catalogue_import.sources import BACKEND
 from catalogue_import.template_answers import (
     GENERAL_CASTER_RULES,
+    LORE_ONLY,
     RULES_ADDED,
     SIZES,
     TEMPLATE_TYPES,
@@ -243,6 +244,9 @@ def build_templates(
     unmet = sorted(GENERAL_CASTER_RULES - set(log.fighters.general_casters))
     if unmet:
         raise ValueError(f"template_answers.GENERAL_CASTER_RULES: no such rule {unmet}")
+    unmet_lores = sorted(LORE_ONLY - set(log.fighters.lore_only))
+    if unmet_lores:
+        raise ValueError(f"template_answers.LORE_ONLY: no such fighter {unmet_lores}")
     for slug, template in built:  # once every page gave its mutations' prices (the Cult's, the Carnival's)
         mutation_upgrades(slug, template, shared, log.upgrades)
     templates = [template for _slug, template in built]

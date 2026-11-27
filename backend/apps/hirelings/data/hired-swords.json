@@ -2190,10 +2190,11 @@
     "leadership": 9,
     "armour_save": null,
     "large": false,
-    "caster": "Priest",
+    "caster": "No",
     "spell_types": [
       "Runes"
     ],
+    "spell_picks": 1,
     "specials": [
       {
         "name": "Runesmith",
@@ -6858,7 +6859,7 @@
     "leadership": 7,
     "armour_save": null,
     "large": false,
-    "caster": "Priest",
+    "caster": "No",
     "spell_types": [
       "Potion Recipes"
     ],

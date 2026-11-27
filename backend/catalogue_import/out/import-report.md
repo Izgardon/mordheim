@@ -1134,7 +1134,7 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | dreamwalkers-cult-of-morr | Priest of Morr | Priest | Funerary Rites |
 | drowned-dead | Surgeon | Wizard | Necromancy |
 | druchii | Sorceress | Wizard | Dark Magic (Druchii) |
-| dwarf-grudgebearers | Runesmith | Wizard | Dwarf Runes |
+| dwarf-grudgebearers | Runesmith | No | Dwarf Runes |
 | fen-guard | Branchwych | Wizard | Utterances of the Oak |
 | forest-goblins-lus | Forest Goblin Shaman | Wizard | Forest Goblin Magic |
 | ghost-pirates | Sea Singer | Wizard | Songs of Sorrow |
@@ -1148,7 +1148,7 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | mages | Arch Mage | Wizard | Ice Magic, Fire Magic, Wind Magic, Earth Magic |
 | mages | Mage | Wizard | Ice Magic, Fire Magic, Wind Magic, Earth Magic |
 | mages | Warlock | Wizard | Lesser Magic |
-| mazzalupo | Wandering knight | Priest | Commands (Mazzalupo) |
+| mazzalupo | Wandering knight | No | Commands (Mazzalupo) |
 | mordheimers-fanatics | Prophet | Wizard | Prophetic Rants |
 | necrarchs-the-soul-stealers | Necrarch Vampire | Wizard | Necromancy, Dreaded Scrolls of Nagash |
 | necrarchs | Nosferatu | Wizard | Necromancy |

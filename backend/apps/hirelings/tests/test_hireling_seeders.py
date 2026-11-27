@@ -146,7 +146,7 @@ class HirelingSeederTests(TestCase):
                 "Elf Mage": ["Spells of the Djedhi"],
                 "Norse Shaman": ["Norse Runes"],
                 "Priest of Morr": ["Funerary Rites"],
-                "Runesmith Journeyman": ["Runes"],
+                "Runesmith Journeyman": ["Runes"],  # no caster, a pick of his lore
                 "Warrior Priest of Sigmar": ["Prayers of Sigmar"],
                 "Witch": ["Charms and Hexes"],
                 "Wolf Priest of Ulric": ["Prayers of Ulric"],
@@ -169,6 +169,15 @@ class HirelingSeederTests(TestCase):
                 "Warlock Engineer": None,  # Chain Lightning, and no other spell ever
             },
         )
+
+    def test_a_hired_rune_or_potion_maker_casts_from_his_lore_alone_and_picks_his_first(self):
+        # the Runesmith Journeyman's runes and the Alchemist's recipes are no prayers (William, 27 Nov 2026: no caster
+        # rule, their lore only, which still gives them their first pick)
+        rows = {row["name"]: row for row in json.loads(Path("apps/hirelings/data/hired-swords.json").read_text(encoding="utf-8"))}  # fmt: skip
+        for name, lore, picks in (("Runesmith Journeyman", "Runes", 1), ("Alchemist", "Potion Recipes", 2)):
+            with self.subTest(hired=name):
+                row = rows[name]
+                self.assertEqual((row["caster"], row["spell_types"], row.get("spell_picks")), ("No", [lore], picks))
 
     def test_a_spell_named_in_two_lores_is_the_one_of_his_own_lore(self):
         # the Mousillon Priest of Morr's rites linked the Vampire Hunters' Funerary Rites of their names: by name
@@ -202,6 +211,7 @@ class HirelingSeederTests(TestCase):
                 "Dark Maiden": 2,  # "She starts with two of them, determined at random"
                 "Priest of Morr (Mousillon)": 2,  # "He begins with two, determined at random"
                 "Genie": 1,  # "He starts with one spell", typed no caster (William, 27 Nov 2026: "YES")
+                "Runesmith Journeyman": 1,  # no caster, his lore alone giving his first pick (William, 27 Nov 2026)
             },
         )
 

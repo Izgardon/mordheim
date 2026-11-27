@@ -847,7 +847,8 @@ class PdfImportTests(SimpleTestCase):
         # his Commands are learned as spells are and cast as magic, so they are a lore; he "does not count as a
         # wizard", which our model says as Priest, as the Vampire Hunters' Priest of Morr does
         lores = [lore["name"] for lore in knight["spell_types"]]
-        self.assertEqual((knight["caster"], lores), ("Priest", ["Commands (Mazzalupo)"]))
+        # he "does not count as a wizard": his lore alone (William, 27 Nov 2026)
+        self.assertEqual((knight["caster"], lores), ("No", ["Commands (Mazzalupo)"]))
         self.assertEqual(knight["skills"], ["Ride [Animal]"])  # "has the Riding (horses) skill"
         finances = next(row for row in mazzalupo["fighters"] if row["name"] == "Master of finances")
         self.assertEqual(finances["skills"], ["Haggle"])

@@ -571,6 +571,15 @@ GENERAL_CASTER_RULES: frozenset[tuple[str, str, str]] = frozenset(
         ("vampire-hunters-of-sylvania", "Priest of Morr", "Funerary Rites"),  # "starts with one ... rolled at random"
     }
 )
+# Casters whose own rules say they are no wizard or priest: page, fighter. He casts from his lore, which gives him his
+# first pick, but takes no caster rule (William, 27 Nov 2026, of the Grudgebearers' Runesmith, "no wizard", and the
+# Mazzalupo Wandering knight, who "does not count as a wizard": "no caster rule, their lore only").
+LORE_ONLY: frozenset[tuple[str, str]] = frozenset(
+    {
+        ("dwarf-grudgebearers", "Runesmith"),
+        ("mazzalupo", "Wandering knight"),
+    }
+)
 MAGIC_WARBANDS: dict[str, str] = {"Ostlanders": "ostlander"}  # magic.json's warband names that aren't a page's
 LORES: dict[str, str] = {  # magic.json's lore names that differ from our spells' lores by more than punctuation
     "Charms & Hexes": "Charms and Hexes",
