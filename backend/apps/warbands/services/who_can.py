@@ -24,7 +24,9 @@ armour stay his list's.
 Among an item's rows a warband may use, the lowest step wins, then a row without a label (a "Brace" or "Skink heroes"
 row is a variant, never the default), then the row naming the fewest warbands (the more specific), then the commonest,
 the cheapest and the first. An item from a setting the campaign hasn't ticked is treated like step 5, the setting named
-in the reason; a campaign's own item has no setting and is always in play there. Restrictions warn, they never
+in the reason; a campaign's own item has no setting and is always in play there. A price row of its own setting (another
+book's price for the item: Mutiny in Marienburg's, William, 27 Nov 2026) counts only while that setting is in play
+(`in_play` read with the row); elsewhere the item reads as its other rows make it, as though the row weren't there. Restrictions warn, they never
 block: `can_buy` and the reason are for the pages, purchases never read them.
 """
 
@@ -143,9 +145,10 @@ class Offer:
 
 def offer(item: Any, buyer: Buyer, in_play: bool, setting: str) -> Offer | None:
     """The item's offer to the buyer (its price rows and their lines prefetched); None for an item with no rows."""
-    rows: Sequence[Any] = list(item.availabilities.all())
-    if not rows:
+    every: Sequence[Any] = list(item.availabilities.all())
+    if not every:
         return None
+    rows = [row for row in every if getattr(row, "in_play", True)]
     usable = sorted(
         (_rank(row, index, at), row)
         for index, row in enumerate(rows)
@@ -158,7 +161,7 @@ def offer(item: Any, buyer: Buyer, in_play: bool, setting: str) -> Offer | None:
     # introduced: his own list says he may have it, whatever its setting (William, 21 Nov 2026)
     if not in_play and not on_his_list(item, buyer.sells):
         reasons.append(out_of_play(setting))
-    chosen = [row for _key, row in usable] or [rows[0]]
+    chosen = [row for _key, row in usable] or [(rows or every)[0]]
     at = usable[0][0][0] if usable else None
     open_now = not reasons and always_open(item, at)
     return Offer(item.pk, chosen[0].pk, [row.pk for row in chosen], not reasons, " ".join(reasons), open_now)

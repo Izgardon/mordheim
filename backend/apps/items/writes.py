@@ -12,7 +12,17 @@ from typing import Any
 from .models import Item, ItemAvailability, ItemAvailabilityWarband, ItemRuleLink
 
 LINKS = ("availabilities", "rules")
-ROW_FIELDS = ("label", "cost", "dice", "dice_multiplier", "cost_note", "rarity", "for_everyone", "note")
+ROW_FIELDS = (
+    "label",
+    "cost",
+    "dice",
+    "dice_multiplier",
+    "cost_note",
+    "rarity",
+    "for_everyone",
+    "note",
+    "campaign_type_id",
+)
 RULE_FIELDS = ("name", "summary", "text", "table", "prebattle_roll", "prebattle_text")
 
 

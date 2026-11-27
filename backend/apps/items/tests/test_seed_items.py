@@ -85,6 +85,14 @@ class SeedItemsTests(TestCase):
         single = dict(Item.objects.filter(campaign__isnull=True).values_list("name", "single_use"))
         self.assertEqual(single, {"Swivel Gun - Ball Shot": True, "Sword": False})
 
+    def test_a_price_row_of_another_books_setting_is_seeded_in_it(self) -> None:
+        """A Mutiny in Marienburg row counts only where that setting is in play (William, 27 Nov 2026)."""
+        own = entry("x")["availabilities"][0]
+        seed([entry("Hunting Rifle", availabilities=[own, {**own, "label": "Khemri", "setting": "khemri"}])])
+
+        rows = ItemAvailability.objects.filter(item__name="Hunting Rifle").order_by("id")
+        self.assertEqual(list(rows.values_list("label", "campaign_type_id")), [("", None), ("Khemri", self.khemri.id)])
+
     def test_an_items_save_bonus_and_slot_come_from_the_import(self) -> None:
         """What equipping it does to the wearer's save (William, 18 Nov 2026); an item without one moves nothing."""
         seed([entry("Heavy Armour", type="Armour", save="5+", save_bonus=2, save_slot="body"), entry("Sword")])

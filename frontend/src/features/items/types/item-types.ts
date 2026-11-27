@@ -59,6 +59,8 @@ export type ItemRuleLink = {
  */
 export type ItemAvailability = {
   id: number;
+  /** Another book's setting the row counts in (a Mutiny in Marienburg row); null: the item's own. */
+  setting_id?: number | null;
   label: string;
   cost: number | null;
   dice: number | null;
@@ -85,6 +87,8 @@ export type AvailabilityPayload = {
   for_everyone: boolean;
   note: string;
   warbands: AccessLineInput[];
+  /** Sent back as read, so an edit keeps the row's setting. */
+  setting_id: number | null;
 };
 
 export type RuleLinkPayload = {

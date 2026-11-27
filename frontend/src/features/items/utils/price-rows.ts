@@ -25,9 +25,11 @@ export type PriceRowDraft = {
    * current data as is"); a new row offers neither.
    */
   holds: { label: boolean; costNote: boolean };
+  /** The setting the row counts in, kept through an edit (null: the item's own row). */
+  settingId: number | null;
 };
 
-export type PriceRowField = Exclude<keyof PriceRowDraft, "key" | "who" | "holds">;
+export type PriceRowField = Exclude<keyof PriceRowDraft, "key" | "who" | "holds" | "settingId">;
 
 let nextKey = 1;
 
@@ -42,6 +44,7 @@ export const blankPriceRow = (): PriceRowDraft => ({
   note: "",
   who: everyone(),
   holds: { label: false, costNote: false },
+  settingId: null,
 });
 
 const text = (value: number | null | undefined) => (value == null ? "" : String(value));
@@ -58,6 +61,7 @@ export const priceRowsOf = (rows: ItemAvailability[] | null | undefined): PriceR
     note: row.note ?? "",
     who: draftOf(row),
     holds: { label: Boolean(row.label?.trim()), costNote: Boolean(row.cost_note?.trim()) },
+    settingId: row.setting_id ?? null,
   }));
 
 const numberOrNull = (value: string) => (value.trim() ? Number(value) : null);
@@ -73,6 +77,7 @@ export const priceRowsPayload = (rows: PriceRowDraft[]): AvailabilityPayload[] =
     for_everyone: row.who.forEveryone,
     note: row.note.trim(),
     warbands: linesPayload(row.who),
+    setting_id: row.settingId,
   }));
 
 export const PRICE_HINT = "Needs a price of 0 or more.";

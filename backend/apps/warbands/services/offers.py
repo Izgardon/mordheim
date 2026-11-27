@@ -38,10 +38,11 @@ def _setting(entry: Model) -> str:
 
 
 def current_items(campaign_id: int) -> list[Any]:
-    """The campaign's current items with their price rows and the rows' who-can lines (three queries)."""
+    """The campaign's current items with their price rows (each saying whether its own setting, where it has one, is
+    in play: `who_can.offer`) and the rows' who-can lines (three queries)."""
     from apps.core.catalogue.kinds import ITEMS  # the registry imports the warbands app
 
-    rows = ItemAvailability.objects.order_by("id").prefetch_related("warband_links")
+    rows = with_in_play(ItemAvailability.objects.order_by("id"), campaign_id).prefetch_related("warband_links")
     return list(_current(ITEMS, campaign_id).prefetch_related(Prefetch("availabilities", queryset=rows)))
 
 

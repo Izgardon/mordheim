@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 244 |
 | items (MiM) | 51 |
 | items (warband templates) | 43 |
-| price rows | 614 |
+| price rows | 613 |
 | skills | 529 |
 | skill groups | 115 |
 | skill group links | 680 |
@@ -908,14 +908,13 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 
 All 51 keep their one-line text as the summary of an unnamed rule: Caber, Celestial Iron Fan, Blade of Leaping Gold, Greedy Fist, Kraken-tooth Sword, Stiletto Blade, Veteran's Hand, Cathayan Firesticks/Firepots, Magnin Throwing Knife, Hunter's Throwing Axe, Nipponese Skyrocket, Poison Wind Globe, Harpoon Gun/Crossbow, Eagle-eye Bolt Thrower, Armour of the Wildwood, Beast Hide/Wyvern Hide Cloak, Blessed Hauberk, The Oaken Armour, Skull Cap, Steel Cloth, Black Dust, Daemon Dust, Slaaneshi's Dream, Albion Cloth, Alcoholic Spirits, Burnished Circlet, Dispel Scroll, Falconry Glove, Firefly Scarab, Flame Bullets, Fortune Ring, Gas Mask, Hellheart, Ice Gem, Iron Strongbox, Jewel Necklace, Lyre, Magic Acorn, Medicine Chest, Quiver of Shattering, Skinkskin Boots, Staff of Light, Thief's Cloak, Worn Circlet, Stromfels Heart, Scrimshaw Bauble, Shark-tooth Necklace, Treasure Cart, Ship-of-the-Line, Grunweld's Last Resort, Steam Engine.
 
-Stubs that duplicate a complete item of ours, left out with their price carried onto it as a row labelled "Mutiny in Marienburg" (William, 15 Nov 2026):
+Stubs that duplicate a complete item of ours, left out with their price carried onto it as a row labelled "Mutiny in Marienburg" (William, 15 Nov 2026), which counts only where Mutiny in Marienburg is in play (William, 27 Nov 2026):
 
 | Stub | Joined | Price carried |
 | --- | --- | --- |
 | Double-barrelled Hunting Rifle | Ostlander Double-barrelled Hunting Rifle | 300 gc, Rare 12 |
 | Hochland Long Hunting Rifle | Hunting Rifle | 200 gc, Rare 11 |
 | Fish-hook Shot/Hunting Lasso | Fish-Hook Shot | 10 gc, Rare 7 |
-| Wolf Cloak/Norse Furs | Wolfcloak | 10 gc, Common |
 | Trade Wagon/Stage Coach | Trade Wagon | 100 gc, Rare 7 |
 | Wild Boar/Pig | War Boar | 90 gc, Rare 11 |
 
@@ -928,6 +927,12 @@ Their prices our item already showed, at the same cost, dice and rarity and open
 | Rowing Boat | Rowboat | 40 gc, Rare 7 |
 | Riverboat | Riverboat | 100 gc, Rare 8 |
 | Barge | River Barge | 200 gc, Rare 9 |
+
+Their prices William keeps off our item, whose own rows already sell it (overrides.json `carry_price`):
+
+| Stub | Joined | The price it had |
+| --- | --- | --- |
+| Wolf Cloak/Norse Furs | Wolfcloak | 10 gc, Common |
 
 Restrictions that name no warband type or group, kept as notes on a row open to everyone (most limit which unit may carry the item):
 

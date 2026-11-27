@@ -6,6 +6,7 @@ import {
   PRICE_OR_NOTE_HINT,
   priceRowProblems,
   priceRowsOf,
+  priceRowsPayload,
 } from "./price-rows";
 
 const row = { id: 1, cost: null, dice: null, dice_multiplier: null, rarity: null, note: "" };
@@ -25,5 +26,26 @@ describe("price rows' notes", () => {
       "p"
     );
     expect(problems).toEqual({ "p.0.cost": PRICE_HINT, "p.1.cost": PRICE_OR_NOTE_HINT });
+  });
+});
+
+describe("a price row's setting", () => {
+  it("is sent back as it was read, so an edit keeps a Mutiny in Marienburg row in its setting", () => {
+    const rows = priceRowsOf([
+      { ...row, label: "", cost_note: "", for_everyone: true, warbands: [] },
+      {
+        ...row,
+        label: "Mutiny in Marienburg",
+        cost_note: "",
+        for_everyone: true,
+        warbands: [],
+        setting_id: 7,
+      },
+    ]);
+    expect(priceRowsPayload([...rows, blankPriceRow()]).map((sent) => sent.setting_id)).toEqual([
+      null,
+      7,
+      null,
+    ]);
   });
 });

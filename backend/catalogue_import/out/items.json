@@ -1193,7 +1193,8 @@
         "rarity": 11,
         "for_everyone": true,
         "warbands": [],
-        "note": ""
+        "note": "",
+        "setting": "mutiny-in-marienburg"
       },
       {
         "label": "",
@@ -3502,7 +3503,8 @@
         "rarity": 11,
         "for_everyone": true,
         "warbands": [],
-        "note": ""
+        "note": "",
+        "setting": "mutiny-in-marienburg"
       },
       {
         "label": "",
@@ -3654,7 +3656,8 @@
         "rarity": 12,
         "for_everyone": true,
         "warbands": [],
-        "note": ""
+        "note": "",
+        "setting": "mutiny-in-marienburg"
       }
     ]
   },
@@ -13626,7 +13629,8 @@
         "rarity": 7,
         "for_everyone": true,
         "warbands": [],
-        "note": ""
+        "note": "",
+        "setting": "mutiny-in-marienburg"
       }
     ]
   },
@@ -14344,17 +14348,6 @@
           }
         ],
         "note": ""
-      },
-      {
-        "label": "Mutiny in Marienburg",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": true,
-        "warbands": [],
-        "note": "Special availability"
       },
       {
         "label": "",
@@ -15228,7 +15221,8 @@
         "rarity": 7,
         "for_everyone": true,
         "warbands": [],
-        "note": ""
+        "note": "",
+        "setting": "mutiny-in-marienburg"
       },
       {
         "label": "",

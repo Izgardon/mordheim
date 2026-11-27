@@ -322,7 +322,7 @@ def _mim(data: ReportData) -> list[str]:
     ]
     if data.mim_log.merged:
         lines += [
-            'Stubs that duplicate a complete item of ours, left out with their price carried onto it as a row labelled "Mutiny in Marienburg" (William, 15 Nov 2026):',
+            'Stubs that duplicate a complete item of ours, left out with their price carried onto it as a row labelled "Mutiny in Marienburg" (William, 15 Nov 2026), which counts only where Mutiny in Marienburg is in play (William, 27 Nov 2026):',
             "",
             *_table(["Stub", "Joined", "Price carried"], [list(row) for row in data.mim_log.merged]),
             "",
@@ -331,6 +331,14 @@ def _mim(data: ReportData) -> list[str]:
         rows = [list(row) for row in data.mim_log.twins]
         lines += [
             "Their prices our item already showed, at the same cost, dice and rarity and open to everyone too, so they were not carried:",
+            "",
+            *_table(["Stub", "Joined", "The price it had"], rows),
+            "",
+        ]
+    if data.mim_log.dropped:
+        rows = [list(row) for row in data.mim_log.dropped]
+        lines += [
+            "Their prices William keeps off our item, whose own rows already sell it (overrides.json `carry_price`):",
             "",
             *_table(["Stub", "Joined", "The price it had"], rows),
             "",

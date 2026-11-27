@@ -2,7 +2,7 @@
 
 The duplicate stubs (decisions 1 and 3 to 9) are merged: in each case we hold a complete item from another setting and
 the supplement contributes a bare price, so the stub is left out and its price becomes a price row of our item
-labelled "Mutiny in Marienburg" (a price row has no setting of its own) -- unless our item already shows that line, at
+labelled "Mutiny in Marienburg", in that setting, so it counts only where Marienburg is in play (27 Nov 2026) -- unless our item already shows that line, at
 the same cost, dice and rarity and open to everyone too, when carrying it over would only say the same thing twice. The Handyman and the Beastmaster take the
 document's extra words (decisions 21 and 22); the Pawnbroker and the Energy Focus keep their restrictions, which the
 write-up recommended dropping and William did not (decisions 19 and 20).
@@ -29,7 +29,6 @@ CARRIED: list[tuple[str, str, Price]] = [
         "Ostlander Double-barrelled Hunting Rifle",
         (300, None, None, 12),
     ),  # Ostlanders'  # noqa: E501
-    ("Wolf Cloak/Norse Furs", "Wolfcloak", (10, None, None, None)),  # ours: four warbands' row
     ("Wild Boar/Pig", "War Boar", (90, None, None, 11)),  # ours: the Orc warbands' two rows (16 Nov 2026)
 ]
 # the stubs whose price our item already showed, line for line: nothing was carried
@@ -40,7 +39,10 @@ TWINS: list[tuple[str, str]] = [
     ("Rowing Boat", "Rowboat"),
     ("Barge", "River Barge"),
 ]
-MERGES = [(stub, item) for stub, item, _price in CARRIED] + TWINS
+# the stubs whose price William keeps off our item (27 Nov 2026: "wolf cloak doesn't really go to everyone due to its
+# purchase path"): its own rows sell it to the warbands whose lists hunt for it
+KEPT_OFF: list[tuple[str, str]] = [("Wolf Cloak/Norse Furs", "Wolfcloak")]
+MERGES = [(stub, item) for stub, item, _price in CARRIED] + TWINS + KEPT_OFF
 
 
 class MimMergeTests(ReviewCase):
@@ -65,8 +67,8 @@ class MimMergeTests(ReviewCase):
             with self.subTest(item=item):
                 self.assertEqual(self.carried(item), [price])
 
-    def test_a_price_our_item_already_showed_is_not_carried(self) -> None:
-        for _stub, item in TWINS:
+    def test_a_price_our_item_already_showed_or_william_keeps_off_is_not_carried(self) -> None:
+        for _stub, item in TWINS + KEPT_OFF:
             with self.subTest(item=item):
                 self.assertEqual(self.carried(item), [])
 
@@ -84,10 +86,8 @@ class MimMergeTests(ReviewCase):
 
     def test_the_marienburg_price_is_open_to_everyone_as_the_book_prints_it(self) -> None:
         [row] = [row for row in self.items["Hunting Rifle"]["availabilities"] if row["label"] == MERGE_LABEL]
-        # ours shuts the Dark Elves out, so this row is what lets them buy one at all
+        # ours shuts the Dark Elves out, so this row is what lets them buy one at all, where Marienburg is in play
         self.assertEqual((row["for_everyone"], row["warbands"]), (True, []))
-        [cloak] = [row for row in self.items["Wolfcloak"]["availabilities"] if row["label"] == MERGE_LABEL]
-        self.assertEqual(cloak["note"], "Special availability")  # the rarity the book prints for it
         [boar] = [row for row in self.items["War Boar"]["availabilities"] if row["label"] == MERGE_LABEL]
         # ours are the Orc warbands', so this row is what sells a boar to a Marienburg warband at all
         self.assertEqual((boar["for_everyone"], boar["warbands"]), (True, []))

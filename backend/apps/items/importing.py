@@ -145,6 +145,8 @@ class ImportedItems:
                 "label": clean(row.get("label")),
                 "cost_note": clean(row.get("cost_note")),
                 "note": clean(row.get("note")),
+                # another book's row counts only where its setting is in play (a Mutiny in Marienburg row)
+                "campaign_type_id": self.setting(row["setting"]) if row.get("setting") else None,
                 "warbands": [self._line(line, entry["name"]) for line in row.get("warbands", [])],
             }
             for row in entry.get("availabilities", [])

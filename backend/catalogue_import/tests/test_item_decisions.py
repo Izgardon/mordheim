@@ -79,3 +79,25 @@ class StaffTests(ReviewCase):
         self.assertEqual(
             [rule.get("rule") or rule["name"] for rule in bo["rules"]], ["Extra attack", "parry", "two-handed"]
         )
+
+
+class MarienburgRowTests(ReviewCase):
+    """Question 1 (B): a Mutiny in Marienburg price row counts only where Mutiny in Marienburg is in play."""
+
+    CARRIED = ("Ostlander Double-barrelled Hunting Rifle", "Hunting Rifle", "War Boar", "Fish-Hook Shot", "Trade Wagon")
+
+    def marienburg(self, name: str) -> list[dict[str, object]]:
+        return [row for row in self.items[name]["availabilities"] if row["label"] == "Mutiny in Marienburg"]
+
+    def test_each_carried_row_is_in_the_marienburg_setting(self) -> None:
+        for name in self.CARRIED:
+            with self.subTest(item=name):
+                self.assertEqual([row.get("setting") for row in self.marienburg(name)], ["mutiny-in-marienburg"])
+
+    def test_no_book_row_of_ours_has_a_setting_of_its_own(self) -> None:
+        rows = [row for item in self.items.values() for row in item["availabilities"] if row.get("setting")]
+        self.assertEqual({row["label"] for row in rows}, {"Mutiny in Marienburg"})
+
+    def test_the_wolfcloak_keeps_to_its_purchase_path(self) -> None:
+        self.assertEqual(self.marienburg("Wolfcloak"), [])
+        self.assertFalse(any(row["for_everyone"] for row in self.items["Wolfcloak"]["availabilities"]))

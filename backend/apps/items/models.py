@@ -148,9 +148,15 @@ class ItemRuleLink(PrebattleRoll):
 
 class ItemAvailability(models.Model):
     """One price of an item: its cost (none: see `cost_note`), dice added to it, rarity (none: Common), and who may buy
-    it. `label` names a variant row ("Brace"); `note` is shown when buying and never checked."""
+    it. `label` names a variant row ("Brace"); `note` is shown when buying and never checked. A row another book prints
+    for an item first printed elsewhere carries that book's setting (`campaign_type`; null: the item's own rows), and
+    counts only where it is in play (William, 27 Nov 2026: a Mutiny in Marienburg row only while Marienburg is
+    ticked, `warbands/services/who_can.py`)."""
 
     item = models.ForeignKey(Item, related_name="availabilities", on_delete=models.CASCADE)
+    campaign_type = models.ForeignKey(
+        "campaigns.CampaignType", related_name="item_availabilities", null=True, blank=True, on_delete=models.RESTRICT
+    )
     label = models.CharField(max_length=80, blank=True, default="")
     cost = models.PositiveIntegerField(null=True, blank=True)
     dice = models.PositiveSmallIntegerField(null=True, blank=True)  # "30 + 2D6": 2

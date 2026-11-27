@@ -8,6 +8,7 @@ from django.db.models import Q
 from rest_framework import serializers
 from rest_framework.fields import Field
 
+from apps.campaigns.models import CampaignType
 from apps.core.models import PREBATTLE_DICE
 from apps.warbands.access_lines import (
     AccessLineInputSerializer,
@@ -97,11 +98,13 @@ class ItemAvailabilitySerializer(serializers.ModelSerializer):
 
     warbands = AccessLineSerializer(source="warband_links", many=True, read_only=True)
     who_text = serializers.SerializerMethodField()
+    setting_id = serializers.IntegerField(source="campaign_type_id", read_only=True)  # null: the item's own row
 
     class Meta:
         model = ItemAvailability
         fields = (
             "id",
+            "setting_id",
             "label",
             "cost",
             "dice",
@@ -242,11 +245,17 @@ class AvailabilityInputSerializer(serializers.Serializer):
     for_everyone = serializers.BooleanField(required=False, default=True)
     note = serializers.CharField(max_length=300, allow_blank=True, required=False, default="")
     warbands = AccessLineInputSerializer(many=True, required=False, default=list)
+    # the setting a row of another book counts in, sent back as it was read so an edit keeps it (null: none)
+    setting_id = serializers.PrimaryKeyRelatedField(
+        source="campaign_type", queryset=CampaignType.objects.all(), allow_null=True, required=False, default=None
+    )
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         # a PATCH's availabilities are whole rows: the defaults apply there too (DRF skips them in a partial write)
         defaults = {"label": "", "cost": 0, "dice": None, "dice_multiplier": None, "cost_note": "", "rarity": None}
         attrs = {**defaults, "for_everyone": True, "note": "", "warbands": [], **attrs}
+        setting = attrs.pop("campaign_type", None)
+        attrs["campaign_type_id"] = setting.pk if setting is not None else None
         if attrs["dice_multiplier"] and not attrs["dice"]:
             raise serializers.ValidationError({"dice_multiplier": ["A multiplier needs dice."]})
         attrs["warbands"] = unique_lines(attrs["warbands"])

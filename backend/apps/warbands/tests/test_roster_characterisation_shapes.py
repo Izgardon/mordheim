@@ -102,6 +102,7 @@ ITEM_DETAIL = {
     "availabilities": [
         {
             "id": "int",
+            "setting_id": None,
             "label": "str",
             "cost": "int",
             "dice": None,
