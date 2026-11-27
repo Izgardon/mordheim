@@ -209,11 +209,11 @@
   },
   {
     "name": "Crude Belch",
-    "description": "Halflings will eat anything spicy. Consequences are to be expected from those inconsiderate enough to consume a rich meal before battle. A Hero with this 'condition' may unleash his thunderous fumes on all enemies engaged in close combat. Those that do not pass a Leadership test suffer a –1 'to hit' modifier for the turn. The Halfling must wait until a new enemy engages him in combat before he relieves himself again.  (MiM)"
+    "description": "Consequences are to be expected from those inconsiderate enough to consume a rich meal before battle. A Hero with this 'condition' may unleash his thunderous fumes on all enemies engaged in close combat. Those that do not pass a Leadership test suffer a –1 'to hit' modifier for the turn. The warrior must wait until a new enemy engages him in combat before he relieves himself again. (MiM)"
   },
   {
     "name": "Stealthy",
-    "description": "The Halfling can hide even after running, and can run while within 8\" of enemy models if he starts and ends his move hidden.  (MiM)"
+    "description": "The Hero can hide even after running, and can run while within 8\" of enemy models if he starts and ends his move hidden. (MiM)"
   },
   {
     "name": "Tea-leaf",
@@ -513,7 +513,7 @@
   },
   {
     "name": "Sniper (Shadow Warriors)",
-    "description": "Long years of guerrilla warfare against the Dark Elves have taught Shadow Warriors how to strike from the shadows without being seen. If Hidden, a warrior with this skill may shoot or cast spells and still remain Hidden. (TC10) If the sniper’s target is not taken out of action he is allowed an immediate Initiative test as are anyone within 2” of him and if successful they spot the sniper and he loses his ability to remain Hidden. (TC 12)"
+    "description": "If Hidden, a warrior with this skill may shoot or cast spells and still remain Hidden. (TC10) If the sniper’s target is not taken out of action he is allowed an immediate Initiative test, as is anyone within 2” of him, and if successful they spot the sniper and he loses his ability to remain Hidden. (TC 12)"
   },
   {
     "name": "Master of Runes",
@@ -549,7 +549,7 @@
   },
   {
     "name": "Wall Runner",
-    "description": "The Skaven does not need to take an Initiative test when climbing up walls and other sheer surfaces. Suggested Changes: May run or charge up walls, always striking last when charging in this manner. (RB 93)"
+    "description": "The warrior does not need to take an Initiative test when climbing up walls and other sheer surfaces. (RB 93)"
   },
   {
     "name": "Art of Silent Death",

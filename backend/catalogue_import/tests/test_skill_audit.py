@@ -46,3 +46,21 @@ class SkillAuditTests(ReviewCase):
         self.assertIn("Seeker (Wood Elves)", self.groups["Wood Elves of Arden"])
         self.assertIn("Seeker (Wood Elves)", self.groups["Wood Elves of Athel Loren"])
         self.assertTrue(self.skills["Seeker (Wood Elves)"].startswith("Only one Hero of the warband"))
+
+    def test_a_skill_several_races_learn_is_worded_for_none_of_them(self) -> None:
+        # Crude Belch is the Ogres' and the Ogre Hunting Party's too, Stealthy the Low Kings', Sniper (Shadow
+        # Warriors) the Woodsmen de Artois', Wall Runner the Lost's
+        cases = {
+            "Crude Belch": ("Ogre Hunting Party", ["Halfling", "Ogre"]),
+            "Stealthy": ("Low Kings", ["Halfling"]),
+            "Sniper (Shadow Warriors)": ("Woodsmen de Artois", ["Shadow Warriors", "Dark Elves"]),
+            "Wall Runner": ("The Lost", ["Skaven"]),
+        }
+        for skill, (group, races) in cases.items():
+            with self.subTest(skill=skill):
+                self.assertIn(skill, self.groups[group])
+                for race in races:
+                    self.assertNotIn(race, self.skills[skill])
+        self.assertIn("relieves himself again", self.skills["Crude Belch"])
+        self.assertIn("may shoot or cast spells and still remain Hidden", self.skills["Sniper (Shadow Warriors)"])
+        self.assertIn("climbing up walls", self.skills["Wall Runner"])

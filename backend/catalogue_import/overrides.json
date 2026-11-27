@@ -1414,7 +1414,9 @@
     "Mutant (Beastmen Raiders)": "The Hero may buy one mutation from the Possessed Mutation list. This skill may be taken only once. (EiF 74)",
     "Ignore Pain (Skaven Clan Pestilens)": "A Clan Pestilens member with this skill treats \u201cStunned\u201d injuries as \u201cKnocked Down.\u201d (TC 29)",
     "Handyman (Strength)": "The warrior is skilled in fixing minor damage on a wagon, cart or coach. If the wagon is stationary and has not moved during the last turn then if the warrior is in contact with the wagon, he may repair one previously damaged wheel. He can even set in a new wheel if it flew off. The Hero may do nothing else that turn and the wagon may not be moved. A wagon cannot be repaired if an enemy model is in contact with the handyman or the wagon. (MiM)",
-    "Beastmaster (Strength)": "The Hero is able to communicate on a primal level with any beast he encounters. If the model confronts an animal (not mount) in hand-to-hand combat, before combat he may take a Leadership test. If the test fails, combat proceeds as normal. If successful the animal falls under his command. Place the models 1\" apart. The player may control the animal, but the beastmaster must pass a Leadership test at the beginning of his turn or control is lost. The animal must remain within 6\" of the Hero or control is lost. No more than one animal can be controlled this way. (MiM)"
+    "Beastmaster (Strength)": "The Hero is able to communicate on a primal level with any beast he encounters. If the model confronts an animal (not mount) in hand-to-hand combat, before combat he may take a Leadership test. If the test fails, combat proceeds as normal. If successful the animal falls under his command. Place the models 1\" apart. The player may control the animal, but the beastmaster must pass a Leadership test at the beginning of his turn or control is lost. The animal must remain within 6\" of the Hero or control is lost. No more than one animal can be controlled this way. (MiM)",
+    "Sniper (Shadow Warriors)": "If Hidden, a warrior with this skill may shoot or cast spells and still remain Hidden. (TC10) If the sniper\u2019s target is not taken out of action he is allowed an immediate Initiative test, as is anyone within 2\u201d of him, and if successful they spot the sniper and he loses his ability to remain Hidden. (TC 12)",
+    "Wall Runner (Skaven)": "The warrior does not need to take an Initiative test when climbing up walls and other sheer surfaces. (RB 93)"
   },
   "skill_splits": {
     "Mutant (Marauders of Chaos)": {
@@ -1466,6 +1468,14 @@
     "Battle Tongue": {
       "from": "Battle Tongue (Academic)",
       "why": "the Academic list's wording (William, 4 Nov 2026: \"i agree with recs\")"
+    },
+    "Crude Belch": {
+      "text": "Consequences are to be expected from those inconsiderate enough to consume a rich meal before battle. A Hero with this 'condition' may unleash his thunderous fumes on all enemies engaged in close combat. Those that do not pass a Leadership test suffer a \u20131 'to hit' modifier for the turn. The warrior must wait until a new enemy engages him in combat before he relieves himself again. (MiM)",
+      "why": "the Militant Mootlanders' and the Ogres' wordings, one for the Halfling and one for the Ogre, worded for the warrior, as the Ogre Hunting Party learns it too (the skills audit, 27 Nov 2026)"
+    },
+    "Stealthy": {
+      "from": "Stealthy (Low Kings)",
+      "why": "the Low Kings' wording, for the Hero, not the Militant Mootlanders' for the Halfling, as the Low Kings learn it too (the skills audit, 27 Nov 2026)"
     }
   },
   "skill_group_learners": {
