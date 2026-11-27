@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from catalogue_import.availability import Context, mordheimer_rows
-from catalogue_import.common import unique
+from catalogue_import.common import loose_key, unique
 from catalogue_import.grading import content_setting
 from catalogue_import.rules import link_rule, parse_rule
 from catalogue_import.text import clean_inline
@@ -120,3 +120,13 @@ def mordheimer_items(
     if renames:
         raise ValueError(f"overrides.json item_names: no mordheimer item {', '.join(sorted(renames))}")
     return converted
+
+
+def drop_other_names(items: list[dict[str, Any]]) -> None:
+    """No item keeps a tag that is another item's name, so a search for one item finds that item alone: the boats
+    were each tagged with the other two's names, and the Harpoon Gun/Crossbow "crossbow" (the items audit, 27 Nov
+    2026)."""
+    names = {loose_key(item["name"]) for item in items}
+    for item in items:
+        own = loose_key(item["name"])
+        item["tags"] = [tag for tag in item["tags"] if loose_key(tag) == own or loose_key(tag) not in names]

@@ -12308,8 +12308,6 @@
     "source": "Town Cryer #24, Empire in Flames",
     "link_url": "https://mordheimer.net/docs/optional-rules/wagons-and-boats",
     "tags": [
-      "river barge",
-      "river boat",
       "rowboat",
       "rowing boat"
     ],
@@ -12413,10 +12411,8 @@
     "source": "Town Cryer #24, Empire in Flames",
     "link_url": "https://mordheimer.net/docs/optional-rules/wagons-and-boats",
     "tags": [
-      "river barge",
       "river boat",
-      "riverboat",
-      "rowboat"
+      "riverboat"
     ],
     "flavour": "",
     "range": "",
@@ -12519,8 +12515,6 @@
     "link_url": "https://mordheimer.net/docs/optional-rules/wagons-and-boats",
     "tags": [
       "river barge",
-      "river boat",
-      "rowboat",
       "barge"
     ],
     "flavour": "",
@@ -16539,8 +16533,7 @@
     "source": "Mutiny in Marienburg",
     "link_url": "",
     "tags": [
-      "harpoon gun",
-      "crossbow"
+      "harpoon gun"
     ],
     "flavour": "A harpoon launcher mounted on a boat's railings, swivelling through a 90 degree arc.",
     "range": "36\"",

@@ -17,7 +17,7 @@ from catalogue_import.item_overrides import add_notes, set_own_rules, set_row_no
 from catalogue_import.item_saves import set_saves
 from catalogue_import.item_splits import as_printed, choose_items, read_splits, render_splits, split_rows
 from catalogue_import.item_subtypes import merge_subtypes
-from catalogue_import.items import ItemLog, mordheimer_items
+from catalogue_import.items import ItemLog, drop_other_names, mordheimer_items
 from catalogue_import.mim import MimLog, MimReader, merge_duplicates, mim_item
 from catalogue_import.new_groups import SkillGroups, build_skill_groups
 from catalogue_import.own_rules import own_rules
@@ -270,6 +270,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     merge_subtypes(everything, overrides.get("item_subtypes", {}))  # one subtype per kind (25 Nov 2026)
     splits = read_splits(everything, overrides.get("item_splits", {}))  # Club, Mace or Hammer as three (26 Nov 2026)
     items, everything = split_rows(items, splits), split_rows(everything, splits)
+    drop_other_names(everything)  # a tag naming another item finds the wrong one (27 Nov 2026)
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
     names_we_have = Catalogue(
         [item["name"] for item in everything],

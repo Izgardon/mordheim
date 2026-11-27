@@ -166,3 +166,14 @@ class WeaponProfileTests(ItemAuditCase):
         for name, printed in self.PRINTED.items():
             with self.subTest(item=name):
                 self.assertEqual((self.items[name]["range"], self.items[name]["strength"]), printed)
+
+
+class SearchTagTests(ItemAuditCase):
+    def test_no_item_is_tagged_with_another_items_name(self) -> None:
+        # River Barge was tagged "rowboat", the Harpoon Gun/Crossbow "crossbow": a search for one item found others
+        names = {name.lower(): name for name in self.items}
+        for name, item in self.items.items():
+            with self.subTest(item=name):
+                self.assertEqual([tag for tag in item["tags"] if names.get(tag, name) != name], [])
+        self.assertIn("harpoon gun", self.items["Harpoon Gun/Crossbow"]["tags"])
+        self.assertIn("barge", self.items["River Barge"]["tags"])
