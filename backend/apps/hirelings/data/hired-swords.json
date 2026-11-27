@@ -408,8 +408,8 @@
         "quantity": 1
       },
       {
-        "item": "Brace of Pistols",
-        "quantity": 1
+        "item": "Pistol",
+        "quantity": 2
       },
       {
         "item": "Rapier",
@@ -1183,12 +1183,7 @@
     ],
     "skills": [],
     "spells": [],
-    "equipment": [
-      {
-        "item": "Claws",
-        "quantity": 1
-      }
-    ],
+    "equipment": [],
     "hired_sword": {
       "hire_cost": 100,
       "hire_cost_expression": "",

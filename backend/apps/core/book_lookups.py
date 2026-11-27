@@ -46,17 +46,15 @@ EQUIPMENT_NAME_ALIASES = {
     "throwing axes": "throwing knives/stars/axes",  # one entry for all of them (William, 11 Nov 2026)
     "double-handed axe": "double-handed weapon",
     "two-handed sword": "double-handed weapon",
-    "brace of pistols": "pistol",
     "staff": "quarter staff",
     "rune staff": "quarter staff",
-    "claws": "fighting claws",
     "repeating crossbow": "repeater crossbow",
     "dark cloak": "sea dragon cloak",
     "mining pick": "double-handed weapon",
     "pick": "double-handed weapon",
     "pickaxe": "double-handed weapon",
     "hunter's cloak": "forest cloak",
-    "whip": "barbed whip",
+    "whip": "steel whip",  # as Heinrich 'Altdorf' Schmidt's (persona_item_names), never the Barbed Whip
     "scimitar": "sword",
     "longbow": "long bow",
     "shortbow": "short bow",
