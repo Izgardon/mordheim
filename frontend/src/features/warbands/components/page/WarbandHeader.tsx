@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { GameIcon, type GameIconName } from "@/components/ui/game-icons";
 import { MoreMenu, type MoreMenuEntry } from "@/components/ui/more-menu";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 export type WarbandPanel = "store" | "stash" | "locations" | "loadout" | "hire";
 
@@ -36,6 +37,26 @@ export default function WarbandHeader(props: WarbandHeaderProps) {
         { label: "Encampments", onSelect: () => navigate(`/campaigns/${id}/encampments`) },
       ]
     : props.menu;
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const buttons = PANEL_BUTTONS.filter(
+    (button) => button.panel !== "locations" || props.showLocations
+  );
+  const panelButton = (button: (typeof PANEL_BUTTONS)[number]) => (
+    <Button
+      key={button.panel}
+      variant="secondary"
+      size="lg"
+      className={isMobile ? "w-full min-w-0 px-3" : "min-w-[140px]"}
+      onClick={() => props.onOpen(button.panel)}
+    >
+      <GameIcon name={button.icon} className="h-5 w-5 text-accent-text" />
+      {button.label}
+      {button.panel === "stash" && props.stashCount ? (
+        <span className="font-mono text-xs text-accent-text">{props.stashCount}</span>
+      ) : null}
+    </Button>
+  );
+  const more = <MoreMenu label="More warband actions" entries={menu} />;
 
   return (
     <header className="flex flex-wrap items-end justify-between gap-5">
@@ -47,27 +68,24 @@ export default function WarbandHeader(props: WarbandHeaderProps) {
           {props.name}
         </h1>
       </div>
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 max-[960px]:w-full">
         {/* on a phone, a line of its own above the buttons */}
         {props.code ? <div className="flex max-[960px]:basis-full">{props.code}</div> : null}
-        {PANEL_BUTTONS.filter((button) => button.panel !== "locations" || props.showLocations).map(
-          (button) => (
-            <Button
-              key={button.panel}
-              variant="secondary"
-              size="lg"
-              className="min-w-[140px] max-[960px]:flex-1"
-              onClick={() => props.onOpen(button.panel)}
-            >
-              <GameIcon name={button.icon} className="h-5 w-5 text-accent-text" />
-              {button.label}
-              {button.panel === "stash" && props.stashCount ? (
-                <span className="font-mono text-xs text-accent-text">{props.stashCount}</span>
-              ) : null}
-            </Button>
-          )
+        {isMobile ? (
+          <>
+            {/* Store, Stash and ⋯ share a row, as the page's skeleton draws it */}
+            <div className="grid w-full grid-cols-[1fr_1fr_auto] gap-2">
+              {buttons.filter((button) => button.panel !== "locations").map(panelButton)}
+              {more}
+            </div>
+            {buttons.filter((button) => button.panel === "locations").map(panelButton)}
+          </>
+        ) : (
+          <>
+            {buttons.map(panelButton)}
+            {more}
+          </>
         )}
-        <MoreMenu label="More warband actions" entries={menu} />
       </div>
     </header>
   );
