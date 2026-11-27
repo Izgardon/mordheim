@@ -152,8 +152,11 @@ class SeedAllTests(TestCase):
                 # 2026, of the Grandmother's Wizard): six hired swords' and three personae's Wizard, Oxyotl's Scaly
                 # Skin and the Headless Horseman's Immune to Psychology, 11 more; five personae's rule that they know
                 # a whole lore is its spells (William, 27 Nov 2026: Nicodemus, Gaz Er Unga Og, Bertha, the Crow
-                # Master and Neekit), 5 fewer; Nibbles' Horrible Scars is the shared Fear (William, 27 Nov 2026), 1 fewer
-                "Special": 2005,
+                # Master and Neekit), 5 fewer; Nibbles' Horrible Scars is the shared Fear (William, 27 Nov 2026), 1 fewer;
+                # a caster rule that says only that he starts with one at random is ours (William, 27 Nov 2026): the
+                # Fallen Sister's Wizard, the Warrior Priest's and the Wolf Priest's Prayers and the White Lady's
+                # Spells of the Lake, 4 fewer
+                "Special": 2001,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -769,10 +772,16 @@ class SeedAllTests(TestCase):
         self.assertIn("four spells", hers.description)
         wizards = Special.objects.filter(campaign__isnull=True, name__startswith="Wizard (", archived_at__isnull=True)
         owners = {row.name: row.owner_kind for row in wizards if row.type != "Animal"}  # not a familiar's rule
-        kept = ("Warlock", "Elf Mage", "Witch", "Dark Mage", "The Fallen Sister", "Trancas")
+        kept = ("Warlock", "Elf Mage", "Witch", "Dark Mage", "Trancas")  # the Fallen Sister's one spell is ours
         self.assertEqual(owners, {f"Wizard ({name})": "hired_sword" for name in kept} | {f"Wizard ({name})": "dramatis_persona" for name in ("Dark Emissary", "Truthsayer", "The Grandmother")})  # fmt: skip
         # ours stays the caster's rule: the templates' Wizards link it, and a hire of a Wizard is given it
         self.assertIsNone(Special.objects.get(campaign__isnull=True, name="Wizard", type="Caster").archived_at)
+        # William, 27 Nov 2026: a caster rule that says only that he starts with one at random from his list is ours
+        general = {
+            name: set(HiredSword.objects.get(name=name).special_links.filter(special__type="Caster").values_list("special__name", flat=True))
+            for name in ("The Fallen Sister", "Warrior Priest of Sigmar", "Wolf Priest of Ulric", "White Lady")
+        }  # fmt: skip
+        self.assertEqual(general, {"The Fallen Sister": {"Wizard"}, "Warrior Priest of Sigmar": {"Priest"}, "Wolf Priest of Ulric": {"Priest"}, "White Lady": {"Wizard"}})  # fmt: skip
 
     def test_a_persona_who_knows_a_whole_lore_holds_the_books_spells_of_it(self):
         # William, 27 Nov 2026, of Bertha's "knows all six Prayers of Sigmar" and the like: "YES", with no pick more

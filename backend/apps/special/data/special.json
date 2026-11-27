@@ -2,12 +2,12 @@
   {
     "name": "Wizard",
     "type": "Caster",
-    "description": "A wizard may use spells from their known list of spells. A wizard may only use one spell per turn. They may not wear armour or use shields."
+    "description": "A wizard starts with one spell, rolled at random from his list, and casts one spell per turn. He may not wear armour or use shields. Instead of a new skill he may roll a new spell from his list."
   },
   {
     "name": "Priest",
     "type": "Caster",
-    "description": "A Priest may use prayers from their known list of prayers. A Priest may only use one prayer per turn. They may wear armour and use shields."
+    "description": "A priest starts with one prayer, rolled at random from his list, and uses one prayer per turn. He may wear armour and use shields. Instead of a new skill he may roll a new prayer from his list."
   },
   {
     "name": "Weapons/Armour (Gnoblar)",

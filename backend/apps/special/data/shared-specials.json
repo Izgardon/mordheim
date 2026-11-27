@@ -1247,16 +1247,6 @@
       "why": "One spell at random from the Dark Magic list, and more later from it or the Lesser Magic list."
     },
     {
-      "name": "Wizard (The Fallen Sister)",
-      "rule": "Wizard",
-      "owners": [
-        {
-          "hired_sword": "The Fallen Sister"
-        }
-      ],
-      "why": "One spell at random from the Lesser Magic list."
-    },
-    {
       "name": "Wizard (Trancas)",
       "rule": "Wizard",
       "owners": [

@@ -1645,7 +1645,6 @@ List prices the pages differ from: none.
 | Wizard (Elf Mage) | Elf Mage | Three spells at random from the Spells of the Djed'hi. |
 | Wizard (Witch) | Witch | Two spells at random from the Charms & Hexes list. |
 | Wizard (Dark Mage) | Dark Mage | One spell at random from the Dark Magic list, and more later from it or the Lesser Magic list. |
-| Wizard (The Fallen Sister) | The Fallen Sister | One spell at random from the Lesser Magic list. |
 | Wizard (Trancas) | Trancas Quendalmanliye | Two spells at random from the Lesser Magic list. |
 | Wizard (Dark Emissary) | Dark Emissary | Four spells at random from the Lore of Darkness. |
 | Wizard (Truthsayer) | Truthsayer | Three spells at random from the Lore of Light. |
@@ -1671,7 +1670,6 @@ A hired sword's or dramatis persona's own rule is a row of his own (two owners s
 - Wanderer: Elf Mage; Chaos Wanderer; Chaos Berserker; Aenur, the Sword of Twilight; Dijin Katal, the Renegade Assassin; The Headless Horseman.
 - Hatred: Gaoler; Wolf Priest of Ulric; Grave Robber.
 - Pick Locks: Halfling Thief; Trancas Quendalmanliye.
-- Prayers: Warrior Priest of Sigmar; Wolf Priest of Ulric.
 - Drunken: Chaos Centaur; Bearman Bodyguard; Ex-Blood Bowl Player.
 - Master Craftsman: Swordsmith; The Foole.
 - Daemonic Instability: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.

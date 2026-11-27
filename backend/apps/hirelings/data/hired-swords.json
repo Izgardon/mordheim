@@ -2525,7 +2525,7 @@
     "caster": "Priest",
     "specials": [
       {
-        "name": "Prayers",
+        "name": "Priest",
         "description": "A Warrior-Priest is a servant of Sigmar and may use the Prayers of Sigmar as detailed in the Magic section."
       }
     ],
@@ -2713,7 +2713,7 @@
         "description": "Wolf Priests see Witch Hunters (Templars of Sigmar), Warrior-Priests, Sigmarite Matriarchs and Sisters Superior as agents of an opposing cult, and thus they hate these models. That hatred does not extend to other models in those warbands, as the Wolf Priests see them simply as misguided followers of an errant cult."
       },
       {
-        "name": "Prayers",
+        "name": "Priest",
         "description": "A Wolf Priest is a servant of Ulric and may use the Prayers of Ulric as detailed in the Magic section."
       },
       {
@@ -6994,7 +6994,7 @@
         "description": "The White Lady will never work in a warband that already employs any other magic user, any assassin or a grave robber."
       },
       {
-        "name": "Spells of the Lake",
+        "name": "Wizard",
         "description": "The White Lady is a wizard and uses the Spells of the Lake. She starts with one of them, determined at random. When she gains a new skill she may instead roll on the Spells of the Lake list."
       }
     ],

@@ -784,11 +784,6 @@
       "name": "Wizard (Dark Mage)"
     },
     {
-      "owner": "The Fallen Sister",
-      "rule": "Wizard",
-      "name": "Wizard (The Fallen Sister)"
-    },
-    {
       "owner": "Trancas Quendalmanliye",
       "rule": "Wizard",
       "name": "Wizard (Trancas)"
@@ -1049,16 +1044,6 @@
       "owner": "Trancas Quendalmanliye",
       "rule": "Pick Locks",
       "name": "Pick Locks (Trancas Quendalmanliye)"
-    },
-    {
-      "owner": "Warrior Priest of Sigmar",
-      "rule": "Prayers",
-      "name": "Prayers (Warrior Priest of Sigmar)"
-    },
-    {
-      "owner": "Wolf Priest of Ulric",
-      "rule": "Prayers",
-      "name": "Prayers (Wolf Priest of Ulric)"
     },
     {
       "owner": "Chaos Centaur",

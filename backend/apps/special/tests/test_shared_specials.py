@@ -56,6 +56,11 @@ class SharedSeedTests(TestCase):
             "The model is a Large Target: it may be shot at even if it is not the closest target, and with +1 to hit."
         )
         self.assertEqual(rows["Large"].description, large)
+        # William, 27 Nov 2026: "a general caster in a warband or a simple hired sword ... will always start with one at
+        # random", so ours say so, and his caster rule that says only that links them
+        casters = dict(Special.objects.filter(type="Caster").values_list("name", "description"))
+        self.assertIn("starts with one spell, rolled at random from his list", casters["Wizard"])
+        self.assertIn("starts with one prayer, rolled at random from his list", casters["Priest"])
         claw, flies, rot = rows["Great Claw"], rows["Cloud of Flies"], rows["Nurgle's Rot"]
         self.assertEqual((claw.owner_kind, claw.kind, claw.category), (GENERAL, BOON, MUTATION))
         self.assertTrue(flies.description.startswith("The model is surrounded by a cloud of flies"))
@@ -222,12 +227,16 @@ class SharedLookupTests(TestCase):
         text = "The Grandmother starts each battle with four spells."
         hers = BookLookups("Dramatis Persona").special({"name": "Wizard", "description": text}, "The Grandmother")
         his = BookLookups("Hired Sword").special({"name": "Wizard", "description": "Two spells."}, "Warlock")
+        sister = BookLookups("Hired Sword").special(
+            {"name": "Wizard", "description": "One spell."}, "The Fallen Sister"
+        )
         plain = BookLookups("Dramatis Persona").special("Wizard", "Nicodemus, the Cursed Pilgrim")
 
         assert hers is not None and his is not None and plain is not None
         grandmother = ("Wizard (The Grandmother)", "Dramatis Persona - The Grandmother", DRAMATIS_PERSONA, TRAIT, text)
         self.assertEqual((hers.name, hers.type, hers.owner_kind, hers.kind, hers.description), grandmother)
         self.assertEqual((his.name, his.type), ("Wizard (Warlock)", "Hired Sword - Warlock"))
+        self.assertEqual(sister, plain)  # one spell at random from her list: ours
         self.assertEqual((plain.name, plain.type, plain.owner_kind), ("Wizard", "Caster", GENERAL))
         oxyotl = BookLookups("Dramatis Persona").special({"name": "Scaly Skin", "description": "6+."}, "Oxyotl")
         rider = BookLookups("Dramatis Persona").special({"name": "Immune to Psychology", "description": "Whoa Boy!"}, "The Headless Horseman")  # fmt: skip
