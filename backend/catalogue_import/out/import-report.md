@@ -1678,7 +1678,6 @@ A hired sword's or dramatis persona's own rule is a row of his own (two owners s
 - Fly: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
 - Stealthy: Ninja Gnoblar; Sam Warble.
 - Hiring Fee: Bertha Bestraufrung, High Matriarch of the Sisterhood; Johann the Knife; Penthesilea, Mark of the Serpent.
-- Spells: Bertha Bestraufrung, High Matriarch of the Sisterhood; Nicodemus, the Cursed Pilgrim; The Crow Master.
 - Alignment: Dark Emissary; Truthsayer.
 
 Worded alike, each owner's own row under the name (the shared list could merge them):
@@ -3639,9 +3638,14 @@ A rule pointing to another fighter's entry takes that rule:
 
 - Orc Mob: Cave Squig: Not Orcs (Cave Squig), from the Goblin Warriors entry's Not Orcs.
 
-A rule that said he starts with a spell is the spell (William, 26 Nov 2026):
+A rule that said he starts with a spell, or knows a whole lore, is those spells (William, 26 and 27 Nov 2026):
 
 - Black Dwarfs: Sorcerer: Priest, starts with Sacrificial Ritual.
+- Bertha Bestraufrung, High Matriarch of the Sisterhood: Spells, starts with every Prayers of Sigmar spell.
+- Gaz Er Unga Og: Barbarian Shaman, starts with every Barbarian Shaman Magic spell.
+- Grey Seer Neekit: Magic of the Horned Rat, starts with every Magic of the Horned Rat spell.
+- Nicodemus, the Cursed Pilgrim: Spells, starts with every Lesser Magic spell.
+- The Crow Master: Spells, starts with every Necromancy spell.
 
 Left pointing (nothing to take the rule from):
 

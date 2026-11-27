@@ -21,7 +21,8 @@ A rule that says he starts with a spell of his lore is William's call too (`STAR
 the spell is in his `spells` (by lore and name, ours in apps/spells/data/spells.json), which every hire of his has as
 a real spell, a caster's first pick still to make beside it. One whose rule says he starts with several spells to
 choose or roll picks that many at hire (`SPELL_PICKS`, `PERSONAE_SPELL_PICKS`: his `spell_picks`; the hired swords'
-are in their own data); his rule keeps its text.
+are in their own data); his rule keeps its text. A dramatis persona whose rule says he knows a whole lore starts with
+every spell of its table, as the book prints it (`PERSONAE_KNOW_LORE`), so he has none to pick, and the rule goes.
 """
 
 import re
@@ -113,6 +114,18 @@ SPELL_PICKS: dict[str, dict[str, int]] = {"Altdorf Expeditionary Party": {"Arch-
 # The same for a dramatis persona: "knows four randomly determined spells of the Lore of Darkness", "three ... of the
 # Lore of Light". Khar-mel's D3 and the Grandmother's four, rolled again each battle, stay their rules.
 PERSONAE_SPELL_PICKS: dict[str, int] = {"Dark Emissary": 4, "Truthsayer": 3}
+# A dramatis persona whose rule says he knows a whole lore: name -> the rule -> the lore, whose table's spells (each roll's,
+# as the book prints it: a later book's additions to the lore aren't in "all six") he starts with, the rule going.
+# William, 27 Nov 2026, of Nicodemus, Gaz Er Unga Og, Bertha and the Crow Master ("knows all six"): "YES"; Neekit's
+# "knows every spell of the Magic of the Horned Rat as well as his own" is the same, his own staying his. The Crow
+# Master's "and also knows an additional spell, specific to him, Decay of Ages" is his Decay of Ages rule.
+PERSONAE_KNOW_LORE: dict[str, dict[str, str]] = {
+    "Nicodemus, the Cursed Pilgrim": {"Spells": "Lesser Magic"},
+    "Gaz Er Unga Og": {"Barbarian Shaman": "Barbarian Shaman Magic"},
+    "Bertha Bestraufrung, High Matriarch of the Sisterhood": {"Spells": "Prayers of Sigmar"},
+    "The Crow Master": {"Spells": "Necromancy"},
+    "Grey Seer Neekit": {"Magic of the Horned Rat": "Magic of the Horned Rat"},
+}
 # The same for a dramatis persona: name -> rule -> our skills, the rule keeping its text ("Note that Ippan Shu also
 # has the Dodge skill.", in his Parry Missiles)
 PERSONAE_ALSO_START_WITH: dict[str, dict[str, list[str]]] = {
@@ -247,7 +260,8 @@ def check_answers(templates: list[dict[str, Any]], personae: list[dict[str, Any]
     tables = (STARTS_WITH, ALSO_STARTS_WITH, STARTS_WITH_SPELLS, SPELL_PICKS)
     named = {(name, fighter) for table in tables for name in table for fighter in table[name]}
     missing = [f"{name}: {fighter}" for name, fighter in sorted(named - fighters)]
-    missing += sorted({*PERSONAE_ALSO_START_WITH, *PERSONAE_SPELL_PICKS} - {persona["name"] for persona in personae})
+    named_personae = {*PERSONAE_ALSO_START_WITH, *PERSONAE_SPELL_PICKS, *PERSONAE_KNOW_LORE}
+    missing += sorted(named_personae - {persona["name"] for persona in personae})
     if missing:
         raise ValueError(f"pointer_rules.py names fighters the build lacks: {'; '.join(missing)}")
 
@@ -258,7 +272,11 @@ def resolve_pointers(
     """Every template fighter's and dramatis persona's pointer rule given the skill or rule it points to, and the
     skills and spells William's answers give, in place."""
     skills = Skills(rows)
-    spells = {(row["type"], row["name"]) for row in load_json(BACKEND / "apps" / "spells" / "data" / "spells.json")}
+    ours = [row for row in load_json(BACKEND / "apps" / "spells" / "data" / "spells.json") if isinstance(row, dict)]
+    spells = {(row["type"], row["name"]) for row in ours}
+    tables: dict[str, list[str]] = {}  # a lore's table: its rolled spells in roll order
+    for row in sorted((row for row in ours if row.get("roll") is not None), key=lambda row: row["roll"]):
+        tables.setdefault(row["type"], []).append(row["name"])
     log = PointerLog()
     for template in templates:
         for fighter in template["fighters"]:
@@ -269,6 +287,7 @@ def resolve_pointers(
                 fighter["spell_picks"] = picks
     for persona in personae:
         _persona_rules(persona, skills, log)
+        _persona_lores(persona, tables, log)
         if picks := PERSONAE_SPELL_PICKS.get(persona["name"]):
             persona["spell_picks"] = picks
     return log
@@ -296,6 +315,19 @@ def _persona_rules(persona: dict[str, Any], skills: Skills, log: PointerLog) -> 
     persona["specials"] = rules
 
 
+def _persona_lores(persona: dict[str, Any], tables: dict[str, list[str]], log: PointerLog) -> None:
+    """The spells of each lore William's answer says he knows, in place of the rule that said so; a rule he hasn't,
+    or a lore we lack, stops the build."""
+    for rule, lore in PERSONAE_KNOW_LORE.get(persona["name"], {}).items():
+        rules = persona.get("specials") or []
+        kept = [special for special in rules if not isinstance(special, dict) or special.get("name") != rule]
+        if len(kept) == len(rules) or lore not in tables:
+            raise ValueError(f"pointer_rules.py: {persona['name']} has no rule {rule}, or we have no lore {lore}")
+        persona["specials"] = kept
+        persona["spells"] = [*persona.get("spells", []), *({"lore": lore, "name": name} for name in tables[lore])]
+        log.spells.append((persona["name"], rule, f"every {lore} spell"))
+
+
 def render_pointers(log: PointerLog) -> str:
     """The report's Pointer rules section: the skills each rule now starts him with, the rules taken from another
     entry, and those left pointing."""
@@ -313,7 +345,11 @@ def render_pointers(log: PointerLog) -> str:
     ] or ["- none"]
     lines += ["", "A rule pointing to another fighter's entry takes that rule:", ""]
     lines += [f"- {owner}: {rule}, from {source}." for owner, rule, source in log.entries] or ["- none"]
-    lines += ["", "A rule that said he starts with a spell is the spell (William, 26 Nov 2026):", ""]
+    lines += [
+        "",
+        "A rule that said he starts with a spell, or knows a whole lore, is those spells (William, 26 and 27 Nov 2026):",
+        "",
+    ]
     lines += [f"- {owner}: {rule}, starts with {spells}." for owner, rule, spells in log.spells] or ["- none"]
     lines += ["", "Left pointing (nothing to take the rule from):", ""]
     lines += [f'- {owner}: {rule}, "{text}"' for owner, rule, text in log.unresolved] or ["- none"]

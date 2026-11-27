@@ -150,8 +150,10 @@ class SeedAllTests(TestCase):
                 # shared special, and Mutiny in Marienburg's "Animal (Mutiny in Marienburg)" is its alias: 41 fewer
                 # a rule of a general or shared special's name that says more stays its owner's (William, 27 Nov
                 # 2026, of the Grandmother's Wizard): six hired swords' and three personae's Wizard, Oxyotl's Scaly
-                # Skin and the Headless Horseman's Immune to Psychology, 11 more
-                "Special": 2011,
+                # Skin and the Headless Horseman's Immune to Psychology, 11 more; five personae's rule that they know
+                # a whole lore is its spells (William, 27 Nov 2026: Nicodemus, Gaz Er Unga Og, Bertha, the Crow
+                # Master and Neekit), 5 fewer
+                "Special": 2006,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -771,6 +773,14 @@ class SeedAllTests(TestCase):
         self.assertEqual(owners, {f"Wizard ({name})": "hired_sword" for name in kept} | {f"Wizard ({name})": "dramatis_persona" for name in ("Dark Emissary", "Truthsayer", "The Grandmother")})  # fmt: skip
         # ours stays the caster's rule: the templates' Wizards link it, and a hire of a Wizard is given it
         self.assertIsNone(Special.objects.get(campaign__isnull=True, name="Wizard", type="Caster").archived_at)
+
+    def test_a_persona_who_knows_a_whole_lore_holds_the_books_spells_of_it(self):
+        # William, 27 Nov 2026, of Bertha's "knows all six Prayers of Sigmar" and the like: "YES", with no pick more
+        bertha = DramatisPersona.objects.get(name__startswith="Bertha")
+        prayers = list(bertha.spell_links.values_list("spell__type", "spell__campaign_id"))
+        self.assertEqual(prayers, [("Prayers of Sigmar", None)] * 6)
+        neekit = DramatisPersona.objects.get(name="Grey Seer Neekit")  # the Horned Rat's six and his own six
+        self.assertEqual(Counter(neekit.spell_links.values_list("spell__type", flat=True)), Counter({"Magic of the Horned Rat": 6, "Dramatis Persona - Grey Seer Neekit": 6}))  # fmt: skip
 
     def test_a_race_is_named_in_the_singular(self):
         # the review (5 Nov 2026: D10): "Skinks" and "Centigors" beside Human and Saurus; Other Beastmen stays (the plan)

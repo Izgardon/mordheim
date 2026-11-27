@@ -421,10 +421,6 @@
       {
         "name": "Sigmar’s Handmaiden",
         "description": "Bertha is favoured above all other Sisters in the eyes of Sigmar. She gains +2 to all her rolls to see whether her Prayers of Sigmar are granted."
-      },
-      {
-        "name": "Spells",
-        "description": "Bertha knows all six Prayers of Sigmar."
       }
     ],
     "skills": [
@@ -432,7 +428,32 @@
       "Unstoppable Charge",
       "Righteous Fury"
     ],
-    "spells": [],
+    "spells": [
+      {
+        "lore": "Prayers of Sigmar",
+        "name": "The Hammer of Sigmar"
+      },
+      {
+        "lore": "Prayers of Sigmar",
+        "name": "Hearts of Steel"
+      },
+      {
+        "lore": "Prayers of Sigmar",
+        "name": "Soulfire"
+      },
+      {
+        "lore": "Prayers of Sigmar",
+        "name": "Shield of Faith"
+      },
+      {
+        "lore": "Prayers of Sigmar",
+        "name": "Healing Hand"
+      },
+      {
+        "lore": "Prayers of Sigmar",
+        "name": "Armour of Righteousness"
+      }
+    ],
     "equipment": [
       {
         "item": "Sigmarite Warhammer",
@@ -1462,10 +1483,6 @@
         "description": "Gaz Er Unga Og fights with two small staffs and may parry once with them. She wears no armour to begin with, but may be given some."
       },
       {
-        "name": "Barbarian Shaman",
-        "description": "Gaz Er Unga Og knows all six spells of the Barbarian Shaman spell list."
-      },
-      {
         "name": "Magical Experimentalist",
         "description": "Every time a spell is used while she is around, the enemy's included, she may try to adapt it. Roll a D6: on a 6 she has an idea of how the spell works, and if she uses it as her next spell and manages its difficulty she has learnt it. Even after she leaves the warband that first engaged her, she keeps every spell she has learnt and any item she was given during the campaign, so a second employer gets more for his money than the first."
       },
@@ -1478,7 +1495,32 @@
       "Sorcery",
       "Warrior Wizard"
     ],
-    "spells": [],
+    "spells": [
+      {
+        "lore": "Barbarian Shaman Magic",
+        "name": "Winds of Judgement"
+      },
+      {
+        "lore": "Barbarian Shaman Magic",
+        "name": "Rage!"
+      },
+      {
+        "lore": "Barbarian Shaman Magic",
+        "name": "Warrior's Charge"
+      },
+      {
+        "lore": "Barbarian Shaman Magic",
+        "name": "Erga Unga's Toughness"
+      },
+      {
+        "lore": "Barbarian Shaman Magic",
+        "name": "Mead of Unga Cha Beecha"
+      },
+      {
+        "lore": "Barbarian Shaman Magic",
+        "name": "Arrows of Leggit Og"
+      }
+    ],
     "equipment": [],
     "dramatis_persona": {
       "hire_fee": {
@@ -1631,10 +1673,6 @@
         "description": "If Neekit wins two battles in succession he adds 1 to his Leadership, to a maximum of 10; if he loses two in succession he subtracts 1, to a minimum of 5."
       },
       {
-        "name": "Magic of the Horned Rat",
-        "description": "Neekit is a wizard and knows every spell of the Magic of the Horned Rat as well as his own."
-      },
-      {
         "name": "Grey Seer",
         "description": "Neekit is automatically the leader of any warband he joins."
       },
@@ -1692,6 +1730,30 @@
       {
         "name": "Wither",
         "description": "Difficulty 8. Neekit may give up all his normal attacks to make a single attack at twice his normal Strength. Roll to hit as normal. The victim may make no dodge, armour or ward save of any kind."
+      },
+      {
+        "lore": "Magic of the Horned Rat",
+        "name": "Warpfire"
+      },
+      {
+        "lore": "Magic of the Horned Rat",
+        "name": "Children of the Horned Rat"
+      },
+      {
+        "lore": "Magic of the Horned Rat",
+        "name": "Gnawdoom"
+      },
+      {
+        "lore": "Magic of the Horned Rat",
+        "name": "Black Fury"
+      },
+      {
+        "lore": "Magic of the Horned Rat",
+        "name": "Eye of the Warp"
+      },
+      {
+        "lore": "Magic of the Horned Rat",
+        "name": "Sorcerer's Curse"
       }
     ],
     "equipment": [
@@ -3576,17 +3638,38 @@
       {
         "name": "Wizard's Staff",
         "description": "Nicodemus can use his staff in close combat in two different ways: he can use the staff with both hands, in which case the staff counts as a Club, but also allows Nicodemus to parry spells) in his right hand.\n\nNote: the Sword of Rezhebel is a spell and not a normal sword, therefore it cannot be used to parry."
-      },
-      {
-        "name": "Spells",
-        "description": "Nicodemus knows all six Lesser Magic spells."
       }
     ],
     "skills": [
       "Sorcery",
       "Fearsome"
     ],
-    "spells": [],
+    "spells": [
+      {
+        "lore": "Lesser Magic",
+        "name": "Fires of U'Zhul"
+      },
+      {
+        "lore": "Lesser Magic",
+        "name": "Flight of Zimmeran"
+      },
+      {
+        "lore": "Lesser Magic",
+        "name": "Dread of Aramar"
+      },
+      {
+        "lore": "Lesser Magic",
+        "name": "Silver Arrows of Arha"
+      },
+      {
+        "lore": "Lesser Magic",
+        "name": "Luck of Shemtek"
+      },
+      {
+        "lore": "Lesser Magic",
+        "name": "Sword of Rezhebel"
+      }
+    ],
     "equipment": [],
     "dramatis_persona": {
       "hire_fee": {
@@ -4423,17 +4506,38 @@
       {
         "name": "Decay of Ages",
         "description": "Difficulty: 9\n\n*Gesturing to his hapless victim with a bony outstretched finger Simius invokes the Decay of ages. Skin withers and cracks, muscles atrophy, bones become brittle as the victim ages horrifically in seconds.*\n\nThis spell affects a single warrior within 6\" of Simius Gantt. The warrior must pass an immediate toughness test on a D6 or they will lose -1 from all of their characteristics with the exception of Attacks and Wounds. In each subsequent Recovery phase they must pass a Toughness test or will lose a further -1. As soon as they pass the test all characteristics are returned to normal. If any characteristic reaches O the model is taken out of action. Simius cannot cast this spell on more than one model at a time. If he decides to cast it again the effects on the previous victim are undone."
-      },
-      {
-        "name": "Spells",
-        "description": "Simius knows all of the Necromancy spells and also knows an additional spell, specific to him, Decay of Ages."
       }
     ],
     "skills": [
       "Sorcery",
       "Dodge"
     ],
-    "spells": [],
+    "spells": [
+      {
+        "lore": "Necromancy",
+        "name": "Lifestealer"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Re-Animation"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Death Vision"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Spell of Doom"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Call of Vanhel"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Spell of Awakening"
+      }
+    ],
     "equipment": [],
     "dramatis_persona": {
       "hire_fee": {

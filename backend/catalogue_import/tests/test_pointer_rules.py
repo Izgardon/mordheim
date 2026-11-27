@@ -155,6 +155,19 @@ class PointerTests(SimpleTestCase):
         self.assertEqual((mage["spell_picks"], "spell_picks" in altdorf["fighters"][1]), (2, False))
         self.assertEqual(emissary["spell_picks"], 4)
 
+    def test_a_persona_who_knows_a_whole_lore_starts_with_its_spells_and_the_rule_goes(self):
+        # William, 27 Nov 2026, of Nicodemus, Gaz Er Unga Og, Bertha and the Crow Master ("know all six"): "YES"
+        knows = {"name": "Spells", "description": "Bertha knows all six Prayers of Sigmar."}
+        bertha: dict[str, Any] = {"name": "Bertha Bestraufrung, High Matriarch of the Sisterhood", "specials": [knows]}
+        resolve_pointers([], [bertha], SKILLS)
+        self.assertEqual(bertha["specials"], [])
+        self.assertEqual([spell["lore"] for spell in bertha["spells"]], ["Prayers of Sigmar"] * 6)
+        self.assertEqual(bertha["spells"][0]["name"], "The Hammer of Sigmar")  # the book's table, in its order
+        self.assertNotIn("spell_picks", bertha)  # what he knows leaves nothing to pick
+        renamed: dict[str, Any] = {"name": "Grey Seer Neekit", "specials": [{**knows, "name": "Magic"}]}
+        with self.assertRaisesRegex(ValueError, "Grey Seer Neekit has no rule Magic of the Horned Rat"):
+            resolve_pointers([], [renamed], SKILLS)
+
 
 class CommittedPointerTests(SimpleTestCase):
     """The committed output (test_build checks it is up to date)."""
@@ -216,3 +229,19 @@ class CommittedPointerTests(SimpleTestCase):
         self.assertEqual(self.fighters[("Altdorf Expeditionary Party", "Arch-Mage")]["spell_picks"], 2)
         picks = {name: row.get("spell_picks") for name, row in self.personae.items() if row.get("spell_picks")}
         self.assertEqual(picks, {"Dark Emissary": 4, "Truthsayer": 3})
+
+    def test_the_personae_who_know_a_whole_lore_start_with_it(self):
+        lores = {
+            "Nicodemus, the Cursed Pilgrim": "Lesser Magic",
+            "Gaz Er Unga Og": "Barbarian Shaman Magic",
+            "Bertha Bestraufrung, High Matriarch of the Sisterhood": "Prayers of Sigmar",
+            "The Crow Master": "Necromancy",  # the book's six, as "all of the Necromancy spells" were then
+            "Grey Seer Neekit": "Magic of the Horned Rat",  # "as well as his own", which he keeps
+        }
+        known = {name: {spell["lore"] for spell in self.personae[name]["spells"] if "lore" in spell} for name in lores}
+        self.assertEqual(known, {name: {lore} for name, lore in lores.items()})
+        counts = {name: sum("lore" in spell for spell in self.personae[name]["spells"]) for name in lores}
+        self.assertEqual(set(counts.values()), {6})
+        self.assertEqual(len(self.personae["Grey Seer Neekit"]["spells"]), 12)
+        rules = {special["name"] for name in lores for special in self.personae[name]["specials"]}
+        self.assertFalse(rules & {"Spells", "Barbarian Shaman", "Magic of the Horned Rat"})
