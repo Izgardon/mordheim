@@ -1122,6 +1122,36 @@
     }
   },
   "item_row_notes": {
+    "Bagh Nakh": {
+      "note": "No price in the book: agree one.",
+      "cost_note": "",
+      "why": "William, 27 Nov 2026 (the items audit, question 7: B): its book prints no price, so the player agrees one"
+    },
+    "Bec de Corbin": {
+      "note": "No price in the book: agree one.",
+      "cost_note": "",
+      "why": "William, 27 Nov 2026 (the items audit, question 7: B): its book prints no price, so the player agrees one"
+    },
+    "Firepots Miragliano": {
+      "note": "No price in the book: agree one.",
+      "cost_note": "",
+      "why": "William, 27 Nov 2026 (the items audit, question 7: B): its book prints no price, so the player agrees one"
+    },
+    "Masterwork Heavy Armour": {
+      "note": "No price in the book: agree one.",
+      "cost_note": "",
+      "why": "William, 27 Nov 2026 (the items audit, question 7: B): its book prints no price, so the player agrees one"
+    },
+    "Warpstone Token": {
+      "note": "No price in the book: agree one.",
+      "cost_note": "",
+      "why": "William, 27 Nov 2026 (the items audit, question 7: B): its book prints no price, so the player agrees one"
+    },
+    "Krakensilver Weapon": {
+      "note": "",
+      "cost_note": "4 x Price",
+      "why": "the items audit, 27 Nov 2026: its rule prices it at four times the weapon of that kind, which its row now says as the gromril lines do"
+    },
     "Familiar": {
       "note": "Only spellcasters may search for one, and the gold is spent even if the rarity roll fails.",
       "cost_note": "",

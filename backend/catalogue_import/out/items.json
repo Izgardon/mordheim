@@ -2311,7 +2311,7 @@
             "excluded": false
           }
         ],
-        "note": ""
+        "note": "No price in the book: agree one."
       }
     ],
     "save_bonus": 3,
@@ -4547,7 +4547,7 @@
             "excluded": false
           }
         ],
-        "note": ""
+        "note": "No price in the book: agree one."
       }
     ]
   },
@@ -15156,7 +15156,7 @@
             "excluded": false
           }
         ],
-        "note": ""
+        "note": "No price in the book: agree one."
       }
     ]
   },
@@ -22371,7 +22371,7 @@
         "cost": null,
         "dice": null,
         "dice_multiplier": null,
-        "cost_note": "",
+        "cost_note": "4 x Price",
         "rarity": 9,
         "for_everyone": false,
         "warbands": [
@@ -26774,7 +26774,7 @@
             "excluded": false
           }
         ],
-        "note": ""
+        "note": "No price in the book: agree one."
       }
     ],
     "single_use": true
@@ -27913,7 +27913,7 @@
             "excluded": false
           }
         ],
-        "note": ""
+        "note": "No price in the book: agree one."
       }
     ]
   },

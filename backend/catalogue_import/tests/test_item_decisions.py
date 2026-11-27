@@ -147,3 +147,25 @@ class PerpetualTorchTests(ReviewCase):
         self.assertFalse(torch.get("single_use"))
         self.assertIn("never used up", torch["rules"][0]["text"])
         self.assertTrue(self.items["Torch"]["single_use"])
+
+
+class NoPriceTests(ReviewCase):
+    """Question 7 (B): a row whose book prints no price says so; the Krakensilver Weapon's says its multiple."""
+
+    def test_a_row_with_no_price_says_to_agree_one(self) -> None:
+        for name in ("Bagh Nakh", "Bec de Corbin", "Firepots Miragliano", "Masterwork Heavy Armour", "Warpstone Token"):
+            with self.subTest(item=name):
+                rows = self.items[name]["availabilities"]
+                self.assertEqual(
+                    {(row["cost"], row["note"]) for row in rows}, {(None, "No price in the book: agree one.")}
+                )
+
+    def test_every_row_without_a_cost_says_what_to_pay(self) -> None:
+        for item in self.items.values():
+            for row in item["availabilities"]:
+                if row["cost"] is None:
+                    with self.subTest(item=item["name"]):
+                        self.assertTrue(row["cost_note"] or row["note"].startswith("No price in the book"))
+
+    def test_misericordia_keeps_its_ten_gold_crowns(self) -> None:
+        self.assertEqual({row["cost"] for row in self.items["Misericordia"]["availabilities"]}, {10})
