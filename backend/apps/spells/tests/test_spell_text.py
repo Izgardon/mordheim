@@ -51,3 +51,11 @@ class SpellTextTests(SimpleTestCase):
         for words in ("Very handy", "described later", "The book's example", "(see Nurgle"):
             self.assertEqual([text[:40] for text in texts if words in text], [], words)
         self.assertTrue(self.text[("Snotling Waaagh! Magic", "Mork's Blessing")].startswith("The Shaman blesses"))
+
+    def test_the_onogal_rituals_name_the_caster_not_the_carnivals_master(self) -> None:
+        # the Marauders' Seer casts them too (William, 27 Nov 2026: "the caster")
+        onogal = {name: text for (lore, name), text in self.text.items() if lore == "Onogal Rituals"}
+        self.assertEqual([name for name, text in onogal.items() if "Master" in text], [])
+        self.assertIn('within 12" of the caster', onogal["Pestilence"])
+        self.assertTrue(onogal["Scabrous Hide"].startswith("The caster has an armour save of 2+"))
+        self.assertIn("in base contact with the caster", onogal["Nurgle's Rot"])
