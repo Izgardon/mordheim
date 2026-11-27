@@ -58,7 +58,7 @@ def unit_body(kind_key: str, fighter: TemplateFighter) -> dict[str, Any]:
         return {
             **body,
             **({"spell_ids": spells} if spells else {}),
-            **({"pending_spells": fighter.spell_picks} if fighter.spell_picks else {}),
+            **({"pending_spells": fighter.spell_picks} if fighter.spell_picks is not None else {}),
             "is_leader": fighter.is_leader,
             "caster": fighter.caster,
             "available_skills": list(fighter.skill_types or []),

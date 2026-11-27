@@ -144,6 +144,12 @@ class HiringFromTheTemplateTests(CatalogueTestCase):
         self.assertEqual(self.batch("heroes", {"create": [{"fighter_key": "captain", "name": "Ada"}]}).status_code, 200)
         self.assertEqual(Hero.objects.get(warband=self.warband, name="Ada").pending_spells, 2)
 
+    def test_a_hire_who_starts_with_no_spell_has_none_to_pick(self) -> None:
+        # the spells audit (27 Nov 2026, M3): the Skryre Warlock Apprentice "begins with no spells", though he has a lore
+        TemplateFighter.objects.filter(pk=self.made.captain.pk).update(spell_picks=0)
+        self.assertEqual(self.batch("heroes", {"create": [{"fighter_key": "captain", "name": "Ada"}]}).status_code, 200)
+        self.assertEqual(Hero.objects.get(warband=self.warband, name="Ada").pending_spells, 0)
+
     def test_a_group_buys_one_loadout_and_every_member_gets_the_dagger(self) -> None:
         create = {"fighter_key": "warriors", "name": "Lads", "henchmen": [{"name": "A"}, {"name": "B"}]}
         purchase = {"create_index": 0, "item_id": self.book_axe.id, "price": 5}

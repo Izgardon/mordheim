@@ -54,8 +54,10 @@ def first_spell_pick(kind: "UnitKindSpec", data: MutableMapping[str, Any]) -> No
     """A unit created with a spell lore has his first spell to pick (William, 20 Nov 2026: "for wizards and priests
     when created for the first time they should be prompted to learn a spell from their list"): his card shows the
     same prompt a Spell advance leaves and he picks through the unit's PATCH. Only at creation, only for a kind that
-    keeps picks (heroes, hired swords and dramatis personae), and never for one given no lore."""
-    if not kind.pick_advances or not data.get("available_spell_types"):
+    keeps picks (heroes, hired swords and dramatis personae), and never for one given no lore. A count sent is his,
+    none included (a template fighter's or a hire's: the Skryre Warlock Apprentice "begins with no spells", Bertha knows
+    hers)."""
+    if not kind.pick_advances or not data.get("available_spell_types") or "pending_spells" in data:
         return
     data["pending_spells"] = max(int(data.get("pending_spells") or 0), 1)
 

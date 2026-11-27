@@ -98828,7 +98828,8 @@
             "description": "Every spell a Warlock Apprentice casts counts as +1 difficulty."
           }
         ],
-        "skills": []
+        "skills": [],
+        "spell_picks": 0
       },
       {
         "key": "initiates",

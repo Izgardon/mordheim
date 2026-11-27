@@ -244,7 +244,7 @@ class CommittedPointerTests(SimpleTestCase):
         self.assertEqual([lore["name"] for lore in sorcerer["spell_types"]], ["Rituals of Hashut"])
 
     def test_the_arch_mage_and_the_personae_who_know_several_spells_pick_that_many(self):
-        picked = {key: one["spell_picks"] for key, one in self.fighters.items() if one.get("spell_picks")}
+        picked = {key: one["spell_picks"] for key, one in self.fighters.items() if one.get("spell_picks") is not None}
         two = [
             ("Adventurers", "Wizard"),
             ("Albion Barbarians", "Shaman"),
@@ -257,7 +257,8 @@ class CommittedPointerTests(SimpleTestCase):
             ("Sorcerous Society", "Magus"),
             ("The Restless Dead", "Liche"),
         ]  # their caster rules, theirs now, say they start with two spells (William, 27 Nov 2026)
-        self.assertEqual(picked, dict.fromkeys(two, 2))
+        none = ("Skaven of Clan Skryre (Athel Loren)", "Warlock Apprentice")  # "begins with no spells" (the audit's M3)
+        self.assertEqual(picked, {**dict.fromkeys(two, 2), none: 0})
         picks = {name: row.get("spell_picks") for name, row in self.personae.items() if row.get("spell_picks")}
         self.assertEqual(picks, {"Dark Emissary": 4, "Truthsayer": 3})
 

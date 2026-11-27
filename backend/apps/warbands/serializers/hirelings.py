@@ -178,7 +178,7 @@ class HirelingCreateSerializer(UnitCreateSerializer):
 
     class Meta:
         model = Hireling
-        fields = WRITE_FIELDS
+        fields = (*WRITE_FIELDS, "pending_spells")  # a hire's spells to pick (units/services/hire.py)
 
 
 class HirelingUpdateSerializer(UnitWriteSerializer):

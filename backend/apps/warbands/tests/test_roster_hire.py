@@ -84,6 +84,15 @@ class HireCopyTests(HireTestCase):
         body = self.hire().data
         self.assertEqual((body["available_spell_types"], body["pending_spells"]), (["Spells of Wrath"], 1))
 
+    def test_a_hire_who_knows_his_spells_has_none_to_pick_though_he_has_a_lore(self):
+        # Bertha knows all six Prayers of Sigmar: a lore of his gave every hire one pick more
+        HiredSword.objects.filter(id=self.ogre.id).update(caster="Priest", available_spell_types=["Prayers of Sigmar"])
+        self.ogre.spell_links.create(spell=self.spells[0])
+        self.assertEqual(self.hire().data["pending_spells"], 0)
+        HiredSword.objects.filter(id=self.ogre.id).update(spell_picks=0)  # and one whose rule gives none
+        self.ogre.spell_links.all().delete()
+        self.assertEqual(self.hire(name="Second").data["pending_spells"], 0)
+
     def test_one_who_starts_with_several_spells_has_that_many_to_pick(self):
         # William, 26 Nov 2026: "there are a few hired swords that start with multiple" (the Warlock's two random
         # spells): his `spell_picks`, whatever he casts as

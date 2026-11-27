@@ -125,6 +125,7 @@ SPELL_PICKS: dict[str, dict[str, int]] = {
     "Fen Guard": {"Branchwych": 2},
     "Lords of the Marsh": {"Draich": 2},
     "Mages": {"Arch Mage": 2, "Warlock": 2},
+    "Skaven of Clan Skryre (Athel Loren)": {"Warlock Apprentice": 0},  # "begins with no spells" (the audit's M3)
     "Sorcerous Society": {"Magus": 2},
     "The Restless Dead": {"Liche": 2},
 }
@@ -328,7 +329,7 @@ def resolve_pointers(
             fighter.setdefault("skills", [])
             _fighter_rules(template, fighter, skills, log)
             _fighter_spells(template, fighter, spells, log)
-            if picks := SPELL_PICKS.get(template["name"], {}).get(fighter["name"]):
+            if (picks := SPELL_PICKS.get(template["name"], {}).get(fighter["name"])) is not None:
                 fighter["spell_picks"] = picks
     for persona in personae:
         _persona_rules(persona, skills, log)

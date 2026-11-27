@@ -128,10 +128,21 @@ def hire_payload(source: str, entry: Any, name: str | None, gold: int) -> dict[s
         "skill_ids": [link.skill_id for link in entry.skill_links.all()],
         "special_ids": [link.special_id for link in entry.special_links.all()],
         "spell_ids": [link.spell_id for link in entry.spell_links.all()],
+        "pending_spells": spell_picks(entry),
     }
     if source == "dramatis_persona":
         payload.update(PERSONA, stays=entry.stays, payment_note=entry.payment_note)
     return payload
+
+
+def spell_picks(entry: Any) -> int:
+    """How many spells a hire of his picks, free (William, 22 Nov 2026: "when hired with a lore (wizard or priest) ...
+    they start with a free spell"): his `spell_picks`, whatever he casts as (William, 26 Nov 2026: "there are a few
+    hired swords that start with multiple"; none at all where that is 0), else one for a Wizard or Priest who knows
+    none of his spells, else none; his profile's spells, where it lists them, are the ones he knows."""
+    if entry.spell_picks is not None:
+        return int(entry.spell_picks)
+    return 1 if entry.caster in CASTERS and not entry.spell_links.all() else 0
 
 
 def custom_payload(body: Mapping[str, Any], terms: HireTerms) -> dict[str, Any]:
@@ -196,18 +207,6 @@ def _kit(unit: Hireling, entry: Any, campaign_id: int) -> bool:
     return mount is not None
 
 
-def _first_spell(unit: Hireling, entry: Any) -> None:
-    """A Wizard or Priest hired knowing no spell picks one from his card, free (William, 22 Nov 2026: "when hired
-    with a lore (wizard or priest) ... they start with a free spell"); his profile's spells, where it lists them, are
-    the ones he knows. One who starts with several picks as many as his `spell_picks` says, whatever he casts as
-    (William, 26 Nov 2026: "there are a few hired swords that start with multiple"). One query, only for such a
-    hire."""
-    usual = 1 if entry.caster in CASTERS and not entry.spell_links.all() else 0
-    picks = usual if entry.spell_picks is None else entry.spell_picks
-    if picks and not unit.pending_spells:
-        Hireling.objects.filter(pk=unit.pk).update(pending_spells=picks)
-
-
 def hire(warband: Warband, writer: Any, source: str, entry: Any, terms: HireTerms) -> Hired:
     """Recruit the validated hireling (`writer`, from `hire_payload` or `custom_payload`) with the entry's kit (none
     for a custom hire), paying `terms`, in one transaction."""
@@ -223,8 +222,6 @@ def hire(warband: Warband, writer: Any, source: str, entry: Any, terms: HireTerm
         settled = f"Paid: {terms.settled}" if terms.settled else ""
         sent = {**writer.initial_data, "paid": " ".join(part for part in (payment.note, settled) if part)}
         unit: Hireling = recruit(HIRELING, warband, writer, sent=sent, locked=True)  # type: ignore[assignment]
-        if entry is not None:
-            _first_spell(unit, entry)
         warnings += payment.warnings
         if entry is not None and _kit(unit, entry, warband.campaign_id):
             warnings += unit_warnings(HIRELING, warband, unit)
