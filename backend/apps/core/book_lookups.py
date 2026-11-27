@@ -35,7 +35,7 @@ SKILL_NAME_ALIASES = {  # the Ninja's and the Knight of the White Wolf's skills 
     "ride warhorse": "ride [animal]",
 }
 SPELL_PREFIX = re.compile(r"^(\d+)\s*-\s*")  # "1 - Banishment": the Dark Mage's D6 roll (BUG-54)
-SPELL_DIFFICULTY = re.compile(r"^Difficulty (\d+)")
+SPELL_DIFFICULTY = re.compile(r"^Difficulty:? (\d+)\.?\s*")  # "Difficulty 8. ...": its dc, said once
 
 EQUIPMENT_NAME_ALIASES = {
     "horse": "riding/draft horse",  # BUG-54
@@ -114,12 +114,13 @@ def name_and_description(item):
 
 
 def spell_fields(spell_item):
-    """A hired sword's own spell: its name without the "N - " roll prefix, and the fields a book spell has."""
+    """A hired sword's own spell: its name without the "N - " roll prefix, and the fields a book spell has, the
+    difficulty its text opens with as its dc and not its text (the spells audit, 27 Nov 2026: L2)."""
     name, description = name_and_description(spell_item)
     prefix = SPELL_PREFIX.match(name)
     difficulty = SPELL_DIFFICULTY.match(description)
     return SPELL_PREFIX.sub("", name), {
-        "description": description,
+        "description": SPELL_DIFFICULTY.sub("", description, count=1),
         "roll": int(prefix.group(1)) if prefix else None,
         "dc": difficulty.group(1) if difficulty else "",
     }

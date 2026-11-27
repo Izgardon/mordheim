@@ -7,6 +7,8 @@ from pathlib import Path
 
 from django.test import SimpleTestCase
 
+from apps.core.book_lookups import spell_fields
+
 SPELLS = Path(__file__).resolve().parent.parent / "data" / "spells.json"
 
 
@@ -27,3 +29,9 @@ class SpellTextTests(SimpleTestCase):
         horror = self.text[("Necromancy (Restless Dead)", "Living Horror")]
         for words in ("no armour saves allowed", "still has Wounds remaining", "immune to fear"):
             self.assertIn(words, horror)
+
+    def test_a_hirelings_spell_keeps_its_difficulty_once(self) -> None:
+        # the audit's L2: every spell the hireling seeders made read "Difficulty 8. ..." with its dc 8 as well
+        name, fields = spell_fields({"name": "1 - Banishment", "description": "Difficulty 8. Pulling the energies."})
+        self.assertEqual((name, fields["dc"], fields["roll"], fields["description"]), ("Banishment", "8", 1, "Pulling the energies."))  # fmt: skip
+        self.assertEqual(spell_fields({"name": "Rite", "description": "Difficulty: 7"})[1]["description"], "")
