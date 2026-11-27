@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { CATALOGUE_STALE_TIME_MS } from "@/lib/catalogue-queries";
 import { queryKeys } from "@/lib/query-keys";
+import { isWaitingForNetwork, NO_CONNECTION_LIST } from "@/lib/query-offline";
 
 import { getWarbandTemplate, listWarbandTemplates } from "./templates-api";
 import type { WarbandTemplateSummary } from "../types/template-types";
@@ -16,10 +17,15 @@ export function useWarbandTemplates(campaignId: number) {
     enabled: campaignId > 0,
     staleTime: CATALOGUE_STALE_TIME_MS,
   });
+  const waiting = isWaitingForNetwork(query);
   return {
     data: query.data ?? NONE,
-    isLoading: query.isLoading,
-    error: query.error && !query.data ? "Unable to load the warbands" : "",
+    isLoading: query.isLoading || waiting,
+    error: waiting
+      ? NO_CONNECTION_LIST
+      : query.error && !query.data
+        ? "Unable to load the warbands"
+        : "",
   };
 }
 
@@ -34,7 +40,7 @@ export function useWarbandTemplateContents(campaignId: number) {
     enabled: campaignId > 0,
     staleTime: CATALOGUE_STALE_TIME_MS,
   });
-  return { data: query.data ?? NONE, isLoading: query.isLoading };
+  return { data: query.data ?? NONE, isLoading: query.isLoading || isWaitingForNetwork(query) };
 }
 
 /** One whole template, read when its row opens (0: none yet, nothing read). */

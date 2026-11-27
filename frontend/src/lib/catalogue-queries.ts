@@ -13,6 +13,7 @@ import { listSpells } from "@/features/spells/api/spells-api";
 
 // other
 import { type CatalogueKind, queryKeys } from "./query-keys";
+import { isWaitingForNetwork, NO_CONNECTION_LIST } from "./query-offline";
 
 // types
 import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
@@ -127,15 +128,17 @@ export function useCatalogue<K extends CatalogueKind>(
   });
 
   // A failed background refetch (focus or reconnect while offline) keeps the cached list on
-  // screen; only a list that never loaded reports its error.
-  const error =
-    query.error && query.data === undefined
+  // screen; only a list that never loaded reports its error, or that it waits for a connection.
+  const waiting = isWaitingForNetwork(query);
+  const error = waiting
+    ? NO_CONNECTION_LIST
+    : query.error && query.data === undefined
       ? (query.error instanceof Error && query.error.message) || errorLabels[kind]
       : "";
 
   return {
     data: (query.data ?? NO_ENTRIES) as CatalogueEntry<K>[],
-    isLoading: query.isLoading,
+    isLoading: query.isLoading || waiting,
     error,
     /** Reads the list again, e.g. from a Retry beside its error. */
     refetch: query.refetch,

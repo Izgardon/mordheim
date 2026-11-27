@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { ApiError } from "@/lib/api-client";
 import { CATALOGUE_STALE_TIME_MS } from "@/lib/catalogue-queries";
+import { isWaitingForNetwork, NO_CONNECTION_LIST } from "@/lib/query-offline";
 import { queryKeys, type CatalogueKind } from "@/lib/query-keys";
 
 /**
@@ -21,13 +22,15 @@ export function useCatalogueEntryDetail<T>(
     enabled: entryId !== null && campaignId > 0,
     staleTime: CATALOGUE_STALE_TIME_MS,
   });
-  const error =
-    query.error && query.data === undefined
+  const waiting = isWaitingForNetwork(query);
+  const error = waiting
+    ? NO_CONNECTION_LIST
+    : query.error && query.data === undefined
       ? (query.error instanceof Error && query.error.message) || "Failed to load"
       : "";
   return {
     entry: query.data ?? null,
-    isLoading: query.isLoading,
+    isLoading: query.isLoading || waiting,
     error,
     /** The server answered 404: it has no such entry (a version reverted, an entry deleted). */
     gone: query.error instanceof ApiError && query.error.status === 404,

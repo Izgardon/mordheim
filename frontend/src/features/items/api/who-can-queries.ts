@@ -3,6 +3,7 @@ import { useQuery, type QueryClient } from "@tanstack/react-query";
 
 import { apiRequest } from "@/lib/api-client";
 import { queryKeys } from "@/lib/query-keys";
+import { isWaitingForNetwork } from "@/lib/query-offline";
 
 import type {
   HireAccess,
@@ -54,7 +55,9 @@ export function useWhoCan(campaignId: number, warbandId: number | null | undefin
     }),
     [data]
   );
-  return { ...maps, isLoading: query.isLoading && Boolean(warbandId) };
+  // paused offline with nothing read is still loading, not "nothing can be bought"
+  const loading = query.isLoading || isWaitingForNetwork(query);
+  return { ...maps, isLoading: loading && Boolean(warbandId) };
 }
 
 /** Every warband's who-can read in a campaign goes stale: the catalogue or the settings changed. */
