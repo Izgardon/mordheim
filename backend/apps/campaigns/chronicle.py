@@ -71,6 +71,13 @@ def _deaths(campaign_id: int) -> list[dict[str, Any]]:
     return rows
 
 
+def _gained(payload: dict[str, Any]) -> str:
+    """What an advance gave: the skill, spell or special picked with it ("Step Aside"), else its label ("Skill")."""
+    pick = payload.get("pick")
+    name = pick.get("name") if isinstance(pick, dict) else None
+    return str(name) if name else _label(payload.get("advance"))
+
+
 def _label(advance: Any) -> str:
     if isinstance(advance, dict):
         return str(advance.get("label") or advance.get("id") or "an advance")
@@ -96,7 +103,7 @@ def _log_text(log: WarbandLog) -> tuple[str, str] | None:
         name = payload.get("henchman_name") or "A henchman"
         return "level", f"{name} of {payload.get('group') or 'the henchmen'} has got talent and joins the heroes"
     if log.feature == "advance":
-        return "level", f"{payload.get('hero') or 'A hero'} gained {_label(payload.get('advance'))}"
+        return "level", f"{payload.get('hero') or 'A hero'} gained {_gained(payload)}"
     if log.feature == "loadout":
         quantity = f" ×{payload['quantity']}" if (payload.get("quantity") or 1) > 1 else ""
         target = f"for {payload['hero']}" if payload.get("hero") else "for the stash"

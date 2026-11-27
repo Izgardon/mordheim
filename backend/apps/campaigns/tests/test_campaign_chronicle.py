@@ -151,6 +151,18 @@ class ChronicleTests(ChronicleTestCase):
         self.assertEqual(self.get("chronicle/?kind=kill"), self.get("chronicle/"))  # kills stay off it (William)
         self.assertEqual([entry["kind"] for entry in self.get("chronicle/?kind=level")], ["level", "level"])
 
+    def test_a_skill_advance_names_the_skill_picked(self):
+        # the advance's label is only its kind ("Skill"); the pick made with it says what he gained
+        skill = {"id": "Skill", "label": "Skill"}
+        picked = {"hero": "Dieter", "advance": skill, "pick": {"list": "skills", "name": "Step Aside", "added": True}}
+        WarbandLog.objects.create(warband=self.warband, feature="advance", entry_type="hero", payload=picked)
+        later = {"hero": "Ott", "advance": skill}  # Choose later: nothing picked yet
+        WarbandLog.objects.create(warband=self.warband, feature="advance", entry_type="hero", payload=later)
+
+        texts = sorted(entry["text"] for entry in self.get("chronicle/?kind=level"))
+
+        self.assertEqual(texts, ["Dieter gained Step Aside", "Ott gained Skill"])
+
 
 class ReadinessTests(ChronicleTestCase):
     def test_a_busy_player_carries_his_own_status_in_the_battle(self):
