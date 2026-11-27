@@ -56,7 +56,7 @@ export default function JoinCampaignDialog({ onJoin, className }: JoinCampaignDi
         onOpenChange={handleOpenChange}
         kicker="Campaigns"
         title="Join a campaign"
-        description="Enter the six-character rally code a member of the campaign shared with you."
+        description="Enter the six-character join code a member of the campaign shared with you."
         className="max-w-[480px]"
         footer={
           <div className="grid w-full grid-cols-[1fr_2fr] gap-2">
@@ -79,7 +79,7 @@ export default function JoinCampaignDialog({ onJoin, className }: JoinCampaignDi
         }
       >
         <form className="flex flex-col gap-4" onSubmit={(event) => void submit(event)}>
-          <Field label="Rally code" htmlFor="join-code">
+          <Field label="Join code" htmlFor="join-code">
             <Input
               id="join-code"
               value={code}

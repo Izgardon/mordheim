@@ -125,7 +125,7 @@ describe("Campaigns list and the join code", () => {
 
     await user.click(screen.getByRole("button", { name: "Join a campaign" }));
     const dialog = screen.getByRole("dialog", { name: "Join a campaign" });
-    await user.type(within(dialog).getByLabelText("Rally code"), "pit777");
+    await user.type(within(dialog).getByLabelText("Join code"), "pit777");
     await user.click(within(dialog).getByRole("button", { name: "Join" }));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
@@ -148,7 +148,7 @@ describe("Campaigns list and the join code", () => {
 
     await user.click(screen.getByRole("button", { name: "Join a campaign" }));
     expect(screen.getByRole("dialog", { name: "Join a campaign" })).toHaveAccessibleDescription(
-      "Enter the six-character rally code a member of the campaign shared with you."
+      "Enter the six-character join code a member of the campaign shared with you."
     );
     await user.keyboard("{Escape}");
 
@@ -177,11 +177,11 @@ describe("Campaigns list and the join code", () => {
 
     await user.click(screen.getByRole("button", { name: "Join a campaign" }));
     const dialog = screen.getByRole("dialog", { name: "Join a campaign" });
-    await user.type(within(dialog).getByLabelText("Rally code"), "wyr123");
+    await user.type(within(dialog).getByLabelText("Join code"), "wyr123");
     await user.click(within(dialog).getByRole("button", { name: "Join" }));
 
     expect(await within(dialog).findByText("Already a member")).toBeInTheDocument();
-    expect(within(dialog).getByLabelText("Rally code")).toHaveValue("wyr123");
+    expect(within(dialog).getByLabelText("Join code")).toHaveValue("wyr123");
     expect(screen.getByText("2 campaigns")).toBeInTheDocument();
   });
 });
