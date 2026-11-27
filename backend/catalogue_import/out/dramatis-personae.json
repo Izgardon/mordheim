@@ -2467,7 +2467,7 @@
     "leadership": 8,
     "armour_save": null,
     "large": false,
-    "caster": "No",
+    "caster": "Wizard",
     "specials": [
       {
         "name": "Fear",

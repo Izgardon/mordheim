@@ -23,6 +23,7 @@ a real spell, a caster's first pick still to make beside it. One whose rule says
 choose or roll picks that many at hire (`SPELL_PICKS`, `PERSONAE_SPELL_PICKS`: his `spell_picks`; the hired swords'
 are in their own data); his rule keeps its text. A dramatis persona whose rule says he knows a whole lore starts with
 every spell of its table, as the book prints it (`PERSONAE_KNOW_LORE`), so he has none to pick, and the rule goes.
+One whose page lists no spells but whose rule says he knows some casts as William says (`PERSONAE_CASTERS`).
 """
 
 import re
@@ -126,6 +127,10 @@ PERSONAE_KNOW_LORE: dict[str, dict[str, str]] = {
     "The Crow Master": {"Spells": "Necromancy"},
     "Grey Seer Neekit": {"Magic of the Horned Rat": "Magic of the Horned Rat"},
 }
+# A dramatis persona whose page lists no spells, so the build typed him no caster, though his rule says he knows some:
+# what he casts as. William, 27 Nov 2026, of Khar-mel ("knows D3 spells chosen from the Elemental Magic list"): "They
+# are a caster", so a hire of hers picks the usual one, her rule keeping its D3.
+PERSONAE_CASTERS: dict[str, str] = {"Khar-mel the Djinn": "Wizard"}
 # The same for a dramatis persona: name -> rule -> our skills, the rule keeping its text ("Note that Ippan Shu also
 # has the Dodge skill.", in his Parry Missiles)
 PERSONAE_ALSO_START_WITH: dict[str, dict[str, list[str]]] = {
@@ -260,7 +265,7 @@ def check_answers(templates: list[dict[str, Any]], personae: list[dict[str, Any]
     tables = (STARTS_WITH, ALSO_STARTS_WITH, STARTS_WITH_SPELLS, SPELL_PICKS)
     named = {(name, fighter) for table in tables for name in table for fighter in table[name]}
     missing = [f"{name}: {fighter}" for name, fighter in sorted(named - fighters)]
-    named_personae = {*PERSONAE_ALSO_START_WITH, *PERSONAE_SPELL_PICKS, *PERSONAE_KNOW_LORE}
+    named_personae = {*PERSONAE_ALSO_START_WITH, *PERSONAE_SPELL_PICKS, *PERSONAE_KNOW_LORE, *PERSONAE_CASTERS}
     missing += sorted(named_personae - {persona["name"] for persona in personae})
     if missing:
         raise ValueError(f"pointer_rules.py names fighters the build lacks: {'; '.join(missing)}")
@@ -288,6 +293,7 @@ def resolve_pointers(
     for persona in personae:
         _persona_rules(persona, skills, log)
         _persona_lores(persona, tables, log)
+        persona["caster"] = PERSONAE_CASTERS.get(persona["name"], persona.get("caster", "No"))
         if picks := PERSONAE_SPELL_PICKS.get(persona["name"]):
             persona["spell_picks"] = picks
     return log

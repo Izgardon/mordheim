@@ -168,6 +168,14 @@ class PointerTests(SimpleTestCase):
         with self.assertRaisesRegex(ValueError, "Grey Seer Neekit has no rule Magic of the Horned Rat"):
             resolve_pointers([], [renamed], SKILLS)
 
+    def test_williams_answer_makes_a_persona_who_knows_spells_a_caster(self):
+        # William, 27 Nov 2026, of Khar-mel ("knows D3 spells chosen from the Elemental Magic list"): "They are a
+        # caster", so a hire of hers picks the usual one; her rule keeps its text
+        magic = {"name": "Elemental Magic", "description": "Khar-mel knows D3 spells."}
+        djinn: dict[str, Any] = {"name": "Khar-mel the Djinn", "caster": "No", "specials": [magic]}
+        resolve_pointers([], [djinn], SKILLS)
+        self.assertEqual((djinn["caster"], djinn["specials"], "spell_picks" in djinn), ("Wizard", [magic], False))
+
 
 class CommittedPointerTests(SimpleTestCase):
     """The committed output (test_build checks it is up to date)."""
@@ -245,3 +253,6 @@ class CommittedPointerTests(SimpleTestCase):
         self.assertEqual(len(self.personae["Grey Seer Neekit"]["spells"]), 12)
         rules = {special["name"] for name in lores for special in self.personae[name]["specials"]}
         self.assertFalse(rules & {"Spells", "Barbarian Shaman", "Magic of the Horned Rat"})
+
+    def test_khar_mel_is_a_wizard(self):
+        self.assertEqual(self.personae["Khar-mel the Djinn"]["caster"], "Wizard")
