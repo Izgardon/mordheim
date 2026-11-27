@@ -13,7 +13,7 @@ from catalogue_import.grading import build_settings, collect_evidence
 from catalogue_import.groups import build_groups
 from catalogue_import.hiring import HiringLog, build_who_can
 from catalogue_import.injuries import build_serious_injuries
-from catalogue_import.item_overrides import add_notes, set_own_rules, set_row_notes, set_row_prices
+from catalogue_import.item_overrides import add_notes, mark_unwritten, set_own_rules, set_row_notes, set_row_prices
 from catalogue_import.item_saves import set_saves
 from catalogue_import.item_splits import as_printed, choose_items, read_splits, render_splits, split_rows
 from catalogue_import.item_subtypes import merge_subtypes
@@ -266,6 +266,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     set_row_notes(everything, overrides.get("item_row_notes", {}))
     set_row_prices(everything, overrides.get("item_row_prices", {}))
     set_own_rules(everything, overrides.get("item_own_rules", {}))
+    mark_unwritten(everything, overrides.get("rules_unwritten", {}))  # a warning where no book prints them
     set_saves(everything, overrides.get("item_saves", {}))  # what equipping it does to the save (18 Nov 2026)
     set_single_use(everything, overrides.get("single_use_items", []))  # what a battle uses up (26 Nov 2026)
     merge_subtypes(everything, overrides.get("item_subtypes", {}))  # one subtype per kind (25 Nov 2026)

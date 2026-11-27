@@ -1,5 +1,7 @@
 """William's answers of 27 Nov 2026 to the items audit's decisions, as the committed `out/` holds them."""
 
+from typing import Any
+
 from catalogue_import.tests.review_support import ReviewCase
 
 
@@ -224,3 +226,49 @@ class NamedItemTests(ReviewCase):
         lists = ["corsair-equipment-list", "janissary-equipment-list", "slave-equipment-list"]
         self.assertEqual(self.sold("araby-smugglers", "Katar"), [(key, "", 5) for key in lists])
         self.assertEqual(self.sold("araby-smugglers", "Axe"), [])
+
+
+class ItemRulesTests(ReviewCase):
+    """Question 2 (D): an item whose book prints its rules has them; the rest warn on every price row."""
+
+    NONE_IN_THE_BOOK = ("Bow", "Long Bow", "Short Bow")  # the rulebook's bows have their profile and no rules
+    UNWRITTEN = "Rules not written yet: check the book."
+
+    @staticmethod
+    def has_rules(item: dict[str, Any]) -> bool:
+        return any(rule.get("rule") or rule.get("text") for rule in item["rules"])
+
+    def test_every_item_has_its_rules_or_says_they_are_not_written(self) -> None:
+        for item in self.items.values():
+            if item["type"] == "Animal" or item["name"] in self.NONE_IN_THE_BOOK or self.has_rules(item):
+                continue
+            with self.subTest(item=item["name"]):
+                self.assertTrue(item["availabilities"])
+                self.assertTrue(all(self.UNWRITTEN in row["note"] for row in item["availabilities"]))
+
+    def test_the_books_rules_are_in(self) -> None:
+        for name, words in (
+            ("Longsword", "+1 Attack and Strike First"),
+            ("Electric Trident", "stunned on an injury roll of 2-4"),
+            ("Beastwhip", "+1 to his roll for the Difficulty when he goads"),
+            ("Medicine Chest", "D6 doses of Healing Herbs"),
+            ("Skinkskin Boots", "Aquatic special rule"),
+            ("Throat Guard", "special 6+ save against every injury roll a vampire causes"),
+        ):
+            with self.subTest(item=name):
+                self.assertIn(words, " ".join(rule.get("text", "") for rule in self.items[name]["rules"]))
+
+    def test_the_two_shields_are_shields(self) -> None:
+        for name in ("Holy Shield", "Shield of Sigmar"):
+            with self.subTest(item=name):
+                self.assertEqual((self.items[name]["save_bonus"], self.items[name]["save_slot"]), (1, "shield"))
+
+    def test_a_scythe_and_a_familiar_of_another_effect_stay_apart(self) -> None:
+        # question 10: the Sylvania Scythe strikes at +1 Strength, the Khemri one with Cutting Edge; the Sorcerous
+        # Society's familiar is a pet, the Town Cryer's a re-roll
+        self.assertEqual(self.items["Scythe"]["strength"], "As user +1")
+        self.assertIn(
+            {"rule": "cutting-edge"}, [{"rule": rule.get("rule")} for rule in self.items["Scythe (Khemri)"]["rules"]]
+        )
+        self.assertIn("Familiar", self.items)
+        self.assertIn("Dog, Cat, Raven or Viper", self.items["Familiar (Sorcerous Society)"]["rules"][0]["text"])

@@ -839,6 +839,7 @@ class SeedAllTests(TestCase):
         knives |= {"Leather Whip"}  # the Goblin Raiders' whip gives the enemy +1 to his save, as a dagger does
         knives |= {"Double-Dirks"}  # the Hobgoblin Horde's pair of poisoned daggers
         knives |= {"Gaveleers"}  # the Sealed City's blunt clockwork ammunition gives the enemy +1 to his save
+        knives |= {"Pebble", "Sharp Stuff"}  # thrown as their books print them (the items audit, 27 Nov 2026)
         self.assertEqual(holders("+1 Enemy armour save"), knives)
         self.assertEqual(ItemRule.objects.filter(name__iregex=r"^two.handed$").count(), 1)
         self.assertLessEqual({"Boat Hook", "Brazier Iron", "Pike", "Flail", "Halberd"}, holders("Two-handed"))  # fmt: skip

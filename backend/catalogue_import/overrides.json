@@ -1,5 +1,5 @@
 {
-  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists (its setting and source, and its grade and Broheim PDF where it has them). drop_warband_types: a Broheim warband left out -> why (one William split into two, whose types are extra_warband_types entries); the seeder archives the type it drops. warband_type_names: a type's name as Broheim spells it -> as we show it (a typo or a capital \"Of\"; the slug stays the source's). persona_item_names: a name a dramatis persona's kit prints -> our item it means, for one that is ours under another word (Heinrich 'Altdorf' Schmidt's Whip is our Steel Whip; the Khemri equipment page prints no whip of its own, 11 Nov 2026). persona_names: a dramatis persona's name as mordheimer gives it -> ours (one casing: title case, small words lower case after the first; William, 5 Nov 2026). group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_names: a mordheimer item's name -> the name we show it under (name), the tags added with it (tags), the tags dropped (drop_tags), the kind and subtype it takes (type, subtype: the Magic Carpet is an Animal, a Mount, since the bestiary holds it), the range, strength or save it takes where mordheimer's is wrong (the Nehekharan Javelins' 8\", 12\" in their warband's own PDF) and why. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_own_rules: our item's name -> the rules William settles for it (rules: name, summary, text, or a shared rule's slug as rule), in place of its own. item_notes: item name -> a soft note added to each of its price rows. item_row_notes: item name -> the buying note and cost note on each of its price rows, in place of the source's. item_row_prices: item name -> the price rows William settles (cost, dice, dice_multiplier), each found by its label (none: \"\") and, where it names one, the warband type its lines name. item_rule_wordings: a shared item rule's slug -> the wording William settles for it (summary, text), the items whose own wording it now covers (covers: their own is dropped) and those that keep only what is theirs (items: name -> summary, text). whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note. hire_warbands_add: a hired sword's or dramatis persona's name -> type slugs added to its mordheimer hire list, and why (a list that then matches a group is stored as that group, so it follows the group). Skill groups (phase 1a): our skill rows merge by name into one skill each, linked into the group of every list that had it, and each list is a group; a list's skill_lists decision is its group's (who learns from it, large_only, note). skill_splits: a row (by label) whose rule differs stays its own skill under name, in its group alone, and why. skill_wordings: a merged skill's name -> the wording it takes (text, or the row label it is from) and why; any other merged skill keeps its longest. skill_group_learners: a group's name -> who learns from it (for_everyone, or warbands as {type} or {group} slugs), settling a group the report flags (its default is the warbands that may learn every skill in it). new_skill_groups: groups our lists lack -> the warband type that alone learns from it (type, or types), our skills it holds (skills) and new ones (new_skills; {name, rule} names one apart from the skill whose rules it takes) with rules from mordheimer, or from the source file in sources/ it names. seed_items_back: an item of our old seed (apps/items/data/standard-items.json) -> the setting and source it comes back with, and why: its price rows and properties as they were, single use kept. extra_items: items no source has: name, type, subtype, setting, source, link_url, flavour, cost (with dice and dice_multiplier for a dice price: 10+4D6 is cost 10, dice 4) and rarity, a statblock for an animal sold as an item, the warband types that buy it (none: everyone), the price row's note, its rules (a shared rule by slug, or its own) and why. warband_items: an item a warband's special equipment brings in (warband_items.py) -> the snapshot page (testwarbands-2026-10-31), the entry when it is named otherwise, the warband type that buys it, its type and subtype: one price row for that type at the book's price and rarity. mim_merges: a Mutiny in Marienburg stub that duplicates a complete item of ours -> the item it joins (item), the tags carried with it (tags) and why; the stub is left out and the book's price becomes a price row of that item labelled \"Mutiny in Marienburg\" in that setting, which counts only where Mutiny in Marienburg is in play (William, 15 and 27 Nov 2026), unless carry_price is false. single_use_items: the items a battle uses up (William, 26 Nov 2026; the last 17 added 27 Nov 2026, the items audit's question 4: A), each marked single_use on every variant; a name that is no item stops the build. item_splits: a book item split into items of its own (William, 26 Nov 2026: Club, Mace or Hammer) -> the new items with their tags (items: name -> tags; everything else is the original's), the one every warband list that sold it now sells (default) and the templates that sell another (templates: slug -> item and why); the original is dropped, so the seeder archives it, and its lines keep their price, who and limits (item_splits.py). An item, template or choice that matches nothing stops the build. item_saves: an item's name -> what equipping it does to the wearer's armour save (bonus: the steps it moves it, read from the save it prints with no save as 7+, so a 6+ item is 1 and a 4+ item 3; slot: body, shield, mount or extra, where only one body item counts at a time), and the subtype it shows under. William, 18 Nov 2026: \"Armour items should be viewed as +1 (light), +2 (heavy) etc but if a piece of armoud is equipped already then ignore subsequent. taking it away should just minus that value up to 6+. Helmets do nothing. Things like shields and mounting a mount when equipped should plus their value and take away when unequipped, no checks needed on these its up to user to be normal.\" A save a condition qualifies takes no bonus, with `why` instead: one number can't hold the condition, so the item's rules text does the work. A mount's bonus is its kind's, not data (apps/bestiary/animal_items.py). item_subtypes: a subtype one source spells its own way -> the subtype we show it under, so one kind sits under one subtype (William, 25 Nov 2026: Missile is Ranged, Drug/Poison is Poisons and Drugs, Vehicle/Watercraft is Vehicles).",
+  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists (its setting and source, and its grade and Broheim PDF where it has them). drop_warband_types: a Broheim warband left out -> why (one William split into two, whose types are extra_warband_types entries); the seeder archives the type it drops. warband_type_names: a type's name as Broheim spells it -> as we show it (a typo or a capital \"Of\"; the slug stays the source's). persona_item_names: a name a dramatis persona's kit prints -> our item it means, for one that is ours under another word (Heinrich 'Altdorf' Schmidt's Whip is our Steel Whip; the Khemri equipment page prints no whip of its own, 11 Nov 2026). persona_names: a dramatis persona's name as mordheimer gives it -> ours (one casing: title case, small words lower case after the first; William, 5 Nov 2026). group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_names: a mordheimer item's name -> the name we show it under (name), the tags added with it (tags), the tags dropped (drop_tags), the kind and subtype it takes (type, subtype: the Magic Carpet is an Animal, a Mount, since the bestiary holds it), the range, strength or save it takes where mordheimer's is wrong (the Nehekharan Javelins' 8\", 12\" in their warband's own PDF) and why. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_own_rules: our item's name -> the rules William settles for it (rules: name, summary, text, or a shared rule's slug as rule), in place of its own. rules_unwritten: an item whose rules no book of ours prints -> why; each of its price rows says \"Rules not written yet: check the book.\" (William, 27 Nov 2026). item_notes: item name -> a soft note added to each of its price rows. item_row_notes: item name -> the buying note and cost note on each of its price rows, in place of the source's. item_row_prices: item name -> the price rows William settles (cost, dice, dice_multiplier), each found by its label (none: \"\") and, where it names one, the warband type its lines name. item_rule_wordings: a shared item rule's slug -> the wording William settles for it (summary, text), the items whose own wording it now covers (covers: their own is dropped) and those that keep only what is theirs (items: name -> summary, text). whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note. hire_warbands_add: a hired sword's or dramatis persona's name -> type slugs added to its mordheimer hire list, and why (a list that then matches a group is stored as that group, so it follows the group). Skill groups (phase 1a): our skill rows merge by name into one skill each, linked into the group of every list that had it, and each list is a group; a list's skill_lists decision is its group's (who learns from it, large_only, note). skill_splits: a row (by label) whose rule differs stays its own skill under name, in its group alone, and why. skill_wordings: a merged skill's name -> the wording it takes (text, or the row label it is from) and why; any other merged skill keeps its longest. skill_group_learners: a group's name -> who learns from it (for_everyone, or warbands as {type} or {group} slugs), settling a group the report flags (its default is the warbands that may learn every skill in it). new_skill_groups: groups our lists lack -> the warband type that alone learns from it (type, or types), our skills it holds (skills) and new ones (new_skills; {name, rule} names one apart from the skill whose rules it takes) with rules from mordheimer, or from the source file in sources/ it names. seed_items_back: an item of our old seed (apps/items/data/standard-items.json) -> the setting and source it comes back with, and why: its price rows and properties as they were, single use kept. extra_items: items no source has: name, type, subtype, setting, source, link_url, flavour, cost (with dice and dice_multiplier for a dice price: 10+4D6 is cost 10, dice 4) and rarity, a statblock for an animal sold as an item, the warband types that buy it (none: everyone), the price row's note, its rules (a shared rule by slug, or its own) and why. warband_items: an item a warband's special equipment brings in (warband_items.py) -> the snapshot page (testwarbands-2026-10-31), the entry when it is named otherwise, the warband type that buys it, its type and subtype: one price row for that type at the book's price and rarity. mim_merges: a Mutiny in Marienburg stub that duplicates a complete item of ours -> the item it joins (item), the tags carried with it (tags) and why; the stub is left out and the book's price becomes a price row of that item labelled \"Mutiny in Marienburg\" in that setting, which counts only where Mutiny in Marienburg is in play (William, 15 and 27 Nov 2026), unless carry_price is false. single_use_items: the items a battle uses up (William, 26 Nov 2026; the last 17 added 27 Nov 2026, the items audit's question 4: A), each marked single_use on every variant; a name that is no item stops the build. item_splits: a book item split into items of its own (William, 26 Nov 2026: Club, Mace or Hammer) -> the new items with their tags (items: name -> tags; everything else is the original's), the one every warband list that sold it now sells (default) and the templates that sell another (templates: slug -> item and why); the original is dropped, so the seeder archives it, and its lines keep their price, who and limits (item_splits.py). An item, template or choice that matches nothing stops the build. item_saves: an item's name -> what equipping it does to the wearer's armour save (bonus: the steps it moves it, read from the save it prints with no save as 7+, so a 6+ item is 1 and a 4+ item 3; slot: body, shield, mount or extra, where only one body item counts at a time), and the subtype it shows under. William, 18 Nov 2026: \"Armour items should be viewed as +1 (light), +2 (heavy) etc but if a piece of armoud is equipped already then ignore subsequent. taking it away should just minus that value up to 6+. Helmets do nothing. Things like shields and mounting a mount when equipped should plus their value and take away when unequipped, no checks needed on these its up to user to be normal.\" A save a condition qualifies takes no bonus, with `why` instead: one number can't hold the condition, so the item's rules text does the work. A mount's bonus is its kind's, not data (apps/bestiary/animal_items.py). item_subtypes: a subtype one source spells its own way -> the subtype we show it under, so one kind sits under one subtype (William, 25 Nov 2026: Missile is Ranged, Drug/Poison is Poisons and Drugs, Vehicle/Watercraft is Vehicles).",
   "warband_aliases": {
     "Stromfels Reavers": [
       "shallows-beasts"
@@ -479,6 +479,521 @@
     "Venom Ring": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026"
   },
   "item_own_rules": {
+    "Longsword": {
+      "rules": [
+        {
+          "rule": "parry",
+          "text": "A model armed with a longsword may parry: when an opponent rolls to hit, roll a D6, and if it beats his highest to-hit score that attack is discarded. He may not parry an attack made with double or more his own Strength."
+        },
+        {
+          "name": "Versatile",
+          "summary": "Alone, two-handed: +1 Attack and Strike First",
+          "text": "Used with a shield or a weapon in the other hand, a longsword is a normal one-handed sword. Used alone it is wielded two-handed, and gives the knight +1 Attack and Strike First."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Bretonnian Grail Companions p3: Parry and Versatile"
+    },
+    "Holy Shield": {
+      "rules": [
+        {
+          "name": "Magic Resistance",
+          "summary": "A shield, and +1 to saves against magic",
+          "text": "A Holy Shield is a shield in every way, and its bearer also gets +1 to his saves against all magic."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Bretonnian Grail Companions p3: Magic Resistance, and the same rules as a standard shield"
+    },
+    "Draich": {
+      "rules": [
+        {
+          "rule": "two-handed"
+        },
+        {
+          "name": "Swift",
+          "summary": "Does not strike last",
+          "text": "Unlike other double-handed weapons, a Draich does not strike last."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Druchii p7: Two handed and Swift"
+    },
+    "Whirling Blades": {
+      "rules": [
+        {
+          "rule": "cannot-be-parried",
+          "text": "A model attacked with Whirling Blades may not parry with a sword or buckler."
+        },
+        {
+          "rule": "cutting-edge",
+          "text": "Whirling Blades have an extra save modifier of -1, so a Strength 4 wielder hits at -2 to the armour save in close combat."
+        },
+        {
+          "name": "Pair",
+          "summary": "Used as a pair, +1 Attack",
+          "text": "Bought and used as a pair, one in each hand: the off-hand blade gives an extra attack as normal. Their wielder may use no other off-hand weapon and never splits the pair unless he loses a hand."
+        },
+        {
+          "name": "Dance of Doom",
+          "summary": "+1 Attack when charging or charged",
+          "text": "When the Doomseeker charges, his main-hand blade gives +1 Attack in the first round of combat. When he is charged it gives him one extra attack that turn, against one of the chargers; charged by several at once, he still gains only +1 Attack."
+        },
+        {
+          "name": "Whirlwind of Death",
+          "summary": "Charged: two of his attacks strike first",
+          "text": "When the Doomseeker is charged, the extra attack from Dance of Doom and the off-hand blade's attack both strike first that turn, like a Steel Whip's; his other attacks strike as normal."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Dwarf Slayer Cult: Cannot be parried, Cutting Edge, Pair, Dance of Doom and Whirlwind of Death, 30 gc a pair"
+    },
+    "Pry Bar": {
+      "rules": [
+        {
+          "rule": "concussion",
+          "text": "A pry bar is a club in every way: a roll of 2-4 on the injury table is treated as stunned."
+        },
+        {
+          "rule": "parry",
+          "text": "A Graver armed with a pry bar may parry blows."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Grave Robbers p2: it acts as a club in every sense and parries"
+    },
+    "Hooded Lantern & Rig": {
+      "rules": [
+        {
+          "name": "Concealed Light",
+          "summary": "A lantern that doesn't give its bearer away",
+          "text": "It gives light as a lantern does, but enemy models cannot see the bearer by it."
+        },
+        {
+          "name": "Free-Hand",
+          "summary": "Leaves both hands free",
+          "text": "The rig holds the lantern, leaving the Graver's hands free."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Grave Robbers p2: Concealed Light and Free-hand"
+    },
+    "Surgeons Journal": {
+      "rules": [
+        {
+          "name": "Skilled Hand",
+          "summary": "One Serious Injury dice +/-1",
+          "text": "A Medic with the journal may modify one dice rolled for a friendly model's Serious Injury by +1 or -1, instead of using his Sawbones skill."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Grave Robbers p2: Skilled Hand"
+    },
+    "Finger Pendant": {
+      "rules": [
+        {
+          "name": "Death-Ward",
+          "summary": "One 5+ save against necromantic or dark magic",
+          "text": "Its wearer has one 5+ save against Necromantic or Dark Arts magic; once used, it is gone."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Grave Robbers p2: Death-Ward"
+    },
+    "Chainsaw Sword": {
+      "rules": [
+        {
+          "rule": "fear",
+          "text": "A model armed with a Chainsaw Sword causes fear."
+        },
+        {
+          "name": "Shredder",
+          "summary": "-2 to the armour save",
+          "text": "Every blow from a Chainsaw Sword is at -2 to the armour save."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Masters of Horror p2: Fear and Shredder"
+    },
+    "Electric Trident": {
+      "rules": [
+        {
+          "name": "Zzap!",
+          "summary": "Stunned on 2-4",
+          "text": "A model wounded by the Electric Trident is stunned on an injury roll of 2-4."
+        },
+        {
+          "name": "Shocking",
+          "summary": "A 6 to hit and a 6 to wound: S3 hits within 2\"",
+          "text": "On a natural 6 to hit followed by a natural 6 to wound, the trident discharges: every model within 2\" of the target, but not its bearer, takes a Strength 3 hit."
+        },
+        {
+          "name": "Nail in Boot",
+          "summary": "A 1 to hit: the bearer takes a S3 hit",
+          "text": "On a to-hit roll of 1 the bearer takes a Strength 3 hit."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Masters of Horror p2: Zzap!, Shocking and Nail in Boot"
+    },
+    "Staff of Damnation": {
+      "rules": [
+        {
+          "rule": "two-handed"
+        },
+        {
+          "name": "Magic-well",
+          "summary": "Stores one spell to release later",
+          "text": "A Necrarch Vampire may cast a spell into the staff in his magic phase instead of casting it as normal. If the casting succeeds the spell is stored, and he may release it in a later shooting phase instead of casting another spell."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): LOD1 p5: Two-Handed and Magic-well"
+    },
+    "Damned Book": {
+      "rules": [
+        {
+          "name": "Cursed Aura",
+          "summary": "Enemies within 2\" at -1 to hit in close combat",
+          "text": "Enemy models within 2\" of the bearer are at -1 to hit in close combat."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): LOD1 p5: Cursed Aura"
+    },
+    "Sashimono": {
+      "rules": [
+        {
+          "name": "Sashimono",
+          "summary": "Re-roll a non-rout Leadership test",
+          "text": "Its wearer may re-roll any Leadership test except a rout test, but must keep the second roll."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Nipponese Expedition p2"
+    },
+    "Horo": {
+      "rules": [
+        {
+          "name": "Horo",
+          "summary": "Mounted: +1 save against shooting (6+ with none)",
+          "text": "While its wearer rides a horse or warhorse he gets +1 to his armour saves against ranged weapons, or a 6+ save if he wears no armour."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Nipponese Expedition p2"
+    },
+    "Kusarigama": {
+      "rules": [
+        {
+          "rule": "two-handed"
+        },
+        {
+          "rule": "cannot-be-parried",
+          "text": "A model attacked with a Kusarigama may not parry with a sword or buckler."
+        },
+        {
+          "name": "Chain Strike",
+          "summary": "A failed charge on him or a friend within 3\" is knocked down",
+          "text": "A model with a Kusarigama who is not in combat knocks down an enemy who fails a charge against him or against a friend within 3\" of him."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Nipponese Expedition p2: Two-Handed, Cannot be parried and Chain Strike"
+    },
+    "Sharp Stuff": {
+      "rules": [
+        {
+          "name": "No Limit",
+          "summary": "Not counted as a missile weapon carried",
+          "text": "Sharp Stuff does not count towards the most missile weapons a Gnoblar may carry."
+        },
+        {
+          "rule": "thrown-weapon",
+          "text": "A Gnoblar throwing Sharp Stuff suffers no penalty for moving and shooting, nor for long range."
+        },
+        {
+          "rule": "1-enemy-armour-save",
+          "text": "A model hit by Sharp Stuff gets +1 to its armour save."
+        },
+        {
+          "name": "Stuff Thrower",
+          "summary": "Knife Thrower: three throws",
+          "text": "With the Knife Thrower skill a Gnoblar throws three pieces of scrap instead of one, but never three pieces and three knives in the same turn."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Ogre Hunting Party p8: No Limit, Thrown Weapon, +1 Armour Save and Stuff Thrower; the first is free"
+    },
+    "Blessed Bolts": {
+      "rules": [
+        {
+          "name": "Holy",
+          "summary": "+1 Strength against Undead, Possessed and mutants",
+          "text": "Fired against Undead, a Possessed or mutated model, or a twister of magic, a Blessed Bolt hits at +1 Strength."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): LOD3: Holy"
+    },
+    "Shield of Sigmar": {
+      "rules": [
+        {
+          "name": "Shield of Faith",
+          "summary": "A shield; a special 6+ save against shooting",
+          "text": "A Shield of Sigmar is a shield, and its bearer has a special 6+ save against all ranged attacks. It is light enough that the -1 penalty for carrying a shield with heavy armour doesn't apply."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): LOD3: Shield of Faith"
+    },
+    "Beastwhip": {
+      "rules": [
+        {
+          "rule": "cannot-be-parried",
+          "text": "A model attacked with a Beastwhip may not parry with a weapon or buckler."
+        },
+        {
+          "rule": "whipcrack",
+          "text": "When the wielder charges he gains +1 Attack that turn, added after every other modifier. When he is charged he gains +1 Attack against the charger only, striking first; charged by two or more at once, he still gains only +1 Attack. A model with two whips gains the bonus from one."
+        },
+        {
+          "name": "Cruel Barbs",
+          "summary": "+1 to goading rolls",
+          "text": "Its wielder adds +1 to his roll for the Difficulty when he goads, once per goad however many Beastwhips he carries."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Clan Moulder p3 (the page read as an image): Cannot be parried, Whipcrack and Cruel Barbs"
+    },
+    "Pebble": {
+      "rules": [
+        {
+          "rule": "thrown-weapon",
+          "text": "A model throwing a pebble suffers no penalty for range or moving; pebbles can't be used in close combat."
+        },
+        {
+          "rule": "1-enemy-armour-save",
+          "text": "A model wounded by a pebble gets +1 to its armour save."
+        },
+        {
+          "name": "Easy to Find",
+          "summary": "Free, and not counted as a missile weapon carried",
+          "text": "Pebbles are free for a Snotling warband's members, and a lost one is found again for nothing. They do not count towards the most missile weapons a warrior may carry."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Snotlings: Thrown weapon, +1 Enemy Armor Piercing and Easy to Find"
+    },
+    "Wizard's Staff": {
+      "rules": [
+        {
+          "rule": "parry",
+          "text": "A warrior armed with a Wizard's Staff may parry a blow, as with a sword."
+        },
+        {
+          "rule": "two-handed"
+        },
+        {
+          "rule": "concussion",
+          "text": "A roll of 2-4 on the injury table for a model hit with a Wizard's Staff is treated as stunned."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): LOD4 p7: Parry, 2 Handed and Concussion"
+    },
+    "Familiar (Sorcerous Society)": {
+      "rules": [
+        {
+          "name": "Familiar",
+          "summary": "One per Wizard; a Dog, Cat, Raven or Viper",
+          "text": "A familiar is one of the four familiar pets, a Dog, Cat, Raven or Viper. Each Wizard may have one. It is a living creature: taken out of action, it rolls for injury as a Henchman, and it counts towards neither the warband's most warriors nor its rout tests. If it dies or leaves, the Wizard may search for another as a rare item. Models shooting at a familiar are at -1 to hit."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): LOD4 p7: what a familiar is (each pet's own rules are its beast's); a different item from the Town Cryer Familiar, whose re-roll this one does not give, so the two stay apart"
+    },
+    "Chest Talon": {
+      "rules": [
+        {
+          "rule": "two-handed"
+        },
+        {
+          "name": "Heart-Pierce",
+          "summary": "+1 to wound vampires",
+          "text": "It adds +1 to wound against a vampire."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Survivors of Strigos p2: Two Handed and Heart-Pierce"
+    },
+    "Ring of Strigos": {
+      "rules": [
+        {
+          "name": "Arcane Barrier",
+          "summary": "A 6+ save against spells",
+          "text": "Its wearer has a 6+ save against every spell that targets or affects him."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Survivors of Strigos p2"
+    },
+    "Black Gold Wristbands": {
+      "rules": [
+        {
+          "name": "Quickened",
+          "summary": "A 6+ save against missiles",
+          "text": "Their wearer has a 6+ save against all missile fire, magical too, which stacks with the Dodge skill."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Survivors of Strigos p2"
+    },
+    "Cursed Book": {
+      "rules": [
+        {
+          "name": "Cursed Aura",
+          "summary": "Enemies within 2\" at -1 to hit in close combat",
+          "text": "Enemy models within 2\" of the bearer are at -1 to hit in close combat."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Survivors of Strigos p2"
+    },
+    "Scythe": {
+      "rules": [
+        {
+          "rule": "two-handed"
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): LOD5 p10: Two Handed, at Strength as user +1; a different weapon from the Scythe (Khemri), which strikes at the user's Strength with Cutting Edge, so the two stay apart"
+    },
+    "Silver-tip Stake": {
+      "rules": [
+        {
+          "name": "Heart-seeker",
+          "summary": "+1 to injury rolls against vampires",
+          "text": "When it wounds a vampire, it adds +1 to the injury roll."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): LOD5 p10"
+    },
+    "Throat Guard": {
+      "rules": [
+        {
+          "name": "Life Saver",
+          "summary": "A 6+ save against a vampire's injuries",
+          "text": "Its wearer has a special 6+ save against every injury roll a vampire causes. Strength doesn't modify it, though a critical that ignores armour does bypass it. It adds nothing to the armour save, and is worn alone or with light or heavy armour."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): LOD5 p10"
+    },
+    "Orichalcum token": {
+      "rules": [
+        {
+          "name": "Orichalcum",
+          "summary": "Spent on infusions and prostheses",
+          "text": "A Clockworker spends orichalcum tokens with the Moonstone infusion skill, and a model with a clockwork prosthesis spends one each game to ignore the injury it replaces. The Metallurgist's Moonstone refinery splits a moonstone into D6 tokens."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): the Clockworkers' page and the Sealed City's Lost and Found (the clockwork prosthesis)"
+    },
+    "Knuckledusters": {
+      "rules": [
+        {
+          "name": "Pair",
+          "summary": "+1 Attack",
+          "text": "Knuckledusters are used in pairs, one in each hand, and give their wearer an extra attack."
+        },
+        {
+          "name": "Concealable",
+          "summary": "Not counted as a weapon carried",
+          "text": "They fit in any pocket, so they don't count towards the two close combat weapons a model may carry, and may be used in a scenario that forbids weapons, such as Last Orders! or Pit of Blood."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Mutiny in Marienburg: Pair and Concealable"
+    },
+    "Spike-jawed Snatcher": {
+      "rules": [
+        {
+          "rule": "two-handed"
+        },
+        {
+          "name": "Capture",
+          "summary": "Takes captives",
+          "text": "A model it takes out of action is captured unless his warband routs, and rolls for no serious injuries. Large models, such as Ogres or Trolls, and animals can't be captured this way and roll for serious injuries as normal."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Mutiny in Marienburg: Capture and Two-handed"
+    },
+    "Scourge": {
+      "rules": [
+        {
+          "rule": "cannot-be-parried",
+          "text": "A scourge is a blunt close combat weapon that cannot be parried."
+        },
+        {
+          "name": "Biting Teeth",
+          "summary": "+1 S without armour, -1 S against it",
+          "text": "Against a target wearing no armour it hits at +1 Strength, but against one wearing any armour other than a shield or helmet at -1 Strength."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Relics of the Crusades Pt1"
+    },
+    "Slave": {
+      "rules": [
+        {
+          "name": "Slaves",
+          "summary": "A henchmen group; stupidity",
+          "text": "Slaves bought together are a henchmen group that gains experience, with the profile M4 WS2 BS2 S3 T3 W1 I2 A1 Ld4. They may take any weapons and armour from the warband's basic equipment list costing 5 gc or less each. One may become a hero only in a human warband, never its leader, and is no longer a slave once he does; a non-human warband re-rolls a Lad's Got Talent. A seriously injured slave escapes, removed for good on a D6 of 1-3 instead of 1-2, and slaves are subject to stupidity."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Relics of the Crusades Pt1"
+    },
+    "Medicine Chest": {
+      "rules": [
+        {
+          "name": "Medicine Chest",
+          "summary": "D6 Healing Herbs, or one Serious Injury re-roll",
+          "text": "It serves as D6 doses of Healing Herbs, or once to let a Hero re-roll on the Serious Injury chart unless the result was Captured or Sold to the Pits."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Mutiny in Marienburg p61"
+    },
+    "Ship-of-the-Line": {
+      "rules": [
+        {
+          "name": "Ship-of-the-Line",
+          "summary": "A ship every model of the warband can crew",
+          "text": "A small ship used in battles, which every model of the warband can crew, with any cargo and objective markers."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Mutiny in Marienburg's encampment of that name"
+    },
+    "Treasure Cart": {
+      "rules": [
+        {
+          "name": "Treasure Cart",
+          "summary": "Carries three warriors; holds five rare items",
+          "text": "A cart used at markets or in mines, smaller than a wagon. It carries up to three human-sized warriors or the same in cargo, and holds at most five rare items."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Mutiny in Marienburg's Treasure Carts"
+    },
+    "Skinkskin Boots": {
+      "rules": [
+        {
+          "name": "Skinkskin Boots",
+          "summary": "Aquatic, and no slipping on mud",
+          "text": "Their wearer has the Aquatic special rule and never slips on Muddy Soil."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Border Town Burning's Lesser Artefact table, 7"
+    },
+    "Fortune Ring": {
+      "rules": [
+        {
+          "name": "Fortune Ring",
+          "summary": "One die +/-1 a battle",
+          "text": "Its wearer may alter one die roll by +1 or -1 each battle."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Border Town Burning's Lesser Artefact table, 8"
+    },
+    "Firefly Scarab": {
+      "rules": [
+        {
+          "name": "Firefly",
+          "summary": "A lantern, and a S4 fire bolt once a battle",
+          "text": "Its wearer always counts as carrying a lantern, and once each battle it sends a searing bolt at an enemy model within 12\", a single Strength 4 fire hit."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): Border Town Burning's Lesser Artefact table, 11 (the Firefly, a jewelled brooch)"
+    },
+    "Staff of Light": {
+      "rules": [
+        {
+          "name": "Staff of Light",
+          "summary": "A halberd that dispels a spell on 4+",
+          "text": "It counts as a halberd, and dispels one enemy spell each turn on a 4+."
+        }
+      ],
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): the Truthsayer's page (an Albion Truthsayer's staff)"
+    },
     "Gas Mask": {
       "rules": [
         {
@@ -605,11 +1120,33 @@
       "why": "William, 25 Nov 2026: a wardog bought is recruited from the stash as a creature group, so the rule that it is part of the equipment of the Hero who bought it, and needs a model of its own, goes; the other two stay"
     }
   },
+  "rules_unwritten": {
+    "War Chain": "William, 27 Nov 2026 (the items audit, question 2: D): Town Cryer #14, which we don't hold",
+    "Magic War Paint": "William, 27 Nov 2026 (the items audit, question 2: D): Athel Loren lists its price only",
+    "Stiletto Blade": "William, 27 Nov 2026 (the items audit, question 2: D): Mutiny in Marienburg lists its price only",
+    "Cathayan Firesticks/Firepots": "William, 27 Nov 2026 (the items audit, question 2: D): Mutiny in Marienburg lists its price only",
+    "Nipponese Skyrocket": "William, 27 Nov 2026 (the items audit, question 2: D): Mutiny in Marienburg lists its price only",
+    "Albion Cloth": "William, 27 Nov 2026 (the items audit, question 2: D): Mutiny in Marienburg lists its price only",
+    "Alcoholic Spirits": "William, 27 Nov 2026 (the items audit, question 2: D): Mutiny in Marienburg lists its price only",
+    "Dispel Scroll": "William, 27 Nov 2026 (the items audit, question 2: D): Mordheim Annual 2002 p31, which we don't hold"
+  },
   "item_notes": {
     "Stromfels Heart": "Heroes only",
     "Nightmare": "Cursed Cavalcade: the Aristocrat only"
   },
   "item_saves": {
+    "Holy Shield": {
+      "bonus": 1,
+      "slot": "shield",
+      "subtype": "Shield",
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): a shield, as its book says, with its own rule on top"
+    },
+    "Shield of Sigmar": {
+      "bonus": 1,
+      "slot": "shield",
+      "subtype": "Shield",
+      "why": "William, 27 Nov 2026 (the items audit, question 2: D): a shield, as its book says, with its own rule on top"
+    },
     "Light Armour": {
       "bonus": 1,
       "slot": "body",
@@ -758,14 +1295,6 @@
     "Kite Shield": {
       "subtype": "Shield",
       "why": "5+ on foot, 6+ mounted: one number can't hold the condition"
-    },
-    "Holy Shield": {
-      "subtype": "Shield",
-      "why": "its page prints no save for it"
-    },
-    "Shield of Sigmar": {
-      "subtype": "Shield",
-      "why": "its page prints no save for it"
     },
     "Horo": {
       "subtype": "Cloak",

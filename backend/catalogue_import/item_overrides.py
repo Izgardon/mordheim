@@ -52,16 +52,40 @@ def set_row_prices(items: list[dict[str, Any]], decisions: dict[str, Any]) -> No
 def set_own_rules(items: list[dict[str, Any]], decisions: dict[str, Any]) -> None:
     """overrides.json "item_own_rules": the rules William settles for one of our items, in place of its own (the
     Rain Coat, which mordheimer leaves to its flavour line while the Khemri page prints what it does); a rule may be a
-    shared one by its slug (the Mechanical Suit keeps Chaos armour's). A name that is no item of ours stops the
-    build."""
+    shared one by its slug (the Mechanical Suit keeps Chaos armour's), in the item's own words where it gives them. A
+    name that is no item of ours stops the build."""
     by_name = {item["name"]: item for item in items}
     missing = sorted(set(decisions) - set(by_name))
     if missing:
         raise ValueError(f"overrides.json item_own_rules: no item {', '.join(missing)}")
     for name, decision in decisions.items():
+        by_name[name]["needs_rules"] = False
         by_name[name]["rules"] = [
-            {"rule": rule["rule"]}
+            {"rule": rule["rule"], **{key: rule[key] for key in ("summary", "text") if rule.get(key)}}
             if "rule" in rule
             else {"name": rule.get("name", ""), "summary": rule.get("summary", ""), "text": rule["text"], "tables": []}
             for rule in decision["rules"]
         ]
+
+
+UNWRITTEN = "Rules not written yet: check the book."
+
+
+def _has_rules(item: dict[str, Any]) -> bool:
+    return any(rule.get("rule") or rule.get("text") for rule in item["rules"])
+
+
+def mark_unwritten(items: list[dict[str, Any]], decisions: dict[str, Any]) -> None:
+    """overrides.json "rules_unwritten": an item whose rules no book of ours prints (William, 27 Nov 2026: the items
+    audit's question 2, D) warns of it on every price row, so a player knows to check his book. A name that is no item
+    of ours, or one that has rules, stops the build."""
+    by_name = {item["name"]: item for item in items}
+    missing = sorted(set(decisions) - set(by_name))
+    if missing:
+        raise ValueError(f"overrides.json rules_unwritten: no item {', '.join(missing)}")
+    written = sorted(name for name in decisions if _has_rules(by_name[name]))
+    if written:
+        raise ValueError(f"overrides.json rules_unwritten: {', '.join(written)} has rules")
+    for name in decisions:
+        for row in by_name[name]["availabilities"]:
+            row["note"] = "; ".join(filter(None, [row["note"], UNWRITTEN]))

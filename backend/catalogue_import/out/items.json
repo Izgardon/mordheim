@@ -16282,7 +16282,7 @@
         "rarity": 8,
         "for_everyone": true,
         "warbands": [],
-        "note": ""
+        "note": "Rules not written yet: check the book."
       }
     ]
   },
@@ -16374,7 +16374,7 @@
         "rarity": 9,
         "for_everyone": true,
         "warbands": [],
-        "note": ""
+        "note": "Rules not written yet: check the book."
       }
     ]
   },
@@ -16496,7 +16496,7 @@
         "rarity": 14,
         "for_everyone": true,
         "warbands": [],
-        "note": ""
+        "note": "Rules not written yet: check the book."
       }
     ]
   },
@@ -17144,7 +17144,7 @@
         "rarity": 9,
         "for_everyone": true,
         "warbands": [],
-        "note": ""
+        "note": "Rules not written yet: check the book."
       }
     ]
   },
@@ -17184,7 +17184,7 @@
         "rarity": 8,
         "for_everyone": true,
         "warbands": [],
-        "note": ""
+        "note": "Rules not written yet: check the book."
       }
     ],
     "single_use": true
@@ -17265,7 +17265,7 @@
         "rarity": 12,
         "for_everyone": true,
         "warbands": [],
-        "note": "Wizards only"
+        "note": "Wizards only; Rules not written yet: check the book."
       }
     ],
     "single_use": true
@@ -17327,12 +17327,12 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
-        "name": "",
-        "summary": "Magical scarab; details in rules.",
-        "text": "",
+        "name": "Firefly",
+        "summary": "A lantern, and a S4 fire bolt once a battle",
+        "text": "Its wearer always counts as carrying a lantern, and once each battle it sends a searing bolt at an enemy model within 12\", a single Strength 4 fire hit.",
         "tables": []
       }
     ],
@@ -17412,12 +17412,12 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
-        "name": "",
-        "summary": "Ring granting good fortune; details in rules.",
-        "text": "",
+        "name": "Fortune Ring",
+        "summary": "One die +/-1 a battle",
+        "text": "Its wearer may alter one die roll by +1 or -1 each battle.",
         "tables": []
       }
     ],
@@ -17754,12 +17754,12 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
-        "name": "",
-        "summary": "Medical supplies chest; details in rules.",
-        "text": "",
+        "name": "Medicine Chest",
+        "summary": "D6 Healing Herbs, or one Serious Injury re-roll",
+        "text": "It serves as D6 doses of Healing Herbs, or once to let a Hero re-roll on the Serious Injury chart unless the result was Captured or Sold to the Pits.",
         "tables": []
       }
     ],
@@ -17834,12 +17834,12 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
-        "name": "",
-        "summary": "Boots made from skinkskin; details in rules.",
-        "text": "",
+        "name": "Skinkskin Boots",
+        "summary": "Aquatic, and no slipping on mud",
+        "text": "Their wearer has the Aquatic special rule and never slips on Muddy Soil.",
         "tables": []
       }
     ],
@@ -17874,12 +17874,12 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
-        "name": "",
-        "summary": "Albion Truthsayer staff; details in rules.",
-        "text": "",
+        "name": "Staff of Light",
+        "summary": "A halberd that dispels a spell on 4+",
+        "text": "It counts as a halberd, and dispels one enemy spell each turn on a 4+.",
         "tables": []
       }
     ],
@@ -18138,12 +18138,12 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
-        "name": "",
-        "summary": "Transport or watercraft item from the price chart.",
-        "text": "",
+        "name": "Treasure Cart",
+        "summary": "Carries three warriors; holds five rare items",
+        "text": "A cart used at markets or in mines, smaller than a wagon. It carries up to three human-sized warriors or the same in cargo, and holds at most five rare items.",
         "tables": []
       }
     ],
@@ -18178,12 +18178,12 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
-        "name": "",
-        "summary": "Transport or watercraft item from the price chart.",
-        "text": "",
+        "name": "Ship-of-the-Line",
+        "summary": "A ship every model of the warband can crew",
+        "text": "A small ship used in battles, which every model of the warband can crew, with any cargo and objective markers.",
         "tables": []
       }
     ],
@@ -18450,7 +18450,7 @@
             "excluded": false
           }
         ],
-        "note": "Pit Fighters (old) only"
+        "note": "Pit Fighters (old) only; Rules not written yet: check the book."
       }
     ]
   },
@@ -20328,8 +20328,19 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "parry",
+        "text": "A model armed with a longsword may parry: when an opponent rolls to hit, roll a D6, and if it beats his highest to-hit score that attack is discarded. He may not parry an attack made with double or more his own Strength."
+      },
+      {
+        "name": "Versatile",
+        "summary": "Alone, two-handed: +1 Attack and Strike First",
+        "text": "Used with a shield or a weapon in the other hand, a longsword is a normal one-handed sword. Used alone it is wielded two-handed, and gives the knight +1 Attack and Strike First.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20368,8 +20379,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Magic Resistance",
+        "summary": "A shield, and +1 to saves against magic",
+        "text": "A Holy Shield is a shield in every way, and its bearer also gets +1 to his saves against all magic.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20387,7 +20405,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "shield"
   },
   {
     "slug": "pegasus",
@@ -20461,8 +20481,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "two-handed"
+      },
+      {
+        "name": "Swift",
+        "summary": "Does not strike last",
+        "text": "Unlike other double-handed weapons, a Draich does not strike last.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20548,8 +20578,35 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "cannot-be-parried",
+        "text": "A model attacked with Whirling Blades may not parry with a sword or buckler."
+      },
+      {
+        "rule": "cutting-edge",
+        "text": "Whirling Blades have an extra save modifier of -1, so a Strength 4 wielder hits at -2 to the armour save in close combat."
+      },
+      {
+        "name": "Pair",
+        "summary": "Used as a pair, +1 Attack",
+        "text": "Bought and used as a pair, one in each hand: the off-hand blade gives an extra attack as normal. Their wielder may use no other off-hand weapon and never splits the pair unless he loses a hand.",
+        "tables": []
+      },
+      {
+        "name": "Dance of Doom",
+        "summary": "+1 Attack when charging or charged",
+        "text": "When the Doomseeker charges, his main-hand blade gives +1 Attack in the first round of combat. When he is charged it gives him one extra attack that turn, against one of the chargers; charged by several at once, he still gains only +1 Attack.",
+        "tables": []
+      },
+      {
+        "name": "Whirlwind of Death",
+        "summary": "Charged: two of his attacks strike first",
+        "text": "When the Doomseeker is charged, the extra attack from Dance of Doom and the off-hand blade's attack both strike first that turn, like a Steel Whip's; his other attacks strike as normal.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20588,8 +20645,17 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "concussion",
+        "text": "A pry bar is a club in every way: a roll of 2-4 on the injury table is treated as stunned."
+      },
+      {
+        "rule": "parry",
+        "text": "A Graver armed with a pry bar may parry blows."
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20628,8 +20694,21 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Concealed Light",
+        "summary": "A lantern that doesn't give its bearer away",
+        "text": "It gives light as a lantern does, but enemy models cannot see the bearer by it.",
+        "tables": []
+      },
+      {
+        "name": "Free-Hand",
+        "summary": "Leaves both hands free",
+        "text": "The rig holds the lantern, leaving the Graver's hands free.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20668,8 +20747,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Skilled Hand",
+        "summary": "One Serious Injury dice +/-1",
+        "text": "A Medic with the journal may modify one dice rolled for a friendly model's Serious Injury by +1 or -1, instead of using his Sawbones skill.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20708,8 +20794,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Death-Ward",
+        "summary": "One 5+ save against necromantic or dark magic",
+        "text": "Its wearer has one 5+ save against Necromantic or Dark Arts magic; once used, it is gone.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20748,8 +20841,19 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "fear",
+        "text": "A model armed with a Chainsaw Sword causes fear."
+      },
+      {
+        "name": "Shredder",
+        "summary": "-2 to the armour save",
+        "text": "Every blow from a Chainsaw Sword is at -2 to the armour save.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20788,8 +20892,27 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Zzap!",
+        "summary": "Stunned on 2-4",
+        "text": "A model wounded by the Electric Trident is stunned on an injury roll of 2-4.",
+        "tables": []
+      },
+      {
+        "name": "Shocking",
+        "summary": "A 6 to hit and a 6 to wound: S3 hits within 2\"",
+        "text": "On a natural 6 to hit followed by a natural 6 to wound, the trident discharges: every model within 2\" of the target, but not its bearer, takes a Strength 3 hit.",
+        "tables": []
+      },
+      {
+        "name": "Nail in Boot",
+        "summary": "A 1 to hit: the bearer takes a S3 hit",
+        "text": "On a to-hit roll of 1 the bearer takes a Strength 3 hit.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20828,8 +20951,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "two-handed"
+      },
+      {
+        "name": "Magic-well",
+        "summary": "Stores one spell to release later",
+        "text": "A Necrarch Vampire may cast a spell into the staff in his magic phase instead of casting it as normal. If the casting succeeds the spell is stored, and he may release it in a later shooting phase instead of casting another spell.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20868,8 +21001,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Cursed Aura",
+        "summary": "Enemies within 2\" at -1 to hit in close combat",
+        "text": "Enemy models within 2\" of the bearer are at -1 to hit in close combat.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20958,8 +21098,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Sashimono",
+        "summary": "Re-roll a non-rout Leadership test",
+        "text": "Its wearer may re-roll any Leadership test except a rout test, but must keep the second roll.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20998,8 +21145,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Horo",
+        "summary": "Mounted: +1 save against shooting (6+ with none)",
+        "text": "While its wearer rides a horse or warhorse he gets +1 to his armour saves against ranged weapons, or a 6+ save if he wears no armour.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21038,8 +21192,22 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "two-handed"
+      },
+      {
+        "rule": "cannot-be-parried",
+        "text": "A model attacked with a Kusarigama may not parry with a sword or buckler."
+      },
+      {
+        "name": "Chain Strike",
+        "summary": "A failed charge on him or a friend within 3\" is knocked down",
+        "text": "A model with a Kusarigama who is not in combat knocks down an enemy who fails a charge against him or against a friend within 3\" of him.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21078,8 +21246,29 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "No Limit",
+        "summary": "Not counted as a missile weapon carried",
+        "text": "Sharp Stuff does not count towards the most missile weapons a Gnoblar may carry.",
+        "tables": []
+      },
+      {
+        "rule": "thrown-weapon",
+        "text": "A Gnoblar throwing Sharp Stuff suffers no penalty for moving and shooting, nor for long range."
+      },
+      {
+        "rule": "1-enemy-armour-save",
+        "text": "A model hit by Sharp Stuff gets +1 to its armour save."
+      },
+      {
+        "name": "Stuff Thrower",
+        "summary": "Knife Thrower: three throws",
+        "text": "With the Knife Thrower skill a Gnoblar throws three pieces of scrap instead of one, but never three pieces and three knives in the same turn.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21171,8 +21360,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Holy",
+        "summary": "+1 Strength against Undead, Possessed and mutants",
+        "text": "Fired against Undead, a Possessed or mutated model, or a twister of magic, a Blessed Bolt hits at +1 Strength.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21227,8 +21423,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Shield of Faith",
+        "summary": "A shield; a special 6+ save against shooting",
+        "text": "A Shield of Sigmar is a shield, and its bearer has a special 6+ save against all ranged attacks. It is light enough that the -1 penalty for carrying a shield with heavy armour doesn't apply.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21246,7 +21449,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "shield"
   },
   {
     "slug": "beastwhip",
@@ -21267,8 +21472,23 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "cannot-be-parried",
+        "text": "A model attacked with a Beastwhip may not parry with a weapon or buckler."
+      },
+      {
+        "rule": "whipcrack",
+        "text": "When the wielder charges he gains +1 Attack that turn, added after every other modifier. When he is charged he gains +1 Attack against the charger only, striking first; charged by two or more at once, he still gains only +1 Attack. A model with two whips gains the bonus from one."
+      },
+      {
+        "name": "Cruel Barbs",
+        "summary": "+1 to goading rolls",
+        "text": "Its wielder adds +1 to his roll for the Difficulty when he goads, once per goad however many Beastwhips he carries.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21426,8 +21646,23 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "thrown-weapon",
+        "text": "A model throwing a pebble suffers no penalty for range or moving; pebbles can't be used in close combat."
+      },
+      {
+        "rule": "1-enemy-armour-save",
+        "text": "A model wounded by a pebble gets +1 to its armour save."
+      },
+      {
+        "name": "Easy to Find",
+        "summary": "Free, and not counted as a missile weapon carried",
+        "text": "Pebbles are free for a Snotling warband's members, and a lost one is found again for nothing. They do not count towards the most missile weapons a warrior may carry.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21466,8 +21701,20 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "parry",
+        "text": "A warrior armed with a Wizard's Staff may parry a blow, as with a sword."
+      },
+      {
+        "rule": "two-handed"
+      },
+      {
+        "rule": "concussion",
+        "text": "A roll of 2-4 on the injury table for a model hit with a Wizard's Staff is treated as stunned."
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21506,8 +21753,15 @@
     "save": "",
     "statblock": [],
     "notes": "The familiar is one of four pets in the Bestiary: the Dog, Cat, Raven or Viper Familiar.",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Familiar",
+        "summary": "One per Wizard; a Dog, Cat, Raven or Viper",
+        "text": "A familiar is one of the four familiar pets, a Dog, Cat, Raven or Viper. Each Wizard may have one. It is a living creature: taken out of action, it rolls for injury as a Henchman, and it counts towards neither the warband's most warriors nor its rout tests. If it dies or leaves, the Wizard may search for another as a rare item. Models shooting at a familiar are at -1 to hit.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21546,8 +21800,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "two-handed"
+      },
+      {
+        "name": "Heart-Pierce",
+        "summary": "+1 to wound vampires",
+        "text": "It adds +1 to wound against a vampire.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21586,8 +21850,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Arcane Barrier",
+        "summary": "A 6+ save against spells",
+        "text": "Its wearer has a 6+ save against every spell that targets or affects him.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21626,8 +21897,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Quickened",
+        "summary": "A 6+ save against missiles",
+        "text": "Their wearer has a 6+ save against all missile fire, magical too, which stacks with the Dodge skill.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21666,8 +21944,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Cursed Aura",
+        "summary": "Enemies within 2\" at -1 to hit in close combat",
+        "text": "Enemy models within 2\" of the bearer are at -1 to hit in close combat.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21706,8 +21991,12 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "two-handed"
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21762,8 +22051,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Heart-seeker",
+        "summary": "+1 to injury rolls against vampires",
+        "text": "When it wounds a vampire, it adds +1 to the injury roll.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -21802,8 +22098,15 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Life Saver",
+        "summary": "A 6+ save against a vampire's injuries",
+        "text": "Its wearer has a special 6+ save against every injury roll a vampire causes. Strength doesn't modify it, though a critical that ignores armour does bypass it. It adds nothing to the armour save, and is worn alone or with light or heavy armour.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -22199,8 +22502,15 @@
     "save": "",
     "statblock": [],
     "notes": "Spent by the Moonstone infusion skill and made by the Metallurgist's Moonstone refinery.",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Orichalcum",
+        "summary": "Spent on infusions and prostheses",
+        "text": "A Clockworker spends orichalcum tokens with the Moonstone infusion skill, and a model with a clockwork prosthesis spends one each game to ignore the injury it replaces. The Metallurgist's Moonstone refinery splits a moonstone into D6 tokens.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -23796,8 +24106,21 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Pair",
+        "summary": "+1 Attack",
+        "text": "Knuckledusters are used in pairs, one in each hand, and give their wearer an extra attack.",
+        "tables": []
+      },
+      {
+        "name": "Concealable",
+        "summary": "Not counted as a weapon carried",
+        "text": "They fit in any pocket, so they don't count towards the two close combat weapons a model may carry, and may be used in a scenario that forbids weapons, such as Last Orders! or Pit of Blood.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -23836,8 +24159,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "two-handed"
+      },
+      {
+        "name": "Capture",
+        "summary": "Takes captives",
+        "text": "A model it takes out of action is captured unless his warband routs, and rolls for no serious injuries. Large models, such as Ogres or Trolls, and animals can't be captured this way and roll for serious injuries as normal.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -26631,8 +26964,19 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "cannot-be-parried",
+        "text": "A scourge is a blunt close combat weapon that cannot be parried."
+      },
+      {
+        "name": "Biting Teeth",
+        "summary": "+1 S without armour, -1 S against it",
+        "text": "Against a target wearing no armour it hits at +1 Strength, but against one wearing any armour other than a shield or helmet at -1 Strength.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -26935,8 +27279,15 @@
     "save": "",
     "statblock": [],
     "notes": "A slave bought for the warband. The Slaver list sells him to heroes only; this PDF prints no profile or rules for him.",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Slaves",
+        "summary": "A henchmen group; stupidity",
+        "text": "Slaves bought together are a henchmen group that gains experience, with the profile M4 WS2 BS2 S3 T3 W1 I2 A1 Ld4. They may take any weapons and armour from the warband's basic equipment list costing 5 gc or less each. One may become a hero only in a human warband, never its leader, and is no longer a slave once he does; a non-human warband re-rolls a Lad's Got Talent. A seriously injured slave escapes, removed for good on a D6 of 1-3 instead of 1-2, and slaves are subject to stupidity.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -28670,7 +29021,7 @@
             "excluded": false
           }
         ],
-        "note": ""
+        "note": "Rules not written yet: check the book."
       }
     ]
   },
