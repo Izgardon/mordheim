@@ -36,6 +36,7 @@ class Sources:
     # build adds to mordheimer's (pipeline.py), so they get a setting, their shared specials and their own rules
     our_extra_personae: list[dict[str, Any]] = field(default_factory=list)
     skill_files: dict[str, list[dict[str, Any]]] = field(default_factory=dict)  # SKILL_FILES, by file name
+    setting_grades: dict[str, str] = field(default_factory=dict)  # each built setting's grade (pipeline.py)
 
 
 def _values(data: Json) -> list[dict[str, Any]]:

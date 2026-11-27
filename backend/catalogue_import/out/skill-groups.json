@@ -132,7 +132,7 @@
   },
   {
     "name": "Adventurers",
-    "setting": null,
+    "setting": "karak-azgal",
     "for_everyone": false,
     "warbands": [
       {
@@ -205,7 +205,7 @@
   },
   {
     "name": "Amazons",
-    "setting": null,
+    "setting": "mordheim-1b",
     "for_everyone": false,
     "warbands": [
       {
@@ -263,7 +263,7 @@
   },
   {
     "name": "Araby Smugglers",
-    "setting": null,
+    "setting": "sartosa",
     "for_everyone": false,
     "warbands": [
       {
@@ -349,7 +349,7 @@
   },
   {
     "name": "Battle Monks of Cathay",
-    "setting": null,
+    "setting": "border-town-burning",
     "for_everyone": false,
     "warbands": [
       {
@@ -370,7 +370,7 @@
   },
   {
     "name": "Beastmen Raiders",
-    "setting": null,
+    "setting": "empire-in-flames",
     "for_everyone": false,
     "warbands": [
       {
@@ -393,7 +393,7 @@
   },
   {
     "name": "Black Dwarfs",
-    "setting": null,
+    "setting": "border-town-burning",
     "for_everyone": false,
     "warbands": [
       {
@@ -415,7 +415,7 @@
   },
   {
     "name": "Bretonnian Chapel Guard",
-    "setting": null,
+    "setting": "mordheim-1c",
     "for_everyone": false,
     "warbands": [
       {
@@ -436,7 +436,7 @@
   },
   {
     "name": "Bretonnian Knights",
-    "setting": null,
+    "setting": "mordheim-1b",
     "for_everyone": false,
     "warbands": [
       {
@@ -459,7 +459,7 @@
   },
   {
     "name": "Brood of Ghurash",
-    "setting": null,
+    "setting": "sealed-city",
     "for_everyone": false,
     "warbands": [
       {
@@ -480,7 +480,7 @@
   },
   {
     "name": "Call of the Night Haint",
-    "setting": null,
+    "setting": "mutiny-in-marienburg",
     "for_everyone": false,
     "warbands": [
       {
@@ -521,7 +521,7 @@
   },
   {
     "name": "Channel Rats",
-    "setting": null,
+    "setting": "mutiny-in-marienburg",
     "for_everyone": false,
     "warbands": [
       {
@@ -543,7 +543,7 @@
   },
   {
     "name": "Clan Pestilens (Lustria)",
-    "setting": null,
+    "setting": "lustria",
     "for_everyone": false,
     "warbands": [
       {
@@ -564,7 +564,7 @@
   },
   {
     "name": "Clan Pestilens (Mousillon)",
-    "setting": null,
+    "setting": "mousillon",
     "for_everyone": false,
     "warbands": [
       {
@@ -585,7 +585,7 @@
   },
   {
     "name": "Clan Pristekk",
-    "setting": null,
+    "setting": "sealed-city",
     "for_everyone": false,
     "warbands": [
       {
@@ -607,7 +607,7 @@
   },
   {
     "name": "Clockworkers",
-    "setting": null,
+    "setting": "sealed-city",
     "for_everyone": false,
     "warbands": [
       {
@@ -628,7 +628,7 @@
   },
   {
     "name": "Cursed Cavalcade",
-    "setting": null,
+    "setting": "mordheim-1c",
     "for_everyone": false,
     "warbands": [
       {
@@ -690,7 +690,7 @@
   },
   {
     "name": "Dark Elf",
-    "setting": null,
+    "setting": "lustria",
     "for_everyone": false,
     "warbands": [
       {
@@ -712,7 +712,7 @@
   },
   {
     "name": "Dark Elf Corsairs",
-    "setting": null,
+    "setting": "mousillon",
     "for_everyone": false,
     "warbands": [
       {
@@ -733,7 +733,7 @@
   },
   {
     "name": "Dreamwalkers",
-    "setting": null,
+    "setting": "mordheim-2a",
     "for_everyone": false,
     "warbands": [
       {
@@ -753,7 +753,7 @@
   },
   {
     "name": "Druchii",
-    "setting": null,
+    "setting": "mordheim-2a",
     "for_everyone": false,
     "warbands": [
       {
@@ -776,7 +776,7 @@
   },
   {
     "name": "Dwarf Exiled Engineers",
-    "setting": null,
+    "setting": "mutiny-in-marienburg",
     "for_everyone": false,
     "warbands": [
       {
@@ -820,7 +820,7 @@
   },
   {
     "name": "Dwarf Rangers",
-    "setting": null,
+    "setting": "nemesis-crown",
     "for_everyone": false,
     "warbands": [
       {
@@ -840,7 +840,7 @@
   },
   {
     "name": "Dwarf Troll Slayers",
-    "setting": null,
+    "setting": "mordheim",
     "for_everyone": false,
     "warbands": [
       {
@@ -881,7 +881,7 @@
   },
   {
     "name": "Dwarves",
-    "setting": null,
+    "setting": "mordheim",
     "for_everyone": false,
     "warbands": [
       {
@@ -915,7 +915,7 @@
   },
   {
     "name": "Fen Guard",
-    "setting": null,
+    "setting": "mutiny-in-marienburg",
     "for_everyone": false,
     "warbands": [
       {
@@ -938,7 +938,7 @@
   },
   {
     "name": "Forest Goblins",
-    "setting": null,
+    "setting": "nemesis-crown",
     "for_everyone": false,
     "warbands": [
       {
@@ -956,7 +956,7 @@
   },
   {
     "name": "Forest Goblins (Lustria)",
-    "setting": null,
+    "setting": "lustria",
     "for_everyone": false,
     "warbands": [
       {
@@ -996,7 +996,7 @@
   },
   {
     "name": "Grail Companions",
-    "setting": null,
+    "setting": "mordheim-2a",
     "for_everyone": false,
     "warbands": [
       {
@@ -1026,7 +1026,7 @@
   },
   {
     "name": "Grave Robber",
-    "setting": null,
+    "setting": "sylvania",
     "for_everyone": false,
     "warbands": [
       {
@@ -1048,7 +1048,7 @@
   },
   {
     "name": "Halflings (MIC)",
-    "setting": null,
+    "setting": "mordheim-2a",
     "for_everyone": false,
     "warbands": [
       {
@@ -1071,7 +1071,7 @@
   },
   {
     "name": "High Elves",
-    "setting": null,
+    "setting": "lustria",
     "for_everyone": false,
     "warbands": [
       {
@@ -1134,7 +1134,7 @@
   },
   {
     "name": "Hochland Bandits",
-    "setting": null,
+    "setting": "nemesis-crown",
     "for_everyone": false,
     "warbands": [
       {
@@ -1178,7 +1178,7 @@
   },
   {
     "name": "Horned Hunters",
-    "setting": null,
+    "setting": "nemesis-crown",
     "for_everyone": false,
     "warbands": [
       {
@@ -1200,7 +1200,7 @@
   },
   {
     "name": "Khorne Raiders",
-    "setting": null,
+    "setting": "sartosa",
     "for_everyone": false,
     "warbands": [
       {
@@ -1223,7 +1223,7 @@
   },
   {
     "name": "Knights Feats",
-    "setting": null,
+    "setting": "mousillon",
     "for_everyone": false,
     "warbands": [
       {
@@ -1251,7 +1251,7 @@
   },
   {
     "name": "Knights of the Bitter Moors",
-    "setting": null,
+    "setting": "mutiny-in-marienburg",
     "for_everyone": false,
     "warbands": [
       {
@@ -1312,7 +1312,7 @@
   },
   {
     "name": "Lizardmen (Lustria)",
-    "setting": null,
+    "setting": "lustria",
     "for_everyone": false,
     "warbands": [
       {
@@ -1332,7 +1332,7 @@
   },
   {
     "name": "Lothern Sea Patrol",
-    "setting": null,
+    "setting": "sartosa",
     "for_everyone": false,
     "warbands": [
       {
@@ -1354,7 +1354,7 @@
   },
   {
     "name": "Low Kings",
-    "setting": null,
+    "setting": "mutiny-in-marienburg",
     "for_everyone": false,
     "warbands": [
       {
@@ -1396,7 +1396,7 @@
   },
   {
     "name": "Marauders of Chaos",
-    "setting": null,
+    "setting": "border-town-burning",
     "for_everyone": false,
     "warbands": [
       {
@@ -1418,7 +1418,7 @@
   },
   {
     "name": "Masters of Horror",
-    "setting": null,
+    "setting": "sylvania",
     "for_everyone": false,
     "warbands": [
       {
@@ -1438,7 +1438,7 @@
   },
   {
     "name": "Merchant Caravans",
-    "setting": null,
+    "setting": "border-town-burning",
     "for_everyone": false,
     "warbands": [
       {
@@ -1459,7 +1459,7 @@
   },
   {
     "name": "Militant Mootlanders",
-    "setting": null,
+    "setting": "mutiny-in-marienburg",
     "for_everyone": false,
     "warbands": [
       {
@@ -1482,7 +1482,7 @@
   },
   {
     "name": "Necrarchs, the Soul Stealers",
-    "setting": null,
+    "setting": "sylvania",
     "for_everyone": false,
     "warbands": [
       {
@@ -1501,7 +1501,7 @@
   },
   {
     "name": "Night Goblins",
-    "setting": null,
+    "setting": "mordheim-1c",
     "for_everyone": false,
     "warbands": [
       {
@@ -1524,7 +1524,7 @@
   },
   {
     "name": "Night Goblins (Karak Azgal)",
-    "setting": null,
+    "setting": "karak-azgal",
     "for_everyone": false,
     "warbands": [
       {
@@ -1544,7 +1544,7 @@
   },
   {
     "name": "Night Goblins (MIC)",
-    "setting": null,
+    "setting": "mordheim-1c",
     "for_everyone": false,
     "warbands": [
       {
@@ -1564,7 +1564,7 @@
   },
   {
     "name": "Nipponese Expedition",
-    "setting": null,
+    "setting": "mordheim-2a",
     "for_everyone": false,
     "warbands": [
       {
@@ -1586,7 +1586,7 @@
   },
   {
     "name": "Norse",
-    "setting": null,
+    "setting": "lustria",
     "for_everyone": false,
     "warbands": [
       {
@@ -1612,7 +1612,7 @@
   },
   {
     "name": "Ogre Hunting Party",
-    "setting": null,
+    "setting": "mordheim-2a",
     "for_everyone": false,
     "warbands": [
       {
@@ -1637,7 +1637,7 @@
   },
   {
     "name": "Ogres",
-    "setting": null,
+    "setting": "border-town-burning",
     "for_everyone": false,
     "warbands": [
       {
@@ -1660,7 +1660,7 @@
   },
   {
     "name": "Orcs",
-    "setting": null,
+    "setting": "mordheim",
     "for_everyone": false,
     "warbands": [
       {
@@ -1684,7 +1684,7 @@
   },
   {
     "name": "Ostlanders",
-    "setting": null,
+    "setting": "mordheim",
     "for_everyone": false,
     "warbands": [
       {
@@ -1706,7 +1706,7 @@
   },
   {
     "name": "Pirates",
-    "setting": null,
+    "setting": "mordheim-1b",
     "for_everyone": false,
     "warbands": [
       {
@@ -1729,7 +1729,7 @@
   },
   {
     "name": "Pirates (TBMF)",
-    "setting": null,
+    "setting": "mordheim-1b",
     "for_everyone": false,
     "warbands": [
       {
@@ -1751,7 +1751,7 @@
   },
   {
     "name": "Pirates of the Cathayan Sea",
-    "setting": null,
+    "setting": "sartosa",
     "for_everyone": false,
     "warbands": [
       {
@@ -1772,7 +1772,7 @@
   },
   {
     "name": "Pit Fighters",
-    "setting": null,
+    "setting": "mordheim-1b",
     "for_everyone": false,
     "warbands": [
       {
@@ -1798,7 +1798,7 @@
   },
   {
     "name": "Protectorate of Sigmar",
-    "setting": null,
+    "setting": "mordheim-2a",
     "for_everyone": false,
     "warbands": [
       {
@@ -1819,7 +1819,7 @@
   },
   {
     "name": "Ranger (High Elves)",
-    "setting": null,
+    "setting": "lustria",
     "for_everyone": false,
     "warbands": [
       {
@@ -1837,7 +1837,7 @@
   },
   {
     "name": "Restless Dead Lich and Necromancer",
-    "setting": null,
+    "setting": "border-town-burning",
     "for_everyone": false,
     "warbands": [
       {
@@ -1859,7 +1859,7 @@
   },
   {
     "name": "Sartosa Pirate Skills",
-    "setting": null,
+    "setting": "sartosa",
     "for_everyone": false,
     "warbands": [
       {
@@ -1930,7 +1930,7 @@
   },
   {
     "name": "Sartosan Pirates",
-    "setting": null,
+    "setting": "sartosa",
     "for_everyone": false,
     "warbands": [
       {
@@ -1950,7 +1950,7 @@
   },
   {
     "name": "Saurus",
-    "setting": null,
+    "setting": "lustria",
     "for_everyone": false,
     "warbands": [
       {
@@ -1969,7 +1969,7 @@
   },
   {
     "name": "Savage Orcs",
-    "setting": null,
+    "setting": "sartosa",
     "for_everyone": false,
     "warbands": [
       {
@@ -1989,7 +1989,7 @@
   },
   {
     "name": "Sea Ghosts",
-    "setting": null,
+    "setting": "mutiny-in-marienburg",
     "for_everyone": false,
     "warbands": [
       {
@@ -2012,7 +2012,7 @@
   },
   {
     "name": "Shadow Warriors",
-    "setting": null,
+    "setting": "mordheim-1b",
     "for_everyone": false,
     "warbands": [
       {
@@ -2034,7 +2034,7 @@
   },
   {
     "name": "Silent Brotherhood",
-    "setting": null,
+    "setting": "sealed-city",
     "for_everyone": false,
     "warbands": [
       {
@@ -2056,7 +2056,7 @@
   },
   {
     "name": "Sisters of Sigmar",
-    "setting": null,
+    "setting": "mordheim",
     "for_everyone": false,
     "warbands": [
       {
@@ -2078,7 +2078,7 @@
   },
   {
     "name": "Skaven",
-    "setting": null,
+    "setting": "mordheim",
     "for_everyone": false,
     "warbands": [
       {
@@ -2100,7 +2100,7 @@
   },
   {
     "name": "Skaven Clan Moulder",
-    "setting": null,
+    "setting": "mordheim-2a",
     "for_everyone": false,
     "warbands": [
       {
@@ -2121,7 +2121,7 @@
   },
   {
     "name": "Skaven Clan Pestilens",
-    "setting": null,
+    "setting": "mordheim-1b",
     "for_everyone": false,
     "warbands": [
       {
@@ -2164,7 +2164,7 @@
   },
   {
     "name": "Skaven Metal Mongers",
-    "setting": null,
+    "setting": "mutiny-in-marienburg",
     "for_everyone": false,
     "warbands": [
       {
@@ -2187,7 +2187,7 @@
   },
   {
     "name": "Skaven of Karak Azgal",
-    "setting": null,
+    "setting": "karak-azgal",
     "for_everyone": false,
     "warbands": [
       {
@@ -2211,7 +2211,7 @@
   },
   {
     "name": "Skink",
-    "setting": null,
+    "setting": "lustria",
     "for_everyone": false,
     "warbands": [
       {
@@ -2230,7 +2230,7 @@
   },
   {
     "name": "Slayer Cult",
-    "setting": null,
+    "setting": "mordheim-2a",
     "for_everyone": false,
     "warbands": [
       {
@@ -2257,7 +2257,7 @@
   },
   {
     "name": "Slayer Pirates",
-    "setting": null,
+    "setting": "sartosa",
     "for_everyone": false,
     "warbands": [
       {
@@ -2301,7 +2301,7 @@
   },
   {
     "name": "Snotlings",
-    "setting": null,
+    "setting": "mordheim-2a",
     "for_everyone": false,
     "warbands": [
       {
@@ -2323,7 +2323,7 @@
   },
   {
     "name": "Sons of Hashut",
-    "setting": null,
+    "setting": "mordheim-1c",
     "for_everyone": false,
     "warbands": [
       {
@@ -2343,7 +2343,7 @@
   },
   {
     "name": "Survivors of Strigos",
-    "setting": null,
+    "setting": "sylvania",
     "for_everyone": false,
     "warbands": [
       {
@@ -2386,7 +2386,7 @@
   },
   {
     "name": "The Lost",
-    "setting": null,
+    "setting": "mousillon",
     "for_everyone": false,
     "warbands": [
       {
@@ -2406,7 +2406,7 @@
   },
   {
     "name": "Tomb Robbers",
-    "setting": null,
+    "setting": "khemri",
     "for_everyone": false,
     "warbands": [
       {
@@ -2426,7 +2426,7 @@
   },
   {
     "name": "Undead Vampires",
-    "setting": null,
+    "setting": "mordheim",
     "for_everyone": false,
     "warbands": [
       {
@@ -2448,7 +2448,7 @@
   },
   {
     "name": "Underworld Alliance",
-    "setting": null,
+    "setting": "mutiny-in-marienburg",
     "for_everyone": false,
     "warbands": [
       {
@@ -2469,7 +2469,7 @@
   },
   {
     "name": "Vampire Hunters of Sylvania",
-    "setting": null,
+    "setting": "sylvania",
     "for_everyone": false,
     "warbands": [
       {
@@ -2538,7 +2538,7 @@
   },
   {
     "name": "Wood Elves of Arden",
-    "setting": null,
+    "setting": "mousillon",
     "for_everyone": false,
     "warbands": [
       {
@@ -2559,7 +2559,7 @@
   },
   {
     "name": "Wood Elves of Athel Loren",
-    "setting": null,
+    "setting": "mordheim-2a",
     "for_everyone": false,
     "warbands": [
       {
@@ -2580,7 +2580,7 @@
   },
   {
     "name": "Woodsmen de Artois",
-    "setting": null,
+    "setting": "mousillon",
     "for_everyone": false,
     "warbands": [
       {

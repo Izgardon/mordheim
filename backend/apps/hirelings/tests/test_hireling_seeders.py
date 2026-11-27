@@ -223,6 +223,18 @@ class HirelingSeederTests(TestCase):
         self.assertFalse(any(line.excluded for line in lines))
         self.assertEqual(ogre.hire_note, "Any warband except Skaven may hire an Ogre Bodyguard.")
 
+    def test_his_own_skill_group_takes_his_setting(self):
+        # William, 27 Nov 2026: a group takes the setting of those who learn from it, a hired sword's group his, so
+        # the Skills page shows it only where he is in play
+        run("seed_settings")
+        with data_file([{**OGRE, "name": "Ninja Gnoblar"}]) as path:
+            run("seed_hired_swords", json_paths=[path])
+
+        row = HiredSword.objects.get(name="Ninja Gnoblar", campaign__isnull=True)
+        group = SkillGroup.objects.get(name="Hired Sword - Ninja Gnoblar", campaign__isnull=True)
+        self.assertIsNotNone(row.campaign_type_id)
+        self.assertEqual(group.campaign_type_id, row.campaign_type_id)
+
     def test_a_hired_sword_mordheimer_lacks_says_who_may_hire_him_himself(self):
         # William, 11 Nov 2026: "why cant specialists just be hired swords that only that warband can hire?" — a row
         # the import's list lacks carries its own who-can lines, so it is not seeded for everyone

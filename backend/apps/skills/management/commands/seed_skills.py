@@ -2,7 +2,8 @@
 skill per name with its rules: our skills table with William's decisions applied, merged by name, and the new groups'
 skills) and `out/skill-groups.json` (each group with who learns from it, whether it is a Large unit's, the note shown
 when learning from it and its skills by name). Each skill's setting comes from `out/setting-assignments.json` and a
-group's from its own `setting` (grading phase 1): a group naming none is Mordheim's, as all but the Khemri 3 ones are.
+group's from its own `setting` (grading phase 1: its warbands', William, 27 Nov 2026): a group naming none, one open
+to everyone, is Mordheim's.
 
 Skills are upserted by name and groups by name; each seeded group's skills and who-can lines are written again. A
 group's lines name warband types and groups, so they apply once seed_warband_types has run (seed_all runs it first);

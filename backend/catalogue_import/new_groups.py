@@ -185,7 +185,8 @@ def build_skill_groups(
     """The skills (one per name), every group (our lists', then the new ones; the core five first) and each skill's
     setting, from our rows (`sources.our_skills`), their who-can (`who_rows`) and settings (`assigned`)."""
     overrides = sources.overrides
-    build = SkillGroupBuild(overrides, types, groups, lists, lambda name: named_after(name, resolver, groups))
+    grades = getattr(sources, "setting_grades", {})  # each setting's grade, for a group's lowest graded setting
+    build = SkillGroupBuild(overrides, types, groups, lists, lambda name: named_after(name, resolver, groups), grades)
     build.merge(sources.our_skills)
     settings = build.settings(assigned)
     built = build.list_groups(sources.our_skills, who_rows)

@@ -236,18 +236,20 @@ class BookLookups:
             special.save(update_fields=changed)
         return special
 
-    def special_skills(self, items: list[Any], owner: str) -> bool:
+    def special_skills(self, items: list[Any], owner: str, setting_id: int | None = None) -> bool:
         """A hired sword's special skills, made sure of in the book and held by his own group ("Hired Sword -
-        <name>", for everyone: only his skill access names it); whether he has any."""
+        <name>", for everyone: only his skill access names it, and in his setting, `setting_id`, so it is in play
+        where he is: William, 27 Nov 2026); whether he has any."""
         named = [(name, description) for name, description in map(name_and_description, items) if name]
         own: dict[str, Any] = {"campaign": None, "name": self.own_type_of(owner)}
         if not named:  # none left (the Runesmith's runes became a lore): his group leaves the Skills page
             SkillGroup.objects.filter(**own, archived_at__isnull=True).update(archived_at=timezone.now())
             return False
         group, _created = SkillGroup.objects.get_or_create(**own)
-        if group.archived_at is not None:
+        if group.archived_at is not None or group.campaign_type_id != setting_id:
             group.archived_at = None
-            group.save(update_fields=["archived_at"])
+            group.campaign_type_id = setting_id
+            group.save(update_fields=["archived_at", "campaign_type"])
         # a skill no other group holds is his own: it takes his wording (the Runesmith's Rune Use and its table)
         others = set(SkillGroupSkill.objects.exclude(group=group).values_list("skill_id", flat=True))
         skills = []

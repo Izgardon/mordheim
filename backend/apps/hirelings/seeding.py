@@ -121,7 +121,11 @@ class _Run:
         terms = data.get(self.spec.terms) or {}
         skill_types = list(terms.get("available_skill_types") or [])
         own_type = self.lookups.own_type_of(name)
-        if self.lookups.special_skills(terms.get("available_special_skills", []), name) and own_type not in skill_types:
+        setting_id = self.settings.of(name)
+        if (
+            self.lookups.special_skills(terms.get("available_special_skills", []), name, setting_id)
+            and own_type not in skill_types
+        ):
             skill_types.append(own_type)
         race_label = clean(terms.get("race"))
         return {
@@ -138,7 +142,7 @@ class _Run:
             "race": self.races.get(race_label.lower()),
             "race_label": race_label,
             "available_skill_types": skill_types,
-            "campaign_type_id": self.settings.of(name),
+            "campaign_type_id": setting_id,
             **self.spec.extras(terms, label),
         }
 

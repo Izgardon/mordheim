@@ -288,6 +288,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     hiring_log = HiringLog()
     who_can = build_who_can(sources, resolver, groups, hiring_log, skill_lists)
     add_skill_groups(sources, pdf_pages, types, settings)  # the PDF pages' new skill groups, as our new groups
+    sources.setting_grades = {row["slug"]: row["grade"] for row in settings}  # a group's lowest graded setting
     grouped = _skill_groups(sources, types, groups, skill_lists, resolver, who_can, assignments, assignment_log)
     folded = fold_variant_pages(pdf_pages, snapshot.pages, {page: [row["key"] for row in rows] for page, rows in VARIANTS.items()})  # fmt: skip
     add_pages(snapshot.pages, pdf_pages)

@@ -13,8 +13,10 @@ becomes a group that says who learns from it.
   (the intersection of its rows' who-can). A group whose intersection is empty (the union is taken) or differs from
   the union is flagged with both.
 - ``new_skill_groups`` (new_groups.py): groups our rows lack, each open to its warband type only.
-- A group's ``setting`` (grading phase 1) is the setting every warband that may learn from it sits in, when each of
-  them is graded 3; every other group's is null, which counts as Mordheim's and is in play everywhere.
+- A group's ``setting`` (grading phase 1) is the setting of the warbands that may learn from it, the lowest graded of
+  them where they sit in several (William, 27 Nov 2026, widening the Khemri split: a group comes and goes with its
+  warbands); a group open to everyone, or shutting some out, has none, which counts as Mordheim's and is in play
+  everywhere.
 """
 
 import re
@@ -23,7 +25,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from catalogue_import.assignments import label
-from catalogue_import.common import norm_name
+from catalogue_import.common import GRADE_RANK, norm_name
 from catalogue_import.grading import SETTING_ORDER
 from catalogue_import.groups import collapse
 from catalogue_import.skill_lists import SkillLists
@@ -105,8 +107,10 @@ class SkillGroupBuild:
         groups: list[dict[str, Any]],
         lists: SkillLists,
         named_after: Callable[[str], list[dict[str, Any]]] = lambda name: [],
+        grades: dict[str, str] | None = None,
     ) -> None:
         self.named_after = named_after
+        self.grades = grades or {}  # each setting's grade (the built settings), for the lowest graded
         self.order = {row["slug"]: index for index, row in enumerate(types)}
         self.type_rows = {row["slug"]: row for row in types}
         self.everyone = frozenset(self.order)
@@ -218,20 +222,20 @@ class SkillGroupBuild:
         return groups
 
     def setting_of(self, access: dict[str, Any]) -> str | None:
-        """The setting a group belongs to: the one every warband that may learn from it sits in, when each of them
-        is graded 3. Grade 3 is the content a lower-grade campaign must not see at all — the reason Khemri splits
-        (William, 11 Nov 2026) — so its groups carry a setting and go out of play with it, instead of showing as a
-        row with every skill inside it filtered out. Giving the other settings' groups theirs is a job of its own."""
+        """The setting a group belongs to: the one the warbands that may learn from it sit in, the lowest graded (then
+        the earliest) where they sit in several, so a campaign that has any of them in play has the group. A group
+        open to everyone, or shutting some out, belongs to none."""
         lines = access.get("warbands") or []
-        if access.get("for_everyone") or not lines:
+        if access.get("for_everyone") or not lines or any(line.get("excluded") for line in lines):
             return None
-        if any(line.get("excluded") or "type" not in line for line in lines):
+        slugs: set[str] = set()
+        for line in lines:
+            slugs |= {line["type"]} if "type" in line else set(self.members.get(line["group"], frozenset()))
+        settings = {self.type_rows.get(slug, {}).get("setting") for slug in slugs}
+        if not settings or None in settings:
             return None
-        rows = [self.type_rows.get(str(line["type"])) for line in lines]
-        if any(row is None or row.get("broheim_grade") != "3" for row in rows):
-            return None
-        settings = {str(row["setting"]) for row in rows if row}
-        return settings.pop() if len(settings) == 1 else None
+        found = {str(setting) for setting in settings}
+        return min(found, key=lambda slug: (GRADE_RANK.get(self.grades.get(slug, ""), 0), setting_order(slug)))
 
     def type_set(self, access: dict[str, Any]) -> frozenset[str]:
         """The type slugs a who-can list lets in (everyone: every type but those it shuts out)."""

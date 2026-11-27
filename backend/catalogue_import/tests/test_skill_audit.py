@@ -204,3 +204,19 @@ class SkillAuditTests(ReviewCase):
             self.terms("Chameleon Skink")["available_skill_types"], ["Shooting", "Speed", "Lizardmen (Lustria)"]
         )
         self.assertIn("Lizardmen (Lustria)", self.groups)
+
+    def test_a_skill_group_takes_the_setting_of_the_warbands_that_learn_from_it(self) -> None:
+        # William, 27 Nov 2026 (the skills audit's M1): the Khemri split widened, so a group comes and goes with its
+        # warbands, the lowest graded of them where several settings learn from it; one open to everyone has none
+        groups = {row["name"]: row for row in load_json(OUT / "skill-groups.json")}
+        settings = {
+            "Clockworkers": "sealed-city",
+            "Snotlings": "mordheim-2a",
+            "Savage Orcs": "sartosa",
+            "Skink": "lustria",
+            "Pirates": "mordheim-1b",
+            "Dwarf Troll Slayers": "mordheim",  # the Dwarf Treasure Hunters' 1a, below the Rangers' and the Slayers'
+            "Academic": None,
+            "Holy": None,
+        }
+        self.assertEqual({name: groups[name]["setting"] for name in settings}, settings)

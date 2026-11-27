@@ -222,7 +222,13 @@ class SeedAllTests(TestCase):
                                 "marienburg-annual": 26,
                             },
                         )
-                    elif model in (Race, Spell, SkillGroup):  # what the Khemri 3, Grade 3 and Athel Loren
+                    elif model is SkillGroup:  # each the setting of the warbands that learn from it, the lowest
+                        # graded (William, 27 Nov 2026), a hired sword's his: only those open to everyone have none
+                        groups = SkillGroup.objects.filter(campaign_type__isnull=True)
+                        self.assertFalse(groups.filter(for_everyone=False).exists())
+                        mine = groups.filter(name__startswith="Hired Sword - ", archived_at__isnull=True)
+                        self.assertFalse(mine.exists())
+                    elif model in (Race, Spell):  # what the Khemri 3, Grade 3 and Athel Loren
                         # warbands brought: the Khemri races and lores, the Grade 3 lores and groups, and the
                         # three Athel Loren skill groups, and Relics of the Crusades' six spells and the
                         # Runesmith's Runes and the Alchemist's Potion Recipes, each its hired sword's setting
