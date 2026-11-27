@@ -79,7 +79,7 @@ class HireCopyTests(HireTestCase):
 
     def test_one_who_starts_with_several_spells_has_that_many_to_pick(self):
         # William, 26 Nov 2026: "there are a few hired swords that start with multiple" (the Warlock's two random
-        # spells): his `spell_picks`, whatever he casts as (the Dark Emissary is typed no caster)
+        # spells): his `spell_picks`, whatever he casts as
         HiredSword.objects.filter(id=self.ogre.id).update(caster="Wizard", spell_picks=2)
         self.assertEqual(self.hire().data["pending_spells"], 2)
         HiredSword.objects.filter(id=self.ogre.id).update(caster="No", spell_picks=4)

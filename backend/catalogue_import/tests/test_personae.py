@@ -63,6 +63,14 @@ class PersonaRowTests(SimpleTestCase):
         self.assertIn("Ulli: A brute.", row["description"])
         self.assertEqual(row["specials"][-1], {"name": "Spells", "description": "He knows all six Prayers of Sigmar."})
 
+    def test_one_whose_rule_is_named_wizard_or_priest_casts_as_one(self) -> None:
+        # the Dark Emissary's and the Truthsayer's pages list no spells, but their rule is named Wizard ("knows four
+        # randomly determined spells of the Lore of Darkness"): typed no caster, a hire of theirs lost the Wizard
+        wizard = {**AENUR, "specialRules": [{"rulename": "Wizard", "ruleFull": "He knows four spells."}]}
+        priest = {**AENUR, "specialRules": [{"rulename": "Priest", "ruleFull": "He knows two prayers."}]}
+
+        self.assertEqual([persona_row(row, CATALOGUE)["caster"] for row in (wizard, priest, AENUR)], ["Wizard", "Priest", "No"])  # fmt: skip
+
     def test_a_plain_skill_list_is_read_after_its_colon_and_prose_left_out(self) -> None:
         text = "He has the following skills: Horse Archer, Pistolier, and Strongman. (and yes, he may)"
 
@@ -83,3 +91,7 @@ class CommittedPersonaeTests(SimpleTestCase):
         heinrich = rows["Heinrich 'Altdorf' Schmidt"]
         self.assertIn({"item": "Steel Whip", "quantity": 1}, heinrich["equipment"])
         self.assertNotIn("Also carries", heinrich["description"])
+
+    def test_the_dark_emissary_and_the_truthsayer_are_wizards(self) -> None:
+        rows = {row["name"]: row for row in json.loads((OUT / "dramatis-personae.json").read_text(encoding="utf-8"))}
+        self.assertEqual([rows[name]["caster"] for name in ("Dark Emissary", "Truthsayer")], ["Wizard", "Wizard"])

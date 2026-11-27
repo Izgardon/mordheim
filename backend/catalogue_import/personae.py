@@ -29,6 +29,7 @@ STATS = {
 }
 NAMED = re.compile(r"<(Tooltip|a)\b[^>]*>(.*?)</\1>", re.S | re.I)
 LEADING_NUMBER = re.compile(r"^\s*(\d+)")
+CASTERS = ("Wizard", "Priest")
 ONE_BATTLE = re.compile(r"\bwanderers?\b|for the duration of (?:the|one|a) battle|only ever stays", re.I)
 
 
@@ -100,11 +101,14 @@ def _specials(entry: dict[str, Any], rules: list[dict[str, Any]]) -> list[dict[s
     return specials
 
 
-def _caster(entry: dict[str, Any]) -> str:
+def _caster(entry: dict[str, Any], specials: list[dict[str, str]]) -> str:
+    """What he casts as: by his spells' words, else by a rule named Wizard or Priest (the Dark Emissary's, whose
+    page lists no spells), else nothing."""
     spells = clean_inline(entry.get("spells")).lower()
-    if not spells:
-        return "No"
-    return "Priest" if "prayer" in spells else "Wizard"
+    if spells:
+        return "Priest" if "prayer" in spells else "Wizard"
+    named = {special["name"].casefold() for special in specials}
+    return next((caster for caster in CASTERS if caster.casefold() in named), "No")
 
 
 def _stays(rules: list[dict[str, Any]]) -> str:
@@ -159,6 +163,7 @@ def persona_row(entry: dict[str, Any], catalogue: Catalogue, in_rules: dict[str,
     if isinstance(statblock, list):  # several profiles (a horde): the first, its leader
         statblock = next((profile for profile in statblock if isinstance(profile, dict)), {})
     rules = _rules(entry)
+    specials = _specials(entry, rules)
     kit, other_kit = catalogue.split(catalogue.items, [name for name in named(_first(entry, "equipment")) if name.isprintable() and any(char.isalpha() for char in name)])  # fmt: skip
     skills, other_skills = catalogue.split(catalogue.skills, listed_skills(_first(entry, "skills")))
     return {
@@ -167,8 +172,8 @@ def persona_row(entry: dict[str, Any], catalogue: Catalogue, in_rules: dict[str,
         **{field: number(statblock.get(key)) for key, field in STATS.items()},
         "armour_save": None,
         "large": False,
-        "caster": _caster(entry),
-        "specials": _specials(entry, rules),
+        "caster": _caster(entry, specials),
+        "specials": specials,
         "skills": skills,
         "spells": [],
         "equipment": [{"item": item, "quantity": 1} for item in kit],
