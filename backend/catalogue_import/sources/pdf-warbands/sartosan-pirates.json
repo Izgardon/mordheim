@@ -631,6 +631,7 @@
     }
   ],
   "priceRows": [
+    {"name": "Jolly Roger", "cost": 40, "dice": 2, "rarity": 9, "types": ["sartosan-pirates", "araby-smugglers", "bretonnian-buccaneers", "estalian-corsairs", "ghost-pirates", "khorne-raiders", "lothern-sea-patrol", "orc-pirates", "savage-orcs-sar", "pirates-of-the-cathayan-sea", "slayer-pirates", "wasteland-privateers"], "note": "A banner in Sartosa, which a Navy warband never carries.", "page": 10},
     {
       "name": "Cat O' Nine Tails",
       "cost": 3,
@@ -1424,38 +1425,6 @@
       ]
     },
     {
-      "name": "Banner - Jolly Roger",
-      "type": "Miscellaneous",
-      "subtype": "",
-      "cost": 40,
-      "dice": 2,
-      "rarity": 9,
-      "rulesPage": 10,
-      "types": [
-        "sartosan-pirates",
-        "araby-smugglers",
-        "bretonnian-buccaneers",
-        "estalian-corsairs",
-        "ghost-pirates",
-        "khorne-raiders",
-        "lothern-sea-patrol",
-        "orc-pirates",
-        "savage-orcs-sar",
-        "pirates-of-the-cathayan-sea",
-        "slayer-pirates",
-        "wasteland-privateers"
-      ],
-      "rules": [
-        {
-          "rule": "pirate-banner"
-        },
-        {
-          "name": "Jolly Roger",
-          "text": "One per warband, carried by any Hero. Any Pirate within 12\" of the Jolly Roger never counts as All Alone."
-        }
-      ]
-    },
-    {
       "name": "Banner - 'Friendly' Flag",
       "type": "Miscellaneous",
       "subtype": "",
@@ -1699,7 +1668,7 @@
     },
     {
       "page": 10,
-      "what": "The setting's Equipment PDF prints eighteen items our catalogue lacks: they are stubs with the rules and prices it prints, one row for the setting's twelve warband types (William, 11 Nov 2026: \"add them in as stubs if you dont have the rules for them yet, we will populate later but good to know they exist\"). The Quarantine Flag is 40+2D6 on the trading chart and 30+2D6 in its entry: the entry's, as William settled for the Horn of the Wild Hunt. Each of the six Banners carries the shared Pirate Banner rule and its own. The Greatcoat (10 gc, Common) is our Rain Coat, \"Based on 'Raincoat' from Border Town Burning\" and the same price, so it is no new item: it is a tag on ours, and the PDF adds that it may be worn over armour without penalty but not with a cloak, and does not keep powder dry when walking through water. The Powder Monkey has no rules in either PDF read."
+      "what": "The setting's Equipment PDF prints eighteen items our catalogue lacks: they are stubs with the rules and prices it prints, one row for the setting's twelve warband types (William, 11 Nov 2026: \"add them in as stubs if you dont have the rules for them yet, we will populate later but good to know they exist\"). The Quarantine Flag is 40+2D6 on the trading chart and 30+2D6 in its entry: the entry's, as William settled for the Horn of the Wild Hunt. Each of the five Banners carries the shared Pirate Banner rule and its own; the sixth, the Jolly Roger, is our Town Cryer Jolly Roger, the same effect at the same 40+2D6, Rare 9 (William, 27 Nov 2026, the items audit's question 8: A), with a price row for the twelve types. The Greatcoat (10 gc, Common) is our Rain Coat, \"Based on 'Raincoat' from Border Town Burning\" and the same price, so it is no new item: it is a tag on ours, and the PDF adds that it may be worn over armour without penalty but not with a cloak, and does not keep powder dry when walking through water. The Powder Monkey has no rules in either PDF read."
     },
     {
       "page": 14,

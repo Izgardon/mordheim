@@ -779,7 +779,7 @@ class PdfImportTests(SimpleTestCase):
             "Captain's Hat": (25, 2, 9),
             "Whalebone Charm": (15, 3, 10),
             "Silver Bullets/Arrows": (30, None, 10),
-            "Banner - Jolly Roger": (40, 2, 9),
+            # the Jolly Roger is our Town Cryer one (the items audit, 27 Nov 2026): `JollyRogerTests`
             "Banner - 'Friendly' Flag": (25, 2, 9),
             "Banner - Hourglass": (50, 2, 9),
             "Banner - Nation's Colors": (40, 2, 9),

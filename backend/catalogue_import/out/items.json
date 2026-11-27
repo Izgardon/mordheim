@@ -10290,6 +10290,66 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 40,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
+            "type": "araby-smugglers",
+            "excluded": false
+          },
+          {
+            "type": "bretonnian-buccaneers",
+            "excluded": false
+          },
+          {
+            "type": "estalian-corsairs",
+            "excluded": false
+          },
+          {
+            "type": "ghost-pirates",
+            "excluded": false
+          },
+          {
+            "type": "khorne-raiders",
+            "excluded": false
+          },
+          {
+            "type": "lothern-sea-patrol",
+            "excluded": false
+          },
+          {
+            "type": "orc-pirates",
+            "excluded": false
+          },
+          {
+            "type": "savage-orcs-sar",
+            "excluded": false
+          },
+          {
+            "type": "pirates-of-the-cathayan-sea",
+            "excluded": false
+          },
+          {
+            "type": "slayer-pirates",
+            "excluded": false
+          },
+          {
+            "type": "wasteland-privateers",
+            "excluded": false
+          }
+        ],
+        "note": "A banner in Sartosa, which a Navy warband never carries."
       }
     ]
   },
@@ -25229,100 +25289,6 @@
       }
     ],
     "single_use": true
-  },
-  {
-    "slug": "banner-jolly-roger",
-    "name": "Banner - Jolly Roger",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Miscellaneous",
-    "subtype": "",
-    "setting": "sartosa",
-    "source": "Sartosa",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Human%20Pirates.pdf",
-    "tags": [
-      "banner - jolly roger"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": false,
-    "rules": [
-      {
-        "rule": "pirate-banner"
-      },
-      {
-        "name": "Jolly Roger",
-        "summary": "",
-        "text": "One per warband, carried by any Hero. Any Pirate within 12\" of the Jolly Roger never counts as All Alone.",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 40,
-        "dice": 2,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 9,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          },
-          {
-            "type": "araby-smugglers",
-            "excluded": false
-          },
-          {
-            "type": "bretonnian-buccaneers",
-            "excluded": false
-          },
-          {
-            "type": "estalian-corsairs",
-            "excluded": false
-          },
-          {
-            "type": "ghost-pirates",
-            "excluded": false
-          },
-          {
-            "type": "khorne-raiders",
-            "excluded": false
-          },
-          {
-            "type": "lothern-sea-patrol",
-            "excluded": false
-          },
-          {
-            "type": "orc-pirates",
-            "excluded": false
-          },
-          {
-            "type": "savage-orcs-sar",
-            "excluded": false
-          },
-          {
-            "type": "pirates-of-the-cathayan-sea",
-            "excluded": false
-          },
-          {
-            "type": "slayer-pirates",
-            "excluded": false
-          },
-          {
-            "type": "wasteland-privateers",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
   },
   {
     "slug": "banner-friendly-flag",

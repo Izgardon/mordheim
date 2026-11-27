@@ -178,3 +178,15 @@ class CloakTests(ReviewCase):
         cloak = self.items["Hunter's Cloak"]
         self.assertEqual((cloak["type"], cloak["availabilities"]), ("Miscellaneous", []))
         self.assertIn("does not reveal his position by shooting", cloak["rules"][0]["text"])
+
+
+class JollyRogerTests(ReviewCase):
+    """Question 8 (A): Sartosa's Banner - Jolly Roger is our Jolly Roger."""
+
+    def test_one_jolly_roger_sold_to_the_pirates_and_sartosas_warbands(self) -> None:
+        self.assertNotIn("Banner - Jolly Roger", self.items)
+        self.assertEqual(self.rows("Jolly Roger", "pirates"), [(40, 2, 9, "")])
+        self.assertEqual(
+            self.rows("Jolly Roger", "sartosan-pirates"),
+            [(40, 2, 9, "A banner in Sartosa, which a Navy warband never carries.")],
+        )
