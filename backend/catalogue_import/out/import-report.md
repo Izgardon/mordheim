@@ -3613,7 +3613,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p5): The Friar's rule is headed "Wizard" but reads "The Friar is a Priest of Taal and may use the prayers of Taal in TC 11": he is read as a priest of the Prayers of Taal.
 - Flag (p6): The Hunting Hound's profile row is labelled "Trapper": read as the Hound's, the entry it sits under.
 - Flag (p1): Hunting Hounds are "0-5" in their entry, while Choice of Warriors says no more Hunting Hounds than Trappers: the count is 0-5 and the limit is his Dog Handler rule.
-- Flag (p6): The Trapper's Set Traps rule is the same mechanic as our Set Traps skill (Gnoblars only), and is kept as his own rule, as the PDF prints it.
+- Flag (p6): The Trapper's Set Traps rule is our Set Traps skill, the Ogre Hunting Party's, so he starts with it (William, 27 Nov 2026: "Shared, use wordier one"): the skill keeps its wording, which also lets a model of more than one wound finish its move, and its Gnoblars-only limit stays the Ogre Hunting Party group's note.
 
 ## Pointer rules and starting skills
 

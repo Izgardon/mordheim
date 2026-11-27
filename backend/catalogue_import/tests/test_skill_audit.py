@@ -5,7 +5,7 @@ import re
 from typing import Any, ClassVar
 
 from catalogue_import.common import load_json
-from catalogue_import.pdf_warbands import TYPE, skill_settings
+from catalogue_import.pdf_warbands import PDF_SOURCES, TYPE, skill_settings
 from catalogue_import.skill_groups import title_case
 from catalogue_import.sources import HIRELING_DATA, OUT
 from catalogue_import.tests.review_support import ReviewCase
@@ -180,6 +180,16 @@ class SkillAuditTests(ReviewCase):
         self.assertFalse(self.skills["Set Traps"].startswith("Gnoblars only"))
         groups = {row["name"]: row for row in load_json(OUT / "skill-groups.json")}
         self.assertIn("Set Traps", groups["Ogre Hunting Party"]["note"])
+
+    def test_one_set_traps_skill_in_the_wordier_wording(self) -> None:
+        # William, 27 Nov 2026, of the Woodsmen de Artois' Trapper's rule and the Ogre Hunting Party's skill, which
+        # adds that a model of more than one wound may finish its move: "Shared, use wordier one"
+        self.assertIn("the model has more than one wound", self.skills["Set Traps"])
+        page = load_json(PDF_SOURCES / "woodsmen-de-artois.json")
+        flags = [flag["what"] for flag in page["flags"] if "Set Traps" in flag["what"]]
+        self.assertEqual(len(flags), 1)
+        self.assertIn("so he starts with it", flags[0])
+        self.assertNotIn("kept as his own rule", flags[0])
 
     def test_the_cursed_dwarves_longbeard_learns_the_clansmens_line(self) -> None:
         # the book's skill lists name Leader, Priest, "Clansmen" and Slayers; the Clansmen are henchmen, so that line
