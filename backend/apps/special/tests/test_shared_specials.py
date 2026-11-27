@@ -115,6 +115,8 @@ class SharedSeedTests(TestCase):
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         animosity.refresh_from_db()
         self.assertIsNone(animosity.archived_at)
+        # the Grandmother's Wizard is kept apart under her name: the book's general Wizard stays everyone else's
+        self.assertTrue(Special.objects.filter(name="Wizard", type="Caster", archived_at__isnull=True).exists())
         self.assertIn("Shared specials - Created: 0, Updated: 83, copies archived: 0.", seed())
 
 
@@ -208,6 +210,25 @@ class SharedLookupTests(TestCase):
         self.assertEqual((own.name, own.category), ("Regeneration (Belandysh)", BODY))
         self.assertEqual((skink.name, skink.type), ("Scaly Skin (Chameleon Skink)", "Hired Sword - Chameleon Skink"))
         self.assertEqual((rot.name, rot.type, rot.category), ("Nurgle's Rot", "Blessing of Nurgle", MUTATION))
+
+    def test_a_rule_of_a_general_specials_name_that_says_more_is_kept_his_and_one_that_says_no_more_is_ours(self):
+        # William, 27 Nov 2026, of the Grandmother: "I can't see that rule in her profile why isn't it there?" Her
+        # Wizard names the four spells she starts each battle with, so it is hers; the Warlock's says his two
+        text = "The Grandmother starts each battle with four spells."
+        hers = BookLookups("Dramatis Persona").special({"name": "Wizard", "description": text}, "The Grandmother")
+        his = BookLookups("Hired Sword").special({"name": "Wizard", "description": "Two spells."}, "Warlock")
+        plain = BookLookups("Dramatis Persona").special("Wizard", "Nicodemus, the Cursed Pilgrim")
+
+        assert hers is not None and his is not None and plain is not None
+        grandmother = ("Wizard (The Grandmother)", "Dramatis Persona - The Grandmother", DRAMATIS_PERSONA, TRAIT, text)
+        self.assertEqual((hers.name, hers.type, hers.owner_kind, hers.kind, hers.description), grandmother)
+        self.assertEqual((his.name, his.type), ("Wizard (Warlock)", "Hired Sword - Warlock"))
+        self.assertEqual((plain.name, plain.type, plain.owner_kind), ("Wizard", "Caster", GENERAL))
+        oxyotl = BookLookups("Dramatis Persona").special({"name": "Scaly Skin", "description": "6+."}, "Oxyotl")
+        rider = BookLookups("Dramatis Persona").special({"name": "Immune to Psychology", "description": "Whoa Boy!"}, "The Headless Horseman")  # fmt: skip
+        assert oxyotl is not None and rider is not None
+        self.assertEqual((oxyotl.name, oxyotl.kind, oxyotl.category), ("Scaly Skin (Oxyotl)", BOON, BODY))
+        self.assertEqual((rider.name, rider.kind), ("Immune to Psychology (The Headless Horseman)", BOON))
 
 
 class SharedNotSeededTests(TestCase):

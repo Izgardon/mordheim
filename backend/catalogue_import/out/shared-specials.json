@@ -762,6 +762,61 @@
       "owner": "Body Snatcher",
       "rule": "Loner",
       "name": "Loner (Body Snatcher)"
+    },
+    {
+      "owner": "Warlock",
+      "rule": "Wizard",
+      "name": "Wizard (Warlock)"
+    },
+    {
+      "owner": "Elf Mage",
+      "rule": "Wizard",
+      "name": "Wizard (Elf Mage)"
+    },
+    {
+      "owner": "Witch",
+      "rule": "Wizard",
+      "name": "Wizard (Witch)"
+    },
+    {
+      "owner": "Dark Mage",
+      "rule": "Wizard",
+      "name": "Wizard (Dark Mage)"
+    },
+    {
+      "owner": "The Fallen Sister",
+      "rule": "Wizard",
+      "name": "Wizard (The Fallen Sister)"
+    },
+    {
+      "owner": "Trancas Quendalmanliye",
+      "rule": "Wizard",
+      "name": "Wizard (Trancas)"
+    },
+    {
+      "owner": "Dark Emissary",
+      "rule": "Wizard",
+      "name": "Wizard (Dark Emissary)"
+    },
+    {
+      "owner": "Truthsayer",
+      "rule": "Wizard",
+      "name": "Wizard (Truthsayer)"
+    },
+    {
+      "owner": "The Grandmother",
+      "rule": "Wizard",
+      "name": "Wizard (The Grandmother)"
+    },
+    {
+      "owner": "Oxyotl",
+      "rule": "Scaly Skin",
+      "name": "Scaly Skin (Oxyotl)"
+    },
+    {
+      "owner": "The Headless Horseman",
+      "rule": "Immune to Psychology",
+      "name": "Immune to Psychology (The Headless Horseman)"
     }
   ],
   "own_names": [

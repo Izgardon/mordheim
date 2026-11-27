@@ -5,7 +5,8 @@ Sword - <name>" (or "Dramatis Persona - <name>"), his spells under his `spell_lo
 the review, 5 Nov 2026: D3); his special skills are the book's of their names (created when it
 lacks one) in a skill group of that name, which his skill access names (skill groups, phase 1a). A special of a shared
 special's name or alias is the shared one (Fear for "Cause Fear"), unless William's list keeps that owner's apart under
-a name of its own (special/shared.py). Any other special is the book's general one of its name (Wizard), else
+a name of its own (special/shared.py). Any other special is the book's general one of its name (Wizard), unless the
+list keeps his apart too (William, 27 Nov 2026: the Grandmother's Wizard names the four spells she starts with), else
 the owner's own, never another owner's of the name (the coordinator, 5 Nov 2026: two owners share a rule only through
 the shared specials list), named for him where others word it otherwise ("Hiring Fee (Johann the Knife)").
 """

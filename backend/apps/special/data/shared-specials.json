@@ -1205,6 +1205,116 @@
         }
       ],
       "why": "A Baneworm may not climb."
+    },
+    {
+      "name": "Wizard (Warlock)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "hired_sword": "Warlock"
+        }
+      ],
+      "why": "Two spells at random from the Lesser Magic list."
+    },
+    {
+      "name": "Wizard (Elf Mage)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "hired_sword": "Elf Mage"
+        }
+      ],
+      "why": "Three spells at random from the Spells of the Djed'hi."
+    },
+    {
+      "name": "Wizard (Witch)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "hired_sword": "Witch"
+        }
+      ],
+      "why": "Two spells at random from the Charms & Hexes list."
+    },
+    {
+      "name": "Wizard (Dark Mage)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "hired_sword": "Dark Mage"
+        }
+      ],
+      "why": "One spell at random from the Dark Magic list, and more later from it or the Lesser Magic list."
+    },
+    {
+      "name": "Wizard (The Fallen Sister)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "hired_sword": "The Fallen Sister"
+        }
+      ],
+      "why": "One spell at random from the Lesser Magic list."
+    },
+    {
+      "name": "Wizard (Trancas)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "hired_sword": "Trancas Quendalmanliye"
+        }
+      ],
+      "why": "Two spells at random from the Lesser Magic list."
+    },
+    {
+      "name": "Wizard (Dark Emissary)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "dramatis_persona": "Dark Emissary"
+        }
+      ],
+      "why": "Four spells at random from the Lore of Darkness."
+    },
+    {
+      "name": "Wizard (Truthsayer)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "dramatis_persona": "Truthsayer"
+        }
+      ],
+      "why": "Three spells at random from the Lore of Light."
+    },
+    {
+      "name": "Wizard (The Grandmother)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "dramatis_persona": "The Grandmother"
+        }
+      ],
+      "why": "Four spells at the start of each battle: two at random from the Lesser Magic list, two from Charms and Hexes."
+    },
+    {
+      "name": "Scaly Skin (Oxyotl)",
+      "rule": "Scaly Skin",
+      "owners": [
+        {
+          "dramatis_persona": "Oxyotl"
+        }
+      ],
+      "why": "A natural 6+ save; the mutation's is 5+, and armour adds to it."
+    },
+    {
+      "name": "Immune to Psychology (The Headless Horseman)",
+      "rule": "Immune to Psychology",
+      "owners": [
+        {
+          "dramatis_persona": "The Headless Horseman"
+        }
+      ],
+      "why": "A wound still makes him roll on the Whoa Boy! table."
     }
   ]
 }

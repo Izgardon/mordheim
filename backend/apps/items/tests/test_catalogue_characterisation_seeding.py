@@ -148,7 +148,10 @@ class SeedAllTests(TestCase):
                 # dramatis personae's 26
                 # one Animal rule (William, 25 Nov 2026): the templates' 39 copies of Animal and Animals link the
                 # shared special, and Mutiny in Marienburg's "Animal (Mutiny in Marienburg)" is its alias: 41 fewer
-                "Special": 2000,
+                # a rule of a general or shared special's name that says more stays its owner's (William, 27 Nov
+                # 2026, of the Grandmother's Wizard): six hired swords' and three personae's Wizard, Oxyotl's Scaly
+                # Skin and the Headless Horseman's Immune to Psychology, 11 more
+                "Special": 2011,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -370,9 +373,9 @@ class SeedAllTests(TestCase):
                     66,
                     0,
                     4,
-                    8,
+                    7,
                     1,
-                ),  # Marienburg's Cultists of Chaos, the Annual's two Chaos swords and Oxyotl
+                ),  # Marienburg's Cultists of Chaos, the Annual's two Chaos swords and Oxyotl; the Headless Horseman's his own
                 "Immune to Poison": (63, 0, 4, 5, 8),
                 "Hideous": (
                     0,
@@ -409,6 +412,7 @@ class SeedAllTests(TestCase):
                 "Immune to Psychology (Plague Cart)": "warband",
                 "Immune to Psychology (Belandysh)": "dramatis_persona",
                 "Immune to Psychology (Ippan Shu)": "dramatis_persona",
+                "Immune to Psychology (The Headless Horseman)": "dramatis_persona",  # still rolls on Whoa Boy!
                 "Immune to Psychology (Nightmare)": "beast",  # a mount's book rule only beasts hold (7 Nov 2026)
                 # the daemons', plants' and Terracotta Soldier's of the East: every Leadership-based test passed
                 "Immune to Psychology (Beasts of the East)": "beast",
@@ -753,6 +757,20 @@ class SeedAllTests(TestCase):
         self.assertFalse(Special.objects.filter(type__startswith="Dramatis Persona - Crow Master").exists())
         maximilian = DramatisPersona.objects.get(name="Maximilian the Mad")
         self.assertTrue(maximilian.special_links.filter(special__name="Fear (Maximilian)").exists())  # still his own
+
+    def test_a_wizard_whose_rule_says_more_keeps_it_as_his_own_and_still_casts(self):
+        # William, 27 Nov 2026, of the Grandmother: "I can't see that rule in her profile why isn't it there?" A rule
+        # of the general Wizard's name linked ours and dropped her text: hers names the four spells she starts with
+        grandmother = DramatisPersona.objects.get(name="The Grandmother")
+        hers = Special.objects.get(dramatis_persona_specials__dramatis_persona=grandmother, name__startswith="Wizard")
+        self.assertEqual((hers.name, hers.type, grandmother.caster), ("Wizard (The Grandmother)", "Dramatis Persona - The Grandmother", "Wizard"))  # fmt: skip
+        self.assertIn("four spells", hers.description)
+        wizards = Special.objects.filter(campaign__isnull=True, name__startswith="Wizard (", archived_at__isnull=True)
+        owners = {row.name: row.owner_kind for row in wizards if row.type != "Animal"}  # not a familiar's rule
+        kept = ("Warlock", "Elf Mage", "Witch", "Dark Mage", "The Fallen Sister", "Trancas")
+        self.assertEqual(owners, {f"Wizard ({name})": "hired_sword" for name in kept} | {f"Wizard ({name})": "dramatis_persona" for name in ("Dark Emissary", "Truthsayer", "The Grandmother")})  # fmt: skip
+        # ours stays the caster's rule: the templates' Wizards link it, and a hire of a Wizard is given it
+        self.assertIsNone(Special.objects.get(campaign__isnull=True, name="Wizard", type="Caster").archived_at)
 
     def test_a_race_is_named_in_the_singular(self):
         # the review (5 Nov 2026: D10): "Skinks" and "Centigors" beside Human and Saurus; Other Beastmen stays (the plan)

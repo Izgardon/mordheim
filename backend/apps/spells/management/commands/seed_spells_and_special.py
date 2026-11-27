@@ -125,7 +125,8 @@ class Command(BaseCommand):
         alias, or of a rule kept apart under a name of its own (a mount's Fear, a fighter's Cause Fear, the
         Nightmare's Immune to Psychology (Mount) seeded before), is archived, since its owners link the shared one or
         their own now. An injury table's special is never one of those copies: the shared Trait Hardened and the
-        injury of that name are two rules, and the injury's row stays the injury's (William, 13 Nov 2026)."""
+        injury of that name are two rules, and the injury's row stays the injury's (William, 13 Nov 2026); nor is a
+        general special of special.json's (the Wizard the Grandmother's own Wizard is kept apart from)."""
         data = read_shared()
         entries = data["specials"]
         settings = dict(CampaignType.objects.values_list("slug", "id"))
@@ -155,6 +156,8 @@ class Command(BaseCommand):
             .exclude(pk__in=shared)
             .exclude(type=INJURY)  # the injury tables' own rows of a shared name (Hardened) are not copies of it
         )
-        copies = [row.pk for row in live.only("pk", "name") if lookup_key(row.name) in names]
+        general = {(entry.get("name", "").strip(), entry.get("type", "").strip()) for entry in read_json_list(SPECIAL_JSON_PATH)}  # fmt: skip
+        rows = live.only("pk", "name", "type")
+        copies = [row.pk for row in rows if lookup_key(row.name) in names and (row.name, row.type) not in general]
         archived = Special.objects.filter(pk__in=copies).update(archived_at=timezone.now())
         return created, updated, archived

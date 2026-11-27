@@ -403,5 +403,16 @@
   "Animals (Slavehound)": "trait",
   "Animals (Cave Squig)": "trait",
   "Animal (Great Squig)": "trait",
-  "Animal (Baneworm)": "trait"
+  "Animal (Baneworm)": "trait",
+  "Wizard (Warlock)": "trait",
+  "Wizard (Elf Mage)": "trait",
+  "Wizard (Witch)": "trait",
+  "Wizard (Dark Mage)": "trait",
+  "Wizard (The Fallen Sister)": "trait",
+  "Wizard (Trancas)": "trait",
+  "Wizard (Dark Emissary)": "trait",
+  "Wizard (Truthsayer)": "trait",
+  "Wizard (The Grandmother)": "trait",
+  "Scaly Skin (Oxyotl)": "boon",
+  "Immune to Psychology (The Headless Horseman)": "boon"
 }
