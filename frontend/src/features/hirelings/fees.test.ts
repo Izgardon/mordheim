@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
 
 import { feeDraftOf, feeFromDraft } from "./components/fees/fee-draft";
-import { blankFee, feeGold, feeReads, formatFee, matchCounter, type Fee } from "./fees";
+import {
+  blankFee,
+  feeGold,
+  feeReads,
+  formatFee,
+  matchCounter,
+  upkeepWords,
+  type Fee,
+} from "./fees";
 
 const fee = (change: Partial<Fee>): Fee => ({ ...blankFee(), ...change });
 
@@ -17,6 +25,12 @@ describe("structured fees", () => {
     expect(formatFee(fee({ kind: "replaces_hero" }))).toBe("Takes a hero's place");
     expect(formatFee(fee({ kind: "none" }))).toBe("None");
     expect(formatFee(undefined)).toBe("-");
+  });
+
+  it("reads an upkeep mid-sentence, none of it as no upkeep", () => {
+    expect(upkeepWords(fee({ gold: 10 }))).toBe("upkeep 10 gc");
+    expect(upkeepWords(fee({ kind: "none" }))).toBe("no upkeep");
+    expect(upkeepWords(fee({ kind: "special" }))).toBe("upkeep: see their rules");
   });
 
   it("reads a fee as the form's line under it does (William, 7 Nov 2026)", () => {

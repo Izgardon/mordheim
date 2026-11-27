@@ -13,7 +13,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 import { useRequestKey } from "@/lib/request-key";
 
-import { feeOf, feeSettle, formatFee } from "../fees";
+import { feeOf, feeSettle, formatFee, upkeepWords } from "../fees";
 import type { HirelingCatalogueConfig } from "../hireling-catalogue-kinds";
 import type { HirelingProfile } from "../types/hireling-catalogue-types";
 import FeePayment from "./fees/FeePayment";
@@ -118,7 +118,7 @@ export default function HireDialog(props: HireDialogProps) {
             <p className="m-0 text-sm font-semibold text-danger">{props.warning}</p>
           ) : null}
           <p className="m-0 text-sm text-text2">
-            Hire fee {formatFee(entry.hire_fee)}, upkeep {formatFee(entry.upkeep_fee)}.
+            Hire fee {formatFee(entry.hire_fee)}, {upkeepWords(entry.upkeep_fee)}.
           </p>
           <HireTerms
             kind={config.kind}

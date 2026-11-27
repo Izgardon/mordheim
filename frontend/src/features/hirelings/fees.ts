@@ -78,6 +78,14 @@ export function formatFee(raw: Fee | null | undefined) {
   return parts.join(" + ") || "-";
 }
 
+/** An upkeep in the middle of a line: "upkeep 10 gc", "no upkeep", "upkeep: see their rules". */
+export function upkeepWords(raw: Fee | null | undefined) {
+  const fee = feeOf(raw);
+  if (fee.kind === "none") return "no upkeep";
+  if (fee.kind === "special") return "upkeep: see their rules";
+  return `upkeep ${formatFee(fee)}`;
+}
+
 /**
  * A fee as the form's line under it reads it (William, 7 Nov 2026: "Hire fee should have a line
  * displaying what it would look like"): "30 + D6 gc and 1 Wyrdstone", "2D6×5 gc", "1 Treasure".

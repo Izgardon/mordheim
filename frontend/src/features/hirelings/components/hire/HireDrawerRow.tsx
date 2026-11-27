@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-import { formatFee } from "../../fees";
+import { formatFee, upkeepWords } from "../../fees";
 import { hirelingRace } from "../../hireling-catalogue-kinds";
 import type { HirelingProfile } from "../../types/hireling-catalogue-types";
 
@@ -36,7 +36,7 @@ export default function HireDrawerRow({
         <span className="font-mono text-[13px] font-bold text-ink">
           {formatFee(entry.hire_fee)}
         </span>
-        <span className="text-xs text-muted-foreground">upkeep {formatFee(entry.upkeep_fee)}</span>
+        <span className="text-xs text-muted-foreground">{upkeepWords(entry.upkeep_fee)}</span>
       </div>
       {canHire ? (
         <Button
