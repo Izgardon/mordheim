@@ -47,11 +47,9 @@ EQUIPMENT_NAME_ALIASES = {
     "double-handed axe": "double-handed weapon",
     "two-handed sword": "double-handed weapon",
     "repeating crossbow": "repeater crossbow",
-    "dark cloak": "sea dragon cloak",
     "mining pick": "double-handed weapon",
     "pick": "double-handed weapon",
     "pickaxe": "double-handed weapon",
-    "hunter's cloak": "forest cloak",
     "whip": "steel whip",  # as Heinrich 'Altdorf' Schmidt's (persona_item_names), never the Barbed Whip
     "scimitar": "sword",
     "longbow": "long bow",

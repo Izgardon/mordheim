@@ -1248,7 +1248,8 @@
         "quantity": 1
       },
       {
-        "item": "Dark Cloak",
+        "item": "Elven Cloak",
+        "shown_as": "Dark Cloak",
         "quantity": 1
       }
     ],
@@ -1778,10 +1779,6 @@
       {
         "name": "Heart Strike",
         "description": "Kislev Rangers often battle against large monsters that roam their native borders. They have grown particularly adept at felling such beasts with a single, deadly arrow strike. When shooting at a large monster (this includes large animals such as bears too), if the Kislev Ranger rolls a 6 to hit, followed by a wound roll of 5+, the beast is shot in some vital spot and is killed instantly."
-      },
-      {
-        "name": "Hunter's Cloak",
-        "description": "This cloak is fashioned by Kislevites and is only worn by their rangers. A hidden ranger will not reveal her position by shooting. The target model can take an initiative test in order to try and spot the firing ranger. If the test is successful, the ranger is no longer hidden."
       },
       {
         "name": "Loner",

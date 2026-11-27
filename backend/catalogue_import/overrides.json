@@ -1981,6 +1981,22 @@
       "why": "on the Pit Fighters (old) list; no rules for now (question 29); William, 4 Nov 2026"
     },
     {
+      "name": "Hunter's Cloak",
+      "type": "Miscellaneous",
+      "setting": "mordheim-1b",
+      "source": "Kislev Ranger",
+      "link_url": "https://broheim.net/downloads/resources/Hired%20Sword%20Compendium.pdf#page=27",
+      "flavour": "This cloak is fashioned by Kislevites and is only worn by their rangers.",
+      "rules": [
+        {
+          "name": "",
+          "summary": "A hidden wearer shooting stays hidden unless the target passes an Initiative test",
+          "text": "A hidden model wearing it does not reveal his position by shooting. The target model may take an Initiative test to try to spot him; if it passes, he is no longer hidden."
+        }
+      ],
+      "why": "the Kislev Ranger's own cloak (William, 27 Nov 2026, the items audit's question 6: C): its rule is that shooting keeps a hidden ranger hidden, which is no Forest Cloak's (-1 to hit by a tree or hedge), so it is an item of its own, out of his rules; no cost, so it has no price row and the store never offers it"
+    },
+    {
       "name": "Bo",
       "type": "Weapon",
       "subtype": "Melee",

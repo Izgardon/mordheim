@@ -169,3 +169,12 @@ class NoPriceTests(ReviewCase):
 
     def test_misericordia_keeps_its_ten_gold_crowns(self) -> None:
         self.assertEqual({row["cost"] for row in self.items["Misericordia"]["availabilities"]}, {10})
+
+
+class CloakTests(ReviewCase):
+    """Question 6 (C): the Kislev Ranger's Hunter's Cloak keeps a hidden shooter hidden, no Forest Cloak's effect."""
+
+    def test_the_hunters_cloak_is_an_item_of_its_own_no_store_sells(self) -> None:
+        cloak = self.items["Hunter's Cloak"]
+        self.assertEqual((cloak["type"], cloak["availabilities"]), ("Miscellaneous", []))
+        self.assertIn("does not reveal his position by shooting", cloak["rules"][0]["text"])

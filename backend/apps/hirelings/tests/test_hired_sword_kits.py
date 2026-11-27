@@ -94,3 +94,27 @@ class PyromaniacTests(TestCase):
         self.assertTrue(
             rockets.startswith("His fireworks are these rockets, and like his firecrackers they never run out.")
         )
+
+
+class CloakTests(TestCase):
+    """William, 27 Nov 2026 (the items audit's question 6: C), each by its book text."""
+
+    rows: ClassVar[dict[str, dict[str, Any]]]
+
+    @classmethod
+    def setUpTestData(cls):
+        for name in ("Elven Cloak", "Sea Dragon Cloak", "Forest Cloak", "Hunter's Cloak"):
+            Item.objects.create(name=name, type="Miscellaneous")
+        cls.rows = {row["name"]: row for row in json.loads(DATA.read_text())}
+
+    def cloaks(self, name: str) -> dict[str, str]:
+        links = BookLookups().links(self.rows[name], name)
+        by_id = {item.id: item.name for item in Item.objects.all()}
+        return {by_id[pk]: line.shown_as for pk, line in links.equipment.items()}
+
+    def test_the_dark_elf_assassins_dark_cloak_counts_as_an_elven_cloak(self):
+        self.assertEqual(self.cloaks("Dark Elf Assassin"), {"Elven Cloak": "Dark Cloak"})
+
+    def test_the_kislev_rangers_hunters_cloak_is_its_own_item_and_out_of_his_rules(self):
+        self.assertEqual(self.cloaks("Kislev Ranger"), {"Hunter's Cloak": ""})
+        self.assertNotIn("Hunter's Cloak", [special["name"] for special in self.rows["Kislev Ranger"]["specials"]])

@@ -18407,6 +18407,36 @@
     ]
   },
   {
+    "slug": "hunters-cloak",
+    "name": "Hunter's Cloak",
+    "variant": "",
+    "origin": "templates",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mordheim-1b",
+    "source": "Kislev Ranger",
+    "link_url": "https://broheim.net/downloads/resources/Hired%20Sword%20Compendium.pdf#page=27",
+    "tags": [
+      "hunter's cloak"
+    ],
+    "flavour": "This cloak is fashioned by Kislevites and is only worn by their rangers.",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "",
+        "summary": "A hidden wearer shooting stays hidden unless the target passes an Initiative test",
+        "text": "A hidden model wearing it does not reveal his position by shooting. The target model may take an Initiative test to try to spot him; if it passes, he is no longer hidden.",
+        "tables": []
+      }
+    ],
+    "availabilities": []
+  },
+  {
     "slug": "bo",
     "name": "Bo",
     "variant": "",
