@@ -5233,8 +5233,7 @@
     "link_url": "https://mordheimer.net/docs/weapons-armour/close-combat#club,-mace-or-hammer",
     "tags": [
       "club",
-      "clubs",
-      "staff"
+      "clubs"
     ],
     "flavour": "Perhaps the simplest type of weapon, these brutal, bludgeoning instruments range from primitive wooden clubs to elaborately forged Dwarf hammers made from the finest steel. A blow from a mace can easily crush a skull or knock a man unconscious.",
     "range": "Close Combat",
@@ -5274,7 +5273,8 @@
     "link_url": "https://mordheimer.net/docs/weapons-armour/close-combat#club,-mace-or-hammer",
     "tags": [
       "mace",
-      "maces"
+      "maces",
+      "staff"
     ],
     "flavour": "Perhaps the simplest type of weapon, these brutal, bludgeoning instruments range from primitive wooden clubs to elaborately forged Dwarf hammers made from the finest steel. A blow from a mace can easily crush a skull or knock a man unconscious.",
     "range": "Close Combat",
@@ -18404,6 +18404,42 @@
         "note": "Pit Fighters (old) only"
       }
     ]
+  },
+  {
+    "slug": "bo",
+    "name": "Bo",
+    "variant": "",
+    "origin": "templates",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mordheim-2a",
+    "source": "Ninja Gnoblar",
+    "link_url": "https://broheim.net/downloads/resources/Hired%20Sword%20Compendium.pdf#page=25",
+    "tags": [
+      "bo"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Extra attack",
+        "summary": "+1 Attack",
+        "text": "A model armed with a bo gets +1 Attack.",
+        "tables": []
+      },
+      {
+        "rule": "parry"
+      },
+      {
+        "rule": "two-handed"
+      }
+    ],
+    "availabilities": []
   },
   {
     "slug": "pox-staff",

@@ -46,8 +46,6 @@ EQUIPMENT_NAME_ALIASES = {
     "throwing axes": "throwing knives/stars/axes",  # one entry for all of them (William, 11 Nov 2026)
     "double-handed axe": "double-handed weapon",
     "two-handed sword": "double-handed weapon",
-    "staff": "quarter staff",
-    "rune staff": "quarter staff",
     "repeating crossbow": "repeater crossbow",
     "dark cloak": "sea dragon cloak",
     "mining pick": "double-handed weapon",
@@ -66,7 +64,6 @@ EQUIPMENT_NAME_ALIASES = {
     "fireworks": "firecrackers",
     "superior black powder": "superior blackpowder",
     "hardened leathers": "toughened leathers",
-    "bo": "quarter staff",
     "rope and hook": "rope & hook",
     "dark elf blade": "sword",  # what it is made of is in EQUIPMENT_MATERIALS: his copy reads "Dark Elf Sword"
 }
@@ -146,11 +143,13 @@ def shared_names(
 
 @dataclass(frozen=True)
 class KitLine:
-    """One line of a seeded entry's kit: how many copies and what the book makes it of (weapon materials; "" plain,
-    which every line but the Runesmith Journeyman's gromril hammer and the Dark Elves' blade is)."""
+    """One line of a seeded entry's kit: how many copies, what the book makes it of (weapon materials; "" plain,
+    which every line but the Runesmith Journeyman's gromril hammer and the Dark Elves' blade is) and the name his kit
+    gives the item (`shown_as`; "" its own: the Warlock's Mace is his Staff, William, 27 Nov 2026)."""
 
     quantity: int
     material: str = ""
+    shown_as: str = ""
 
 
 @dataclass
@@ -332,7 +331,7 @@ class BookLookups:
             item = self.equipment(line, owner)
             if item:  # an item listed twice keeps its last quantity
                 quantity = parse_int(line.get("quantity"), 1)
-                links.equipment[item.id] = KitLine(quantity, equipment_material(line))
+                links.equipment[item.id] = KitLine(quantity, equipment_material(line), str(line.get("shown_as") or ""))
         return links
 
     def _special(self, name: str, description: str, owner: str) -> Special:

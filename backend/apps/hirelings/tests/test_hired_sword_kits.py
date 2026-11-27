@@ -44,3 +44,36 @@ class HiredSwordKitTests(TestCase):
 
     def test_the_rat_ogre_fights_with_his_own_claws(self):
         self.assertEqual(self.kit("Clan Skryre Rat Ogre"), {})
+
+
+class StaffKitTests(TestCase):
+    """William, 27 Nov 2026: "Quarter staff is its own item with different rules, give it to people that have it,
+    otherwise give ... staff as a nickname to hired swords that just have a mace/hammer named as a staff"."""
+
+    rows: ClassVar[dict[str, dict[str, Any]]]
+
+    @classmethod
+    def setUpTestData(cls):
+        for name in ("Mace", "Quarter Staff", "Bo", "Sword", "Throwing Knives/Stars/Axes"):
+            Item.objects.create(name=name, type="Weapon")
+        Item.objects.create(name="Elven Cloak", type="Miscellaneous")
+        Item.objects.create(name="Toughened Leathers", type="Armour")
+        cls.rows = {row["name"]: row for row in json.loads(DATA.read_text())}
+
+    def kit(self, name: str) -> dict[str, tuple[int, str]]:
+        links = BookLookups().links(self.rows[name], name)
+        by_id = {item.id: item.name for item in Item.objects.all()}
+        return {by_id[pk]: (line.quantity, line.shown_as) for pk, line in links.equipment.items()}
+
+    def test_a_casters_plain_staff_is_our_mace_shown_as_his_staff(self):
+        for name in ("Warlock", "Witch", "Dark Mage"):
+            with self.subTest(hired_sword=name):
+                self.assertEqual(self.kit(name), {"Mace": (1, "Staff")})
+        self.assertEqual(self.kit("Elf Mage"), {"Mace": (1, "Staff"), "Elven Cloak": (1, "")})
+        self.assertEqual(self.kit("Norse Shaman"), {"Mace": (1, "Rune Staff"), "Sword": (1, "")})
+
+    def test_the_ninja_gnoblars_bo_is_his_own_weapon(self):
+        self.assertEqual(
+            self.kit("Ninja Gnoblar"),
+            {"Toughened Leathers": (1, ""), "Throwing Knives/Stars/Axes": (1, ""), "Bo": (1, "")},
+        )

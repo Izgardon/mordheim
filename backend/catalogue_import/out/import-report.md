@@ -25,7 +25,7 @@ Answers go into `overrides.json`; the next build applies them.
 | shared item rules | 54 |
 | items (mordheimer) | 244 |
 | items (MiM) | 51 |
-| items (warband templates) | 42 |
+| items (warband templates) | 43 |
 | price rows | 614 |
 | skills | 529 |
 | skill groups | 115 |
@@ -1313,13 +1313,13 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 ## Club, Mace or Hammer
 
-Split into Club, Mace, Hammer (overrides.json `item_splits`): William, 26 Nov 2026: "Split into 3 items and go through the warband lists that had the original and only give them 1 appropriate option." Each is the original under its own name (3 gc, Concussion, for everyone). A list sells the one chosen for its warband: Hammer for Dwarfs and Sigmarites, Club for greenskins, Skaven and beasts, Mace otherwise, and the one its list prints where it prints only one. The original's staff tag goes to the Club
+Split into Club, Mace, Hammer (overrides.json `item_splits`): William, 26 Nov 2026: "Split into 3 items and go through the warband lists that had the original and only give them 1 appropriate option." Each is the original under its own name (3 gc, Concussion, for everyone). A list sells the one chosen for its warband: Hammer for Dwarfs and Sigmarites, Club for greenskins, Skaven and beasts, Mace otherwise, and the one its list prints where it prints only one. The original's staff tag goes to the Mace, which a list's plain Staff sells (William, 27 Nov 2026)
 
-- Club: tags club, clubs, staff
-- Mace: tags mace, maces
+- Club: tags club, clubs
+- Mace: tags mace, maces, staff
 - Hammer: tags hammer, hammers
 
-134 templates sold it; each now sells one: Club 41, Mace 65, Hammer 28. The default is Mace; a reason marks each exception.
+134 templates sold it; each now sells one: Club 39, Mace 67, Hammer 28. The default is Mace; a reason marks each exception.
 
 | Template | Sells | Why | Its lines printed | Names kept | Lines folded into another |
 | --- | --- | --- | --- | --- | --- |
@@ -1425,8 +1425,8 @@ Split into Club, Mace, Hammer (overrides.json `item_splits`): William, 26 Nov 20
 | Skaven of Clan Mors | Club | Skaven, and the lists print Club | Club |  |  |
 | Skaven of Clan Moulder | Club | Skaven, and the lists print Club | Mace/Club, Club |  |  |
 | Skaven of Clan Pestilens | Club | Skaven, and the lists print Club | Club |  |  |
-| Skaven of Clan Pestilens (Lustria) | Club | Skaven, and the lists print Club/Staff | Staff, Club/Staff | Staff |  |
-| Skaven of Clan Pestilens (Mousillon) | Club | Skaven, and the lists print Club/Staff | Staff, Club/Staff | Staff |  |
+| Skaven of Clan Pestilens (Lustria) | Mace | the Plague Monks' staffs: a list's plain Staff is our Mace, shown as Staff (William, 27 Nov 2026: "Quarter staff is its own item with different rules, give it to people that have it, otherwise give mace to lists"), so the Henchmen's Club/Staff is the Mace too, one item for the warband | Staff, Club/Staff | Staff |  |
+| Skaven of Clan Pestilens (Mousillon) | Mace | the Plague Monks' staffs: a list's plain Staff is our Mace, shown as Staff (William, 27 Nov 2026: "Quarter staff is its own item with different rules, give it to people that have it, otherwise give mace to lists"), so the Henchmen's Club/Staff is the Mace too, one item for the warband | Staff, Club/Staff | Staff |  |
 | Skaven of Clan Pristekk | Club | Skaven, and the lists print Club | Club |  |  |
 | Skaven of Clan Skryre (Athel Loren) | Club | Skaven, and the lists print Club | Club |  |  |
 | Skaven of Clan Skryre (Karak Azgal) | Club | Skaven, and the lists print Club | Club |  |  |

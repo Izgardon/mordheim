@@ -35,3 +35,47 @@ class BombTests(ReviewCase):
                 self.assertIn("a range of twice the thrower's Strength in inches", text)
         self.assertIn("D3 Strength 5 hits with no armour save", self.items["Acid Bomb"]["rules"][0]["text"])
         self.assertIn('within 1", friend or foe, takes one Strength 4 hit', self.items["Acid Bomb"]["rules"][0]["text"])
+
+
+class StaffTests(ReviewCase):
+    """Question 3: "Quarter staff is its own item with different rules, give it to people that have it, otherwise give
+    mace to lists and staff as a nickname to hired swords that just have a mace/hammer named as a staff"."""
+
+    def lines(self, slug: str, shown_as: str) -> list[str]:
+        return [
+            line["item"]["name"]
+            for entry in self.templates[slug]["lists"]
+            for line in entry["lines"]
+            if line["shown_as"] == shown_as
+        ]
+
+    def test_a_lists_plain_staff_is_our_mace(self) -> None:
+        for slug in (
+            "adventurers",
+            "mages",
+            "nehekhara-tomb-guards",
+            "tomb-guardians",
+            "skaven-of-clan-pestilens-lustria",
+            "skaven-of-clan-pestilens-mousillon",
+        ):
+            with self.subTest(template=slug):
+                self.assertEqual(self.lines(slug, "Staff"), ["Mace"])
+
+    def test_the_staff_tag_is_the_maces(self) -> None:
+        self.assertIn("staff", self.items["Mace"]["tags"])
+        self.assertNotIn("staff", self.items["Club"]["tags"])
+
+    def test_the_quarter_staff_stays_with_the_lists_that_sell_it(self) -> None:
+        sold = [
+            line["item"]["name"]
+            for entry in self.templates["battle-monks-of-cathay"]["lists"]
+            for line in entry["lines"]
+        ]
+        self.assertIn("Quarter Staff", sold)
+
+    def test_the_ninja_gnoblars_bo_is_an_item_of_its_own_no_store_sells(self) -> None:
+        bo = self.items["Bo"]
+        self.assertEqual(bo["availabilities"], [])
+        self.assertEqual(
+            [rule.get("rule") or rule["name"] for rule in bo["rules"]], ["Extra attack", "parry", "two-handed"]
+        )

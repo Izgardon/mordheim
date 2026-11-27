@@ -821,14 +821,14 @@
         "Club": {
           "tags": [
             "club",
-            "clubs",
-            "staff"
+            "clubs"
           ]
         },
         "Mace": {
           "tags": [
             "mace",
-            "maces"
+            "maces",
+            "staff"
           ]
         },
         "Hammer": {
@@ -1033,12 +1033,12 @@
           "why": "Skaven, and the lists print Club"
         },
         "skaven-of-clan-pestilens-lustria": {
-          "item": "Club",
-          "why": "Skaven, and the lists print Club/Staff"
+          "item": "Mace",
+          "why": "the Plague Monks' staffs: a list's plain Staff is our Mace, shown as Staff (William, 27 Nov 2026: \"Quarter staff is its own item with different rules, give it to people that have it, otherwise give mace to lists\"), so the Henchmen's Club/Staff is the Mace too, one item for the warband"
         },
         "skaven-of-clan-pestilens-mousillon": {
-          "item": "Club",
-          "why": "Skaven, and the lists print Club/Staff"
+          "item": "Mace",
+          "why": "the Plague Monks' staffs: a list's plain Staff is our Mace, shown as Staff (William, 27 Nov 2026: \"Quarter staff is its own item with different rules, give it to people that have it, otherwise give mace to lists\"), so the Henchmen's Club/Staff is the Mace too, one item for the warband"
         },
         "skaven-of-clan-pristekk": {
           "item": "Club",
@@ -1117,7 +1117,7 @@
           "why": "the list prints Club"
         }
       },
-      "why": "William, 26 Nov 2026: \"Split into 3 items and go through the warband lists that had the original and only give them 1 appropriate option.\" Each is the original under its own name (3 gc, Concussion, for everyone). A list sells the one chosen for its warband: Hammer for Dwarfs and Sigmarites, Club for greenskins, Skaven and beasts, Mace otherwise, and the one its list prints where it prints only one. The original's staff tag goes to the Club"
+      "why": "William, 26 Nov 2026: \"Split into 3 items and go through the warband lists that had the original and only give them 1 appropriate option.\" Each is the original under its own name (3 gc, Concussion, for everyone). A list sells the one chosen for its warband: Hammer for Dwarfs and Sigmarites, Club for greenskins, Skaven and beasts, Mace otherwise, and the one its list prints where it prints only one. The original's staff tag goes to the Mace, which a list's plain Staff sells (William, 27 Nov 2026)"
     }
   },
   "item_row_notes": {
@@ -1948,6 +1948,30 @@
       ],
       "note": "Pit Fighters (old) only",
       "why": "on the Pit Fighters (old) list; no rules for now (question 29); William, 4 Nov 2026"
+    },
+    {
+      "name": "Bo",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "setting": "mordheim-2a",
+      "source": "Ninja Gnoblar",
+      "link_url": "https://broheim.net/downloads/resources/Hired%20Sword%20Compendium.pdf#page=25",
+      "range": "Close Combat",
+      "strength": "As user",
+      "rules": [
+        {
+          "name": "Extra attack",
+          "summary": "+1 Attack",
+          "text": "A model armed with a bo gets +1 Attack."
+        },
+        {
+          "rule": "parry"
+        },
+        {
+          "rule": "two-handed"
+        }
+      ],
+      "why": "the Ninja Gnoblar's own staff: \"Bo (gives an additional attack, may parry and requires both hands)\", which is no Quarter Staff of ours (+1 Initiative, Parry, Freestyle) nor a Mace (William, 27 Nov 2026: \"Quarter staff is its own item with different rules\"); no cost, so it has no price row and the store never offers it"
     },
     {
       "name": "Pox Staff",

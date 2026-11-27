@@ -784,7 +784,8 @@
     "spells": [],
     "equipment": [
       {
-        "item": "Staff",
+        "item": "Mace",
+        "shown_as": "Staff",
         "quantity": 1
       }
     ],
@@ -1536,7 +1537,8 @@
     "spells": [],
     "equipment": [
       {
-        "item": "Staff",
+        "item": "Mace",
+        "shown_as": "Staff",
         "quantity": 1
       },
       {
@@ -1970,7 +1972,8 @@
     "spells": [],
     "equipment": [
       {
-        "item": "Rune Staff",
+        "item": "Mace",
+        "shown_as": "Rune Staff",
         "quantity": 1
       },
       {
@@ -2617,7 +2620,8 @@
     "spells": [],
     "equipment": [
       {
-        "item": "Staff",
+        "item": "Mace",
+        "shown_as": "Staff",
         "quantity": 1
       }
     ],
@@ -3589,7 +3593,8 @@
     ],
     "equipment": [
       {
-        "item": "Staff",
+        "item": "Mace",
+        "shown_as": "Staff",
         "quantity": 1
       }
     ],

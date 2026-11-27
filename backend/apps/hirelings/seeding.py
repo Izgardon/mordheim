@@ -6,8 +6,8 @@ Each row is an object: `name`, `description` (fluff), the nine characteristics, 
 spell named in two lores is looked up first), `skills`, `specials`, `spells` (the spells he knows: his own under `spell_lore` where it is given,
 else under "Hired Sword - <name>"; a spell line may name its own `lore`, for one whose spells come from several),
 `lore_spells` (his own lore's spells, made in the book under `spell_lore` as `spells` are, which he casts from and
-does not know: the Dark Maiden's Spells of Wrath) and `equipment` (`{"item", "quantity", "item_type"?}` or an item's
-name), and the hire terms in one object (`hired_sword`, or `dramatis_persona`): `hire_fee` and `upkeep_fee` (structured
+does not know: the Dark Maiden's Spells of Wrath) and `equipment` (`{"item", "quantity", "item_type"?, "shown_as"?}`,
+the last the name his kit gives the item, or an item's name), and the hire terms in one object (`hired_sword`, or `dramatis_persona`): `hire_fee` and `upkeep_fee` (structured
 fees, fees.py; or `hire_cost` and `upkeep_cost` in gold with a `*_cost_expression` kept as the note), `rating`,
 `grade`, `race`, `unique_to`, `available_skill_types` and `available_special_skills`; a dramatis persona's adds
 `stays` ("always" or "one_battle") and `payment_note`.
@@ -188,7 +188,7 @@ class _Run:
             "special_ids": [special.id for special in links.specials],
             "spell_ids": [spell.id for spell in links.spells],
             "item_entries": [
-                {"item_id": pk, "quantity": line.quantity, "material": line.material}
+                {"item_id": pk, "quantity": line.quantity, "material": line.material, "shown_as": line.shown_as}
                 for pk, line in links.equipment.items()
             ],
             "warbands": imported["lines"] if imported else self.own_lines(terms, row.name),
