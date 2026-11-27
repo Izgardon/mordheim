@@ -60,7 +60,8 @@ class SharedSeedTests(TestCase):
         # random", so ours say so, and his caster rule that says only that links them
         casters = dict(Special.objects.filter(type="Caster").values_list("name", "description"))
         self.assertIn("starts with one spell, rolled at random from his list", casters["Wizard"])
-        self.assertIn("He may cast no spell while he wears armour.", casters["Wizard"])  # the rulebook's (27 Nov 2026)
+        # the rulebook's, a shield counting as armour (William, 27 Nov 2026)
+        self.assertIn("He may cast no spell while he wears armour (including shields).", casters["Wizard"])
         self.assertIn("starts with one prayer, rolled at random from his list", casters["Priest"])
         claw, flies, rot = rows["Great Claw"], rows["Cloud of Flies"], rows["Nurgle's Rot"]
         self.assertEqual((claw.owner_kind, claw.kind, claw.category), (GENERAL, BOON, MUTATION))
