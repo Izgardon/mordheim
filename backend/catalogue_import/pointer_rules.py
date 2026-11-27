@@ -22,7 +22,8 @@ the spell is in his `spells` (by lore and name, ours in apps/spells/data/spells.
 a real spell, a caster's first pick still to make beside it. One whose rule says he starts with several spells to
 choose or roll picks that many at hire (`SPELL_PICKS`, `PERSONAE_SPELL_PICKS`: his `spell_picks`; the hired swords'
 are in their own data); his rule keeps its text. A dramatis persona whose rule says he knows a whole lore starts with
-every spell of its table, as the book prints it (`PERSONAE_KNOW_LORE`), so he has none to pick, and the rule goes.
+every spell of its table, as the book prints it (`PERSONAE_KNOW_LORE`), so he has none to pick, and the rule goes
+(one that says more keeps its text: `PERSONAE_ALSO_KNOW_LORE`); one typed no caster casts from those lores.
 One whose page lists no spells but whose rule says he knows some casts as William says (`PERSONAE_CASTERS`).
 """
 
@@ -32,6 +33,7 @@ from typing import Any
 
 from catalogue_import.common import load_json
 from catalogue_import.sources import BACKEND
+from catalogue_import.template_fighters import is_prayers
 
 SKILL_POINTER = re.compile(
     r"^(?:see (?:the )?[\w' -]*?\bskills?(?: section| list)?|as the skill of the same name)\.?$", re.I
@@ -115,17 +117,24 @@ SPELL_PICKS: dict[str, dict[str, int]] = {"Altdorf Expeditionary Party": {"Arch-
 # The same for a dramatis persona: "knows four randomly determined spells of the Lore of Darkness", "three ... of the
 # Lore of Light". Khar-mel's D3 and the Grandmother's four, rolled again each battle, stay their rules.
 PERSONAE_SPELL_PICKS: dict[str, int] = {"Dark Emissary": 4, "Truthsayer": 3}
-# A dramatis persona whose rule says he knows a whole lore: name -> the rule -> the lore, whose table's spells (each roll's,
+# A dramatis persona whose rule says he knows a whole lore: name -> the rule -> the lores, whose tables' spells (each roll's,
 # as the book prints it: a later book's additions to the lore aren't in "all six") he starts with, the rule going.
 # William, 27 Nov 2026, of Nicodemus, Gaz Er Unga Og, Bertha and the Crow Master ("knows all six"): "YES"; Neekit's
 # "knows every spell of the Magic of the Horned Rat as well as his own" is the same, his own staying his. The Crow
 # Master's "and also knows an additional spell, specific to him, Decay of Ages" is his Decay of Ages rule.
-PERSONAE_KNOW_LORE: dict[str, dict[str, str]] = {
-    "Nicodemus, the Cursed Pilgrim": {"Spells": "Lesser Magic"},
-    "Gaz Er Unga Og": {"Barbarian Shaman": "Barbarian Shaman Magic"},
-    "Bertha Bestraufrung, High Matriarch of the Sisterhood": {"Spells": "Prayers of Sigmar"},
-    "The Crow Master": {"Spells": "Necromancy"},
-    "Grey Seer Neekit": {"Magic of the Horned Rat": "Magic of the Horned Rat"},
+PERSONAE_KNOW_LORE: dict[str, dict[str, list[str]]] = {
+    "Nicodemus, the Cursed Pilgrim": {"Spells": ["Lesser Magic"]},
+    "Gaz Er Unga Og": {"Barbarian Shaman": ["Barbarian Shaman Magic"]},
+    "Bertha Bestraufrung, High Matriarch of the Sisterhood": {"Spells": ["Prayers of Sigmar"]},
+    "The Crow Master": {"Spells": ["Necromancy"]},
+    "Grey Seer Neekit": {"Magic of the Horned Rat": ["Magic of the Horned Rat"]},
+}
+# The same, the rule keeping its text. William, 27 Nov 2026, of Abdul Alhazred ("knows all the spells in the Elemental
+# lists", rolling each Shooting phase, 1-3 Elemental and 4-6 Necromancy, then a D6 for the spell he remembers): "Just
+# give him the elemental and necromancy lists". The Elemental list one D6 rolls on is Araby's, Arabian Elemental Magic;
+# which spell he remembers stays his rule.
+PERSONAE_ALSO_KNOW_LORE: dict[str, dict[str, list[str]]] = {
+    "Abdul Alhazred, the Mad Sorcerer": {"Master Wizard": ["Arabian Elemental Magic", "Necromancy"]},
 }
 # A dramatis persona whose page lists no spells, so the build typed him no caster, though his rule says he knows some:
 # what he casts as. William, 27 Nov 2026, of Khar-mel ("knows D3 spells chosen from the Elemental Magic list"): "They
@@ -265,7 +274,13 @@ def check_answers(templates: list[dict[str, Any]], personae: list[dict[str, Any]
     tables = (STARTS_WITH, ALSO_STARTS_WITH, STARTS_WITH_SPELLS, SPELL_PICKS)
     named = {(name, fighter) for table in tables for name in table for fighter in table[name]}
     missing = [f"{name}: {fighter}" for name, fighter in sorted(named - fighters)]
-    named_personae = {*PERSONAE_ALSO_START_WITH, *PERSONAE_SPELL_PICKS, *PERSONAE_KNOW_LORE, *PERSONAE_CASTERS}
+    named_personae = {
+        *PERSONAE_ALSO_START_WITH,
+        *PERSONAE_SPELL_PICKS,
+        *PERSONAE_KNOW_LORE,
+        *PERSONAE_ALSO_KNOW_LORE,
+        *PERSONAE_CASTERS,
+    }
     missing += sorted(named_personae - {persona["name"] for persona in personae})
     if missing:
         raise ValueError(f"pointer_rules.py names fighters the build lacks: {'; '.join(missing)}")
@@ -322,16 +337,26 @@ def _persona_rules(persona: dict[str, Any], skills: Skills, log: PointerLog) -> 
 
 
 def _persona_lores(persona: dict[str, Any], tables: dict[str, list[str]], log: PointerLog) -> None:
-    """The spells of each lore William's answer says he knows, in place of the rule that said so; a rule he hasn't,
-    or a lore we lack, stops the build."""
-    for rule, lore in PERSONAE_KNOW_LORE.get(persona["name"], {}).items():
-        rules = persona.get("specials") or []
-        kept = [special for special in rules if not isinstance(special, dict) or special.get("name") != rule]
-        if len(kept) == len(rules) or lore not in tables:
-            raise ValueError(f"pointer_rules.py: {persona['name']} has no rule {rule}, or we have no lore {lore}")
-        persona["specials"] = kept
-        persona["spells"] = [*persona.get("spells", []), *({"lore": lore, "name": name} for name in tables[lore])]
-        log.spells.append((persona["name"], rule, f"every {lore} spell"))
+    """The spells of each lore William's answers say he knows, in place of the rule that said so or beside the rule
+    that says more, and a caster's type from them for one typed no caster; a rule he hasn't, or a lore we lack, stops
+    the build."""
+    answers = [(PERSONAE_KNOW_LORE, False), (PERSONAE_ALSO_KNOW_LORE, True)]
+    for answer, keeps in answers:
+        for rule, lores in answer.get(persona["name"], {}).items():
+            rules = persona.get("specials") or []
+            kept = [special for special in rules if not isinstance(special, dict) or special.get("name") != rule]
+            missing = [lore for lore in lores if lore not in tables]
+            if len(kept) == len(rules) or missing:
+                raise ValueError(
+                    f"pointer_rules.py: {persona['name']} has no rule {rule}, or we have no lore {missing}"
+                )
+            if not keeps:
+                persona["specials"] = kept
+            known = [{"lore": lore, "name": name} for lore in lores for name in tables[lore]]
+            persona["spells"] = [*persona.get("spells", []), *known]
+            if persona.get("caster", "No") == "No":
+                persona["caster"] = "Priest" if all(is_prayers(lore) for lore in lores) else "Wizard"
+            log.spells.append((persona["name"], rule, f"every {' and '.join(lores)} spell"))
 
 
 def render_pointers(log: PointerLog) -> str:

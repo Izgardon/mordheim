@@ -3641,6 +3641,7 @@ A rule pointing to another fighter's entry takes that rule:
 A rule that said he starts with a spell, or knows a whole lore, is those spells (William, 26 and 27 Nov 2026):
 
 - Black Dwarfs: Sorcerer: Priest, starts with Sacrificial Ritual.
+- Abdul Alhazred, the Mad Sorcerer: Master Wizard, starts with every Arabian Elemental Magic and Necromancy spell.
 - Bertha Bestraufrung, High Matriarch of the Sisterhood: Spells, starts with every Prayers of Sigmar spell.
 - Gaz Er Unga Og: Barbarian Shaman, starts with every Barbarian Shaman Magic spell.
 - Grey Seer Neekit: Magic of the Horned Rat, starts with every Magic of the Horned Rat spell.

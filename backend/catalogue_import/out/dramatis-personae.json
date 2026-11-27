@@ -13,7 +13,7 @@
     "leadership": 8,
     "armour_save": null,
     "large": false,
-    "caster": "No",
+    "caster": "Wizard",
     "specials": [
       {
         "name": "The Eye Pendant",
@@ -35,7 +35,56 @@
     "skills": [
       "Sorcery"
     ],
-    "spells": [],
+    "spells": [
+      {
+        "lore": "Arabian Elemental Magic",
+        "name": "Riding the Wind"
+      },
+      {
+        "lore": "Arabian Elemental Magic",
+        "name": "Skin of Stone"
+      },
+      {
+        "lore": "Arabian Elemental Magic",
+        "name": "Burning Hand"
+      },
+      {
+        "lore": "Arabian Elemental Magic",
+        "name": "Quicksand"
+      },
+      {
+        "lore": "Arabian Elemental Magic",
+        "name": "Storm of Magic"
+      },
+      {
+        "lore": "Arabian Elemental Magic",
+        "name": "Blessing of the Elements"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Lifestealer"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Re-Animation"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Death Vision"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Spell of Doom"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Call of Vanhel"
+      },
+      {
+        "lore": "Necromancy",
+        "name": "Spell of Awakening"
+      }
+    ],
     "equipment": [
       {
         "item": "Nomad Robes",

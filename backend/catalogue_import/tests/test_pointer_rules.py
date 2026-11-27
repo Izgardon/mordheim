@@ -176,6 +176,16 @@ class PointerTests(SimpleTestCase):
         resolve_pointers([], [djinn], SKILLS)
         self.assertEqual((djinn["caster"], djinn["specials"], "spell_picks" in djinn), ("Wizard", [magic], False))
 
+    def test_a_persona_who_knows_whole_lores_but_says_more_keeps_his_rule_and_casts(self):
+        # William, 27 Nov 2026, of Abdul Alhazred: "Just give him the elemental and necromancy lists"; which spell he
+        # remembers each Shooting phase stays his rule
+        master = {"name": "Master Wizard", "description": "He must roll to see which spell he remembers."}
+        abdul: dict[str, Any] = {"name": "Abdul Alhazred, the Mad Sorcerer", "caster": "No", "specials": [master]}
+        resolve_pointers([], [abdul], SKILLS)
+        lores = [spell["lore"] for spell in abdul["spells"]]
+        self.assertEqual(lores, ["Arabian Elemental Magic"] * 6 + ["Necromancy"] * 6)
+        self.assertEqual((abdul["specials"], abdul["caster"], "spell_picks" in abdul), ([master], "Wizard", False))
+
 
 class CommittedPointerTests(SimpleTestCase):
     """The committed output (test_build checks it is up to date)."""
@@ -246,6 +256,10 @@ class CommittedPointerTests(SimpleTestCase):
             "The Crow Master": "Necromancy",  # the book's six, as "all of the Necromancy spells" were then
             "Grey Seer Neekit": "Magic of the Horned Rat",  # "as well as his own", which he keeps
         }
+        abdul = self.personae["Abdul Alhazred, the Mad Sorcerer"]
+        self.assertEqual({spell["lore"] for spell in abdul["spells"]}, {"Arabian Elemental Magic", "Necromancy"})
+        self.assertEqual((len(abdul["spells"]), abdul["caster"]), (12, "Wizard"))
+        self.assertIn("Master Wizard", [special["name"] for special in abdul["specials"]])
         known = {name: {spell["lore"] for spell in self.personae[name]["spells"] if "lore" in spell} for name in lores}
         self.assertEqual(known, {name: {lore} for name, lore in lores.items()})
         counts = {name: sum("lore" in spell for spell in self.personae[name]["spells"]) for name in lores}
