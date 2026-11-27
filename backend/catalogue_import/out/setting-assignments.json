@@ -637,8 +637,8 @@
     },
     {
       "name": "Fey",
-      "setting": "mordheim-2a",
-      "how": "mordheimer"
+      "setting": "lustria",
+      "how": "overrides.json"
     },
     {
       "name": "Sniper (Shadow Warriors)",
@@ -1327,7 +1327,7 @@
     },
     {
       "name": "Magic Resistant",
-      "setting": "khemri-3",
+      "setting": "karak-azgal",
       "how": "overrides.json"
     },
     {

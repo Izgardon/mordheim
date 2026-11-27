@@ -277,7 +277,8 @@ class SeedAllTests(TestCase):
                 "WarbandType": 8,
                 "WarbandTemplate": 8,
                 "Item": 7,
-                "Skill": 24,  # the Arabyan Nomads' Blending into the Sands is our Sand worm (William, 12 Nov 2026)
+                "Skill": 23,  # the Arabyan Nomads' Blending into the Sands is our Sand worm (William, 12 Nov 2026); Magic
+                # Resistant is Karak Azgal's, the Adventurers learning it too (the skills audit, 27 Nov 2026)
                 "SkillGroup": 7,
                 "Race": 1,
                 "Spell": 36,  # the Nehekhara Tomb Guards' printing of the Mortuary Cult scrolls (13 Nov 2026)

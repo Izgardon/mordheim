@@ -4,8 +4,10 @@ pins to a fresh run of build.py) and the hired swords' own data."""
 from typing import Any, ClassVar
 
 from catalogue_import.common import load_json
-from catalogue_import.sources import HIRELING_DATA
+from catalogue_import.pdf_warbands import TYPE, skill_settings
+from catalogue_import.sources import HIRELING_DATA, OUT
 from catalogue_import.tests.review_support import ReviewCase
+from catalogue_import.tests.test_pdf_warbands import good_page
 
 
 class SkillAuditTests(ReviewCase):
@@ -64,3 +66,26 @@ class SkillAuditTests(ReviewCase):
         self.assertIn("relieves himself again", self.skills["Crude Belch"])
         self.assertIn("may shoot or cast spells and still remain Hidden", self.skills["Sniper (Shadow Warriors)"])
         self.assertIn("climbing up walls", self.skills["Wall Runner"])
+
+    def test_a_skill_sits_in_a_setting_its_lowest_graded_learners_see(self) -> None:
+        # under a grade preset, a skill in a later setting than the warband learning it is greyed for that warband:
+        # Magic Resistant was Khemri 3's (the Cursed Dwarves) though the Adventurers (Karak Azgal, 2b) learn it, and
+        # Fey Mordheim 2a's though the High Elves' Ranger (Lustria, 1b) learns it
+        settings = {row["name"]: row["setting"] for row in load_json(OUT / "setting-assignments.json")["skills"]}
+        self.assertIn("Magic Resistant", self.groups["Adventurers"])
+        self.assertEqual(settings["Magic Resistant"], "karak-azgal")
+        self.assertIn("Fey", self.groups["Ranger (High Elves)"])
+        self.assertEqual(settings["Fey"], "lustria")
+
+    def test_a_skill_two_pages_share_takes_the_lower_graded_setting_before_the_earlier(self) -> None:
+        # Khemri 3 comes before Karak Azgal in the settings' order, but a 2b campaign ticks Karak Azgal, not Khemri 3
+        late, early = good_page(), good_page()
+        late[TYPE], early[TYPE] = "graded-3", "graded-2b"
+        late["skillGroup"], early["skillGroup"] = {"name": "Three", "new": True}, {"name": "Two", "new": True}
+        shared = {"name": "Magic Resistant", "description": "A spell does not affect him on a 4+."}
+        late["specialSkillsList"], early["specialSkillsList"] = [dict(shared)], [dict(shared)]
+        setting_of = {"graded-3": "khemri-3", "graded-2b": "karak-azgal"}
+        grades = {"khemri-3": "3", "karak-azgal": "2b"}
+        for pages in ({"a": late, "b": early}, {"a": early, "b": late}):
+            self.assertEqual(skill_settings(pages, setting_of, grades), {"Magic Resistant": "karak-azgal"})
+        self.assertEqual(skill_settings({"a": late, "b": early}, setting_of), {"Magic Resistant": "khemri-3"})

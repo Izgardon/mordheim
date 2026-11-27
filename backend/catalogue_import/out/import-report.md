@@ -208,7 +208,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 529 | 153 | 340 | 36 |
+| skills | 529 | 152 | 341 | 36 |
 | hired swords | 133 | 71 | 62 | 0 |
 | dramatis personae | 61 | 30 | 31 | 0 |
 
@@ -559,7 +559,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Instinctive Warrior | Adventurers | karak-azgal | Karak Azgal |
 | Trading Flair | Adventurers | karak-azgal | Karak Azgal |
 | Taunt (Adventurers) | Adventurers | karak-azgal | Karak Azgal |
-| Magic Resistant | Adventurers | khemri-3 | Karak Azgal |
+| Magic Resistant | Adventurers | karak-azgal | Karak Azgal |
 | Experienced Fighter | Albion Barbarians | grade-3 | Albion Barbarians |
 | Attack Howl | Albion Barbarians | grade-3 | Albion Barbarians |
 | Master Shot | Albion Barbarians | grade-3 | Albion Barbarians |
