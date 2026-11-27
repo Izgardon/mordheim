@@ -77,6 +77,10 @@
       "roll": "D6",
       "text": "At the beginning of the battle roll a D6: on a roll of 1 the warrior is subject to Stupidity for the duration of the battle. On a roll of 2-5, the warrior hates all the enemies during the battle. On a roll of 6, the warrior is affected by Frenzy."
     },
+    "Horn of the Wild Hunt": {
+      "roll": "D6",
+      "text": "Before each battle the Branchnymph may take a Leadership test to blow the horn. If she passes, roll a D6: the animals that answer fight for the warband in that battle and leave once it ends, and count neither towards its rout tests nor its most warriors."
+    },
     "Scorpion Ring": {
       "roll": "2D6",
       "text": "At the beginning of the battle the warrior is able to call forth a single Tomb Scorpion to fight for the warband if he can pass a Leadership test. The summoned scorpion will fight for a single battle only (use Tomb Scorpion from Tomb Guardians list)."

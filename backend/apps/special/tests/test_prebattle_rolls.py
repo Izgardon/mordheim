@@ -71,6 +71,12 @@ class WilliamsListTests(SimpleTestCase):
         self.assertEqual(skills["sneaky git (karak azgal)"][0], "D3")
         self.assertNotIn("charitable", skills)  # two rolls: William picks which
 
+    def test_the_horn_of_the_wild_hunt_rolls_a_d6_for_the_animals_that_answer(self):
+        # the items audit's question 15 (William, 27 Nov 2026: A)
+        roll, text = book_rolls()[ITEM]["horn of the wild hunt"]
+        self.assertEqual(roll, "D6")
+        self.assertIn("may take a Leadership test to blow the horn", text)
+
     def test_every_mark_has_dice_the_dice_entry_reads_and_its_text(self):
         data = listed()
         self.assertEqual(set(data), {SPECIAL, SKILL, ITEM_RULE, ITEM})
