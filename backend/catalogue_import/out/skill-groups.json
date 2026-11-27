@@ -809,7 +809,7 @@
       }
     ],
     "large_only": false,
-    "note": "Monster Hunter, Set Traps and Infiltration are the Ranger's; Expert Runesmith the Runesmith's.",
+    "note": "Monster Hunter, Set Traps (Dwarf Grudgebearers) and Infiltration are the Ranger's; Expert Runesmith the Runesmith's.",
     "how": "new group",
     "skills": [
       "Infiltration",
@@ -1321,7 +1321,7 @@
       }
     ],
     "large_only": false,
-    "note": "Infiltration and Great Hunter are for Skinks only; Bellowing Battle Roar and Toughened Hide for Saurus only.",
+    "note": "Infiltration (Skink) and Great Hunter are for Skinks only; Bellowing Battle Roar and Toughened Hide for Saurus only.",
     "how": "new group",
     "skills": [
       "Infiltration (Skink)",
@@ -1621,7 +1621,7 @@
       }
     ],
     "large_only": false,
-    "note": "Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Infiltration.",
+    "note": "Ogres only: Maneater, Bull Charge. The leader only: Bellowing Roar (Ogres). Gnoblars only: Infiltration.",
     "how": "new group",
     "skills": [
       "Crude Belch",

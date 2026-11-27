@@ -196,7 +196,7 @@
   ],
   "sharedSkillGroup": {
     "name": "Dwarf Grudgebearers",
-    "note": "Monster Hunter, Set Traps and Infiltration are the Ranger's; Expert Runesmith the Runesmith's.",
+    "note": "Monster Hunter, Set Traps (Dwarf Grudgebearers) and Infiltration are the Ranger's; Expert Runesmith the Runesmith's.",
     "types": ["dwarf-grudgebearers"],
     "skills": [
       {"name": "Monster Hunter", "description": "Every enemy monster and animal counts as a large target for him."},

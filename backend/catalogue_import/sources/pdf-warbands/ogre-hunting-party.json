@@ -167,7 +167,7 @@
       ]
     }
   ],
-  "skillGroup": {"name": "Ogre Hunting Party", "new": true, "note": "Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Infiltration."},
+  "skillGroup": {"name": "Ogre Hunting Party", "new": true, "note": "Ogres only: Maneater, Bull Charge. The leader only: Bellowing Roar (Ogres). Gnoblars only: Infiltration."},
   "specialSkillsList": [
     {"name": "Crude Belch", "ours": "Crude Belch"},
     {"name": "Scent Hound", "description": "The Hero spots hidden enemies from twice his Initiative in inches."},

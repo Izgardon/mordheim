@@ -217,7 +217,7 @@
       ]
     }
   ],
-  "skillGroup": {"name": "Lizardmen (Lustria)", "new": true, "note": "Infiltration and Great Hunter are for Skinks only; Bellowing Battle Roar and Toughened Hide for Saurus only."},
+  "skillGroup": {"name": "Lizardmen (Lustria)", "new": true, "note": "Infiltration (Skink) and Great Hunter are for Skinks only; Bellowing Battle Roar and Toughened Hide for Saurus only."},
   "specialSkillsList": [
     {"name": "Infiltration (Skink)", "pdfName": "Infiltration", "ours": "Infiltration (Skink)"},
     {"name": "Great Hunter", "ours": "Great Hunter"},

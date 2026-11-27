@@ -450,7 +450,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Dreamwalkers | Dreamwalkers, Cult of Morr | new group | - | Inspiring Presence, Fanatical, Inured to Horror, Blessed by Morr |
 | Druchii | Druchii | new group | - | Fey Quickness, Infiltration, Fury of Khaine (Druchii), Master of Poisons (Druchii), Vraithen Master, Survival of the Fittest, Excellent Sight |
 | Dwarf Exiled Engineers | Guild of Disgraced Engineers | skill_lists | - | True Grit, Thick Skull, Extra Tough, Tunneler, Tinkerer, Quick Thinker, Master Inventor |
-| Dwarf Grudgebearers | Dwarf Grudgebearers | new group | Monster Hunter, Set Traps and Infiltration are the Ranger's; Expert Runesmith the Runesmith's. | Infiltration, Monster Hunter, Set Traps (Dwarf Grudgebearers), Expert Runesmith |
+| Dwarf Grudgebearers | Dwarf Grudgebearers | new group | Monster Hunter, Set Traps (Dwarf Grudgebearers) and Infiltration are the Ranger's; Expert Runesmith the Runesmith's. | Infiltration, Monster Hunter, Set Traps (Dwarf Grudgebearers), Expert Runesmith |
 | Dwarf Rangers | Dwarf Rangers | new group | - | Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Dwarf Troll Slayers | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Dwarf Slayers | skill_group_learners | - | Ferocious Charge, Monster Slayer, Berserker, Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Dwarves | Dwarf Treasure Hunters, Dwarf Guildsmen, Dwarf Slayers, Dwarf Grudgebearers | skill_group_learners | - | Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
@@ -472,7 +472,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Knights of the Bitter Moors | Knights of the Bitter Moors | new group | - | Virtue of Purity, Virtue of Discipline, Virtue of Noble Disdain, Virtue of the Impetuous, Virtue of the Squire, Virtue of Valour (Knights of the Bitter Moors) |
 | Lahmian | Lahmian | new group | - | Swift, Transfix, Quickblood, Innocence Lost, Seduction, Night Creature |
 | Large Special | everyone, Large units only | skill_lists | A Large warrior knows one Large skill at a time: learning another forgets the first. | Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip |
-| Lizardmen (Lustria) | Lizardmen (LUS) | new group | Infiltration and Great Hunter are for Skinks only; Bellowing Battle Roar and Toughened Hide for Saurus only. | Infiltration (Skink), Great Hunter, Bellowing Battle Roar, Toughened Hide |
+| Lizardmen (Lustria) | Lizardmen (LUS) | new group | Infiltration (Skink) and Great Hunter are for Skinks only; Bellowing Battle Roar and Toughened Hide for Saurus only. | Infiltration (Skink), Great Hunter, Bellowing Battle Roar, Toughened Hide |
 | Lothern Sea Patrol | Lothern Sea Patrol | new group | Infiltration: a Hero with the Ranger honour and a promoted Sea Ranger only. | Fey Quickness, Infiltration, Graceful Strength, Swordmasters Protege, Defending Guard, Swift Fighter |
 | Low Kings | Low Kings | skill_group_learners | - | Backstabber, Pick Locks, Poisoner, Slaver, Stealthy, Cutpurse |
 | Mages | Mages | new group | - | Dispel, Store Spell, Clockwork Mage |
@@ -486,7 +486,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Night Goblins (MIC) | Night Goblins (MIC) | new group | - | Infiltration, Sneaky Git, Netter, Ded Shooty |
 | Nipponese Expedition | Nipponese Expedition | new group | - | Death Before Dishonor, Night Fighter, Iaijutsu, Last Stand, Tea Ceremony, Blessed by the Kami |
 | Norse | Norse Explorers (TC13), Norse Explorers (BTB) | intersection | - | Barbarian Courage, Berserk Charge, Battle Tongue, Shield Master, Crushing Blow |
-| Ogre Hunting Party | Ogre Hunting Party | new group | Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Infiltration. | Crude Belch, Maneater, Bull Charge, Bellowing Roar (Ogres), Infiltration, Scent Hound, Sabre Trainer, Set Traps, Netter (Ogre Hunting Party) |
+| Ogre Hunting Party | Ogre Hunting Party | new group | Ogres only: Maneater, Bull Charge. The leader only: Bellowing Roar (Ogres). Gnoblars only: Infiltration. | Crude Belch, Maneater, Bull Charge, Bellowing Roar (Ogres), Infiltration, Scent Hound, Sabre Trainer, Set Traps, Netter (Ogre Hunting Party) |
 | Ogres | Ogres (group) | skill_group_learners | - | Master of Arms, Crude Belch, Maneater, Bull Charge, Dog of War, Bellowing Roar (Ogres) |
 | Orcs | Orcs (group) | skill_group_learners | - | ’Ard ’Ead, Waaagh!, ’Ere We Go!, Da Cunnin’ Plan, Well ’Ard, ’Eadbasher, Proven Warrior |
 | Ostlanders | Ostlanders | skill_group_learners | - | Bull Rush, Foul Odour, Taunt, Animal Friendship, Blood Oath |

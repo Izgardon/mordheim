@@ -128,3 +128,14 @@ class SkillAuditTests(ReviewCase):
     def fighters_skills(self, slug: str, fighter: str) -> list[str]:
         found = next(row for row in self.templates[slug]["fighters"] if row["name"] == fighter)
         return list(found["skills"])
+
+    def test_a_group_note_names_its_skills_as_the_group_holds_them(self) -> None:
+        groups = {row["name"]: row for row in load_json(OUT / "skill-groups.json")}
+        for group, skill in (
+            ("Ogre Hunting Party", "Bellowing Roar (Ogres)"),
+            ("Lizardmen (Lustria)", "Infiltration (Skink)"),
+            ("Dwarf Grudgebearers", "Set Traps (Dwarf Grudgebearers)"),
+        ):
+            with self.subTest(group=group):
+                self.assertIn(skill, groups[group]["skills"])
+                self.assertIn(skill, groups[group]["note"])

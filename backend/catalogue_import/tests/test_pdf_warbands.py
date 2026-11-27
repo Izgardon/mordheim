@@ -1053,7 +1053,7 @@ class PdfImportTests(SimpleTestCase):
         groups = {row["name"]: row for row in load_json(OUT / "skill-groups.json")}
         self.assertEqual(
             groups["Ogre Hunting Party"]["note"],
-            "Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Infiltration.",
+            "Ogres only: Maneater, Bull Charge. The leader only: Bellowing Roar (Ogres). Gnoblars only: Infiltration.",
         )
         for name in ("Druchii", "Wood Elves of Athel Loren"):
             self.assertIn("Excellent Sight", groups[name]["skills"])
