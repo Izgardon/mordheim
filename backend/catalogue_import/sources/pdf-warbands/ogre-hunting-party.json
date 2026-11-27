@@ -184,7 +184,7 @@
     {"pdf": "slings", "ours": "sling", "page": 2}
   ],
   "stubs": [
-    {"name": "Sharp Stuff", "type": "Weapon", "subtype": "Ranged", "rarity": null, "dice": null, "rulesPage": 5},
+    {"name": "Sharp Stuff", "type": "Weapon", "subtype": "Ranged", "rarity": null, "dice": null, "rulesPage": 5, "range": "8\"", "strength": "2"},
     {"name": "Pigback Mount", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 5}
   ],
   "flags": [

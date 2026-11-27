@@ -622,7 +622,9 @@
       "subtype": "Melee",
       "rarity": 9,
       "dice": null,
-      "rulesPage": 6
+      "rulesPage": 6,
+      "range": "Close Combat",
+      "strength": "As user"
     }
   ],
   "flags": [

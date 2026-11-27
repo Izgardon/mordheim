@@ -242,7 +242,7 @@
   ],
   "aliases": [],
   "stubs": [
-    {"name": "Draich", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": 1, "rulesPage": 7},
+    {"name": "Draich", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": 1, "rulesPage": 7, "range": "Close Combat", "strength": "As user +2"},
     {"name": "Sea Dragon Cloak (Druchii)", "type": "Miscellaneous", "subtype": "", "cost": 30, "rarity": 10, "dice": 2, "rulesPage": 8,
      "rules": [{"name": "Scales", "summary": "+2 to the save against shooting, +1 in close combat; worn with armour", "text": "A model wearing a sea dragon cloak adds +2 to his armour save against shooting, or has a 5+ save against shooting if he has none, and +1 to his armour save in close combat, or a 6+ save in close combat if he has none. It may be worn together with other armour, a shield and light armour among it, with no penalty."}]}
   ],

@@ -169,7 +169,7 @@
     {"pdf": "throwing stars/knives", "ours": "throwing knives", "page": 2}
   ],
   "stubs": [
-    {"name": "Knuckledusters", "type": "Weapon", "subtype": "Melee", "rarity": 6, "dice": null, "rulesPage": 5}
+    {"name": "Knuckledusters", "type": "Weapon", "subtype": "Melee", "rarity": 6, "dice": null, "rulesPage": 5, "range": "Close Combat", "strength": "As user"}
   ],
   "priceRows": [
     {"name": "spiked gauntlet", "rarity": 7, "dice": null, "note": "Enforcer only", "page": 5}

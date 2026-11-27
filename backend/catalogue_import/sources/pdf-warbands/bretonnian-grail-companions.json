@@ -228,7 +228,7 @@
     {"pdf": "heavy armor", "ours": "heavy armour", "page": 2}
   ],
   "stubs": [
-    {"name": "Longsword", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
+    {"name": "Longsword", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3, "range": "Close Combat", "strength": "As user"},
     {"name": "Holy Shield", "type": "Armour", "subtype": "", "rarity": 7, "dice": null, "rulesPage": 3},
     {"name": "Pegasus", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": null, "rulesPage": 3}
   ],

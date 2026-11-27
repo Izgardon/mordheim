@@ -190,7 +190,7 @@
     {"pdf": "heavy armor", "ours": "heavy armour", "page": 2}
   ],
   "stubs": [
-    {"name": "Chest Talon", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
+    {"name": "Chest Talon", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3, "range": "Close Combat", "strength": "As user +1"},
     {"name": "Ring of Strigos", "type": "Miscellaneous", "subtype": "", "rarity": 9, "dice": 1, "rulesPage": 3},
     {"name": "Black Gold Wristbands", "type": "Miscellaneous", "subtype": "", "rarity": 10, "dice": 2, "rulesPage": 3},
     {"name": "Cursed Book", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": 3, "rulesPage": 3}

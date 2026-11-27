@@ -180,6 +180,8 @@
       "rarity": 6,
       "dice": null,
       "rulesPage": 59,
+      "range": "Close Combat",
+      "strength": "As user",
       "rules": [
         {"name": "Huge Hammer", "text": "On the first turn of any combat the wielder gains +1 Strength and causes concussion as a hammer does. In every later round it counts as an ordinary hammer."},
         {"name": "Unwieldy", "text": "A Skull Busta may not be used while mounted, may not be used by a goblin, and may not be used with any other weapon, though a shield is allowed."},

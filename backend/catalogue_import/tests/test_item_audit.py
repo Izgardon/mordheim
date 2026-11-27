@@ -132,3 +132,37 @@ class BuyingNoteTests(ItemAuditCase):
     def test_the_cinderblast_bombs_dice_show_once(self) -> None:
         (row,) = self.items["Cinderblast Bomb"]["availabilities"]
         self.assertEqual((row["cost"], row["dice"], row["cost_note"]), (45, 3, ""))
+
+
+class WeaponProfileTests(ItemAuditCase):
+    # each weapon's range and Strength as its PDF prints them (or, for a weapon that "works exactly like" another,
+    # as that one's), where the import had none
+    PRINTED = {
+        "Longsword": ("Close Combat", "As user"),
+        "Draich": ("Close Combat", "As user +2"),
+        "Whirling Blades": ("Close Combat", "As user"),
+        "Pry Bar": ("Close Combat", "As user"),
+        "Chainsaw Sword": ("Close Combat", "As user"),
+        "Electric Trident": ("Close Combat", "As user"),
+        "Staff of Damnation": ("Close Combat", "As user"),
+        "Kusarigama": ("Close Combat", "As user"),
+        "Sharp Stuff": ('8"', "2"),
+        "Beastwhip": ("Close Combat", "As user"),
+        "Pebble": ('6"', "As user"),
+        "Wizard's Staff": ("Close Combat", "As user"),
+        "Chest Talon": ("Close Combat", "As user +1"),
+        "Scythe": ("Close Combat", "As user +1"),
+        "Silver-tip Stake": ("Close Combat", "As user"),
+        "Knuckledusters": ("Close Combat", "As user"),
+        "Spike-jawed Snatcher": ("Close Combat", "As user"),
+        "Skull Busta": ("Close Combat", "As user"),  # "counts as a normal hammer", +1 Strength its first turn
+        "Trapper's Pole": ("Close Combat", "As user"),  # "works exactly like a spear"
+        "Acid Bomb": ('Strength x 2"', "5"),
+        "Bait Bomb": ('Strength x 2"', ""),  # a bait bomb and a stink bomb cause no hit
+        "Stink Bomb": ('Strength x 2"', ""),
+    }
+
+    def test_each_weapon_has_the_range_and_strength_its_book_prints(self) -> None:
+        for name, printed in self.PRINTED.items():
+            with self.subTest(item=name):
+                self.assertEqual((self.items[name]["range"], self.items[name]["strength"]), printed)

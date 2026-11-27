@@ -245,7 +245,7 @@
     {"pdf": "light armor", "ours": "light armour", "page": 3}
   ],
   "stubs": [
-    {"name": "Pebble", "type": "Weapon", "subtype": "Ranged", "rarity": null, "dice": null, "rulesPage": 9}
+    {"name": "Pebble", "type": "Weapon", "subtype": "Ranged", "rarity": null, "dice": null, "rulesPage": 9, "range": "6\"", "strength": "As user"}
   ],
   "flags": [
     {"page": 2, "what": "A Snotling warband needs at least 3 models: our templates hold no minimum, so it is not imported."},

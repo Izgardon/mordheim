@@ -139,7 +139,7 @@
   ],
   "aliases": [],
   "stubs": [
-    {"name": "Wizard's Staff", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 7},
+    {"name": "Wizard's Staff", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 7, "range": "Close Combat", "strength": "As user"},
     {"name": "Familiar (Sorcerous Society)", "type": "Miscellaneous", "subtype": "", "rarity": 9, "dice": 2, "rulesPage": 7, "note": "The familiar is one of four pets in the Bestiary: the Dog, Cat, Raven or Viper Familiar."}
   ],
   "flags": [

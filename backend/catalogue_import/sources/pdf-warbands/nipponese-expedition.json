@@ -247,7 +247,7 @@
      "rules": [{"rule": "two-handed"}, {"name": "Concussion", "text": "A roll of 2-4 on the injury table is a Stunned result."}]},
     {"name": "Sashimono", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 3},
     {"name": "Horo", "type": "Armour", "subtype": "", "rarity": 6, "dice": null, "rulesPage": 3},
-    {"name": "Kusarigama", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": null, "rulesPage": 3}
+    {"name": "Kusarigama", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": null, "rulesPage": 3, "range": "Close Combat", "strength": "As user"}
   ],
   "flags": [
     {"page": 1, "what": "A Nippon warband needs at least 3 models: our templates hold no minimum, so it is not imported."},

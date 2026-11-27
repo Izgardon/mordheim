@@ -220,6 +220,8 @@
       "rarity": null,
       "dice": null,
       "rulesPage": 7,
+      "range": "Strength x 2\"",
+      "strength": "5",
       "rules": [
         {"name": "Acid Bomb", "text": "Thrown in the shooting phase, with a range of twice the thrower's Strength in inches. Roll to hit with his Ballistic Skill, with no modifier for range or moving. A hit causes D3 Strength 5 hits with no armour save, and every warrior within 1\", friend or foe, takes one Strength 4 hit with saves as normal. A hit destroys all the target's normal armour at once: heavy armour, light armour, shields, bucklers and helmets, but not gromril or ithilmar. On a roll of 1 to hit, the bomb misfires and explodes as though it had hit the thrower."}
       ]
@@ -231,6 +233,7 @@
       "rarity": null,
       "dice": null,
       "rulesPage": 7,
+      "range": "Strength x 2\"",
       "rules": [
         {"name": "Bait Bomb", "text": "Thrown in the shooting phase, with a range of twice the thrower's Strength in inches. Roll to hit with his Ballistic Skill, with no modifier for range or moving. A model hit draws every Stray Dog and Ratswarm: while it is alive, all of them within 12\" become frenzied in their next movement phase and must charge it, or move as close to it as they can, ignoring every other model, friend or foe. Where several models have been bait bombed they go for the nearest. On a roll of 1 to hit, the bomb misfires and explodes as though it had hit the thrower."}
       ]
@@ -242,6 +245,7 @@
       "rarity": null,
       "dice": null,
       "rulesPage": 8,
+      "range": "Strength x 2\"",
       "rules": [
         {"name": "Stink Bomb", "text": "Thrown in the shooting phase, with a range of twice the thrower's Strength in inches. Roll to hit with his Ballistic Skill, with no modifier for range or moving. A model hit must pass a Toughness test or be knocked out, and every model within 4\" must pass a Toughness test or suffer -1 to hit until the end of its next recovery phase. A stink bomb has no effect on Chaos, Undead, Ostlanders or any other warband immune to a strong smell. On a roll of 1 to hit, the bomb misfires and explodes as though it had hit the thrower."}
       ]

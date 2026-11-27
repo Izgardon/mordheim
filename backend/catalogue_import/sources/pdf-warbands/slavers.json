@@ -415,6 +415,8 @@
       "rarity": 6,
       "dice": null,
       "rulesPage": 10,
+      "range": "Close Combat",
+      "strength": "As user",
       "rules": [
         {
           "name": "Spear",

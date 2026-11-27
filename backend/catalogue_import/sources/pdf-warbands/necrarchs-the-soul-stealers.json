@@ -212,7 +212,7 @@
     {"pdf": "light armor", "ours": "light armour", "page": 6}
   ],
   "stubs": [
-    {"name": "Staff of Damnation", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 6},
+    {"name": "Staff of Damnation", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 6, "range": "Close Combat", "strength": "As user"},
     {"name": "Damned Book", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": 3, "rulesPage": 6}
   ],
   "flags": [

@@ -157,7 +157,7 @@
     {"pdf": "heavy armor", "ours": "heavy armour", "page": 2}
   ],
   "stubs": [
-    {"name": "Pry Bar", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 2},
+    {"name": "Pry Bar", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 2, "range": "Close Combat", "strength": "As user"},
     {"name": "Hooded Lantern & Rig", "type": "Miscellaneous", "subtype": "", "rarity": 9, "dice": 1, "rulesPage": 2},
     {"name": "Surgeons Journal", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": 4, "rulesPage": 2},
     {"name": "Finger Pendant", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 2}

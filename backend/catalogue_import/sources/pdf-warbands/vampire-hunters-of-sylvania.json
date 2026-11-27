@@ -192,8 +192,8 @@
     {"pdf": "light armor", "ours": "light armour", "page": 10}
   ],
   "stubs": [
-    {"name": "Scythe", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 10},
-    {"name": "Silver-tip Stake", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 10},
+    {"name": "Scythe", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 10, "range": "Close Combat", "strength": "As user +1"},
+    {"name": "Silver-tip Stake", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 10, "range": "Close Combat", "strength": "As user"},
     {"name": "Throat Guard", "type": "Armour", "subtype": "", "rarity": 7, "dice": null, "rulesPage": 10},
     {"name": "Blessed Bolts", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 10}
   ],

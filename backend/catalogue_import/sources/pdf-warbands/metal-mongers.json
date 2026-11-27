@@ -178,7 +178,7 @@
   ],
   "aliases": [],
   "stubs": [
-    {"name": "Spike-jawed Snatcher", "type": "Weapon", "subtype": "Melee", "rarity": 10, "dice": null, "rulesPage": 7},
+    {"name": "Spike-jawed Snatcher", "type": "Weapon", "subtype": "Melee", "rarity": 10, "dice": null, "rulesPage": 7, "range": "Close Combat", "strength": "As user"},
     {
       "name": "Ratling Gun",
       "type": "Weapon",

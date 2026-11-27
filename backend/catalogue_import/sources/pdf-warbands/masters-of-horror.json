@@ -200,8 +200,8 @@
     {"pdf": "light armor", "ours": "light armour", "page": 2}
   ],
   "stubs": [
-    {"name": "Chainsaw Sword", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2},
-    {"name": "Electric Trident", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2}
+    {"name": "Chainsaw Sword", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2, "range": "Close Combat", "strength": "As user"},
+    {"name": "Electric Trident", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2, "range": "Close Combat", "strength": "As user"}
   ],
   "priceRows": [
     {"name": "Repeater Pistol", "cost": 25, "dice": 3, "rarity": null, "note": "Heroes only", "page": 2}

@@ -198,7 +198,7 @@
   ],
   "aliases": [],
   "stubs": [
-    {"name": "Beastwhip", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": null, "rulesPage": 3},
+    {"name": "Beastwhip", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": null, "rulesPage": 3, "range": "Close Combat", "strength": "As user"},
     {"name": "Thingcatcher", "type": "Weapon", "subtype": "Melee", "rarity": 9, "dice": null, "rulesPage": 3,
      "range": "Close Combat", "strength": "As user",
      "rules": [
