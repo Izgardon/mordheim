@@ -479,7 +479,7 @@ export function buildRenderableGroups(draft: BattlePostbattleState, roster?: Par
   if (hirelings.length > 0) {
     groups.push({
       key: "hirelings",
-      label: "Hired Swords",
+      label: "Hired swords",
       unitKind: "hireling",
       rows: hirelings,
     });

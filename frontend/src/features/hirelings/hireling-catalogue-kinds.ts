@@ -16,7 +16,7 @@ export type HirelingCatalogueConfig = {
   /** The type a special created on the spot in the form takes. */
   specialType: string;
   labels: {
-    /** Page title and nav: "Hired Swords". */
+    /** Page title and nav: "Hired swords". */
     title: string;
     /** "hired sword": in sentences ("Delete hired sword"). */
     noun: string;
@@ -38,7 +38,7 @@ export const HIRED_SWORDS: HirelingCatalogueConfig = {
   hasPersonaTerms: false,
   specialType: "Hired Sword",
   labels: {
-    title: "Hired Swords",
+    title: "Hired swords",
     noun: "hired sword",
     singular: "Hired sword",
     search: "Search hired swords",
@@ -54,7 +54,7 @@ export const DRAMATIS_PERSONAE: HirelingCatalogueConfig = {
   hasPersonaTerms: true,
   specialType: "Dramatis Persona",
   labels: {
-    title: "Dramatis Personae",
+    title: "Dramatis personae",
     noun: "dramatis persona",
     singular: "Dramatis persona",
     search: "Search dramatis personae",

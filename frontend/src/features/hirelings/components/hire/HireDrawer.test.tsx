@@ -111,14 +111,14 @@ describe("HireDrawer", () => {
   it("lists who the warband may hire, and Show all the rest with the reason", async () => {
     const user = setupUser();
     renderDrawer();
-    expect(names("Hired Swords")).toEqual(["Ogre Bodyguard"]);
+    expect(names("Hired swords")).toEqual(["Ogre Bodyguard"]);
 
     await user.click(screen.getByRole("switch", { name: "Show all" }));
-    expect(names("Hired Swords")).toEqual(["Ogre Bodyguard", "Clan Skryre Rat Ogre"]);
+    expect(names("Hired swords")).toEqual(["Ogre Bodyguard", "Clan Skryre Rat Ogre"]);
     expect(screen.getByText("Not available for Reiklanders.")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Dramatis Personae" }));
-    expect(names("Dramatis Personae")).toEqual(["Bertha Bestraufrung"]);
+    await user.click(screen.getByRole("button", { name: "Dramatis personae" }));
+    expect(names("Dramatis personae")).toEqual(["Bertha Bestraufrung"]);
   });
 
   it("hires one it can't usually hire, with the warning, and hands back the new unit", async () => {
@@ -196,7 +196,7 @@ describe("Add new in the hire drawer", () => {
     );
     expect(fakeApi.countOf(HIRE)).toBe(0);
     expect(onHired).not.toHaveBeenCalled();
-    expect(names("Hired Swords")).toEqual(["Tilean Duellist"]);
+    expect(names("Hired swords")).toEqual(["Tilean Duellist"]);
   });
 
   it("only makes the new one for a viewer who can't hire for the warband", async () => {
@@ -208,6 +208,6 @@ describe("Add new in the hire drawer", () => {
       expect(screen.queryByRole("dialog", { name: "Add hired sword" })).not.toBeInTheDocument()
     );
     expect(screen.queryByRole("dialog", { name: "Tilean Duellist" })).not.toBeInTheDocument();
-    expect(names("Hired Swords")).toEqual(["Tilean Duellist"]);
+    expect(names("Hired swords")).toEqual(["Tilean Duellist"]);
   });
 });
