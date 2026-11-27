@@ -128,7 +128,7 @@ export function StartingSpellsField({
   const sorted = [...spells].sort((a, b) => a.name.localeCompare(b.name));
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
-      <span className={CAPTION}>Starts with</span>
+      <span className={CAPTION}>Starting spells</span>
       <SearchMultiSelect
         values={value.map((id) => {
           const spell = known.get(id);
