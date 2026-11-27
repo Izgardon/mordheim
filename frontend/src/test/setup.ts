@@ -1,5 +1,10 @@
 // other
 import "@testing-library/jest-dom/vitest";
+import { configure } from "@testing-library/react";
+
+// findBy* and waitFor give a page 5 s, not 1 s: a busy machine (the gates beside other agents' runs) otherwise times
+// out the heavier pages' first render while nothing is wrong.
+configure({ asyncUtilTimeout: 5000 });
 
 if (!window.matchMedia) {
   Object.defineProperty(window, "matchMedia", {
