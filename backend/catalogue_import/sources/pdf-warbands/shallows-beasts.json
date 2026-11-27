@@ -88,7 +88,7 @@
       "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 4, "w": 1, "i": 4, "a": 1, "ld": 8},
       "equipmentLists": ["stromfels-heroes-equipment-list"],
       "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
-      "spellLores": ["Chaos Rituals"],
+      "spellLores": ["Chaos Rituals", "Prayers of Manann"],
       "specialRules": [
         {"rulename": "Wizard", "ruleFull": "The Mutant-Priest is a wizard and uses the Chaos Rituals."},
         {"rulename": "Prayers", "ruleFull": "The Mutant-Priest may use the Prayers of Manann (the Miracle Workers chapter). Instead of a new skill, after an advance roll of a double, he may receive a Mark of Manann."},
@@ -185,7 +185,7 @@
     {"page": 1, "what": "Aquatic Mutants is a tailored upgrade list, Aquatic Mutants, one each for Heroes at its price: Blackblood 30, Great Claw 50, Tentacle 35, Prehensile Tail 50, Beak 35, Electrical Touch 45, Mer-creature 25, Suckers 25, Hideous 40 (\"eye stalks (counts as hideous)\"). The heroes' costs say \"+ the cost of mutation\"."},
     {"page": 2, "what": "Club/Mace/Staff and Club/Mace are our Club, Mace or Hammer, and Cutlass/Sword our Sword, each shown under the PDF's name."},
     {"page": 3, "what": "The fighters' headings aren't in the text layer, so each is named from Choice of Warriors and his profile row (Fishmen's reads Mermen), and each cost is the one in his column: Buccaneer 85 gc, Mutant-Priest 75, Renegade 35, Foundling 20, Wrecker 20, Swamper 25, Fishman 30."},
-    {"page": 3, "what": "The Mutant-Priest is a wizard of the Chaos Rituals (ours) and may also use the Prayers of Manann and take a Mark of Manann (the Miracle Workers chapter), which we lack: only the Chaos Rituals are set, and his Prayers rule is kept as printed."},
+    {"page": 3, "what": "The Mutant-Priest is a wizard of the Chaos Rituals and may also use the Prayers of Manann (both ours) and take a Mark of Manann (the Miracle Workers chapter), which we lack: his Prayers rule is kept as printed."},
     {"page": 3, "what": "The Mutant-Priest's Bite Attack does what our shared Beak mutation does, under another name: kept his own rule."},
     {"page": 4, "what": "The Fishmen's Mer-creatures is our shared Mer-creature but for its \"on land its Movement is reduced by 1\": kept apart, as Mer-creature (Fishmen)."},
     {"page": 5, "what": "The Stromfels Heart, Shark-tooth Necklace and Scrimshaw Bauble are our MiM items, with the same prices and rarities. Ours carry no rules, so the PDF's are attached, in our words; the Scrimshaw Bauble's rule has no name, as the PDF gives none."},

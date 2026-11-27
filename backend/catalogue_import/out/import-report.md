@@ -1150,7 +1150,7 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | protectorate-of-sigmar | Warrior Priest | Priest | Prayers of Sigmar |
 | savage-orcs-ath | Savage Orc Shaman | Wizard | Waaaagh! Magic |
 | savage-orcs-kaz | Wierdo | Wizard | Waaaagh! Magic |
-| shallows-beasts | Mutant-Priest | Wizard | Chaos Rituals |
+| shallows-beasts | Mutant-Priest | Wizard | Chaos Rituals, Prayers of Manann |
 | skaven-of-clan-mors | Mors Sorcerer | Wizard | Magic of the Horned Rat |
 | skaven-of-clan-pristekk | Clan Pristekk sorcerer | Wizard | Magic of the Horned Rat |
 | skaven-of-clan-skryre-ath | Warlock Engineer | Wizard | Magic of the Horned Rat |
@@ -3108,7 +3108,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): Aquatic Mutants is a tailored upgrade list, Aquatic Mutants, one each for Heroes at its price: Blackblood 30, Great Claw 50, Tentacle 35, Prehensile Tail 50, Beak 35, Electrical Touch 45, Mer-creature 25, Suckers 25, Hideous 40 ("eye stalks (counts as hideous)"). The heroes' costs say "+ the cost of mutation".
 - Flag (p2): Club/Mace/Staff and Club/Mace are our Club, Mace or Hammer, and Cutlass/Sword our Sword, each shown under the PDF's name.
 - Flag (p3): The fighters' headings aren't in the text layer, so each is named from Choice of Warriors and his profile row (Fishmen's reads Mermen), and each cost is the one in his column: Buccaneer 85 gc, Mutant-Priest 75, Renegade 35, Foundling 20, Wrecker 20, Swamper 25, Fishman 30.
-- Flag (p3): The Mutant-Priest is a wizard of the Chaos Rituals (ours) and may also use the Prayers of Manann and take a Mark of Manann (the Miracle Workers chapter), which we lack: only the Chaos Rituals are set, and his Prayers rule is kept as printed.
+- Flag (p3): The Mutant-Priest is a wizard of the Chaos Rituals and may also use the Prayers of Manann (both ours) and take a Mark of Manann (the Miracle Workers chapter), which we lack: his Prayers rule is kept as printed.
 - Flag (p3): The Mutant-Priest's Bite Attack does what our shared Beak mutation does, under another name: kept his own rule.
 - Flag (p4): The Fishmen's Mer-creatures is our shared Mer-creature but for its "on land its Movement is reduced by 1": kept apart, as Mer-creature (Fishmen).
 - Flag (p5): The Stromfels Heart, Shark-tooth Necklace and Scrimshaw Bauble are our MiM items, with the same prices and rarities. Ours carry no rules, so the PDF's are attached, in our words; the Scrimshaw Bauble's rule has no name, as the PDF gives none.

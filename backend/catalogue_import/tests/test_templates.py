@@ -404,3 +404,9 @@ class CommittedCasterTests(SimpleTestCase):
         # William, 27 Nov 2026: "yes" a Priest with the Prayers of Sigmar, picking the usual one at random
         cleric = self.fighters[("Outlaws of Stirwood Forest", "Cleric")]
         self.assertEqual((cleric["caster"], [lore["name"] for lore in cleric["spell_types"]]), ("Priest", ["Prayers of Sigmar"]))  # fmt: skip
+
+    def test_the_shallows_mutant_priest_also_prays_to_manann(self) -> None:
+        # the spells audit (27 Nov 2026, H3): his Prayers rule names the Prayers of Manann, which we hold now
+        priest = self.fighters[("Shallows Beasts", "Mutant-Priest")]
+        lores = [lore["name"] for lore in priest["spell_types"]]
+        self.assertEqual((priest["caster"], lores), ("Wizard", ["Chaos Rituals", "Prayers of Manann"]))
