@@ -72,3 +72,14 @@ class SpellTextTests(SimpleTestCase):
         for lore in ("Lesser Magic", "Chaos Rituals", "Necromancy"):
             with self.subTest(lore=lore):
                 self.assertEqual([row["name"] for row in rows if row["type"] == lore and row["roll"] is None], [])
+
+    def test_the_lothern_sea_spells_the_djedhi_share_read_as_the_djedhi_print_them(self) -> None:
+        # the Lothern Sea Patrol's list is the Djed'hi's but for Mistress of the Deep, and its copies were cut down,
+        # losing rules: Statue of Light's "he can see", Silent Guardian's "cannot be attacked" (William, 27 Nov 2026)
+        shared = ("Divination of Shirath", "Shimmering Shield", "Statue of Light", "Hunter's Fury", "Silent Guardian")
+        for name in shared:
+            with self.subTest(spell=name):
+                self.assertEqual(
+                    self.text[("Spells of the Lothern Sea", name)], self.text[("Spells of the Djedhi", name)]
+                )
+        self.assertIn("Oceanid", self.text[("Spells of the Lothern Sea", "Mistress of the Deep")])
