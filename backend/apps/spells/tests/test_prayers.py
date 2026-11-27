@@ -89,6 +89,7 @@ class PrayerLoreTests(SimpleTestCase):
             "Prophetic Rants",
             "Blessings of the Mare",
             " lady's prayers",
+            "Norse Runes",  # "treated in the same way as Sigmarite Prayers" (William, 27 Nov 2026)
         ):
             self.assertTrue(is_prayer_lore(lore), lore)
         spells = ("Rituals of Hashut", "Lore of Light", "Light and Silence", "Werewolf Runes", "Lizardmen Magic")
