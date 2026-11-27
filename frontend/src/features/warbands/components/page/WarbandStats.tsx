@@ -26,8 +26,8 @@ type WarbandStatsProps = {
   setBreakdownOpen: (open: boolean) => void;
   /** Shows the Treasury tab (the Gold window's link). */
   onTreasury: () => void;
-  /** A workshop's warband: its cost against its budget in place of its gold and record. */
-  workshop?: { cost: number; budget: number } | null;
+  /** A workshop's warband: its running cost in place of its gold and record. */
+  workshop?: { cost: number } | null;
 };
 
 type Window = "gold" | "units" | "record";
@@ -36,25 +36,21 @@ type Total = {
   label: string;
   icon: GameIconName;
   value: string | number;
-  /** The smaller part after the value: "gc", "of 15", a workshop's "/ 500 gc". */
+  /** The smaller part after the value: "gc", "of 15". */
   unit?: string;
   hint: string;
   /** Opens its window; a total with none (a workshop's cost) is plain text. */
   onClick?: () => void;
-  /** Above what it should be (a workshop's cost over its budget): the danger colour. */
-  warn?: boolean;
 };
 
 /**
  * A total's value, opening its window: on one line, at the size the row shares (`useFitRow`),
  * its unit smaller.
  */
-function StatValue({ label, value, unit, hint, onClick, warn }: Total) {
+function StatValue({ label, value, unit, hint, onClick }: Total) {
   const fit = { [FIT_VALUE]: "" };
-  const look = cn(
-    "block w-full overflow-hidden whitespace-nowrap text-left font-display text-[26px] font-semibold",
-    warn ? "text-danger" : "text-head"
-  );
+  const look =
+    "block w-full overflow-hidden whitespace-nowrap text-left font-display text-[26px] font-semibold text-head";
   const shown = (
     <>
       {value}{" "}
@@ -125,17 +121,16 @@ export default function WarbandStats(props: WarbandStatsProps) {
     },
   ];
   const { workshop } = props;
-  // a workshop's warband (apps/workshop) shows what it costs against its budget, never its gold
-  // or a record, and its rating plain, with no breakdown: it plays no battles
+  // a workshop's warband (apps/workshop) shows its running cost (no budget: William, 27 Nov 2026),
+  // never its gold or a record, and its rating plain, with no breakdown: it plays no battles
   const shownTotals = workshop
     ? [
         {
           label: "Cost",
           icon: "gold" as const,
           value: workshop.cost,
-          unit: `/ ${workshop.budget} gc`,
+          unit: "gc",
           hint: "",
-          warn: workshop.cost > workshop.budget,
         },
         { ...totals[0], onClick: undefined },
         totals[2],

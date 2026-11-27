@@ -21,9 +21,6 @@ type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   warband: Warband;
-  /** Its budget, its own to change when it was made with no list. */
-  budget: number;
-  noList: boolean;
 };
 
 /** A box's whole number at or above `least`, else null. */
@@ -33,30 +30,20 @@ const whole = (typed: string, least: number) => {
 };
 
 /**
- * A workshop warband's settings: its name, type and most warriors, and its budget when it was
- * made with no list (a list's gold is a listed one's budget). A new type keeps a no-list warband
- * without a list; the server swaps a listed one's rules and says so. Mounted while open, so each
- * opening starts from the warband as it is.
+ * A workshop warband's settings: its name, type and most warriors (it has a running cost and no
+ * budget). A new type keeps a no-list warband without a list; the server swaps a listed one's
+ * rules and says so. Mounted while open, so each opening starts from the warband as it is.
  */
-export default function WarbandSettingsDialog({
-  open,
-  onOpenChange,
-  warband,
-  budget,
-  noList,
-}: Props) {
+export default function WarbandSettingsDialog({ open, onOpenChange, warband }: Props) {
   const queryClient = useQueryClient();
   const [name, setName] = useState(warband.name);
   const [type, setType] = useState<WarbandTypeBrief | null>(warband.warband_type ?? null);
-  const [gold, setGold] = useState(String(budget));
   const [most, setMost] = useState(String(warband.max_units ?? 15));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const budgetGc = whole(gold, 0);
   const mostWarriors = whole(most, 1);
-  const ready =
-    Boolean(name.trim()) && mostWarriors !== null && (!noList || budgetGc !== null) && !saving;
+  const ready = Boolean(name.trim()) && mostWarriors !== null && !saving;
 
   const changes = (): Partial<WarbandUpdatePayload> => ({
     ...(name.trim() !== warband.name ? { name: name.trim() } : {}),
@@ -64,7 +51,6 @@ export default function WarbandSettingsDialog({
     ...(mostWarriors !== null && mostWarriors !== warband.max_units
       ? { max_units: mostWarriors }
       : {}),
-    ...(noList && budgetGc !== null && budgetGc !== budget ? { budget: budgetGc } : {}),
   });
   const saved = (answer: WarbandUpdateAnswer) => {
     const { campaign_id: campaignId, id } = warband;
@@ -134,19 +120,6 @@ export default function WarbandSettingsDialog({
           />
         </Field>
         <div className="grid grid-cols-2 gap-3">
-          {noList ? (
-            <Field label="Budget (gc)" htmlFor="workshop-settings-budget">
-              <NumberInput
-                id="workshop-settings-budget"
-                min={0}
-                step={5}
-                allowEmpty
-                value={gold}
-                onChange={(event) => setGold(event.target.value)}
-                className="font-mono"
-              />
-            </Field>
-          ) : null}
           <Field label="Most warriors" htmlFor="workshop-settings-most">
             <NumberInput
               id="workshop-settings-most"

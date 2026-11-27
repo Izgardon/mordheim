@@ -115,15 +115,14 @@ describe("the warband page's sections", () => {
     show({
       ...sheet,
       capabilities: readCapabilities({ edit: true, workshop: true }),
-      workshop: { cost: 620, budget: 500, share_code: "WAGN2345" },
+      workshop: { cost: 620, share_code: "WAGN2345" },
     } as typeof sheet);
 
     expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual([
       "Roster",
       "Backstory",
     ]);
-    expect(screen.getByText("/ 500 gc").parentElement).toHaveClass("text-danger");
-    expect(screen.getByText("/ 500 gc").parentElement).toHaveTextContent(/^620 \/ 500 gc$/);
+    expect(screen.getByText("620")).toHaveTextContent(/^620 gc$/);
     expect(screen.queryByText("Gold")).toBeNull();
     expect(screen.queryByText("Record")).toBeNull();
     expect(screen.queryByRole("region", { name: "Resources" })).toBeNull();

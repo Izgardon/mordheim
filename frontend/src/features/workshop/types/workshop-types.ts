@@ -5,7 +5,7 @@ export type WorkshopType = { id: number; name: string };
 
 /**
  * One of the server's warnings, in its words (`custom_content_added`, `custom_content_archived`,
- * `not_in_play`, `left_out`, `over_budget`, `list_serves_none`...), with the names it is about.
+ * `not_in_play`, `left_out`, `list_serves_none`...), with the names it is about.
  */
 export type WorkshopWarning = { code: string; message: string; names?: string[] };
 
@@ -17,7 +17,7 @@ export type WorkshopWarbandRow = {
   warband_type: WorkshopType | null;
   /** The list it reads (one of my lists, or the book's template). */
   template_id: number | null;
-  /** It reads no list at all: its own budget, every unit made by hand. */
+  /** It reads no list at all: every unit made by hand. */
   no_list: boolean;
   share_code: string;
   updated_at: string;
@@ -54,8 +54,8 @@ export type SharedPreview =
       maker: string;
       name: string;
       warband_type: WorkshopType | null;
+      /** Its running cost (a workshop warband has no budget). */
       cost: number;
-      budget: number;
       heroes: number;
       henchmen: number;
       hired_swords: number;
@@ -75,9 +75,8 @@ export type MakeWarbandBody = {
   template_variant?: string;
   list_id?: number;
   list_code?: string;
-  /** Raised from no list: its own budget and most warriors, every unit made by hand. */
+  /** Raised from no list: its own most warriors, every unit made by hand. */
   no_list?: boolean;
-  budget?: number;
   max_units?: number;
 };
 

@@ -2,7 +2,7 @@
  * The hire dialog's Paid button (William, 18 Nov 2026): a fee that charges nothing but asks for
  * something in words shows the server's words and a Paid button, which sends `fee_paid` so the
  * hire records what was settled; it moves no gold, and a fee in gold never shows one. A hire's
- * warnings are the server's words (a workshop warband's over its budget among them).
+ * warnings are the server's words (a resource paid short among them).
  */
 import { screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
@@ -83,12 +83,12 @@ describe("HireDialog", () => {
     expect(screen.getByRole("button", { name: "Hire for 80 gc" })).toBeVisible();
   });
 
-  it("shows the server's warning when a workshop warband's hire takes it over its budget", async () => {
-    const over = "The Reiklanders costs 540 gc: 40 gc over its budget of 500 gc.";
+  it("shows the server's warning when the hire is paid short", async () => {
+    const over = "Wyrdstone shards held 1: 1 of 2 Wyrdstone paid.";
     fakeApi.on(`POST /warbands/9/hirelings/hire/`, {
       id: 31,
       name: "Knight Panther",
-      warnings: [{ code: "over_budget", message: over }],
+      warnings: [{ code: "resource_short", message: over }],
     });
     const user = setupUser();
     show({ gold: 80, settle: "" });
@@ -96,7 +96,7 @@ describe("HireDialog", () => {
     await user.click(screen.getByRole("button", { name: "Hire for 80 gc" }));
 
     await waitFor(() =>
-      expect(toast.warning).toHaveBeenCalledWith(over, { id: "server-warning-over_budget" })
+      expect(toast.warning).toHaveBeenCalledWith(over, { id: "server-warning-resource_short" })
     );
   });
 });

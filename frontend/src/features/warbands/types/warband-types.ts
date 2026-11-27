@@ -152,8 +152,8 @@ export type WarbandUnitsSummary = WarbandRosterCounts & {
   heroes?: WarbandHero[];
   hirelings?: WarbandHireling[];
   henchmen_groups?: HenchmenGroup[];
-  /** A workshop's warband's cost against its budget, after every write (null in a campaign). */
-  workshop?: { cost: number; budget: number } | null;
+  /** A workshop's warband's running cost, after every write (null in a campaign). */
+  workshop?: { cost: number } | null;
 };
 
 export type WarbandResource = {
@@ -247,8 +247,6 @@ export type WarbandUpdatePayload = {
   plot_id?: number | null;
   /** Its campaign point total, as the player typed it. */
   campaign_points?: number;
-  /** A workshop warband made with no list: its own budget (apps/workshop). */
-  budget?: number;
 };
 
 export type LevelUpHistoryEntry = {

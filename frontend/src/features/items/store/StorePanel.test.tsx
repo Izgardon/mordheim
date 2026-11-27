@@ -81,7 +81,7 @@ const whoCan: WhoCan = {
   materials: [],
 };
 
-function renderStore(heroes: ReturnType<typeof makeHero>[] = [], purse: Purse = "Gold") {
+function renderStore(heroes: ReturnType<typeof makeHero>[] = [], purse: Purse = { kind: "gold" }) {
   const queryClient = createTestQueryClient();
   queryClient.setQueryData(catalogueListKey(CAMPAIGN, "items"), [lance]);
   queryClient.setQueryData(queryKeys.campaign.warbandWhoCan(CAMPAIGN, WARBAND), whoCan);
@@ -105,9 +105,29 @@ function renderStore(heroes: ReturnType<typeof makeHero>[] = [], purse: Purse = 
 beforeEach(() => fakeApi.reset());
 
 describe("StorePanel", () => {
-  it("names a workshop warband's Budget where a campaign's shows only its gold left", () => {
-    renderStore([], "Budget");
-    expect(screen.getByText("Budget 100 gc left")).toBeInTheDocument();
+  it("shows a campaign warband's gold left", () => {
+    renderStore();
+    expect(screen.getByText("100 gc left")).toBeInTheDocument();
+  });
+
+  it("shows a workshop warband's running cost with the basket, never gold left", async () => {
+    // William, 27 Nov 2026: "it shouldn't matter here, we just need a running cost"
+    fakeApi.on(`POST /warbands/${WARBAND}/rarity-rolls/`, { hero_id: 4, warnings: [] });
+    vi.mocked(rollDie).mockReturnValueOnce(5).mockReturnValueOnce(3);
+    const user = setupUser();
+    renderStore([makeHero({ id: 4, name: "Aldric" })], { kind: "cost", cost: 108 });
+    expect(screen.getByText("Cost 108 → 108 gc")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Get" }));
+    const searchers = within(screen.getByRole("group", { name: "Who searches" }));
+    await user.click(searchers.getByRole("button", { name: "Aldric" }));
+    await user.click(screen.getByRole("button", { name: "Search" }));
+    await screen.findByRole("status");
+    await user.click(screen.getByRole("button", { name: "Add to basket · 40 gc" }));
+
+    expect(screen.getByText("Cost 108 → 148 gc")).toBeInTheDocument();
+    expect(screen.queryByText(/gc left/)).toBeNull();
+    expect(screen.queryByText(/Budget/)).toBeNull();
   });
 
   it("shows a clicked item's details, and hides them on a second click", async () => {

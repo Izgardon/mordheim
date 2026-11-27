@@ -47,7 +47,7 @@ export default function WarbandInfo({
   /** Shows the Treasury tab (the Gold window's link). */
   onTreasury: () => void;
   /** A workshop's warband: its cost for its gold and record, and no resources. */
-  workshop?: { cost: number; budget: number } | null;
+  workshop?: { cost: number } | null;
   /** The sections after the plot (the warband rules), in this block's spacing. */
   children?: ReactNode;
 }) {

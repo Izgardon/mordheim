@@ -23,7 +23,9 @@ import WarbandTrade from "../components/trade/WarbandTrade";
 import type { RosterUnit } from "../components/roster/unit-view";
 import { useUnitActions } from "../hooks/units/useUnitActions";
 import { useWarbandSheet } from "../hooks/warband/useWarbandSheet";
-import { PurseContext } from "../purse";
+import { PurseContext, type Purse } from "../purse";
+
+const GOLD: Purse = { kind: "gold" };
 
 /** The warband page (design E): your own warband, or someone else's to look at. */
 export default function Warband() {
@@ -93,10 +95,9 @@ export default function Warband() {
 
   const canEdit = capabilities.edit;
   const mine = warband.user_id === user?.id;
-  // A workshop's warband (apps/workshop) has a budget for its gold: the store, the tally and the
-  // hire screens spend what is left of it; it has no battles, trades, visits or encampments.
+  // A workshop's warband (apps/workshop) has a running cost and no budget or gold to show: the
+  // store and the tally count from its cost; it has no battles, trades, visits or encampments.
   const { workshop } = sheet;
-  const shown = workshop ? { ...warband, gold: workshop.budget - workshop.cost } : warband;
   const units: RosterUnit[] = [
     ...sheet.heroes.map((unit) => ({ kind: "hero" as const, unit })),
     ...sheet.henchmenGroups.map((unit) => ({ kind: "henchmen_group" as const, unit })),
@@ -116,7 +117,7 @@ export default function Warband() {
   } as const;
 
   return (
-    <PurseContext.Provider value={workshop ? "Budget" : "Gold"}>
+    <PurseContext.Provider value={workshop ? { kind: "cost", cost: workshop.cost } : GOLD}>
       <div className="flex flex-col gap-6">
         <PostgameSlot slot={isMobile ? "aside" : "bar"} {...postgame} />
         <WarbandHeader
@@ -169,7 +170,7 @@ export default function Warband() {
             <WarbandSections
               campaignId={campaignId}
               campaign={campaign}
-              warband={shown}
+              warband={warband}
               sheet={sheet}
               canEdit={canEdit}
               breakdownOpen={breakdownOpen}
@@ -193,7 +194,7 @@ export default function Warband() {
 
         <WarbandPanels
           campaignId={campaignId}
-          warband={shown}
+          warband={warband}
           heroes={sheet.heroes}
           henchmenGroups={sheet.henchmenGroups}
           units={units}
@@ -209,13 +210,7 @@ export default function Warband() {
           placeSearch={searchParams.get("place") ?? undefined}
         />
         {workshop && settingsOpen ? (
-          <WarbandSettingsDialog
-            open
-            onOpenChange={setSettingsOpen}
-            warband={warband}
-            budget={workshop.budget}
-            noList={workshop.no_list}
-          />
+          <WarbandSettingsDialog open onOpenChange={setSettingsOpen} warband={warband} />
         ) : null}
         <AdvanceDialog
           entry={advancing}

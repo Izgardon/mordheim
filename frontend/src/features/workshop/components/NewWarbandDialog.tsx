@@ -27,8 +27,8 @@ const SOURCES: { key: Source; name: string }[] = [
 /**
  * New warband (the workshop): a name, then a book warband type (every type: every setting is in
  * play in a workshop), one of my lists, a shared list's code (read first), with the type where
- * the list serves several and the variant where the type presets none, or no list: a type, a
- * budget and most warriors. Its page opens once made.
+ * the list serves several and the variant where the type presets none, or no list: a type and
+ * most warriors. Its page opens once made.
  */
 export default function NewWarbandDialog({
   open,
@@ -147,17 +147,6 @@ export default function NewWarbandDialog({
         )}
         {draft.source === "none" ? (
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Budget (gc)" htmlFor="workshop-warband-budget">
-              <NumberInput
-                id="workshop-warband-budget"
-                min={0}
-                step={5}
-                allowEmpty
-                value={draft.budget}
-                onChange={(event) => draft.setBudget(event.target.value)}
-                className="font-mono"
-              />
-            </Field>
             <Field label="Most warriors" htmlFor="workshop-warband-most">
               <NumberInput
                 id="workshop-warband-most"

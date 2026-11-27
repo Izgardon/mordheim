@@ -220,7 +220,6 @@ describe("Raising a warband from its type's template", () => {
       name: "The Gilded Wagon",
       warband_type: { id: 7, name: "Merchant Caravans" },
       cost: 480,
-      budget: 500,
       heroes: 2,
       henchmen: 5,
       hired_swords: 0,

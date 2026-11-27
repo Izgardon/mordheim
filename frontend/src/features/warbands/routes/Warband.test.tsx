@@ -1,8 +1,8 @@
 /**
  * The warband page's workshop parts (apps/workshop): my own warband in a campaign offers Copy to
- * my workshop, which opens the copy there; a workshop's warband shows its code and offers none,
- * no rating breakdown, and Settings: its name, type and most warriors, and its budget when it was
- * made with no list.
+ * my workshop, which opens the copy there; a workshop's warband shows its code and its running cost
+ * alone (no budget: William, 27 Nov 2026), offers no copy and no rating breakdown, and Settings:
+ * its name, type and most warriors.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -27,7 +27,7 @@ vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
 
 const WORKSHOP_ID = 90;
 
-const sheet = (id: number, campaignId: number, workshop: boolean, noList = false) => ({
+const sheet = (id: number, campaignId: number, workshop: boolean) => ({
   warband: {
     id,
     name: "Iron Vultures",
@@ -40,14 +40,14 @@ const sheet = (id: number, campaignId: number, workshop: boolean, noList = false
     gold: 120,
     rating: 0,
     resources: [],
-    workshop: workshop ? { cost: 380, budget: 500 } : null,
+    workshop: workshop ? { cost: 380 } : null,
   },
   capabilities: { edit: true, manage_items: true, workshop, trade: false },
   rules: [],
   heroes: [],
   henchmen_groups: [],
   hirelings: [],
-  workshop: workshop ? { cost: 380, budget: 500, share_code: "VLTR2345", no_list: noList } : null,
+  workshop: workshop ? { cost: 380, share_code: "VLTR2345" } : null,
 });
 
 const openMenu = async (user: ReturnType<typeof setupUser>) =>
@@ -81,8 +81,7 @@ describe("the warband page and the workshop", () => {
       name: "Iron Vultures",
       warband_type: { id: 3, name: "Reiklanders" },
       template_id: 5,
-      cost: 380,
-      budget: 500,
+      no_list: false,
       share_code: "VLTR2345",
       updated_at: "2026-11-26T10:00:00Z",
       kind: "warband",
@@ -100,11 +99,14 @@ describe("the warband page and the workshop", () => {
     expect(await screen.findByText("VLTR2345")).toBeInTheDocument();
   });
 
-  it("shows a workshop warband with its code, and offers no copy of it", async () => {
+  it("shows a workshop warband with its code and its running cost alone, and offers no copy", async () => {
     const user = setupUser();
     renderApp(`/workshop/${WORKSHOP_ID}/warbands/41`);
 
     expect(await screen.findByText("VLTR2345")).toBeInTheDocument();
+    expect(screen.getByText("380")).toHaveTextContent(/^380 gc$/);
+    expect(screen.queryByText(/\/ 500/)).toBeNull();
+    expect(screen.queryByText("Gold")).toBeNull();
     await openMenu(user);
     expect(await screen.findByRole("menuitem", { name: "Settings" })).toBeInTheDocument();
     expect(screen.queryByRole("menuitem", { name: "Rating breakdown" })).toBeNull();
@@ -112,8 +114,7 @@ describe("the warband page and the workshop", () => {
     expect(screen.queryByRole("button", { name: /^Rating/ })).toBeNull();
   });
 
-  it("changes a no-list warband's budget in its Settings, sending only what changed", async () => {
-    fakeApi.on("GET /warbands/41/sheet/", sheet(41, WORKSHOP_ID, true, true));
+  it("changes a workshop warband's most warriors in its Settings, with no budget to set", async () => {
     fakeApi.on("PATCH /warbands/41/", {
       ...sheet(41, WORKSHOP_ID, true).warband,
       rules_changed: null,
@@ -124,24 +125,14 @@ describe("the warband page and the workshop", () => {
     await openMenu(user);
     await user.click(await screen.findByRole("menuitem", { name: "Settings" }));
     const dialog = await screen.findByRole("dialog", { name: "Warband settings" });
-    const budget = within(dialog).getByLabelText("Budget (gc)");
-    expect(budget).toHaveValue(500);
-    await user.clear(budget);
-    await user.type(budget, "650");
+    expect(within(dialog).queryByLabelText(/Budget/)).toBeNull();
+    const most = within(dialog).getByLabelText("Most warriors");
+    expect(most).toHaveValue(15);
+    await user.clear(most);
+    await user.type(most, "12");
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(fakeApi.bodyOf("PATCH /warbands/41/")).toEqual({ budget: 650 }));
+    await waitFor(() => expect(fakeApi.bodyOf("PATCH /warbands/41/")).toEqual({ max_units: 12 }));
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
-  });
-
-  it("offers no budget in a listed workshop warband's Settings", async () => {
-    const user = setupUser();
-    renderApp(`/workshop/${WORKSHOP_ID}/warbands/41`);
-
-    await openMenu(user);
-    await user.click(await screen.findByRole("menuitem", { name: "Settings" }));
-    const dialog = await screen.findByRole("dialog", { name: "Warband settings" });
-    expect(within(dialog).getByLabelText("Most warriors")).toHaveValue(15);
-    expect(within(dialog).queryByLabelText("Budget (gc)")).toBeNull();
   });
 });

@@ -55,10 +55,9 @@ export type WarbandSheet = {
   /** The encampments it holds while the campaign has Encampments on; [] while they are off. */
   encampments?: HeldEncampment[];
   /**
-   * A workshop's warband: its cost, budget and share code, and whether it was made with no list
-   * (its budget then its own); null in a campaign.
+   * A workshop's warband: its running cost and share code; null in a campaign.
    */
-  workshop?: { cost: number; budget: number; share_code: string; no_list: boolean } | null;
+  workshop?: { cost: number; share_code: string } | null;
   heroes: WarbandHero[];
   henchmen_groups: HenchmenGroup[];
   hirelings: WarbandHireling[];

@@ -1,7 +1,7 @@
 import { NumberInput } from "@/components/ui/number-input";
 import { cn } from "@/lib/utils";
 
-import { usePurse } from "../../purse";
+import { costAfter, usePurse } from "../../purse";
 
 import type { TemplateLine } from "../../types/hire-template-types";
 import { overWarbandMax, pickKey, pickLabel, tallyTotal, type KitPick } from "./hire-draft";
@@ -37,8 +37,8 @@ const ROW = "flex min-h-9 items-center gap-2.5 border-t border-line py-1 first:b
 /**
  * What the hire costs, as the store's basket tallies it: his cost (each member's, for a group),
  * each item picked at its price, each upgrade picked (a hero's) and the "1st free" items. Every price
- * can be changed; the total and the gold (a workshop's budget) left follow, and the server writes
- * what the tally says.
+ * can be changed; the total and the gold left (a workshop's running cost) follow, and the server
+ * writes what the tally says.
  */
 export default function HireTally({
   name,
@@ -76,9 +76,9 @@ export default function HireTally({
     (sum, pick) => sum + Math.max(0, Math.trunc(Number(pick.price) || 0)),
     0
   );
-  const purse = usePurse();
   const total = tallyTotal(cost, members, picks, prices) + extra;
   const left = gold - total;
+  const running = costAfter(usePurse(), total);
   return (
     <div className="flex flex-col border-t border-accent-line pt-2">
       <ul aria-label="Tally" className="m-0 flex list-none flex-col p-0">
@@ -142,9 +142,13 @@ export default function HireTally({
         <span>
           Total <span className="font-mono font-bold text-head">{total} gc</span>
         </span>
-        <span className={left < 0 ? "text-danger" : undefined}>
-          {purse} {gold} → {left} gc
-        </span>
+        {running ? (
+          <span>{running}</span>
+        ) : (
+          <span className={left < 0 ? "text-danger" : undefined}>
+            Gold {gold} → {left} gc
+          </span>
+        )}
       </p>
     </div>
   );

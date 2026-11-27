@@ -75,7 +75,7 @@ const trade = (id: number, description: string, price: number): WarbandTrade => 
   updated_at: "2026-11-05T10:00:00Z",
 });
 
-type Workshop = { cost: number; budget: number } | null;
+type Workshop = { cost: number } | null;
 
 function renderStats(onTreasury = vi.fn(), workshop: Workshop = null) {
   renderWithQueryClient(
@@ -184,17 +184,21 @@ describe("The header's windows", () => {
     expect(second).toHaveTextContent("No winner");
   });
 
-  it("shows a workshop warband's rating plain, with no breakdown to open", () => {
-    renderStats(vi.fn(), { cost: 455, budget: 500 });
+  it("shows a workshop warband's running cost alone and its rating plain, with no breakdown", () => {
+    // William, 27 Nov 2026: "not show the out of 500 ... we just need a running cost"
+    renderStats(vi.fn(), { cost: 455 });
 
-    expect(screen.getByText("/ 500 gc")).toBeInTheDocument();
+    const cost = screen.getByText("455");
+    expect(cost).toHaveTextContent(/^455 gc$/);
+    expect(cost).toHaveClass("text-head");
+    expect(screen.queryByText(/\/ \d+ gc/)).toBeNull();
     expect(screen.queryByRole("button", { name: /^Rating/ })).toBeNull();
     expect(screen.getByText("51.5")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /^Gold/ })).toBeNull();
   });
 
-  // William, 26 Nov 2026: Rating's and Units' values the size of Cost's, its "500" smaller still
-  it("gives every value the one size, the tightest's, with the budget in the smaller part", () => {
+  // William, 26 Nov 2026: Rating's and Units' values the size of Cost's, its "gc" smaller still
+  it("gives every value the one size, the tightest's, with the unit in the smaller part", () => {
     const tight = (element: HTMLElement) => element.textContent?.startsWith("455") ?? false;
     vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(60);
     vi.spyOn(HTMLElement.prototype, "scrollWidth", "get").mockImplementation(function (
@@ -202,14 +206,14 @@ describe("The header's windows", () => {
     ) {
       return tight(this) ? 120 : 30;
     });
-    renderStats(vi.fn(), { cost: 455, budget: 500 });
+    renderStats(vi.fn(), { cost: 455 });
 
-    const cost = screen.getByText("/ 500 gc").parentElement as HTMLElement;
-    expect(cost).toHaveTextContent(/^455 \/ 500 gc$/);
+    const cost = screen.getByText("gc").parentElement as HTMLElement;
+    expect(cost).toHaveTextContent(/^455 gc$/);
     expect(cost.style.fontSize).toBe("13px");
     expect(screen.getByText("51.5").style.fontSize).toBe("13px");
     expect(screen.getByText("of 15").parentElement?.style.fontSize).toBe("13px");
-    expect(screen.getByText("/ 500 gc")).toHaveClass("text-[0.5em]");
+    expect(screen.getByText("gc")).toHaveClass("text-[0.5em]");
     vi.restoreAllMocks();
   });
 });

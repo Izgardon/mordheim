@@ -115,10 +115,16 @@ export default function StorePanel(props: StorePanelProps) {
       title="Store"
       actions={
         <span className="font-display text-[22px] font-semibold text-head">
-          {purse === "Budget" ? (
-            <span className="font-sans text-xs font-semibold text-faint">Budget </span>
-          ) : null}
-          {left} <span className="font-sans text-xs font-semibold text-faint">gc</span>
+          {/* a workshop's running cost with the basket (it has no budget), else the gold left */}
+          {purse.kind === "cost" ? (
+            <>
+              <span className="font-sans text-xs font-semibold text-faint">Cost </span>
+              {purse.cost + basket.total}
+            </>
+          ) : (
+            left
+          )}{" "}
+          <span className="font-sans text-xs font-semibold text-faint">gc</span>
         </span>
       }
       dock={

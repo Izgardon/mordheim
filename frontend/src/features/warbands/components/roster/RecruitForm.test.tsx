@@ -19,7 +19,7 @@ import type {
   TemplateLine,
   WarbandTemplateAnswer,
 } from "../../types/hire-template-types";
-import { PurseContext } from "../../purse";
+import { PurseContext, type Purse } from "../../purse";
 import RecruitForm from "./RecruitForm";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
@@ -135,7 +135,7 @@ const answer = (open: boolean): WarbandTemplateAnswer => ({
 
 const ulrich = makeHero({ id: 6, name: "Ulrich", unit_type: "Champion", price: 35 });
 
-function renderForm(onCreated = vi.fn(), purse: "Gold" | "Budget" = "Gold") {
+function renderForm(onCreated = vi.fn(), purse: Purse = { kind: "gold" }) {
   renderWithQueryClient(
     <PurseContext.Provider value={purse}>
       <RecruitForm
@@ -302,12 +302,12 @@ describe("Recruiting from the warband's template", () => {
     expect(screen.getByText("Gold 74 → 39 gc")).toBeInTheDocument();
   });
 
-  it("tallies against a workshop warband's Budget rather than its Gold", async () => {
+  it("tallies a workshop warband's running cost rather than its gold", async () => {
     fakeApi.on("GET /warbands/9/template/", answer(false));
-    renderForm(vi.fn(), "Budget");
+    renderForm(vi.fn(), { kind: "cost", cost: 108 });
     const user = setupUser();
     await user.click(await screen.findByRole("radio", { name: /Champion/ }));
-    expect(screen.getByText("Budget 74 → 39 gc")).toBeInTheDocument();
+    expect(screen.getByText("Cost 108 → 143 gc")).toBeInTheDocument();
     expect(screen.queryByText(/^Gold /)).toBeNull();
   });
 

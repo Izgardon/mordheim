@@ -23,7 +23,7 @@ export function PreviewSummary({ preview }: { preview: SharedPreview }) {
       {types ? <span className="text-sm text-text2">{types}</span> : null}
       {preview.kind === "warband" ? (
         <>
-          <CostLine cost={preview.cost} budget={preview.budget} />
+          <CostLine cost={preview.cost} />
           <span className="text-sm text-text2">
             {[
               plural(preview.heroes, "hero", "heroes"),
@@ -86,14 +86,11 @@ export default function CodePreview({
   );
 }
 
-/** "Cost 455 / 500 gc", in the danger colour above the budget. */
-function CostLine({ cost, budget }: { cost: number; budget: number }) {
+/** "Cost 455 gc": a workshop warband's running cost (it has no budget). */
+function CostLine({ cost }: { cost: number }) {
   return (
     <p className="m-0 text-sm text-text2">
-      Cost{" "}
-      <span className={cost > budget ? "font-bold text-danger" : "font-bold text-head"}>
-        {cost} / {budget} gc
-      </span>
+      Cost <span className="font-bold text-head">{cost} gc</span>
     </p>
   );
 }

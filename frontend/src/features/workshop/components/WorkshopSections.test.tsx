@@ -2,8 +2,8 @@
  * Home's workshop: its warbands and lists (each card's name, a warband's type under it, its code
  * and page), Delete saying campaigns keep their copy, My content (making the workshop on its first use), Import by code (read first,
  * imported with the server's warnings, opened), and a new warband from a book type, a list code,
- * one of my lists, with the type and variant each asks for, or no list (a type, a budget and most
- * warriors).
+ * one of my lists, with the type and variant each asks for, or no list (a type and most warriors,
+ * no budget).
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -195,7 +195,6 @@ describe("Home's workshop sections", () => {
       name: "Pit Dogs",
       warband_type: { id: 4, name: "Middenheimers" },
       cost: 480,
-      budget: 500,
       heroes: 3,
       henchmen: 7,
       hired_swords: 1,
@@ -345,7 +344,7 @@ describe("Home's workshop sections", () => {
     });
   });
 
-  it("makes a warband with no list: a type, its budget and most warriors, and no variant", async () => {
+  it("makes a warband with no list: a type and most warriors, no budget and no variant", async () => {
     const user = setupUser();
     fakeApi.on("GET /warband-templates/", [MERCENARIES]);
     fakeApi.on("POST /workshop/warbands/", {
@@ -365,13 +364,13 @@ describe("Home's workshop sections", () => {
     await user.click(within(dialog).getByRole("combobox", { name: "Warband type" }));
     await user.click(await screen.findByRole("option", { name: /Mercenaries/ }));
     expect(within(dialog).queryByRole("group", { name: "Variant" })).not.toBeInTheDocument();
-    const budget = within(dialog).getByLabelText("Budget (gc)");
-    expect(budget).toHaveValue(500);
-    expect(within(dialog).getByLabelText("Most warriors")).toHaveValue(15);
-    await user.clear(budget);
+    expect(within(dialog).queryByLabelText(/Budget/)).toBeNull();
+    const most = within(dialog).getByLabelText("Most warriors");
+    expect(most).toHaveValue(15);
+    await user.clear(most);
     const make = within(dialog).getByRole("button", { name: "Make the warband" });
     expect(make).toBeDisabled();
-    await user.type(budget, "350");
+    await user.type(most, "12");
     await user.click(make);
 
     expect(await screen.findByText("Workshop page")).toBeInTheDocument();
@@ -379,8 +378,7 @@ describe("Home's workshop sections", () => {
       name: "Freebooters",
       warband_type_id: 7,
       no_list: true,
-      budget: 350,
-      max_units: 15,
+      max_units: 12,
     });
   });
 });
