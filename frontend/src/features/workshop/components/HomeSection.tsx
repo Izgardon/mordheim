@@ -13,10 +13,14 @@ export const workshopState = (query: { isPending: boolean; error: unknown }) => 
   error: query.error ? getErrorMessage(query.error, "Unable to load your workshop") : "",
 });
 
-/** A workshop section (Home's, or the workshop's own page): its title and buttons, then its cards. */
+/**
+ * A workshop section (a part of Home's Workshop, at level 3, or the workshop's own page): its
+ * title and buttons, then its cards.
+ */
 export default function HomeSection(props: {
   id: string;
   title: string;
+  level?: 2 | 3;
   actions: ReactNode;
   state: { isLoading: boolean; error: string };
   empty: string;
@@ -28,6 +32,7 @@ export default function HomeSection(props: {
       <SectionHead
         id={props.id}
         title={props.title}
+        level={props.level}
         className="flex-wrap items-center"
         aside={
           <div className="flex gap-2 max-[960px]:grid max-[960px]:w-full max-[960px]:grid-cols-2">

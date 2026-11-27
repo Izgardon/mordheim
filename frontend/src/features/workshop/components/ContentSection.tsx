@@ -12,7 +12,7 @@ import { CHIP_LINK } from "./WorkshopNav";
 const CHIP = cn(CHIP_LINK, "border-border text-text2 hover:bg-raised hover:text-ink");
 
 /**
- * Home's My content: my workshop's own catalogue entries, a link per kind to its page there.
+ * Home's My content (a part of its Workshop): my workshop's own catalogue entries, a link per kind to its page there.
  * Before my workshop's first use a link makes it first (the server's `POST workshop/`).
  */
 export default function ContentSection() {
@@ -28,7 +28,7 @@ export default function ContentSection() {
 
   return (
     <section aria-labelledby="your-content" className="flex flex-col gap-4">
-      <SectionHead id="your-content" title="My content" />
+      <SectionHead id="your-content" title="My content" level={3} />
       <div className="flex flex-wrap gap-1.5">
         {CONTENT_KINDS.map((kind) =>
           id ? (

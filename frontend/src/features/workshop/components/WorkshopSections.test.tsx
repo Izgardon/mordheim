@@ -114,6 +114,20 @@ beforeEach(() => {
 });
 
 describe("Home's workshop sections", () => {
+  it("sits under its own Workshop title, its warbands, lists and content its parts (William, 27 Nov 2026)", async () => {
+    renderHome();
+
+    const workshop = screen.getByRole("region", { name: "Workshop" });
+    expect(screen.getByRole("heading", { level: 2, name: "Workshop" })).toBeInTheDocument();
+    for (const part of ["Warbands", "Warband lists", "My content"]) {
+      const region = within(workshop).getByRole("region", { name: part });
+      expect(within(region).getByRole("heading", { level: 3, name: part })).toBeInTheDocument();
+    }
+    expect(
+      await within(workshop).findByRole("article", { name: "The Gilded Wagon" })
+    ).toBeInTheDocument();
+  });
+
   it("lists my warbands with their type under the name and my lists, each with its code", async () => {
     renderHome();
 

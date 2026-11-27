@@ -9,14 +9,18 @@ import ImportIntoWorkshop from "./ImportIntoWorkshop";
 import NewListDialog from "./NewListDialog";
 import WorkshopCard from "./WorkshopCard";
 
-/** My workshop's warband lists: each with its code; New, Import by code. */
-export default function ListsSection() {
+/**
+ * My workshop's warband lists (a part of Home's Workshop at level 3):
+ * each with its code; New, Import by code.
+ */
+export default function ListsSection({ level }: { level?: 2 | 3 }) {
   const workshop = useWorkshop();
   const remove = useDeleteWorkshopList();
   const [making, setMaking] = useState(false);
   const lists = workshop.data?.lists ?? [];
   return (
     <HomeSection
+      level={level}
       id="your-lists"
       title="Warband lists"
       state={workshopState(workshop)}
