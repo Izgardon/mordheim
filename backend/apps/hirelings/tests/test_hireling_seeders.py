@@ -136,6 +136,7 @@ class HirelingSeederTests(TestCase):
                 "Dark Elf Sorceress (Dark Elf Corsairs)": 2,
                 "Trancas Quendalmanliye": 2,
                 "Alchemist": 2,  # two potion recipes
+                "Genie": 1,  # "He starts with one spell", typed no caster (William, 27 Nov 2026: "YES")
             },
         )
 
