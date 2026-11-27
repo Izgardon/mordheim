@@ -5,9 +5,11 @@ what a variant changes about him himself (`variantChanges`), where a snapshot pa
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from functools import cache
 from typing import Any
 
-from catalogue_import.common import loose_key, norm_name, slugify
+from catalogue_import.common import load_json, loose_key, norm_name, slugify
+from catalogue_import.sources import BACKEND
 from catalogue_import.template_answers import (
     CASTERS,
     CORE_SKILLS,
@@ -45,10 +47,16 @@ OURS = {"large": ("Large", "Trait"), "wizard": ("Wizard", "Caster"), "priest": (
 
 
 def is_prayers(lore: str) -> bool:
-    """A lore a priest casts from: prayers, the Funerary Rites of a Priest of Morr, who "is not a wizard" (the
-    Vampire Hunters of Sylvania's PDF, p11), the Blessings of the Mare, which the Dame of the Mare prays, or the
-    Mazzalupo's Commands, whose Wandering knight "does not count as a wizard" though he casts as one."""
-    return "Prayers" in lore or lore.startswith(("Funerary Rites", "Blessings of the Mare", "Commands ("))
+    """A lore a priest casts from: one of the book's prayer lists (apps/spells/data/prayer-lores.json, the seeders'
+    answer too), the priests' prayers, a Priest of Morr's Funerary Rites, the Blessings of the Mare and the Prophetic
+    Rants among them (William, 27 Nov 2026, of the Mordheimers' Fanatics' Prophet: a Priest)."""
+    return lore.strip().casefold() in _prayer_lores()
+
+
+@cache
+def _prayer_lores() -> frozenset[str]:
+    names = load_json(BACKEND / "apps" / "spells" / "data" / "prayer-lores.json")
+    return frozenset(str(name).strip().casefold() for name in names)
 
 
 @dataclass

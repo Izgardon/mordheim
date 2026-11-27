@@ -1148,7 +1148,7 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | mages | Mage | Wizard | Ice Magic, Fire Magic, Wind Magic, Earth Magic |
 | mages | Warlock | Wizard | Lesser Magic |
 | mazzalupo | Wandering knight | No | Commands (Mazzalupo) |
-| mordheimers-fanatics | Prophet | Wizard | Prophetic Rants |
+| mordheimers-fanatics | Prophet | Priest | Prophetic Rants |
 | necrarchs-the-soul-stealers | Necrarch Vampire | Wizard | Necromancy, Dreaded Scrolls of Nagash |
 | necrarchs | Nosferatu | Wizard | Necromancy |
 | necromancer | Necromancer | Wizard | Necromancy |

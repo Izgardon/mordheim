@@ -67671,7 +67671,7 @@
         "gains_xp": true,
         "promotable": true,
         "is_leader": true,
-        "caster": "Wizard",
+        "caster": "Priest",
         "large": false,
         "variant_changes": {},
         "fixed_kit": "",

@@ -31,3 +31,9 @@ class CasterTests(ReviewCase):
         self.assertEqual((performer["caster"], performer["spell_types"]), ("No", []))
         rules = {special["name"]: special["description"] for special in performer["specials"]}
         self.assertIn("Magician", rules["Specialist"])
+
+    def test_the_fanatics_prophet_is_a_priest_of_his_prophetic_rants(self) -> None:
+        # his Rants are a prayer list (William, 27 Nov 2026: a Priest); a caster is a priest exactly when every lore
+        # he casts from is one of prayer-lores.json's
+        self.assertEqual(self.fighter("mordheimers-fanatics", "Prophet")["caster"], "Priest")
+        self.assertEqual(self.lores("mordheimers-fanatics", "Prophet"), ["Prophetic Rants"])
