@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { scrollPageToTop } from "@/components/ScrollToTop";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/features/campaigns/components/settings/settings-ui";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -99,6 +100,8 @@ export default function CreateWarband({
                   ...(plotId === null ? {} : { plot_id: plotId }),
                 })
               );
+              // the sheet replaces this form at the same address: start it at its top
+              scrollPageToTop();
             } catch (error) {
               toast.error("Couldn't raise the warband.", { description: getErrorMessage(error) });
             } finally {

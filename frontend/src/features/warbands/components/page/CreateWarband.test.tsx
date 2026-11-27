@@ -135,6 +135,25 @@ describe("Raising a warband from its type's template", () => {
     });
   });
 
+  it("lands on the new warband's top: the scrolled form makes way for its sheet", async () => {
+    fakeApi.on(OUTLINE, outline({}));
+    fakeApi.on("POST /warbands/", { id: 11, name: "The Gilded Wagon" });
+    vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    renderRaise(
+      <div data-scroll-root>
+        <CreateWarband campaignId={4} onCreated={vi.fn().mockResolvedValue(undefined)} />
+      </div>
+    );
+    const user = await pickType();
+    await screen.findByRole("region", { name: "Template outline" });
+    const root = document.querySelector<HTMLElement>("[data-scroll-root]")!;
+    root.scrollTop = 600; // Raise sits under the outline, far down a phone's page
+
+    await user.click(screen.getByRole("button", { name: "Raise the warband" }));
+
+    await waitFor(() => expect(root.scrollTop).toBe(0));
+  });
+
   it("fills the link from the type with no note saying so", async () => {
     caravans.link_url = "https://mordheimer.net/caravans";
     try {
