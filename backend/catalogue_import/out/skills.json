@@ -236,7 +236,7 @@
     "description": "Between missions, the bandit goes off and robs travelers or other innocent victims. Instead of searching for Rare equipment, the hero may engage in banditry - roll a D6, on a result of 2-6, the banditry is successful and the hero adds D6+1 gold to the warband's stash. However, on a result of 1, the attempted robbery has somehow gone wrong - roll on the Serious Injury table for the bandit, as if he had been taken Out of Action in the last game. If several heroes have this skill, it is quite possible that some are successful and some not in their Banditry attempt between games...that is the nature of theives' honor - if a man falls behind, he is usually on his own! This skill may not be combined with the Huckster's Slick Operator special ability. (NC)"
   },
   {
-    "name": "Jump back",
+    "name": "Jump Back",
     "description": "This warrior is an expert at getting himself out of sticky situations. If the warrior is in close combat with an enemy warrior (and not Knocked Down or Stunned) at the start of his Movement Phase, he may attempt to jump out of combat. To attempt to do so, the warrior must make an Initiative test. If he fails the test, the warrior will automatically strike last in that round of combat. However, if he passes, immediately move him 1\" away from the enemy warrior (this does not count against his movement for that Movement Phase); he may then move and otherwise act normally for the test of that that turn (even charging back into combat if he chooses!). (NC)"
   },
   {
@@ -244,7 +244,7 @@
     "description": "The bandit is an expert at shooting his victims from the comfort of cover. When Hiding, the warrior may cast spells or shoot and still remain Hidden. Note that the bandit may not use this skill if he is shooting a Blackpowder weapon! (NC)"
   },
   {
-    "name": "Throw voice",
+    "name": "Throw Voice",
     "description": "This rogue has mastered the art of misdirecting enemies who get too close by making them hear noises or voices some distance from his location. If an Enemy warrior is attempting to detect the bandit While he is Hidden, roll a D6 - on a result of 4 or better, the bandit is undetected and remains Hidden. (NC)"
   },
   {
@@ -284,15 +284,15 @@
     "description": "The Hero makes his profession by finding items others have lost. At the end of the game when the warband rolls to find Treasures, they receive one additional Treasure as long as the Hero was in the battle, and wasn't taken out of action. (MiM)"
   },
   {
-    "name": "Chosen of chaos",
+    "name": "Chosen of Chaos",
     "description": "The Hero has been found worthy of his god’s service and entered the rank of a Chaos Warrior. He uses the maximum profile for Warriors of Chaos and the Hero equipment list (if he does not already). (BTB)"
   },
   {
-    "name": "Tattooed body",
+    "name": "Tattooed Body",
     "description": "Only the warband's leader may have this skill. The Hero's body is covered with unholy Chaos signs to attract his patron's attention. The Eye of the Gods special rule's effect (of becoming a Chaos Spawn or receiving a Mark) happens on a result of 10+ instead of 12+ only. Note that for the less favoured Norse leaders this is 11+. (BTB)"
   },
   {
-    "name": "Sweeping blow",
+    "name": "Sweeping Blow",
     "description": "Whenever the Hero takes an enemy model out of action using a double-handed weapon he may immediately make an additional attack against another model in base contact. Requires the Strongman skill. (BTB)"
   },
   {
@@ -300,7 +300,7 @@
     "description": "The Hero may buy one mutation. See the Mutations section of the Possessed on special rules. Heroes with the Mark of Onogal may choose a Blessing of Nurgle instead, except the Mark of Nurgle. Note that unlike other skills Marauder Heroes may take this skill more than once. (BTB)"
   },
   {
-    "name": "Heart of the warrior",
+    "name": "Heart of the Warrior",
     "description": "Only the warband’s leader may have this skill. He may re-roll any failed Rout test and is immune to fear and all alone tests. (BTB)"
   },
   {
@@ -324,11 +324,11 @@
     "description": "The Goblin specializes in attacking their targets from the shadows. They may charge an opponent from hiding, even if they cannot see the target. There is no need for an initiative test, and the target may be over the normal 4” limit for charging unseen targets. If the charge is successful, the Goblin surprises their opponent who will attack at half Weapon Skill and half Initiative, rounded up. This penalty lasts for the first round of combat only, as the opponent will swiftly recover their wits if the initial assault is survived. (TBMF)"
   },
   {
-    "name": "Barbarian courage",
+    "name": "Barbarian Courage",
     "description": "As Norse warriors strive to die bravely in battle, they learn to fear nothing and embrace hardship. This hero never needs to take all alone tests and may re-roll failed fear tests. (TC 13)"
   },
   {
-    "name": "Berserk charge",
+    "name": "Berserk Charge",
     "description": "The Norse are very skilled with weapons that many other races see as primitive and savage. When this hero is armed with an axe or double handed weapon, he may re-roll all failed to hit rolls when he charges. (TC 13)"
   },
   {
@@ -336,15 +336,15 @@
     "description": "Only for leaders; Undead leaders cannot use. The warrior has drilled his warband to follow short barked commands. This increases the range of his Leader ability by 6\"."
   },
   {
-    "name": "Shield master",
+    "name": "Shield Master",
     "description": "Norse warriors begin training with shields when they are still children. Some warriors become so skilled with these weapons they can stop almost any blow against them. When this hero is armed with a shield he may parry with it in addition to getting a 6+ save. (TC 13)"
   },
   {
-    "name": "Crushing blow",
+    "name": "Crushing Blow",
     "description": "Norse warriors train in almost all of their spare time. They are expert fighters and learn to put all of their strength into very powerful attacks. No enemy may parry an attack made by this hero because it strikes with such great power that it pushes right through a buckler or sword. (TC 13)"
   },
   {
-    "name": "Master of arms",
+    "name": "Master of Arms",
     "description": "The Ogre learns how to use his size. He may now wield a Difficult to Use weapon and a hand weapon at the same time, but not two Difficult to Use weapons. (BTB)"
   },
   {
@@ -352,11 +352,11 @@
     "description": "Ogres are not civilized of their own accord but it is proven they are prone to absorb foreign customs when travelling the world. Some eventually learn strange new skills before returning home to their tribes. This Ogre may immediately learn one skill from the Shooting or Academic skill lists. This skill may be taken only once and may not be taken by the Guide. (BTB)"
   },
   {
-    "name": "Bull charge",
+    "name": "Bull Charge",
     "description": "Ogres learn to use their vast bulk in a charge, trampling the enemy to the ground. When charging, an Ogre with this skill may attempt a single attack with a +1 ‘to hit’ modifier rather than making his normal attacks. If successful the enemy model is automatically knocked down. (BTB)"
   },
   {
-    "name": "Dog of war",
+    "name": "Dog of War",
     "description": "When an Ogre travels south he can find employment as a tavern bouncer. Some are enlisted by Paymasters to fight for Tilean City States. Drawing from experience gained during a stint on foreign soil, the band can now hire those Hired Swords available for Mercenaries. This skill may only be taken by the leader and if he dies all Hired Swords are removed from the Warband. (BTB)"
   },
   {
@@ -364,7 +364,7 @@
     "description": "An Ogre leader expects challenges to his authority. One of the best ways to suppress a mutineer in the ranks is to give his ear drums a good pounding. This skill may only be taken by the warband leader, allowing him to re-roll the first failed Rout test. (BTB)"
   },
   {
-    "name": "’ard ’ead",
+    "name": "’Ard ’Ead",
     "description": "The warrior has a thick skull even for an Orc. He has a special 3+ save on a D6 to avoid being stunned. If the save is made, treat a stunned result as knocked down instead. If the Orc also wears a helmet, this save is 2+ instead of 3+ (this takes the place of the normal helmet special rule). (A02 13)"
   },
   {
@@ -372,23 +372,23 @@
     "description": "Orcs are aggressive creatures and some are experts at bulldozing charges. The warrior may add +D3\" to his charge range. (A02 13)"
   },
   {
-    "name": "’ere we go!",
+    "name": "’Ere We Go!",
     "description": "Orcs often charge even the most fearsome opponents. The model may ignore Fear and Terror tests when charging. (A02 13)"
   },
   {
-    "name": "Da cunnin’ plan",
+    "name": "Da Cunnin’ Plan",
     "description": "Only the Boss may have this skill. The warband may re-roll any failed Rout tests as long as the Boss is not out of action. (A02 13)"
   },
   {
-    "name": "Well ’ard",
+    "name": "Well ’Ard",
     "description": "(not available to Black Orc warband) The Orc has a thick, dark-green skin, possibly indicating Black Orc blood. Such is the toughness of the Orc that he may add +1 to any armour saves. (A02 13)"
   },
   {
-    "name": "’eadbasher",
+    "name": "’Eadbasher",
     "description": "Orcs have massive physical strength and some of them even learn to aim their blows at the heads of their opponents, with obvious results. Any knocked down results which the Orc causes in hand-to-hand count as stunned results instead. (A02 13)"
   },
   {
-    "name": "Proven warrior",
+    "name": "Proven Warrior",
     "description": "(Black Orc Young’uns only) This young warrior has proven himself worthy of his Black Orc heritage. This skill may only be taken by a Young’un with the Black Orc blood ability and 25 experience. Once he gains this skill, the model is now considered a full Black Orc Warrior (yet still retains the title of Young’un). He follows all the rules for Black Orcs and uses their equipment list and has access to the same skill lists as a Black Orc. (NC)"
   },
   {
@@ -456,7 +456,7 @@
     "description": "When the Pit Fighter loses his last wound and is taken Out-of-Action, he must roll a D6 equal or under his Toughness, each following round he has to roll again on his toughness but then with a -1 modifier for each subsequent round. If he succeeds he gets up and may continue to fight, when he gets taken Out-of-Action a second time he’ll be removed as normal. (TC 21)"
   },
   {
-    "name": "Arms master",
+    "name": "Arms Master",
     "description": "The Pit Fighter may now ignore all ‘difficult to use’ rules for all weapons. This enables him to combine certain types of weapons, he can combine a Morning Star with buckler, or even a Morning Star with a Morning Star. (TC 21)"
   },
   {
@@ -588,15 +588,15 @@
     "description": "A Clan Pestilens member with this skill treats “Stunned” injuries as “Knocked Down.” (TC 29)"
   },
   {
-    "name": "Sand worm",
+    "name": "Sand Worm",
     "description": "The warrior can bury himself in sand and become almost undetectable. The model can Hide in open ground. Cannot be used inside buildings."
   },
   {
-    "name": "Hit and run",
+    "name": "Hit and Run",
     "description": "The warrior can run and shoot but suffers -2 to hit instead of the usual -1 for moving."
   },
   {
-    "name": "Weather tolerant",
+    "name": "Weather Tolerant",
     "description": "The warrior has grown so used to the weather that it doesn’t affect him anymore. Weather conditions such as heat no longer affect this model."
   },
   {
@@ -928,7 +928,7 @@
     "description": "Whenever the Hero takes a Strength or Toughness test, that characteristic counts as 1 higher for the test."
   },
   {
-    "name": "Man At Arms",
+    "name": "Man at Arms",
     "description": "The warrior switches between thrusting and slashing with a halberd: when he fights with one, he may roll each critical hit on either the thrusting or the bladed weapons' critical hit chart."
   },
   {
@@ -1280,11 +1280,11 @@
     "description": "A friendly model within 6\" of him may re-roll a failed Leadership test, rout tests included, at +1 Leadership (no more than 10)."
   },
   {
-    "name": "Experimental enhancements",
+    "name": "Experimental Enhancements",
     "description": "Apprentice only. Instead of searching for rare items, the Apprentice may work on one construct. He needs 3D6 gold crowns of materials, then rolls on the Sealed City's Stygian Mutation chart and applies the result to one of your constructs."
   },
   {
-    "name": "Moonstone infusion",
+    "name": "Moonstone Infusion",
     "description": "Before the game the Hero may raise any characteristic except Toughness and Wounds of a single construct by 1 for each orichalcum token used. Each characteristic may be raised only once, and the increase lasts for that game."
   },
   {
@@ -1292,7 +1292,7 @@
     "description": "Any construct within 12\" of the Hero may ignore the Need Orders rule."
   },
   {
-    "name": "Rogue control",
+    "name": "Rogue Control",
     "description": "Instead of shooting a missile weapon, the Hero may choose a single construct or clockwork weapon within 12\" and line of sight. Roll 2D6 against the construct's or the weapon bearer's Leadership: if the roll is higher, the target ceases to function until the Clockworkers' next Movement phase."
   },
   {
@@ -1668,7 +1668,7 @@
     "description": "The Goblin may declare a net charge and throw his net at the target as the rulebook says. If he hits and the target does not escape, the target counts as knocked down and the Goblin completes his charge; if he misses or the target escapes, it is a failed charge, and he stops 1\" away if it would bring him into base contact. A warrior caught in a net is hit automatically in combat, though the Goblin still rolls to wound as against a knocked down enemy. In the warrior's next recovery phase, unless he is stunned or out of action, he cuts himself free, but may do nothing else and strikes last that turn, as if he had stood up from knocked down."
   },
   {
-    "name": "Death before Dishonor",
+    "name": "Death Before Dishonor",
     "description": "When a close combat attack would remove this model from the battlefield, it first makes a single close combat attack as normal."
   },
   {
@@ -1860,7 +1860,7 @@
     "description": "May be taken only by a Hero who has Black Hunger. He gains +1 Wound and +1 Toughness and loses 1 Movement, and counts as two models when the warband sells moonstone."
   },
   {
-    "name": "Thing handler",
+    "name": "Thing Handler",
     "description": "Any Giant rat, Rat Ogre or converted thing within 6\" of the Hero may use his Leadership."
   },
   {
@@ -1944,7 +1944,7 @@
     "description": "May be taken only by a Troll who already has four or more mutations. Every enemy warrior in close combat with him must take an All Alone test at the end of each turn, even with friendly warriors within 6\"."
   },
   {
-    "name": "Mother knows best",
+    "name": "Mother Knows Best",
     "description": "Broodmother only. She may use the Brood Mentality bonus when she takes a Rout test."
   },
   {
@@ -1992,7 +1992,7 @@
     "description": "While in base contact with the Warpstone Troll, the Hero may be thrown 2D6\" in a direction you choose, and lands safely if he passes an Initiative test. Thrown at an enemy warrior, it counts as a diving charge, but if he fails the test he and his target each take a S3 hit. On a double 1 for the distance, the troll bites him instead, and he is taken out of action."
   },
   {
-    "name": "Stuff 'em with Green",
+    "name": "Stuff 'Em with Green",
     "description": "After a game the Hero may feed 1 wyrdstone shard to one squig or giant rat. In the next battle, secretly nominate it: when it charges or is charged, you may make it explode in a shower of wyrdstone, wounding every model within 2\" on a 4+. The blast hurts the undead too and counts as a tainted attack, and the animal is lost for good."
   },
   {

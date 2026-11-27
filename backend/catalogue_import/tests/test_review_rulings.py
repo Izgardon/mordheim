@@ -18,8 +18,8 @@ class MergesAndSeparationsTests(ReviewCase):
 
     def test_blending_into_the_sands_is_our_sand_worm(self) -> None:
         self.assertNotIn("Blending into the Sands", self.skills)
-        self.assertIn("Sand worm", self.groups["Arabyan Nomads"])
-        self.assertIn("Hide in open ground", self.skills["Sand worm"])  # ours, word for word
+        self.assertIn("Sand Worm", self.groups["Arabyan Nomads"])
+        self.assertIn("Hide in open ground", self.skills["Sand Worm"])  # ours, word for word
 
     def test_no_pain_and_numb_are_our_ignore_pain_with_its_condition_dropped(self) -> None:
         # three names for one rule (a stunned result counts as knocked down): the Lustria warband's No Pain, the

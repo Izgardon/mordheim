@@ -19,7 +19,7 @@
       "Bulwark",
       "Lunge",
       "Ambidextrous",
-      "Man At Arms",
+      "Man at Arms",
       "Frightful Crack",
       "Weak Spot"
     ]
@@ -275,7 +275,7 @@
     "note": "",
     "how": "new group",
     "skills": [
-      "Hit and run",
+      "Hit and Run",
       "Slave Driver",
       "Pious Fury",
       "Pawnbroker",
@@ -297,9 +297,9 @@
     "note": "",
     "how": "new group",
     "skills": [
-      "Sand worm",
-      "Weather tolerant",
-      "Hit and run"
+      "Sand Worm",
+      "Weather Tolerant",
+      "Hit and Run"
     ]
   },
   {
@@ -472,7 +472,7 @@
     "how": "new group",
     "skills": [
       "The Terror",
-      "Mother knows best",
+      "Mother Knows Best",
       "Ground Pounder",
       "Titanic Strength",
       "Hurl"
@@ -599,7 +599,7 @@
     "skills": [
       "Black Hunger",
       "Bloated",
-      "Thing handler",
+      "Thing Handler",
       "Enrage",
       "Breeder",
       "Mutating Experiment"
@@ -619,10 +619,10 @@
     "note": "",
     "how": "new group",
     "skills": [
-      "Experimental enhancements",
-      "Moonstone infusion",
+      "Experimental Enhancements",
+      "Moonstone Infusion",
       "Puppeteer",
-      "Rogue control",
+      "Rogue Control",
       "Gift of Sentience"
     ]
   },
@@ -985,7 +985,7 @@
     "note": "Hit and run is any Hero's; Beast tamer needs the Beastmasta Nitch and Infiltration the Nasty Skulker Nitch.",
     "how": "new group",
     "skills": [
-      "Hit and run",
+      "Hit and Run",
       "Beastmaster",
       "Infiltration",
       "Flank",
@@ -1149,9 +1149,9 @@
     "skills": [
       "Banditry",
       "Hide in Shadows",
-      "Jump back",
+      "Jump Back",
       "Sniper",
-      "Throw voice"
+      "Throw Voice"
     ]
   },
   {
@@ -1409,11 +1409,11 @@
     "how": "intersection",
     "open_to_all": false,
     "skills": [
-      "Chosen of chaos",
-      "Tattooed body",
-      "Sweeping blow",
+      "Chosen of Chaos",
+      "Tattooed Body",
+      "Sweeping Blow",
       "Mutant (Marauders of Chaos)",
-      "Heart of the warrior"
+      "Heart of the Warrior"
     ]
   },
   {
@@ -1576,7 +1576,7 @@
     "note": "",
     "how": "new group",
     "skills": [
-      "Death before Dishonor",
+      "Death Before Dishonor",
       "Night Fighter",
       "Iaijutsu",
       "Last Stand",
@@ -1603,11 +1603,11 @@
     "how": "intersection",
     "open_to_all": false,
     "skills": [
-      "Barbarian courage",
-      "Berserk charge",
+      "Barbarian Courage",
+      "Berserk Charge",
       "Battle Tongue",
-      "Shield master",
-      "Crushing blow"
+      "Shield Master",
+      "Crushing Blow"
     ]
   },
   {
@@ -1626,7 +1626,7 @@
     "skills": [
       "Crude Belch",
       "Maneater",
-      "Bull charge",
+      "Bull Charge",
       "Bellowing Roar (Ogres)",
       "Infiltration",
       "Scent Hound",
@@ -1650,11 +1650,11 @@
     "how": "skill_group_learners",
     "open_to_all": false,
     "skills": [
-      "Master of arms",
+      "Master of Arms",
       "Crude Belch",
       "Maneater",
-      "Bull charge",
-      "Dog of war",
+      "Bull Charge",
+      "Dog of War",
       "Bellowing Roar (Ogres)"
     ]
   },
@@ -1673,13 +1673,13 @@
     "how": "skill_group_learners",
     "open_to_all": false,
     "skills": [
-      "’ard ’ead",
+      "’Ard ’Ead",
       "Waaagh!",
-      "’ere we go!",
-      "Da cunnin’ plan",
-      "Well ’ard",
-      "’eadbasher",
-      "Proven warrior"
+      "’Ere We Go!",
+      "Da Cunnin’ Plan",
+      "Well ’Ard",
+      "’Eadbasher",
+      "Proven Warrior"
     ]
   },
   {
@@ -1791,7 +1791,7 @@
     "skills": [
       "Bulging Biceps",
       "Force of Will",
-      "Arms master",
+      "Arms Master",
       "Body Slam",
       "Grizzled Veteran"
     ]
@@ -2419,9 +2419,9 @@
     "how": "intersection",
     "open_to_all": false,
     "skills": [
-      "Sand worm",
-      "Hit and run",
-      "Weather tolerant"
+      "Sand Worm",
+      "Hit and Run",
+      "Weather Tolerant"
     ]
   },
   {
@@ -2463,7 +2463,7 @@
       "Infiltration",
       "Wyrdstone Addict",
       "Toss Me!",
-      "Stuff 'em with Green",
+      "Stuff 'Em with Green",
       "Ha! Watch This"
     ]
   },

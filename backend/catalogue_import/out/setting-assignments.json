@@ -296,7 +296,7 @@
       "how": "mordheimer"
     },
     {
-      "name": "Jump back",
+      "name": "Jump Back",
       "setting": "nemesis-crown",
       "how": "mordheimer"
     },
@@ -306,7 +306,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Throw voice",
+      "name": "Throw Voice",
       "setting": "nemesis-crown",
       "how": "mordheimer"
     },
@@ -356,17 +356,17 @@
       "how": "no match"
     },
     {
-      "name": "Chosen of chaos",
+      "name": "Chosen of Chaos",
       "setting": "mordheim-1c",
       "how": "mordheimer"
     },
     {
-      "name": "Tattooed body",
+      "name": "Tattooed Body",
       "setting": "mordheim-1c",
       "how": "mordheimer"
     },
     {
-      "name": "Sweeping blow",
+      "name": "Sweeping Blow",
       "setting": "mordheim-1c",
       "how": "mordheimer"
     },
@@ -376,7 +376,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Heart of the warrior",
+      "name": "Heart of the Warrior",
       "setting": "mordheim-1c",
       "how": "mordheimer"
     },
@@ -406,12 +406,12 @@
       "how": "mordheimer"
     },
     {
-      "name": "Barbarian courage",
+      "name": "Barbarian Courage",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
-      "name": "Berserk charge",
+      "name": "Berserk Charge",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
@@ -421,17 +421,17 @@
       "how": "overrides.json"
     },
     {
-      "name": "Shield master",
+      "name": "Shield Master",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
-      "name": "Crushing blow",
+      "name": "Crushing Blow",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
-      "name": "Master of arms",
+      "name": "Master of Arms",
       "setting": "mordheim-1c",
       "how": "mordheimer"
     },
@@ -441,12 +441,12 @@
       "how": "overrides.json"
     },
     {
-      "name": "Bull charge",
+      "name": "Bull Charge",
       "setting": "mordheim-1c",
       "how": "mordheimer"
     },
     {
-      "name": "Dog of war",
+      "name": "Dog of War",
       "setting": "mordheim-1c",
       "how": "mordheimer"
     },
@@ -456,7 +456,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "’ard ’ead",
+      "name": "’Ard ’Ead",
       "setting": "mordheim",
       "how": "no match"
     },
@@ -466,27 +466,27 @@
       "how": "mordheimer"
     },
     {
-      "name": "’ere we go!",
+      "name": "’Ere We Go!",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
-      "name": "Da cunnin’ plan",
+      "name": "Da Cunnin’ Plan",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
-      "name": "Well ’ard",
+      "name": "Well ’Ard",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
-      "name": "’eadbasher",
+      "name": "’Eadbasher",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
-      "name": "Proven warrior",
+      "name": "Proven Warrior",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
@@ -571,7 +571,7 @@
       "how": "mordheimer"
     },
     {
-      "name": "Arms master",
+      "name": "Arms Master",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
@@ -736,17 +736,17 @@
       "how": "mordheimer"
     },
     {
-      "name": "Sand worm",
+      "name": "Sand Worm",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
-      "name": "Hit and run",
+      "name": "Hit and Run",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
-      "name": "Weather tolerant",
+      "name": "Weather Tolerant",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
@@ -1161,7 +1161,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Man At Arms",
+      "name": "Man at Arms",
       "setting": "marienburg-annual",
       "how": "overrides.json"
     },
@@ -1601,12 +1601,12 @@
       "how": "overrides.json"
     },
     {
-      "name": "Experimental enhancements",
+      "name": "Experimental Enhancements",
       "setting": "sealed-city",
       "how": "overrides.json"
     },
     {
-      "name": "Moonstone infusion",
+      "name": "Moonstone Infusion",
       "setting": "sealed-city",
       "how": "overrides.json"
     },
@@ -1616,7 +1616,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Rogue control",
+      "name": "Rogue Control",
       "setting": "sealed-city",
       "how": "overrides.json"
     },
@@ -2086,7 +2086,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Death before Dishonor",
+      "name": "Death Before Dishonor",
       "setting": "mordheim-2a",
       "how": "overrides.json"
     },
@@ -2326,7 +2326,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Thing handler",
+      "name": "Thing Handler",
       "setting": "sealed-city",
       "how": "overrides.json"
     },
@@ -2431,7 +2431,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Mother knows best",
+      "name": "Mother Knows Best",
       "setting": "sealed-city",
       "how": "overrides.json"
     },
@@ -2491,7 +2491,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Stuff 'em with Green",
+      "name": "Stuff 'Em with Green",
       "setting": "mutiny-in-marienburg",
       "how": "overrides.json"
     },

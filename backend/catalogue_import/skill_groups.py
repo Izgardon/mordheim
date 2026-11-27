@@ -3,7 +3,7 @@ skill group table and a pivot table linking them, so a single skill can be owned
 rows (a name and its list) become one skill per name, linked into every group that had a row of it, and each list
 becomes a group that says who learns from it.
 
-- Rows merge by name, in any case, under the title-case spelling ("Battle Tongue"). A merged skill takes
+- Rows merge by name, in any case, and every skill takes the title-case spelling ("Battle Tongue", "Hit and Run"). A merged skill takes
   overrides.json's ``skill_wordings`` (its ``text``, or the row it is ``from``), else the longest description; the
   report lists every wording dropped. Its setting is the lowest of its rows' (so it is in play wherever one was).
 - ``skill_splits``: a row whose rule differs stays a skill of its own, renamed after its group ("Sniper (Shadow
@@ -17,6 +17,7 @@ becomes a group that says who learns from it.
   them is graded 3; every other group's is null, which counts as Mordheim's and is in play everywhere.
 """
 
+import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
@@ -29,16 +30,22 @@ from catalogue_import.skill_lists import SkillLists
 from catalogue_import.text import same_text
 
 CORE_GROUPS = ("Combat", "Shooting", "Academic", "Strength", "Speed")  # listed first, in the book's order
+FIRST_LETTER = re.compile(r"^(\W*)(\w)")  # a word's first letter or digit, after any punctuation
 SMALL_WORDS = {"a", "an", "and", "as", "at", "by", "for", "in", "of", "on", "or", "the", "to", "with"}
 
 
 def title_case(name: str) -> str:
-    """Each word capitalised but the small ones inside: "Hide in shadows" is "Hide in Shadows"."""
+    """Each word capitalised but the small ones inside: "Hide in shadows" is "Hide in Shadows". A word's first letter
+    is capitalised after a leading apostrophe or bracket ("’ere we go!" is "’Ere We Go!")."""
     words = name.split(" ")
     return " ".join(
-        word.lower() if index and word.lower() in SMALL_WORDS else word[:1].upper() + word[1:]
+        word.lower() if index and word.lower() in SMALL_WORDS else FIRST_LETTER.sub(_capital, word, count=1)
         for index, word in enumerate(words)
     )
+
+
+def _capital(match: re.Match[str]) -> str:
+    return match.group(1) + match.group(2).upper()
 
 
 def group_rank(name: str) -> tuple[int, str]:
@@ -133,9 +140,8 @@ class SkillGroupBuild:
         unknown = sorted(name for name in self.wording_names if norm_name(name) not in merged)
         if unknown:
             raise ValueError(f"overrides.json skill_wordings names no merged skill: {', '.join(unknown)}")
-        for key, skill in self.skills.items():
-            if key in merged:
-                skill.name = title_case(skill.name)
+        for skill in self.skills.values():
+            skill.name = title_case(skill.name)
             skill.description = self._wording(skill)
             self.row_skill.update({label(row): skill.name for row in skill.rows})
 

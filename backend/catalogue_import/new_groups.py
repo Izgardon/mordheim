@@ -48,7 +48,7 @@ def _named(raw: str | dict[str, str]) -> tuple[str, str, str]:
     gives one (``description``: the Amazons' Savage Fury, reworded away from the Amazon now that the Albion
     Barbarians learn the same skill). A bare name (title-cased) is its own rule's name and takes mordheimer's."""
     if isinstance(raw, dict):
-        return raw["name"], raw.get("rule", raw["name"]), raw.get("description", "")
+        return title_case(raw["name"]), raw.get("rule", raw["name"]), raw.get("description", "")
     return title_case(raw), title_case(raw), ""
 
 

@@ -140,6 +140,8 @@ class MergeTests(SimpleTestCase):
         self.assertEqual(title_case("hide in shadows"), "Hide in Shadows")
         self.assertEqual(title_case("Elixir of life"), "Elixir of Life")
         self.assertEqual(title_case("Sea Legs (TBMF)"), "Sea Legs (TBMF)")
+        self.assertEqual(title_case("’ere we go!"), "’Ere We Go!")  # the first letter after a leading apostrophe
+        self.assertEqual(title_case("Pathfinder (wood elf scouts)"), "Pathfinder (Wood Elf Scouts)")
 
 
 class GroupAccessTests(SimpleTestCase):

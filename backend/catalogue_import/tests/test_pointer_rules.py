@@ -204,7 +204,7 @@ class CommittedPointerTests(SimpleTestCase):
         pit = [one for (template, _name), one in self.fighters.items() if template.startswith("Pit Fighters")]
         self.assertEqual(len([one for one in pit if "Pit Fighter" in one["skills"]]), 12)  # all but the Initiate
         self.assertFalse([one for one in pit if "Pit Fighter" in rules_of(one)])
-        self.assertIn("Arms master", self.fighters[("Pit Fighters (old)", "Pit Fighter")]["skills"])
+        self.assertIn("Arms Master", self.fighters[("Pit Fighters (old)", "Pit Fighter")]["skills"])
         orc, goblin = self.fighters[("Orc Mob", "Cave Squig")], self.fighters[("Orc Mob", "Goblin Warrior")]
         self.assertEqual(rules_of(orc)["Not Orcs"], rules_of(goblin)["Not Orcs"])
         pointers = [

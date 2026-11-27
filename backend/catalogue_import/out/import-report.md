@@ -414,7 +414,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 
 | Group | Who learns from it | How | Note | Skills |
 | --- | --- | --- | --- | --- |
-| Combat | everyone | intersection | - | Strike to Injure, Combat Master, Weapons Training, Web of Steel, Expert Swordsman, Step Aside, Elusive, Bulwark, Lunge, Ambidextrous, Man At Arms, Frightful Crack, Weak Spot |
+| Combat | everyone | intersection | - | Strike to Injure, Combat Master, Weapons Training, Web of Steel, Expert Swordsman, Step Aside, Elusive, Bulwark, Lunge, Ambidextrous, Man at Arms, Frightful Crack, Weak Spot |
 | Shooting | everyone | intersection | - | Quick Shot, Pistolier, Eagle Eyes, Weapons Expert, Nimble, Trick Shooter, Hunter, Knife-Fighter, Wilhelm Tellus, Axe Thrower, Target Practice, Crossfire, Hunter's Eye |
 | Academic | everyone | intersection | - | Battle Tongue, Sorcery, Streetwise, Haggle, Arcane Lore, Wyrdstone Hunter, Warrior Wizard, Scribe, Mind Focus, Tactician, Hunch, Magical Aptitude, Trap Expert, Driver, Strategist, Scholar, Starstruck, Pilot, Smith (Academic) |
 | Strength | everyone | intersection | - | Mighty Blow, Pit Fighter, Resilient, Fearsome, Strongman, Unstoppable Charge, Handyman, Beastmaster, Rough and Tumble, Dirty Blow, Rigger, Splintering Blow, Beat Down, Fortitude, Impressive Bulk, Resilience (Annual) |
@@ -425,8 +425,8 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Amazons | Amazons (group) | new group | - | Skink Hunter, Elixir of Life, Mesmerising Dance, Savage Fury, Concealment |
 | Animal | everyone | skill_lists | - | [Animal] Handler, Ride [Animal], Falconer |
 | Animal Aspects | Wood Elves, the Asrai Way-farers | new group | Wood Elf heroes only. No more than two heroes in a warband may hold the same Aspect. | Aspect of the Hawk, Aspect of the Serpent, Aspect of the Panther, Aspect of the Fox, Aspect of the Stag, Aspect of the Rabbit |
-| Araby Smugglers | Araby Smugglers | new group | - | Hit and run, Slave Driver, Pious Fury, Pawnbroker, Black Market, Man of the World |
-| Arabyan Nomads | Arabyan Nomads | new group | - | Sand worm, Weather tolerant, Hit and run |
+| Araby Smugglers | Araby Smugglers | new group | - | Hit and Run, Slave Driver, Pious Fury, Pawnbroker, Black Market, Man of the World |
+| Arabyan Nomads | Arabyan Nomads | new group | - | Sand Worm, Weather Tolerant, Hit and Run |
 | Arabyan Thieves | Arabyan Thieves | new group | - | Infiltration, Trap Expert, Sticky Fingers, Knife Fighting (Arabyan Thieves), Hide in Shadows (Arabyan Thieves), Sheer Speed |
 | Assassin Squad | Assassin Squad, Knives from the Dark | new group | - | Infiltration, Silent Strike (Assassin Squad), Ultimate Kill, Master of Poisons (Assassin Squad), Shadow Defense, Ultimate Specialist, Play Dead |
 | Battle Monks of Cathay | Battle Monks of Cathay | intersection | - | Heron Strike, Swallow Kick, Water Form, Inch Punch |
@@ -434,14 +434,14 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Black Dwarfs | Black Dwarfs | new group | - | Extra Tough, Resource Hunter, True Grit, Thick Skull, Chaos Engineer, Tyrant |
 | Bretonnian Chapel Guard | Bretonnian Chapel Guard | new group | - | Renowned Virtue, Questing Vow, Shield Bash, Bulging Muscles, Untiring |
 | Bretonnian Knights | Bretonnian Knights | intersection | - | Virtue of Purity, Virtue of Valour, Virtue of Discipline, Virtue of Noble Disdain, Virtue of the Impetuous, Virtue of the Squire |
-| Brood of Ghurash | The Brood of Ghurash | new group | - | The Terror, Mother knows best, Ground Pounder, Titanic Strength, Hurl |
+| Brood of Ghurash | The Brood of Ghurash | new group | - | The Terror, Mother Knows Best, Ground Pounder, Titanic Strength, Hurl |
 | Call of the Night Haint | Call of the Night Haint | new group | Spirits only. | Wight Walk, Traumatic Passing, Possession, The Key and the Gate, Siren Song |
 | Cavalry | everyone | intersection | - | Cavalry Commander, Trick Riding, Combat Riding, Evade, Running Dismount, Athletic Mount, Horse Archer, Mounted Combat Master |
 | Channel Rats | Channel Rats | new group | - | Bull Rush, Infiltration, Prize-fighter, Knowledge of Myths and Legends, Animal Charmer, Songster |
 | Clan Pestilens (Lustria) | Skaven of Clan Pestilens (LUS) | new group | - | Ignore Pain, Fearsome, Cloud of Flies, Frenzy, Resilience |
 | Clan Pestilens (Mousillon) | Skaven of Clan Pestilens (MOU) | new group | - | Ignore Pain, Resilient, Fearsome, Cloud of Flies, Frenzy |
-| Clan Pristekk | Skaven of Clan Pristekk | new group | - | Black Hunger, Bloated, Thing handler, Enrage, Breeder, Mutating Experiment |
-| Clockworkers | Clockworkers | new group | - | Experimental enhancements, Moonstone infusion, Puppeteer, Rogue control, Gift of Sentience |
+| Clan Pristekk | Skaven of Clan Pristekk | new group | - | Black Hunger, Bloated, Thing Handler, Enrage, Breeder, Mutating Experiment |
+| Clockworkers | Clockworkers | new group | - | Experimental Enhancements, Moonstone Infusion, Puppeteer, Rogue Control, Gift of Sentience |
 | Cursed Cavalcade | Cursed Cavalcade | new group | - | Noblesse Obliges, Torturer, Duelist |
 | Cursed Dwarf Slayer Skills | Cursed Dwarves | new group | - | Ferocious Charge, Monster Slayer, Berserker, Sweeping Strike, Tattoos of Grimnir, Fated |
 | Cursed Dwarves | Cursed Dwarves | new group | - | Magic Resistant, Smith, Gnollengrom, Fearless (Cursed Dwarves), Dwarf Grit |
@@ -457,14 +457,14 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Fen Guard | Fen Guard | new group | - | Absorption, Adaptation, Harvester of Souls, Gladeborn, Transform, Take Root, Poison Sap |
 | Forest Goblins | Forest Goblins (NC) | intersection | - | Animosity |
 | Forest Goblins (Lustria) | Forest Goblins (LUS) | new group | Bosses only. | Animosity |
-| Goblin Raiders | Goblin Raiders | new group | Hit and run is any Hero's; Beast tamer needs the Beastmasta Nitch and Infiltration the Nasty Skulker Nitch. | Hit and run, Beastmaster, Infiltration, Flank, Strong 'Un, Wolf Breaker, Fast Learner |
+| Goblin Raiders | Goblin Raiders | new group | Hit and run is any Hero's; Beast tamer needs the Beastmasta Nitch and Infiltration the Nasty Skulker Nitch. | Hit and Run, Beastmaster, Infiltration, Flank, Strong 'Un, Wolf Breaker, Fast Learner |
 | Grail Companions | Bretonnian Grail Companions | new group | - | Virtue of the Impetuous, Virtue of Noble Disdain (Grail Companions), Virtue of Heroism, Virtue of Stoicism, Virtue of the Penitent, Virtue of the Ideal, Virtue of Audacity, Virtue of Purity (Grail Companions), Virtue of Duty, Virtue of the Joust, Virtue of Confidence, Virtue of Knightly Temper, Virtue of Discipline (Grail Companions), Virtue of Empathy |
 | Grave Robber | Grave Robbers | intersection | - | Darkstalker, Instinctual Violence, De-animator, Hardy Constitution (Grave Robber), Body Dealer |
 | Halflings (MIC) | Halflings | new group | Stealthy: the Halfling Thief only. | Stealthy, Quiet as a Mouse, Crude Belch (Halflings MIC), Wizened Halfling, Skilled Huntsman, Layers of Fat, Shifty |
 | High Elves | High Elves | new group | - | Fey Quickness, High Sorcery, Stand and Fire, Miniath, Unerring Strike |
 | Hobgoblin Horde | Hobgoblin Horde | new group | - | Infiltration, Strict Leader, Sneaky (Hobgoblin Horde), Discretion, Slaver (Hobgoblin Horde), Backstabber (Hobgoblin Horde), Mystic Aura |
 | Hobgoblins | Hobgoblins | new group | - | Ded Shooty (Hobgoblins), Ded Sneaky, Backstabba |
-| Hochland Bandits | Hochland Bandits | intersection | - | Banditry, Hide in Shadows, Jump back, Sniper, Throw voice |
+| Hochland Bandits | Hochland Bandits | intersection | - | Banditry, Hide in Shadows, Jump Back, Sniper, Throw Voice |
 | Holy | everyone | skill_lists | Path of The One (Preacher) and Path of Sigmar (Holy Vow) path-takers only | Martyr, Charitable, Slayer of the Heretic, Aesthete, Light of Glory, Divine Guidance, On the Wings of Angels, Converter, Blessed Weapon, Iron Faith |
 | Horned Hunters | Horned Hunters | new group | - | Animal Friendship, Infiltration, Foul Odour, Hide in Shadows, Master Trapper, Pathfinder (Horned Hunters) |
 | Khorne Raiders | Khorne Raiders | new group | - | Mutant, Blood of Khorne, Berserker (Khorne Raiders), Massive Muscles, Stromfel's Boon, Master Tanner, Rite of Combat |
@@ -476,7 +476,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Lothern Sea Patrol | Lothern Sea Patrol | new group | Infiltration: a Hero with the Ranger honour and a promoted Sea Ranger only. | Fey Quickness, Infiltration, Graceful Strength, Swordmasters Protege, Defending Guard, Swift Fighter |
 | Low Kings | Low Kings | skill_group_learners | - | Backstabber, Pick Locks, Poisoner, Slaver, Stealthy, Cutpurse |
 | Mages | Mages | new group | - | Dispel, Store Spell, Clockwork Mage |
-| Marauders of Chaos | Marauders of Chaos | intersection | - | Chosen of chaos, Tattooed body, Sweeping blow, Mutant (Marauders of Chaos), Heart of the warrior |
+| Marauders of Chaos | Marauders of Chaos | intersection | - | Chosen of Chaos, Tattooed Body, Sweeping Blow, Mutant (Marauders of Chaos), Heart of the Warrior |
 | Masters of Horror | Masters of Horror | new group | - | Surgeon, Alchemist, Apt Revitalist, Lunatic |
 | Merchant Caravans | Merchant Caravans | new group | - | Bribery, Dubious Income, Wholesale, Deal Breaker, Connected |
 | Militant Mootlanders | Militant Mootlanders | skill_group_learners | - | Crude Belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt (Militant Mootlanders) |
@@ -484,16 +484,16 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Night Goblins | Night Goblins (WEB) | skill_group_learners | - | Hide in Shadows, Fungus Farmer, Infiltrate, Netter, Ride Squig, Sneaky Git |
 | Night Goblins (Karak Azgal) | Night Goblins (KAZ) | new group | - | Infiltration, Ded Shooty, Sneaky Git (Karak Azgal), Netter (Karak Azgal) |
 | Night Goblins (MIC) | Night Goblins (MIC) | new group | - | Infiltration, Sneaky Git, Netter, Ded Shooty |
-| Nipponese Expedition | Nipponese Expedition | new group | - | Death before Dishonor, Night Fighter, Iaijutsu, Last Stand, Tea Ceremony, Blessed by the Kami |
-| Norse | Norse Explorers (TC13), Norse Explorers (BTB) | intersection | - | Barbarian courage, Berserk charge, Battle Tongue, Shield master, Crushing blow |
-| Ogre Hunting Party | Ogre Hunting Party | new group | Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Infiltration. | Crude Belch, Maneater, Bull charge, Bellowing Roar (Ogres), Infiltration, Scent Hound, Sabre Trainer, Set Traps, Netter (Ogre Hunting Party) |
-| Ogres | Ogres (group) | skill_group_learners | - | Master of arms, Crude Belch, Maneater, Bull charge, Dog of war, Bellowing Roar (Ogres) |
-| Orcs | Orcs (group) | skill_group_learners | - | ’ard ’ead, Waaagh!, ’ere we go!, Da cunnin’ plan, Well ’ard, ’eadbasher, Proven warrior |
+| Nipponese Expedition | Nipponese Expedition | new group | - | Death Before Dishonor, Night Fighter, Iaijutsu, Last Stand, Tea Ceremony, Blessed by the Kami |
+| Norse | Norse Explorers (TC13), Norse Explorers (BTB) | intersection | - | Barbarian Courage, Berserk Charge, Battle Tongue, Shield Master, Crushing Blow |
+| Ogre Hunting Party | Ogre Hunting Party | new group | Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Infiltration. | Crude Belch, Maneater, Bull Charge, Bellowing Roar (Ogres), Infiltration, Scent Hound, Sabre Trainer, Set Traps, Netter (Ogre Hunting Party) |
+| Ogres | Ogres (group) | skill_group_learners | - | Master of Arms, Crude Belch, Maneater, Bull Charge, Dog of War, Bellowing Roar (Ogres) |
+| Orcs | Orcs (group) | skill_group_learners | - | ’Ard ’Ead, Waaagh!, ’Ere We Go!, Da Cunnin’ Plan, Well ’Ard, ’Eadbasher, Proven Warrior |
 | Ostlanders | Ostlanders | skill_group_learners | - | Bull Rush, Foul Odour, Taunt, Animal Friendship, Blood Oath |
 | Pirates | Pirates | intersection | - | Sea Shanty Singer, Sea Legs, Cutlass Master, Booming Voice, Hardy Constitution, Swashbuckler |
 | Pirates (TBMF) | Pirates | skill_lists | - | Captain Blood, Sea Legs (TBMF), Cutlass Master, Treasure Hunter, Swashbuckler |
 | Pirates of the Cathayan Sea | Pirates of the Cathayan Sea | new group | - | Angel of the Sword, Knowledge of Shadows, Art of the Silent Death, Energy Focus, Monk Weaponry |
-| Pit Fighters | Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Bulging Biceps, Force of Will, Arms master, Body Slam, Grizzled Veteran |
+| Pit Fighters | Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Bulging Biceps, Force of Will, Arms Master, Body Slam, Grizzled Veteran |
 | Protectorate of Sigmar | Protectorate of Sigmar | new group | - | Protection of Sigmar, Utter Determination, Iron Will, Rousing Sermon, Sigmar's Guidance |
 | Ranger (High Elves) | High Elves | new group | - | Fey, Luck |
 | Restless Dead Lich and Necromancer | The Restless Dead | intersection | - | Corpse Bomb, Deathspeaker, Wraith Touch, Forbidden Rite, Summoner |
@@ -520,9 +520,9 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Survivors of Strigos | Survivors of Strigos | new group | - | Iron Sinews, Great Thirster, Curse of the Revenant, Dark Arts, Light Fingers, Practiced Arm |
 | The Innocents | The Innocents | new group | - | Step Aside, Infiltration, Taunt (The Innocents), Humane, Child of the Ruins |
 | The Lost | The Lost | new group | - | Wall Runner, Expert Explorer, Trap Master, Silent Strike |
-| Tomb Robbers | Arabian Tomb Raiders | intersection | - | Sand worm, Hit and run, Weather tolerant |
+| Tomb Robbers | Arabian Tomb Raiders | intersection | - | Sand Worm, Hit and Run, Weather Tolerant |
 | Undead Vampires | Undead | skill_lists | Vampire only | Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form |
-| Underworld Alliance | Underworld Alliance | new group | - | Infiltration, Wyrdstone Addict, Toss Me!, Stuff 'em with Green, Ha! Watch This |
+| Underworld Alliance | Underworld Alliance | new group | - | Infiltration, Wyrdstone Addict, Toss Me!, Stuff 'Em with Green, Ha! Watch This |
 | Vampire Hunters of Sylvania | Vampire Hunters of Sylvania | new group | Iron Will and Righteous Aura: the Vampire Hunter and Slayers only. | Righteous Aura, Iron Will, Thirst for Vengeance, Blessing of Morr, Touch of Darkness |
 | Werewolf Hunting Pack | Werewolf Hunting Pack | new group | - | Hunter's Senses, Complete Healing, Terrible Claws, Bloodthirst, Chilling Howl, Bestial Savagery, Pack Hunter, Heavy Pelt |
 | Wood Elf Scouts | Wood Elf Scouts | new group | - | Infiltrate (Wood Elf Scouts), Trapper, Expert Hunter, Stand and Shoot, Wild Hunter, Pathfinder (Wood Elf Scouts), Tree Walker, Sniper (Wood Elf Scouts) |
@@ -620,10 +620,10 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Knowledge of Myths and Legends | Channel Rats | mutiny-in-marienburg | Mutiny in Marienburg |
 | Animal Charmer | Channel Rats | mutiny-in-marienburg | Mutiny in Marienburg |
 | Songster | Channel Rats | mordheim-2a | Mutiny in Marienburg |
-| Experimental enhancements | Clockworkers | sealed-city | Sealed City |
-| Moonstone infusion | Clockworkers | sealed-city | Sealed City |
+| Experimental Enhancements | Clockworkers | sealed-city | Sealed City |
+| Moonstone Infusion | Clockworkers | sealed-city | Sealed City |
 | Puppeteer | Clockworkers | sealed-city | Sealed City |
-| Rogue control | Clockworkers | sealed-city | Sealed City |
+| Rogue Control | Clockworkers | sealed-city | Sealed City |
 | Gift of Sentience | Clockworkers | sealed-city | Sealed City |
 | Smith | Cursed Dwarves | khemri-3 | Khemri |
 | Gnollengrom | Cursed Dwarves | khemri-3 | Khemri |
@@ -717,7 +717,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Pull of Undeath | Necrarchs, the Soul Stealers | sylvania | LOD1 |
 | Sneaky Git (Karak Azgal) | Night Goblins (Karak Azgal) | karak-azgal | Karak Azgal |
 | Netter (Karak Azgal) | Night Goblins (Karak Azgal) | karak-azgal | Karak Azgal |
-| Death before Dishonor | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
+| Death Before Dishonor | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
 | Night Fighter | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
 | Iaijutsu | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
 | Last Stand | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
@@ -765,7 +765,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Frenzy | Clan Pestilens (Lustria) | lustria | Lustria |
 | Resilience | Clan Pestilens (Lustria) | lustria | Lustria |
 | Bloated | Clan Pristekk | sealed-city | Sealed City |
-| Thing handler | Clan Pristekk | sealed-city | Sealed City |
+| Thing Handler | Clan Pristekk | sealed-city | Sealed City |
 | Enrage | Clan Pristekk | sealed-city | Sealed City |
 | Breeder | Clan Pristekk | sealed-city | Sealed City |
 | Mutating Experiment | Clan Pristekk | sealed-city | Sealed City |
@@ -786,7 +786,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Light Fingers | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Practiced Arm | Survivors of Strigos | sylvania | Sylvania Supplement |
 | The Terror | Brood of Ghurash | sealed-city | Sealed City |
-| Mother knows best | Brood of Ghurash | sealed-city | Sealed City |
+| Mother Knows Best | Brood of Ghurash | sealed-city | Sealed City |
 | Ground Pounder | Brood of Ghurash | sealed-city | Sealed City |
 | Titanic Strength | Brood of Ghurash | sealed-city | Sealed City |
 | Hurl | Brood of Ghurash | sealed-city | Sealed City |
@@ -798,7 +798,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Silent Strike | The Lost | mousillon | Mousillon |
 | Wyrdstone Addict | Underworld Alliance | mutiny-in-marienburg | Mutiny in Marienburg |
 | Toss Me! | Underworld Alliance | mutiny-in-marienburg | Mutiny in Marienburg |
-| Stuff 'em with Green | Underworld Alliance | mutiny-in-marienburg | Mutiny in Marienburg |
+| Stuff 'Em with Green | Underworld Alliance | mutiny-in-marienburg | Mutiny in Marienburg |
 | Ha! Watch This | Underworld Alliance | mutiny-in-marienburg | Mutiny in Marienburg |
 | Thirst for Vengeance | Vampire Hunters of Sylvania | sylvania | LOD5 |
 | Blessing of Morr | Vampire Hunters of Sylvania | sylvania | LOD5 |
@@ -868,9 +868,9 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Ferocious Charge | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Dwarf Slayer Cult, Adventurers, Dwarf Slayers, Slayer Pirates, Cursed Dwarves, Dwarf Troll Slayers |
 | Monster Slayer | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Adventurers, Dwarf Slayers, Cursed Dwarves |
 | Berserker | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Adventurers, Dwarf Slayers, Cursed Dwarves, Dwarf Troll Slayers |
-| Hit and run | Arabian Tomb Raiders | Arabian Tomb Raiders, Araby Smugglers, Arabyan Nomads, Goblin Raiders |
-| Sand worm | Arabian Tomb Raiders | Arabian Tomb Raiders, Arabyan Nomads |
-| Weather tolerant | Arabian Tomb Raiders | Arabian Tomb Raiders, Arabyan Nomads |
+| Hit and Run | Arabian Tomb Raiders | Arabian Tomb Raiders, Araby Smugglers, Arabyan Nomads, Goblin Raiders |
+| Sand Worm | Arabian Tomb Raiders | Arabian Tomb Raiders, Arabyan Nomads |
+| Weather Tolerant | Arabian Tomb Raiders | Arabian Tomb Raiders, Arabyan Nomads |
 | Virtue of the Impetuous | Bretonnian Knights | Bretonnian Knights, Bretonnian Grail Companions, Knights of the Bitter Moors |
 | Bull Rush | Ostlanders | Ostlanders, Channel Rats, Woodsmen de Artois |
 | Animosity | Forest Goblins (NC) | Forest Goblins (NC), Forest Goblins (LUS) |
@@ -3650,7 +3650,7 @@ A fighter's or dramatis persona's own rule that only pointed to a skill, or said
 - Pit Fighters (old): Ogre Pit Fighter: Pit Fighter, starts with Pit Fighter.
 - Pit Fighters (old): Pursuer: Pit Fighter, starts with Pit Fighter.
 - Pit Fighters (old): Pit Fighter: Pit Fighter, starts with Pit Fighter.
-- Pit Fighters (old): Pit Fighter: Arms Master, starts with Arms master.
+- Pit Fighters (old): Pit Fighter: Arms Master, starts with Arms Master.
 - Skaven of Clan Moulder: Packmaster: Master Handler, keeps the rule and starts with Ride [Animal].
 - The Cursed Cavalcade: Aristocrat: Expert Horseman, starts with Ride [Animal].
 - The Cursed Cavalcade: Companion: Expert Swordsman, starts with Expert Swordsman.

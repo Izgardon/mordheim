@@ -277,7 +277,7 @@ class SeedAllTests(TestCase):
                 "WarbandType": 8,
                 "WarbandTemplate": 8,
                 "Item": 7,
-                "Skill": 23,  # the Arabyan Nomads' Blending into the Sands is our Sand worm (William, 12 Nov 2026); Magic
+                "Skill": 23,  # the Arabyan Nomads' Blending into the Sands is our Sand Worm (William, 12 Nov 2026); Magic
                 # Resistant is Karak Azgal's, the Adventurers learning it too (the skills audit, 27 Nov 2026)
                 "SkillGroup": 7,
                 "Race": 1,
@@ -700,7 +700,7 @@ class SeedAllTests(TestCase):
             },
         )
         champion = beasts.get(name="Champion of Chaos").bestiary_entry_skills.values_list("skill__name", flat=True)
-        self.assertEqual(set(champion), {"Step Aside", "Mighty Blow", "Resilient", "Sweeping blow"})
+        self.assertEqual(set(champion), {"Step Aside", "Mighty Blow", "Resilient", "Sweeping Blow"})
         own = Special.objects.filter(campaign__isnull=True, bestiary_entry_specials__bestiary_entry__in=beasts, type="Animal")  # fmt: skip
         self.assertEqual(set(own.exclude(name="Animal").values_list("campaign_type__slug", flat=True)), {"border-town-burning"})  # fmt: skip
 
@@ -1077,7 +1077,7 @@ class SeedAllTests(TestCase):
         # errata Resilience is a skill apart from Clan Pestilens' (William, 23 Nov 2026)
         annual = {"Splintering Blow", "Beat Down", "Fortitude", "Impressive Bulk", "Resilience (Annual)"}
         self.assertLessEqual(annual, holds("Strength"))
-        self.assertLessEqual({"Ambidextrous", "Man At Arms", "Frightful Crack", "Weak Spot"}, holds("Combat"))
+        self.assertLessEqual({"Ambidextrous", "Man at Arms", "Frightful Crack", "Weak Spot"}, holds("Combat"))
         in_annual = Skill.objects.filter(campaign_type__slug="marienburg-annual")
         self.assertEqual(in_annual.count(), 9)
         self.assertIn("-1 on the critical hit chart", Skill.objects.get(name="Resilience (Annual)").description)

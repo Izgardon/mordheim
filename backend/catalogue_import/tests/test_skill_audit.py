@@ -5,6 +5,7 @@ from typing import Any, ClassVar
 
 from catalogue_import.common import load_json
 from catalogue_import.pdf_warbands import TYPE, skill_settings
+from catalogue_import.skill_groups import title_case
 from catalogue_import.sources import HIRELING_DATA, OUT
 from catalogue_import.tests.review_support import ReviewCase
 from catalogue_import.tests.test_pdf_warbands import good_page
@@ -115,3 +116,15 @@ class SkillAuditTests(ReviewCase):
 
     def test_no_skill_description_holds_a_double_space(self) -> None:
         self.assertEqual([name for name, text in self.skills.items() if "  " in text], [])
+
+    def test_every_skill_name_is_title_cased(self) -> None:
+        # 26 were in sentence case beside the rest ("Hit and run" beside "Hit and Run (Silent Brotherhood)")
+        self.assertEqual([name for name in self.skills if title_case(name) != name], [])
+        for name in ("Hit and Run", "Arms Master", "Sand Worm", "’Ere We Go!", "Thing Handler", "Bull Charge"):
+            self.assertIn(name, self.skills)
+        self.assertIn("Bull Charge", self.groups["Ogre Hunting Party"])
+        self.assertIn("Arms Master", self.fighters_skills("pit-fighters-old", "Pit Fighter"))
+
+    def fighters_skills(self, slug: str, fighter: str) -> list[str]:
+        found = next(row for row in self.templates[slug]["fighters"] if row["name"] == fighter)
+        return list(found["skills"])
