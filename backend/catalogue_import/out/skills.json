@@ -132,8 +132,8 @@
     "description": "The Dark Elf is infused with an intense raging thirst for blood and is a whirlwind in hand-to-hand combat, moving from opponent to opponent. The Dark Elf may make a 4\" follow up move if he takes all of his opponents out of action. If he comes into contact with another enemy this starts a new combat. This new combat takes place in the following turn and the model counts as charging. May not follow up in the opponent’s turn. (TC10)"
   },
   {
-    "name": "Powerful Build",
-    "description": "The warrior is strongly built for an Elf, and is capable of feats of strength not often seen among the people of Ulthuan. A warrior with this skill may choose skills from the Strength skills table from now on. This skill may not be taken by Shadow Weavers. (TC10) There may never be more than two Elves with this skill in the warband at any one time. (TC 12)"
+    "name": "Powerful Build (Dark Elf)",
+    "description": "The warrior is strongly built for an Elf and is capable of feats of strength. A warrior with this skill may choose skills from the Strength table. The Sorceress may never take this skill and no more than two warriors in the warband may take this skill at any one time. (TC10)"
   },
   {
     "name": "Fey Quickness",
@@ -506,6 +506,10 @@
   {
     "name": "See in Shadows",
     "description": "The warrior’s senses have become especially keen from years spent walking the shadows. As long as he has movement to reach them, the warrior may always roll to charge opponents he cannot see (instead of the normal 4\"). (TC10)"
+  },
+  {
+    "name": "Powerful Build",
+    "description": "The warrior is strongly built for an Elf, and is capable of feats of strength not often seen among the people of Ulthuan. A warrior with this skill may choose skills from the Strength skills table from now on. This skill may not be taken by Shadow Weavers. (TC10) There may never be more than two Elves with this skill in the warband at any one time. (TC 12)"
   },
   {
     "name": "Fey",

@@ -27,7 +27,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (MiM) | 51 |
 | items (warband templates) | 44 |
 | price rows | 613 |
-| skills | 529 |
+| skills | 530 |
 | skill groups | 115 |
 | skill group links | 680 |
 | serious injuries (D66) | 20 |
@@ -208,7 +208,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 529 | 152 | 341 | 36 |
+| skills | 530 | 153 | 341 | 36 |
 | hired swords | 133 | 71 | 62 | 0 |
 | dramatis personae | 61 | 30 | 31 | 0 |
 
@@ -367,7 +367,7 @@ Description put right: Beastmaster (Strength).
 
 ## Skill groups
 
-`out/skills.json` is 529 skills, one per name; `out/skill-groups.json` is 115 groups holding them (680 links), the five core groups first.
+`out/skills.json` is 530 skills, one per name; `out/skill-groups.json` is 115 groups holding them (680 links), the five core groups first.
 
 ### Merged by name
 
@@ -375,7 +375,6 @@ Description put right: Beastmaster (Strength).
 
 | Skill | Rows merged | Wording | Dropped wordings |
 | --- | --- | --- | --- |
-| Powerful Build | Powerful Build (Dark Elf), Powerful Build (Sea Ghosts), Powerful Build (Shadow Warriors) | longest | Powerful Build (Dark Elf): The warrior is strongly built for an Elf and is capable of feats of strength. A warrior with this skill may choose skills from the Strength table. The Sorceress may never take this skill and no more than two warriors in the warband may take this skill at any one time. (TC10) / Powerful Build (Sea Ghosts): The warrior is strongly built for an Elf, and is capable of feats of strength not often seen among the elder race. A warrior with this skill may choose skills from the Strength skills table from now on. There may never be more than two Elves with this skill in the warband at any one time. (MiM) |
 | Infiltration | Infiltration (Dark Elf), Infiltration (Sea Ghosts), Infiltration (Skaven), Infiltration (Skaven Metal Mongers) | overrides.json | Infiltration (Dark Elf): A Skaven with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12" away from any enemy model. If both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first. (RB 93) / Infiltration (Sea Ghosts): An Elf with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12" away from any enemy model. If both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first. (MiM) / Infiltration (Skaven Metal Mongers): A Skaven with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12" away from any enemy model. If both players have models that infiltrate, roll a D6 for each, and the lowest roll sets up first. (MiM) |
 | Master of Blades | Master of Blades (Dwarves), Master of Blades (Dwarf Troll Slayers) | overrides.json | Master of Blades (Dwarves): This Dwarf’s martial skills surpass those of a normal warrior; he has fought unscathed against hordes of Orcs and Goblins. When using a weapon that has a Parry special rule, this hero parries successfully if he beats or matches his opponents highest ‘to hit’ roll, not just if he beats the roll. In addition, if this warrior is using two weapons that have the Parry special rule, he is allowed to parry two attacks (if his two dice match or beat the two highest Attack dice against him) instead of the normal maximum of one. Note that if this Dwarf has two Dwarf axes (as detailed above) he can reroll any failed parries. (A02 24) |
 | Extra Tough | Extra Tough (Dwarves), Extra Tough (Dwarf Exiled Engineers), Extra Tough (Dwarf Troll Slayers) | longest | Extra Tough (Dwarf Exiled Engineers): This Dwarf is notorious for walking away from wounds that would kill a lesser being. When rolling on the Heroes Serious Injury Chart for this hero after a game in which he has been taken Out of Action, the dice may be re-rolled once. The result of this second dice roll must be accepted, even if it is a worse result. (MiM) |
@@ -389,6 +388,7 @@ Description put right: Beastmaster (Strength).
 | Cutlass Master | Cutlass Master (Pirates), Cutlass Master (Pirates (TBMF)) | longest | Cutlass Master (Pirates (TBMF)): These short, single bladed swords are the mainstay weapon of any pirate crew, and in the hands of a trained seaman they are superb weapons for close quarters fighting. If the pirate is equipped with a Sword, this skill will give him the additional benefit of also being able to parry successfully if the player rolls equal to the number rolled to hit, not just higher as normal. (FO 65) |
 | Swashbuckler | Swashbuckler (Pirates), Swashbuckler (Pirates (TBMF)) | longest | Swashbuckler (Pirates): The pirate cuts a dashing figure in combat, mixing dazzling swordplay and acrobatic feats with charm and witty comments. Even the basest villains in Mordheim respect (and curse) his ability to always seem to effortlessly slip from their grasp. The pirate may make a Leadership Test at the end of any Hand-to-Hand phase (pirate’s or enemy’s turn) if he is still in base contact with any enemy models. If he passes he may make a normal movement away from the enemy (he may not run or charge), without the enemy striking any blows on him. If he fails the test he remains in combat and must fight as normal in the following turn. (TC 9) |
 | See in Shadows | See in Shadows (Sea Ghosts), See in Shadows (Shadow Warriors) | longest | See in Shadows (Sea Ghosts): The warrior's senses have become especially keen from years spent walking the shadows. As long as he has movement to reach them, the warrior may always roll to charge opponents he cannot see (instead of the normal 4"). (MiM) |
+| Powerful Build | Powerful Build (Sea Ghosts), Powerful Build (Shadow Warriors) | longest | Powerful Build (Sea Ghosts): The warrior is strongly built for an Elf, and is capable of feats of strength not often seen among the elder race. A warrior with this skill may choose skills from the Strength skills table from now on. There may never be more than two Elves with this skill in the warband at any one time. (MiM) |
 | Black Hunger | Black Hunger (Skaven), Black Hunger (Skaven Clan Pestilens) | longest | - |
 | Tail Fighting | Tail Fighting (Skaven), Tail Fighting (Skaven Metal Mongers) | longest | Tail Fighting (Skaven Metal Mongers): The Skaven may wield a shield, dagger or a sword with its tail. The model gains an extra attack with the appropriate weapon or a +1 bonus to its armour save. (MiM) |
 
@@ -398,6 +398,7 @@ Merged skills whose rows had different settings, given the lowest: Hide in Shado
 
 | Row | Its own skill | Why |
 | --- | --- | --- |
+| Powerful Build (Dark Elf) | Powerful Build (Dark Elf) | its limit differs: the Sorceress may never take it, where the Sea Ghosts' and Shadow Warriors' bars Shadow Weavers (William, 27 Nov 2026: "split out a Dark Elf Powerful Build") |
 | Hardy Constitution (Grave Robber) | Hardy Constitution (Grave Robber) | its rule differs from the Pirates' Hardy Constitution, which keeps the name (William, 4 Nov 2026: "i agree with recs") |
 | Taunt (Militant Mootlanders) | Taunt (Militant Mootlanders) | the Ostlanders' Taunt, which keeps the name, is worded for the Ostlander; the Militant Mootlanders' is MiM's, for a Halfling (William, 6 Nov 2026: "sure unless its specific") |
 | Infiltration (Skink) | Infiltration (Skink) | its rule differs from the other five lists' Infiltration, which keeps the name (William, 4 Nov 2026: "i agree with recs") |
@@ -445,7 +446,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Cursed Cavalcade | Cursed Cavalcade | new group | - | Noblesse Obliges, Torturer, Duelist |
 | Cursed Dwarf Slayer Skills | Cursed Dwarves | new group | - | Ferocious Charge, Monster Slayer, Berserker, Sweeping Strike, Tattoos of Grimnir, Fated |
 | Cursed Dwarves | Cursed Dwarves | new group | - | Magic Resistant, Smith, Gnollengrom, Fearless (Cursed Dwarves), Dwarf Grit |
-| Dark Elf | Dark Elves | skill_group_learners | - | Fury of Khaine, Powerful Build, Fey Quickness, Infiltration, Master of Poisons |
+| Dark Elf | Dark Elves | skill_group_learners | - | Fury of Khaine, Powerful Build (Dark Elf), Fey Quickness, Infiltration, Master of Poisons |
 | Dark Elf Corsairs | Dark Elf Corsairs | new group | - | Fey Quickness, Infiltration, Furious Charge, Excellent Sight, Looting |
 | Dreamwalkers | Dreamwalkers, Cult of Morr | new group | - | Inspiring Presence, Fanatical, Inured to Horror, Blessed by Morr |
 | Druchii | Druchii | new group | - | Fey Quickness, Infiltration, Fury of Khaine (Druchii), Master of Poisons (Druchii), Vraithen Master, Survival of the Fittest, Excellent Sight |

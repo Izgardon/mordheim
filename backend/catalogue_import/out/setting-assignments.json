@@ -166,7 +166,7 @@
       "how": "mordheimer"
     },
     {
-      "name": "Powerful Build",
+      "name": "Powerful Build (Dark Elf)",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
@@ -632,6 +632,11 @@
     },
     {
       "name": "See in Shadows",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Powerful Build",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },

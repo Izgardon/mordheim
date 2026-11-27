@@ -220,3 +220,12 @@ class SkillAuditTests(ReviewCase):
             "Holy": None,
         }
         self.assertEqual({name: groups[name]["setting"] for name in settings}, settings)
+
+    def test_the_dark_elves_powerful_build_keeps_its_own_limit(self) -> None:
+        # the kept wording bars Shadow Weavers; the Dark Elves' "The Sorceress may never take this skill" was dropped
+        # (William, 27 Nov 2026: split it out)
+        self.assertIn("Powerful Build (Dark Elf)", self.groups["Dark Elf"])
+        self.assertNotIn("Powerful Build", self.groups["Dark Elf"])
+        self.assertIn("The Sorceress may never take this skill", self.skills["Powerful Build (Dark Elf)"])
+        self.assertIn("Shadow Weavers", self.skills["Powerful Build"])
+        self.assertIn("Powerful Build", self.groups["Sea Ghosts"])
