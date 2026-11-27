@@ -157,9 +157,6 @@ class WeaponProfileTests(ItemAuditCase):
         "Spike-jawed Snatcher": ("Close Combat", "As user"),
         "Skull Busta": ("Close Combat", "As user"),  # "counts as a normal hammer", +1 Strength its first turn
         "Trapper's Pole": ("Close Combat", "As user"),  # "works exactly like a spear"
-        "Acid Bomb": ('Strength x 2"', "5"),
-        "Bait Bomb": ('Strength x 2"', ""),  # a bait bomb and a stink bomb cause no hit
-        "Stink Bomb": ('Strength x 2"', ""),
     }
 
     def test_each_weapon_has_the_range_and_strength_its_book_prints(self) -> None:

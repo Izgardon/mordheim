@@ -1859,7 +1859,7 @@ Kept apart from a family's, the effect differing:
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
 | the-brood-of-ghurash | the-brood-of-ghurash | 6 | 0 | 0 | 9 |
 | the-fallen | the-fallen | 6 | 0 | 0 | 6 |
-| the-innocents | the-innocents | 8 | 0 | 4 | 12 |
+| the-innocents | the-innocents | 8 | 0 | 4 | 13 |
 | the-lost | the-lost | 6 | 0 | 0 | 10 |
 | tilean-thespian-troupe | tilean-thespian-troupe | 9 | 0 | 0 | 10 |
 | underworld-alliance | underworld-alliance | 9 | 0 | 0 | 10 |
@@ -3418,6 +3418,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p5): The Blacksmith's Apprentice is headed 0-2 while Choice of warriors allows "a single" one. The simpler reading, 0-1, is imported.
 - Flag (p5): The Companions are heroes: they have their own row in the skill table, their own line in the starting experience, and they sit in the heroes section.
 - Flag (p4): The equipment is "only available to The Innocents", which the stubs' and price rows' warband lines already do; no rule is imported for it. No rarity is printed for any of it.
+- Flag (p7): The Acid, Bait and Stink Bombs are Miscellaneous, as our Fire and Smoke Bombs are (William, 27 Nov 2026, the items audit's question 14: A), so they show no weapon line: each one's rules say its range, twice the thrower's Strength, and the Acid Bomb's its D3 Strength 5 hits and the Strength 4 hit within 1".
 - Flag (p4): The Firebomb at 20 gc is our Fire Bomb (35 gc, no rules of its own) and the Smoke Bomb at 15 gc is our Smoke Bomb (30 gc, no rules of its own); both are linked with a price row at the list price, and ours take the PDF's rules. See the decisions.
 - Flag (p6): Step Aside and Infiltration are ours word for word and are linked. The PDF's Taunt reaches 12", may be used in hand-to-hand and takes any enemy in sight, where our Ostlander Taunt must take the nearest and says nothing of combat, so it is kept apart.
 - Flag (p11): The Heresy of Alchemy is a D6 table of six results the Alchemist's Apprentice works from, not spells with a casting value, so each is imported with the difficulty Auto. See the decisions.
