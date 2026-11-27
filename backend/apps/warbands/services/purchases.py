@@ -29,6 +29,7 @@ from apps.bestiary.models import BestiaryEntry
 from apps.items.materials import named, priced
 from apps.items.models import ANIMAL, Item, ItemAvailability
 from apps.warbands.models import HenchmenGroup, LedgerAction, RosterUnit, Warband, WarbandTrade
+from apps.warbands.units.caster_armour import armed_wizard_warning
 from apps.warbands.units.companions import COMPANION_KINDS, beast_kind
 from apps.warbands.units.errors import RosterError
 from apps.warbands.units.kinds import KINDS, UnitKindKey
@@ -220,6 +221,15 @@ def _companion_warnings(warband: Warband, lines: Sequence[Line]) -> list[Warning
     return units_warnings(warband, riders) if riders else []
 
 
+def _wizard_warnings(lines: Sequence[Line]) -> list[Warning]:
+    """Each wizard the lines armed, once, naming the armour they gave him (units/caster_armour.py)."""
+    bought: dict[tuple[str, int], tuple[RosterUnit, list[Item]]] = {}
+    for line in lines:
+        if line.unit is not None:
+            bought.setdefault((line.target_type, line.unit.pk), (line.unit, []))[1].append(line.item)
+    return [warning for unit, items in bought.values() for warning in armed_wizard_warning(unit, items)]
+
+
 def buy_lines(warband: Warband, lines: Sequence[Line]) -> tuple[list[WarbandTrade], list[Warning]]:
     """Inside the caller's transaction: charge, save the rolls, append the copies and log each line; the "Buy"
     rows and the warnings. The gold goes first: it locks the warband before the hero and stash rows."""
@@ -239,7 +249,7 @@ def buy_lines(warband: Warband, lines: Sequence[Line]) -> tuple[list[WarbandTrad
         _log(warband, line)
         _place(warband, line)
         warnings += _line_warnings(warband, line)
-    warnings += _companion_warnings(warband, lines)
+    warnings += _companion_warnings(warband, lines) + _wizard_warnings(lines)
     if charged:
         warnings += gold_warnings(warband)
     return trades, warnings

@@ -23,6 +23,8 @@ from apps.warbands.units.serializers import (
 )
 from apps.warbands.units.services.blood_pacts import can_pact, pact_bonus
 
+from .unit_warnings import UnitWarningsMixin
+
 WRITE_FIELDS = (
     "name",
     "unit_type",
@@ -72,8 +74,9 @@ class BloodPactMixin:
 BLOOD_PACT_FIELDS = ("blood_pact_bonus", "can_blood_pact")
 
 
-class HirelingSummarySerializer(BloodPactMixin, UnitSummarySerializer):
+class HirelingSummarySerializer(UnitWarningsMixin, BloodPactMixin, UnitSummarySerializer):
     kind = HIRELING
+    warnings = serializers.SerializerMethodField()
     hire_fee = FeeField(read_only=True)
     upkeep_fee = FeeField(read_only=True)
     blood_pact_bonus = serializers.SerializerMethodField()
@@ -116,11 +119,13 @@ class HirelingSummarySerializer(BloodPactMixin, UnitSummarySerializer):
             "skills",
             "specials",
             "spells",
+            "warnings",
         )
 
 
-class HirelingDetailSerializer(BloodPactMixin, UnitDetailSerializer):
+class HirelingDetailSerializer(UnitWarningsMixin, BloodPactMixin, UnitDetailSerializer):
     kind = HIRELING
+    warnings = serializers.SerializerMethodField()
     hire_fee = FeeField(read_only=True)
     upkeep_fee = FeeField(read_only=True)
     blood_pact_bonus = serializers.SerializerMethodField()
@@ -167,6 +172,7 @@ class HirelingDetailSerializer(BloodPactMixin, UnitDetailSerializer):
             "skills",
             "specials",
             "spells",
+            "warnings",
             "updated_at",  # the version a roster Save sends back (409 when it changed)
         )
 

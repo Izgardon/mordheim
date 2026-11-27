@@ -16,6 +16,8 @@ from apps.warbands.units.serializers import (
     UnitWriteSerializer,
 )
 
+from .unit_warnings import UnitWarningsMixin
+
 WRITE_FIELDS = (
     "name",
     "unit_type",
@@ -39,8 +41,9 @@ WRITE_FIELDS = (
 )
 
 
-class HeroSummarySerializer(UnitSummarySerializer):
+class HeroSummarySerializer(UnitWarningsMixin, UnitSummarySerializer):
     kind = HERO
+    warnings = serializers.SerializerMethodField()
 
     class Meta:
         model = Hero
@@ -70,11 +73,13 @@ class HeroSummarySerializer(UnitSummarySerializer):
             "skills",
             "specials",
             "spells",
+            "warnings",
         )
 
 
-class HeroDetailSerializer(UnitDetailSerializer):
+class HeroDetailSerializer(UnitWarningsMixin, UnitDetailSerializer):
     kind = HERO
+    warnings = serializers.SerializerMethodField()
 
     class Meta:
         model = Hero
@@ -109,6 +114,7 @@ class HeroDetailSerializer(UnitDetailSerializer):
             "skills",
             "specials",
             "spells",
+            "warnings",
             "updated_at",  # the version a roster Save sends back (409 when it changed)
         )
 

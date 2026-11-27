@@ -14,6 +14,7 @@ import UnitKills from "./UnitKills";
 import UnitLines from "./UnitLines";
 import UnitProfile from "./UnitProfile";
 import UnitTitle from "./UnitTitle";
+import UnitWarnings from "./UnitWarnings";
 import {
   buysItems,
   isGroup,
@@ -219,6 +220,7 @@ export default function UnitCard(props: UnitCardProps) {
           highlighted={stats.highlighted}
           notes={open ? (unit.notes ?? "") : undefined}
         />
+        <UnitWarnings warnings={"warnings" in unit ? unit.warnings : undefined} />
         {/* closed: his items, skills, spells and specials, a line each, and his XP */}
         {open ? null : (
           <UnitLines

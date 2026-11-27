@@ -347,6 +347,8 @@ export type WarbandHero = UnitCompanionFields &
     skills: Skill[];
     specials?: Special[];
     spells?: Spell[];
+    /** What the server warns of on his card, in its words: a wizard in armour. */
+    warnings?: ServerWarning[];
   };
 
 /** What a hireling is: a hired sword, or a dramatis persona ("hireling" is the code's word only). */
@@ -436,6 +438,8 @@ export type WarbandHireling = UnitCompanionFields &
     skills: Skill[];
     specials?: Special[];
     spells?: Spell[];
+    /** What the server warns of on his card, in its words: a wizard in armour. */
+    warnings?: ServerWarning[];
   };
 
 export type WarbandHeroPayload = {

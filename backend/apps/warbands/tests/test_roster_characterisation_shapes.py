@@ -190,6 +190,7 @@ HERO_SUMMARY = {
     "skills": [NAMED],
     "specials": [SPECIAL_SUMMARY],
     "spells": [SPELL_SUMMARY],
+    "warnings": [],  # a wizard in armour (William, 27 Nov 2026)
 }
 HERO_DETAIL = {
     **HERO_SUMMARY,
@@ -265,6 +266,7 @@ HIRELING_SUMMARY = {
     "skills": [NAMED],
     "specials": [SPECIAL_SUMMARY],
     "spells": [SPELL_SUMMARY],
+    "warnings": [],  # a wizard in armour (William, 27 Nov 2026)
 }
 HIRELING_DETAIL = {
     **HIRELING_SUMMARY,

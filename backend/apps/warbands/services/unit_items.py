@@ -31,7 +31,10 @@ def resolve_unit(warband: Warband, unit_type: str, unit_id: int | None, role: st
     """The unit a move, sale or purchase names, if it is on the warband's roster; NotFound (404) otherwise."""
     kind = KINDS[cast(UnitKindKey, unit_type)]  # validated against the kind keys
     rows = kind.visible(kind.objects.filter(id=unit_id, warband=warband))
-    unit = rows.only("id", "name", "unit_type", "movement", "armour_save").first()  # what a mount changes, too
+    fields = ["id", "name", "unit_type", "movement", "armour_save"]  # what a mount changes, too
+    if any(field.name == "caster" for field in kind.model._meta.concrete_fields):
+        fields.append("caster")  # a wizard in armour warns (units/caster_armour.py)
+    unit = rows.only(*fields).first()
     if unit is None:
         raise NotFound(f"{role} not found")
     return unit

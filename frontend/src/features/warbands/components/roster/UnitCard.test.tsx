@@ -342,3 +342,28 @@ describe("An open card's Edit", () => {
     expect(within(edit).getByText("Edit")).toHaveClass("max-[960px]:hidden");
   });
 });
+
+describe("A unit's warnings", () => {
+  const WIZARD = {
+    code: "wizard_in_armour",
+    message: "A wizard may cast no spell while he wears armour (Shield).",
+  };
+
+  it("shows the server's warning on his card, closed or open, for a hero and a hired sword", () => {
+    for (const entry of [
+      { kind: "hero", unit: makeHero({ name: "Magister", warnings: [WIZARD] }) },
+      { kind: "hireling", unit: hired({ name: "Warlock", warnings: [WIZARD] }) },
+    ] as RosterUnit[]) {
+      for (const open of [false, true]) {
+        const { unmount } = renderCard(entry, open);
+        expect(screen.getByRole("alert")).toHaveTextContent(WIZARD.message);
+        unmount();
+      }
+    }
+  });
+
+  it("says nothing when the server warns of nothing", () => {
+    renderCard({ kind: "hero", unit: makeHero({ warnings: [] }) });
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+});
