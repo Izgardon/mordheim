@@ -161,9 +161,10 @@ class SeedAllTests(TestCase):
                 # named otherwise that say only what ours does are ours, 7 more; the Grave Robber (Mousillon)'s Trap
                 # Expert is the skill he starts with (the skills audit, 27 Nov 2026), 1 fewer; nine rules of a skill's
                 # name and effect are the skill he starts with (William, 27 Nov 2026), 9 fewer; the Ogre Hunter's
-                # Sabre Trainer and the Watchmen Sergeant's Falconer are the skill alone (William, 27 Nov 2026), 2 fewer
+                # Sabre Trainer and the Watchmen Sergeant's Falconer are the skill alone (William, 27 Nov 2026), 2 fewer;
+                # the Prospector's Dwarf Skills rule keeps the Dwarves skills for a Dwarf (William, 27 Nov 2026), 1 more
                 # and the Kislev Ranger's Hunter's Cloak is an item of its own (the items audit, 27 Nov 2026), 1 fewer
-                "Special": 1995,
+                "Special": 1996,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four

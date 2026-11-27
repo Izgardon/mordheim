@@ -176,3 +176,14 @@ class SkillAuditTests(ReviewCase):
         # is the Longbeard's (William, 27 Nov 2026)
         longbeard = next(row for row in self.templates["cursed-dwarves"]["fighters"] if row["name"] == "Longbeard")
         self.assertEqual(longbeard["skill_types"], ["Combat", "Strength", "Cursed Dwarves"])
+
+    def test_the_prospector_learns_dwarf_skills_which_his_rule_keeps_for_a_dwarf(self) -> None:
+        # "Dwarf Prospectors can also choose skills from the Dwarf Special list" (William, 27 Nov 2026: A, warned in
+        # his rule, as nothing tells a Dwarf Prospector from a Human one)
+        prospector = self.hired["Prospector (Karak Azgal)"]
+        self.assertEqual(
+            self.terms("Prospector (Karak Azgal)")["available_skill_types"], ["Combat", "Strength", "Dwarves"]
+        )
+        self.assertIn("Dwarves", self.groups)
+        rules = {special["name"]: special["description"] for special in prospector["specials"]}
+        self.assertIn("Only a Dwarf Prospector may learn Dwarves skills", rules["Dwarf Skills"])

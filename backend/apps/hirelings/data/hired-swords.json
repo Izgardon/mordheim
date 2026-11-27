@@ -6464,6 +6464,10 @@
       {
         "name": "Crossbow for a Dwarf",
         "description": "A human Prospector carries a bow; a Dwarf Prospector carries a crossbow instead."
+      },
+      {
+        "name": "Dwarf Skills",
+        "description": "Only a Dwarf Prospector may learn Dwarves skills."
       }
     ],
     "skills": [
@@ -6521,7 +6525,8 @@
       ],
       "available_skill_types": [
         "Combat",
-        "Strength"
+        "Strength",
+        "Dwarves"
       ],
       "available_special_skills": [
         {
