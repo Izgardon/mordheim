@@ -2080,11 +2080,7 @@
     "description": "Once per game the Wood Elf may re-roll any failed roll."
   },
   {
-    "name": "Seeker (Wood Elves of Arden)",
-    "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."
-  },
-  {
-    "name": "Seeker (Wood Elves of Athel Loren)",
+    "name": "Seeker (Wood Elves)",
     "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."
   },
   {

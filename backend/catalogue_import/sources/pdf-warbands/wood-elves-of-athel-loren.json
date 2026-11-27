@@ -152,7 +152,7 @@
     {"name": "Fey", "ours": "Fey"},
     {"name": "Elven Luck", "description": "Once per game the Wood Elf may re-roll any failed roll."},
     {"name": "Excellent Sight", "description": "The Hero spots hidden enemies from twice his Initiative in inches."},
-    {"name": "Seeker (Wood Elves of Athel Loren)", "pdfName": "Seeker", "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."},
+    {"name": "Seeker (Wood Elves)", "pdfName": "Seeker", "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."},
     {"name": "Infiltration", "ours": "Infiltration"}
   ],
   "aliases": [],
@@ -166,7 +166,7 @@
     {"page": 2, "what": "Elven Runestones (50+2D6 gc, Rare 11, Forest Mage only) and the Familiar (20+D6 gc, Rare 8, spell-users only) are on no list: they are special equipment, both ours, the Forest Mage's (the only spell-user)."},
     {"page": 3, "what": "The Leader rule says \"within 6\" of the Protector of the Hunt\": read as the Hunt Master, who leads."},
     {"page": 4, "what": "\"Bought in groups of 1-5\" stands over the henchmen: Deepwood Scouts and Glade Guard come in groups of 1-5."},
-    {"page": 5, "what": "The special skills are a new group, Wood Elves of Athel Loren. Fey and Infiltration are ours (William, 6 Nov 2026, of Infiltration: \"match it to ours drop theirs\"). Excellent Sight (also a warband rule for every Elf) is one skill with the Druchii's Excellent Sight, in both groups. Excellent Sight and Seeker do what our Unblinking Eye and Resource Hunter do, under other names, so they are kept apart (William, 6 Nov 2026: \"keep both of those separate as they have a name that inspires a different idea behind it\"); Seeker's \"only one Elven Hero\" opens its description, and it is named Seeker (Wood Elves of Athel Loren), as the Kislev Ranger's own Seeker holds the name (his needs him not to have gone out of action). Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one; William: \"separate yes\")."},
+    {"page": 5, "what": "The special skills are a new group, Wood Elves of Athel Loren. Fey and Infiltration are ours (William, 6 Nov 2026, of Infiltration: \"match it to ours drop theirs\"). Excellent Sight (also a warband rule for every Elf) is one skill with the Druchii's Excellent Sight, in both groups. Excellent Sight and Seeker do what our Unblinking Eye and Resource Hunter do, under other names, so they are kept apart (William, 6 Nov 2026: \"keep both of those separate as they have a name that inspires a different idea behind it\"); Seeker's \"only one Elven Hero\" opens its description, and it is named Seeker (Wood Elves), one skill with the Wood Elves of Arden's, as the Kislev Ranger's own Seeker holds the name (his needs him not to have gone out of action). Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one; William: \"separate yes\")."},
     {"page": 5, "what": "Woodland Incantations is a new lore. Lyrics of Feral Infatuation gives no range or duration, and Song of the Sun names no test (\"must make a test\"): both are kept as printed."}
   ]
 }

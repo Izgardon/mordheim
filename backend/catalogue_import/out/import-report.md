@@ -27,7 +27,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (MiM) | 51 |
 | items (warband templates) | 42 |
 | price rows | 614 |
-| skills | 530 |
+| skills | 529 |
 | skill groups | 115 |
 | skill group links | 680 |
 | serious injuries (D66) | 20 |
@@ -208,7 +208,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 530 | 153 | 341 | 36 |
+| skills | 529 | 153 | 340 | 36 |
 | hired swords | 133 | 71 | 62 | 0 |
 | dramatis personae | 61 | 30 | 31 | 0 |
 
@@ -359,7 +359,7 @@ Description put right: Beastmaster (Strength).
 
 ## Skill groups
 
-`out/skills.json` is 530 skills, one per name; `out/skill-groups.json` is 115 groups holding them (680 links), the five core groups first.
+`out/skills.json` is 529 skills, one per name; `out/skill-groups.json` is 115 groups holding them (680 links), the five core groups first.
 
 ### Merged by name
 
@@ -518,13 +518,13 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Vampire Hunters of Sylvania | Vampire Hunters of Sylvania | new group | Iron Will and Righteous Aura: the Vampire Hunter and Slayers only. | Righteous Aura, Iron Will, Thirst for Vengeance, Blessing of Morr, Touch of Darkness |
 | Werewolf Hunting Pack | Werewolf Hunting Pack | new group | - | Hunter's Senses, Complete Healing, Terrible Claws, Bloodthirst, Chilling Howl, Bestial Savagery, Pack Hunter, Heavy Pelt |
 | Wood Elf Scouts | Wood Elf Scouts | new group | - | Infiltrate (Wood Elf Scouts), Trapper, Expert Hunter, Stand and Shoot, Wild Hunter, Pathfinder (Wood Elf Scouts), Tree Walker, Sniper (Wood Elf Scouts) |
-| Wood Elves of Arden | Wood Elves of Arden | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker (Wood Elves of Arden) |
-| Wood Elves of Athel Loren | Wood Elves of Athel Loren | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker (Wood Elves of Athel Loren) |
+| Wood Elves of Arden | Wood Elves of Arden | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker (Wood Elves) |
+| Wood Elves of Athel Loren | Wood Elves of Athel Loren | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker (Wood Elves) |
 | Woodsmen de Artois | Woodsmen de Artois | new group | - | Bull Rush, Infiltration, Sniper (Shadow Warriors), Staff Master, Forager |
 
 ### New groups and skills (`new_skill_groups`)
 
-294 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+293 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -812,8 +812,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Tree Walker | Wood Elf Scouts | athel-loren | Athel Loren |
 | Sniper (Wood Elf Scouts) | Wood Elf Scouts | athel-loren | Athel Loren |
 | Elven Luck | Wood Elves of Arden | mordheim-2a | Mousillon |
-| Seeker (Wood Elves of Arden) | Wood Elves of Arden | mousillon | Mousillon |
-| Seeker (Wood Elves of Athel Loren) | Wood Elves of Athel Loren | mordheim-2a | WEB |
+| Seeker (Wood Elves) | Wood Elves of Arden | mordheim-2a | Mousillon |
 | Aspect of the Hawk | Animal Aspects | grade-3 | Wood Elves, the Asrai Way-farers |
 | Aspect of the Serpent | Animal Aspects | grade-3 | Wood Elves, the Asrai Way-farers |
 | Aspect of the Panther | Animal Aspects | grade-3 | Wood Elves, the Asrai Way-farers |
@@ -3424,7 +3423,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): Choice of Warriors (p1) allows up to five Greycoats, while the Greycoat entry (p5) is headed "0-2": the count is taken as 0-5, with Mummers 0-5 as Choice of Warriors has them (their entry prints no number).
 - Flag (p1): The warband has no standing leader: the hero with the highest Leadership leads each battle, so no fighter is marked the leader and the template's checks warn that it has none.
 - Flag (p2): The skill table: the Baron ticks Combat, Shooting, Strength, Speed and Special, the Elder Academic and Special, and the Greenjack Combat, Shooting, Strength and Speed with no Special.
-- Flag (p2): The special skills: Wall Runner is ours, the same effect (ours is worded for a Skaven and carries a suggested change). Expert Explorer does what our Resource Hunter, Seeker (Wood Elves of Athel Loren) and Treasure Hunter do, and Silent Strike what our Sniper does: both are kept apart. A decision for William.
+- Flag (p2): The special skills: Wall Runner is ours, the same effect (ours is worded for a Skaven and carries a suggested change). Expert Explorer does what our Resource Hunter, Seeker (Wood Elves) and Treasure Hunter do, and Silent Strike what our Sniper does: both are kept apart. A decision for William.
 - Flag (p5): The Greycoat's profile row is labelled "Trapper": read as the Greycoat's, the entry it sits under.
 - Flag (p5): The Mummer's and the Scavenger's Weapons/Armour lines both name the Scavengers: read as each entry's own fighter, both from the Lost equipment list.
 - Flag (p5): Brutes (re-roll a Lad's Got Talent result) is read as Mummers not being promotable, and his rule carries the re-roll.
@@ -3546,7 +3545,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p3): List prices as printed: Elven Cloak 75 gc, Ithilmar Armour 60 gc, Hunting Arrows 35 gc, Elven Wine 50 gc, Elf Bow 35 gc. Ours are priced otherwise, and are left alone.
 - Flag (p5): The Ivy Ferret's Movement is printed as "-": it stays beside its keeper, which is kept as its Keeper rule.
 - Flag (p6): Woodland Incantations is the lore we already hold from the Wood Elves of Athel Loren: the same six spells with the same difficulties, so the Forest Mage casts ours.
-- Flag (p2): The five special skills are word for word the Wood Elves of Athel Loren's (their PDF, p5), but that warband is Mordheim 2a and this one Mousillon, and a skill carries its setting, so this is a group of its own rather than a shared one. Fey and Infiltration are ours; Elven Luck and Excellent Sight are kept apart as they are there; Seeker is named Seeker (Wood Elves of Arden), as our Kislev Ranger's Seeker holds the plain name, and its "only one Elven Hero" opens its description.
+- Flag (p2): The five special skills are word for word the Wood Elves of Athel Loren's (their PDF, p5), but that warband is Mordheim 2a and this one Mousillon, and a skill carries its setting, so this is a group of its own rather than a shared one. Fey and Infiltration are ours; Elven Luck and Excellent Sight are kept apart as they are there; Seeker is one skill with the Wood Elves of Athel Loren's, Seeker (Wood Elves), as our Kislev Ranger's Seeker holds the plain name, and its "only one Elven Hero" opens its description (the skills audit, 27 Nov 2026: the two rows were word for word the same).
 
 ### Wood Elves of Athel Loren
 
@@ -3558,7 +3557,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p2): Elven Runestones (50+2D6 gc, Rare 11, Forest Mage only) and the Familiar (20+D6 gc, Rare 8, spell-users only) are on no list: they are special equipment, both ours, the Forest Mage's (the only spell-user).
 - Flag (p3): The Leader rule says "within 6" of the Protector of the Hunt": read as the Hunt Master, who leads.
 - Flag (p4): "Bought in groups of 1-5" stands over the henchmen: Deepwood Scouts and Glade Guard come in groups of 1-5.
-- Flag (p5): The special skills are a new group, Wood Elves of Athel Loren. Fey and Infiltration are ours (William, 6 Nov 2026, of Infiltration: "match it to ours drop theirs"). Excellent Sight (also a warband rule for every Elf) is one skill with the Druchii's Excellent Sight, in both groups. Excellent Sight and Seeker do what our Unblinking Eye and Resource Hunter do, under other names, so they are kept apart (William, 6 Nov 2026: "keep both of those separate as they have a name that inspires a different idea behind it"); Seeker's "only one Elven Hero" opens its description, and it is named Seeker (Wood Elves of Athel Loren), as the Kislev Ranger's own Seeker holds the name (his needs him not to have gone out of action). Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one; William: "separate yes").
+- Flag (p5): The special skills are a new group, Wood Elves of Athel Loren. Fey and Infiltration are ours (William, 6 Nov 2026, of Infiltration: "match it to ours drop theirs"). Excellent Sight (also a warband rule for every Elf) is one skill with the Druchii's Excellent Sight, in both groups. Excellent Sight and Seeker do what our Unblinking Eye and Resource Hunter do, under other names, so they are kept apart (William, 6 Nov 2026: "keep both of those separate as they have a name that inspires a different idea behind it"); Seeker's "only one Elven Hero" opens its description, and it is named Seeker (Wood Elves), one skill with the Wood Elves of Arden's, as the Kislev Ranger's own Seeker holds the name (his needs him not to have gone out of action). Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one; William: "separate yes").
 - Flag (p5): Woodland Incantations is a new lore. Lyrics of Feral Infatuation gives no range or duration, and Song of the Sun names no test ("must make a test"): both are kept as printed.
 
 ### Wood Elves, The Asrai Way-farers

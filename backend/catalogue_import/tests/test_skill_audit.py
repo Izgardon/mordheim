@@ -38,3 +38,11 @@ class SkillAuditTests(ReviewCase):
         self.assertEqual(prospector["skills"], ["Luck (Prospector)"])
         own = [skill["name"] for skill in self.terms("Prospector (Karak Azgal)")["available_special_skills"]]
         self.assertIn("Luck (Prospector)", own)
+
+    def test_the_two_wood_elf_seekers_are_one_skill(self) -> None:
+        # the Wood Elves of Arden's and of Athel Loren's Seeker are word for word the same
+        for old in ("Seeker (Wood Elves of Arden)", "Seeker (Wood Elves of Athel Loren)"):
+            self.assertNotIn(old, self.skills)
+        self.assertIn("Seeker (Wood Elves)", self.groups["Wood Elves of Arden"])
+        self.assertIn("Seeker (Wood Elves)", self.groups["Wood Elves of Athel Loren"])
+        self.assertTrue(self.skills["Seeker (Wood Elves)"].startswith("Only one Hero of the warband"))

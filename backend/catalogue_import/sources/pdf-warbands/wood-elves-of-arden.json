@@ -164,7 +164,7 @@
     {"name": "Fey", "ours": "Fey"},
     {"name": "Elven Luck", "description": "Once per game the Wood Elf may re-roll any failed roll."},
     {"name": "Excellent Sight", "description": "The Hero spots hidden enemies from twice his Initiative in inches."},
-    {"name": "Seeker (Wood Elves of Arden)", "pdfName": "Seeker", "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."},
+    {"name": "Seeker (Wood Elves)", "pdfName": "Seeker", "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."},
     {"name": "Infiltration", "ours": "Infiltration"}
   ],
   "aliases": [],
@@ -176,6 +176,6 @@
     {"page": 3, "what": "List prices as printed: Elven Cloak 75 gc, Ithilmar Armour 60 gc, Hunting Arrows 35 gc, Elven Wine 50 gc, Elf Bow 35 gc. Ours are priced otherwise, and are left alone."},
     {"page": 5, "what": "The Ivy Ferret's Movement is printed as \"-\": it stays beside its keeper, which is kept as its Keeper rule."},
     {"page": 6, "what": "Woodland Incantations is the lore we already hold from the Wood Elves of Athel Loren: the same six spells with the same difficulties, so the Forest Mage casts ours."},
-    {"page": 2, "what": "The five special skills are word for word the Wood Elves of Athel Loren's (their PDF, p5), but that warband is Mordheim 2a and this one Mousillon, and a skill carries its setting, so this is a group of its own rather than a shared one. Fey and Infiltration are ours; Elven Luck and Excellent Sight are kept apart as they are there; Seeker is named Seeker (Wood Elves of Arden), as our Kislev Ranger's Seeker holds the plain name, and its \"only one Elven Hero\" opens its description."}
+    {"page": 2, "what": "The five special skills are word for word the Wood Elves of Athel Loren's (their PDF, p5), but that warband is Mordheim 2a and this one Mousillon, and a skill carries its setting, so this is a group of its own rather than a shared one. Fey and Infiltration are ours; Elven Luck and Excellent Sight are kept apart as they are there; Seeker is one skill with the Wood Elves of Athel Loren's, Seeker (Wood Elves), as our Kislev Ranger's Seeker holds the plain name, and its \"only one Elven Hero\" opens its description (the skills audit, 27 Nov 2026: the two rows were word for word the same)."}
   ]
 }

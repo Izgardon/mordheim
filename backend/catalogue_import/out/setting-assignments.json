@@ -2601,12 +2601,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Seeker (Wood Elves of Arden)",
-      "setting": "mousillon",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Seeker (Wood Elves of Athel Loren)",
+      "name": "Seeker (Wood Elves)",
       "setting": "mordheim-2a",
       "how": "overrides.json"
     },
