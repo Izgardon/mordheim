@@ -61,6 +61,14 @@
     "Spy": {
       "roll": "D3",
       "text": "Before the battle commences but after deployment, the player controlling the Hobgoblin Scout may re-deploy D3 models (not including the Scout), using the normal deployment rules. If the player chooses not to do this, then the Scout may be set up anywhere on the board that is not within 18\" of any enemy model."
+    },
+    "Slaver (Hobgoblin Horde)": {
+      "roll": "D3",
+      "text": "At the start of any game, if one or more of the warband's Hobgoblins has this skill, you may deploy D3 Goblin warriors; it does not stack with a second warrior who has it. They carry daggers only, and count towards neither the warband's size nor its rating, casualties or rout tests."
+    },
+    "Sneaky Git (Karak Azgal)": {
+      "roll": "D3",
+      "text": "He may move D3 members of his warband after all other deployment is complete."
     }
   },
   "item_rule": {},

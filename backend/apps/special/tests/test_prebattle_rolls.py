@@ -62,6 +62,15 @@ class WilliamsListTests(SimpleTestCase):
     def test_old_battle_wound_rolls_a_d6_in_the_books_words(self):
         self.assertEqual(book_rolls()[SPECIAL]["old battle wound"], ("D6", OLD_BATTLE_WOUND))
 
+    def test_the_skills_that_bring_or_move_d3_models_before_the_battle_roll_a_d3(self):
+        # the skills audit (27 Nov 2026): the Hobgoblin Horde's Slaver deploys D3 Goblins, as Deathspeaker does
+        # Zombies, and Karak Azgal's Sneaky Git moves D3 models after deployment, as Spy re-deploys them
+        skills = book_rolls()[SKILL]
+        self.assertEqual(skills["slaver (hobgoblin horde)"][0], "D3")
+        self.assertIn("you may deploy D3 Goblin warriors", skills["slaver (hobgoblin horde)"][1])
+        self.assertEqual(skills["sneaky git (karak azgal)"][0], "D3")
+        self.assertNotIn("charitable", skills)  # two rolls: William picks which
+
     def test_every_mark_has_dice_the_dice_entry_reads_and_its_text(self):
         data = listed()
         self.assertEqual(set(data), {SPECIAL, SKILL, ITEM_RULE, ITEM})
