@@ -24,3 +24,10 @@ class CasterTests(ReviewCase):
             with self.subTest(fighter=name):
                 self.assertEqual(self.fighter(slug, name)["caster"], "No")
                 self.assertEqual(self.lores(slug, name), [lore])
+
+    def test_the_circus_performers_cast_nothing_the_magician_is_made_a_wizard_by_hand(self) -> None:
+        # only the 0-1 Magician casts, and a Performer picks his specialization when he joins (William, 27 Nov 2026)
+        performer = self.fighter("circus-extraordinaire", "Performer")
+        self.assertEqual((performer["caster"], performer["spell_types"]), ("No", []))
+        rules = {special["name"]: special["description"] for special in performer["specials"]}
+        self.assertIn("Magician", rules["Specialist"])

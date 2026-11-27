@@ -1128,7 +1128,6 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | bretonnian-grail-companions | Damsel | Wizard | Grail Magic |
 | call-of-the-night-haint | Cairn Wraith | Wizard | Necromancy (Call of the Night Haint) |
 | channel-rats | Petru | Wizard | Charms and Hexes, Necromancy |
-| circus-extraordinare | Performer | Wizard | Lesser Magic |
 | clockworkers | Master of Clocks | Wizard | Laws of Construction |
 | disciples-of-maldred | Prophet of the False Grail | Wizard | Chaos Rituals |
 | dreamwalkers-cult-of-morr | Priest of Morr | Priest | Funerary Rites |
@@ -2134,7 +2133,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p2): The warband's minimum of 3 models is not imported: our templates hold no minimum.
 - Flag (p2): No fighter has a Special column, so the warband declares no skill group.
 - Flag (p3): The Performer is one entry (0-4) with six specializations the player picks from, each with its own limit and its own skill lists. The entry is one fighter with its skill lists set to the Combat, Academic and Speed of "most Performers"; the Marksman's (Combat, Shooting, Speed) and the Freak's and Mystery of the East's (Combat, Strength) are in his Specialist rule, as are the specializations themselves.
-- Flag (p3): The Magician specialization "has the Wizard Special Rule as per Warlocks" and names no lore, so Lesser Magic (the Warlock's) is offered to a Performer and the rule says only that he casts as a Warlock does.
+- Flag (p3): The Magician specialization "has the Wizard Special Rule as per Warlocks" and names no lore: a Performer casts nothing, and the one who takes the Magician is made a Wizard of Lesser Magic (the Warlock's) by hand (William, 27 Nov 2026).
 - Flag (p3): The Freak may buy "a Mutation from the Cult of the Possessed Mutations list", which our Cult template already sells; no upgrade list of this warband's own was made.
 - Flag (p3): The Acrobat starts with Dodge and the Marksman with Knife-Fighter or Trick Shooter. They are written in the Specialist rule rather than as skills a Performer starts with, because only one specialization in six takes each.
 - Flag (p3): The Ringmaster's Performer Skill (20 gc for a specialization and 4 more starting experience) is kept as his rule. See the decisions.

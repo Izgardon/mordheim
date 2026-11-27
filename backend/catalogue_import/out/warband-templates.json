@@ -21869,16 +21869,11 @@
           "Academic",
           "Speed"
         ],
-        "spell_types": [
-          {
-            "name": "Lesser Magic",
-            "note": ""
-          }
-        ],
+        "spell_types": [],
         "gains_xp": true,
         "promotable": true,
         "is_leader": false,
-        "caster": "Wizard",
+        "caster": "No",
         "large": false,
         "variant_changes": {},
         "fixed_kit": "",

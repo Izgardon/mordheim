@@ -89,7 +89,6 @@
       "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
       "equipmentLists": ["performer-equipment-list"],
       "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
-      "spellLores": ["Lesser Magic"],
       "specialRules": [
         {"rulename": "Specialist", "ruleFull": "Each Performer picks one specialization when he joins, within the warband's limits: 0-2 Beast Tamer, 0-2 Acrobat, 0-1 Exotic Mystery of the East, 0-1 Freak, 0-1 Marksman, 0-1 Magician.\n\nBeast Tamer: the warband may hold 2 more Trained Animals, and a Trained Animal within 6\" of him does not test for Ferocity.\n\nAcrobat: he starts with the Dodge skill.\n\nExotic Mystery of the East: he never uses a weapon and is always treated as carrying a pair of clubs. He may be given no equipment.\n\nFreak: he may buy a mutation from the Cult of the Possessed mutation list.\n\nMarksman: he starts with Knife-Fighter or Trick Shooter.\n\nMagician: he is a spell caster, as a Warlock is.\n\nA Marksman takes Combat, Shooting and Speed as his skill lists; a Freak and an Exotic Mystery of the East take Combat and Strength; every other Performer takes Combat, Academic and Speed."}
       ]
@@ -213,7 +212,7 @@
     {"page": 2, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum."},
     {"page": 2, "what": "No fighter has a Special column, so the warband declares no skill group."},
     {"page": 3, "what": "The Performer is one entry (0-4) with six specializations the player picks from, each with its own limit and its own skill lists. The entry is one fighter with its skill lists set to the Combat, Academic and Speed of \"most Performers\"; the Marksman's (Combat, Shooting, Speed) and the Freak's and Mystery of the East's (Combat, Strength) are in his Specialist rule, as are the specializations themselves."},
-    {"page": 3, "what": "The Magician specialization \"has the Wizard Special Rule as per Warlocks\" and names no lore, so Lesser Magic (the Warlock's) is offered to a Performer and the rule says only that he casts as a Warlock does."},
+    {"page": 3, "what": "The Magician specialization \"has the Wizard Special Rule as per Warlocks\" and names no lore: a Performer casts nothing, and the one who takes the Magician is made a Wizard of Lesser Magic (the Warlock's) by hand (William, 27 Nov 2026)."},
     {"page": 3, "what": "The Freak may buy \"a Mutation from the Cult of the Possessed Mutations list\", which our Cult template already sells; no upgrade list of this warband's own was made."},
     {"page": 3, "what": "The Acrobat starts with Dodge and the Marksman with Knife-Fighter or Trick Shooter. They are written in the Specialist rule rather than as skills a Performer starts with, because only one specialization in six takes each."},
     {"page": 3, "what": "The Ringmaster's Performer Skill (20 gc for a specialization and 4 more starting experience) is kept as his rule. See the decisions."},
