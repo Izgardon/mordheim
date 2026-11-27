@@ -69,6 +69,10 @@
     "Sneaky Git (Karak Azgal)": {
       "roll": "D3",
       "text": "He may move D3 members of his warband after all other deployment is complete."
+    },
+    "Charitable": {
+      "roll": "D3",
+      "text": "D3 mace-armed Novices (see the Sisters of Sigmar warband) accompany him in every battle and don't count towards the warband's limit."
     }
   },
   "item_rule": {},

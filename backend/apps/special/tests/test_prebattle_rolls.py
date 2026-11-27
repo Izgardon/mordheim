@@ -69,7 +69,10 @@ class WilliamsListTests(SimpleTestCase):
         self.assertEqual(skills["slaver (hobgoblin horde)"][0], "D3")
         self.assertIn("you may deploy D3 Goblin warriors", skills["slaver (hobgoblin horde)"][1])
         self.assertEqual(skills["sneaky git (karak azgal)"][0], "D3")
-        self.assertNotIn("charitable", skills)  # two rolls: William picks which
+        # Charitable rolls twice, D3 Novices and D6x5 dinars: the Novices are its roll, as they change the battle
+        # (William, 27 Nov 2026), the dinars staying in its text
+        self.assertEqual(skills["charitable"][0], "D3")
+        self.assertIn("Novices", skills["charitable"][1])
 
     def test_the_horn_of_the_wild_hunt_rolls_a_d6_for_the_animals_that_answer(self):
         # the items audit's question 15 (William, 27 Nov 2026: A)
