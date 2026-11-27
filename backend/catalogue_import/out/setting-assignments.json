@@ -427,7 +427,7 @@
     },
     {
       "name": "Maneater",
-      "setting": "mordheim-2a",
+      "setting": "mordheim-1c",
       "how": "overrides.json"
     },
     {
@@ -477,8 +477,8 @@
     },
     {
       "name": "Proven Warrior",
-      "setting": "mordheim-1b",
-      "how": "mordheimer"
+      "setting": "mordheim",
+      "how": "overrides.json"
     },
     {
       "name": "Bull Rush",
@@ -577,18 +577,18 @@
     },
     {
       "name": "Ferocious Charge",
-      "setting": "nemesis-crown",
-      "how": "mordheimer"
+      "setting": "mordheim",
+      "how": "overrides.json"
     },
     {
       "name": "Monster Slayer",
-      "setting": "nemesis-crown",
-      "how": "mordheimer"
+      "setting": "mordheim",
+      "how": "overrides.json"
     },
     {
       "name": "Berserker",
-      "setting": "nemesis-crown",
-      "how": "mordheimer"
+      "setting": "mordheim",
+      "how": "overrides.json"
     },
     {
       "name": "Corpse Bomb",

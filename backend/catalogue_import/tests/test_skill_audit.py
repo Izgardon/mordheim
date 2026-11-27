@@ -288,3 +288,16 @@ class SkillAuditTests(ReviewCase):
         self.assertEqual([name for name, text in self.skills.items() if tag.search(text)], [])
         self.assertTrue(self.skills["Shaggy Hide"].endswith("combined with other armour as normal."))
         self.assertIn("Shadow Weavers. There may never be", self.skills["Powerful Build"])
+
+    def test_a_skill_sits_in_the_lowest_setting_of_the_warbands_that_learn_it(self) -> None:
+        # William, 27 Nov 2026: the Dwarf Treasure Hunters (1a) learn the Troll Slayer skills, the Orc Mob (1a) Proven
+        # Warrior and the Ogres (1c) Maneater, so none of them is greyed for those warbands
+        settings = {row["name"]: row["setting"] for row in load_json(OUT / "setting-assignments.json")["skills"]}
+        expected = {
+            "Ferocious Charge": "mordheim",
+            "Monster Slayer": "mordheim",
+            "Berserker": "mordheim",
+            "Proven Warrior": "mordheim",
+            "Maneater": "mordheim-1c",
+        }
+        self.assertEqual({name: settings[name] for name in expected}, expected)

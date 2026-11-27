@@ -208,7 +208,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 528 | 153 | 341 | 34 |
+| skills | 528 | 149 | 345 | 34 |
 | hired swords | 133 | 71 | 62 | 0 |
 | dramatis personae | 61 | 30 | 31 | 0 |
 
@@ -232,7 +232,7 @@ Names mordheimer gives more than one setting; the entry for our list's warband w
 | skills | Netter (Night Goblins) | mordheim-1c | mordheim-2a | overrides.json |
 | skills | Battle tongue (Norse) | mordheim-1b | mordheim | overrides.json |
 | skills | Crude belch (Ogres) | mordheim-1c | mordheim-2a | overrides.json |
-| skills | Maneater (Ogres) | mordheim-2a | mordheim-1c | overrides.json |
+| skills | Maneater (Ogres) | mordheim-1c | mordheim-2a | overrides.json |
 | skills | Bellowing roar (Ogres) | mordheim-1c | empire-in-flames | overrides.json |
 | skills | Foul Odour (Ostlanders) | mordheim | nemesis-crown | overrides.json |
 | skills | Hardy Constitution (Pirates) | mordheim-1b | mordheim-2a | overrides.json |
