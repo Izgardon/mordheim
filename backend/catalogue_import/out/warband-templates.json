@@ -20946,17 +20946,14 @@
             "description": "Warriors within 6\" of the Domnu may use his Leadership instead of their own."
           },
           {
-            "name": "Prize-fighter",
-            "type": "Warband - Channel Rats",
-            "description": "The Domnu suffers no penalty for fighting unarmed, and has +1 Attack when he does."
-          },
-          {
             "name": "Bear Hug",
             "type": "Warband - Channel Rats",
             "description": "If the Domnu hits the same enemy with both his unarmed attacks in a round of combat, he may make one Bear Hug attack instead of resolving them: each player rolls a D6 and adds his warrior's Strength. If the Domnu's total is higher or equal, the enemy takes one automatic wound with no armour save; if the enemy's is higher, he breaks the hold and takes no damage."
           }
         ],
-        "skills": []
+        "skills": [
+          "Prize-fighter"
+        ]
       },
       {
         "key": "petru",
@@ -21125,17 +21122,14 @@
         ],
         "specials": [
           {
-            "name": "Spry",
-            "type": "Warband - Channel Rats",
-            "description": "A Truant may run or charge while climbing."
-          },
-          {
             "name": "Taunt",
             "type": "Warband - Channel Rats",
             "description": "In the shooting phase, instead of shooting, a Truant may taunt one enemy he can see, with line of sight as for shooting. The enemy takes a Leadership test: if he fails, he must spend his next movement phase trying to reach close combat with the Truant."
           }
         ],
-        "skills": []
+        "skills": [
+          "Spry"
+        ]
       },
       {
         "key": "gypsies",
@@ -45597,14 +45591,10 @@
           "cadets-equipment-list",
           "special-equipment"
         ],
-        "specials": [
-          {
-            "name": "Seeker",
-            "type": "Warband - High Elves",
-            "description": "If the Ranger was not taken out of action, you may modify one Exploration dice by -1 or +1."
-          }
-        ],
-        "skills": []
+        "specials": [],
+        "skills": [
+          "Seeker (Wood Elves)"
+        ]
       },
       {
         "key": "sword-warden",
@@ -60118,14 +60108,10 @@
           "ogre-equipment-list",
           "special-equipment"
         ],
-        "specials": [
-          {
-            "name": "Bull Charge",
-            "type": "Warband - Maneaters",
-            "description": "Ogres learn to use their vast bulk in a charge, trampling the enemy to the ground. When charging, Bulls may attempt a single attack with a +1 ‘to hit’ modifier rather than making their normal attacks. If successful the enemy model is automatically knocked down."
-          }
-        ],
-        "skills": []
+        "specials": [],
+        "skills": [
+          "Bull Charge"
+        ]
       },
       {
         "key": "half-growns",
@@ -65213,17 +65199,14 @@
         ],
         "specials": [
           {
-            "name": "Strongman",
-            "type": "Warband - Merchant Caravans",
-            "description": "Blackguards are capable of great feats of strength. They may use a double-handed weapon without the usual penalty of always striking last. Work out the order of battle as you would with other weapons."
-          },
-          {
             "name": "Unreliable Hirelings",
             "type": "Warband - Merchant Caravans",
             "description": "Blackguards are only hired by the Merchant to serve him by protecting his cargo. They are not much trusted or granted with any responsibilities. Therefore they may never become Heroes. Re-roll all results of ‘The lad’s got talent’ for them."
           }
         ],
-        "skills": []
+        "skills": [
+          "Strongman"
+        ]
       }
     ],
     "upgrades": []
@@ -90169,17 +90152,14 @@
         ],
         "specials": [
           {
-            "name": "Songster",
-            "type": "Warband - Sea Ghosts",
-            "description": "Any friendly model within 6\" of a Minstrel may re-roll a failed Leadership test, rout tests included, at +1 Leadership."
-          },
-          {
             "name": "Deathdancer",
             "type": "Warband - Sea Ghosts",
             "description": "A Minstrel promoted to Hero may learn a Wardancer Dance instead of a new skill (the Feast-Master's Shadow Dances of Loec), and then must dance in close combat as the Feast-Master does."
           }
         ],
-        "skills": []
+        "skills": [
+          "Songster"
+        ]
       },
       {
         "key": "wildkin",
@@ -122417,14 +122397,10 @@
         "lists": [
           "woodsmen-equipment-list"
         ],
-        "specials": [
-          {
-            "name": "Set Traps",
-            "type": "Warband - Woodsmen de Artois",
-            "description": "A Trapper may set a trap in a turn he does nothing else, and not in one in which he recovered from being knocked down: place a marker touching him. A model, friend or foe, that moves within 2\" of the marker rolls a D6, and on a 3+ triggers the trap and takes a Strength 4 hit; the Trapper never triggers his own. If the hit doesn't wound or the trap isn't triggered, the model may finish its move; a model knocked down or stunned is placed 2\" from the marker. The marker is removed either way."
-          }
-        ],
-        "skills": []
+        "specials": [],
+        "skills": [
+          "Set Traps"
+        ]
       },
       {
         "key": "hunting-hounds",

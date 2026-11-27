@@ -1520,10 +1520,6 @@
     "spell_picks": 3,
     "specials": [
       {
-        "name": "Fey",
-        "description": "Hostile magic spells will not affect the Elf on a D6 roll of a 4+."
-      },
-      {
         "name": "Wanderer",
         "description": "An Elf Mage is a wanderer, and will only stay with a warband for the duration of a single battle. A warband who used an Elf Mage in their last battle may not seek out another until they have fought at least one battle without one."
       },
@@ -1533,7 +1529,8 @@
       }
     ],
     "skills": [
-      "Sorcery"
+      "Sorcery",
+      "Fey"
     ],
     "spells": [],
     "equipment": [
@@ -2989,15 +2986,13 @@
     "caster": "No",
     "specials": [
       {
-        "name": "Driver",
-        "description": "A wagon driven by the Coachman may re-roll results on the Out of Control chart once. Note that the second result must be accepted even if it is worse."
-      },
-      {
         "name": "Handyman",
         "description": "The Coachman is skilled in fixing minor damage on the wagon. If the wagon is stationary (ie, it has not moved the last turn) and the driver is in contact with the wagon, he may repair one previously damaged wheel. The driver may do nothing else that turn and the wagon may not be moved. He can even set in a new wheel if it flew off. Note that if there are any enemy models in contact with the wagon, it cannot be repaired that turn as the situation is way too dangerous to focus on the cart."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Driver"
+    ],
     "spells": [],
     "equipment": [
       {

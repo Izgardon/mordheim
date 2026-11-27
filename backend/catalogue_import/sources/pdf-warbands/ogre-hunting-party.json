@@ -167,7 +167,7 @@
       ]
     }
   ],
-  "skillGroup": {"name": "Ogre Hunting Party", "new": true, "note": "Ogres only: Maneater, Bull Charge. The leader only: Bellowing Roar (Ogres). Gnoblars only: Infiltration."},
+  "skillGroup": {"name": "Ogre Hunting Party", "new": true, "note": "Ogres only: Maneater, Bull Charge. The leader only: Bellowing Roar (Ogres). Gnoblars only: Infiltration, Set Traps."},
   "specialSkillsList": [
     {"name": "Crude Belch", "ours": "Crude Belch"},
     {"name": "Scent Hound", "description": "The Hero spots hidden enemies from twice his Initiative in inches."},
@@ -175,7 +175,7 @@
     {"name": "Maneater", "ours": "Maneater"},
     {"name": "Bull Charge", "ours": "Bull charge"},
     {"name": "Bellowing Roar", "ours": "Bellowing Roar (Ogres)"},
-    {"name": "Set Traps", "description": "Gnoblars only. The Trapper may set a trap in a turn he does nothing else (not one in which he recovered from being knocked down): place a marker touching him. A model, friend or foe, that moves within 2\" of it rolls a D6, and on a 3+ triggers the trap and takes a S4 hit; the Trapper never triggers his own. If the hit doesn't wound, the model has more than one wound, or the trap isn't triggered, it may finish its move; a model knocked down or stunned is placed 2\" from the marker. The marker is removed either way."},
+    {"name": "Set Traps", "description": "The Trapper may set a trap in a turn he does nothing else (not one in which he recovered from being knocked down): place a marker touching him. A model, friend or foe, that moves within 2\" of it rolls a D6, and on a 3+ triggers the trap and takes a S4 hit; the Trapper never triggers his own. If the hit doesn't wound, the model has more than one wound, or the trap isn't triggered, it may finish its move; a model knocked down or stunned is placed 2\" from the marker. The marker is removed either way."},
     {"name": "Infiltration", "ours": "Infiltration"},
     {"name": "Netter (Ogre Hunting Party)", "pdfName": "Netter", "description": "Gnoblars only. The Hero starts every game with 3 nets. They can't be sold, traded or given to another warrior, and any he doesn't use are gone after the game; he starts the next game with 3 again, at no cost."}
   ],

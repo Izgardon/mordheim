@@ -50,6 +50,13 @@ OWNER_SUFFIX = re.compile(r"\s*\([^)]*\)$")  # "Not Orcs (Cave Squig)": the rule
 # Animal Handler: Horse and Warhorse our [Animal] Handler.
 STARTS_WITH: dict[str, dict[str, dict[str, list[str]]]] = {
     "Battle Monks of Cathay": {"Emissary": {"Ride Horse": ["Ride [Animal]"]}},  # "trained in riding Horses"
+    # William, 27 Nov 2026, of the rules that share a skill's name and effect (the skills audit's M4): "A", the skill
+    # he starts with; it adds no group to his advance list
+    "Channel Rats": {"Domnu": {"Prize-fighter": ["Prize-fighter"]}, "Truant": {"Spry": ["Spry"]}},
+    "High Elves": {"Ranger": {"Seeker": ["Seeker (Wood Elves)"]}},  # "you may modify one Exploration dice by -1 or +1"
+    "Maneaters": {"Bull": {"Bull Charge": ["Bull Charge"]}},
+    "Sea Ghosts": {"Minstrel": {"Songster": ["Songster"]}},
+    "Woodsmen de Artois": {"Trapper": {"Set Traps": ["Set Traps"]}},  # the Ogre Hunting Party's Trapper's
     # "A Questing Knight starts with the skill Ride Warhorse."
     "Bretonnian Chapel Guard": {"Questing Knight": {"Ride": ["Ride [Animal]"]}},
     # "Brutes start the game with the Strongman skill from the Strength skill list"
@@ -69,7 +76,10 @@ STARTS_WITH: dict[str, dict[str, dict[str, list[str]]]] = {
     },
     # "A Squire starts with the skills Ride: Horse and Animal Handler: Horse and Warhorse."
     "Knights of the Bitter Moors": {"Squire": {"Starting Skills": ["Ride [Animal]", "[Animal] Handler"]}},
-    "Merchant Caravans": {"Knights Vanguard": {"Ride Warhorse": ["Ride [Animal]"]}},  # "trained in riding Warhorses"
+    "Merchant Caravans": {
+        "Knights Vanguard": {"Ride Warhorse": ["Ride [Animal]"]},  # "trained in riding Warhorses"
+        "Blackguard": {"Strongman": ["Strongman"]},  # "They may use a double-handed weapon without ... striking last"
+    },
     # "Thieves may infiltrate, as the Infiltration skill: ..." (the skill's rule, retold)
     "Militant Mootlanders": {"Thief": {"Infiltration": ["Infiltration"]}},
     "Nipponese Expedition": {  # "The Hatamoto has the Ride skill of the Blazing Saddles rules."

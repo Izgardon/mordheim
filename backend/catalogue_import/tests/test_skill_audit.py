@@ -139,3 +139,34 @@ class SkillAuditTests(ReviewCase):
             with self.subTest(group=group):
                 self.assertIn(skill, groups[group]["skills"])
                 self.assertIn(skill, groups[group]["note"])
+
+    def test_a_rule_of_a_skills_name_and_effect_is_the_skill_he_starts_with(self) -> None:
+        # William, 27 Nov 2026 (the decision sheet's 25: A): the nine rules the skills audit's M4 lists, under his
+        # 7 Nov rule; a starting skill adds no group to his advance list
+        fighters = {
+            ("channel-rats", "Domnu"): ("Prize-fighter", "Prize-fighter"),
+            ("channel-rats", "Truant"): ("Spry", "Spry"),
+            ("maneaters", "Bull"): ("Bull Charge", "Bull Charge"),
+            ("merchant-caravans", "Blackguard"): ("Strongman", "Strongman"),
+            ("sea-ghosts", "Minstrel"): ("Songster", "Songster"),
+            ("high-elves", "Ranger"): ("Seeker", "Seeker (Wood Elves)"),
+            ("woodsmen-de-artois", "Trapper"): ("Set Traps", "Set Traps"),
+        }
+        for (slug, name), (rule, skill) in fighters.items():
+            with self.subTest(fighter=name):
+                found = next(row for row in self.templates[slug]["fighters"] if row["name"] == name)
+                self.assertIn(skill, found["skills"])
+                self.assertNotIn(rule, [special["name"] for special in found["specials"]])
+                self.assertIn(skill, self.skills)
+        ranger = next(row for row in self.templates["high-elves"]["fighters"] if row["name"] == "Ranger")
+        self.assertNotIn("Wood Elves of Arden", ranger["skill_types"])
+        for hired, (rule, learns) in {"Elf Mage": ("Fey", []), "Coachman": ("Driver", ["Speed"])}.items():
+            with self.subTest(hired=hired):
+                self.assertIn(rule, self.hired[hired]["skills"])
+                self.assertNotIn(rule, [special["name"] for special in self.hired[hired]["specials"]])
+                self.assertEqual(self.terms(hired)["available_skill_types"], learns)
+        # the Woodsmen's Trapper starts with the Ogre Hunting Party's Set Traps, so its Gnoblars-only limit is that
+        # group's note, not the skill's text
+        self.assertFalse(self.skills["Set Traps"].startswith("Gnoblars only"))
+        groups = {row["name"]: row for row in load_json(OUT / "skill-groups.json")}
+        self.assertIn("Set Traps", groups["Ogre Hunting Party"]["note"])

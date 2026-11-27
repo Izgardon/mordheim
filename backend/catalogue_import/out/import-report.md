@@ -486,7 +486,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Night Goblins (MIC) | Night Goblins (MIC) | new group | - | Infiltration, Sneaky Git, Netter, Ded Shooty |
 | Nipponese Expedition | Nipponese Expedition | new group | - | Death Before Dishonor, Night Fighter, Iaijutsu, Last Stand, Tea Ceremony, Blessed by the Kami |
 | Norse | Norse Explorers (TC13), Norse Explorers (BTB) | intersection | - | Barbarian Courage, Berserk Charge, Battle Tongue, Shield Master, Crushing Blow |
-| Ogre Hunting Party | Ogre Hunting Party | new group | Ogres only: Maneater, Bull Charge. The leader only: Bellowing Roar (Ogres). Gnoblars only: Infiltration. | Crude Belch, Maneater, Bull Charge, Bellowing Roar (Ogres), Infiltration, Scent Hound, Sabre Trainer, Set Traps, Netter (Ogre Hunting Party) |
+| Ogre Hunting Party | Ogre Hunting Party | new group | Ogres only: Maneater, Bull Charge. The leader only: Bellowing Roar (Ogres). Gnoblars only: Infiltration, Set Traps. | Crude Belch, Maneater, Bull Charge, Bellowing Roar (Ogres), Infiltration, Scent Hound, Sabre Trainer, Set Traps, Netter (Ogre Hunting Party) |
 | Ogres | Ogres (group) | skill_group_learners | - | Master of Arms, Crude Belch, Maneater, Bull Charge, Dog of War, Bellowing Roar (Ogres) |
 | Orcs | Orcs (group) | skill_group_learners | - | ’Ard ’Ead, Waaagh!, ’Ere We Go!, Da Cunnin’ Plan, Well ’Ard, ’Eadbasher, Proven Warrior |
 | Ostlanders | Ostlanders | skill_group_learners | - | Bull Rush, Foul Odour, Taunt, Animal Friendship, Blood Oath |
@@ -974,7 +974,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 3993 |
 | warband rules | 512 |
 | upgrades | 179 |
-| the templates' own specials | 1126 |
+| the templates' own specials | 1119 |
 
 ### List lines
 
@@ -3623,11 +3623,14 @@ A fighter's or dramatis persona's own rule that only pointed to a skill, or said
 - Battle Monks of Cathay: Emissary: Ride Horse, starts with Ride [Animal].
 - Bretonnian Chapel Guard: Questing Knight: Ride, starts with Ride [Animal].
 - Carnival of Chaos: Brute: Unnatural Strength, starts with Strongman.
+- Channel Rats: Domnu: Prize-fighter, starts with Prize-fighter.
+- Channel Rats: Truant: Spry, starts with Spry.
 - Estalian Corsairs: Pirate Captain: Expert Swordsman, starts with Expert Swordsman.
 - Estalian Corsairs: Ship's Mate: Expert Swordsman, starts with Expert Swordsman.
 - Forest Goblins: Chieftain: Ride Spiders, starts with Ride [Animal].
 - Gunnery School of Nuln: Senior Gunnery Officer: Hunter, starts with Hunter.
 - Gunnery School of Nuln: Marksmen: Quick Reload, starts with Hunter.
+- High Elves: Ranger: Seeker, starts with Seeker (Wood Elves).
 - Imperial Outriders: Knight: Ride, starts with Ride [Animal].
 - Imperial Outriders: Outrider: Ride, starts with Ride [Animal].
 - Imperial Outriders: Scout: Ride, starts with Ride [Animal].
@@ -3640,7 +3643,9 @@ A fighter's or dramatis persona's own rule that only pointed to a skill, or said
 - Knights of the Bitter Moors: Knight Errant: Ride, keeps the rule and starts with Ride [Animal].
 - Knights of the Bitter Moors: Squire: Starting Skills, starts with Ride [Animal], [Animal] Handler.
 - Knights of the Bitter Moors: Mounted Yeoman: Mounted or Nothin', keeps the rule and starts with Ride [Animal].
+- Maneaters: Bull: Bull Charge, starts with Bull Charge.
 - Merchant Caravans: Knights Vanguard: Ride Warhorse, starts with Ride [Animal].
+- Merchant Caravans: Blackguard: Strongman, starts with Strongman.
 - Militant Mootlanders: Thief: Infiltration, starts with Infiltration.
 - Nipponese Expedition: Hatamoto: Ride, starts with Ride [Animal].
 - Nipponese Expedition: Retainer: Ride, starts with Ride [Animal].
@@ -3658,11 +3663,13 @@ A fighter's or dramatis persona's own rule that only pointed to a skill, or said
 - Pit Fighters (old): Pursuer: Pit Fighter, starts with Pit Fighter.
 - Pit Fighters (old): Pit Fighter: Pit Fighter, starts with Pit Fighter.
 - Pit Fighters (old): Pit Fighter: Arms Master, starts with Arms Master.
+- Sea Ghosts: Minstrel: Songster, starts with Songster.
 - Skaven of Clan Moulder: Packmaster: Master Handler, keeps the rule and starts with Ride [Animal].
 - The Cursed Cavalcade: Aristocrat: Expert Horseman, starts with Ride [Animal].
 - The Cursed Cavalcade: Companion: Expert Swordsman, starts with Expert Swordsman.
 - The Cursed Cavalcade: Fighting Ape: Agile (Fighting Ape), keeps the rule and starts with Scale Sheer Surfaces, Acrobat, Dodge.
 - Watchmen: Sergeant: Falconer, keeps the rule and starts with Falconer.
+- Woodsmen de Artois: Trapper: Set Traps, starts with Set Traps.
 - Grand Master Ippan Shu: Parry Missiles, keeps the rule and starts with Dodge.
 - Maximilian the Mad: Strongman, starts with Strongman.
 

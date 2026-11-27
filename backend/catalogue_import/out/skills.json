@@ -1701,7 +1701,7 @@
   },
   {
     "name": "Set Traps",
-    "description": "Gnoblars only. The Trapper may set a trap in a turn he does nothing else (not one in which he recovered from being knocked down): place a marker touching him. A model, friend or foe, that moves within 2\" of it rolls a D6, and on a 3+ triggers the trap and takes a S4 hit; the Trapper never triggers his own. If the hit doesn't wound, the model has more than one wound, or the trap isn't triggered, it may finish its move; a model knocked down or stunned is placed 2\" from the marker. The marker is removed either way."
+    "description": "The Trapper may set a trap in a turn he does nothing else (not one in which he recovered from being knocked down): place a marker touching him. A model, friend or foe, that moves within 2\" of it rolls a D6, and on a 3+ triggers the trap and takes a S4 hit; the Trapper never triggers his own. If the hit doesn't wound, the model has more than one wound, or the trap isn't triggered, it may finish its move; a model knocked down or stunned is placed 2\" from the marker. The marker is removed either way."
   },
   {
     "name": "Netter (Ogre Hunting Party)",
