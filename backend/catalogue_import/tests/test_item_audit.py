@@ -7,7 +7,7 @@ name, and the Gas Mask the Temple Dog's armour save. Each now words the rule its
 from typing import Any, ClassVar
 
 from catalogue_import.common import load_json
-from catalogue_import.sources import OUT
+from catalogue_import.sources import BACKEND, OUT
 from catalogue_import.tests.review_support import ReviewCase
 
 
@@ -177,3 +177,41 @@ class SearchTagTests(ItemAuditCase):
                 self.assertEqual([tag for tag in item["tags"] if names.get(tag, name) != name], [])
         self.assertIn("harpoon gun", self.items["Harpoon Gun/Crossbow"]["tags"])
         self.assertIn("barge", self.items["River Barge"]["tags"])
+
+
+class MountTests(ItemAuditCase):
+    MOUNTS = {  # the mount, its profile's M WS BS S T W I A Ld as its PDF prints them
+        "Pegasus": ["8", "3", "0", "3", "3", "1", "3", "1", "5"],  # "the same stats as a warhorse"
+        "Wolf Rat Mount": ["9", "3", "0", "3(4)", "3", "1", "4", "1", "4"],
+        "Pigback Mount": ["5", "2", "-", "2", "-", "1", "3", "1", "5"],
+        "Wild Mountain Goat": ["7", "2", "0", "2", "3", "1", "4", "1", "5"],
+    }
+
+    @staticmethod
+    def beasts() -> dict[str, dict[str, Any]]:
+        return {
+            row["name"]: row
+            for path in sorted((BACKEND / "apps" / "bestiary" / "data").glob("*.json"))
+            for row in load_json(path)
+        }
+
+    def test_the_pdf_warbands_mounts_are_animals_with_their_profiles(self) -> None:
+        # the items audit, 27 Nov 2026: typed Miscellaneous, they had no beast, so they could not be ridden
+        for name, profile in self.MOUNTS.items():
+            with self.subTest(item=name):
+                item = self.items[name]
+                self.assertEqual((item["type"], item["subtype"]), ("Animal", "Ridden Animals"))
+                keys = ("m", "ws", "bs", "s", "t", "w", "i", "a", "ld")
+                self.assertEqual([item["statblock"][0][key] for key in keys], profile)
+
+    def test_every_animal_item_has_its_beast_and_each_new_mount_rides(self) -> None:
+        beasts = self.beasts()
+        for name, item in self.items.items():
+            if item["type"] == "Animal":
+                with self.subTest(item=name):
+                    self.assertIn(name, beasts)
+        for name in self.MOUNTS:
+            self.assertEqual(beasts[name]["kind"], "mount")
+        # the Ogre Hunting Party: a gnoblar on Pigback "doesn't gain +1AS"; the rest are worth the usual step
+        self.assertEqual(beasts["Pigback Mount"]["save_bonus"], 0)
+        self.assertNotIn("save_bonus", beasts["Pegasus"])

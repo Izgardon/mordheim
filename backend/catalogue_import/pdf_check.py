@@ -57,7 +57,7 @@ from catalogue_import.template_lists import Fighter, ItemIndex, plain, read_note
 
 WRITTEN = re.compile(r"^(\d{1,2}\(\d{1,2}\)|\d*D\d+(\+\d+)?|-)$")
 SKILLS = ("combat", "shooting", "academic", "strength", "speed", "special")
-STUB_TYPES = ("Weapon", "Armour", "Miscellaneous")
+STUB_TYPES = ("Weapon", "Armour", "Miscellaneous", "Animal")  # an Animal is a mount, its beast in the bestiary
 NOTE_MAX = 200  # a group's learn_note
 # key -> (what it must be, required); a page, its parts and the keys pdf_warbands.py adds
 

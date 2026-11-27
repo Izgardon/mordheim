@@ -192,7 +192,7 @@ class BestiarySeederBeastTests(TestCase):
 
 
 class CommittedBestiaryTests(TestCase):
-    """The committed files: 93 beasts, each with its Animal item."""
+    """The committed files: 97 beasts, each with its Animal item."""
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -203,15 +203,16 @@ class CommittedBestiaryTests(TestCase):
     def beasts(self) -> dict[str, BestiaryEntry]:
         return {beast.name: beast for beast in BestiaryEntry.objects.select_related("animal_item")}
 
-    def test_the_book_holds_19_mounts_12_pets_and_62_creatures_each_with_its_item(self):
+    def test_the_book_holds_23_mounts_12_pets_and_62_creatures_each_with_its_item(self):
         beasts = self.beasts()
 
         # the Border Town Burning bear and Marienburg's wild dogs joined ours (William, 15 Nov 2026), and
         # Marienburg's Wild Boar/Pig mount our War Boar (William, 16 Nov 2026), and Relics of the Crusades' Arabian
         # Steed is one mount more (William, 21 Nov 2026), and the Marienburg Annual brings three beast daemons (mounts),
-        # five other daemons, the Great Eagle and the Great Stag (23 Nov 2026)
-        self.assertEqual(Counter(beast.kind for beast in beasts.values()), {"mount": 19, "creature": 62, "pet": 12})
-        self.assertEqual(Item.objects.filter(type="Animal").count(), 93)
+        # five other daemons, the Great Eagle and the Great Stag (23 Nov 2026), and the PDF warbands' Pegasus, Wolf Rat
+        # Mount, Pigback Mount and Wild Mountain Goat are four mounts more (the items audit, 27 Nov 2026)
+        self.assertEqual(Counter(beast.kind for beast in beasts.values()), {"mount": 23, "creature": 62, "pet": 12})
+        self.assertEqual(Item.objects.filter(type="Animal").count(), 97)
         self.assertEqual({beast.animal_item.subtype for beast in beasts.values() if beast.kind == "pet"}, {"Pet"})
         self.assertIn("Wardogs", beasts)
         self.assertNotIn("Wardog", beasts)  # Mutiny in Marienburg's duplicate with an empty profile
@@ -236,7 +237,7 @@ class CommittedBestiaryTests(TestCase):
             unsold,
             sorted(["Giant Rat", "Wyvern", *familiars, *beasts_of_the_east, *river_city, *annual]),
         )
-        self.assertEqual(Item.objects.filter(type="Animal", listed=True).count(), 33)  # the Arabian Steed is sold
+        self.assertEqual(Item.objects.filter(type="Animal", listed=True).count(), 37)  # the Arabian Steed is sold
         rat = self.beasts()["Giant Rat"].animal_item
         self.assertEqual(list(rat.availabilities.values_list("cost", "rarity", "cost_note")), [(0, 9, "15 warptokens")])  # fmt: skip
 
@@ -262,13 +263,16 @@ class CommittedBestiaryTests(TestCase):
 
         self.assertEqual(bonuses, {"Riding/Draft Horse": 3, "Warhorse": 5, "Rhinox": 20, "Temple Dog": 20})
 
-    def test_the_cold_one_and_the_war_boar_arm_their_rider_two_steps_the_rot_fly_none_and_every_other_mount_one(self):
+    def test_the_cold_one_and_the_war_boar_arm_their_rider_two_steps_the_rot_fly_and_pigback_none_and_every_other_one(
+        self,
+    ):
         """Their own rules print "making +2 total" (Scaly, Thick Skinned); no other beast's claims an extra step. The
-        Rot Fly's rider takes its own 4+ save instead of a mount's step (the Marienburg Annual, 23 Nov 2026)."""
+        Rot Fly's rider takes its own 4+ save instead of a mount's step (the Marienburg Annual, 23 Nov 2026), and a
+        gnoblar on Pigback "doesn't gain +1AS" (the Ogre Hunting Party)."""
         steps = {name: beast.save_bonus for name, beast in self.beasts().items() if beast.kind == "mount"}
 
         self.assertEqual({name for name, value in steps.items() if value == 2}, {"Cold One", "War Boar"})
-        self.assertEqual({name for name, value in steps.items() if value == 0}, {"Rot Fly"})
+        self.assertEqual({name for name, value in steps.items() if value == 0}, {"Rot Fly", "Pigback Mount"})
         self.assertEqual({value for value in steps.values()}, {0, 1, 2})
         items = {name: beast.animal_item.save_bonus for name, beast in self.beasts().items() if beast.kind == "mount"}
         self.assertEqual(items, steps)  # each mount's item carries its beast's steps
@@ -276,7 +280,7 @@ class CommittedBestiaryTests(TestCase):
     def test_every_item_has_its_setting_the_imports_animals_theirs_and_marienburgs_beasts_marienburg(self):
         settings = {name: beast.animal_item.campaign_type.slug for name, beast in self.beasts().items() if beast.animal_item.campaign_type}  # fmt: skip
 
-        self.assertEqual(len(settings), 93)
+        self.assertEqual(len(settings), 97)
         self.assertEqual({settings[name] for name in ("Dragon Turtle", "Geckamand", "Lizard-Hawk", "Tiger", "Wyvern")}, {"mutiny-in-marienburg"})  # fmt: skip
         self.assertEqual((settings["Warhorse"], settings["Chaos Steed"]), ("mordheim", "mordheim-1b"))
         self.assertEqual(
@@ -292,6 +296,6 @@ class CommittedBestiaryTests(TestCase):
 
         output = run("seed_bestiary")
 
-        self.assertIn("Entries created: 0, updated: 93, archived (no longer in the data): 0.", output)
-        self.assertIn("Items created: 0, updated: 93.", output)
+        self.assertIn("Entries created: 0, updated: 97, archived (no longer in the data): 0.", output)
+        self.assertIn("Items created: 0, updated: 97.", output)
         self.assertEqual(sorted(Item.objects.filter(type="Animal").values_list("id", "bestiary_entry_id")), before)

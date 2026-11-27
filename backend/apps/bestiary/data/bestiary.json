@@ -791,5 +791,141 @@
         }
       ]
     }
+  },
+  {
+    "name": "Pegasus",
+    "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": true,
+    "setting": "mordheim-2a",
+    "description": "",
+    "movement": 8,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "2a",
+      "availabilities": [
+        {
+          "cost": 110,
+          "rarity": 11
+        }
+      ]
+    }
+  },
+  {
+    "name": "Pigback Mount",
+    "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
+    "save_bonus": 0,
+    "available_in_shop": true,
+    "setting": "mordheim-2a",
+    "description": "",
+    "movement": 5,
+    "weapon_skill": 2,
+    "ballistic_skill": "-",
+    "strength": 2,
+    "toughness": "-",
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "2a",
+      "availabilities": [
+        {
+          "cost": 50
+        }
+      ]
+    }
+  },
+  {
+    "name": "Wild Mountain Goat",
+    "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": true,
+    "setting": "mutiny-in-marienburg",
+    "description": "",
+    "movement": 7,
+    "weapon_skill": 2,
+    "ballistic_skill": 0,
+    "strength": 2,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "2b",
+      "availabilities": [
+        {
+          "cost": 85,
+          "rarity": 12
+        }
+      ]
+    }
+  },
+  {
+    "name": "Wolf Rat Mount",
+    "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": true,
+    "setting": "mordheim-2a",
+    "description": "",
+    "movement": 9,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": "3(4)",
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 4,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "2a",
+      "availabilities": [
+        {
+          "cost": 90,
+          "rarity": 11
+        }
+      ]
+    }
   }
 ]

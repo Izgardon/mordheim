@@ -185,7 +185,7 @@
   ],
   "stubs": [
     {"name": "Sharp Stuff", "type": "Weapon", "subtype": "Ranged", "rarity": null, "dice": null, "rulesPage": 5, "range": "8\"", "strength": "2"},
-    {"name": "Pigback Mount", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 5}
+    {"name": "Pigback Mount", "type": "Animal", "subtype": "Ridden Animals", "rarity": null, "dice": null, "rulesPage": 5, "statblock": [{"profile": "Pigback", "m": 5, "ws": 2, "bs": "-", "s": 2, "t": "-", "w": 1, "i": 3, "a": 1, "ld": 5}]}
   ],
   "flags": [
     {"page": 1, "what": "An Ogre warband needs at least 3 models: our templates hold no minimum, so it is not imported."},

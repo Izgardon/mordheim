@@ -205,7 +205,7 @@
        {"rule": "Two-handed"},
        {"name": "Capture", "text": "A model taken out of action by a thingcatcher is captured and does not roll for serious injuries. Only animals and large models, such as Ogres and Duskcats, may be captured this way."}
      ]},
-    {"name": "Wolf Rat Mount", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": null, "rulesPage": 3}
+    {"name": "Wolf Rat Mount", "type": "Animal", "subtype": "Ridden Animals", "rarity": 11, "dice": null, "rulesPage": 3, "statblock": [{"profile": "Wolf Rat", "m": 9, "ws": 3, "bs": 0, "s": "3(4)", "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4}]}
   ],
   "flags": [
     {"page": 1, "what": "The warband is designed for the updated Blazing Saddles mounted rules (2002 Mordheim Annual) and says it is overcosted without them: a note, not imported."},

@@ -192,7 +192,7 @@
   ],
   "aliases": [],
   "stubs": [
-    {"name": "Wild Mountain Goat", "type": "Miscellaneous", "subtype": "", "rarity": 12, "dice": null, "rulesPage": 3}
+    {"name": "Wild Mountain Goat", "type": "Animal", "subtype": "Ridden Animals", "rarity": 12, "dice": null, "rulesPage": 3, "statblock": [{"profile": "Wild Goat", "m": 7, "ws": 2, "bs": 0, "s": 2, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5}]}
   ],
   "flags": [
     {"page": 2, "what": "A Halfling Rogues warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed."},

@@ -171,7 +171,9 @@ class SeedAllTests(TestCase):
                 # Relics of the Crusades' Arabian Steed is one mount more (William, 21 Nov 2026)
                 # the Marienburg Annual's eight daemons we lacked (three beast daemons are mounts) and the Horn of the
                 # Wild Hunt's Great Eagle and Great Stag (23 Nov 2026)
-                "BestiaryEntry": 93,
+                # the PDF warbands' Pegasus, Wolf Rat Mount, Pigback Mount and Wild Mountain Goat, four mounts more
+                # (the items audit, 27 Nov 2026)
+                "BestiaryEntry": 97,
                 # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin), Mutiny in
                 # Marienburg's eleven Specialists and three Dramatis Personae, and broheim's hired sword section's
                 # 35 (Karak Azgal 6, Mousillon 6, Khemri 3, the Sealed City 6, Sartosa 6, the fan-made trees 8)

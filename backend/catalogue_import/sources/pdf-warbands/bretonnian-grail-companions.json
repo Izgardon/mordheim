@@ -230,7 +230,7 @@
   "stubs": [
     {"name": "Longsword", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3, "range": "Close Combat", "strength": "As user"},
     {"name": "Holy Shield", "type": "Armour", "subtype": "", "rarity": 7, "dice": null, "rulesPage": 3},
-    {"name": "Pegasus", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": null, "rulesPage": 3}
+    {"name": "Pegasus", "type": "Animal", "subtype": "Ridden Animals", "rarity": 11, "dice": null, "rulesPage": 3, "statblock": [{"profile": "Pegasus", "m": 8, "ws": 3, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 5}]}
   ],
   "flags": [
     {"page": 1, "what": "The manifest gives no setting; our type's is Mordheim 2a, assumed (setting_assumed). Grade 2a matches."},
