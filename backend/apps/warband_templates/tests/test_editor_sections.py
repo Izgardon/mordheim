@@ -1,7 +1,7 @@
 """The editor's sections, each saved on its own (the templates plan, phase 4): Basics, Fighters, Lists, Rules and
 Upgrades, refusing only what breaks the data (an unknown item, list or fighter, a missing name)."""
 
-from apps.items.tests.catalogue_support import ITEMS, SKILLS, make_entry
+from apps.items.tests.catalogue_support import ITEMS, SKILLS, SPELLS, make_entry
 from apps.skills.models import Skill
 from apps.special.kinds import WARBAND
 from apps.special.models import Special
@@ -157,6 +157,41 @@ class FighterTests(EditorTestCase):
         elsewhere = make_entry(SKILLS, "Lurk", campaign=self.elsewhere)
         refused = self.save("fighters/captain/", fighter_body(skill_ids=[elsewhere.id]), template=version)
         self.assertEqual(refused.status_code, 400)
+
+    def test_a_save_writes_the_spells_he_starts_with_in_order_as_the_campaigns_current_ones(self) -> None:
+        # William, 27 Nov 2026: "Just have a spell picker"
+        ritual = make_entry(SPELLS, "Sacrificial Ritual", type="Rituals of Hashut")
+        book_bolt = make_entry(SPELLS, "Bolt")
+        bolt = make_entry(SPELLS, "Bolt", campaign=self.campaign, replaces=book_bolt)
+        body = self.saved("fighters/captain/", fighter_body(name="Captain", spell_ids=[book_bolt.id, ritual.id]))
+        version = WarbandTemplate.objects.get(pk=body["template"]["id"])
+        captain = version.fighters.get(key="captain")
+        self.assertEqual([link.spell_id for link in captain.spell_links.all()], [bolt.id, ritual.id])
+        self.assertFalse(self.made.captain.spell_links.exists())  # the book's fighter is left as he was
+        row = next(row for row in body["template"]["fighters"] if row["key"] == "captain")
+        self.assertEqual([spell["name"] for spell in row["spells"]], ["Bolt", "Sacrificial Ritual"])
+        # none sent: he starts with none
+        self.saved("fighters/captain/", fighter_body(name="Captain"), template=version)
+        self.assertFalse(captain.spell_links.exists())
+        elsewhere = make_entry(SPELLS, "Curse", campaign=self.elsewhere)
+        refused = self.save("fighters/captain/", fighter_body(spell_ids=[elsewhere.id]), template=version)
+        self.assertEqual(refused.status_code, 400)
+
+    def test_a_book_templates_first_save_writes_his_spells_on_the_house_version_alone(self) -> None:
+        ritual = make_entry(SPELLS, "Sacrificial Ritual", type="Rituals of Hashut")
+        book_bolt = make_entry(SPELLS, "Bolt")
+        bolt = make_entry(SPELLS, "Bolt", campaign=self.campaign, replaces=book_bolt)
+        self.made.captain.spell_links.create(spell=ritual)
+        warriors = self.saved("fighters/warriors/", fighter_body(kind="henchman", name="Warrior"))
+        version = WarbandTemplate.objects.get(pk=warriors["template"]["id"])
+        self.assertNotEqual(version.pk, self.book.pk)
+        captain = version.fighters.get(key="captain")
+        self.assertEqual([link.spell_id for link in captain.spell_links.all()], [ritual.id])  # copied with him
+        # his save naming the book template again writes the version's fighter, the book's spell as its version
+        body = self.saved("fighters/captain/", fighter_body(name="Captain", spell_ids=[ritual.id, book_bolt.id]))
+        self.assertEqual(body["template"]["id"], version.pk)
+        self.assertEqual([link.spell_id for link in captain.spell_links.all()], [ritual.id, bolt.id])
+        self.assertEqual([link.spell_id for link in self.made.captain.spell_links.all()], [ritual.id])
 
     def test_a_profile_read_back_saves_unchanged(self) -> None:
         # the Tilean Hunting Hawk's M12 is written (no number to sum), as the seeding keeps it

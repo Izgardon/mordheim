@@ -1,6 +1,6 @@
 """What the editor's Fighters and Lists saves send (the templates plan, phase 4): a whole fighter, or a whole equipment
 list with its lines. Data integrity only, as editor_serializers.py: the counts in order, a profile as players write it
-("1(2)", "D6", "-": utils/stats.py), the race, items, specials and skills the campaign may link (each list in one
+("1(2)", "D6", "-": utils/stats.py), the race, items, specials, skills and spells the campaign may link (each list in one
 query)."""
 
 from typing import Any
@@ -12,6 +12,7 @@ from apps.items.materials import SLUGS
 from apps.items.models import Item
 from apps.races.models import Race
 from apps.skills.models import Skill
+from apps.spells.models import Spell
 from apps.warbands.models.shared import STAT_FIELDS
 from apps.warbands.utils.stats import Stat, StatField
 
@@ -57,6 +58,7 @@ class FighterSerializer(serializers.Serializer):
     lists = serializers.ListField(child=serializers.SlugField(max_length=80), default=list)
     rules = SpecialRuleSerializer(many=True, default=list)
     skill_ids = CatalogueIdsField(rows=Skill.objects.all(), default=list)  # the skills he starts with, in order
+    spell_ids = CatalogueIdsField(rows=Spell.objects.all(), default=list)  # the spells he starts with, in order
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         for low, high in (("min_count", "max_count"), ("group_min", "group_max")):

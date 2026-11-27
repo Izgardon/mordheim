@@ -8,6 +8,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
 from apps.campaigns.models import CampaignSettings
+from apps.items.tests.catalogue_support import SPELLS, make_entry
 from apps.skills.models import Skill
 from apps.warband_templates.models import TemplateFighter, TemplateFighterList, WarbandTemplate, WarbandTemplateType
 from apps.warbands.models import Hero
@@ -124,6 +125,7 @@ class EditorQueryTests(EditorTestCase):
             fighter.list_links.create(equipment_list=fighter.template.lists.get())
             fighter.special_links.create(special=self.made.rule)
             fighter.skill_links.create(skill=Skill.objects.get(campaign=None, name="Sprint"))
+            fighter.spell_links.create(spell=make_entry(SPELLS, f"Bolt {number}"))
 
     def test_the_editor_reads_in_the_same_queries_however_much_the_template_holds(self) -> None:
         url = f"{self.at('editor/')}?campaign_id={self.campaign.id}"
@@ -134,7 +136,8 @@ class EditorQueryTests(EditorTestCase):
     def test_a_section_save_takes_the_same_queries_however_much_the_template_holds(self) -> None:
         version_id = self.saved("fighters/captain/", fighter_body(name="Captain"))["template"]["id"]
         url = self.at("fighters/captain/", template=version_id)
-        body = {"campaign_id": self.campaign.id, **fighter_body(name="Captain", lists=["kit"])}
+        bolt = make_entry(SPELLS, "Bolt")
+        body = {"campaign_id": self.campaign.id, **fighter_body(name="Captain", lists=["kit"], spell_ids=[bolt.id])}
         few = self.count(url, "put", body)
         self.grow(version_id)
         self.assertEqual(few, self.count(url, "put", body))
