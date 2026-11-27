@@ -547,6 +547,28 @@ CASTERS: dict[tuple[str, str], str] = {
     # the Tomb Guardians' printing is the earlier, so it keeps the true name.
     ("tomb-guardians-old", "Liche Priest"): "Mortuary Cult Scrolls (Nehekhara Tomb Guards)",
 }
+# A caster rule of another name that says only what ours does, that he starts with one spell or prayer at random from
+# his list (William, 27 Nov 2026: "For a general caster in a warband or a simple hired sword they will always start
+# with one at random, just call it a spell or prayer depending and can therefore keep the general rule"): page,
+# fighter, rule -> our Wizard or Priest, by his lores. One named Wizard or Priest is ours unless shared-specials.json
+# keeps it apart ("Wizard (Liche)": two spells); one that says more under its own name stays his (the Funerary Rites
+# a Priest of Morr chooses, the Drowned Dead Surgeon's Bloated for zombies, the Mutant-Priest's Marks of Manann).
+GENERAL_CASTER_RULES: frozenset[tuple[str, str, str]] = frozenset(
+    {
+        ("bretonnian-chapel-guard", "Damsel", "Prayercaster"),
+        ("cult-of-the-posessed", "Magister", "Magic User"),
+        ("horned-hunters", "Priest of Taal", "Prayers"),
+        ("ostlander", "Priest of Taal", "Prayers"),
+        ("sisters-of-sigmar", "Sigmarite Matriarch", "Prayers of Sigmar"),
+        ("skaven-eshin", "Eshin Sorcerer", "Magic User"),
+        ("skaven-pestilens", "Pestilens Sorcerer", "Spellcaster"),
+        ("the-sons-of-hashut", "Apprentice Sorcerer", "Rituals of Chaos"),
+        ("witch-hunters", "Warrior-Priest", "Prayers"),
+        ("order-of-the-mare", "Dame of the Mare", "Prayers"),
+        ("protectorate-of-sigmar", "Warrior Priest", "Prayers of Sigmar"),
+        ("vampire-hunters-of-sylvania", "Priest of Morr", "Funerary Rites"),  # "starts with one ... rolled at random"
+    }
+)
 MAGIC_WARBANDS: dict[str, str] = {"Ostlanders": "ostlander"}  # magic.json's warband names that aren't a page's
 LORES: dict[str, str] = {  # magic.json's lore names that differ from our spells' lores by more than punctuation
     "Charms & Hexes": "Charms and Hexes",

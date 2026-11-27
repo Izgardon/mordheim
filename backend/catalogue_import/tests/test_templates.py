@@ -2,10 +2,13 @@
 their prices and who may take them, fighters with their written profile, race, skill groups by variant, lores and
 rules, and the warband rules with their variants and William's titles."""
 
+import json
 from typing import Any
 
 from django.test import SimpleTestCase
 
+from catalogue_import.shared_specials import load_shared
+from catalogue_import.sources import OUT
 from catalogue_import.template_fighters import (
     FighterLog,
     build_fighter,
@@ -193,6 +196,27 @@ class FighterTests(SimpleTestCase):
         )
         self.assertEqual(log.written, [("mercenaries", "Captain", {"attacks": "1(2)"})])
 
+    def test_a_caster_rule_that_says_only_the_general_rule_is_ours_and_one_that_says_more_his_own(self) -> None:
+        # William, 27 Nov 2026: "For a general caster in a warband or a simple hired sword they will always start with
+        # one at random, just call it a spell or prayer depending and can therefore keep the general rule. Only people
+        # with a clear different caster rule should have a specific one."
+        prayers = {"rulename": "Prayers", "ruleFull": "He may use the Prayers of Sigmar."}
+        priest = {**warband_page()["fighters"][0], "name": "Warrior-Priest", "specialRules": [prayers]}
+
+        class Prayers:
+            def of(self, page: str, name: str) -> list[dict[str, str]]:
+                return [{"name": "Prayers of Sigmar", "note": ""}]
+
+        context = {"variants": [], "races": {"Human"}, "lores": Prayers(), "owner": "Warband - Witch Hunters"}
+        built = build_fighter("witch-hunters", priest, context, [], FighterLog())
+        self.assertEqual((built["caster"], built["specials"]), ("Priest", [{"name": "Priest", "type": "Caster"}]))
+        two = {"rulename": "Wizard", "ruleFull": "A Liche starts with two spells randomly generated."}
+        liche = {**warband_page()["fighters"][0], "name": "Liche", "specialRules": [two]}
+        restless = {**context, "lores": FakeLores(), "owner": "Warband - The Restless Dead", "template": "The Restless Dead", "shared": load_shared()}  # fmt: skip
+        built = build_fighter("the-restless-dead", liche, restless, [], FighterLog())
+        own = {"name": "Wizard (Liche)", "type": "Warband - The Restless Dead", "description": two["ruleFull"]}
+        self.assertEqual(built["specials"], [own])
+
     def test_the_special_tick_names_the_warbands_group_and_a_hero_his_own(self) -> None:
         log = FighterLog()
         slayer = {"name": "Dwarf Troll Slayer", "skillAccess": {"combat": True, "special": True}}
@@ -350,3 +374,28 @@ class PartsTests(SimpleTestCase):
         template_log = TemplateLog()
         hero_skills("marauders-of-chaos", fighters, template_log)
         self.assertEqual([row["variant_changes"] for row in fighters], [{"hung": {"skills": ["Ride [Animal]"]}}, {}])
+
+
+class CommittedCasterTests(SimpleTestCase):
+    """The committed output (test_build checks it is up to date)."""
+
+    def setUp(self) -> None:
+        templates = json.loads((OUT / "warband-templates.json").read_text(encoding="utf-8"))
+        self.fighters = {(template["name"], one["name"]): one for template in templates for one in template["fighters"]}
+
+    def test_every_caster_links_ours_for_what_he_casts_and_keeps_only_a_clearly_different_rule(self) -> None:
+        wrong = [
+            (key, special["name"])
+            for key, one in self.fighters.items()
+            for special in one["specials"]
+            if special.get("type") == "Caster" and one["caster"] != "No" and special["name"] != one["caster"]
+        ]
+        self.assertEqual(wrong, [])  # a Priest's lore is prayers, a Wizard's spells
+        worded = [key for key, one in self.fighters.items() for special in one["specials"] if special["name"] in ("Wizard", "Priest") and special.get("description")]  # fmt: skip
+        self.assertEqual(worded, [])
+        undead, liche = self.fighters[("Undead", "Necromancer")], self.fighters[("The Restless Dead", "Liche")]
+        self.assertEqual([special["name"] for special in undead["specials"] if "Wizard" in special["name"]], ["Wizard"])
+        self.assertIn("two spells", next(s["description"] for s in liche["specials"] if s["name"] == "Wizard (Liche)"))
+        hunter = self.fighters[("Witch Hunters", "Warrior-Priest")]
+        self.assertIn({"name": "Priest", "type": "Caster"}, hunter["specials"])
+        self.assertNotIn("Prayers", [special["name"] for special in hunter["specials"]])

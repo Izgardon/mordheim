@@ -1305,6 +1305,215 @@
         }
       ],
       "why": "A wound still makes him roll on the Whoa Boy! table."
+    },
+    {
+      "name": "Wizard (Liche)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "The Restless Dead",
+          "fighter": "Liche"
+        }
+      ],
+      "why": "Two spells at random from his Necromancy list."
+    },
+    {
+      "name": "Wizard (Restless Dead Necromancer)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "The Restless Dead",
+          "fighter": "Necromancer"
+        }
+      ],
+      "why": "He starts knowing one of the two spells his Liche master knows."
+    },
+    {
+      "name": "Wizard (Nehekhara Liche Priest)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Nehekhara Tomb Guards",
+          "fighter": "Liche Priest"
+        }
+      ],
+      "why": "He may use Necromantic magic as well as the Liche Priest scrolls."
+    },
+    {
+      "name": "Wizard (Adventurers' Wizard)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Adventurers",
+          "fighter": "Wizard"
+        }
+      ],
+      "why": "Two spells at random from the Lesser Magic list."
+    },
+    {
+      "name": "Wizard (Albion Shaman)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Albion Barbarians",
+          "fighter": "Shaman"
+        }
+      ],
+      "why": "Two spells at random."
+    },
+    {
+      "name": "Wizard (Student)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Altdorf Expeditionary Party",
+          "fighter": "Student"
+        }
+      ],
+      "why": "No spells, but he counts as a wizard for his weapons and for hatred."
+    },
+    {
+      "name": "Wizard (Street Mage)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Arabyan Nomads",
+          "fighter": "Street Mage"
+        }
+      ],
+      "why": "He casts only from the one element he chooses, for good."
+    },
+    {
+      "name": "Wizard (Petru)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Channel Rats",
+          "fighter": "Petru"
+        }
+      ],
+      "why": "Two spells from Charms and Hexes."
+    },
+    {
+      "name": "Wizard (Branchwych)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Fen Guard",
+          "fighter": "Branchwych"
+        }
+      ],
+      "why": "Two spells from the Utterances of the Oak."
+    },
+    {
+      "name": "Wizard (Loremaster)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "High Elves",
+          "fighter": "Loremaster"
+        }
+      ],
+      "why": "His first spell is High Elf Magic's; later ones come from it or from Lesser Magic."
+    },
+    {
+      "name": "Wizard (Lustrian Skink Priest)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Lizardmen (Lustria)",
+          "fighter": "Skink Priest"
+        }
+      ],
+      "why": "His spells work like prayers: he casts them in armour."
+    },
+    {
+      "name": "Wizard (Draich)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Lords of the Marsh",
+          "fighter": "Draich"
+        }
+      ],
+      "why": "Two spells, one from the Chaos Rituals and one from the Rituals of Dhar."
+    },
+    {
+      "name": "Wizard (Arch Mage)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Mages",
+          "fighter": "Arch Mage"
+        }
+      ],
+      "why": "Two elemental lores, and a spell from each."
+    },
+    {
+      "name": "Wizard (Mage)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Mages",
+          "fighter": "Mage"
+        }
+      ],
+      "why": "He casts only from the one elemental lore he takes."
+    },
+    {
+      "name": "Wizard (Mages' Warlock)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Mages",
+          "fighter": "Warlock"
+        }
+      ],
+      "why": "Two spells from the Lesser Magic list."
+    },
+    {
+      "name": "Wizard (Necrarch Vampire)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Necrarchs, the Soul Stealers",
+          "fighter": "Necrarch Vampire"
+        }
+      ],
+      "why": "With Pupil of Nagash he also rolls on the Dreaded Scrolls of Nagash."
+    },
+    {
+      "name": "Wizard (Magus)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Sorcerous Society",
+          "fighter": "Magus"
+        }
+      ],
+      "why": "Two spells at random from one Elemental lore he takes, or from Lesser Magic."
+    },
+    {
+      "name": "Wizard (Sorcerous Society Mage)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Sorcerous Society",
+          "fighter": "Mage"
+        }
+      ],
+      "why": "His spell comes from one Elemental lore he takes, or from Lesser Magic."
+    },
+    {
+      "name": "Wizard (Rünwulf)",
+      "rule": "Wizard",
+      "owners": [
+        {
+          "warband": "Werewolf Hunting Pack",
+          "fighter": "Rünwulf"
+        }
+      ],
+      "why": "His runes last one game, are inscribed before it and once on a subject."
     }
   ]
 }

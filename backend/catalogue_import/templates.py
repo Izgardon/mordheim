@@ -13,6 +13,7 @@ from catalogue_import.shared_specials import SharedSpecials
 from catalogue_import.snapshot import Snapshot
 from catalogue_import.sources import BACKEND
 from catalogue_import.template_answers import (
+    GENERAL_CASTER_RULES,
     RULES_ADDED,
     SIZES,
     TEMPLATE_TYPES,
@@ -163,7 +164,13 @@ def build_template(slug: str, snapshot: Snapshot, context: dict[str, Any], log: 
     variants = pdf_variants(page) if is_pdf(page) else VARIANTS.get(slug, [])
     owner = f"Warband - {name}"
     lists, list_keys = build_lists(slug, page, context["index"], log.lists)
-    fighter_context = {**context, "variants": variants, "owner": owner, "special_groups": special_groups(page)}
+    fighter_context = {
+        **context,
+        "variants": variants,
+        "owner": owner,
+        "template": name,
+        "special_groups": special_groups(page),
+    }
     fighters = [
         build_fighter(slug, fighter, fighter_context, list_keys.get(fighter["name"], []), log.fighters)
         for fighter in page["fighters"]
@@ -233,6 +240,9 @@ def build_templates(
         for slug in snapshot.pages
         if (template := build_template(slug, snapshot, context, log)) is not None
     ]
+    unmet = sorted(GENERAL_CASTER_RULES - set(log.fighters.general_casters))
+    if unmet:
+        raise ValueError(f"template_answers.GENERAL_CASTER_RULES: no such rule {unmet}")
     for slug, template in built:  # once every page gave its mutations' prices (the Cult's, the Carnival's)
         mutation_upgrades(slug, template, shared, log.upgrades)
     templates = [template for _slug, template in built]

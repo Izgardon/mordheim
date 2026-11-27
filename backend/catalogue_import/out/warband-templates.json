@@ -1053,8 +1053,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Adventurers' Wizard)",
+            "type": "Warband - Adventurers",
+            "description": "The Wizard is a spell caster. He starts with two spells from the Lesser Magic list, chosen at random."
           }
         ],
         "skills": []
@@ -1605,8 +1606,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Albion Shaman)",
+            "type": "Warband - Albion Barbarians",
+            "description": "The Shaman is a spell caster and uses Barbarian Shaman Magic. He starts with two spells, chosen at random."
           }
         ],
         "skills": []
@@ -2482,8 +2484,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Student)",
+            "type": "Warband - Altdorf Expeditionary Party",
+            "description": "A Student starts with no spells, but counts as a wizard, in particular for what weapons he may use and for hatred. As a henchman he may still use no equipment beyond his list."
           },
           {
             "name": "Very Talented",
@@ -6874,8 +6877,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Street Mage)",
+            "type": "Warband - Arabyan Nomads",
+            "description": "The Street Mage is a wizard. He starts with one elemental spell, and the element he chooses is the only one he may ever cast from. When he gains a new level he may take another spell from it, chosen at random."
           }
         ],
         "skills": []
@@ -16050,9 +16054,8 @@
         ],
         "specials": [
           {
-            "name": "Prayercaster",
-            "type": "Warband - Bretonnian Chapel Guard",
-            "description": "The Damsel starts with one prayer from the Lady's Prayers list, and can learn additional prayers as outlined in the Magic section."
+            "name": "Priest",
+            "type": "Caster"
           }
         ],
         "skills": []
@@ -21004,8 +21007,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Petru)",
+            "type": "Warband - Channel Rats",
+            "description": "The Petru is a wizard and starts with two spells from Charms and Hexes."
           },
           {
             "name": "Necromancy",
@@ -24418,9 +24422,8 @@
             "description": "Any models in the warband within 6\" of the Magister may use his Leadership instead of their own."
           },
           {
-            "name": "Magic User",
-            "type": "Warband - Cult of the Possessed",
-            "description": "The Magister has the ability to use magic and casts spells like any other magicians, and the Magister starts with one spells generated at random from the Chaos Rituals In addition the Magister may learn a new Spell instead of a new skill."
+            "name": "Wizard",
+            "type": "Caster"
           }
         ],
         "skills": []
@@ -37883,8 +37886,9 @@
             "type": "Psychology"
           },
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Branchwych)",
+            "type": "Warband - Fen Guard",
+            "description": "The Branchwych is a wizard and starts with two spells from the Utterances of the Oak."
           },
           {
             "name": "Eternal",
@@ -45541,8 +45545,9 @@
             "description": "Any model in the warband within 6\" of the Loremaster may use his Leadership instead of his own."
           },
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Loremaster)",
+            "type": "Warband - High Elves",
+            "description": "The Loremaster starts with one spell from High Elf Magic. Each later spell he gains is chosen from either High Elf Magic or Lesser Magic."
           }
         ],
         "skills": []
@@ -48375,9 +48380,8 @@
         ],
         "specials": [
           {
-            "name": "Prayers",
-            "type": "Warband - Horned Hunters",
-            "description": "A Priest of Taal may use the Prayers of Taal."
+            "name": "Priest",
+            "type": "Caster"
           },
           {
             "name": "Strictures",
@@ -54900,8 +54904,9 @@
             "description": "Any Lizardman within 6\" of the Skink Priest may use his Leadership for any Leadership test. If the Skink Priest is killed you may recruit a new one, but you must play at least one game without a leader first."
           },
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Lustrian Skink Priest)",
+            "type": "Warband - Lizardmen (Lustria)",
+            "description": "The Skink Priest casts Lizardmen Magic. Its spells work like the Prayers of Sigmar and may be used even when he wears armour."
           }
         ],
         "skills": []
@@ -55681,8 +55686,9 @@
             "description": "Warriors within 6\" of the Draich may use his Leadership instead of their own."
           },
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Draich)",
+            "type": "Warband - Lords of the Marsh",
+            "description": "The Draich is a wizard with two spells: one from the Chaos Rituals, and one from the Rituals of Dhar (the Bazaar of Books, in Infamous Haunts)."
           },
           {
             "name": "Mind Focus",
@@ -59186,8 +59192,9 @@
             "description": "Any member of the warband within 6\" of the Arch Mage may use his Leadership for a Leadership test."
           },
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Arch Mage)",
+            "type": "Warband - Mages",
+            "description": "The Arch Mage may take spells from two of the elemental lores, and starts with two spells, one from each."
           }
         ],
         "skills": []
@@ -59250,8 +59257,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Mage)",
+            "type": "Warband - Mages",
+            "description": "The Mage casts from one elemental lore and starts with one spell from it."
           }
         ],
         "skills": []
@@ -59302,8 +59310,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Mages' Warlock)",
+            "type": "Warband - Mages",
+            "description": "The Warlock casts from the Lesser Magic list and starts with two spells."
           }
         ],
         "skills": []
@@ -69336,8 +69345,9 @@
             "type": "Psychology"
           },
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Necrarch Vampire)",
+            "type": "Warband - Necrarchs, the Soul Stealers",
+            "description": "The Necrarch Vampire is a wizard and starts with one spell rolled at random from Necromancy. With Pupil of Nagash he also rolls on the Dreaded Scrolls of Nagash."
           },
           {
             "name": "Immune to Psychology",
@@ -71081,8 +71091,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Nehekhara Liche Priest)",
+            "type": "Warband - Nehekhara Tomb Guards",
+            "description": "The Liche Priest is a wizard and may use Necromantic magic or Liche Priest scrolls, see the Liche Priests section for more details."
           },
           {
             "name": "Undead",
@@ -79244,9 +79255,8 @@
         ],
         "specials": [
           {
-            "name": "Prayers",
-            "type": "Warband - Order of the Mare",
-            "description": "The Dame of the Mare prays from the Blessings of the Mare. She starts with one, chosen at random."
+            "name": "Priest",
+            "type": "Caster"
           }
         ],
         "skills": []
@@ -80916,9 +80926,8 @@
         ],
         "specials": [
           {
-            "name": "Prayers",
-            "type": "Warband - Ostlander Mercenaries",
-            "description": "A Priest of Taal may use the Prayers of Taal."
+            "name": "Priest",
+            "type": "Caster"
           },
           {
             "name": "Strictures",
@@ -86735,9 +86744,8 @@
             "description": "Warriors within 6\" of the Warrior Priest may use his Leadership instead of their own."
           },
           {
-            "name": "Prayers of Sigmar",
-            "type": "Warband - Protectorate Of Sigmar",
-            "description": "The Warrior Priest starts with one prayer rolled at random from the Prayers of Sigmar."
+            "name": "Priest",
+            "type": "Caster"
           }
         ],
         "skills": []
@@ -92873,9 +92881,8 @@
             "description": "Any warband member within 6\" of the Sigmarite Matriarch may use her Leadership characteristic when taking any Leadership tests."
           },
           {
-            "name": "Prayers of Sigmar",
-            "type": "Warband - Sisters of Sigmar",
-            "description": "The Sigmarite Matriarch is a servant of Sigmar and may use the Prayers of Sigmar as detailed in the Magic section and the Sigmarite Matriarchs start with one prayer generated at random. In addition the Sigmarite Matriarchs may learn a new Prayer instead of a new skill."
+            "name": "Priest",
+            "type": "Caster"
           }
         ],
         "skills": []
@@ -93564,9 +93571,8 @@
         ],
         "specials": [
           {
-            "name": "Magic User",
-            "type": "Warband - Skaven",
-            "description": "The Eshin Sorcerer has the ability to use magic and casts spells like any other magicians, and the Eshin Sorcerer starts with one spells generated at random from the Magic of the Horned Rat. In addition the Eshin Sorcerer may learn a new Spell instead of a new skill."
+            "name": "Wizard",
+            "type": "Caster"
           }
         ],
         "skills": []
@@ -95904,9 +95910,8 @@
         ],
         "specials": [
           {
-            "name": "Spellcaster",
-            "type": "Warband - Skaven of Clan Pestilens",
-            "description": "The Pestilens Sorcerer is a spellcaster and may cast spells from the Horned Rat spell list."
+            "name": "Wizard",
+            "type": "Caster"
           }
         ],
         "skills": []
@@ -103321,8 +103326,9 @@
             "description": "Warriors within 6\" of the Magus may use his Leadership instead of their own."
           },
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Magus)",
+            "type": "Warband - Sorcerous Society",
+            "description": "The Magus is a wizard and starts with two spells rolled at random from any one Elemental lore, or from Lesser Magic."
           }
         ],
         "skills": []
@@ -103443,8 +103449,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Sorcerous Society Mage)",
+            "type": "Warband - Sorcerous Society",
+            "description": "The Mage is a wizard and starts with one spell rolled at random from any one Elemental lore, or from Lesser Magic."
           },
           {
             "name": "Respect your betters",
@@ -109033,8 +109040,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Liche)",
+            "type": "Warband - The Restless Dead",
+            "description": "A Liche is a powerful wizard and so is able to use Necromantic magic and starts with two spells randomly generated from the Necromantic magic list."
           },
           {
             "name": "Fear",
@@ -109121,8 +109129,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Restless Dead Necromancer)",
+            "type": "Warband - The Restless Dead",
+            "description": "Necromancers are wizards being trained by their Liche masters in the art of Necromancy and so are able to use Necromantic magic. They start out knowing one of the two spells known by their Liche masters."
           },
           {
             "name": "Apprentices",
@@ -110034,9 +110043,8 @@
             "description": "Any warrior within 6“ of the Apprentice Sorcerer may use his Leadership when taking Ld tests."
           },
           {
-            "name": "Rituals of Chaos",
-            "type": "Warband - The Sons of Hashut",
-            "description": "Chaos Dwarf spellcasters are wizards and can learn a random spell from the Chaos Dwarf spell list."
+            "name": "Wizard",
+            "type": "Caster"
           }
         ],
         "skills": []
@@ -115484,9 +115492,8 @@
             "type": "Trait"
           },
           {
-            "name": "Funerary Rites",
-            "type": "Warband - Vampire Hunters of Sylvania",
-            "description": "The Priest of Morr is not a wizard, but starts with one Funerary Rite rolled at random."
+            "name": "Priest",
+            "type": "Caster"
           }
         ],
         "skills": []
@@ -117912,8 +117919,9 @@
         ],
         "specials": [
           {
-            "name": "Wizard",
-            "type": "Caster"
+            "name": "Wizard (Rünwulf)",
+            "type": "Warband - Werewolf Hunting Pack",
+            "description": "The Rünwulf casts from the Werewolf Runes and starts with one of them, chosen in the normal way. A rune counts as a spell, lasts one game only and is inscribed before the game starts, and the same rune may be inscribed only once on a given subject. Where he would roll a rune he already has, he may instead gain the ability to inscribe it on one more hero rather than lower its difficulty by one."
           }
         ],
         "skills": []
@@ -118650,9 +118658,8 @@
         ],
         "specials": [
           {
-            "name": "Prayers",
-            "type": "Warband - Witch Hunters",
-            "description": "The Warrior-Priest is a servant of Sigmar and may use the Prayers of Sigmar as detailed in the Magic section and the Warrior-Priest start with one prayer generated at random. In addition the Warrior-Priest may learn a new Prayer instead of a new skill."
+            "name": "Priest",
+            "type": "Caster"
           }
         ],
         "skills": []

@@ -3,6 +3,7 @@ skill groups (a variant's table where it differs), spell lores, the caster, lead
 specials (the template's own, "Warband - Mercenaries", or our Large, Wizard and Priest). A PDF page's fighter says
 what a variant changes about him himself (`variantChanges`), where a snapshot page's is William's answer."""
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -11,6 +12,7 @@ from catalogue_import.template_answers import (
     CASTERS,
     CORE_SKILLS,
     CREATURES,
+    GENERAL_CASTER_RULES,
     GENERAL_RULE_WORDINGS,
     LORES,
     MAGIC_WARBANDS,
@@ -61,6 +63,7 @@ class FighterLog:
     lores: dict[str, str] = field(default_factory=dict)  # magic.json's lore -> ours, where they differ
     unplaced_casters: list[str] = field(default_factory=list)  # magic.json lines no page fighter matches
     casters: list[tuple[str, str, str, list[str]]] = field(default_factory=list)  # page, fighter, caster, lores
+    general_casters: list[tuple[str, str, str]] = field(default_factory=list)  # GENERAL_CASTER_RULES met
 
 
 def profile(page: str, fighter: dict[str, Any], log: FighterLog) -> dict[str, int | str]:
@@ -188,9 +191,14 @@ class Lores:
         return self.by_fighter.get((page, name), [])
 
 
-def rules(page: str, fighter: dict[str, Any], owner: str) -> tuple[list[dict[str, str]], bool, bool]:
+def rules(
+    page: str, fighter: dict[str, Any], owner: str, caster: str, kept: Callable[[str], str | None], log: FighterLog
+) -> tuple[list[dict[str, str]], bool, bool]:
     """His rules as specials (ours for Large, Wizard and Priest), whether he leads and whether he is Large. A rule
-    William has worded for every fighter of the page who shares it takes that wording (GENERAL_RULE_WORDINGS)."""
+    William has worded for every fighter of the page who shares it takes that wording (GENERAL_RULE_WORDINGS). A
+    caster rule is ours unless it says more (William, 27 Nov 2026): one named Wizard or Priest stays his under the name
+    William's list keeps it apart under (`kept`: "Wizard (Liche)"), and one of another name that says only what ours
+    does (GENERAL_CASTER_RULES) is our Wizard or Priest, as his lores make him."""
     specials: list[dict[str, str]] = []
     leader = large = False
     for raw in fighter.get("specialRules") or []:
@@ -200,7 +208,16 @@ def rules(page: str, fighter: dict[str, Any], owner: str) -> tuple[list[dict[str
         large = large or key in LARGE_RULES
         ours = OURS.get("large" if key in LARGE_RULES else key)
         text = GENERAL_RULE_WORDINGS.get((page, name)) or clean_rule(raw.get("ruleFull"))
-        special = {"name": ours[0], "type": ours[1]} if ours else {"name": name, "type": owner, "description": text}
+        if (named := (page, plain(fighter["name"]), name)) in GENERAL_CASTER_RULES:
+            log.general_casters.append(named)
+            ours = OURS["priest" if caster == "Priest" else "wizard"]
+        own = kept(name) if key in ("wizard", "priest") and text else None
+        if own:
+            special = {"name": own, "type": owner, "description": text}
+        elif ours:
+            special = {"name": ours[0], "type": ours[1]}
+        else:
+            special = {"name": name, "type": owner, "description": text}
         if name and special["name"] not in [entry["name"] for entry in specials]:
             specials.append(special)
     return specials, leader, large
@@ -246,18 +263,29 @@ def plural_of(fighter: dict[str, Any]) -> str:
     return text[:-1] if text.endswith("mens") else text
 
 
+def _kept(context: dict[str, Any], fighter: dict[str, Any]) -> Callable[[str], str | None]:
+    """The name William's list (shared-specials.json `apart`) keeps a rule of his under, else None."""
+    shared, owner = context.get("shared"), f"{context.get('template', '')}: {plain(fighter['name'])}"
+
+    def kept(rule: str) -> str | None:
+        found = shared.rule("warband", owner, rule) if shared is not None else None
+        return str(found[1]["name"]) if found is not None and found[0] == "apart" else None
+
+    return kept
+
+
 def build_fighter(
     page: str, fighter: dict[str, Any], context: dict[str, Any], lists: list[str], log: FighterLog
 ) -> dict[str, Any]:
     """One fighter in the template's shape (`context`: variants, races, lores, owner)."""
     hero = fighter["type"] == "hero"
     lores = context["lores"].of(page, fighter["name"])
-    specials, leader, large = rules(page, fighter, context["owner"])
+    caster = ("Priest" if all(is_prayers(lore["name"]) for lore in lores) else "Wizard") if lores else "No"
+    specials, leader, large = rules(page, fighter, context["owner"], caster, _kept(context, fighter), log)
     base, changes = skill_types(page, fighter, context["variants"], log, context.get("special_groups"))
     stats = profile(page, fighter, log)
     variant_numbers(page, plain(fighter["name"]), stats, changes)
     page_variant_numbers(fighter, changes)
-    caster = ("Priest" if all(is_prayers(lore["name"]) for lore in lores) else "Wizard") if lores else "No"
     if lores:
         log.casters.append((page, fighter["name"], caster, [lore["name"] for lore in lores]))
     group = fighter.get("groupSize") or {}

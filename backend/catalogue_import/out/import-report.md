@@ -962,7 +962,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 3993 |
 | warband rules | 512 |
 | upgrades | 179 |
-| the templates' own specials | 1119 |
+| the templates' own specials | 1126 |
 
 ### List lines
 
@@ -1651,6 +1651,25 @@ List prices the pages differ from: none.
 | Wizard (The Grandmother) | The Grandmother | Four spells at the start of each battle: two at random from the Lesser Magic list, two from Charms and Hexes. |
 | Scaly Skin (Oxyotl) | Oxyotl | A natural 6+ save; the mutation's is 5+, and armour adds to it. |
 | Immune to Psychology (The Headless Horseman) | The Headless Horseman | A wound still makes him roll on the Whoa Boy! table. |
+| Wizard (Liche) | The Restless Dead: Liche | Two spells at random from his Necromancy list. |
+| Wizard (Restless Dead Necromancer) | The Restless Dead: Necromancer | He starts knowing one of the two spells his Liche master knows. |
+| Wizard (Nehekhara Liche Priest) | Nehekhara Tomb Guards: Liche Priest | He may use Necromantic magic as well as the Liche Priest scrolls. |
+| Wizard (Adventurers' Wizard) | Adventurers: Wizard | Two spells at random from the Lesser Magic list. |
+| Wizard (Albion Shaman) | Albion Barbarians: Shaman | Two spells at random. |
+| Wizard (Student) | Altdorf Expeditionary Party: Student | No spells, but he counts as a wizard for his weapons and for hatred. |
+| Wizard (Street Mage) | Arabyan Nomads: Street Mage | He casts only from the one element he chooses, for good. |
+| Wizard (Petru) | Channel Rats: Petru | Two spells from Charms and Hexes. |
+| Wizard (Branchwych) | Fen Guard: Branchwych | Two spells from the Utterances of the Oak. |
+| Wizard (Loremaster) | High Elves: Loremaster | His first spell is High Elf Magic's; later ones come from it or from Lesser Magic. |
+| Wizard (Lustrian Skink Priest) | Lizardmen (Lustria): Skink Priest | His spells work like prayers: he casts them in armour. |
+| Wizard (Draich) | Lords of the Marsh: Draich | Two spells, one from the Chaos Rituals and one from the Rituals of Dhar. |
+| Wizard (Arch Mage) | Mages: Arch Mage | Two elemental lores, and a spell from each. |
+| Wizard (Mage) | Mages: Mage | He casts only from the one elemental lore he takes. |
+| Wizard (Mages' Warlock) | Mages: Warlock | Two spells from the Lesser Magic list. |
+| Wizard (Necrarch Vampire) | Necrarchs, the Soul Stealers: Necrarch Vampire | With Pupil of Nagash he also rolls on the Dreaded Scrolls of Nagash. |
+| Wizard (Magus) | Sorcerous Society: Magus | Two spells at random from one Elemental lore he takes, or from Lesser Magic. |
+| Wizard (Sorcerous Society Mage) | Sorcerous Society: Mage | His spell comes from one Elemental lore he takes, or from Lesser Magic. |
+| Wizard (Rünwulf) | Werewolf Hunting Pack: Rünwulf | His runes last one game, are inscribed before it and once on a subject. |
 
 ### Own rules of one name
 

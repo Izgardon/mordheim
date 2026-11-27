@@ -155,8 +155,9 @@ class SeedAllTests(TestCase):
                 # Master and Neekit), 5 fewer; Nibbles' Horrible Scars is the shared Fear (William, 27 Nov 2026), 1 fewer;
                 # a caster rule that says only that he starts with one at random is ours (William, 27 Nov 2026): the
                 # Fallen Sister's Wizard, the Warrior Priest's and the Wolf Priest's Prayers and the White Lady's
-                # Spells of the Lake, 4 fewer
-                "Special": 2001,
+                # Spells of the Lake, 4 fewer; the templates' 19 caster rules that say more are their own, and the 12
+                # named otherwise that say only what ours does are ours, 7 more
+                "Special": 2008,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -771,7 +772,12 @@ class SeedAllTests(TestCase):
         self.assertEqual((hers.name, hers.type, grandmother.caster), ("Wizard (The Grandmother)", "Dramatis Persona - The Grandmother", "Wizard"))  # fmt: skip
         self.assertIn("four spells", hers.description)
         wizards = Special.objects.filter(campaign__isnull=True, name__startswith="Wizard (", archived_at__isnull=True)
-        owners = {row.name: row.owner_kind for row in wizards if row.type != "Animal"}  # not a familiar's rule
+        owners = {row.name: row.owner_kind for row in wizards if row.owner_kind in ("hired_sword", "dramatis_persona")}
+        # a template fighter's that says more is his template's (William, 27 Nov 2026): the Liche's two spells
+        liche = TemplateFighter.objects.get(template__slug="the-restless-dead", name="Liche")
+        self.assertEqual(list(liche.special_links.filter(special__name__startswith="Wizard").values_list("special__name", "special__owner_kind")), [("Wizard (Liche)", "warband")])  # fmt: skip
+        necromancer = TemplateFighter.objects.get(template__slug="undead", name="Necromancer")  # only ours
+        self.assertEqual(list(necromancer.special_links.filter(special__type="Caster").values_list("special__name", flat=True)), ["Wizard"])  # fmt: skip
         kept = ("Warlock", "Elf Mage", "Witch", "Dark Mage", "Trancas")  # the Fallen Sister's one spell is ours
         self.assertEqual(owners, {f"Wizard ({name})": "hired_sword" for name in kept} | {f"Wizard ({name})": "dramatis_persona" for name in ("Dark Emissary", "Truthsayer", "The Grandmother")})  # fmt: skip
         # ours stays the caster's rule: the templates' Wizards link it, and a hire of a Wizard is given it
