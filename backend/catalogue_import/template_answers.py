@@ -722,6 +722,14 @@ PIT_FIGHTER_LISTS: list[dict[str, object]] = [
     },
 ]
 
+# A list line that names an item of ours by its alias links that item (William, 27 Nov 2026, the items audit's
+# question 11: A, "each list links the item it names"): (page, the line's alias) -> our item. The Maneaters' "axe"
+# printed Cleaver is our Cleaver, and the Araby Smugglers' Axe (Katar) our Katar
+LINE_ITEMS: dict[tuple[str, str], str] = {
+    ("maneaters", "Cleaver"): "Cleaver",
+    ("araby-smugglers", "Axe (Katar)"): "Katar",
+}
+
 # Special equipment named apart from our item ("Firepots" is our "Firepots Miragliano")
 SPECIAL_EQUIPMENT_ITEMS: dict[tuple[str, str], str] = {("lustrian-reavers", "Firepots"): "Firepots Miragliano"}
 

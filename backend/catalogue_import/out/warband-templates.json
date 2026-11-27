@@ -5467,10 +5467,10 @@
           },
           {
             "item": {
-              "name": "Axe",
+              "name": "Katar",
               "variant": ""
             },
-            "shown_as": "Axe (Katar)",
+            "shown_as": "",
             "cost": 5,
             "cost_note": "",
             "first_free": false,
@@ -5731,10 +5731,10 @@
           },
           {
             "item": {
-              "name": "Axe",
+              "name": "Katar",
               "variant": ""
             },
-            "shown_as": "Axe (Katar)",
+            "shown_as": "",
             "cost": 5,
             "cost_note": "",
             "first_free": false,
@@ -5963,10 +5963,10 @@
           },
           {
             "item": {
-              "name": "Axe",
+              "name": "Katar",
               "variant": ""
             },
-            "shown_as": "Axe (Katar)",
+            "shown_as": "",
             "cost": 5,
             "cost_note": "",
             "first_free": false,
@@ -59487,10 +59487,10 @@
         "lines": [
           {
             "item": {
-              "name": "Axe",
+              "name": "Cleaver",
               "variant": ""
             },
-            "shown_as": "Cleaver",
+            "shown_as": "",
             "cost": 5,
             "cost_note": "",
             "first_free": false,
@@ -59738,10 +59738,10 @@
         "lines": [
           {
             "item": {
-              "name": "Axe",
+              "name": "Cleaver",
               "variant": ""
             },
-            "shown_as": "Cleaver",
+            "shown_as": "",
             "cost": 5,
             "cost_note": "",
             "first_free": false,

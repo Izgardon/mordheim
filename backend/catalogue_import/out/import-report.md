@@ -990,7 +990,7 @@ Lines found other than by name or tag:
 | cursed-dwarves | hand gun | Handgun | a loose match |
 | watchmen | stage coach | Wagon, Stagecoach | a loose match |
 
-608 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+603 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Notes it couldn't read, kept as the line's note:
 

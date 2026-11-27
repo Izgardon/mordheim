@@ -8,6 +8,7 @@ from typing import Any
 
 from catalogue_import.common import loose_key, slugify
 from catalogue_import.template_answers import (
+    LINE_ITEMS,
     PIT_FIGHTER_LISTS,
     PIT_FIGHTERS,
     RULE_TITLES,
@@ -88,7 +89,8 @@ def _lines(
     fighters, warband = _fighters(page), [page["name"]]
     lines = []
     for entry in raw["items"]:
-        item, how = index.find(entry["name"], warband)
+        named = LINE_ITEMS.get((slug, plain(entry.get("alias"))))  # the item its alias names (27 Nov 2026)
+        item, how = index.find(named or entry["name"], warband)
         if item is None:
             log.unmatched.append((slug, plain(raw["title"]), plain(entry["name"])))
             continue
@@ -102,7 +104,7 @@ def _lines(
             log.read.append((slug, plain(entry["name"]), plain(note)))
         elif note:
             log.unread.append((slug, plain(raw["title"]), plain(entry["name"]), who.note))
-        shown_as = _shown_as(plain(entry.get("alias")), plain(entry["name"]), item, how)
+        shown_as = "" if named else _shown_as(plain(entry.get("alias")), plain(entry["name"]), item, how)
         log.shown_as += bool(shown_as)
         # a PDF page's line may be one variant's (the House Guard's Rapier, House Fierezza only)
         variant = str(entry.get("variant") or "")

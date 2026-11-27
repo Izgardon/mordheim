@@ -200,3 +200,27 @@ class StagecoachTests(ReviewCase):
         self.assertEqual([(row["cost"], row["for_everyone"]) for row in rows], [(180, False)])
         self.assertNotIn("trade wagon/stage coach", self.items["Trade Wagon"]["tags"])
         self.assertIn("trade wagon/stage coach", self.items["Wagon, Stagecoach"]["tags"])
+
+
+class NamedItemTests(ReviewCase):
+    """Question 11 (A): each list links the item it names, Cleaver or Katar."""
+
+    def sold(self, slug: str, item: str) -> list[tuple[str, str, int]]:
+        return [
+            (entry["key"], line["shown_as"], line["cost"])
+            for entry in self.templates[slug]["lists"]
+            for line in entry["lines"]
+            if line["item"]["name"] == item
+        ]
+
+    def test_the_maneaters_cleaver_is_our_cleaver(self) -> None:
+        self.assertEqual(
+            self.sold("maneaters", "Cleaver"),
+            [("ogre-equipment-list", "", 5), ("mountain-guide-equipment-list", "", 5)],
+        )
+        self.assertEqual(self.sold("maneaters", "Axe"), [])
+
+    def test_the_araby_smugglers_axe_katar_is_our_katar(self) -> None:
+        lists = ["corsair-equipment-list", "janissary-equipment-list", "slave-equipment-list"]
+        self.assertEqual(self.sold("araby-smugglers", "Katar"), [(key, "", 5) for key in lists])
+        self.assertEqual(self.sold("araby-smugglers", "Axe"), [])
