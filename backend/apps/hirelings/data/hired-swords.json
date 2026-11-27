@@ -6478,7 +6478,9 @@
         "description": "A human Prospector carries a bow; a Dwarf Prospector carries a crossbow instead."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Luck (Prospector)"
+    ],
     "spells": [],
     "equipment": [
       {
@@ -6673,13 +6675,11 @@
       {
         "name": "Familiar with the Crypts",
         "description": "The warband may change a single dice roll on the Exploration chart by 1 either way."
-      },
-      {
-        "name": "Trap Expert",
-        "description": "The Grave Robber has the Trap Expert skill."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Trap Expert"
+    ],
     "spells": [],
     "equipment": [
       {

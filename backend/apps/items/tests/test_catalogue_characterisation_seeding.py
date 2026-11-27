@@ -158,8 +158,9 @@ class SeedAllTests(TestCase):
                 # a caster rule that says only that he starts with one at random is ours (William, 27 Nov 2026): the
                 # Fallen Sister's Wizard, the Warrior Priest's and the Wolf Priest's Prayers and the White Lady's
                 # Spells of the Lake, 4 fewer; the templates' 19 caster rules that say more are their own, and the 12
-                # named otherwise that say only what ours does are ours, 7 more
-                "Special": 2008,
+                # named otherwise that say only what ours does are ours, 7 more; the Grave Robber (Mousillon)'s Trap
+                # Expert is the skill he starts with (the skills audit, 27 Nov 2026), 1 fewer
+                "Special": 2007,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four

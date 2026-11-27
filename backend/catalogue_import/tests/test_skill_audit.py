@@ -26,3 +26,15 @@ class SkillAuditTests(ReviewCase):
         self.assertIn("Shadow Warriors", self.terms("Shadow Warrior")["available_skill_types"])
         self.assertIn("Dark Elf", self.groups)
         self.assertIn("Shadow Warriors", self.groups)
+
+    def test_the_skills_a_hired_swords_rules_say_he_has_are_skills_he_starts_with(self) -> None:
+        # the Grave Robber's rule only said "The Grave Robber has the Trap Expert skill."; the Prospector's PDF says
+        # "Prospector Hired Swords start the game with this skill" of Luck
+        robber = self.hired["Grave Robber (Mousillon)"]
+        self.assertEqual(robber["skills"], ["Trap Expert"])
+        self.assertNotIn("Trap Expert", [special["name"] for special in robber["specials"]])
+        self.assertIn("Trap Expert", self.skills)
+        prospector = self.hired["Prospector (Karak Azgal)"]
+        self.assertEqual(prospector["skills"], ["Luck (Prospector)"])
+        own = [skill["name"] for skill in self.terms("Prospector (Karak Azgal)")["available_special_skills"]]
+        self.assertIn("Luck (Prospector)", own)
