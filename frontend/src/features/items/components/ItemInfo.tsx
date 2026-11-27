@@ -95,10 +95,12 @@ export function OwnedItemInfo({
 export function ItemRowButton({
   shown,
   onToggle,
+  className,
   children,
 }: {
   shown: boolean;
   onToggle: () => void;
+  className?: string;
   children: ReactNode;
 }) {
   return (
@@ -108,7 +110,8 @@ export function ItemRowButton({
       onClick={onToggle}
       className={cn(
         "flex min-w-0 flex-1 items-center gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        shown && "[&_.item-name]:text-accent-hi"
+        shown && "[&_.item-name]:text-accent-hi",
+        className
       )}
     >
       {children}

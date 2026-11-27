@@ -96,6 +96,8 @@ export function StashList({
             className="flex flex-wrap items-center gap-3 border-b border-line py-2.5"
           >
             <ItemRowButton
+              // its name stays readable: the row's actions wrap under it once Sell shows its price
+              className="min-w-[8rem]"
               shown={isShown(key)}
               onToggle={() => onToggleShown({ key, item: entry })}
             >
@@ -115,7 +117,7 @@ export function StashList({
               </div>
             </ItemRowButton>
             {canEdit ? (
-              <div className="flex items-center gap-1.5">
+              <div className="ml-auto flex items-center gap-1.5">
                 {forUnit ? (
                   <Button
                     size="sm"
