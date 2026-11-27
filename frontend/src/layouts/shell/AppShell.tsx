@@ -2,6 +2,7 @@ import { Fragment, useCallback, useState } from "react";
 import type { ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
+import OfflineBar from "@/components/offline/OfflineBar";
 import { cn } from "@/lib/utils";
 import { refreshMobileQueries, reloadMobileLayout } from "../mobile/mobile-refresh";
 import { usePullToRefresh } from "../mobile/use-pull-to-refresh";
@@ -61,9 +62,15 @@ export default function AppShell({
     <main
       className={isMobile ? "fixed inset-0 flex flex-col overflow-hidden bg-page" : "desktop-shell"}
     >
-      {isMobile || !webBar ? null : <div className="desktop-shell__bar">{webBar}</div>}
+      {isMobile ? null : (
+        <div className="desktop-shell__bar">
+          {webBar}
+          <OfflineBar />
+        </div>
+      )}
       {isMobile ? null : <aside className="desktop-shell__rail">{rail}</aside>}
       {isMobile && topBar ? <div className="shrink-0">{topBar}</div> : null}
+      {isMobile ? <OfflineBar /> : null}
       <div className={isMobile ? "flex min-h-0 flex-1 flex-col" : "desktop-shell__main"}>
         <div
           ref={pull.scrollRef}

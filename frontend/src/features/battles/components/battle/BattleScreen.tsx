@@ -3,6 +3,7 @@ import { useOutletContext } from "react-router-dom";
 import { ArrowRight, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 
+import OfflineBar from "@/components/offline/OfflineBar";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { IconButton } from "@/components/ui/icon-button";
 import BattleNotesSheet from "@/features/battles/components/shared/BattleNotesSheet";
@@ -411,6 +412,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
           </div>
           {nextRoundButton}
         </header>
+        <OfflineBar />
         <div className="shrink-0 border-b border-line bg-bar px-3 py-2">{strip}</div>
         <JumpScroller>
           {feedBox}

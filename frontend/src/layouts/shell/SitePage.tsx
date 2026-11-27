@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { House, LogOut, UserRound } from "lucide-react";
 
+import OfflineBar from "@/components/offline/OfflineBar";
 import { IconButton } from "@/components/ui/icon-button";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -97,6 +98,7 @@ export default function SitePage({
           <Wordmark />
         </WebTopBar>
       )}
+      <OfflineBar />
       <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
         <div
           className={cn(
