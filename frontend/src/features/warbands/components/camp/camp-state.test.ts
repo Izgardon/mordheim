@@ -16,13 +16,18 @@ const result = (name: string, xp: number, advances: { id: string; label: string 
   advances: advances.map((advance) => ({ ...advance, at: 4, rolls: [3, 4] })),
 });
 
+type Explored = { handedOver?: boolean; shards?: number; stored?: number; found?: number };
+
 /** A camp whose heroes start on 3, 5 and 1 XP: crossing 4 (and 6) brings an advance. */
-const camp = (unitResults: Record<string, ReturnType<typeof result>>) =>
+const camp = (
+  unitResults: Record<string, ReturnType<typeof result>>,
+  { handedOver = false, shards = 0, stored = 0, found = 0 }: Explored = {}
+) =>
   ({
     draft: {
       unit_results: unitResults,
       mount_survival: {},
-      finds: { gold_crowns: 0, items: [] },
+      finds: { gold_crowns: found, items: [] },
       upkeep: { entries: {} },
     },
     postgame: {
@@ -35,7 +40,11 @@ const camp = (unitResults: Record<string, ReturnType<typeof result>>) =>
         henchmen_groups: [],
         hirelings: [],
       },
-      explore: { amount: 0, resource: null },
+      explore: {
+        amount: shards,
+        resource: shards ? { id: 1, name: "Wyrdstone", amount: stored } : null,
+      },
+      locks: { explore: handedOver },
     },
     campaign: null,
     battleState: { suggested_postbattle: undefined },
@@ -81,5 +90,21 @@ describe("readySummary", () => {
       (line) => line.k === "Injuries"
     );
     expect(injuries?.v).toBe("Dieter Brandt: Mutation (Spiked Tail)");
+  });
+
+  it("adds the shards and finds still to come at Ready", () => {
+    const lines = readySummary(camp({}, { shards: 3, stored: 7, found: 20 }));
+    expect(lines.find((line) => line.k === "Shards")?.v).toBe("+3 Wyrdstone, now 10");
+    expect(lines.find((line) => line.k === "Gold")?.v).toBe("100 → 120 gc");
+  });
+
+  it("counts the shards and finds the explore step handed over once", () => {
+    // the warband already holds them: 7 shards became 10 and 100 gc became 120 when Next was pressed
+    const lines = readySummary({
+      ...camp({}, { handedOver: true, shards: 3, stored: 10, found: 20 }),
+      gold: 120,
+    } as OpenCamp);
+    expect(lines.find((line) => line.k === "Shards")?.v).toBe("+3 Wyrdstone, now 10");
+    expect(lines.find((line) => line.k === "Gold")?.v).toBe("120 → 120 gc");
   });
 });

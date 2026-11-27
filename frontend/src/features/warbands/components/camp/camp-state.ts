@@ -123,9 +123,12 @@ export function readySummary(camp: OpenCamp) {
       const mutation = roll.mutation?.special ? ` (${roll.mutation.special})` : "";
       return `${r.unit_name}: ${roll.result_label}${mutation}${games ? `, misses ${games} game${games === 1 ? "" : "s"}` : ""}`;
     });
-  const finds = draft.finds.gold_crowns;
+  // once the explore step has handed its shards and finds over, the warband already holds them
+  const handedOver = camp.postgame.locks.explore;
+  const finds = handedOver ? 0 : draft.finds.gold_crowns;
   const after = camp.gold - upkeepCharged(camp) + finds;
   const { amount, resource } = camp.postgame.explore;
+  const shardsNow = resource ? resource.amount + (handedOver ? 0 : amount) : 0;
   const inKind = upkeepLines(camp)
     .filter((line) => line.status !== "gone")
     .flatMap((line) => line.entry.resources ?? [])
@@ -139,7 +142,7 @@ export function readySummary(camp: OpenCamp) {
     ...(inKind.length ? [{ k: "Upkeep", v: inKind.join(", ") }] : []),
     {
       k: "Shards",
-      v: resource ? `+${amount} ${resource.name}, now ${resource.amount + amount}` : `+${amount}`,
+      v: resource ? `+${amount} ${resource.name}, now ${shardsNow}` : `+${amount}`,
     },
   ];
 }
