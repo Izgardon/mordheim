@@ -12,7 +12,7 @@ import {
   type OpenRow,
 } from "./BattleRulesLists";
 import BattleWarbandRules from "./BattleWarbandRules";
-import ScenarioSheet, { type BattleScenario } from "./ScenarioSheet";
+import ScenarioSheet, { type BattleScenario } from "@/features/scenarios/components/ScenarioSheet";
 
 /** The sheet's five pills, in William's order (24 Nov 2026). */
 export const BATTLE_RULES_SECTIONS = [

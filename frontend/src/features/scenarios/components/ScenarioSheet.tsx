@@ -1,10 +1,10 @@
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { ErrorState } from "@/components/ui/error-state";
 import { Bone, SkeletonPage, boneWidth } from "@/components/ui/skeleton";
-import { useScenario } from "@/features/scenarios/api/scenario-queries";
-import ScenarioDetail from "@/features/scenarios/components/ScenarioDetail";
-import ScenarioPlayersIcon from "@/features/scenarios/components/ScenarioPlayersIcon";
-import { sourceLine } from "@/features/scenarios/scenario-rows";
+import { useScenario } from "../api/scenario-queries";
+import ScenarioDetail from "./ScenarioDetail";
+import ScenarioPlayersIcon from "./ScenarioPlayersIcon";
+import { sourceLine } from "../scenario-rows";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 /** The battle's scenario as the Rules sheet opens it: its name, and the campaign scenario it is played as. */

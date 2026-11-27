@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChipLabel } from "@/components/ui/chip";
-import ScenarioSheet from "@/features/battles/components/battle/ScenarioSheet";
+import ScenarioSheet from "@/features/scenarios/components/ScenarioSheet";
 import AcceptClearsNote from "@/features/battles/components/shared/AcceptClearsNote";
 import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 import type { PrebattlePage } from "@/features/battles/hooks/usePrebattlePage";

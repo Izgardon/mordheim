@@ -8,7 +8,7 @@ import {
   RANGED_CRITICAL_TABLES,
 } from "@/features/battles/data/critical-hits";
 import BattleRulesSheet from "@/features/battles/components/battle/BattleRulesSheet";
-import type { BattleScenario } from "@/features/battles/components/battle/ScenarioSheet";
+import type { BattleScenario } from "@/features/scenarios/components/ScenarioSheet";
 import { MISFIRE_TABLE } from "@/features/battles/data/misfire";
 
 import { BottomBar, BottomBarButton } from "../mobile/BottomBar";
