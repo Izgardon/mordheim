@@ -187,3 +187,12 @@ class SkillAuditTests(ReviewCase):
         self.assertIn("Dwarves", self.groups)
         rules = {special["name"]: special["description"] for special in prospector["specials"]}
         self.assertIn("Only a Dwarf Prospector may learn Dwarves skills", rules["Dwarf Skills"])
+
+    def test_the_prospectors_loner_and_prospector_are_his_rules(self) -> None:
+        # his book lists them as his rules, "Prospector Skills" (William, 27 Nov 2026): Loner the shared special
+        prospector = self.hired["Prospector (Karak Azgal)"]
+        rules = [special["name"] for special in prospector["specials"]]
+        self.assertIn("Loner", rules)
+        self.assertIn("Prospector", rules)
+        own = [skill["name"] for skill in self.terms("Prospector (Karak Azgal)")["available_special_skills"]]
+        self.assertEqual(own, ["Luck (Prospector)"])

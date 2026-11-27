@@ -1480,7 +1480,7 @@ Split into Club, Mace, Hammer (overrides.json `item_splits`): William, 26 Nov 20
 | Daemonic Flesh | Trait | the list's text |  |  | 0 | 1 | 1 | 0 |
 | Perfect Killer | Trait | the list's text |  |  | 3 | 2 | 1 | 0 |
 | Pawnbroker | Trait | the list's text |  |  | 0 | 2 | 0 | 0 |
-| Loner | Trait | the list's text |  |  | 2 | 2 | 3 | 0 |
+| Loner | Trait | the list's text |  |  | 2 | 3 | 3 | 0 |
 | Hardened | Trait | the list's text |  |  | 1 | 4 | 0 | 0 |
 | Hate Orcs and Goblins | Psychology | the list's text |  |  | 5 | 3 | 0 | 0 |
 | Frenzy | Psychology | the list's text |  |  | 13 | 2 | 1 | 2 |
@@ -1568,7 +1568,7 @@ List prices the pages differ from: none.
 - Daemonic Flesh: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
 - Perfect Killer: Skaven: Assassin Adept; Assassin Squad, Knives from the Dark: Shadowblade; Silent Brotherhood: Silent Master; Dark Elf Assassin; Clan Eshin Assassin; Dijin Katal, the Renegade Assassin.
 - Pawnbroker: Arabian Merchant; Cathayan Merchant.
-- Loner: Dreamwalkers, Cult Of Morr: Priest of Morr; Vampire Hunters of Sylvania: Priest of Morr; Kislev Ranger; Priest of Morr; Kromwell the Blackhearted; Laure Croftenssen; The Dark Jester in Mordheim.
+- Loner: Dreamwalkers, Cult Of Morr: Priest of Morr; Vampire Hunters of Sylvania: Priest of Morr; Kislev Ranger; Priest of Morr; Prospector (Karak Azgal); Kromwell the Blackhearted; Laure Croftenssen; The Dark Jester in Mordheim.
 - Hardened: Dark Elf Corsairs: Captain; Old Prospector; Grave Warden; Albino Stormvermin; Whaler.
 - Hate Orcs and Goblins: Pit Fighters (old): Dwarf Troll Slayer; Pit Fighters: Dwarf Troll Slayer; Dwarf Slayer Cult: Rememberer; Dwarf Slayer Cult: Stubble; Dwarf Slayer Cult: Axe Hurler; Dwarf Pathfinder; Dwarf Treasure Hunter (Hates Orcs & Goblins); Runesmith Journeyman.
 - Frenzy: Amazons (Mordheim): Totem Warrior; Norse Explorers: Berserker (Berserkers); Adventurers: Barbarian; Druchii: Witch Elf; Dwarf Troll Slayers: Skaven Slayer; Forest Goblins (Lustria): Red Toof Clan Goblin (Berserkers); Khorne Raiders: Cannibal Boy; Mordheimers' Fanatics: Lunatic; Savage Orcs (Athel Loren): Savage Orc Scarboy (Savage); Savage Orcs (Athel Loren): Savage Orc Boy (Savage); Savage Orcs (Karak Azgal): Nutta; Skaven of Clan Pestilens (Mousillon): Plague Priest; Skaven of Clan Pestilens (Mousillon): Plague Champion; Witch Elf (Dark Elf Corsairs); Bearserker; Sigmund Spindle, the Harvester of Flesh (Maddened); Cathayan Temple Rooster; Bloodletter.

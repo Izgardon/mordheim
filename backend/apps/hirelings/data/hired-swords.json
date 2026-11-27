@@ -6468,6 +6468,14 @@
       {
         "name": "Dwarf Skills",
         "description": "Only a Dwarf Prospector may learn Dwarves skills."
+      },
+      {
+        "name": "Prospector",
+        "description": "If the Prospector was not taken out of action he may go prospecting as well as exploring normally, and finds a further D6-1 gc for the warband."
+      },
+      {
+        "name": "Loner",
+        "description": "The Prospector never takes All Alone tests."
       }
     ],
     "skills": [
@@ -6532,14 +6540,6 @@
         {
           "name": "Luck (Prospector)",
           "description": "The Prospector may re-roll a single dice in the game. He starts with this skill and may learn it twice more, for up to three re-rolls in a game. A re-roll not used during a battle may be used on a single dice in the post-battle sequence, exploration dice and his own serious injury included."
-        },
-        {
-          "name": "Prospector",
-          "description": "If the Prospector was not taken out of action he may go prospecting as well as exploring normally, and finds a further D6-1 gc for the warband."
-        },
-        {
-          "name": "Loner",
-          "description": "The Prospector never takes All Alone tests."
         }
       ]
     }
