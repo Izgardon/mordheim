@@ -717,7 +717,8 @@
       "strength": "4",
       "rules": [
         {
-          "rule": "thrown-weapon"
+          "rule": "thrown-weapon",
+          "text": "A model throwing a poison wind globe suffers no penalty for range or for moving."
         },
         {
           "rule": "no-save",

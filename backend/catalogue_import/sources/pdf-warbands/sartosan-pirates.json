@@ -1112,7 +1112,8 @@
           "text": "It holds one shot, and may not be used again for the rest of the battle."
         },
         {
-          "rule": "save-modifier"
+          "rule": "save-modifier",
+          "text": "A warrior wounded by a Pocket Pistol takes his armour save with a -2 modifier, as against a pistol."
         },
         {
           "rule": "hand-to-hand"
@@ -1169,7 +1170,8 @@
           "text": "A Sword Pistol adds +1 to its rolls to hit when firing its pistol shot."
         },
         {
-          "rule": "prepare-shot"
+          "rule": "prepare-shot",
+          "text": "A Sword Pistol takes a whole turn to reload, so its pistol shot may be fired only every other turn."
         },
         {
           "rule": "save-modifier",

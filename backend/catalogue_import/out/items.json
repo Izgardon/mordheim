@@ -2339,6 +2339,12 @@
     "needs_rules": false,
     "rules": [
       {
+        "name": "Chaos Armour",
+        "summary": "Counts as Chaos armour",
+        "text": "A Mechanical suit counts as Chaos armour, and rules that affect Chaos armour affect the suit as well.",
+        "tables": []
+      },
+      {
         "rule": "rarity"
       },
       {
@@ -4108,10 +4114,12 @@
     "needs_rules": false,
     "rules": [
       {
-        "rule": "prepare-shot"
+        "rule": "prepare-shot",
+        "text": "A swivel gun takes a complete turn to reload, so you may only fire it every other turn."
       },
       {
-        "rule": "move-or-fire"
+        "rule": "move-or-fire",
+        "text": "You may not move and fire a swivel gun in the same turn, other than to pivot on the spot to face your target or stand up."
       },
       {
         "name": "Maximum 1 per warband",
@@ -4975,7 +4983,9 @@
         "tables": []
       },
       {
-        "rule": "cutting-edge"
+        "rule": "cutting-edge",
+        "summary": "Extra -1 armour save modifier",
+        "text": "A Cathayan longsword has an extra save modifier of -1, so a model with Strength 4 using one has a -2 save modifier when he hits an opponent in hand-to-hand combat."
       }
     ],
     "availabilities": [
@@ -16387,7 +16397,8 @@
         "tables": []
       },
       {
-        "rule": "thrown-weapon"
+        "rule": "thrown-weapon",
+        "text": "This is a thrown weapon. The warrior suffers no penalty for range or moving."
       },
       {
         "name": "Weighted",
@@ -16436,7 +16447,8 @@
         "tables": []
       },
       {
-        "rule": "thrown-weapon"
+        "rule": "thrown-weapon",
+        "text": "This is a thrown weapon. The warrior suffers no penalty for range or moving."
       }
     ],
     "availabilities": [
@@ -16519,7 +16531,8 @@
         "tables": []
       },
       {
-        "rule": "thrown-weapon"
+        "rule": "thrown-weapon",
+        "text": "A model throwing a Poison Wind Globe takes no penalty for range or for moving."
       },
       {
         "name": "Poison wind",
@@ -16598,13 +16611,17 @@
         "tables": []
       },
       {
-        "rule": "move-or-fire"
+        "rule": "move-or-fire",
+        "text": "A model cannot move, moving to man the weapon included, and shoot in the same turn."
       },
       {
-        "rule": "prepare-shot"
+        "rule": "prepare-shot",
+        "summary": "Shoots every other round, whatever skills or abilities say",
+        "text": "The weapon can only shoot every other round, and no skill or ability can change that."
       },
       {
-        "rule": "save-modifier"
+        "rule": "save-modifier",
+        "text": "A wound from a harpoon gun has a further -1 to the armour save, for -2 in all."
       },
       {
         "name": "Reel ’em In",
@@ -16653,10 +16670,13 @@
         "tables": []
       },
       {
-        "rule": "move-or-fire"
+        "rule": "move-or-fire",
+        "text": "A model cannot move, moving to man the weapon included, and shoot in the same turn."
       },
       {
-        "rule": "prepare-shot"
+        "rule": "prepare-shot",
+        "summary": "Shoots every other round, whatever skills or abilities say",
+        "text": "The weapon can only shoot every other round, and no skill or ability can change that."
       },
       {
         "name": "Multiple Wounds (D2)",
@@ -16665,7 +16685,9 @@
         "tables": []
       },
       {
-        "rule": "save-modifier"
+        "rule": "save-modifier",
+        "summary": "Wounded targets suffer a -3 armour save modifier.",
+        "text": "A wound from this weapon has a further -1 to the armour save, for -3 in all."
       }
     ],
     "availabilities": [
@@ -17530,12 +17552,9 @@
     "rules": [
       {
         "name": "",
-        "summary": "Protective mask against gas attacks; details in rules.",
-        "text": "",
+        "summary": "Poison wind affects the wearer only on a 6+",
+        "text": "A warrior wearing a Gas Mask is affected by poison wind only on a D6 roll of 6+.",
         "tables": []
-      },
-      {
-        "rule": "save"
       }
     ],
     "availabilities": [
@@ -21999,7 +22018,8 @@
         "tables": []
       },
       {
-        "rule": "wagon"
+        "rule": "wagon",
+        "text": "The Mortis Engine follows all rules for Wagons (see Empire in Flames Supplement, p. 30-33) unless specified otherwise here."
       },
       {
         "name": "Spectral Nightmares",
@@ -24359,7 +24379,8 @@
         "tables": []
       },
       {
-        "rule": "save-modifier"
+        "rule": "save-modifier",
+        "text": "A warrior wounded by a Pocket Pistol takes his armour save with a -2 modifier, as against a pistol."
       },
       {
         "rule": "hand-to-hand"
@@ -24482,7 +24503,8 @@
         "text": "A Sword Pistol adds +1 to its rolls to hit when firing its pistol shot."
       },
       {
-        "rule": "prepare-shot"
+        "rule": "prepare-shot",
+        "text": "A Sword Pistol takes a whole turn to reload, so its pistol shot may be fired only every other turn."
       },
       {
         "rule": "save-modifier",
@@ -27725,7 +27747,8 @@
         "rule": "two-handed"
       },
       {
-        "rule": "strike-last"
+        "rule": "strike-last",
+        "text": "A great scimitar is so heavy that the model using it always strikes last, even when charging."
       },
       {
         "rule": "cutting-edge",
@@ -29171,7 +29194,8 @@
     "needs_rules": false,
     "rules": [
       {
-        "rule": "thrown-weapon"
+        "rule": "thrown-weapon",
+        "text": "A model throwing a poison wind globe suffers no penalty for range or for moving."
       },
       {
         "rule": "no-save",

@@ -16,14 +16,17 @@ def add_notes(items: list[dict[str, Any]], notes: dict[str, str]) -> None:
 
 def set_own_rules(items: list[dict[str, Any]], decisions: dict[str, Any]) -> None:
     """overrides.json "item_own_rules": the rules William settles for one of our items, in place of its own (the
-    Rain Coat, which mordheimer leaves to its flavour line while the Khemri page prints what it does). A name that
-    is no item of ours stops the build."""
+    Rain Coat, which mordheimer leaves to its flavour line while the Khemri page prints what it does); a rule may be a
+    shared one by its slug (the Mechanical Suit keeps Chaos armour's). A name that is no item of ours stops the
+    build."""
     by_name = {item["name"]: item for item in items}
     missing = sorted(set(decisions) - set(by_name))
     if missing:
         raise ValueError(f"overrides.json item_own_rules: no item {', '.join(missing)}")
     for name, decision in decisions.items():
         by_name[name]["rules"] = [
-            {"name": rule.get("name", ""), "summary": rule.get("summary", ""), "text": rule["text"], "tables": []}
+            {"rule": rule["rule"]}
+            if "rule" in rule
+            else {"name": rule.get("name", ""), "summary": rule.get("summary", ""), "text": rule["text"], "tables": []}
             for rule in decision["rules"]
         ]

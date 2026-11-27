@@ -273,7 +273,7 @@
       "rules": [
         {"name": "Undead", "text": "The Mortis Engine follows the rules for the undead: it is immune to psychology, poison and disease, and causes fear."},
         {"name": "Ethereal", "text": "The Mortis Engine follows the Night Haint's rule for Ethereal models."},
-        {"rule": "Wagon"},
+        {"rule": "Wagon", "text": "The Mortis Engine follows all rules for Wagons (see Empire in Flames Supplement, p. 30-33) unless specified otherwise here."},
         {"name": "Spectral Nightmares", "text": "Four ghostly Nightmares pull the Mortis Engine. When it is hit, roll on the Out of Control table only if a Nightmare fails its Ethereal save."},
         {"name": "Passengers", "text": "The Corpse Master must drive the Mortis Engine, and no other model may ride in it. While he drives it, he has all its special rules."},
         {"name": "Storage", "text": "The Mortis Engine carries any number of corpses without slowing."},
