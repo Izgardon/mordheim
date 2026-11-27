@@ -1,0 +1,28 @@
+"""The book skills audit (27 Nov 2026): the obvious corrections, read from the committed `out/` (which test_build.py
+pins to a fresh run of build.py) and the hired swords' own data."""
+
+from typing import Any, ClassVar
+
+from catalogue_import.common import load_json
+from catalogue_import.sources import HIRELING_DATA
+from catalogue_import.tests.review_support import ReviewCase
+
+
+class SkillAuditTests(ReviewCase):
+    hired: ClassVar[dict[str, dict[str, Any]]]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.hired = {row["name"]: row for row in load_json(HIRELING_DATA / "hired-swords.json")}
+
+    def terms(self, name: str) -> dict[str, Any]:
+        return dict(self.hired[name]["hired_sword"])
+
+    def test_the_lustria_elves_learn_from_the_special_list_their_rules_name(self) -> None:
+        # "In addition, the Assassin may use any unique Dark Elf skills"; the Shadow Warrior "may choose his skill
+        # from the Shadow Warriors Special Skill list in Town Cryer 10"
+        self.assertIn("Dark Elf", self.terms("Dark Elf Assassin")["available_skill_types"])
+        self.assertIn("Shadow Warriors", self.terms("Shadow Warrior")["available_skill_types"])
+        self.assertIn("Dark Elf", self.groups)
+        self.assertIn("Shadow Warriors", self.groups)

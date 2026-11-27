@@ -1265,7 +1265,8 @@
       "available_skill_types": [
         "Combat",
         "Shooting",
-        "Speed"
+        "Speed",
+        "Dark Elf"
       ],
       "available_special_skills": [],
       "grade": "1b",
@@ -2337,7 +2338,8 @@
       "unique_to": "High Elf and all Human warbands, but may not be hired by a warband that is evil or one that includes an evil Hired Sword (eg Dark Elf Assassin)",
       "available_skill_types": [
         "Combat",
-        "Shooting"
+        "Shooting",
+        "Shadow Warriors"
       ],
       "available_special_skills": [],
       "grade": "1b",
