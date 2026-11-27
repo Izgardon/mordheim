@@ -11,6 +11,7 @@ from django.test import SimpleTestCase
 from apps.core.book_lookups import spell_fields
 
 SPELLS = Path(__file__).resolve().parent.parent / "data" / "spells.json"
+RELICS = "Relics of the Crusades Spells"
 
 
 def book() -> dict[tuple[str, str], str]:
@@ -59,3 +60,15 @@ class SpellTextTests(SimpleTestCase):
         self.assertIn('within 12" of the caster', onogal["Pestilence"])
         self.assertTrue(onogal["Scabrous Hide"].startswith("The caster has an armour save of 2+"))
         self.assertIn("in base contact with the caster", onogal["Nurgle's Rot"])
+
+    def test_the_relics_spells_are_a_lore_of_their_own(self) -> None:
+        # Curse of Form, Shroud of Darkness, Summon Skeletons and Control Undead sat greyed in every Lesser Magic,
+        # Chaos Rituals and Necromancy caster's table, which no Relics warband casts (William, 27 Nov 2026: their own
+        # lore, as Light and Silence is)
+        rows = json.loads(SPELLS.read_text(encoding="utf-8"))
+        relics = {row["name"] for row in rows if row["type"] == RELICS}
+        self.assertEqual(relics, {"Curse of Form", "Shroud of Darkness", "Summon Skeletons", "Control Undead"})
+        self.assertEqual({row.get("setting") for row in rows if row["type"] == RELICS}, {"relics-of-the-crusades"})
+        for lore in ("Lesser Magic", "Chaos Rituals", "Necromancy"):
+            with self.subTest(lore=lore):
+                self.assertEqual([row["name"] for row in rows if row["type"] == lore and row["roll"] is None], [])
