@@ -12,11 +12,13 @@ export const logTranslations = {
       henchmen: "{group} levelled up and gained {advance_label}",
     },
     loadout: {
-      hero_skill: "{actor} learned the {skill_type} skill: {skill}",
-      hero_special: "{actor} gained a {special_type}: {special}",
-      hero_spell: "{actor} attuned to the spell: {spell}",
-      hero_item: "{actor} received: {item}{item_suffix}",
-      henchmen_item: "{actor} received: {item}{item_suffix}",
+      // the server names the hero or hired sword `hero` (apps/warbands/units: the loadout log rows)
+      hero_skill: "{hero} learned the {skill_type} skill: {skill}",
+      hero_special: "{hero} gained {special} ({special_type})",
+      hero_spell: "{hero} attuned to the spell: {spell}",
+      hireling_skill: "{hero} learned the {skill_type} skill: {skill}",
+      hireling_special: "{hero} gained {special} ({special_type})",
+      hireling_spell: "{hero} attuned to the spell: {spell}",
     },
     trading_action: {
       "rarity roll":
