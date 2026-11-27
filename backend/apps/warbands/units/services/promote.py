@@ -7,10 +7,11 @@ should just get a pending advance"). The henchman is dismissed from the group (t
 left) and every step is logged. The group keeps its level-up: the talent is recorded in its history and the rest of
 the group rolls the advance again ("offer for you to roll again normally for the rest of the group"), which can't come
 up the talent while that record is the last (`talent_used`). At the hero cap the caller may name a hero to dismiss to
-make room; without one the promotion is refused with `hero_cap_reached`.
+make room; without one the promotion is refused with `hero_cap_reached`. He takes the skill lists picked from the
+heroes' (services/talent_lists.py), warned of rather than refused when the choice departs from them.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, cast
 
 from django.db import transaction
@@ -27,6 +28,7 @@ from apps.warbands.utils.stats import stat_values
 from .create import apply_create, check_cap
 from .dismiss import dismiss
 from .level_up import STAT_LABELS, advance_record, record_without_spending
+from .talent_lists import skill_list_warnings, talent_skill_lists
 
 LADS_GOT_TALENT = {"id": "LGT", "label": "Lad's Got Talent"}
 TALENT_USED = "The lad's got talent already came up on this advance: roll the group's advance again."
@@ -36,6 +38,7 @@ TALENT_USED = "The lad's got talent already came up on this advance: roll the gr
 class Promotion:
     hero: Hero
     group: HenchmenGroup | None  # None once the group has been dismissed (nobody living left)
+    warnings: list[dict[str, Any]] = field(default_factory=list)
 
 
 def _field_error(field: str, message: str) -> RosterError:
@@ -105,10 +108,12 @@ def promote_henchman(warband: Warband, group: HenchmenGroup, request: dict[str, 
         if henchman is None:
             raise _field_error("henchman_id", "Not a living member of this group.")
         _take_the_talent(group)
+        lists = list(request.get("skill_lists") or [])
+        warnings = skill_list_warnings(talent_skill_lists(warband), lists)  # the offer before anyone makes room
         _make_room(warband, request.get("dismiss_hero_id"))
         name = henchman.name
         items = carried_rows(henchman)  # his share: a copy of each row, still riding what he rode
-        fields = _hero_fields(warband, group, name, items)
+        fields = _hero_fields(warband, group, name, items) | {"available_skills": lists}
         check_cap(HERO, warband, fields, locked=True)
         hero = cast(Hero, apply_create(HERO, fields))
         HERO.hooks.record_recruit(HERO, warband, hero, {})
@@ -118,5 +123,5 @@ def promote_henchman(warband: Warband, group: HenchmenGroup, request: dict[str, 
         log_warband_event(warband.id, "advance", HENCHMEN_GROUP.advance_log_type, log_payload)
         if len(living) == 1:
             dismiss(HENCHMEN_GROUP, warband, group)
-            return Promotion(hero, None)
-    return Promotion(hero, group)
+            return Promotion(hero, None, warnings)
+    return Promotion(hero, group, warnings)

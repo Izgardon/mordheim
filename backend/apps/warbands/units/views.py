@@ -39,6 +39,7 @@ from .services.kill_history import kill_history
 from .services.level_up import LevelUpRejected, apply_advance
 from .services.members import fill_gap, on_roster_gap, take_kit
 from .services.promote import promote_henchman
+from .services.talent_lists import lists_to_pick, talent_skill_lists
 from .services.update import update_unit
 
 NOT_FOUND = {"detail": "Not found"}
@@ -166,8 +167,15 @@ class UnitKillHistoryView(UnitView):
         return Response(kill_history(self.kind, self.warband, unit))
 
 
-# Lad's Got Talent, henchmen groups only (decision 9, BUG-28). No docstring: DRF serves it on OPTIONS.
+# Lad's Got Talent, henchmen groups only (decision 9, BUG-28): GET the skill lists he may pick from the heroes', POST
+# the promotion. No docstring: DRF serves it on OPTIONS.
 class UnitPromoteView(UnitView):
+    def get(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
+        if not self.kind.visible(self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband)).exists():
+            return Response(NOT_FOUND, status=404)
+        offer = talent_skill_lists(self.warband)
+        return Response({"skill_lists": offer, "pick": lists_to_pick(offer)})
+
     def post(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
         units = self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband)
         group = self.kind.visible(units).select_related("race").first()
@@ -183,6 +191,7 @@ class UnitPromoteView(UnitView):
             "hero": UNIT_SERIALIZERS[HERO.key].detail(hero).data,
             "group": self.serializers.detail(kept).data if kept else None,
             "summary": WarbandSummarySerializer(self.warband).data,
+            "warnings": promotion.warnings,
         }
         return Response(payload, status=status.HTTP_201_CREATED)
 

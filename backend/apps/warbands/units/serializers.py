@@ -41,6 +41,7 @@ from .hooks import Recruit
 from .kinds import LinkSpec, UnitKindSpec
 from .services.create import apply_create
 from .services.missing import MAX_MISSING_GAMES
+from .services.talent_lists import SkillListsField
 from .services.update import apply_update
 
 STAT_FIELDS = (
@@ -315,11 +316,12 @@ class UnitLevelUpSerializer(serializers.Serializer):
 
 class HenchmanPromoteSerializer(serializers.Serializer):
     """POST .../henchmen-groups/<id>/promote/ (Lad's Got Talent, decision 9): the henchman who joins the heroes, with
-    an advance to take later (services/promote.py), and `dismiss_hero_id`, a hero to dismiss to make room at the hero
-    cap."""
+    an advance to take later (services/promote.py), `dismiss_hero_id`, a hero to dismiss to make room at the hero
+    cap, and `skill_lists`, the heroes' lists he takes."""
 
     henchman_id = serializers.IntegerField()
     dismiss_hero_id = serializers.IntegerField(required=False, allow_null=True)
+    skill_lists = SkillListsField(default=list)
 
 
 class UnitBatchSerializer(serializers.Serializer):

@@ -215,12 +215,15 @@ describe("The lad's got talent", () => {
       />
     );
 
+  const OFFER = "GET /warbands/9/henchmen-groups/7/promote/";
+
   beforeEach(() => {
     fakeApi.reset();
     fakeApi.on("GET /races/?campaign_id=1", []);
+    fakeApi.on(OFFER, { skill_lists: ["Combat", "Academic", "Speed"], pick: 2 });
   });
 
-  it("promotes the henchman picked, then rolls the rest of the group again without the talent", async () => {
+  it("promotes the henchman picked with two of the heroes' skill lists, then rolls the rest of the group again without the talent", async () => {
     const user = setupUser();
     fakeApi.on(PROMOTE, {
       hero: makeHero({ id: 90, name: "Beta", level_up: 1 }),
@@ -234,9 +237,22 @@ describe("The lad's got talent", () => {
     const promote = screen.getByRole("button", { name: "Pick who joins the heroes" });
     expect(promote).toBeDisabled();
     await user.click(screen.getByRole("button", { name: "Beta" }));
+    expect(screen.getByRole("button", { name: "Pick 2 skill lists" })).toBeDisabled();
+    const lists = await screen.findByRole("group", { name: "Skill lists" });
+    for (const name of ["Combat", "Academic", "Speed"]) {
+      await user.click(within(lists).getByRole("button", { name }));
+    }
+    // a third pick lets the first go: he takes two
+    expect(within(lists).getByRole("button", { name: "Combat" })).toHaveAttribute(
+      "aria-pressed",
+      "false"
+    );
     await user.click(screen.getByRole("button", { name: "Promote Beta" }));
 
-    expect(fakeApi.bodyOf(PROMOTE)).toEqual({ henchman_id: 72 });
+    expect(fakeApi.bodyOf(PROMOTE)).toEqual({
+      henchman_id: 72,
+      skill_lists: ["Academic", "Speed"],
+    });
     expect(await screen.findByText(/already came up, roll again/)).toBeInTheDocument();
     expect(faces()).toEqual(["", ""]);
     await roll2D6(user, "66");

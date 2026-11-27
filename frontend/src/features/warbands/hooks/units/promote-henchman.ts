@@ -10,6 +10,8 @@ type PromoteHenchmanInput = {
   selectedHenchmanId: string;
   /** At the hero cap: the hero dismissed in the same transaction to make room. */
   dismissHeroId?: number;
+  /** The skill lists he takes, from the heroes' (the server's offer). */
+  skillLists: string[];
 };
 
 /**
@@ -22,6 +24,7 @@ export async function promoteHenchman({
   group,
   selectedHenchmanId,
   dismissHeroId,
+  skillLists,
 }: PromoteHenchmanInput): Promise<PromoteHenchmanResult | "not-found"> {
   const resolved = resolveHenchmanFromGroup(group, selectedHenchmanId);
   if (!resolved?.henchman.id) {
@@ -29,6 +32,7 @@ export async function promoteHenchman({
   }
   return promoteWarbandHenchman(warbandId, group.id, {
     henchman_id: resolved.henchman.id,
+    skill_lists: skillLists,
     ...(dismissHeroId !== undefined ? { dismiss_hero_id: dismissHeroId } : {}),
   });
 }

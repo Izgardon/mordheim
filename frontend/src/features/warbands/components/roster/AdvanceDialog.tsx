@@ -109,6 +109,7 @@ export default function AdvanceDialog({
           {flow.advance === "LGT" && entry?.kind === "henchmen_group" ? (
             <LadsGotTalent
               group={entry.unit}
+              campaignId={campaignId}
               warbandId={warbandId}
               heroes={heroes}
               maxHeroes={maxHeroes}

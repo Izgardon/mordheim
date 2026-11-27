@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -6,25 +7,31 @@ import { Chip } from "@/components/ui/chip";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
+import { talentSkillListsQuery } from "../../api/warbands-henchmen";
 import { promoteHenchman } from "../../hooks/units/promote-henchman";
 import type { HenchmenGroup, WarbandHero } from "../../types/warband-types";
+import { toastServerWarnings } from "../../utils/server-warnings";
 import { buildHenchmenOptions } from "../../utils/levelup-utils";
+import TalentSkillLists from "./TalentSkillLists";
 
 /**
  * The lad's got talent (a henchmen roll of 10–12; William: "after rolling you should see the
  * henchmen names and then click a henchman then lock in promote"): the member who joins the
- * heroes and, at the hero cap, a hero to dismiss to make room. Promote makes him a hero with an
+ * heroes, the skill lists he takes from the heroes' (William, 27 Nov 2026) and, at the hero cap,
+ * a hero to dismiss to make room. Promote makes him a hero with an
  * advance to take later on his card ("we dont then level up that new hero then and there"); the
  * group keeps its level-up, so the dialog then offers its roll again (`onPromoted`).
  */
 export default function LadsGotTalent({
   group,
+  campaignId,
   warbandId,
   heroes,
   maxHeroes,
   onPromoted,
 }: {
   group: HenchmenGroup;
+  campaignId: number;
   warbandId: number;
   heroes: WarbandHero[];
   maxHeroes: number | null;
@@ -38,9 +45,13 @@ export default function LadsGotTalent({
   });
   const [memberId, setMemberId] = useState<string | null>(null);
   const [dismissId, setDismissId] = useState<number | null>(null);
+  const [lists, setLists] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const offer = useQuery(talentSkillListsQuery(campaignId, warbandId, group.id));
+  const pick = offer.data?.pick ?? 0;
   const atCap = maxHeroes !== null && heroes.length >= maxHeroes;
   const chosen = members.find((member) => member.id === memberId);
+  const listsReady = !offer.isLoading && lists.length >= pick;
 
   const promote = async () => {
     if (!memberId) return;
@@ -50,6 +61,7 @@ export default function LadsGotTalent({
         warbandId,
         group,
         selectedHenchmanId: memberId,
+        skillLists: lists,
         ...(atCap && dismissId !== null ? { dismissHeroId: dismissId } : {}),
       });
       if (result === "not-found") throw new Error("That henchman has left the group.");
@@ -63,6 +75,7 @@ export default function LadsGotTalent({
       toast.success(
         `${result.hero.name ?? "The new hero"} joins the heroes, with an advance to take.`
       );
+      toastServerWarnings(result.warnings);
       onPromoted(result.group === null);
     } catch (error) {
       toast.error("The promotion didn't save.", { description: getErrorMessage(error) });
@@ -92,6 +105,17 @@ export default function LadsGotTalent({
           </Chip>
         ))}
       </div>
+      <TalentSkillLists
+        offer={offer.data?.skill_lists ?? []}
+        pick={pick}
+        chosen={lists}
+        onChange={setLists}
+      />
+      {offer.isError ? (
+        <p className="m-0 text-xs font-semibold text-danger">
+          The heroes&apos; skill lists didn&apos;t load.
+        </p>
+      ) : null}
       {atCap ? (
         <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
           The warband has {maxHeroes} heroes already. Dismiss one to make room:
@@ -111,8 +135,12 @@ export default function LadsGotTalent({
           </select>
         </label>
       ) : null}
-      <Button disabled={!chosen || saving} onClick={() => void promote()}>
-        {chosen ? `Promote ${chosen.label}` : "Pick who joins the heroes"}
+      <Button disabled={!chosen || !listsReady || saving} onClick={() => void promote()}>
+        {!chosen
+          ? "Pick who joins the heroes"
+          : listsReady
+            ? `Promote ${chosen.label}`
+            : `Pick ${pick} skill list${pick === 1 ? "" : "s"}`}
       </Button>
     </div>
   );

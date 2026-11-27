@@ -167,6 +167,9 @@ export const queryKeys = {
     /** Its template as the hire screens read it: the variant applied, what it has of each fighter. */
     warbandHireTemplate: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "template"] as const,
+    /** The skill lists its heroes hold, which a henchman promoted by Lad's Got Talent picks from. */
+    talentSkillLists: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "talent-skill-lists"] as const,
     /** Its own rules, for a page that doesn't hold its sheet (the battle Rules sheet). */
     warbandRules: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "rules"] as const,
