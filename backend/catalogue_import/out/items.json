@@ -8929,7 +8929,8 @@
         ],
         "note": "Skink Heroes only, on missile weapons"
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "elven-boots",
@@ -9866,7 +9867,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "healing-herbs",
@@ -10899,7 +10901,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "magic-carpet",
@@ -11140,7 +11143,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "map-of-cathay",
@@ -12982,7 +12986,8 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "spy-glass",
@@ -13862,7 +13867,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "victuals",
@@ -13963,7 +13969,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "vodka",
@@ -18896,7 +18903,8 @@
         "warbands": [],
         "note": "Heroes only. Khalibon: 35+D6 dinars, Rare 12."
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "stickfire-hose",
@@ -22668,7 +22676,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "moonshine",
@@ -22733,7 +22742,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "stardust",
@@ -22794,7 +22804,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "gaveleers",
@@ -24708,7 +24719,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "raft",
@@ -25185,7 +25197,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "banner-jolly-roger",
@@ -26763,7 +26776,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "insulation-robe",
@@ -27127,7 +27141,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "hunting-bird",
@@ -29371,7 +29386,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "wolfsbane",
@@ -29418,7 +29434,8 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "single_use": true
   },
   {
     "slug": "thornblade",

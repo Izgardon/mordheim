@@ -30,5 +30,5 @@ class ImportOutputTests(SimpleTestCase):
         marked = {item["name"] for item in items if item.get("single_use")}
 
         self.assertLessEqual(set(overrides["single_use_items"]), marked)
-        self.assertEqual(len(overrides["single_use_items"]), 30)
+        self.assertEqual(len(overrides["single_use_items"]), 47)  # 30 (26 Nov 2026) and the items audit's 17 (27 Nov)
         self.assertFalse(marked & set(NOT_SURE))

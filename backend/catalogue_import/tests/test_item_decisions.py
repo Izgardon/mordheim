@@ -101,3 +101,32 @@ class MarienburgRowTests(ReviewCase):
     def test_the_wolfcloak_keeps_to_its_purchase_path(self) -> None:
         self.assertEqual(self.marienburg("Wolfcloak"), [])
         self.assertFalse(any(row["for_everyone"] for row in self.items["Wolfcloak"]["availabilities"]))
+
+
+class SingleUseTests(ReviewCase):
+    """Question 4 (A): the five whose text says they are used up and the twelve of a listed item's kind."""
+
+    USED_UP = (
+        "Corpse Liquor",
+        "Silver Bullets/Arrows",
+        "Stickfire Pot",
+        "Vial of Pestilens",
+        "Warpstone Token",
+        "Dark Venom",
+        "Mad Cap Mushrooms",
+        "Lurking Fear",
+        "Moonshine",
+        "Manticore Spoor",
+        "Spider Spittle",
+        "Stardust",
+        "Silver Powder",
+        "Wolfsbane",
+        "Grog",
+        "Victuals",
+        "Hardtack Biscuits",
+    )
+
+    def test_each_is_used_up_in_battle(self) -> None:
+        for name in self.USED_UP:
+            with self.subTest(item=name):
+                self.assertTrue(self.items[name].get("single_use"))
