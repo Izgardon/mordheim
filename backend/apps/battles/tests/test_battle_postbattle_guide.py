@@ -42,7 +42,7 @@ class PostbattleGuideTests(BattleTestCase):
         suggested = self.guide(battle_id)["suggested_postbattle"]
 
         swords = [f"hireling:{sword.id}" for sword in self.fixture.hirelings]
-        group_xp = [2, 2, 2, 1, 1, 1, 1, 1]  # the first group shares its member's kill
+        group_xp = [1] * 8  # a henchman's kill earns his group nothing (William, 28 Nov 2026)
         # the first hero leads a winning warband: Winning Leader +1 (BATL-NEW-09)
         expected_xp = dict(zip(heroes, [3, 1, 1, 1, 1], strict=True)) | {swords[0]: 1, swords[1]: 0}
         expected_xp |= {f"henchman:{member.id}": xp for member, xp in zip(henchmen, group_xp, strict=True)}
@@ -52,8 +52,7 @@ class PostbattleGuideTests(BattleTestCase):
         leader = [survived, {"label": "1 kill", "xp": 1}, {"label": "winning leader", "xp": 1}]
         self.assertEqual((reasons[heroes[0]], reasons[heroes[1]]), (leader, [survived]))
         self.assertEqual((reasons[swords[0]], reasons[swords[1]]), ([survived], [no_level_ups]))
-        group_kill = [survived, {"label": "1 group kill", "xp": 1}]
-        self.assertEqual((reasons[f"henchman:{henchmen[0].id}"], reasons[f"henchman:{henchmen[3].id}"]), (group_kill, [survived]))  # fmt: skip
+        self.assertEqual((reasons[f"henchman:{henchmen[0].id}"], reasons[f"henchman:{henchmen[3].id}"]), ([survived], [survived]))  # fmt: skip
         self.assertEqual(suggested["exploration"], {"dice_count": 5})  # 4 heroes in action, +1 for the win
         upkeep = {key: {"unit_name": f"Sword {n}", "cost": 15} for n, key in enumerate(swords)}
         self.assertEqual(suggested["upkeep"], {"entries": upkeep})

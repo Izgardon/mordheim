@@ -3,9 +3,10 @@
 `suggested_postbattle` is today's rule, which the postbattle page worked out on its own until now:
 - XP: 1 for each hero and hired sword (0 for one with no level-ups, and for a dramatis persona, who gains none) plus 1
   per live kill that earns XP, plus 1 for a winning warband's leader (Winning Leader, BATL-NEW-09); a henchmen group
-  earns 1 plus its selected members' kills, the same for each member (0 when any has no level-ups). Each unit's suggestion lists its `reasons`
-  (`[{"label": "survived", "xp": 1}, {"label": "2 kills", "xp": 2}, {"label": "winning leader", "xp": 1}]`), which
-  add up to its `xp_earned`, and the `level_ups` that XP would earn (services/postbattle/level_ups.py);
+  earns 1, the same for each member (0 when any has no level-ups), and nothing for kills (William, 28 Nov 2026:
+  "henchmen dont earn experience for kills generally"; the player adds any by hand). Each unit's suggestion lists
+  its `reasons` (`[{"label": "survived", "xp": 1}, {"label": "2 kills", "xp": 2}, {"label": "winning leader",
+  "xp": 1}]`), which add up to its `xp_earned`, and the `level_ups` that XP would earn (services/postbattle/level_ups.py);
 - exploration dice: the chart's `dice_per_hero` for each selected hero still in action, its `dice_for_win` more for a
   winner (the player's own declaration while the others still fight, decision 4), at most its `max_dice`;
 - upkeep: every hireling on the battle's roster but one who stays for one battle, misses games, is sworn to a blood
@@ -53,8 +54,8 @@ def _suggestion(*reasons: tuple[str, int] | None) -> dict:
     return {"xp_earned": sum(reason["xp"] for reason in listed), "reasons": listed}
 
 
-def _kills(count: int, noun: str = "kill") -> tuple[str, int] | None:
-    return (f"{count} {noun}{'' if count == 1 else 's'}", count) if count else None
+def _kills(count: int) -> tuple[str, int] | None:
+    return (f"{count} kill{'' if count == 1 else 's'}", count) if count else None
 
 
 SURVIVED = ("survived", 1)
@@ -73,17 +74,15 @@ def _hero_results(heroes: list[dict], kills: dict[str, int], winner: bool) -> di
     }
 
 
-def _group_results(groups: list[dict], selected: set[str], kills: dict[str, int]) -> dict[str, dict]:
+def _group_results(groups: list[dict], selected: set[str]) -> dict[str, dict]:
+    """A henchmen group's XP, the same for each member: 1, never anything for kills."""
     results: dict[str, dict] = {}
     for group in groups:
         members = [member for member in group.get("members", []) if member.get("key") in selected]
         if not members:
             continue
-        group_kills = sum(kills.get(member["key"], 0) for member in members)
         no_level_ups = any(member.get("noLevelUps") for member in members)
-        suggestion = (
-            _suggestion(NO_LEVEL_UPS) if no_level_ups else _suggestion(SURVIVED, _kills(group_kills, "group kill"))
-        )
+        suggestion = _suggestion(NO_LEVEL_UPS) if no_level_ups else _suggestion(SURVIVED)
         results.update({member["key"]: suggestion for member in members})
     return results
 
@@ -165,7 +164,7 @@ def suggested_postbattle(
     swords = [sword for sword in roster.get("hirelings", []) if sword.get("key") in selected]
     winner = won(battle, participant)
     unit_results = {**_hero_results(heroes, kills, winner), **_hireling_results(swords, kills)}
-    unit_results.update(_group_results(roster.get("henchmenGroups", []), selected, kills))
+    unit_results.update(_group_results(roster.get("henchmenGroups", []), selected))
     information = normalize_unit_information(participant.unit_information_json)
     in_action = [hero for hero in heroes if not information.get(hero["key"], {}).get("out_of_action")]
     suggested = {
