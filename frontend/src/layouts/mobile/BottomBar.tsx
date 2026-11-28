@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
+import type { IconType } from "react-icons";
 
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,7 @@ export function BottomBar({ label, children }: { label: string; children: ReactN
   );
 }
 
-type ItemProps = { label: string; icon: LucideIcon; current?: boolean };
+type ItemProps = { label: string; icon: LucideIcon | IconType; current?: boolean };
 
 /** An item that goes to a page. */
 export function BottomBarLink({

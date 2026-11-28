@@ -1,7 +1,8 @@
 import type { LucideIcon } from "lucide-react";
-import { BookOpenText, LayoutGrid, Map, Shield, Swords, Tent } from "lucide-react";
+import { BookOpenText, LayoutGrid, Map, Swords, Tent } from "lucide-react";
 import type { IconType } from "react-icons";
 import {
+  GiBrutalHelm,
   GiBattleGear,
   GiCheckedShield,
   GiCrownCoin,
@@ -77,7 +78,7 @@ export const BATTLES_ICON = Swords;
  */
 export function warbandLinks(campaign: CampaignNavFlags): NavLink[] {
   return [
-    { label: "Warband", path: "warband", icon: Shield },
+    { label: "Warband", path: "warband", icon: GiBrutalHelm },
     ...(campaign.enable_encampments
       ? [{ label: "Encampments", path: "encampments", icon: Tent }]
       : []),

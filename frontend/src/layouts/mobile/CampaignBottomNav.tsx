@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Flag, House, LogOut, Search, Settings, Shield, Swords } from "lucide-react";
+import { Flag, House, LogOut, Search, Settings, Swords } from "lucide-react";
+import { GiBrutalHelm } from "react-icons/gi";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
@@ -61,7 +62,7 @@ export default function CampaignBottomNav({
         <BottomBarLink
           to={`${base}/warband`}
           label="Warband"
-          icon={Shield}
+          icon={GiBrutalHelm}
           current={active === "warband"}
         />
         {onRejoinBattle ? (
