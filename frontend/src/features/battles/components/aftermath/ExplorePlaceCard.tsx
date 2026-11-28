@@ -3,17 +3,17 @@ import type { FoundPlace } from "@/features/exploration/utils/places-found";
 
 /**
  * One place the dice found: the multiple that found it, its name and what the campaign's chart
- * says it does. The player reads it and gives himself whatever it says; nothing here is applied,
- * logged or rolled for him (William, 12 Nov 2026). A place nobody has written rules for shows its
- * name alone.
+ * says it does. The player reads it and gives himself whatever it says; nothing here is applied
+ * or rolled for him (William, 12 Nov 2026). Read and roll opens its text over the dice roller. A
+ * place nobody has written rules for shows its name alone.
  */
 export default function ExplorePlaceCard({
   found,
   onReadAndRoll,
 }: {
   found: FoundPlace;
-  /** Opens the campaign's locations searched for the place (none when they're switched off). */
-  onReadAndRoll?: (place: string) => void;
+  /** Opens the place's text over the dice roller. */
+  onReadAndRoll: (found: FoundPlace) => void;
 }) {
   const { place } = found;
   return (
@@ -25,11 +25,11 @@ export default function ExplorePlaceCard({
           </span>
           <span className="font-display text-[19px] font-semibold text-head">{place.name}</span>
         </div>
-        {onReadAndRoll ? (
+        {place.rules ? (
           <Button
             variant="secondary"
             className="border-accent-line text-accent-hi"
-            onClick={() => onReadAndRoll(place.name)}
+            onClick={() => onReadAndRoll(found)}
           >
             Read and roll
           </Button>

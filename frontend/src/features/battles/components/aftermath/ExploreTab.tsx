@@ -13,7 +13,7 @@ import {
 } from "@/features/battles/components/postbattle/postbattle-utils";
 import type { ExplorationState } from "@/features/battles/hooks/useExploration";
 import type { ExplorationChart } from "@/features/exploration/types/exploration-types";
-import { placesFound } from "@/features/exploration/utils/places-found";
+import { placesFound, type FoundPlace } from "@/features/exploration/utils/places-found";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 import { cn } from "@/lib/utils";
 
@@ -42,8 +42,8 @@ export default function ExploreTab({
   /** "3 heroes on their feet, +1 for winning". */
   why: string;
   isMobile: boolean;
-  /** Opens the campaign's locations searched for the place (none when they're switched off). */
-  onReadAndRoll?: (place: string) => void;
+  /** Opens a place's text over the dice roller (Read and roll). */
+  onReadAndRoll: (found: FoundPlace) => void;
 }) {
   const { exploration, amount, rolled } = explore;
   if (!exploration) return null;

@@ -9,7 +9,7 @@ import type { BattleParticipant, BattleState } from "@/features/battles/types/ba
 import { numberedOr } from "@/features/battles/utils/battle-number";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { useCampaignExplorationChart } from "@/features/exploration/api/exploration-queries";
-import LocationsPanel from "@/features/warbands/components/panels/LocationsPanel";
+import type { FoundPlace } from "@/features/exploration/utils/places-found";
 import { useTabScroll } from "@/lib/use-tab-scroll";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +26,7 @@ import ExperienceTab from "./ExperienceTab";
 import ExploreTab from "./ExploreTab";
 import FindsCard from "./FindsCard";
 import InjuriesTab from "./InjuriesTab";
+import PlaceRollPanel from "./PlaceRollPanel";
 import ResultsBanner from "./ResultsBanner";
 import SettledNote from "./SettledNote";
 import StatChangesCard from "./StatChangesCard";
@@ -85,7 +86,10 @@ export default function AftermathBody({
     tabs.reveal();
     setTab(next);
   };
-  const [readPlace, setReadPlace] = useState<string | null>(null);
+  const [reading, setReading] = useState<{ found: FoundPlace | null; open: boolean }>({
+    found: null,
+    open: false,
+  });
   const navigate = useNavigate();
   const { drafting, explore } = postgame;
   const { draft, persistDraft } = drafting;
@@ -144,7 +148,7 @@ export default function AftermathBody({
           resources={postgame.resources}
           why={why}
           isMobile={isMobile}
-          onReadAndRoll={campaign?.enable_locations ? setReadPlace : undefined}
+          onReadAndRoll={(found) => setReading({ found, open: true })}
         />
         <FindsCard
           campaignId={campaignId}
@@ -220,14 +224,12 @@ export default function AftermathBody({
           {nav}
         </footer>
       ) : null}
-      <LocationsPanel
+      <PlaceRollPanel
+        key={reading.found?.place.name}
         campaignId={campaignId}
-        warbandId={me.warband.id}
-        heroes={[]}
-        canEdit={false}
-        open={readPlace !== null}
-        onOpenChange={(open) => (open ? null : setReadPlace(null))}
-        initialSearch={readPlace ?? undefined}
+        found={reading.found}
+        open={reading.open}
+        onOpenChange={(open) => setReading((now) => ({ ...now, open }))}
       />
     </div>
   );

@@ -18,15 +18,16 @@ const rollDie = (die: Die) =>
 /**
  * The dice roller's state, held by whoever places it so it outlives the panel closing: the dice,
  * the modifier and reason, the last roll, and your recent rolls (read while `enabled`). Each roll,
- * rolled here or typed in from the table, goes into your warband's log as a dice roll.
+ * rolled here or typed in from the table, goes into your warband's log as a dice roll, with
+ * `reason` ("What for") to begin with.
  */
-export function useDiceRoller(campaignId: number, enabled: boolean) {
+export function useDiceRoller(campaignId: number, enabled: boolean, initialReason = "") {
   const { warband } = useAppStore();
   const queryClient = useQueryClient();
   const [count, setCount] = useState(2);
   const [die, setDie] = useState<Die>("D6");
   const [modifier, setModifier] = useState(0);
-  const [reason, setReason] = useState("");
+  const [reason, setReason] = useState(initialReason);
   const [last, setLast] = useState<{ faces: number[]; total: number; dice: string } | null>(null);
   const [error, setError] = useState("");
   const logs = useInfiniteQuery({

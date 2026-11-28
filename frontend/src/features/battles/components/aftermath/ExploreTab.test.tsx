@@ -50,6 +50,7 @@ const chart = {
 } as ExplorationChart;
 
 const setDie = vi.fn();
+const readAndRoll = vi.fn();
 
 const rolled = (
   diceValues: number[],
@@ -80,6 +81,7 @@ const rolled = (
       resources={[{ id: 4, name: "Wyrdstone", amount: 2 } as never]}
       why="2 heroes on their feet, +1 for winning"
       isMobile={false}
+      onReadAndRoll={readAndRoll}
     />
   );
 };
@@ -100,6 +102,7 @@ const show = () => {
       resources={[{ id: 4, name: "Wyrdstone", amount: 2 } as never]}
       why="2 heroes on their feet, +1 for winning"
       isMobile={false}
+      onReadAndRoll={readAndRoll}
     />
   );
   return setExploration;
@@ -175,6 +178,22 @@ describe("ExploreTab", () => {
   it("shows what a found place does, in the chart's own words", () => {
     rolled([1, 1], rules, chart);
     expect(screen.getByText("D6 gc.")).toBeInTheDocument();
+  });
+
+  it("opens a place's text and the roller from Read and roll, never another page", async () => {
+    const user = setupUser();
+    rolled([1, 1], rules, chart);
+    const card = screen.getByText("Jetty").closest("article") as HTMLElement;
+    expect(card.querySelector("a")).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Read and roll" }));
+    expect(readAndRoll).toHaveBeenCalledWith(
+      expect.objectContaining({ kicker: "Twice 1\u00b71", place: chart.multiples[0].places[0] })
+    );
+  });
+
+  it("offers no Read and roll for a place with nothing to read", () => {
+    rolled([3, 3, 3], rules, chart);
+    expect(screen.queryByRole("button", { name: "Read and roll" })).toBeNull();
   });
 
   it("says nothing about a place nobody has written rules for", () => {
