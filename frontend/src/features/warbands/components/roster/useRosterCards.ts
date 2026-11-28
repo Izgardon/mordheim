@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 
 import type { RecruitKind } from "../../hooks/units/useRecruit";
 import type { UnitKindKey } from "../../types/units";
+import type { PendingList } from "./unit-view";
 
 /**
  * Lands on a unit just hired from outside the roster (the hire drawer, the hired swords page): his
@@ -51,6 +52,8 @@ export function useRosterCards() {
   const [openKey, setOpenKey] = useState<string | null>(linked);
   const [editKey, setEditKey] = useState<string | null>(linked && linkedEdit ? linked : null);
   const [recruiting, setRecruiting] = useState<RecruitKind | null>(null);
+  // the pick a closed card's "Skill to choose" opened it on
+  const [picking, setPicking] = useState<{ key: string; list: PendingList } | null>(null);
 
   useEffect(() => {
     if (!linked) return;
@@ -85,10 +88,20 @@ export function useRosterCards() {
     toggle: (key: string) => {
       setOpenKey((current) => (current === key ? null : key));
       setEditKey(null);
+      setPicking(null);
     },
+    /** Opens the card on the box of its first pick on `list` (a closed card's picks to choose). */
+    openAtPick: (key: string, list: PendingList) => {
+      setOpenKey(key);
+      setEditKey(null);
+      setPicking({ key, list });
+    },
+    /** The list a card was opened to pick from, while it is the one open. */
+    pickingOn: (key: string) => (picking?.key === key ? picking.list : undefined),
     startEdit: (key: string) => {
       setOpenKey(key);
       setEditKey(key);
+      setPicking(null);
     },
     stopEdit: () => setEditKey(null),
     /**

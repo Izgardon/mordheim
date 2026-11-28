@@ -28,6 +28,7 @@ import {
   isGroup,
   itemBoxKind,
   pendingPicks,
+  type PendingList,
   type RosterUnit,
 } from "./unit-view";
 
@@ -50,13 +51,26 @@ type UnitDetailsProps = {
   warbandId: number;
   /** Makes a pick an advance left for later: the entry joins its list, one pick fewer. */
   onPick: (pick: AdvancePick) => void;
+  /** Opened from the closed card's picks to choose: the first pick's box on this list starts open. */
+  startPick?: PendingList;
+};
+
+/** Where the first box of a pick still to make on `list` sits. */
+const pickBox = (rows: Row[], list?: PendingList): OpenBox | null => {
+  if (!list) return null;
+  for (const line of rows) {
+    const index = line.boxes.findIndex((box) => box.pending === list);
+    if (index >= 0) return { row: line.key, index };
+  }
+  return null;
 };
 
 /** An open card's body: experience across the top, then design E's columns on the web (items, skills and the rest). */
 export default function UnitDetails(props: UnitDetailsProps) {
   const { entry, campaign, canEdit, others } = props;
   const { kind } = entry;
-  const [open, setOpen] = useState<OpenBox | null>(null);
+  // undefined until a box is opened or closed: the box of the pick he came to make, if any
+  const [chosen, setOpen] = useState<OpenBox | null>();
   // on a phone a box's detail opens under the line of boxes holding it (William, 25 Nov 2026);
   // the web's columns are too narrow for it, so it sits under them all
   const inSection = useMediaQuery("(max-width: 960px)");
@@ -111,6 +125,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
     })),
   ].filter((row) => row.boxes.length > 0);
   const all = [itemsRow, ...skillRows];
+  const open = chosen === undefined ? pickBox(skillRows, props.startPick) : chosen;
   const selectedRow = all.find((row) => row.key === open?.row);
   const selected = open && selectedRow ? selectedRow.boxes[open.index] : undefined;
 

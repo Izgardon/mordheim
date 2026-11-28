@@ -204,3 +204,10 @@ export function pendingPicks({ unit }: RosterUnit, list: PendingList) {
     (unit as Partial<Record<(typeof PENDING_FIELD)[PendingList], number>>)[PENDING_FIELD[list]] ?? 0
   );
 }
+
+/** The lists a unit has picks waiting on, in his card's order, with how many (a group: none). */
+export function waitingPicks(entry: RosterUnit) {
+  return (["skills", "spells", "specials"] as const)
+    .map((list) => ({ list, count: pendingPicks(entry, list) }))
+    .filter((pick) => pick.count > 0);
+}

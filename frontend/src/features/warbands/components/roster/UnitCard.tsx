@@ -13,6 +13,7 @@ import UnitBadges, { hasBadges, UnitTradingAction } from "./UnitBadges";
 import UnitKills from "./UnitKills";
 import UnitLines from "./UnitLines";
 import UnitProfile from "./UnitProfile";
+import UnitPendingPicks, { type OnPendingPick } from "./UnitPendingPicks";
 import UnitTitle from "./UnitTitle";
 import UnitWarnings from "./UnitWarnings";
 import {
@@ -41,6 +42,8 @@ type UnitCardProps = {
   /** Advance ready's button: the unit's advance. */
   onAdvance?: () => void;
   onTradingAction?: (on: boolean) => void;
+  /** Its picks to choose, pressed: opens the card at the pick's box. */
+  onPendingPick?: OnPendingPick;
   /** The open body (`UnitDetails`), or the edit form. */
   children?: ReactNode;
 };
@@ -113,11 +116,21 @@ export default function UnitCard(props: UnitCardProps) {
   const name = unit.name;
   // the badges and (open) kills sit on the row under the head, leaving the head to the name
   // (William, 22 Nov 2026): opposite a hero's trading action, beside a group's members; a hired
-  // sword has no such row, so theirs stay in the head. Closed, no kills.
+  // sword has no such row, so theirs stay in the head, his picks to choose on a line under it.
+  // Closed, no kills; open, no picks to choose (the boxes show them).
   const badgesAt = entry.kind === "hero" ? "trading" : members.length ? "members" : "head";
+  const picks = open ? null : (
+    <UnitPendingPicks
+      entry={entry}
+      campaignId={campaign?.id ?? 0}
+      line={badgesAt !== "trading"}
+      onPick={canEdit ? props.onPendingPick : undefined}
+    />
+  );
   const badges = (
     <>
       <UnitBadges entry={entry} campaign={campaign} canEdit={canEdit} onRide={props.onRide} />
+      {badgesAt === "trading" ? picks : null}
       {/* a henchmen group's kills sit on each member's line in the members list (William, 22 Nov 2026) */}
       {open && !isGroup(entry) ? (
         <UnitKills
@@ -190,6 +203,7 @@ export default function UnitCard(props: UnitCardProps) {
             {buttons}
           </div>
         </div>
+        {badgesAt === "trading" ? null : picks}
         <UnitTradingAction
           entry={entry}
           canEdit={canEdit}

@@ -99,6 +99,7 @@ export default function RosterSections(props: RosterSectionsProps) {
         onRide={(rowId, on) => actions.rideMount(entry, rowId, on)}
         onAdvance={() => props.onAdvance(entry)}
         onTradingAction={(on) => actions.patchUnit(entry, { trading_action: on })}
+        onPendingPick={(list) => cards.openAtPick(key, list)}
       >
         {editing ? (
           props.renderEdit(entry, cards.stopEdit)
@@ -119,6 +120,7 @@ export default function RosterSections(props: RosterSectionsProps) {
             campaignId={campaign?.id ?? 0}
             warbandId={warbandId}
             onPick={(pick) => actions.pickLater(entry, pick)}
+            startPick={cards.pickingOn(key)}
           />
         ) : null}
       </UnitCard>

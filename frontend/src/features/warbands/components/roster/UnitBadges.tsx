@@ -7,7 +7,7 @@ import type { CampaignSummary } from "@/features/campaigns/types/campaign-types"
 import { isMissing, missingGamesOf, missingLabel } from "../../units/missing-games";
 import { carriedMounts } from "../../utils/companions";
 import { BADGE } from "./badge-style";
-import { isGroup, liveMembers, type RosterUnit } from "./unit-view";
+import { isGroup, liveMembers, waitingPicks, type RosterUnit } from "./unit-view";
 
 /**
  * The card's Missing badge: a hero's or hired sword's games, or how many of a group's members miss
@@ -73,12 +73,13 @@ export default function UnitBadges({
   );
 }
 
-/** Whether the unit has a badge to show: a mount, Missing or a blood pact. */
+/** Whether the unit has a badge to show: a mount, Missing, picks to choose or a blood pact. */
 export function hasBadges(entry: RosterUnit, campaign: CampaignSummary | null) {
   const { unit } = entry;
   return Boolean(
     carriedMounts(unit.items).length ||
       missingBadge(entry) ||
+      waitingPicks(entry).length ||
       (campaign?.enable_blood_pacts && entry.kind === "hireling" && entry.unit.blood_pacted)
   );
 }

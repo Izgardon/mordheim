@@ -733,3 +733,44 @@ describe("A caster's spells section", () => {
     expect(screen.getByText("Spells")).toBeInTheDocument();
   });
 });
+
+describe("A closed card's picks to choose", () => {
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /warbands/9/template/", {
+      template: null,
+      variant: "",
+      list_prices_open: true,
+    });
+  });
+
+  // William, 28 Nov 2026: "make it clear on their minimised card"
+  it("opens the card at the pick's box", async () => {
+    const hero = makeHero({ id: 7, name: "Otto", pending_specials: 1 });
+    renderWithQueryClient(
+      <MemoryRouter initialEntries={["/campaigns/1/warband"]}>
+        <RosterSections
+          warbandId={9}
+          campaign={null}
+          heroes={[hero]}
+          henchmenGroups={[]}
+          hirelings={[]}
+          canEdit
+          canCreateRace={false}
+          onLoadout={vi.fn()}
+          onHire={vi.fn()}
+          onAdvance={vi.fn()}
+          onBuyAgain={vi.fn()}
+          renderEdit={() => null}
+        />
+      </MemoryRouter>
+    );
+    const user = setupUser();
+    await user.click(screen.getByRole("button", { name: "Special to choose" }));
+    expect(screen.getByRole("button", { name: "Close Otto" })).toBeInTheDocument();
+    expect(screen.getByText("Pick a new special")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Close" }));
+    expect(screen.queryByText("Pick a new special")).not.toBeInTheDocument();
+  });
+});
