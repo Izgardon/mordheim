@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { onlineManager } from "@tanstack/react-query";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "./api-client";
 import { createQueryClient, shouldRetryQuery } from "./query-client";
@@ -24,8 +25,24 @@ describe("shouldRetryQuery", () => {
 });
 
 describe("createQueryClient", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    onlineManager.setOnline(true);
+  });
+
   it("never retries mutations", () => {
     expect(createQueryClient().getDefaultOptions().mutations?.retry).toBe(false);
+  });
+
+  it("starts offline when the app opens with no signal, so its reads wait rather than fail", () => {
+    // the service worker opens the app cold in airplane mode, and no `offline` event ever fires
+    vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+    createQueryClient();
+    expect(onlineManager.isOnline()).toBe(false);
+
+    vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
+    createQueryClient();
+    expect(onlineManager.isOnline()).toBe(true);
   });
 });
 

@@ -1,4 +1,4 @@
-import { QueryClient } from "@tanstack/react-query";
+import { onlineManager, QueryClient } from "@tanstack/react-query";
 
 // other
 import { ApiError } from "./api-client";
@@ -22,6 +22,10 @@ export function shouldRetryQuery(failureCount: number, error: unknown) {
 }
 
 export function createQueryClient() {
+  // TanStack starts online and hears only later `online`/`offline` events, so an app opened cold
+  // with no signal (the service worker) would fetch, fail and show the error over an empty list:
+  // offline from the start, its reads pause and the pages say "No connection" (query-offline.ts).
+  onlineManager.setOnline(navigator.onLine);
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
