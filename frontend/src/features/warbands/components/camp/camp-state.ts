@@ -1,9 +1,4 @@
-import { injuryRows } from "@/features/battles/components/aftermath/aftermath-injuries";
-import {
-  advancesWaiting,
-  buildXpRows,
-  xpBlock,
-} from "@/features/battles/components/aftermath/aftermath-xp";
+import { advancesWaiting, buildXpRows } from "@/features/battles/components/aftermath/aftermath-xp";
 import type { BattlePostbattleState } from "@/features/battles/types/battle-types";
 
 import type { OpenCamp } from "./camp-types";
@@ -52,30 +47,6 @@ export const upkeepCharged = (camp: OpenCamp) =>
   upkeepLines(camp)
     .filter((line) => line.status !== "gone")
     .reduce((sum, line) => sum + line.cost, 0);
-
-/**
- * Whether each Aftermath tab is done: a step the player has confirmed with Next is done for good
- * (`postgame.locks`, William 18 Nov 2026); one he hasn't is done when there is nothing left on it
- * to do — every roll made, every advance taken, the dice rolled.
- */
-export function aftermathDone(camp: OpenCamp) {
-  const { draft, postgame, battleState, campaign } = camp;
-  const locks = postgame.locks;
-  const mounts = Object.keys(battleState.suggested_postbattle?.mount_survival?.entries ?? {});
-  const injuries =
-    injuryRows(draft, undefined).every((row) => row.seriousInjuryRolls.length > 0) &&
-    mounts.every((key) => (draft.mount_survival?.[key]?.roll ?? null) !== null);
-  const xp = buildXpRows(draft, postgame.sheet, campaign, battleState.suggested_postbattle).every(
-    (row) => !row.canGainXp || !xpBlock(row).canAdvance
-  );
-  const dice = postgame.explore.exploration?.diceValues ?? [];
-  const explore = dice.length === 0 || dice.every((value) => value !== null);
-  return {
-    injuries: locks.injuries || injuries,
-    xp: locks.xp || xp,
-    explore: locks.explore || explore,
-  };
-}
 
 const last = <T>(list: T[]) => list[list.length - 1];
 

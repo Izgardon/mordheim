@@ -3,7 +3,7 @@ import { Check } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { aftermathDone, upkeepLines } from "./camp-state";
+import { upkeepLines } from "./camp-state";
 import type { CampRow, OpenCamp } from "./camp-types";
 
 const label = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
@@ -23,11 +23,11 @@ export function campDone(camp: OpenCamp): Record<CampRow, boolean> {
 
 /**
  * The web's post-game bar (design E), above the warband page: the battle, the Aftermath's three
- * steps (each ticked once done) linking to the Aftermath, and camp's steps, which tick when done
+ * steps linking to the Aftermath, each ticked only once its Next was pressed (William, 28 Nov 2026), and camp's steps, which tick when done
  * and jump to their row in camp; Ready opens the confirm.
  */
 export default function PostgameBar({ camp }: { camp: OpenCamp }) {
-  const done = aftermathDone(camp);
+  const done = camp.postgame.locks;
   const campTicks = campDone(camp);
   const steps = [
     { tab: "injuries", label: "Injuries", done: done.injuries },

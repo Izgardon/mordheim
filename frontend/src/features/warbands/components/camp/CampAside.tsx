@@ -5,7 +5,6 @@ import { Check, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionTitle } from "@/components/ui/section-title";
 
-import { aftermathDone } from "./camp-state";
 import type { OpenCamp } from "./camp-types";
 import CampRows from "./CampRows";
 import ReadyDialog from "./ReadyDialog";
@@ -20,7 +19,7 @@ import VeteransDialog from "./VeteransDialog";
 export default function CampAside({ camp }: { camp: OpenCamp }) {
   const [modal, setModal] = useState<"sell" | "recruit" | null>(null);
   const readyOpen = camp.focus === "ready";
-  const done = aftermathDone(camp);
+  const done = camp.postgame.locks;
   const rows = (
     <CampRows camp={camp} onSell={() => setModal("sell")} onRecruit={() => setModal("recruit")} />
   );
