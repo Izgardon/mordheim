@@ -4,7 +4,6 @@ import { toast } from "sonner";
 
 import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
-import { Chip } from "@/components/ui/chip";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useRequestKey } from "@/lib/request-key";
@@ -15,17 +14,17 @@ import { typedType } from "../../hooks/units/useRecruit";
 import { unitApi, type UnitBatch } from "../../units/unit-api";
 import { isCreatureGroup } from "../../utils/companions";
 import HireTally from "../recruit/HireTally";
+import MemberNames, { useMemberNames } from "../recruit/MemberNames";
 import { useRecruitName } from "../recruit/RecruitNameField";
-import { overCount, overGroup } from "../recruit/hire-draft";
+import { memberPrefill, overCount, overGroup } from "../recruit/hire-draft";
 import { newUnitId, useOpenInEdit } from "../roster/useRosterCards";
 import CampNewGroup from "./CampNewGroup";
-import { RecruitNames, VeteranXp } from "./CampRecruitParts";
+import { NEW, RecruitInto, VeteranXp } from "./CampRecruitParts";
 import type { OpenCamp } from "./camp-types";
-
-const NEW = "new";
 
 /**
  * The recruit helper (design E): recruits for a new group (name and type) or an existing one,
+ * each named (a creature from the list's "Giant Rat 1" to start, still editable),
  * their experience shared out of the veterans' pool (a group's members share one XP, so a new
  * group's recruits take the same XP each and an existing group's join at its XP), at a cost per
  * model. Going over the pool or the group's size warns; it doesn't stop you.
@@ -47,7 +46,7 @@ export default function VeteransDialog({
   const name = useRecruitName();
   const [type, setType] = useState("");
   const [xpEach, setXpEach] = useState(0);
-  const [recruits, setRecruits] = useState<string[]>(["", ""]);
+  const [count, setCount] = useState(2);
   const [cost, setCost] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const requestKey = useRequestKey();
@@ -62,20 +61,19 @@ export default function VeteransDialog({
   const group = groups.find((entry) => String(entry.id) === into);
   const living = group ? group.henchmen.filter((member) => !member.dead) : [];
   const each = group ? Number(group.xp ?? 0) : xpEach;
-  const left = total - vet.spent - each * recruits.length;
+  const recruits = useMemberNames(count, fighter ? memberPrefill(fighter) : undefined);
+  const left = total - vet.spent - each * count;
   const price =
     cost ?? String(group ? (group.hire_cost ?? group.price ?? 0) : (fighter?.cost ?? 25));
-  const label = (index: number) =>
-    recruits[index]?.trim() ||
-    `${group?.unit_type || fighter?.name || type || "Recruit"} ${index + 1}`;
   const warnings = fighter
-    ? [overCount(fighter, recruits.length), overGroup(fighter, recruits.length)].filter(Boolean)
+    ? [overCount(fighter, count), overGroup(fighter, count)].filter(Boolean)
     : [];
 
   const recruit = async () => {
-    if (!group && !name.ready()) return;
+    const named = group ? true : name.ready();
+    if (!recruits.ready(named) || !named) return;
     setSaving(true);
-    const names = recruits.map((_, index) => label(index));
+    const names = recruits.names.map((recruitName) => recruitName.trim());
     const gc = Number(price) || 0;
     try {
       const batch: UnitBatch<"henchmen_group"> = group
@@ -148,7 +146,7 @@ export default function VeteransDialog({
           </Button>
           <Button
             className="min-h-12"
-            disabled={saving || !recruits.length || (into === NEW && fighters.length > 0 && !as)}
+            disabled={saving || !count || (into === NEW && fighters.length > 0 && !as)}
             onClick={() => void recruit()}
           >
             Recruit
@@ -156,28 +154,14 @@ export default function VeteransDialog({
         </div>
       }
     >
-      <div role="radiogroup" aria-label="Recruit into" className="flex flex-wrap gap-1.5">
-        {[
-          { id: NEW, text: "New group" },
-          ...groups.map((entry) => ({
-            id: String(entry.id),
-            text: `${entry.name} (${entry.henchmen.filter((m) => !m.dead).length}/${entry.max_size ?? 5})`,
-          })),
-        ].map((option) => (
-          <Chip
-            key={option.id}
-            role="radio"
-            aria-checked={into === option.id}
-            pressed={into === option.id}
-            onClick={() => {
-              setInto(option.id);
-              setCost(null);
-            }}
-          >
-            {option.text}
-          </Chip>
-        ))}
-      </div>
+      <RecruitInto
+        groups={groups}
+        into={into}
+        onInto={(id) => {
+          setInto(id);
+          setCost(null);
+        }}
+      />
       {group ? null : (
         <CampNewGroup
           typeName={answer?.template?.name ?? ""}
@@ -194,8 +178,15 @@ export default function VeteransDialog({
         />
       )}
       <VeteranXp left={left} total={total} each={each} fixed={Boolean(group)} onEach={setXpEach} />
-      <RecruitNames recruits={recruits} placeholder={label} onChange={setRecruits} />
-      {group && living.length + recruits.length > (group.max_size ?? 5) ? (
+      <MemberNames
+        field={recruits}
+        label="Recruit"
+        onRemove={(index) => {
+          recruits.removeAt(index);
+          setCount(count - 1);
+        }}
+      />
+      {group && living.length + count > (group.max_size ?? 5) ? (
         <p className="m-0 text-xs text-danger">
           That takes the group over its size of {group.max_size ?? 5}.
         </p>
@@ -208,7 +199,7 @@ export default function VeteransDialog({
       <div className="flex flex-wrap items-center gap-2.5">
         <button
           type="button"
-          onClick={() => setRecruits((list) => [...list, ""])}
+          onClick={() => setCount(count + 1)}
           className="min-h-9 border border-dashed border-strong px-3 text-[13px] font-bold text-accent-text"
         >
           Add another
@@ -230,7 +221,7 @@ export default function VeteransDialog({
       {fighter ? (
         <HireTally
           name={fighter.plural || fighter.name}
-          members={recruits.length}
+          members={count}
           cost={price}
           onCost={setCost}
           picks={[]}

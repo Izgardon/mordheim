@@ -11,12 +11,14 @@ import type {
 import HireKit from "./HireKit";
 import HireTally from "./HireTally";
 import HireUpgrades from "./HireUpgrades";
+import MemberNames, { useMemberNames } from "./MemberNames";
 import RecruitNameField, { useRecruitName } from "./RecruitNameField";
 import {
   fighterLines,
   kitPurchases,
   listNames,
   listPrice,
+  memberPrefill,
   overCount,
   overGroup,
   pickKey,
@@ -28,11 +30,12 @@ import { useUpgradePicks } from "./useUpgradePicks";
 
 const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 
-/** What a template hire sends: the fighter, the name, a group's models, his cost, the kit and his upgrades. */
+/** What a template hire sends: the fighter, the name, a group's members' names, his cost, the kit and his upgrades. */
 export type TemplateHire = {
   fighter: TemplateFighter;
   name: string;
-  models: number;
+  /** A group's members, one name per model; none for a hero. */
+  members: string[];
   cost: string;
   purchases: ReturnType<typeof kitPurchases>;
   upgrades: { create_index: number; upgrade_id: number; price: number }[];
@@ -40,7 +43,7 @@ export type TemplateHire = {
 
 /**
  * The rest of a hire once Recruit as picked a template fighter: his name (a group's models,
- * warning past its size), the kit from his lists, a hero's upgrades (before and after the first
+ * warning past its size, and each model's name), the kit from his lists, a hero's upgrades (before and after the first
  * battle: the book sells them on recruitment), and the tally. The server fills his type,
  * race, profile, skills, spells, rules and starting XP, and gives the "1st free" items.
  */
@@ -76,6 +79,7 @@ export default function TemplateRecruit({
   const offered = atHire(upgrades);
   const bought = useUpgradePicks(group ? [] : offered);
   const count = group ? Math.max(1, Math.min(20, Math.trunc(Number(models) || 1))) : 1;
+  const members = useMemberNames(group ? count : 0, memberPrefill(fighter));
   const warnings = [overCount(fighter, count), group ? overGroup(fighter, count) : null].filter(
     Boolean
   );
@@ -98,11 +102,12 @@ export default function TemplateRecruit({
       className="flex flex-col gap-3"
       onSubmit={(event) => {
         event.preventDefault();
-        if (!name.ready()) return;
+        const named = name.ready();
+        if (!members.ready(named) || !named) return;
         onRecruit({
           fighter,
           name: name.name,
-          models: count,
+          members: members.names,
           cost,
           purchases: kitPurchases(picks, prices, lines),
           upgrades: bought.lines(),
@@ -134,6 +139,7 @@ export default function TemplateRecruit({
           </label>
         ) : null}
       </div>
+      <MemberNames field={members} />
       {warnings.map((warning) => (
         <p key={warning} className="m-0 text-xs font-semibold text-danger">
           {warning}

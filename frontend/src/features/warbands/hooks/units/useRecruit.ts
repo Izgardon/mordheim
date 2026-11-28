@@ -64,9 +64,9 @@ export function useRecruit(kind: RecruitKind, warbandId: number, existingIds: nu
   const send = (batch: UnitBatch<RecruitKind>) =>
     unitApi(kind).batch(warbandId, batch, requestKey.keyFor(batch));
 
-  const create = async (draft: RecruitDraft) => {
+  /** A group's `members` are its models' names, one each. */
+  const create = async (draft: RecruitDraft, members: string[]) => {
     const type = draft.type.trim();
-    const models = Math.max(1, Math.min(20, whole(draft.count) || 1));
     const body = {
       name: draft.name.trim(),
       ...typedType(type),
@@ -74,11 +74,7 @@ export function useRecruit(kind: RecruitKind, warbandId: number, existingIds: nu
       price: whole(draft.cost),
       xp: whole(draft.xp),
       ...(kind === "henchmen_group"
-        ? {
-            henchmen: Array.from({ length: models }, (_, i) => ({
-              name: `${type || "Henchman"} ${i + 1}`,
-            })),
-          }
+        ? { henchmen: members.map((member) => ({ name: member.trim() })) }
         : {}),
     };
     const result = await send({ create: [body as never] });
@@ -90,7 +86,7 @@ export function useRecruit(kind: RecruitKind, warbandId: number, existingIds: nu
     return result.units.find((unit) => !existingIds.includes(unit.id))?.id ?? null;
   };
 
-  /** A hire from the template: the fighter's key, the name, a group's members, his cost and the kit (create 0). */
+  /** A hire from the template: the fighter's key, the name, a group's members' names, his cost and the kit (create 0). */
   const fromTemplate = async (hire: TemplateHire) => {
     const { fighter } = hire;
     const body = {
@@ -98,11 +94,7 @@ export function useRecruit(kind: RecruitKind, warbandId: number, existingIds: nu
       name: hire.name.trim(),
       price: whole(hire.cost),
       ...(kind === "henchmen_group"
-        ? {
-            henchmen: Array.from({ length: hire.models }, (_, i) => ({
-              name: `${fighter.name} ${i + 1}`,
-            })),
-          }
+        ? { henchmen: hire.members.map((member) => ({ name: member.trim() })) }
         : {}),
     };
     const result = await send({
@@ -133,7 +125,8 @@ export function useRecruit(kind: RecruitKind, warbandId: number, existingIds: nu
       setSaving(false);
     }
   };
-  const recruit = (draft: RecruitDraft) => saved(() => create(draft));
+  const recruit = (draft: RecruitDraft, members: string[] = []) =>
+    saved(() => create(draft, members));
   const recruitFromTemplate = (hire: TemplateHire) => saved(() => fromTemplate(hire));
 
   return { recruit, recruitFromTemplate, saving };

@@ -13,7 +13,9 @@ import {
   type RecruitDraft,
   type RecruitKind,
 } from "../../hooks/units/useRecruit";
+import MemberNames, { useMemberNames } from "./MemberNames";
 import RecruitNameField, { useRecruitName } from "./RecruitNameField";
+import { numbered } from "./hire-draft";
 
 const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 // the race's label line too (RaceField), so the fields line up
@@ -21,7 +23,8 @@ const LABEL_TEXT = "flex min-h-5 items-center";
 
 /**
  * A recruit typed by hand (Add hero or Add group; "Someone not in the list"): name, type,
- * race, cost, a group's models and starting XP; once saved, the new card opens in Edit for the
+ * race, cost, a group's models (each named: a creature picked as the type names them "Warhound 1",
+ * still editable) and starting XP; once saved, the new card opens in Edit for the
  * rest. The type searches the bestiary's creatures, as the battle's add sheets do (William,
  * 12 Nov 2026), and takes what is typed for anything else.
  */
@@ -56,6 +59,9 @@ export default function ByHandRecruit({
     (entry) => entry.kind === "creature"
   );
   const beast = creatures.find((entry) => entry.id === beastId);
+  const group = kind === "henchmen_group";
+  const models = Math.max(1, Math.min(20, Math.trunc(Number(draft.count) || 1)));
+  const members = useMemberNames(group ? models : 0, beast ? numbered(beast.name) : undefined);
   const typeField = (
     <div className={LABEL}>
       <span className={LABEL_TEXT}>Type</span>
@@ -114,8 +120,9 @@ export default function ByHandRecruit({
       className="flex flex-col gap-3"
       onSubmit={(event) => {
         event.preventDefault();
-        if (!name.ready()) return;
-        void recruit({ ...draft, name: name.name }).then((key) =>
+        const named = name.ready();
+        if (!members.ready(named) || !named) return;
+        void recruit({ ...draft, name: name.name }, members.names).then((key) =>
           key ? onCreated(key) : undefined
         );
       }}
@@ -136,9 +143,10 @@ export default function ByHandRecruit({
           onChange={(race) => set({ race })}
         />
         {number(kind === "hero" ? "Cost (gc)" : "Cost each (gc)", "cost")}
-        {kind === "henchmen_group" ? number("Models", "count", 1, 20) : null}
+        {group ? number("Models", "count", 1, 20) : null}
         {number("Starting XP", "xp")}
       </div>
+      <MemberNames field={members} />
       {beast ? (
         <p className="m-0 text-xs text-text2">
           Bought in the store, {beast.name} comes with its profile, skills and rules.

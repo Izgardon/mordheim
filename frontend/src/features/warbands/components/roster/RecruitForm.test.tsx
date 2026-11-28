@@ -359,6 +359,46 @@ describe("Recruiting from the warband's template", () => {
     expect(screen.getByLabelText("Models")).toHaveValue(1);
   });
 
+  // William, 28 Nov 2026: "when recruiting henchmen from a list i should be able to set their
+  // names in that initial form"
+  it("sends each model's name with the group's create", async () => {
+    const base = answer(false);
+    const warriors = fighter("warriors", "Warrior", 25, {
+      kind: "henchman",
+      max_count: null,
+      group_min: 2,
+      group_max: 5,
+    });
+    fakeApi.on("GET /warbands/9/template/", {
+      ...base,
+      template: base.template && { ...base.template, fighters: [warriors] },
+    });
+    fakeApi.on("POST /warbands/9/henchmen-groups/batch/", {
+      units: [{ id: 3 }],
+      summary: {},
+      warnings: [],
+    });
+    const onCreated = renderForm(vi.fn(), { kind: "gold" }, "henchmen_group");
+    const user = setupUser();
+    await user.click(await screen.findByRole("radio", { name: /Warrior/ }));
+    await user.type(screen.getByLabelText("Group name"), "The Bravos");
+    await user.type(screen.getByLabelText("Model 1"), "Otto");
+    await user.type(screen.getByLabelText("Model 2"), " Hans ");
+    await user.click(screen.getByRole("button", { name: "Recruit" }));
+
+    await waitFor(() => expect(onCreated).toHaveBeenCalledWith("henchmen_group-3"));
+    expect(fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/")).toEqual({
+      create: [
+        {
+          fighter_key: "warriors",
+          name: "The Bravos",
+          price: 25,
+          henchmen: [{ name: "Otto" }, { name: "Hans" }],
+        },
+      ],
+    });
+  });
+
   it("focuses the fighter picked: the list folds away, Change brings it back", async () => {
     // William, 12 Nov: "when you click a unit it should minimise the unit list section"
     fakeApi.on("GET /warbands/9/template/", answer(true));
@@ -501,6 +541,8 @@ describe("The hand-typed recruit's creature search", () => {
     await user.click(screen.getByRole("option", { name: /Warhound/ }));
 
     expect(screen.getByText(/Bought in the store, Warhound comes with its profile/)).toBeTruthy();
+    // a creature's models take its name and number, as a bought beast's do
+    expect(screen.getByLabelText("Model 1")).toHaveValue("Warhound 1");
     await user.type(screen.getByLabelText("Name"), "The Pack");
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>
@@ -516,18 +558,18 @@ describe("The hand-typed recruit's creature search", () => {
     const onCreated = renderByHand();
 
     await user.click(await screen.findByRole("button", { name: "Recruit" }));
-    expect(screen.getByText("Name is needed.")).toBeInTheDocument();
+    // the group's name and its model's: every henchman needs one (William, 26 Nov 2026)
+    expect(screen.getAllByText("Name is needed.")).toHaveLength(2);
     expect(screen.getByLabelText("Name")).toHaveFocus();
     expect(fakeApi.countOf("POST /warbands/9/henchmen-groups/batch/")).toBe(0);
 
     await user.type(screen.getByLabelText("Name"), "  Bravos ");
+    await user.type(screen.getByLabelText("Model 1"), "Otto");
     expect(screen.queryByText("Name is needed.")).toBeNull();
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/")).toEqual({
-        create: [
-          { name: "Bravos", race: null, price: 0, xp: 0, henchmen: [{ name: "Henchman 1" }] },
-        ],
+        create: [{ name: "Bravos", race: null, price: 0, xp: 0, henchmen: [{ name: "Otto" }] }],
       })
     );
     expect(onCreated).toHaveBeenCalledWith("henchmen_group-3");
@@ -538,6 +580,7 @@ describe("The hand-typed recruit's creature search", () => {
     renderByHand();
 
     await user.type(await screen.findByLabelText("Name"), "   ");
+    await user.type(screen.getByLabelText("Model 1"), "Otto");
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     expect(screen.getByText("Name is needed.")).toBeInTheDocument();
     expect(fakeApi.countOf("POST /warbands/9/henchmen-groups/batch/")).toBe(0);
@@ -552,7 +595,9 @@ describe("The hand-typed recruit's creature search", () => {
     await user.click(screen.getByRole("option", { name: /Use “War” as the type/ }));
 
     expect(screen.queryByText(/Bought in the store/)).toBeNull();
+    expect(screen.getByLabelText("Model 1")).toHaveValue("");
     await user.type(screen.getByLabelText("Name"), "Wolves");
+    await user.type(screen.getByLabelText("Model 1"), "Grey");
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/")).toMatchObject({

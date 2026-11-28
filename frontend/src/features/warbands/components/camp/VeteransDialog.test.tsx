@@ -1,7 +1,6 @@
 /**
  * Camp's Recruit henchmen for a new group: the group needs a name (William, 26 Nov 2026: "Block
- * it, needs a name"), said under the field before anything is sent; recruits into a group the
- * warband has already take its name.
+ * it, needs a name"), said under the field before anything is sent, and so does each recruit.
  */
 import { screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
@@ -60,18 +59,36 @@ describe("Camp's Recruit henchmen", () => {
     const user = setupUser();
 
     await user.click(await screen.findByRole("button", { name: "Recruit" }));
-    expect(screen.getByText("Name is needed.")).toBeInTheDocument();
+    expect(screen.getAllByText("Name is needed.")).toHaveLength(3);
     expect(screen.getByLabelText("Group name")).toHaveFocus();
     expect(fakeApi.countOf(BATCH)).toBe(0);
 
     await user.type(screen.getByLabelText("Group name"), "Bravos");
+    await user.type(screen.getByLabelText("Recruit 1"), "Otto");
+    await user.type(screen.getByLabelText("Recruit 2"), "Hans");
     expect(screen.queryByText("Name is needed.")).toBeNull();
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() => expect(onClose).toHaveBeenCalled());
     expect(fakeApi.bodyOf(BATCH)).toMatchObject({
-      create: [
-        { name: "Bravos", race: null, henchmen: [{ name: "Recruit 1" }, { name: "Recruit 2" }] },
-      ],
+      create: [{ name: "Bravos", race: null, henchmen: [{ name: "Otto" }, { name: "Hans" }] }],
     });
+  });
+
+  // every henchman needs a name (William, 26 Nov 2026), named in the form (28 Nov 2026)
+  it("won't recruit a recruit left unnamed, and Remove and Add another follow the list", async () => {
+    show();
+    const user = setupUser();
+    await user.type(await screen.findByLabelText("Group name"), "Bravos");
+    await user.type(screen.getByLabelText("Recruit 1"), "Otto");
+    await user.click(screen.getByRole("button", { name: "Recruit" }));
+    expect(screen.getAllByText("Name is needed.")).toHaveLength(1);
+    expect(screen.getByLabelText("Recruit 2")).toHaveFocus();
+    expect(fakeApi.countOf(BATCH)).toBe(0);
+
+    await user.click(screen.getByRole("button", { name: "Remove recruit 1" }));
+    expect(screen.queryByLabelText("Recruit 2")).toBeNull();
+    expect(screen.getByLabelText("Recruit 1")).toHaveValue("");
+    await user.click(screen.getByRole("button", { name: "Add another" }));
+    expect(screen.getByLabelText("Recruit 2")).toHaveValue("");
   });
 });

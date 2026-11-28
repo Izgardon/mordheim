@@ -73,6 +73,18 @@ export function overCount(fighter: TemplateFighter, adding: number): string | nu
     : null;
 }
 
+/** "Warhound 1", "Warhound 2": a creature's copies, named as the server names a beast's (`beasts.beast_names`). */
+export const numbered = (name: string) => (index: number) => `${name} ${index + 1}`;
+
+/**
+ * A creature on his list (the shared Animal rule, or his own "Animal (Baneworm)") names his models
+ * as a bought beast's are, "Giant Rat 1", each still editable; anyone else's start blank.
+ */
+export const memberPrefill = (fighter: TemplateFighter) =>
+  fighter.rules.some((rule) => rule.name === "Animal" || rule.name.startsWith("Animal ("))
+    ? numbered(fighter.name)
+    : undefined;
+
 /** A group past its size (a warning). */
 export function overGroup(fighter: TemplateFighter, models: number): string | null {
   const max = fighter.group_max;
