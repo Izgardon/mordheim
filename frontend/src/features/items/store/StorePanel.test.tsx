@@ -105,6 +105,24 @@ function renderStore(heroes: ReturnType<typeof makeHero>[] = [], purse: Purse = 
 beforeEach(() => fakeApi.reset());
 
 describe("StorePanel", () => {
+  it("reads none of the warband's while closed, so the warband page that mounts it pays for no who-can/", () => {
+    renderWithQueryClient(
+      <StorePanel
+        open={false}
+        onOpenChange={vi.fn()}
+        campaignId={CAMPAIGN}
+        warband={{ id: WARBAND, name: "Clan Eshin", gold: 100 }}
+        heroes={[]}
+        henchmenGroups={[]}
+        canBuy
+        opening={{}}
+      />,
+      { queryClient: createTestQueryClient() }
+    );
+    // the campaign's detail is the page's own read; nothing of the warband's is asked for
+    expect(fakeApi.calls().filter((call) => call.includes("/warbands/"))).toEqual([]);
+  });
+
   it("shows a campaign warband's gold left", () => {
     renderStore();
     expect(screen.getByText("100 gc left")).toBeInTheDocument();

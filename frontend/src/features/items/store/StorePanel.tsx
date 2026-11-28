@@ -62,8 +62,9 @@ export default function StorePanel(props: StorePanelProps) {
   }));
   const details = useShownItem(props.open);
   const canAddItem = useCampaignCapabilities(props.campaignId).edit_catalogue;
-  // the weapon materials the server offers this warband (weapon materials)
-  const { materials } = useWhoCan(props.campaignId, warband.id);
+  // the weapon materials the server offers this warband, read once the store opens: the warband
+  // page mounts it closed, and a cold page shouldn't pay for who-can/ (the e2e request budget)
+  const { materials } = useWhoCan(props.campaignId, props.open ? warband.id : null);
   // the template the roster reads ahead: His list for a unit recruited from it, the variant's rare bonus
   const template = useWarbandHireTemplate(props.campaignId, warband.id, props.open).data;
   const his = hisListFor(template, { heroes, henchmenGroups }, firstKey);
