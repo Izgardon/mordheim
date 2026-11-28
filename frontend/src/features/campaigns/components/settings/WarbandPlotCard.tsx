@@ -11,7 +11,8 @@ import { SettingsCard } from "./settings-ui";
 /**
  * The plot the warband follows (apps/plots), changed here and only here (William, 22 Nov 2026: "It
  * should only be changeable from warband settings page"); the warband page shows its points and
- * track. Changed for nothing, as often as the player likes. Shown while the campaign has Plots on.
+ * track, and chooses one only while it follows none (`PlotChooser`). Changed for nothing, as often
+ * as the player likes. Shown while the campaign has Plots on.
  */
 export default function WarbandPlotCard({
   warband,

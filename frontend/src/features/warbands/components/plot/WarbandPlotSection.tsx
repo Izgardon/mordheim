@@ -9,14 +9,16 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { useWarbandPlot } from "../../api/plot-queries";
 import type { WarbandPlot } from "../../types/warband-types";
 import { SECTION_TITLE } from "../page/warband-layout";
+import PlotChooser from "./PlotChooser";
 import PlotDetailsDialog from "./PlotDetailsDialog";
 
 /**
  * Campaign points and the plot the warband follows (apps/plots), shown while the campaign has
  * Plots on. Collapsed it is one line, as a resource reads (William, 22 Nov 2026): the plot's
  * name, the total as a resource shows its amount with − and + (the player's own number: nothing
- * here computes, adds to or takes from it), and the arrow that opens the rest. Open, it shows Plot Details (the plot's own plan, read
- * only) and the track. The plot is picked in warband Settings only (William, 22 Nov 2026).
+ * here computes, adds to or takes from it), and the arrow that opens the rest. Open, it shows Plot
+ * Details (the plot's own plan, read only) and the track. A warband following none chooses one
+ * here (`PlotChooser`); one it follows is changed in warband Settings only (William, 22 Nov 2026).
  *
  * Only the rungs the total has reached are warband rules (`warbands/services/plot_rules.py`); the
  * plan is this section's, not a rule (William, 20 Nov 2026).
@@ -49,9 +51,13 @@ export default function WarbandPlotSection({
     <section aria-label="Campaign points" className="flex flex-col gap-2 border-b border-line pb-3">
       <h2 className={SECTION_TITLE}>Campaign points</h2>
       <div className="flex items-center justify-between gap-2 whitespace-nowrap py-1">
-        <span className="min-w-0 truncate text-[13px] font-bold text-ink">
-          {plot?.name ?? "No plot"}
-        </span>
+        {!plot && canEdit ? (
+          <PlotChooser campaignId={campaignId} warbandId={warbandId} />
+        ) : (
+          <span className="min-w-0 truncate text-[13px] font-bold text-ink">
+            {plot?.name ?? "No plot"}
+          </span>
+        )}
         <span className="flex shrink-0 items-center gap-1.5">
           {canEdit ? (
             <IconButton

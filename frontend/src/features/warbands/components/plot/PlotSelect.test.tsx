@@ -1,6 +1,6 @@
 /**
  * The plot picker (apps/plots): every option reads its name over the plot's own words on who may
- * follow it (William, 18 Nov 2026), nothing is greyed or warned about, and the plot is changed or
+ * follow it (William, 18 Nov 2026), never matched to warband types, and the plot is changed or
  * dropped for nothing.
  */
 import { screen, within } from "@testing-library/react";

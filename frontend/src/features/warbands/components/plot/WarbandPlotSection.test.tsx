@@ -2,8 +2,9 @@
  * Campaign points on the warband page (William, 20 Nov 2026): collapsed, the section is the plot's
  * name, the total shown as a resource's amount with − and + (William, 22 Nov 2026) and the arrow that
  * opens the rest — no plot to edit, nothing about it. Open, it shows Plot details and the track from
- * that plot's ladder; the plot itself is picked in warband Settings only (William, 22 Nov 2026). A
- * viewer reads it and changes nothing.
+ * that plot's ladder; a plot it follows is changed in warband Settings only (William, 22 Nov 2026),
+ * and one is chosen here only while it follows none (William, 28 Nov 2026). A viewer reads it and
+ * changes nothing.
  */
 import { screen, within } from "@testing-library/react";
 import { describe, beforeEach, expect, it, vi } from "vitest";
@@ -138,5 +139,28 @@ describe("the warband's campaign points", () => {
     expect(screen.getByRole("img")).toBeVisible();
     expect(screen.getByRole("button", { name: "Plot details" })).toBeVisible();
     expect(screen.queryByRole("button", { name: /^Plot:/ })).toBeNull();
+  });
+
+  // William, 28 Nov 2026: "If not plot selected then we need a way to choose plot from here,
+  // otherwise we dont"
+  it("offers Choose a plot where the plot's name goes while it follows none", () => {
+    show({ plot: null });
+
+    const section = screen.getByRole("region", { name: "Campaign points" });
+    expect(within(section).getByRole("button", { name: "Choose a plot" })).toBeVisible();
+    expect(within(section).queryByText("No plot")).toBeNull();
+  });
+
+  it("offers no chooser while it follows a plot", () => {
+    show();
+
+    expect(screen.queryByRole("button", { name: "Choose a plot" })).toBeNull();
+  });
+
+  it("offers no chooser to a viewer who may not edit the warband", () => {
+    show({ plot: null, canEdit: false });
+
+    expect(screen.getByText("No plot")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Choose a plot" })).toBeNull();
   });
 });

@@ -1,20 +1,14 @@
-import { SearchSelect, type SearchOption } from "@/components/ui/search-select";
+import { SearchSelect } from "@/components/ui/search-select";
+import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { useCampaignPlots } from "@/features/plots/api/plots-queries";
-import type { PlotRow } from "@/features/plots/types/plot-types";
 
-const plotOption = (plot: PlotRow): SearchOption => ({
-  id: plot.id,
-  title: plot.name,
-  subtitle: plot.who_text,
-});
+import { plotOption } from "./plot-option";
 
 /**
  * The plot a warband follows, picked from the campaign's list (apps/plots): one or none, changed
  * as often as the player likes for nothing. Every option carries the plot's own words on who may
- * follow it under its name (William, 18 Nov 2026: "options should have title of name and
- * subtitles of who can take it"), so the player chooses without picking one to find out, and the
- * plot picked says them again in full underneath. Nothing is matched to warband types, greyed or
- * warned about (`Plot.who_text`).
+ * follow it under its name (`plotOption`), so the player chooses without picking one to find
+ * out, and the plot picked says them again in full underneath.
  */
 export default function PlotSelect({
   campaignId,
@@ -28,6 +22,7 @@ export default function PlotSelect({
   id?: string;
 }) {
   const offered = useCampaignPlots(campaignId);
+  const settings = useSettingsById();
   const rows = offered.data ?? [];
   const picked = rows.find((row) => row.id === value);
 
@@ -42,7 +37,7 @@ export default function PlotSelect({
         placeholder="Search plots"
         emptyText="No plot matches."
         loading={offered.isLoading}
-        options={rows.map(plotOption)}
+        options={rows.map((row) => plotOption(row, settings))}
         // the field keeps the name alone: the plot picked says who may follow it underneath
         value={picked ? { id: picked.id, title: picked.name } : null}
         clearLabel="No plot"
