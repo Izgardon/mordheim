@@ -12,7 +12,7 @@ export type OpenBattlePhase = (typeof OPEN_BATTLE_PHASES)[number];
 /** The way back to it: the banner's, the overview's and the Battles page's button. */
 export const PHASE_ACTION: Record<OpenBattlePhase, string> = {
   fight: "Rejoin",
-  postgame: "To the Aftermath",
+  postgame: "To the aftermath",
   prebattle: "Open pre-battle",
   invitation: "Answer the invitation",
 };

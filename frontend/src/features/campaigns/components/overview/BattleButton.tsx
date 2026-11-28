@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 /**
  * Start battle, or the way to your battle while you have one (William: "start battle button on
  * campaigns page should say rejoin"): the rejoin banner's battle and label (Rejoin, Back to
- * pre-battle, Answer the invitation, To the Aftermath). The overview's header and the Battles
+ * pre-battle, Answer the invitation, To the aftermath). The overview's header and the Battles
  * page's.
  */
 export default function BattleButton({

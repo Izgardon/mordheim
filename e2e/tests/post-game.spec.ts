@@ -32,6 +32,6 @@ test("the owner finishes his post-game and the warband holds what the Ready dial
   await dialog.getByRole("button", { name: "Ready", exact: true }).click();
 
   await expect(warbandStat(page, "Gold")).toHaveText(`${after} gc`);
-  await expect(page.getByText("To the Aftermath")).toHaveCount(0);
+  await expect(page.getByText("To the aftermath")).toHaveCount(0);
   expect(problems).toEqual([]);
 });

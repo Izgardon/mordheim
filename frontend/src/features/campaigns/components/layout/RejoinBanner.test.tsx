@@ -44,7 +44,7 @@ describe("RejoinBanner", () => {
   });
 
   it.each([
-    ["finished_battle", "postbattle", "To the Aftermath", "Aftermath"],
+    ["finished_battle", "postbattle", "To the aftermath", "Aftermath"],
     ["ready", "prebattle", "Open pre-battle", "Before the battle"],
     ["invited", "prebattle", "Answer the invitation", "Invited to a battle"],
   ] as const)("a %s player on %s reads %s", (status, page, action, lead) => {
@@ -66,7 +66,7 @@ describe("RejoinBanner", () => {
 
     const banner = screen.getByRole("status", { name: "Your battle" });
     expect(banner).toHaveTextContent("Street Fight, Battle 6");
-    expect(within(banner).getByRole("link", { name: "To the Aftermath" })).toBeInTheDocument();
+    expect(within(banner).getByRole("link", { name: "To the aftermath" })).toBeInTheDocument();
     expect(within(banner).getByRole("link", { name: "+2 more" })).toHaveAttribute(
       "href",
       "/campaigns/1/battles"

@@ -1,7 +1,7 @@
 import { advancesWaiting, buildXpRows } from "@/features/battles/components/aftermath/aftermath-xp";
 import type { BattlePostbattleState } from "@/features/battles/types/battle-types";
 
-import type { OpenCamp } from "./camp-types";
+import type { CampState } from "./camp-types";
 
 const idOf = (unitKey: string) => Number(unitKey.split(":")[1]);
 
@@ -9,7 +9,7 @@ const idOf = (unitKey: string) => Number(unitKey.split(":")[1]);
  * Each hired sword's upkeep at camp: due, paid (a tick), or gone (let go, or dismissed since), with
  * the gold and the resource lines the draft holds and his upkeep fee (what pays each resource).
  */
-export function upkeepLines(camp: OpenCamp) {
+export function upkeepLines(camp: CampState) {
   return Object.entries(camp.draft.upkeep.entries)
     .filter(([key]) => !camp.draft.unit_results[key]?.dead)
     .map(([key, entry]) => {
@@ -43,7 +43,7 @@ export function dueText(lines: UpkeepLine[]) {
 }
 
 /** What Ready charges in upkeep: every hired sword still on the roster, ticked or not. */
-export const upkeepCharged = (camp: OpenCamp) =>
+export const upkeepCharged = (camp: CampState) =>
   upkeepLines(camp)
     .filter((line) => line.status !== "gone")
     .reduce((sum, line) => sum + line.cost, 0);
@@ -55,7 +55,7 @@ const last = <T>(list: T[]) => list[list.length - 1];
  * with one waiting, which their card offers after Ready: information, never a block), injuries,
  * gold, shards.
  */
-export function readySummary(camp: OpenCamp) {
+export function readySummary(camp: CampState) {
   const draft: BattlePostbattleState = camp.draft;
   const results = Object.values(draft.unit_results);
   const mounts = Object.entries(draft.mount_survival ?? {})

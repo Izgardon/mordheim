@@ -26,6 +26,7 @@ const camp = (applied: ("injuries" | "xp" | "explore")[]) =>
     battleState: { suggested_postbattle: undefined },
     campaign: null,
     hirelings: [],
+    title: "Powder Bridge, Battle 1",
     subtitle: "Lost against Blood eaters",
     aftermathPath: "/campaigns/1/battles/2/postbattle",
     bought: false,
@@ -55,5 +56,16 @@ describe("PostgameBar", () => {
   it("ticks each step pressed Next on, and keeps it", () => {
     show(camp(["injuries", "xp"]));
     expect(ticked()).toEqual(["Injuries", "Experience"]);
+  });
+
+  it("holds the battle, its result and To the aftermath in the one bar", () => {
+    show(camp([]));
+    const bar = screen.getByRole("region", { name: "After the battle" });
+    expect(within(bar).getByText("Powder Bridge, Battle 1")).toBeInTheDocument();
+    expect(within(bar).getByText("Lost against Blood eaters")).toBeInTheDocument();
+    expect(within(bar).getByRole("link", { name: "To the aftermath" })).toHaveAttribute(
+      "href",
+      "/campaigns/1/battles/2/postbattle"
+    );
   });
 });

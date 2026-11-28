@@ -12,15 +12,18 @@ import type { HenchmenGroup, WarbandHireling, WarbandResource } from "../../type
  * campaign has blood pacts on, and sits after Upkeep, as the book rolls for a pact after it. */
 export type CampRow = "sell" | "recruit" | "hire" | "upkeep" | "pacts" | "buy";
 
-export type PostgameSlotProps = {
-  /** "bar": the web's post-game bar; "aside": camp beside the roster, or the phone's card. */
-  slot: "bar" | "aside";
+/** Whose post-game to find: your own warband's, in the campaign (the bar and camp both read it). */
+export type PostgameSource = {
   campaignId: number;
   campaign: CampaignSummary | null;
   warbandId: number;
   userId: number | undefined;
   /** Your own warband: someone else's shows no post-game. */
   enabled: boolean;
+};
+
+/** Camp beside the roster on the web, or the phone's post-game card. */
+export type PostgameSlotProps = PostgameSource & {
   isMobile: boolean;
   /** Hire (the Hired swords row). */
   onHire: () => void;
@@ -28,13 +31,16 @@ export type PostgameSlotProps = {
   onStore: () => void;
 };
 
-/** An open post-game, as the bar and camp read it. */
-export type OpenCamp = PostgameSlotProps & {
+/** An open post-game, as the bar in the web's top bar reads it. */
+export type CampState = PostgameSource & {
   battleState: BattleState;
   me: BattleParticipant;
   postgame: PostgameDraft;
   draft: BattlePostbattleState;
   save: (next: BattlePostbattleState) => Promise<void>;
+  /** "Street Fight, Battle 3". */
+  title: string;
+  /** "Won against Ash Choir". */
   subtitle: string;
   aftermathPath: string;
   gold: number;
@@ -48,3 +54,6 @@ export type OpenCamp = PostgameSlotProps & {
   focus: string | null;
   setCamp: (row: CampRow | "ready" | null) => void;
 };
+
+/** An open post-game, as camp reads it. */
+export type OpenCamp = CampState & PostgameSlotProps;

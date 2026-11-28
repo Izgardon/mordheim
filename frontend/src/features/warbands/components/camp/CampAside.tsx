@@ -4,6 +4,7 @@ import { Check, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { SectionTitle } from "@/components/ui/section-title";
+import { PHASE_ACTION } from "@/features/battles/utils/open-battles";
 
 import type { OpenCamp } from "./camp-types";
 import CampRows from "./CampRows";
@@ -13,13 +14,19 @@ import VeteransDialog from "./VeteransDialog";
 
 /**
  * Camp (design E): on the web the sidebar beside the roster, all rows at once with Ready up at the
- * bottom; on a phone the post-game card (the battle, the Aftermath row, the camp block, Ready up).
+ * bottom; on a phone the post-game card (the battle and its result, the Aftermath's steps, each
+ * ticked once its Next was pressed, with To the aftermath, the camp block, Ready up).
  * Sell, Recruit and Ready open their modals (sheets on a phone).
  */
 export default function CampAside({ camp }: { camp: OpenCamp }) {
   const [modal, setModal] = useState<"sell" | "recruit" | null>(null);
   const readyOpen = camp.focus === "ready";
   const done = camp.postgame.locks;
+  const steps = [
+    { label: "Injuries", done: done.injuries },
+    { label: "XP", done: done.xp },
+    { label: "Explore", done: done.explore },
+  ];
   const rows = (
     <CampRows camp={camp} onSell={() => setModal("sell")} onRecruit={() => setModal("recruit")} />
   );
@@ -43,8 +50,8 @@ export default function CampAside({ camp }: { camp: OpenCamp }) {
         className="flex flex-col gap-2.5 border border-accent-line bg-panel p-3"
       >
         <div className="flex items-baseline justify-between gap-2">
-          <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-accent-text">
-            After the battle
+          <span className="truncate text-[11px] font-bold uppercase tracking-[0.12em] text-accent-text">
+            {camp.title}
           </span>
           <span className="truncate text-xs text-muted-foreground">{camp.subtitle}</span>
         </div>
@@ -52,11 +59,18 @@ export default function CampAside({ camp }: { camp: OpenCamp }) {
           to={camp.aftermathPath}
           className="flex min-h-11 items-center gap-2 border border-border px-2.5 text-[13px] font-semibold text-text2"
         >
-          {done.injuries && done.xp && done.explore ? (
-            <Check className="h-3.5 w-3.5 text-good" strokeWidth={2.5} aria-label="Done" />
-          ) : null}
-          <span className="flex-1">Aftermath · Injuries, XP, Explore</span>
-          <ChevronRight className="h-4 w-4" aria-hidden="true" />
+          <ol aria-label="Aftermath" className="m-0 flex flex-1 list-none gap-2.5 p-0">
+            {steps.map((step) => (
+              <li key={step.label} className="flex items-center gap-1">
+                {step.done ? (
+                  <Check className="h-3.5 w-3.5 text-good" strokeWidth={2.5} aria-label="Done" />
+                ) : null}
+                {step.label}
+              </li>
+            ))}
+          </ol>
+          <span className="text-accent-hi">{PHASE_ACTION.postgame}</span>
+          <ChevronRight className="h-4 w-4 text-accent-hi" aria-hidden="true" />
         </Link>
         <div className="flex flex-col border border-border bg-surface">
           <span className="px-2.5 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-faint">

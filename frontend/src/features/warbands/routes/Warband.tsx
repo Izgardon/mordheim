@@ -119,7 +119,7 @@ export default function Warband() {
   return (
     <PurseContext.Provider value={workshop ? { kind: "cost", cost: workshop.cost } : GOLD}>
       <div className="flex flex-col gap-6">
-        <PostgameSlot slot={isMobile ? "aside" : "bar"} {...postgame} />
+        {isMobile ? <PostgameSlot {...postgame} /> : null}
         <WarbandHeader
           kicker={[warband.warband_type?.name, mine ? user?.name : null]
             .filter(Boolean)
@@ -189,7 +189,7 @@ export default function Warband() {
               }
             />
           </div>
-          {isMobile ? null : <PostgameSlot slot="aside" {...postgame} />}
+          {isMobile ? null : <PostgameSlot {...postgame} />}
         </div>
 
         <WarbandPanels
