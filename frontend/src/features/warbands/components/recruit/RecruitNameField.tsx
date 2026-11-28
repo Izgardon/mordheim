@@ -33,6 +33,7 @@ export default function RecruitNameField({
   className,
   labelClassName,
   inputSize,
+  inputClassName,
   autoFocus,
 }: {
   field: RecruitName;
@@ -41,6 +42,8 @@ export default function RecruitNameField({
   /** The label's own line, where a form lines its labels up. */
   labelClassName?: string;
   inputSize?: "sm" | "default";
+  /** The input's own classes: a height to match the field beside it. */
+  inputClassName?: string;
   autoFocus?: boolean;
 }) {
   const id = `${useId()}-name`;
@@ -53,6 +56,7 @@ export default function RecruitNameField({
         ref={field.ref}
         id={id}
         inputSize={inputSize}
+        className={inputClassName}
         autoFocus={autoFocus}
         value={field.name}
         aria-invalid={field.error ? true : undefined}

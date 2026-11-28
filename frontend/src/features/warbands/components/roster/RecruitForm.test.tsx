@@ -135,11 +135,15 @@ const answer = (open: boolean): WarbandTemplateAnswer => ({
 
 const ulrich = makeHero({ id: 6, name: "Ulrich", unit_type: "Champion", price: 35 });
 
-function renderForm(onCreated = vi.fn(), purse: Purse = { kind: "gold" }) {
+function renderForm(
+  onCreated = vi.fn(),
+  purse: Purse = { kind: "gold" },
+  kind: "hero" | "henchmen_group" = "hero"
+) {
   renderWithQueryClient(
     <PurseContext.Provider value={purse}>
       <RecruitForm
-        kind="hero"
+        kind={kind}
         campaignId={1}
         warbandId={9}
         typeName="Reiklanders"
@@ -309,6 +313,50 @@ describe("Recruiting from the warband's template", () => {
     await user.click(await screen.findByRole("radio", { name: /Champion/ }));
     expect(screen.getByText("Cost 108 → 143 gc")).toBeInTheDocument();
     expect(screen.queryByText(/^Gold /)).toBeNull();
+  });
+
+  // William, 28 Nov 2026: "Don't need the stat line here on any add list unit profile, clutters"
+  it("lists each fighter without his stat line, which his card shows once picked", async () => {
+    fakeApi.on("GET /warbands/9/template/", answer(true));
+    renderForm();
+    const user = setupUser();
+    const picker = await screen.findByRole("radiogroup", { name: "Recruit as" });
+    const champion = within(picker).getByRole("radio", { name: /Champion/ });
+    expect(
+      within(champion).getByText("0 of 0–2 · 8 XP · Combat, Shooting, Strength")
+    ).toBeInTheDocument();
+    expect(picker).not.toHaveTextContent(/WS \d/);
+
+    await user.click(champion);
+    const chosen = screen.getByRole("article", { name: "Champion" });
+    expect(within(chosen).getByText("WS")).toBeInTheDocument();
+  });
+
+  // William, 28 Nov 2026: "Name here in 2nd photo should be group name"
+  it("asks a group picked from the list for its group name beside its models", async () => {
+    const base = answer(true);
+    const warriors = fighter("warriors", "Warrior", 25, {
+      kind: "henchman",
+      starting_xp: 0,
+      max_count: null,
+      group_min: 1,
+      group_max: 5,
+    });
+    fakeApi.on("GET /warbands/9/template/", {
+      ...base,
+      template: base.template && { ...base.template, fighters: [warriors] },
+    });
+    renderForm(vi.fn(), { kind: "gold" }, "henchmen_group");
+    const user = setupUser();
+    const picker = await screen.findByRole("radiogroup", { name: "Recruit as" });
+    expect(
+      within(picker).getByText("0 of any · groups of 1–5 · 0 XP · Combat, Shooting, Strength")
+    ).toBeInTheDocument();
+
+    await user.click(within(picker).getByRole("radio", { name: /Warrior/ }));
+    expect(screen.getByLabelText("Group name")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Name")).toBeNull();
+    expect(screen.getByLabelText("Models")).toHaveValue(1);
   });
 
   it("focuses the fighter picked: the list folds away, Change brings it back", async () => {

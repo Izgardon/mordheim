@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { NumberInput } from "@/components/ui/number-input";
+import { NUMBER_INPUT_HEIGHT, NumberInput } from "@/components/ui/number-input";
 
 import type {
   TemplateFighter,
@@ -110,7 +110,15 @@ export default function TemplateRecruit({
       }}
     >
       <div className="grid grid-cols-[1fr_auto] gap-2">
-        <RecruitNameField field={name} className={LABEL} inputSize="sm" autoFocus />
+        {/* a group's name: "Group name", as tall as the Models stepper beside it (William, 28 Nov 2026) */}
+        <RecruitNameField
+          field={name}
+          label={group ? "Group name" : "Name"}
+          className={LABEL}
+          inputSize="sm"
+          inputClassName={NUMBER_INPUT_HEIGHT.sm}
+          autoFocus
+        />
         {group ? (
           <label htmlFor={`${ids}-models`} className={LABEL}>
             Models

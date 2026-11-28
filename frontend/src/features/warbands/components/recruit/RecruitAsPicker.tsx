@@ -9,32 +9,18 @@ import { haveText, overCount } from "./hire-draft";
 
 export const BY_HAND = "by-hand";
 
-const STAT_SHORT = [
-  ["WS", "weapon_skill"],
-  ["BS", "ballistic_skill"],
-  ["S", "strength"],
-] as const;
-
-/** "1 of 0–2 · 8 XP · WS 4 BS 3 S 3 · Combat, Shooting, Strength" (a group: "groups of 1–5"). */
+/**
+ * "1 of 0–2 · 8 XP · Combat, Shooting, Strength" (a group: "groups of 1–5"); no profile, which
+ * the fighter's card shows once picked (William, 28 Nov 2026: the stat line "clutters").
+ */
 function meta(fighter: TemplateFighter) {
-  const written = fighter.written_stats ?? {};
-  const stats = STAT_SHORT.map(([label, field]) => {
-    const number = fighter[field];
-    return `${label} ${number ?? ""}${written[field] ?? ""}`.trim();
-  }).join(" ");
   const size =
     fighter.kind === "henchman" && fighter.group_max !== null
       ? fighter.group_min !== null && fighter.group_min !== fighter.group_max
         ? `groups of ${fighter.group_min}–${fighter.group_max}`
         : `groups of ${fighter.group_max}`
       : null;
-  return [
-    haveText(fighter),
-    size,
-    `${fighter.starting_xp} XP`,
-    stats,
-    fighter.skill_types.join(", "),
-  ]
+  return [haveText(fighter), size, `${fighter.starting_xp} XP`, fighter.skill_types.join(", ")]
     .filter(Boolean)
     .join(" · ");
 }
@@ -79,7 +65,7 @@ export default function RecruitAsPicker({
     <div className="flex flex-col gap-1.5">
       <span className="text-xs font-bold text-muted-foreground">Recruit as</span>
       <div role="radiogroup" aria-label="Recruit as" className="flex flex-col border border-line">
-        <span className="px-3 pt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+        <span className="px-3 pb-2.5 pt-3 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
           {title}
         </span>
         {fighters.map((fighter) => {

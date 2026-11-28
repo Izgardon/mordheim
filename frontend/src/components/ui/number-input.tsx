@@ -18,7 +18,12 @@ type NumberInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & 
   compact?: boolean;
 };
 
-const HEIGHT = { sm: "h-9", default: "h-9 md:h-11", lg: "h-10 md:h-12" } as const;
+/** The field's height by size, for a field beside it to match (a recruit's name beside Models). */
+export const NUMBER_INPUT_HEIGHT = {
+  sm: "h-9",
+  default: "h-9 md:h-11",
+  lg: "h-10 md:h-12",
+} as const;
 
 /**
  * A number field with − and + attached (William: "immediate plus minus buttons on them for quick
@@ -99,7 +104,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         data-no-sheet-drag=""
         className={cn(
           "flex items-stretch",
-          HEIGHT[inputSize],
+          NUMBER_INPUT_HEIGHT[inputSize],
           compact ? "w-fit shrink-0" : "w-full",
           containerClassName
         )}
