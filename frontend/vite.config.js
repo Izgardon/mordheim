@@ -2,6 +2,9 @@ import { Agent } from "node:http";
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
+
+import { pwaOptions } from "./src/lib/pwa/pwa-options";
 
 // The build's id: the commit Vercel builds, else when it was built. The phone's saved reads are
 // thrown away when it changes (lib/offline/persist-options.ts), so a deploy never reads data saved
@@ -9,7 +12,12 @@ import react from "@vitejs/plugin-react";
 const APP_BUILD = process.env.VERCEL_GIT_COMMIT_SHA || `local-${Date.now()}`;
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // The service worker, in a production build only (lib/pwa/). SW_SELF_DESTROY=1 builds the kill
+    // switch instead: a sw.js that unregisters itself and empties its caches (docs/plans/offline.md).
+    VitePWA({ ...pwaOptions, selfDestroying: process.env.SW_SELF_DESTROY === "1" }),
+  ],
   define: {
     __APP_BUILD__: JSON.stringify(APP_BUILD),
   },

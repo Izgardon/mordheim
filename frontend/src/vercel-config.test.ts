@@ -45,12 +45,31 @@ describe("vercel.json", () => {
     expect(directive("script-src")).not.toContain("'wasm-unsafe-eval'");
     expect(directive("connect-src")).toContain("https://mordheim-1.onrender.com");
     expect(directive("connect-src")).toContain("wss://*.pusher.com");
-    expect(directive("worker-src")).toContain("blob:");
+    // The service worker is the app's only worker (lib/pwa/).
+    expect(directive("worker-src")).toBe("worker-src 'self'");
     expect(directive("img-src")).toContain("data:");
     // The fonts come with the build (index.css), so no font host is let in.
     expect(directive("style-src")).toBe("style-src 'self' 'unsafe-inline'");
     expect(directive("font-src")).toBe("font-src 'self' data:");
     // The landing video embeds YouTube's no-cookie player (decision 5), the only frame the app has.
     expect(directive("frame-src")).toBe("frame-src https://www.youtube-nocookie.com");
+  });
+
+  it("serves sw.js and the manifest uncached, so a new worker is found at once", () => {
+    const headersFor = (path: string) =>
+      routes
+        .filter((route) => route.headers && route.src && new RegExp(`^${route.src}$`).test(path))
+        .reduce<Record<string, string>>((all, route) => ({ ...all, ...route.headers }), {});
+
+    expect(headersFor("/sw.js")["cache-control"]).toBe("no-cache");
+    expect(headersFor("/manifest.webmanifest")).toMatchObject({
+      "content-type": "application/manifest+json",
+      "cache-control": "no-cache",
+    });
+    // the hashed build files stay immutable, which the worker's precache relies on
+    expect(headersFor("/assets/index-DHX6NgHg.js")["cache-control"]).toContain("immutable");
+    expect(
+      headersFor("/assets/manrope-latin-600-normal-4f0koTD-.woff2")["cache-control"]
+    ).toContain("immutable");
   });
 });
