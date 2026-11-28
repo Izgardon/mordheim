@@ -80,7 +80,8 @@ class PresetSeederTests(TestCase):
         self.assertIn("Da Waaagh", both)
         self.assertEqual([wording["skill"] for wording in annual.skill_wordings], ["Mighty Blow"])
         self.assertEqual((annual.main_resource, annual.resources), ("Treasure", ["Wyrdstone"]))
-        self.assertEqual([setting.name for setting in marienburg.settings.all()], [MARIENBURG])
+        # Mordheim 2a too, so no grade under its 2b goes unticked (William, 28 Nov 2026: "Tick 2a as well")
+        self.assertEqual([setting.name for setting in marienburg.settings.all()], ["Mordheim 2a", MARIENBURG])
         # its campaign rules first, then its battle rules, then its charts with their results
         rules = list(marienburg.rules.all())
         self.assertEqual(

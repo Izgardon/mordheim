@@ -13,7 +13,7 @@ field in from another preset or from the app's defaults: silence is data.
 | `slug` | What the row is upserted by. Required. |
 | `name` | What the dropdown shows. Required. |
 | `sort_order` | Where it sits in the dropdown; the settings' own order is a good guide. |
-| `settings` | The settings it guides the content choice towards, by **name** as `out/settings.json` holds it. They are ticked on top of whatever the campaign has, never instead of it. |
+| `settings` | The settings it guides the content choice towards, by **name** as `out/settings.json` holds it. They are ticked on top of whatever the campaign has, never instead of it. Name Mordheim 2a too for a book graded above 2a, so no grade under it goes unticked on the 1c grade preset (William, 28 Nov 2026: "Tick 2a as well"). |
 | `exploration_chart` | The chart it explores by, by the **slug** of a book chart in `sources/exploration/`. |
 | `enable_locations`, `enable_encampments`, `enable_campaign_points`, `enable_blood_pacts` | `true` or `false`. |
 | `max_heroes` | The most heroes a warband may hold. |
