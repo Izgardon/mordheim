@@ -40,7 +40,84 @@ IndexedDB and shows them before anything is read (`frontend/src/lib/offline/`, `
   each page showed from the phone; offline, each showed with the bar.
 
 Still open: writes that refuse at once offline, the bar for weak signal, "Not saved on this phone yet" wording, and
-phases 2 to 4.
+phases 3 and 4.
+
+**Phase 2 done (28 Nov 2026), William: "Just do the next part, not battle taps yet":** a service worker serves the
+app shell, so the installed app opens with no signal and shows what phase 1 kept. No queued writes, no battle taps
+(phase 3). What was built, against (b) below:
+- **Fonts first, in their own commit:** Fraunces (variable, with its optical sizes), Manrope and Space Mono come with
+  the build through `@fontsource` (`src/index.css`), and the CSP drops `fonts.googleapis.com` and `fonts.gstatic.com`.
+- **The worker** (`vite-plugin-pwa` 2.0.0, `workbox-build`/`workbox-window` 7.4.1; `frontend/src/lib/pwa/`):
+  `generateSW` from `pwa-options.ts`, which `vite.config.js` builds, a production build only. `start.ts` loads
+  `register-sw.ts` after the page (not in `npm run dev` or vitest, and never an inline script, which the CSP's
+  `script-src 'self'` would block); the entry grew 0.1 KiB.
+  - **Precached:** every hashed file, `index.html`, the icons, the manifest and the fonts' Latin and Latin Extended
+    files: 253 files, 2.6 MB raw, about 1.3 MB over the wire on first install (11.6 KB of it `sw.js`, the Workbox
+    runtime inlined). A deploy downloads only the files that changed.
+  - **Pages:** network first with a 3-second limit (`NetworkFirst`, with navigation preload), so an online player
+    always gets the newest `index.html`. No page is stored on its own: when the network fails or is slow, the page is
+    the worker's own precached `index.html`, whose build files it holds, so the shell and its files never mix builds.
+    `navigateFallback` is off (it serves the stored copy first) and so is the precache's `directoryIndex` (it would
+    answer `/` from the precache ahead of the network). `/api/` paths are never answered.
+  - **Build files** the worker didn't precache (a newer build loaded online before its worker took over) are kept as
+    they're fetched (`build-files`, 150 at most, 30 days); the SPA's `index.html`, which a missing file answers with,
+    never is.
+  - **Nothing else:** the API (`mordheim-1.onrender.com`), Pusher and every other site match no route, so the browser
+    fetches them as before; phase 1's IndexedDB does the data.
+- **Updates: a prompt, not the plan's quiet `skipWaiting`.** A new worker installs in the background and waits; the
+  app then shows a toast in the app's style, "A new version is ready." with Reload, which stays until the player taps
+  Reload or closes it. Nothing reloads by itself, and left alone the new version takes over at the next cold start.
+  Why a prompt: with `skipWaiting` the new worker takes over the open page at once and deletes the old build's
+  precache, so an old page opening a screen it hadn't loaded yet finds its code gone (offline at the table, a dead
+  page). Waiting keeps the old build whole on the phone while its page is open. The check runs when the app comes to
+  the front, when the signal returns and every hour. The toast hides while offline, because reloading then would open
+  the new build with none of the saved reads (their buster is the build), and Reload in one window never reloads
+  another.
+- **No stale deploys:** online, every launch and reload reads the newest `index.html`, whatever worker is waiting.
+  `vercel.json` serves `sw.js` and the manifest `no-cache` (the manifest as `application/manifest+json`), and the
+  hashed files stay immutable. A page's code that still fails to load says "The app was updated" or "No connection"
+  as before (`lib/chunk-failure.ts`; its reach check is a `HEAD`, which the worker never answers).
+- **The buster** (`__APP_BUILD__`) still empties the saved reads when a new build first runs. Offline the worker
+  opens its own build, which is the build that saved them, so they show.
+- **A cold open with no signal starts offline** (`query-client.ts`): TanStack's online manager assumed online until
+  an `offline` event that never comes, so a list not kept on the phone fetched, failed and showed "Failed to fetch"
+  over "No spells match." It now pauses and says "No connection: this list loads when you're back online."
+- **CSP:** `worker-src 'self'` (the worker is the app's only one; `blob:` and `data:` are gone), no font hosts.
+- **The kill switch:** `SW_SELF_DESTROY=1` on a Vercel build (vite-plugin-pwa's `selfDestroying`) publishes a
+  `sw.js` that unregisters itself, empties its caches and reloads the open pages once. For a broken worker only.
+- **Measured** (the demo campaign, `vite build` and `vite preview` proxying a local API, Playwright on iPhone 13
+  emulation): the worker controls the page straight after sign-in; with the site's server stopped and the browser
+  offline, a new page opened the warband sheet in about 300 ms and a full reload of Wargear in about 290 ms, both from
+  phase 1's cache with the offline bar; Spells, never opened, said "No connection". After a rebuild, the toast showed
+  1.3 s after the signal returned, the page didn't navigate in the 10 s after it, and Reload opened the new build.
+
+Still open after phase 2:
+- **A version waiting when the app is closed offline.** If a deploy lands during the last online visit and the
+  player neither taps Reload nor reopens the app before losing signal, the next cold open activates the new worker,
+  whose build doesn't match the saved reads: the pages say "No connection" until the signal returns. A hand-bumped
+  cache version instead of the build would keep them (the risk in (a)).
+- The e2e suite runs on the dev server, so it doesn't cover the worker; the check above was a script run against a
+  production build.
+- Weak signal still waits for each request's timeout before the bar can show; "Not saved on this phone yet" wording;
+  phases 3 and 4.
+- **iPhone:** a Home Screen app keeps its own storage, apart from Safari's, so the player opens the installed app
+  online once (signing in there too). Safari's 7-day deletion doesn't apply to it, but iOS can still clear its worker
+  and IndexedDB when the phone runs low on space (it asks once for persistent storage, granted at WebKit's
+  judgement). Then it opens like a first visit: online only, until it has been opened online again.
+
+**For William to check on real phones after it deploys** (Android Chrome and iPhone Safari):
+1. **Install:** open the site online, sign in, install it (Android: Account → Appearance → Install; iPhone: Share →
+   Add to Home Screen), open the installed app and sign in there (an iPhone's installed app has its own storage).
+   Visit your warband, Wargear and the campaign rules.
+2. **Airplane mode:** with the app open, turn airplane mode on. The offline bar shows and the pages you visited
+   still show.
+3. **Cold open:** close the app fully (swipe it away), keep airplane mode on and open it from the home screen. It
+   should open, not show the phone's "no connection" page, show the offline bar, and show your warband and Wargear.
+   A page you never opened says "No connection".
+4. **The update notice:** turn airplane mode off and leave the app open while the next deploy goes out (or bring it
+   to the front after one). "A new version is ready." with Reload shows at the top, and nothing reloads by itself.
+   Tap Reload: the app reloads once on the new version. Closing the toast instead and reopening the app later should
+   also give the new version.
 
 ## Summary
 
@@ -303,7 +380,7 @@ the cost.
 |---|---|---|
 | **0. Say it plainly** | An "offline" bar (from the browser's offline events plus failed or timed-out requests; cleared by the next success, with a cheap check of `/api/health/`). Writes refuse at once offline instead of pausing silently. The three bug fixes are **done** (the empty list, the wrong cause, pusher-js retried) | ~1 day |
 | **1. Keep the last-seen data** (option a) — **done** 27 Nov 2026 | The sheet, reference pages, rules, charts, scenarios and an open battle read from the phone on weak or no signal (while the app's files can load) | ~2–3 days |
-| **2. Open with no signal** (option b, fonts first) | The app opens from a cold start in airplane mode and shows phase 1's data. Online players still always get the newest deploy | ~2.5 days + phone checks |
+| **2. Open with no signal** (option b, fonts first) — **done** 28 Nov 2026 | The app opens from a cold start in airplane mode and shows phase 1's data. Online players still always get the newest deploy | ~2.5 days + phone checks |
 | **3. Type the battle offline** (option c) | Wounds, statuses, notes, out of action, kills and the post-game draft are saved on the phone and sent later. Refused changes are listed plainly | ~4–6 days |
 | **3b. No double buys** | **Done** for purchases, hires and roster Saves; location visits and the other gold writes can take the same `once()` | — |
 | **4. Drafts to send later** (optional) | The store basket and a Report result draft survive offline and are sent with one tap once there's signal, so the player still sees the server's warnings | ~2–3 days |
