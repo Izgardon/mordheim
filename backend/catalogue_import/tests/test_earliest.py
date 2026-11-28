@@ -144,7 +144,10 @@ class CommittedEarliestTests(SimpleTestCase):
         items = {row["name"]: row["setting"] for row in load_json(OUT / "items.json") if not row["variant"]}
         self.assertEqual(items["Chaos Steed"], "mordheim")  # the Cult of the Possessed buy it
         self.assertEqual(items["Boss Pole"], "lustria")  # the Lustria Forest Goblins' list sells it
+        # William, 28 Nov 2026 ("Yes"): no override holds Hide in Shadows (1b) or Fey (Lustria) up any more, so the
+        # Imperial Assassin (1a) and the Elf Ranger (1a) bring them down
+        for name in ("Hide in Shadows", "Fey"):
+            self.assertEqual((skills[name]["setting"], skills[name]["how"]), ("mordheim", "earliest adopter"))
         report = (OUT / "import-report.md").read_text(encoding="utf-8")
-        self.assertIn(
-            "- Hide in Shadows (skills): mordheim-1b, while Imperial Assassin (hired sword) is mordheim", report
-        )
+        kept = report.split("kept there, though an adopter is earlier still (William's call):", 1)[1]
+        self.assertEqual(kept.split("\n## ", 1)[0].strip(), "- none")

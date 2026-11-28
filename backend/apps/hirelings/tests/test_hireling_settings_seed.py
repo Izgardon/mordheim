@@ -27,8 +27,12 @@ class SeededSettingTests(TestCase):
         self.assertFalse(HiredSword.objects.filter(campaign_type__isnull=True).exists())
 
     def test_skills_take_theirs_by_name_and_list_and_the_rest_are_mordheims(self) -> None:
-        # Hide in Shadows' lists were Mordheim 1b, 1c and the Nemesis Crown's: the one skill takes the lowest
-        self.assertEqual(self.setting_of(Skill, name="Hide in Shadows"), "mordheim-1b")
+        # Crude Belch's lists were Mordheim 1c and 2a: the one skill takes the lowest
+        self.assertEqual(self.setting_of(Skill, name="Crude Belch"), "mordheim-1c")
+        # Hide in Shadows' were 1b, 1c and the Nemesis Crown's, but the Imperial Assassin (1a) has it (William, 28 Nov
+        # 2026), as the Elf Ranger (1a) has Fey (Lustria's)
+        self.assertEqual(self.setting_of(Skill, name="Hide in Shadows"), "mordheim")
+        self.assertEqual(self.setting_of(Skill, name="Fey"), "mordheim")
         self.assertEqual(self.setting_of(Skill, name="Sniper"), "nemesis-crown")  # the Hochland Bandits' own
         self.assertEqual(self.setting_of(Skill, name="Sniper (Shadow Warriors)"), "mordheim-1b")
         self.assertEqual(self.setting_of(Skill, name="Tunneler"), "mordheim")  # not on mordheimer

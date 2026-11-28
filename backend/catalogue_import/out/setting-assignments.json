@@ -212,8 +212,8 @@
     },
     {
       "name": "Hide in Shadows",
-      "setting": "mordheim-1b",
-      "how": "overrides.json"
+      "setting": "mordheim",
+      "how": "earliest adopter"
     },
     {
       "name": "Tunneler",
@@ -632,8 +632,8 @@
     },
     {
       "name": "Fey",
-      "setting": "lustria",
-      "how": "overrides.json"
+      "setting": "mordheim",
+      "how": "earliest adopter"
     },
     {
       "name": "Sniper (Shadow Warriors)",

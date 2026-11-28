@@ -3203,7 +3203,6 @@
   },
   "setting_assignments": {
     "skills": {
-      "Fey (Sea Ghosts)": "lustria",
       "Master Inventor (Dwarf Exiled Engineers)": "mutiny-in-marienburg",
       "Mutant (Beastmen Raiders)": "empire-in-flames",
       "Bellowing Roar (Beastmen Raiders)": "empire-in-flames",
@@ -3232,8 +3231,6 @@
       "Foul Odour (Ostlanders)": "mordheim",
       "Hardy Constitution (Pirates)": "mordheim-1b",
       "Infiltration (Sea Ghosts)": "mordheim",
-      "Hide in Shadows (Sea Ghosts)": "mordheim-1b",
-      "Hide in Shadows (Shadow Warriors)": "mordheim-1b",
       "Sniper (Shadow Warriors)": "mordheim-1b",
       "Protection of Sigmar (Sisters of Sigmar)": "mordheim",
       "Utter Determination (Sisters of Sigmar)": "mordheim",

@@ -87,12 +87,13 @@ class SkillAuditTests(ReviewCase):
     def test_a_skill_sits_in_a_setting_its_lowest_graded_learners_see(self) -> None:
         # under a grade preset, a skill in a later setting than the warband learning it is greyed for that warband:
         # Magic Resistant was Khemri 3's (the Cursed Dwarves) though the Adventurers (Karak Azgal, 2b) learn it, and
-        # Fey Mordheim 2a's though the High Elves' Ranger (Lustria, 1b) learns it
+        # Fey Mordheim 2a's though the High Elves' Ranger (Lustria, 1b) learns it, and the Elf Ranger (1a) starts with
+        # it (William, 28 Nov 2026)
         settings = {row["name"]: row["setting"] for row in load_json(OUT / "setting-assignments.json")["skills"]}
         self.assertIn("Magic Resistant", self.groups["Adventurers"])
         self.assertEqual(settings["Magic Resistant"], "karak-azgal")
         self.assertIn("Fey", self.groups["Ranger (High Elves)"])
-        self.assertEqual(settings["Fey"], "lustria")
+        self.assertEqual(settings["Fey"], "mordheim")
 
     def test_a_skill_two_pages_share_takes_the_lower_graded_setting_before_the_earlier(self) -> None:
         # Khemri 3 comes before Karak Azgal in the settings' order, but a 2b campaign ticks Karak Azgal, not Khemri 3
