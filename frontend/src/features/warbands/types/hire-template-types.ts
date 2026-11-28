@@ -64,7 +64,7 @@ export type WarbandTemplateAnswer = {
   list_prices_open: boolean;
   /** How many rules Add missing rules would copy: its template's and its preset's it has no rule of that title for. */
   missing_rules: number;
-  /** A workshop warband made with no list: it reads none by choice, so no Make a template. */
+  /** A workshop warband made with no list: it reads none by choice, so no Make a list. */
   no_list: boolean;
 };
 

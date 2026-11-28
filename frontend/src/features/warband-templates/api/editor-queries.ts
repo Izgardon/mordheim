@@ -93,7 +93,7 @@ export function useEditorSave(
 
 export type EditorSaveState = ReturnType<typeof useEditorSave>;
 
-/** Make a template (blank or a copy); the answer is cached for the editor that opens on it. */
+/** Make a list (blank or a copy); the answer is cached for the editor that opens on it. */
 export function useMakeTemplate(campaignId: number) {
   const queryClient = useQueryClient();
   const [pending, setPending] = useState(false);
@@ -107,7 +107,7 @@ export function useMakeTemplate(campaignId: number) {
       templatesChanged(queryClient, campaignId, { answered: true });
       return answer;
     } catch (caught) {
-      setError(getRefusalMessage(caught, "Unable to make the template"));
+      setError(getRefusalMessage(caught, "Unable to make the list"));
       return null;
     } finally {
       setPending(false);

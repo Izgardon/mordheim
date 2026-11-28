@@ -212,7 +212,7 @@ class HiringFromTheTemplateTests(CatalogueTestCase):
             response = self.batch("heroes", {"create": [{"fighter_key": key, "name": "X"}]})
             self.assertEqual(response.status_code, 400)
             self.assertEqual(
-                response.json()["fields"]["create.0.fighter_key"], ["Not one of this warband's template heroes."]
+                response.json()["fields"]["create.0.fighter_key"], ["Not one of the heroes on this warband's list."]
             )
         self.assertFalse(Hero.objects.filter(warband=self.warband).exists())
 

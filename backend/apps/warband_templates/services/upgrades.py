@@ -24,7 +24,7 @@ from .resolve import template_id_for
 if TYPE_CHECKING:
     from apps.warbands.units.kinds import UnitKindSpec
 
-NOT_IN_TEMPLATE = "Not one of this warband's template upgrades."
+NOT_IN_TEMPLATE = "Not one of the upgrades on this warband's list."
 HEROES_ONLY = "Upgrades are bought for heroes."
 
 

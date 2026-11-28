@@ -57,10 +57,7 @@ export default function RaiseOutline({
   const picking = template.variants.length > 0 && !template.preset_variant;
   const difference = (outline.book_gold ?? 500) - 500;
   return (
-    <section
-      aria-label="Template outline"
-      className="flex flex-col gap-3 border-t border-line pt-4"
-    >
+    <section aria-label="List outline" className="flex flex-col gap-3 border-t border-line pt-4">
       {picking ? (
         <div role="radiogroup" aria-label="Variant" className="flex flex-wrap items-center gap-1.5">
           <span className="mr-1 text-xs font-bold text-muted-foreground">Variant</span>

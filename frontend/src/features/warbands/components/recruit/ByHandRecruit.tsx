@@ -20,7 +20,7 @@ const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 const LABEL_TEXT = "flex min-h-5 items-center";
 
 /**
- * A recruit typed by hand (Add hero or Add group; "Someone not in the template"): name, type,
+ * A recruit typed by hand (Add hero or Add group; "Someone not in the list"): name, type,
  * race, cost, a group's models and starting XP; once saved, the new card opens in Edit for the
  * rest. The type searches the bestiary's creatures, as the battle's add sheets do (William,
  * 12 Nov 2026), and takes what is typed for anything else.

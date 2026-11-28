@@ -66,7 +66,7 @@ export default function TemplateDetail({
       <div className="flex flex-wrap gap-2">
         {onEdit ? (
           <Button variant="secondary" className="min-h-10" onClick={onEdit}>
-            Edit template
+            Edit list
           </Button>
         ) : null}
         {copy ? (

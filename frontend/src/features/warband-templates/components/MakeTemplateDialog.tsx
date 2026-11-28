@@ -37,7 +37,7 @@ const sourceOption = (
 });
 
 /**
- * Make a template (the templates plan, phase 4): start blank, or copy any template the campaign
+ * Make a list (the templates plan, phase 4): start blank, or copy any template the campaign
  * can see (the book's, a house version or one of its own) and edit the copy. It serves the type
  * it is made for, never the copied one's.
  */
@@ -73,15 +73,15 @@ export default function MakeTemplateDialog({
     <ModalSheet
       open={open}
       onOpenChange={onOpenChange}
-      kicker={forType ? forType.name : "Warband template"}
-      title="Make a template"
+      kicker={forType ? forType.name : "Warband list"}
+      title="Make a list"
       footer={
         <>
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button disabled={!ready || pending} onClick={() => void submit()}>
-            {pending ? "Making..." : "Make the template"}
+            {pending ? "Making..." : "Make the list"}
           </Button>
         </>
       }
@@ -100,17 +100,17 @@ export default function MakeTemplateDialog({
           Start blank
         </Chip>
         <Chip pressed={copying} onClick={() => setCopying(true)}>
-          Copy a template
+          Copy a list
         </Chip>
       </div>
       {copying ? (
         <SearchSelect
           label="Copy of"
-          placeholder="Search templates"
+          placeholder="Search lists"
           value={source}
           options={templates.data.map((template) => sourceOption(template, settings))}
           loading={templates.isLoading}
-          emptyText="No template by that name."
+          emptyText="No list by that name."
           onChange={setSource}
         />
       ) : null}

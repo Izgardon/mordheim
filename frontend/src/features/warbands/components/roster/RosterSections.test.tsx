@@ -139,7 +139,7 @@ describe("Recruiting from the roster", () => {
   });
 });
 
-describe("Make a template for a type with none (the templates plan, phase 4)", () => {
+describe("Make a list for a type with none (the templates plan, phase 4)", () => {
   const reiklanders = {
     id: 10,
     name: "Reiklanders",
@@ -178,7 +178,7 @@ describe("Make a template for a type with none (the templates plan, phase 4)", (
     renderRoster();
     const heroes = screen.getByRole("region", { name: "Heroes" });
     expect(
-      await within(heroes).findByRole("button", { name: "Make a template for Reiklanders" })
+      await within(heroes).findByRole("button", { name: "Make a list for Reiklanders" })
     ).toBeInTheDocument();
   });
 
@@ -186,14 +186,14 @@ describe("Make a template for a type with none (the templates plan, phase 4)", (
     fakeApi.on("GET /warbands/9/template/", { ...NO_TEMPLATE, no_list: true });
     renderRoster();
     await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/template/")).toBe(1));
-    expect(screen.queryByRole("button", { name: /^Make a template/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /^Make a list/ })).toBeNull();
   });
 
   it("isn't there once the type has one", async () => {
     fakeApi.on("GET /warbands/9/template/", makeTemplateAnswer());
     renderRoster();
     await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/template/")).toBe(1));
-    expect(screen.queryByRole("button", { name: /^Make a template/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /^Make a list/ })).toBeNull();
   });
 });
 

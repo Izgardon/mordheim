@@ -127,7 +127,7 @@ class BasicsSerializer(serializers.Serializer):
         if len(set(type_ids)) < len(type_ids):
             raise serializers.ValidationError({"types": ["A type is listed twice."]})
         if any(row["variant"] and row["variant"] not in keys for row in attrs["types"]):
-            raise serializers.ValidationError({"types": ["A type presets a variant the template doesn't have."]})
+            raise serializers.ValidationError({"types": ["A type presets a variant the list doesn't have."]})
         _campaign_types(type_ids, self.context["campaign_id"])
         return attrs
 

@@ -31,12 +31,12 @@ export type TemplateTypeRow = {
   setting: { setting_id: number | null; campaign_id: number | null };
   /**
    * The line under the name: the template's name where it serves several types (Mercenaries,
-   * Tileans) or shares the type with another template; "No template", "No warband type".
+   * Tileans) or shares the type with another template; "No list", "No warband type".
    */
   sub?: string;
 };
 
-export const NO_TEMPLATE = "No template";
+export const NO_TEMPLATE = "No list";
 export const NO_TYPE = "No warband type";
 
 const live = (template: WarbandTemplateSummary) => template.types.filter((type) => !type.archived);
@@ -44,7 +44,7 @@ const live = (template: WarbandTemplateSummary) => template.types.filter((type) 
 /**
  * Each warband type in play in the campaign with its template (the reference pages' scoping: its
  * template's setting and its own), by name: a template serving four types gives four rows; a type
- * in play that no template serves is a row with none (Make a template), and a template serving
+ * in play that no template serves is a row with none (Make a list), and a template serving
  * none is a row of its own (its editor warns).
  */
 export function typeRows(

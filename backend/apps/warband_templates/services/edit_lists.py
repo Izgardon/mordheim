@@ -38,13 +38,13 @@ def check_who(who: dict[str, Any], keys: Iterable[str], label: str) -> None:
     named = [*who.get("fighters", []), *who.get("except", [])]
     unknown = [key for key in named if key not in set(keys)]
     if unknown:
-        raise ValidationError({label: [f"{key} isn't one of this template's fighters." for key in unknown]})
+        raise ValidationError({label: [f"{key} isn't one of this list's fighters." for key in unknown]})
 
 
 def check_variant(template: WarbandTemplate, variant: str, label: str) -> None:
     """A line or a rule for one variant names one the template has."""
     if variant and variant not in variant_keys(template):
-        raise ValidationError({label: [f"{variant} isn't one of this template's variants."]})
+        raise ValidationError({label: [f"{variant} isn't one of this list's variants."]})
 
 
 def add_list(template: WarbandTemplate, data: dict[str, Any]) -> TemplateList:
@@ -79,7 +79,7 @@ def _write_contents(template: WarbandTemplate, found: TemplateList, data: dict[s
     fighters = dict(TemplateFighter.objects.filter(template=template).values_list("key", "id"))
     unknown = [key for key in data["fighters"] if key not in fighters]
     if unknown:
-        raise ValidationError({"fighters": [f"{key} isn't one of this template's fighters." for key in unknown]})
+        raise ValidationError({"fighters": [f"{key} isn't one of this list's fighters." for key in unknown]})
     for line in data["lines"]:
         check_who(line["who"], fighters, "lines")
         check_variant(template, line["variant"], "lines")

@@ -36,12 +36,12 @@ const asideLabel = (setting: string, grade: string) =>
 
 type Making = { forType?: { id: number; name: string } } | null;
 
-/** An open row of a type no template serves: Make a template, for those who edit the catalogue. */
+/** An open row of a type no template serves: Make a list, for those who edit the catalogue. */
 function NoTemplate({ row, onMake }: { row: TemplateTypeRow; onMake: () => void }) {
   return (
     <div className="px-4 py-4">
       <Button variant="secondary" className="min-h-10" onClick={onMake}>
-        Make a template for {row.typeName}
+        Make a list for {row.typeName}
       </Button>
     </div>
   );
@@ -53,7 +53,7 @@ function NoTemplate({ row, onMake }: { row: TemplateTypeRow; onMake: () => void 
  * make it filterable/sortable") and grade (William, 8 Nov 2026), searched, filtered by setting
  * (Mordheim's grades as one), by name, opening in place
  * to its template (gold, warband size, variants, rules, fighters, lists, upgrades), or to Make a
- * template where it has none. Those who edit the catalogue edit a template in the editor (a
+ * list where it has none. Those who edit the catalogue edit a template in the editor (a
  * drawer on the web, a sheet on a phone).
  */
 export default function WarbandTemplates() {

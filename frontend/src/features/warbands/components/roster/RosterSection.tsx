@@ -24,7 +24,7 @@ type RosterSectionProps = {
   divided?: boolean;
   /** The inline recruit form, at the top of the section while it is open (a phone's bottom sheet). */
   form?: ReactNode;
-  /** Beside the add button: the heroes' Make a template for a type with none. */
+  /** Beside the add button: the heroes' Make a list for a type with none. */
   extra?: ReactNode;
   children: ReactNode;
 };

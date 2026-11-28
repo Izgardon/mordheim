@@ -4,7 +4,7 @@ import TemplateEditor from "../editor/TemplateEditor";
 import MakeTemplateDialog from "./MakeTemplateDialog";
 
 /**
- * A warband page's "Make a template for <type>" (the templates plan, phase 4), beside Add hero
+ * A warband page's "Make a list for <type>" (the templates plan, phase 4), beside Add hero
  * while its type has no template: made blank or as a copy, then edited in the editor here. Its
  * next recruits read it; nothing on the roster changes.
  */
@@ -28,7 +28,7 @@ export default function MakeTemplateForWarband({
           onClick={() => setMaking(true)}
           className="min-h-9 px-2 text-[13px] font-semibold text-accent-text underline-offset-2 hover:underline"
         >
-          Make a template for {warbandType.name}
+          Make a list for {warbandType.name}
         </button>
       )}
       {making ? (

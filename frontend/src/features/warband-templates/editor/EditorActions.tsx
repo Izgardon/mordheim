@@ -72,14 +72,14 @@ export default function EditorActions({
         ) : null}
         {facts.source !== "house" && canDelete ? (
           <Button size="sm" variant="danger" onClick={() => setAsking("delete")}>
-            {facts.source === "book" ? "Remove from campaign" : "Delete template"}
+            {facts.source === "book" ? "Remove from campaign" : "Delete list"}
           </Button>
         ) : null}
       </div>
       <ConfirmDialog
         open={asking !== null}
         onOpenChange={(open) => (open ? null : setAsking(null))}
-        title={asking === "revert" ? "Revert to book" : "Delete template"}
+        title={asking === "revert" ? "Revert to book" : "Delete list"}
         description={
           asking === "revert"
             ? `${template.name} goes back to the book's in this campaign: every change made here goes. Units already on rosters keep what they have.`

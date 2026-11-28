@@ -109,7 +109,7 @@ describe("Raising a warband from its type's template", () => {
     renderRaise(<CreateWarband campaignId={4} onCreated={onCreated} />);
     const user = await pickType();
 
-    const shown = await screen.findByRole("region", { name: "Template outline" });
+    const shown = await screen.findByRole("region", { name: "List outline" });
     expect(within(shown).getByText("550 gc")).toBeInTheDocument();
     expect(within(shown).getByText("12")).toBeInTheDocument();
     expect(
@@ -145,7 +145,7 @@ describe("Raising a warband from its type's template", () => {
       </div>
     );
     const user = await pickType();
-    await screen.findByRole("region", { name: "Template outline" });
+    await screen.findByRole("region", { name: "List outline" });
     const root = document.querySelector<HTMLElement>("[data-scroll-root]")!;
     root.scrollTop = 600; // Raise sits under the outline, far down a phone's page
 
@@ -227,7 +227,7 @@ describe("Raising a warband from its type's template", () => {
     expect(browse()).toHaveAttribute("href", "/campaigns/4/warband-templates");
 
     await pickType();
-    await screen.findByRole("region", { name: "Template outline" });
+    await screen.findByRole("region", { name: "List outline" });
     expect(browse()).toHaveAttribute("href", "/campaigns/4/warband-templates?open=3-7");
   });
 
@@ -236,7 +236,7 @@ describe("Raising a warband from its type's template", () => {
     renderRaise(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
     await pickType();
     await waitFor(() => expect(fakeApi.countOf(OUTLINE)).toBe(1));
-    expect(screen.queryByRole("region", { name: "Template outline" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "List outline" })).not.toBeInTheDocument();
   });
 
   it("imports a shared warband by its code instead, paying its cost, and shows the server's warnings", async () => {

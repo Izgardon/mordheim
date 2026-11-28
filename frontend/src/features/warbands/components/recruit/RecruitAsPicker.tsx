@@ -70,7 +70,7 @@ export default function RecruitAsPicker({
       <div className="flex flex-col gap-1.5">
         <RecruitAsHeader onChange={() => onPick("")} />
         <p className="m-0 border border-accent-line bg-accent-soft px-3 py-2.5 text-sm font-bold text-ink">
-          Someone not in the template
+          Someone not in the list
         </p>
       </div>
     );
@@ -112,7 +112,7 @@ export default function RecruitAsPicker({
           onClick={() => onPick(BY_HAND)}
         >
           <Plus className="mt-0.5 h-4 w-4 text-accent-text" aria-hidden="true" />
-          <span className="text-sm font-bold text-accent-text">Someone not in the template</span>
+          <span className="text-sm font-bold text-accent-text">Someone not in the list</span>
         </button>
       </div>
     </div>

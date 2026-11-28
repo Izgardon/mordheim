@@ -62,7 +62,7 @@ export default function RecruitForm({
 
   let body;
   if (template.isPending) {
-    body = <p className="m-0 text-[13px] text-muted-foreground">Reading the template…</p>;
+    body = <p className="m-0 text-[13px] text-muted-foreground">Reading the list…</p>;
   } else if (fighter && answer?.template) {
     body = (
       <TemplateRecruit

@@ -56,12 +56,10 @@ describe("usageSummary", () => {
     );
   });
 
-  it("counts the campaign's warband templates naming the entry as holders", () => {
-    expect(usageSummary({ units: 0, warbands: 0, warband_templates: 1 })).toBe(
-      "1 warband template"
-    );
+  it("counts the campaign's warband lists naming the entry as holders", () => {
+    expect(usageSummary({ units: 0, warbands: 0, warband_templates: 1 })).toBe("1 warband list");
     expect(usageSummary({ units: 1, warbands: 1, hired_swords: 1, warband_templates: 2 })).toBe(
-      "1 unit in 1 warband, and by 1 hired sword and 2 warband templates"
+      "1 unit in 1 warband, and by 1 hired sword and 2 warband lists"
     );
   });
 });

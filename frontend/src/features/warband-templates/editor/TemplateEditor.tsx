@@ -121,10 +121,10 @@ export default function TemplateEditor(props: TemplateEditorProps) {
     <SidePanel
       open={templateId !== null}
       onOpenChange={(open) => (open ? null : discard.close())}
-      kicker="Warband template"
+      kicker="Warband list"
       // on a phone the sheet keeps one height, so it doesn't jump as the sections change
       className={isMobile ? "h-[calc(100dvh-env(safe-area-inset-top,0px))]" : undefined}
-      title={answer?.template.name ?? "Warband template"}
+      title={answer?.template.name ?? "Warband list"}
     >
       <DirtyRegistry value={changes.value}>
         {answer ? (
@@ -136,7 +136,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
           />
         ) : (
           <p className="m-0 text-sm text-text2">
-            {query.isError ? "Unable to load this template." : "Loading…"}
+            {query.isError ? "Unable to load this list." : "Loading…"}
           </p>
         )}
       </DirtyRegistry>

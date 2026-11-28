@@ -31,7 +31,7 @@ export function ruleOptions(specials: Special[], templateName: string): SearchOp
   const own = ownType(templateName);
   const group = (special: Special) =>
     special.type === own ? 0 : special.owner_kind === "warband" ? 2 : 1;
-  const labels = ["This template's", "General", "Other warbands'"];
+  const labels = ["This list's", "General", "Other warbands'"];
   return specials
     .filter((special) => !special.owner_kind || ["general", "warband"].includes(special.owner_kind))
     .map((special) => ({ special, at: group(special) }))

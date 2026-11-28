@@ -318,7 +318,7 @@ describe("Recruiting from the warband's template", () => {
     const user = setupUser();
     await user.click(await screen.findByRole("radio", { name: /Champion/ }));
     expect(screen.queryByRole("radiogroup", { name: "Recruit as" })).toBeNull();
-    expect(screen.queryByText("Someone not in the template")).toBeNull();
+    expect(screen.queryByText("Someone not in the list")).toBeNull();
     const chosen = screen.getByRole("article", { name: "Champion" });
     expect(within(chosen).getByText("35 gc")).toBeInTheDocument();
     expect(within(chosen).getByText("0 of 0–2 · 8 XP · Human")).toBeInTheDocument();
@@ -393,7 +393,7 @@ describe("Recruiting from the warband's template", () => {
     fakeApi.on("GET /warbands/9/template/", answer(true));
     renderForm();
     const user = setupUser();
-    await user.click(await screen.findByRole("radio", { name: "Someone not in the template" }));
+    await user.click(await screen.findByRole("radio", { name: "Someone not in the list" }));
     expect(screen.getByRole("form", { name: "Recruit" })).toBeInTheDocument();
     expect(screen.getByLabelText("Type")).toBeInTheDocument();
   });

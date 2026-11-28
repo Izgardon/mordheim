@@ -43,7 +43,7 @@ export function usageSummary({
     entries > 0 ? counted(entries, "bestiary entry", "bestiary entries") : "",
     hiredSwords > 0 ? counted(hiredSwords, "hired sword", "hired swords") : "",
     personae > 0 ? counted(personae, "dramatis persona", "dramatis personae") : "",
-    templates > 0 ? counted(templates, "warband template", "warband templates") : "",
+    templates > 0 ? counted(templates, "warband list", "warband lists") : "",
   ].filter(Boolean);
   const parts = [inWarbands, holders.length > 0 ? listed(holders) : ""].filter(Boolean);
   return parts.length > 0 ? parts.join(", and by ") : null;

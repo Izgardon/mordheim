@@ -111,7 +111,7 @@ def _write_links(template: WarbandTemplate, fighter: TemplateFighter, data: dict
     lists = dict(TemplateList.objects.filter(template=template).values_list("key", "id"))
     unknown = [key for key in data["lists"] if key not in lists]
     if unknown:
-        raise ValidationError({"lists": [f"{key} isn't one of this template's lists." for key in unknown]})
+        raise ValidationError({"lists": [f"{key} isn't one of this list's equipment lists." for key in unknown]})
     TemplateFighterList.objects.filter(fighter=fighter).delete()
     TemplateFighterList.objects.bulk_create(
         TemplateFighterList(fighter=fighter, equipment_list_id=lists[key]) for key in dict.fromkeys(data["lists"])

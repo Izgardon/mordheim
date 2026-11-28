@@ -34,7 +34,10 @@ if TYPE_CHECKING:
     from apps.warbands.units.kinds import UnitKindSpec
 
 FIGHTER_KINDS = {"hero": HERO, "henchmen_group": HENCHMAN}  # the unit kind -> the fighters it recruits
-NOT_HIS = {HERO: "Not one of this warband's template heroes.", HENCHMAN: "Not one of this warband's template henchmen."}
+NOT_HIS = {
+    HERO: "Not one of the heroes on this warband's list.",
+    HENCHMAN: "Not one of the henchmen on this warband's list.",
+}
 
 
 def unit_body(kind_key: str, fighter: TemplateFighter) -> dict[str, Any]:
