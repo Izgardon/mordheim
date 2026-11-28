@@ -90,7 +90,7 @@ export default function TemplateFighterCard({
         </details>
       ) : null}
       <Tags label="Spells" names={fighter.spell_types.map(spellLabel)} />
-      <Tags label="Lists" names={lists} />
+      <Tags label="Equipment lists" names={lists} />
       {fighter.rules.length ? (
         <details className="group">
           <summary className="cursor-pointer text-xs font-semibold text-accent-text">
