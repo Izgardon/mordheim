@@ -15,16 +15,9 @@ import { cn } from "@/lib/utils";
 
 import { outOfPlay, useSettingsById } from "../../api/settings-queries";
 import type { CampaignSummary } from "../../types/campaign-types";
+import { plotGroups } from "./plot-groups";
 import SettingsDisclosure from "./SettingsDisclosure";
-import { FormError } from "./settings-ui";
-
-type Setting = { name: string };
-
-/** Where the plot comes from: its setting, or the campaign itself. */
-const source = (plot: PlotRow, settings: Map<number, Setting>) =>
-  plot.campaign_id !== null
-    ? "Yours"
-    : ((plot.setting_id !== null ? settings.get(plot.setting_id)?.name : undefined) ?? "Mordheim");
+import { CAPTION, FormError } from "./settings-ui";
 
 function PlotRowView({
   plot,
@@ -34,7 +27,6 @@ function PlotRowView({
   canEdit,
   onToggle,
   onEdit,
-  settings,
 }: {
   plot: PlotRow;
   picked: boolean;
@@ -43,7 +35,6 @@ function PlotRowView({
   canEdit: boolean;
   onToggle: () => void;
   onEdit: () => void;
-  settings: Map<number, Setting>;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-line py-2 first:border-t-0">
@@ -52,7 +43,10 @@ function PlotRowView({
         <span className={cn("text-sm text-ink", plot.in_play === false && "text-faint")}>
           {plot.name}
         </span>
-        <span className="text-xs text-text2">{source(plot, settings)}</span>
+        {/* the campaign's version of a book plot, under its setting */}
+        {plot.campaign_id !== null && plot.setting_id !== null ? (
+          <span className="text-xs text-text2">Yours</span>
+        ) : null}
       </label>
       {picked && warning ? <span className="text-xs text-accent-text">{warning}.</span> : null}
       {canEdit && plot.campaign_id !== null ? (
@@ -66,7 +60,7 @@ function PlotRowView({
 
 /**
  * Settings → Rules → Plots, shown while Plots and CP is on: which plots the campaign plays
- * with, from every setting, each marked with where it comes from. A plot whose setting isn't
+ * with, from every setting, under each setting's heading in the settings' order (`plotGroups`). A plot whose setting isn't
  * ticked is greyed and still pickable, with the warning beside it once picked. Switching Plots on
  * gave the campaign its preset's plots; from then on this list is the list.
  */
@@ -106,21 +100,25 @@ export default function PlotsSection({ campaign }: { campaign: CampaignSummary }
           Add a plot
         </Button>
       ) : null}
-      <div className="flex flex-col">
-        {rows.map((plot) => (
-          <PlotRowView
-            key={plot.id}
-            plot={plot}
-            picked={picked.has(plot.id)}
-            warning={outOfPlay(plot, settings)}
-            busy={pick.isPending}
-            canEdit={can.edit_catalogue}
-            settings={settings}
-            onToggle={() => toggle(plot.id)}
-            onEdit={() => setEditing({ plotId: plot.id })}
-          />
-        ))}
-      </div>
+      {plotGroups(rows, settings).map((group) => (
+        <section key={group.key} aria-label={group.label} className="flex flex-col gap-1">
+          <h3 className={cn(CAPTION, "m-0 font-sans")}>{group.label}</h3>
+          <div className="flex flex-col">
+            {group.plots.map((plot) => (
+              <PlotRowView
+                key={plot.id}
+                plot={plot}
+                picked={picked.has(plot.id)}
+                warning={outOfPlay(plot, settings)}
+                busy={pick.isPending}
+                canEdit={can.edit_catalogue}
+                onToggle={() => toggle(plot.id)}
+                onEdit={() => setEditing({ plotId: plot.id })}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
       {!offered.isLoading && rows.length === 0 ? (
         <p className="m-0 text-sm text-text2">No plots yet.</p>
       ) : null}

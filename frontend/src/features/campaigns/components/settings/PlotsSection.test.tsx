@@ -1,8 +1,9 @@
 /**
- * Settings → Plots: the plots the campaign plays with, picked from every plot it can see. A plot
- * whose setting isn't ticked is offered, pickable and warned about.
+ * Settings → Plots: the plots the campaign plays with, picked from every plot it can see, under
+ * their settings in the settings' order. A plot whose setting isn't ticked is offered, pickable and
+ * warned about.
  */
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { campaignSummary } from "@/test/campaign-fixtures";
@@ -40,8 +41,23 @@ const WITCH = plot(2, "Drowning the Witch", { setting_id: 4, in_play: false });
 /** The campaign's list as the server keeps it: a PUT replaces it, and the next GET reads it. */
 let played: number[] = [];
 
+const setting = (id: number, name: string, sort_order: number) => ({
+  id,
+  slug: name,
+  name,
+  grade: "2b",
+  grade_label: "Supplemental",
+  sort_order,
+  always_on: false,
+  warband_types: 0,
+});
+
 const serve = () => {
   played = [SHARDS.id];
+  fakeApi.on("GET /settings/", {
+    settings: [setting(4, "The Sealed City", 1), setting(1, "Mutiny in Marienburg", 2)],
+    presets: [],
+  });
   fakeApi.on(`GET /plots/?campaign_id=${campaign.id}`, [SHARDS, WITCH]);
   fakeApi.on(`GET /campaigns/${campaign.id}/plots/`, () =>
     [SHARDS, WITCH].filter((row) => played.includes(row.id))
@@ -110,6 +126,23 @@ describe("Settings → Plots", () => {
     await waitFor(() =>
       expect(fakeApi.bodyOf(`PUT /campaigns/${campaign.id}/plots/`)).toEqual({ plot_ids: [] })
     );
+  });
+
+  it("lists the plots under their settings, in the settings' order", async () => {
+    await show();
+
+    const groups = await screen.findAllByRole("heading", { level: 3 });
+    await waitFor(() =>
+      expect(groups.map((heading) => heading.textContent)).toEqual([
+        "The Sealed City",
+        "Mutiny in Marienburg",
+      ])
+    );
+    expect(
+      within(screen.getByRole("region", { name: "The Sealed City" })).getByRole("checkbox", {
+        name: "Drowning the Witch",
+      })
+    ).toBeInTheDocument();
   });
 
   it("opens the editor to add the campaign's own plot", async () => {
