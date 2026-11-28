@@ -55,7 +55,7 @@ beforeEach(() => {
     makeEditorAnswer({
       warnings: [
         { section: "fighters", key: "", text: "No fighter is the leader." },
-        { section: "fighters", key: "champions", text: "No list and no fixed kit." },
+        { section: "fighters", key: "champions", text: "No equipment list and no fixed kit." },
       ],
     })
   );
@@ -80,7 +80,20 @@ describe("The template editor", () => {
     expect(screen.getByText("No fighter is the leader.")).toBeInTheDocument();
     const row = screen.getByRole("button", { name: /^Champion/ });
     expect(row).toHaveTextContent("35 gc · 0–2");
-    expect(row).toHaveTextContent("No list and no fixed kit.");
+    expect(row).toHaveTextContent("No equipment list and no fixed kit.");
+  });
+
+  it("names the equipment lists apart from the warband list", async () => {
+    // William, 28 Nov 2026: "Yes rename to equipment lists"
+    const user = setupUser();
+    renderWithQueryClient(<Harness />);
+    await user.click(await screen.findByRole("button", { name: /^Equipment lists/ }));
+    const section = screen.getByRole("region", { name: "Equipment lists" });
+    expect(within(section).getByRole("button", { name: "Equipment list" })).toBeInTheDocument();
+    await user.click(within(section).getByRole("button", { name: /^Kit list/ }));
+    const form = within(section).getByRole("group", { name: "Edit Kit list" });
+    expect(within(form).getByRole("button", { name: "Save equipment list" })).toBeInTheDocument();
+    expect(within(form).getByRole("button", { name: "Delete equipment list" })).toBeInTheDocument();
   });
 
   it("follows the house version a book template's first save makes", async () => {

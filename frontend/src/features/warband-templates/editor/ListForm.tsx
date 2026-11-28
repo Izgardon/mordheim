@@ -50,7 +50,7 @@ export default function ListForm(props: ListFormProps) {
     <div
       className={FORM_BOX}
       role="group"
-      aria-label={props.list ? `Edit ${props.list.name}` : "New list"}
+      aria-label={props.list ? `Edit ${props.list.name}` : "New equipment list"}
     >
       <div className="grid grid-cols-1 gap-2 min-[620px]:grid-cols-2">
         <Field label="Name">
@@ -140,7 +140,7 @@ export default function ListForm(props: ListFormProps) {
         }}
       />
       <SaveRow
-        label={props.list ? "Save list" : "Add list"}
+        label={props.list ? "Save equipment list" : "Add equipment list"}
         pending={props.pending}
         error={props.error}
         disabled={!draft.name.trim()}
@@ -154,7 +154,7 @@ export default function ListForm(props: ListFormProps) {
             disabled={props.pending}
             onClick={() => (deleting ? props.onDelete?.() : setDeleting(true))}
           >
-            {deleting ? "Delete for good" : "Delete list"}
+            {deleting ? "Delete for good" : "Delete equipment list"}
           </Button>
         ) : null}
       </SaveRow>

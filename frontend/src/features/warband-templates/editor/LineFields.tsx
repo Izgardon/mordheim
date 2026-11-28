@@ -129,7 +129,7 @@ export default function LineFields({
         onChange={(who) => set({ who, whoText: "" })}
       />
       <Button size="sm" variant="ghost" className="self-start" onClick={onRemove}>
-        Take off the list
+        Take off the equipment list
       </Button>
     </div>
   );

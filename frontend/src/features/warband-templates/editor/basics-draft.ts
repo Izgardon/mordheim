@@ -96,9 +96,11 @@ export function variantLoss(template: WarbandTemplate, key: string) {
 const counted = (count: number, noun: string) =>
   count === 1 ? noun : count ? `${count} ${noun}s` : "";
 
-/** "Its own rule goes with it.", "Its own 2 rules and list line go with it.", or "" for none. */
+/** "Its own rule goes with it.", "Its own 2 rules and equipment list line go with it.", or "" for none. */
 export function lossNote(loss: { rules: number; lines: number }) {
-  const parts = [counted(loss.rules, "rule"), counted(loss.lines, "list line")].filter(Boolean);
+  const parts = [counted(loss.rules, "rule"), counted(loss.lines, "equipment list line")].filter(
+    Boolean
+  );
   const one = loss.rules + loss.lines === 1;
   return parts.length ? `Its own ${parts.join(" and ")} ${one ? "goes" : "go"} with it.` : "";
 }

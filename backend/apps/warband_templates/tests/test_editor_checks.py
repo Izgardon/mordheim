@@ -35,7 +35,7 @@ class WarningTests(EditorTestCase):
             self.texts(body),
             [
                 ("fighters", "", "No fighter is the leader."),
-                ("fighters", "warriors", 'No list and no fixed kit: say "None" if they carry nothing.'),
+                ("fighters", "warriors", 'No equipment list and no fixed kit: say "None" if they carry nothing.'),
             ],
         )
         TemplateFighter.objects.filter(pk=self.made.captain.pk).update(is_leader=True, fixed_kit="None")

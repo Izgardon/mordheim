@@ -3,7 +3,7 @@ import type { EditorAnswer, EditorSection, EditorWarning } from "../types/editor
 export const SECTIONS: { id: EditorSection; label: string }[] = [
   { id: "basics", label: "Basics" },
   { id: "fighters", label: "Fighters" },
-  { id: "lists", label: "Lists" },
+  { id: "lists", label: "Equipment lists" },
   { id: "rules", label: "Rules" },
   { id: "upgrades", label: "Upgrades" },
 ];

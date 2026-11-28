@@ -18,7 +18,7 @@ from django.db.models import F
 from ..models import HERO, WarbandTemplate, WarbandTemplateType
 from .resolve import in_campaign
 
-NO_KIT = 'No list and no fixed kit: say "None" if they carry nothing.'
+NO_KIT = 'No equipment list and no fixed kit: say "None" if they carry nothing.'
 
 
 def _warning(section: str, text: str, key: str = "") -> dict[str, str]:

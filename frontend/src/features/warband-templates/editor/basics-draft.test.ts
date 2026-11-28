@@ -30,7 +30,7 @@ describe("Basics' save", () => {
   it("says what a variant taken out takes with it", () => {
     const template = makeEditorTemplate();
     expect(lossNote(variantLoss(template, "middenheim"))).toBe(
-      "Its own rule and list line go with it."
+      "Its own rule and equipment list line go with it."
     );
     expect(lossNote({ rules: 2, lines: 0 })).toBe("Its own 2 rules go with it.");
     expect(lossNote({ rules: 1, lines: 0 })).toBe("Its own rule goes with it.");

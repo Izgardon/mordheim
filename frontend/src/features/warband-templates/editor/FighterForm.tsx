@@ -164,7 +164,7 @@ export default function FighterForm(props: FighterFormProps) {
       />
       <FighterFlags draft={draft} onChange={set} />
       <div className="flex flex-col gap-1.5">
-        <span className={CAPTION}>Lists</span>
+        <span className={CAPTION}>Equipment lists</span>
         <div className="flex flex-wrap gap-1.5">
           {template.lists.map((list) => (
             <Chip

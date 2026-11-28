@@ -22,7 +22,7 @@ function summary(template: WarbandTemplate, list: TemplateList) {
     .join(" · ");
 }
 
-/** Lists: each equipment list with its size and who uses it; a row opens its form, saved on its own. */
+/** Equipment lists: each one with its size and who uses it; a row opens its form, saved on its own. */
 export default function ListsSection({ answer, campaignId, save }: SectionProps) {
   const { template } = answer;
   const [open, setOpen] = useState<Open>(null);
@@ -54,7 +54,7 @@ export default function ListsSection({ answer, campaignId, save }: SectionProps)
   );
 
   return (
-    <section aria-label="Lists" className="flex flex-col gap-3">
+    <section aria-label="Equipment lists" className="flex flex-col gap-3">
       <div className="flex flex-col">
         {template.lists.map((list) =>
           open !== "new" && open?.key === list.key ? (
@@ -81,7 +81,7 @@ export default function ListsSection({ answer, campaignId, save }: SectionProps)
           className="inline-flex min-h-9 items-center gap-1.5 self-start border border-dashed border-strong px-3 text-[13px] font-bold text-accent-text hover:bg-raised"
         >
           <Plus className="h-3.5 w-3.5" aria-hidden="true" />
-          List
+          Equipment list
         </button>
       ) : null}
     </section>
