@@ -4,14 +4,12 @@ import { Flag } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { MoreMenu, type MoreMenuEntry } from "@/components/ui/more-menu";
 import type { YourOpenBattle } from "@/features/battles/utils/open-battles";
 import { cn } from "@/lib/utils";
 
-import { campaignCapabilities, isArchived } from "../../capabilities";
-import { useStartCampaign } from "../../hooks/overview/useStartCampaign";
+import { isArchived } from "../../capabilities";
 import type { CampaignSummary } from "../../types/campaign-types";
 import BattleButton from "./BattleButton";
 
@@ -73,15 +71,14 @@ function InviteDialog({
 
 /**
  * The overview's header (design E): the campaign's name, Start battle and Report a result (the
- * same size), and the ⋯ menu: Invite a player, Campaign settings, Export, and Start the campaign
- * for those who may while it hasn't begun. While you have a battle, Start battle takes you there
+ * same size), and the ⋯ menu: Invite a player, Campaign settings and Export (Start the campaign is
+ * the page's own banner, `StartCampaignBanner`). While you have a battle, Start battle takes you there
  * (Rejoin and the like) and the menu gains Start another battle, unless you are fighting it. An
  * archived campaign takes no new battles.
  */
 export default function OverviewHeader(props: OverviewHeaderProps) {
   const { campaign, isMobile } = props;
   const navigate = useNavigate();
-  const starting = useStartCampaign(campaign);
   const [inviteOpen, setInviteOpen] = useState(false);
   const archived = isArchived(campaign);
   const menu: MoreMenuEntry[] = [
@@ -93,9 +90,6 @@ export default function OverviewHeader(props: OverviewHeaderProps) {
       : []),
     { label: "Campaign settings", onSelect: () => navigate(`/campaigns/${campaign.id}/settings`) },
     { label: "Export the campaign", onSelect: props.onExport },
-    ...(starting.canStartCampaign && !starting.isUnderway && !archived
-      ? [{ label: "Start the campaign", onSelect: () => starting.setIsStartOpen(true) }]
-      : []),
   ];
   const buttons = archived ? null : (
     <>
@@ -142,19 +136,6 @@ export default function OverviewHeader(props: OverviewHeaderProps) {
         </header>
       )}
       <InviteDialog campaign={campaign} open={inviteOpen} onClose={() => setInviteOpen(false)} />
-      {campaignCapabilities(campaign).start ? (
-        <ConfirmDialog
-          open={starting.isStartOpen}
-          onOpenChange={starting.setIsStartOpen}
-          title="Start the campaign"
-          description="Battles count towards it from now on."
-          confirmText={starting.isStarting ? "Starting…" : "Start the campaign"}
-          confirmVariant="primary"
-          isConfirming={starting.isStarting}
-          error={starting.startError}
-          onConfirm={() => void starting.handleStartCampaign()}
-        />
-      ) : null}
     </>
   );
 }
