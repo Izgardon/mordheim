@@ -301,6 +301,7 @@
 - **Impact:** Text renders late, or layout shifts on slow mobile connections.
 - **Fix:** Move the fonts to `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>` plus a `<link rel="stylesheet">` in `index.html`, or self-host with `@fontsource/*`. Self-hosting also removes the third-party origins from a future CSP (FE-SEC-01).
 - **Effort:** S · **Confidence:** Confirmed
+- **Done (28 Nov 2026):** self-hosted through `@fontsource` (`index.css`), so they come with the build; the CSP names no font host.
 
 ## Bugs
 

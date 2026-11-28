@@ -47,8 +47,9 @@ describe("vercel.json", () => {
     expect(directive("connect-src")).toContain("wss://*.pusher.com");
     expect(directive("worker-src")).toContain("blob:");
     expect(directive("img-src")).toContain("data:");
-    expect(directive("style-src")).toContain("https://fonts.googleapis.com");
-    expect(directive("font-src")).toContain("https://fonts.gstatic.com");
+    // The fonts come with the build (index.css), so no font host is let in.
+    expect(directive("style-src")).toBe("style-src 'self' 'unsafe-inline'");
+    expect(directive("font-src")).toBe("font-src 'self' data:");
     // The landing video embeds YouTube's no-cookie player (decision 5), the only frame the app has.
     expect(directive("frame-src")).toBe("frame-src https://www.youtube-nocookie.com");
   });

@@ -1,4 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap");
+/* The fonts come with the build, not from Google, so an installed app has them offline and the CSP names no font host.
+   Each weight's file holds every script by unicode-range, as Google served them; Fraunces is variable, with optical sizes. */
+@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource/manrope/400.css";
+@import "@fontsource/manrope/500.css";
+@import "@fontsource/manrope/600.css";
+@import "@fontsource/manrope/700.css";
+@import "@fontsource/space-mono/400.css";
+@import "@fontsource/space-mono/700.css";
 @import "./features/rules/styles/rules.css";
 
 @tailwind base;
@@ -7,7 +15,7 @@
 
 :root {
   --font-body: "Manrope", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --font-heading: "Fraunces", "Times New Roman", serif;
+  --font-heading: "Fraunces Variable", "Times New Roman", serif;
   --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
   --text-2xs: clamp(0.6rem, 0.56rem + 0.2vw, 0.7rem);

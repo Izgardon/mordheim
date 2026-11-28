@@ -36,6 +36,14 @@ describe("global stylesheet", () => {
     expect(stylesheet).not.toMatch(/@font-face/);
   });
 
+  it("loads its fonts from the build, never from Google, so an installed app has them offline", () => {
+    expect(stylesheet).not.toMatch(/fonts\.googleapis\.com|fonts\.gstatic\.com/);
+    expect(stylesheet).toMatch(/@import "@fontsource-variable\/fraunces\/opsz\.css";/);
+    expect(stylesheet).toMatch(/@import "@fontsource\/manrope\/400\.css";/);
+    expect(stylesheet).toMatch(/@import "@fontsource\/space-mono\/700\.css";/);
+    expect(stylesheet).toMatch(/--font-heading: "Fraunces Variable",/);
+  });
+
   it("defines every design token for dark on :root and again for light", () => {
     const names = (css: string) =>
       [...css.matchAll(/^\s*(--[\w-]+):/gm)].map((match) => match[1]).sort();

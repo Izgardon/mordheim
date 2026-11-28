@@ -16,7 +16,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['\"Manrope\"', '\"Segoe UI\"', '\"Helvetica Neue\"', "Arial", "sans-serif"],
-        display: ['\"Fraunces\"', '\"Times New Roman\"', "serif"],
+        display: ['\"Fraunces Variable\"', '\"Times New Roman\"', "serif"],
         mono: [
           '\"Space Mono\"',
           "ui-monospace",
