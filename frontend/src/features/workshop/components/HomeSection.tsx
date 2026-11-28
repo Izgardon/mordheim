@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { IconType } from "react-icons";
 
 import { SectionHead } from "@/components/ui/section-title";
 import { CAMPAIGN_GRID } from "@/features/campaigns/components/campaigns/CampaignsSkeleton";
@@ -13,6 +14,17 @@ export const workshopState = (query: { isPending: boolean; error: unknown }) => 
   error: query.error ? getErrorMessage(query.error, "Unable to load your workshop") : "",
 });
 
+/** A section's title with its icon before it. */
+export function IconTitle({ icon: Icon, title }: { icon?: IconType; title: string }) {
+  if (!Icon) return title;
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
+      {title}
+    </span>
+  );
+}
+
 /**
  * A workshop section (a part of Home's Workshop, at level 3, or the workshop's own page): its
  * title and buttons, then its cards.
@@ -20,6 +32,7 @@ export const workshopState = (query: { isPending: boolean; error: unknown }) => 
 export default function HomeSection(props: {
   id: string;
   title: string;
+  icon?: IconType;
   level?: 2 | 3;
   actions: ReactNode;
   state: { isLoading: boolean; error: string };
@@ -31,7 +44,7 @@ export default function HomeSection(props: {
     <section aria-labelledby={props.id} className="flex flex-col gap-4">
       <SectionHead
         id={props.id}
-        title={props.title}
+        title={<IconTitle icon={props.icon} title={props.title} />}
         level={props.level}
         className="flex-wrap items-center"
         aside={

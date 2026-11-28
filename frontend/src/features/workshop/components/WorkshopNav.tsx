@@ -1,12 +1,10 @@
 import type { IconType } from "react-icons";
-import { GiBrutalHelm } from "react-icons/gi";
 import { Link, useLocation } from "react-router-dom";
 
-import { GAME_ICONS } from "@/components/ui/game-icons";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 
-import { CONTENT_KINDS, workshopPath } from "../paths";
+import { CONTENT_KINDS, WORKSHOP_ICONS, workshopPath } from "../paths";
 
 /** A chip that is a link (pressed: its page is open). */
 export const CHIP_LINK =
@@ -53,13 +51,13 @@ export default function WorkshopNav({ workshopId }: { workshopId: number }) {
         to={base}
         current={section === "" || section === "warbands"}
         label="Warbands"
-        icon={GiBrutalHelm}
+        icon={WORKSHOP_ICONS.warbands}
       />
       <NavChip
         to={workshopPath(workshopId, "lists")}
         current={section === "lists"}
         label="Lists"
-        icon={GAME_ICONS.warbands}
+        icon={WORKSHOP_ICONS.lists}
       />
       <span aria-hidden="true" className="mx-1 w-px shrink-0 self-stretch bg-line" />
       {CONTENT_KINDS.map((kind) => (

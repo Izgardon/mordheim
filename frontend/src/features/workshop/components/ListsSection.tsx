@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { useDeleteWorkshopList, useWorkshop } from "../api/workshop-queries";
-import { workshopListPath } from "../paths";
+import { workshopListPath, WORKSHOP_ICONS } from "../paths";
 import HomeSection, { SECTION_BUTTON, workshopState } from "./HomeSection";
 import ImportIntoWorkshop from "./ImportIntoWorkshop";
 import NewListDialog from "./NewListDialog";
@@ -23,6 +23,7 @@ export default function ListsSection({ level }: { level?: 2 | 3 }) {
       level={level}
       id="your-lists"
       title="Warband lists"
+      icon={WORKSHOP_ICONS.lists}
       state={workshopState(workshop)}
       count={lists.length}
       empty="No custom warband lists yet."

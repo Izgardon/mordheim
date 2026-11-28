@@ -6,10 +6,11 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 
 import { useOpenWorkshop, useWorkshop } from "../api/workshop-queries";
-import { CONTENT_KINDS, workshopPath } from "../paths";
+import { CONTENT_KINDS, WORKSHOP_ICONS, workshopPath } from "../paths";
+import { IconTitle } from "./HomeSection";
 import { CHIP_LINK } from "./WorkshopNav";
 
-const CHIP = cn(CHIP_LINK, "border-border text-text2 hover:bg-raised hover:text-ink");
+const CHIP = cn(CHIP_LINK, "gap-1.5 border-border text-text2 hover:bg-raised hover:text-ink");
 
 /**
  * Home's My content (a part of its Workshop): my workshop's own catalogue entries, a link per kind to its page there.
@@ -28,11 +29,16 @@ export default function ContentSection() {
 
   return (
     <section aria-labelledby="your-content" className="flex flex-col gap-4">
-      <SectionHead id="your-content" title="My content" level={3} />
+      <SectionHead
+        id="your-content"
+        title={<IconTitle icon={WORKSHOP_ICONS.content} title="My content" />}
+        level={3}
+      />
       <div className="flex flex-wrap gap-1.5">
         {CONTENT_KINDS.map((kind) =>
           id ? (
             <Link key={kind.path} to={workshopPath(id, kind.path)} className={CHIP}>
+              <kind.icon aria-hidden="true" className="h-4 w-4 shrink-0" />
               {kind.label}
             </Link>
           ) : (
@@ -43,6 +49,7 @@ export default function ContentSection() {
               disabled={workshop.isPending || opening.isPending}
               onClick={() => open(kind.path)}
             >
+              <kind.icon aria-hidden="true" className="h-4 w-4 shrink-0" />
               {kind.label}
             </button>
           )

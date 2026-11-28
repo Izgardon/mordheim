@@ -1,14 +1,25 @@
 import {
   GiBattleGear,
+  GiBrutalHelm,
   GiCrownCoin,
   GiDramaMasks,
   GiPawPrint,
+  GiQuillInk,
   GiRuneStone,
   GiSpellBook,
   GiYinYang,
 } from "react-icons/gi";
 
+import { GAME_ICONS } from "@/components/ui/game-icons";
+
 import type { MadeInWorkshop } from "./types/workshop-types";
+
+/** The workshop's parts' icons, on its nav pills and Home's titles alike. */
+export const WORKSHOP_ICONS = {
+  warbands: GiBrutalHelm,
+  lists: GAME_ICONS.warbands,
+  content: GiQuillInk,
+};
 
 /** The workshop's pages (outside the campaign shell): its warbands, its lists, My content. */
 export const workshopPath = (workshopId: number, rest = "") =>

@@ -121,7 +121,13 @@ describe("Home's workshop sections", () => {
     expect(screen.getByRole("heading", { level: 2, name: "Workshop" })).toBeInTheDocument();
     for (const part of ["Warbands", "Warband lists", "My content"]) {
       const region = within(workshop).getByRole("region", { name: part });
-      expect(within(region).getByRole("heading", { level: 3, name: part })).toBeInTheDocument();
+      const heading = within(region).getByRole("heading", { level: 3, name: part });
+      expect(heading.querySelector("svg")).not.toBeNull(); // each part's title carries its icon
+    }
+    const content = within(workshop).getByRole("region", { name: "My content" });
+    for (const kind of ["Items", "Skills", "Dramatis personae"]) {
+      const chip = await within(content).findByRole("link", { name: kind });
+      expect(chip.querySelector("svg")).not.toBeNull(); // as the workshop's own nav pills do
     }
     expect(
       await within(workshop).findByRole("article", { name: "The Gilded Wagon" })
